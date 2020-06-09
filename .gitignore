@@ -1,0 +1,4 @@
+objs/*
+bsnes/*
+*.o
+*.d
