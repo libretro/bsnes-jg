@@ -1,0 +1,40 @@
+bsnes-jg
+--------
+bsnes-jg is an emulator for the Super Nintendo Entertainment System/Super
+Famicom, including support for the Super Game Boy and BS-X Satellaview.
+
+This is a fork of bsnes v115.
+
+Compiling
+---------
+Make sure you have The Jolly Good API's header files installed. If you did
+not install them, you will be required to include their path in CXXFLAGS.
+
+Linux:
+  make
+
+macOS:
+  make
+
+FreeBSD:
+  gmake CC=gcc CXX=g++
+
+Windows (MSYS2):
+  make
+
+The build will be output to "bsnes/". This directory may be used as is
+locally by copying it to your local "cores" directory, or may be installed
+system-wide using the "install" target specified in the Makefile.
+
+Input Devices
+-------------
+bsnes-jg uses a game database to determine which input devices must be
+plugged in. The following input devices are currently supported:
+
+SNES Control Pad
+Super Scope
+
+Settings
+--------
+aspect_ratio = 0
+0 = 8:7, 1 = Auto Region
