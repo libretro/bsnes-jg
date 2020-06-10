@@ -1,7 +1,7 @@
 CC ?= cc
 CXX ?= c++
-CFLAGS ?= -O2 -march=native
-CXXFLAGS ?= -O2 -march=native
+CFLAGS ?= -O2
+CXXFLAGS ?= -O2
 FLAGS := -fPIC -std=c++17 -fno-strict-aliasing -fwrapv
 FLAGS_CO := -fPIC -std=c89
 FLAGS_GB := -fPIC -std=c11
