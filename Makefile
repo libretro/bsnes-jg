@@ -16,8 +16,8 @@ SHARED := -fPIC
 
 NAME := bsnes
 PREFIX ?= /usr/local
-DATADIR ?= $(PREFIX)/share/jollygood/$(NAME)
-LIBDIR ?= $(PREFIX)/lib/jollygood
+DATADIR ?= $(PREFIX)/share
+LIBDIR ?= $(PREFIX)/lib
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Darwin)
@@ -113,11 +113,11 @@ clean:
 	rm -rf $(OBJDIRS) $(NAME)/
 
 install:
-	@mkdir -p $(DESTDIR)$(DATADIR)
-	@mkdir -p $(DESTDIR)$(LIBDIR)
-	cp $(NAME)/$(TARGET) $(DESTDIR)$(LIBDIR)/
-	cp $(NAME)/boards.bml $(DESTDIR)$(DATADIR)/
+	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
+	@mkdir -p $(DESTDIR)$(LIBDIR)/jollygood
+	cp $(NAME)/$(TARGET) $(DESTDIR)$(LIBDIR)/jollygood/
+	cp $(NAME)/boards.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 
 uninstall:
-	rm -rf $(DESTDIR)$(DATADIR)
-	rm $(DESTDIR)$(LIBDIR)/$(TARGET)
+	rm -rf $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
+	rm $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
