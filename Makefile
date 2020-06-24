@@ -5,7 +5,8 @@ CXXFLAGS ?= -O2
 FLAGS := -fPIC -std=c++17 -fno-strict-aliasing -fwrapv
 FLAGS_CO := -fPIC -std=c89
 FLAGS_GB := -fPIC -std=c11
-CPPFLAGS_GB := -DGB_INTERNAL -DDISABLE_DEBUGGER -D_GNU_SOURCE
+CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
+	-D_GNU_SOURCE
 INCLUDES := -I. -I..
 INCLUDES_GB := -I../sameboy
 WARNINGS := -Wno-multichar -Wno-narrowing -Wno-trigraphs
@@ -45,6 +46,7 @@ CSRCS := objs/gb/Core/apu.c \
 	objs/gb/Core/printer.c \
 	objs/gb/Core/random.c \
 	objs/gb/Core/rewind.c \
+	objs/gb/Core/rumble.c \
 	objs/gb/Core/save_state.c \
 	objs/gb/Core/sgb.c \
 	objs/gb/Core/sm83_cpu.c \
