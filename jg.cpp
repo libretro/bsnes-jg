@@ -98,10 +98,14 @@ static jg_inputstate_t *input_device[NUMINPUTS];
 // Emulator settings
 static jg_setting_t settings_bsnes[] = { // name, default, min, max
     { "aspect_ratio", 0, 0, 1 }, // 0 = 8:7, 1 = Auto Region
+    { "fast_ppu", 0, 0, 1 }, // 0 = Disabled, 1 = Enabled
+    { "mode7_scale", 1, 1, 8 }, // 0 = Disabled, 1 = Enabled
 };
 
 enum {
     ASPECT,
+    FASTPPU,
+    M7SCALE,
 };
 
 static uint16_t audio_buffer_index = 0;
@@ -730,11 +734,12 @@ int jg_game_load() {
     emulator->configure("Hacks/SA1/Overclock", 100);
     emulator->configure("Hacks/SuperFX/Overclock", 100);
     
-    emulator->configure("Hacks/PPU/Fast", false); // default true
+    emulator->configure("Hacks/PPU/Fast",
+        settings_bsnes[FASTPPU].value ? true : false);
     emulator->configure("Hacks/PPU/Deinterlace", false);
     emulator->configure("Hacks/PPU/NoSpriteLimit", false);
     emulator->configure("Hacks/PPU/NoVRAMBlocking", false);
-    emulator->configure("Hacks/PPU/Mode7/Scale", 4);
+    emulator->configure("Hacks/PPU/Mode7/Scale", settings_bsnes[M7SCALE].value);
     emulator->configure("Hacks/PPU/Mode7/Perspective", false);
     emulator->configure("Hacks/PPU/Mode7/Supersample", false);
     emulator->configure("Hacks/PPU/Mode7/Mosaic", false);
