@@ -2,9 +2,6 @@
 #include "libco.h"
 #include "settings.h"
 
-#include <assert.h>
-#include <stdlib.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -114,7 +111,7 @@ static void (*co_swap)(cothread_t, cothread_t) = 0;
 #endif
 
 static void crash() {
-  assert(0);  /* called only if cothread_t entrypoint returns */
+  LIBCO_ASSERT(0);  /* called only if cothread_t entrypoint returns */
 }
 
 cothread_t co_active() {
@@ -130,7 +127,7 @@ cothread_t co_derive(void* memory, unsigned int size, void (*entrypoint)(void)) 
   }
   if(!co_active_handle) co_active_handle = &co_active_buffer;
 
-  if((handle = (cothread_t)memory)) {
+  if(handle = (cothread_t)memory) {
     unsigned int offset = (size & ~15) - 32;
     long long *p = (long long*)((char*)handle + offset);  /* seek to top of stack */
     *--p = (long long)crash;                              /* crash if entrypoint returns */
@@ -142,13 +139,13 @@ cothread_t co_derive(void* memory, unsigned int size, void (*entrypoint)(void)) 
 }
 
 cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
-  void* memory = malloc(size);
+  void* memory = LIBCO_MALLOC(size);
   if(!memory) return (cothread_t)0;
   return co_derive(memory, size, entrypoint);
 }
 
 void co_delete(cothread_t handle) {
-  free(handle);
+  LIBCO_FREE(handle);
 }
 
 void co_switch(cothread_t handle) {

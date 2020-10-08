@@ -267,9 +267,9 @@ auto Program::open(uint id, string name, vfs::file::mode mode, bool required) ->
                 bsMemory.program.size());
         }
         else if(name == "program.flash") {
-        //writes are not flushed to disk in bsnes
-        result = vfs::memory::file::open(bsMemory.program.data(),
-            bsMemory.program.size());
+            //writes are not flushed to disk in bsnes
+            result = vfs::memory::file::open(bsMemory.program.data(),
+                bsMemory.program.size());
         }
         else {
             result = openRomBSMemory(name, mode);
