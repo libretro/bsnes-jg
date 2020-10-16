@@ -132,36 +132,35 @@ struct Program : Emulator::Platform {
     Program();
     ~Program();
     
-    auto open(uint id, string name, vfs::file::mode mode, bool required) ->
-        shared_pointer<vfs::file> override;
-    auto load(uint id, string name, string type, vector<string> options = {}) ->
-        Emulator::Platform::Load override;
-    auto videoFrame(const uint16* data, uint pitch, uint width, uint height,
-        uint scale) -> void override;
-    auto audioFrame(const double* samples, uint channels) -> void override;
-    auto inputPoll(uint port, uint device, uint input) -> int16 override;
-    auto inputRumble(uint port, uint device, uint input, bool enable) ->
-        void override;
+    shared_pointer<vfs::file> open(uint id, string name, vfs::file::mode mode,
+        bool required) override;
+    Emulator::Platform::Load load(uint id, string name, string type,
+        vector<string> options = {}) override;
+    void videoFrame(const uint16* data, uint pitch, uint width, uint height,
+        uint scale) override;
+    void audioFrame(const double* samples, uint channels) override;
+    int16 inputPoll(uint port, uint device, uint input) override;
+    void inputRumble(uint port, uint device, uint input, bool enable) override;
     
-    auto load() -> void;
-    auto loadFile(string location) -> vector<uint8_t>;
-    auto loadSuperFamicom(string location) -> bool;
-    auto loadGameBoy(string location) -> bool;
-    auto loadBSMemory(string location) -> bool;
-
-    auto save() -> void;
-
-    auto openRomSuperFamicom(string name, vfs::file::mode mode) ->
-        shared_pointer<vfs::file>;
-    auto openRomGameBoy(string name, vfs::file::mode mode) ->
-        shared_pointer<vfs::file>;
-    auto openRomBSMemory(string name, vfs::file::mode mode) ->
-        shared_pointer<vfs::file>;
+    void load();
+    vector<uint8_t> loadFile(string location);
+    bool loadSuperFamicom(string location);
+    bool loadGameBoy(string location);
+    bool loadBSMemory(string location);
     
-    auto hackPatchMemory(vector<uint8_t>& data) -> void;
+    void save();
+    
+    shared_pointer<vfs::file>
+        openRomSuperFamicom(string name, vfs::file::mode mode);
+    shared_pointer<vfs::file>
+        openRomGameBoy(string name, vfs::file::mode mode);
+    shared_pointer<vfs::file>
+        openRomBSMemory(string name, vfs::file::mode mode);
+    
+    void hackPatchMemory(vector<uint8_t>& data);
     
     string base_name;
-
+    
     bool overscan = true;
 
 public: 
@@ -175,7 +174,7 @@ public:
         boolean patched;
         boolean verified;
     };
-
+    
     struct SuperFamicom : Game {
         string title;
         string region;
@@ -184,7 +183,7 @@ public:
         vector<uint8_t> expansion;
         vector<uint8_t> firmware;
     } superFamicom;
-
+    
     struct GameBoy : Game {
         vector<uint8_t> program;
     } gameBoy;
@@ -204,13 +203,13 @@ Program::~Program() {
     delete emulator;
 }
 
-auto Program::save() -> void {
+void Program::save() {
     if(!emulator->loaded()) return;
     emulator->save();
 }
 
-auto Program::open(uint id, string name, vfs::file::mode mode, bool required) ->
-    shared_pointer<vfs::file> {
+shared_pointer<vfs::file> Program::open(uint id, string name,
+    vfs::file::mode mode, bool required) {
     
     shared_pointer<vfs::file> result;
     
@@ -279,7 +278,7 @@ auto Program::open(uint id, string name, vfs::file::mode mode, bool required) ->
     return result;
 }
 
-auto Program::load() -> void {
+void Program::load() {
     emulator->unload();
     emulator->load();
     
@@ -366,8 +365,8 @@ auto Program::load() -> void {
     }
 }
 
-auto Program::load(uint id, string name, string type, vector<string> options) ->
-    Emulator::Platform::Load {
+Emulator::Platform::Load Program::load(uint id, string name, string type,
+    vector<string> options) {
     
     if (id == 1) {
         if (loadSuperFamicom(superFamicom.location)) {
@@ -387,8 +386,8 @@ auto Program::load(uint id, string name, string type, vector<string> options) ->
     return { id, options(0) };
 }
 
-auto Program::videoFrame(const uint16* data, uint pitch, uint width,
-    uint height, uint scale) -> void {
+void Program::videoFrame(const uint16* data, uint pitch, uint width,
+    uint height, uint scale) {
     
     //print("p: ", pitch, " w: ", width, " h: ", height, "\n");
     vidmult = height / 240;
@@ -401,7 +400,7 @@ auto Program::videoFrame(const uint16* data, uint pitch, uint width,
     vidinfo.buf = (void*)data;
 }
 
-auto Program::audioFrame(const double* samples, uint channels) -> void {
+void Program::audioFrame(const double* samples, uint channels) {
     float *abuf = (float*)audinfo.buf;
     abuf[audio_buffer_index++] = (float)samples[0];
     abuf[audio_buffer_index++] = (float)samples[1];
@@ -409,7 +408,7 @@ auto Program::audioFrame(const double* samples, uint channels) -> void {
 
 static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
 
-auto pollInputDevices(uint port, uint device, uint input) -> int16 {
+int16 pollInputDevices(uint port, uint device, uint input) {
     //print("port: ", port, " device: ", device, " input: ", input, "\n");
     if (device == SuperFamicom::ID::Device::SuperScope) {
         switch (input) {
@@ -463,43 +462,42 @@ auto pollInputDevices(uint port, uint device, uint input) -> int16 {
     return port > 1 ? 0 : input_device[port]->button[imap[input]];
 }
 
-auto Program::inputPoll(uint port, uint device, uint input) -> int16 {
+int16 Program::inputPoll(uint port, uint device, uint input) {
     return pollInputDevices(port, device, input);
 }
 
-auto Program::inputRumble(uint port, uint device, uint input, bool enable) ->
-    void {
+void Program::inputRumble(uint port, uint device, uint input, bool enable) {
 }
 
-auto Program::openRomSuperFamicom(string name, vfs::file::mode mode) ->
-    shared_pointer<vfs::file> {
+shared_pointer<vfs::file> Program::openRomSuperFamicom(string name,
+    vfs::file::mode mode) {
     
     if (name == "program.rom" && mode == vfs::file::mode::read) {
         return vfs::memory::file::open(superFamicom.program.data(),
             superFamicom.program.size());
     }
-
+    
     if (name == "data.rom" && mode == vfs::file::mode::read) {
         return vfs::memory::file::open(superFamicom.data.data(),
             superFamicom.data.size());
     }
-
+    
     if (name == "expansion.rom" && mode == vfs::file::mode::read) {
         return vfs::memory::file::open(superFamicom.expansion.data(),
             superFamicom.expansion.size());
     }
-
+    
     if (name == "msu1/data.rom") {
         return vfs::fs::file::open({Location::notsuffix(superFamicom.location),
             ".msu"}, mode);
     }
-
+    
     if (name.match("msu1/track*.pcm")) {
         name.trimLeft("msu1/track", 1L);
         return vfs::fs::file::open({Location::notsuffix(superFamicom.location),
             name}, mode);
     }
-
+    
     if (name == "save.ram") {
         string save_path = { pathinfo.save, "/", gameinfo.name, ".srm" };
         const char *save = nullptr;
@@ -511,12 +509,12 @@ auto Program::openRomSuperFamicom(string name, vfs::file::mode mode) ->
         const char *save = nullptr;
         return vfs::fs::file::open(ram_path, mode);
     }
-
+    
     return {};
 }
 
-auto Program::openRomGameBoy(string name, vfs::file::mode mode) ->
-    shared_pointer<vfs::file> {
+shared_pointer<vfs::file> Program::openRomGameBoy(string name,
+    vfs::file::mode mode) {
     
     if (name == "program.rom" && mode == vfs::file::mode::read) {
         return vfs::memory::file::open(gameBoy.program.data(),
@@ -538,8 +536,8 @@ auto Program::openRomGameBoy(string name, vfs::file::mode mode) ->
     return {};
 }
 
-auto Program::openRomBSMemory(string name, vfs::file::mode mode) ->
-    shared_pointer<vfs::file> {
+shared_pointer<vfs::file> Program::openRomBSMemory(string name,
+    vfs::file::mode mode) {
     
     if (name == "program.rom" && mode == vfs::file::mode::read) {
         return vfs::memory::file::open(bsMemory.program.data(),
@@ -555,7 +553,7 @@ auto Program::openRomBSMemory(string name, vfs::file::mode mode) ->
     return {};
 }
 
-auto Program::loadFile(string location) -> vector<uint8_t> {
+vector<uint8_t> Program::loadFile(string location) {
     if(Location::suffix(location).downcase() == ".zip") {
         Decode::ZIP archive;
         if (archive.open(location)) {
@@ -577,12 +575,12 @@ auto Program::loadFile(string location) -> vector<uint8_t> {
     }
 }
 
-auto Program::loadSuperFamicom(string location) -> bool {
+bool Program::loadSuperFamicom(string location) {
     vector<uint8_t> rom;
     rom = loadFile(location);
-
+    
     if (rom.size() < 0x8000) return false;
-
+    
     //assume ROM and IPS agree on whether a copier header is present
     //superFamicom.patched = applyPatchIPS(rom, location);
     if ((rom.size() & 0x7fff) == 512) {
@@ -590,18 +588,18 @@ auto Program::loadSuperFamicom(string location) -> bool {
         memory::move(&rom[0], &rom[512], rom.size() - 512);
         rom.resize(rom.size() - 512);
     }
-
+    
     auto heuristics = Heuristics::SuperFamicom(rom, location);
     auto sha256 = Hash::SHA256(rom).digest();
-
+    
     superFamicom.title = heuristics.title();
     superFamicom.region = heuristics.videoRegion();
     superFamicom.manifest = heuristics.manifest();
-
+    
     hackPatchMemory(rom);
     superFamicom.document = BML::unserialize(superFamicom.manifest);
     superFamicom.location = location;
-
+    
     uint offset = 0;
     if (auto size = heuristics.programRomSize()) {
         superFamicom.program.resize(size);
@@ -626,24 +624,24 @@ auto Program::loadSuperFamicom(string location) -> bool {
     return true;
 }
 
-auto Program::loadGameBoy(string location) -> bool {
+bool Program::loadGameBoy(string location) {
     vector<uint8_t> rom;
     rom = loadFile(location);
-
+    
     if (rom.size() < 0x4000) return false;
-
+    
     auto heuristics = Heuristics::GameBoy(rom, location);
     auto sha256 = Hash::SHA256(rom).digest();
-
+    
     gameBoy.manifest = heuristics.manifest();
     gameBoy.document = BML::unserialize(gameBoy.manifest);
     gameBoy.location = location;
     gameBoy.program = rom;
-
+    
     return true;
 }
 
-auto Program::loadBSMemory(string location) -> bool {
+bool Program::loadBSMemory(string location) {
     string manifest;
     vector<uint8_t> rom;
     rom = loadFile(location);
@@ -661,9 +659,9 @@ auto Program::loadBSMemory(string location) -> bool {
     return true;
 }
 
-auto Program::hackPatchMemory(vector<uint8_t>& data) -> void {
+void Program::hackPatchMemory(vector<uint8_t>& data) {
     auto title = superFamicom.title;
-
+    
     if(title == "Satellaview BS-X" && data.size() >= 0x100000) {
         //BS-X: Sore wa Namae o Nusumareta Machi no Monogatari (JPN) (1.1)
         //disable limited play check for BS Memory flash cartridges
