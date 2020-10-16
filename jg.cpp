@@ -376,12 +376,12 @@ auto Program::load(uint id, string name, string type, vector<string> options) ->
     }
     else if (id == 2) {
         if (loadGameBoy(gameBoy.location)) {
-            return { id, NULL };
+            return { id, "" };
         }
     }
     else if (id == 3) {
         if (loadBSMemory(bsMemory.location)) {
-            return { id, NULL };
+            return { id, "" };
         }
     }
     return { id, options(0) };
