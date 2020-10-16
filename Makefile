@@ -3,7 +3,7 @@ CXX ?= c++
 CFLAGS ?= -O2
 CXXFLAGS ?= -O2
 FLAGS := -fPIC -std=c++17 -fno-strict-aliasing -fwrapv
-FLAGS_CO := -fPIC -std=c99
+FLAGS_CO := -fPIC -std=c89
 FLAGS_GB := -fPIC -std=c11
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE
