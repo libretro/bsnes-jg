@@ -76,13 +76,12 @@ CXXSRCS := objs/emulator/emulator.cpp \
 	objs/jg.cpp
 
 # Object dirs
-OBJDIRS := objs objs/emulator objs/filter objs/lzma objs/sfc/interface \
+OBJDIRS := objs objs/emulator objs/heuristics objs/sfc/interface \
 	objs/sfc/system objs/sfc/controller objs/sfc/cartridge objs/sfc/memory \
 	objs/sfc/cpu objs/sfc/smp objs/sfc/dsp objs/sfc/ppu objs/sfc/ppu-fast \
 	objs/sfc/expansion objs/sfc/coprocessor objs/sfc/slot \
-	objs/processor/arm7tdmi objs/processor/gsu objs/processor/hg51b \
-	objs/processor/sm83 objs/processor/spc700 objs/processor/upd96050 \
-	objs/processor/wdc65816 objs/gb/Core objs/libco objs/heuristics
+	objs/processor/arm7tdmi objs/processor/spc700 objs/processor/wdc65816 \
+	objs/gb/Core objs/libco
 
 # List of object files
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
