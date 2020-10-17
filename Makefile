@@ -52,6 +52,7 @@ CSRCS := objs/gb/Core/apu.c \
 	objs/gb/Core/sm83_cpu.c \
 	objs/gb/Core/symbol_hash.c \
 	objs/gb/Core/timing.c \
+	objs/gb/Core/workboy.c \
 	objs/libco/libco.c
 
 CXXSRCS := objs/emulator/emulator.cpp \
