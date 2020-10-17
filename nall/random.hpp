@@ -5,9 +5,6 @@
 #include <nall/range.hpp>
 #include <nall/serializer.hpp>
 #include <nall/stdint.hpp>
-#if !defined(PLATFORM_ANDROID)
-#include <nall/cipher/chacha20.hpp>
-#endif
 
 #if defined(PLATFORM_LINUX) && __has_include(<sys/random.h>)
   #include <sys/random.h>
@@ -126,37 +123,6 @@ private:
 };
 
 }
-
-#if !defined(PLATFORM_ANDROID)
-namespace CSPRNG {
-
-//XChaCha20 cryptographically secure pseudo-random number generator
-struct XChaCha20 : RNG<XChaCha20> {
-  XChaCha20() { seed(); }
-
-  auto seed(maybe<uint256_t> key = {}, maybe<uint192_t> nonce = {}) -> void {
-    //the randomness comes from the key; the nonce just adds a bit of added entropy
-    if(!key) key = randomSeed();
-    if(!nonce) nonce = (uint192_t)clock() << 64 | chrono::nanosecond();
-    context = {key(), nonce()};
-  }
-
-private:
-  auto read() -> uint32_t {
-    if(!counter) { context.cipher(); context.increment(); }
-    uint32_t value = context.block[counter++];
-    if(counter == 16) counter = 0;  //64-bytes per block; 4 bytes per read
-    return value;
-  }
-
-  Cipher::XChaCha20 context{0, 0};
-  uint counter = 0;
-
-  friend class RNG<XChaCha20>;
-};
-
-}
-#endif
 
 //
 
