@@ -23,21 +23,12 @@
 #include <sstream>
 #include <cstring>
 #include <cstdlib>
+#include <cstdio>
 #include <stdint.h>
-
-#include <nall/directory.hpp>
-#include <nall/instance.hpp>
-#include <nall/decode/rle.hpp>
-#include <nall/decode/zip.hpp>
-#include <nall/encode/rle.hpp>
-#include <nall/encode/zip.hpp>
-#include <nall/hash/crc16.hpp>
-using namespace nall;
 
 #include <emulator/emulator.hpp>
 #include <sfc/interface/interface.hpp>
 #include <filter/filter.hpp>
-#include <lzma/lzma.hpp>
 #include <heuristics/heuristics.hpp>
 #include <heuristics/heuristics.cpp>
 #include <heuristics/super-famicom.cpp>
@@ -554,25 +545,13 @@ shared_pointer<vfs::file> Program::openRomBSMemory(string name,
 }
 
 vector<uint8_t> Program::loadFile(string location) {
-    if(Location::suffix(location).downcase() == ".zip") {
-        Decode::ZIP archive;
-        if (archive.open(location)) {
-            for (auto& file : archive.file) {
-                auto type = Location::suffix(file.name).downcase();
-                if (type == ".sfc" || type == ".smc" || type == ".gb" ||
-                    type == ".gbc" || type == ".bs" || type == ".st") {
-                    return archive.extract(file);
-                }
-            }
-        }
-        return {};
-    }
-    else if(Location::suffix(location).downcase() == ".7z") {
-        return LZMA::extract(location);
-    }
-    else {
-        return file::read(location);
-    }
+    uint8_t *game = (uint8_t*)gameinfo.data;
+    vector<uint8_t> ret;
+    
+    for (int i = 0; i < gameinfo.size; i++)
+        ret.append(game[i]);
+    
+    return ret;
 }
 
 bool Program::loadSuperFamicom(string location) {
@@ -590,7 +569,7 @@ bool Program::loadSuperFamicom(string location) {
     }
     
     auto heuristics = Heuristics::SuperFamicom(rom, location);
-    auto sha256 = Hash::SHA256(rom).digest();
+    //auto sha256 = Hash::SHA256(rom).digest();
     
     superFamicom.title = heuristics.title();
     superFamicom.region = heuristics.videoRegion();
@@ -870,28 +849,21 @@ int jg_game_unload() {
 int jg_state_load(const char *filename) {
     vector<uint8_t> memory;
     memory = file::read(filename);
-    auto serializerRLE = Decode::RLE<1>({memory.data() + 3 * sizeof(uint),
-        memory.size() - 3 * sizeof(uint)});
-    serializer s{serializerRLE.data(), (uint)serializerRLE.size()};
+    serializer s(memory.data(), (uint)memory.size());
     return emulator->unserialize(s);
 }
 
 int jg_state_save(const char *filename) {
     serializer s = emulator->serialize();
-    if (!s.size()) return 0;
+    FILE *file;
+    file = fopen(filename, "wb");
+    if (!file)
+        return 0;
     
-    auto serializerRLE = Encode::RLE<1>({s.data(), s.size()});
+    fwrite(s.data(), s.size(), sizeof(uint8_t), file);
+    fclose(file);
     
-    vector<uint8_t> saveState;
-    saveState.resize(3 * sizeof(uint));
-    memory::writel<sizeof(uint)>(saveState.data() + 0 * sizeof(uint),
-        0x5a22'0000);
-    memory::writel<sizeof(uint)>(saveState.data() + 1 * sizeof(uint),
-        serializerRLE.size());
-    memory::writel<sizeof(uint)>(saveState.data() + 2 * sizeof(uint), 0);
-    saveState.append(serializerRLE);
-    
-    return file::write(filename, saveState);
+    return 1;
 }
 
 void jg_media_select() {
