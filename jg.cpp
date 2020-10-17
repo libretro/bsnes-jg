@@ -106,6 +106,8 @@ static int vidmult = 1;
 static int ss_offset_x = 0;
 static int ss_offset_y = 0;
 
+static bool addon = false;
+
 static const unsigned char iplrom[64] = {
     0xcd, 0xef, 0xbd, 0xe8, 0x00, 0xc6, 0x1d, 0xd0,
     0xfc, 0x8f, 0xaa, 0xf4, 0x8f, 0xbb, 0xf5, 0x78,
@@ -134,7 +136,7 @@ struct Program : Emulator::Platform {
     void inputRumble(uint port, uint device, uint input, bool enable) override;
     
     void load();
-    vector<uint8_t> loadFile(string location);
+    vector<uint8_t> loadFile();
     bool loadSuperFamicom(string location);
     bool loadGameBoy(string location);
     bool loadBSMemory(string location);
@@ -544,7 +546,7 @@ shared_pointer<vfs::file> Program::openRomBSMemory(string name,
     return {};
 }
 
-vector<uint8_t> Program::loadFile(string location) {
+vector<uint8_t> Program::loadFile() {
     uint8_t *game = (uint8_t*)gameinfo.data;
     vector<uint8_t> ret;
     
@@ -556,7 +558,8 @@ vector<uint8_t> Program::loadFile(string location) {
 
 bool Program::loadSuperFamicom(string location) {
     vector<uint8_t> rom;
-    rom = loadFile(location);
+    
+    rom = addon ? file::read(location) : loadFile();
     
     if (rom.size() < 0x8000) return false;
     
@@ -605,7 +608,7 @@ bool Program::loadSuperFamicom(string location) {
 
 bool Program::loadGameBoy(string location) {
     vector<uint8_t> rom;
-    rom = loadFile(location);
+    rom = loadFile();
     
     if (rom.size() < 0x4000) return false;
     
@@ -623,7 +626,7 @@ bool Program::loadGameBoy(string location) {
 bool Program::loadBSMemory(string location) {
     string manifest;
     vector<uint8_t> rom;
-    rom = loadFile(location);
+    rom = loadFile();
     
     if (rom.size() < 0x8000) return false;
     
@@ -744,6 +747,7 @@ int jg_game_load() {
         
         program->superFamicom.location = sgb_bios;
         program->gameBoy.location = string(gameinfo.path);
+        addon = true;
     }
     else if (string(gameinfo.path).endsWith(".bs")) {
         string bsx_bios = string(pathinfo.bios, "/BsxBios.sfc");
@@ -754,6 +758,7 @@ int jg_game_load() {
         }
         program->superFamicom.location = bsx_bios;
         program->bsMemory.location = string(gameinfo.path);
+        addon = true;
     }
     else {
         program->superFamicom.location = string(gameinfo.path);
