@@ -57,6 +57,7 @@ CSRCS := objs/gb/Core/apu.c \
 
 CXXSRCS := objs/emulator/emulator.cpp \
 	objs/filter/filter.cpp \
+	objs/heuristics/heuristics.cpp \
 	objs/processor/arm7tdmi/arm7tdmi.cpp \
 	objs/processor/spc700/spc700.cpp \
 	objs/processor/wdc65816/wdc65816.cpp \
@@ -82,7 +83,7 @@ OBJDIRS := objs objs/emulator objs/filter objs/lzma objs/sfc/interface \
 	objs/sfc/expansion objs/sfc/coprocessor objs/sfc/slot \
 	objs/processor/arm7tdmi objs/processor/gsu objs/processor/hg51b \
 	objs/processor/sm83 objs/processor/spc700 objs/processor/upd96050 \
-	objs/processor/wdc65816 objs/gb/Core objs/libco
+	objs/processor/wdc65816 objs/gb/Core objs/libco objs/heuristics
 
 # List of object files
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)

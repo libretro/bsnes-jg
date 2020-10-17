@@ -30,10 +30,6 @@
 #include <sfc/interface/interface.hpp>
 #include <filter/filter.hpp>
 #include <heuristics/heuristics.hpp>
-#include <heuristics/heuristics.cpp>
-#include <heuristics/super-famicom.cpp>
-#include <heuristics/game-boy.cpp>
-#include <heuristics/bs-memory.cpp>
 
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
@@ -572,7 +568,7 @@ bool Program::loadSuperFamicom(string location) {
     }
     
     auto heuristics = Heuristics::SuperFamicom(rom, location);
-    //auto sha256 = Hash::SHA256(rom).digest();
+    auto sha256 = Hash::SHA256(rom).digest();
     
     superFamicom.title = heuristics.title();
     superFamicom.region = heuristics.videoRegion();
