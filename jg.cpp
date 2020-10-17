@@ -28,7 +28,6 @@
 
 #include <emulator/emulator.hpp>
 #include <sfc/interface/interface.hpp>
-#include <filter/filter.hpp>
 #include <heuristics/heuristics.hpp>
 
 #include <jg/jg.h>

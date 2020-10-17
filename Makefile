@@ -56,7 +56,6 @@ CSRCS := objs/gb/Core/apu.c \
 	objs/libco/libco.c
 
 CXXSRCS := objs/emulator/emulator.cpp \
-	objs/filter/filter.cpp \
 	objs/heuristics/heuristics.cpp \
 	objs/processor/arm7tdmi/arm7tdmi.cpp \
 	objs/processor/spc700/spc700.cpp \
