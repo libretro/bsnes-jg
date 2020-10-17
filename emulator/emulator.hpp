@@ -19,17 +19,10 @@
 using namespace nall;
 
 #include <emulator/types.hpp>
-#include <emulator/memory/readable.hpp>
-#include <emulator/memory/writable.hpp>
+#include <emulator/memory/memory.hpp>
 #include <emulator/audio/audio.hpp>
 
 namespace Emulator {
-  static const string Name      = "bsnes";
-  static const string Version   = "115";
-  static const string Copyright = "byuu";
-  static const string License   = "GPLv3";
-  static const string Website   = "https://byuu.org";
-
   //incremented only when serialization format changes
   static const string SerializerVersion = "115";
 
