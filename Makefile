@@ -57,7 +57,6 @@ CSRCS := objs/gb/Core/apu.c \
 
 CXXSRCS := objs/emulator/emulator.cpp \
 	objs/filter/filter.cpp \
-	objs/lzma/lzma.cpp \
 	objs/processor/arm7tdmi/arm7tdmi.cpp \
 	objs/processor/spc700/spc700.cpp \
 	objs/processor/wdc65816/wdc65816.cpp \
