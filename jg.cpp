@@ -567,7 +567,6 @@ bool Program::loadSuperFamicom(string location) {
     }
     
     auto heuristics = Heuristics::SuperFamicom(rom, location);
-    auto sha256 = Hash::SHA256(rom).digest();
     
     superFamicom.title = heuristics.title();
     superFamicom.region = heuristics.videoRegion();
@@ -608,7 +607,6 @@ bool Program::loadGameBoy(string location) {
     if (rom.size() < 0x4000) return false;
     
     auto heuristics = Heuristics::GameBoy(rom, location);
-    auto sha256 = Hash::SHA256(rom).digest();
     
     gameBoy.manifest = heuristics.manifest();
     gameBoy.document = BML::unserialize(gameBoy.manifest);
@@ -626,7 +624,6 @@ bool Program::loadBSMemory(string location) {
     if (rom.size() < 0x8000) return false;
     
     auto heuristics = Heuristics::BSMemory(rom, location);
-    auto sha256 = Hash::SHA256(rom).digest();
     
     bsMemory.manifest = manifest ? manifest : heuristics.manifest();
     bsMemory.document = BML::unserialize(bsMemory.manifest);

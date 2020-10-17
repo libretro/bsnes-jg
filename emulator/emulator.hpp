@@ -6,7 +6,6 @@
 #include <nall/adaptive-array.hpp>
 #include <nall/any.hpp>
 #include <nall/chrono.hpp>
-#include <nall/dl.hpp>
 #include <nall/endian.hpp>
 #include <nall/image.hpp>
 #include <nall/literals.hpp>
@@ -14,12 +13,9 @@
 #include <nall/serializer.hpp>
 #include <nall/shared-pointer.hpp>
 #include <nall/string.hpp>
-#include <nall/traits.hpp>
 #include <nall/unique-pointer.hpp>
 #include <nall/vector.hpp>
 #include <nall/vfs.hpp>
-#include <nall/hash/crc32.hpp>
-#include <nall/hash/sha256.hpp>
 using namespace nall;
 
 #include <emulator/types.hpp>
