@@ -20,15 +20,9 @@ image::image(bool endian, unsigned depth, uint64_t alphaMask, uint64_t redMask, 
   _blue  = {blueMask,  bitDepth(blueMask),  bitShift(blueMask )};
 }
 
-image::image(const string& filename) {
-  load(filename);
-}
-
 image::image(const void* data_, uint size) {
   auto data = (const uint8_t*)data_;
   if(size < 4);
-  else if(data[0] == 'B' && data[1] == 'M') loadBMP(data, size);
-  else if(data[1] == 'P' && data[2] == 'N' && data[3] == 'G') loadPNG(data, size);
 }
 
 image::image(const vector<uint8_t>& buffer) : image(buffer.data(), buffer.size()) {
@@ -134,12 +128,6 @@ auto image::write(uint8_t* data, uint64_t value) const -> void {
 auto image::free() -> void {
   if(_data) delete[] _data;
   _data = nullptr;
-}
-
-auto image::load(const string& filename) -> bool {
-  if(loadBMP(filename) == true) return true;
-  if(loadPNG(filename) == true) return true;
-  return false;
 }
 
 //assumes image and data are in the same format; pitch is adapted to image

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <nall/file.hpp>
-#include <nall/decode/zip.hpp>
 
 namespace nall::vfs::memory {
 
@@ -16,14 +15,6 @@ struct file : vfs::file {
 
   static auto open(string location, bool decompress = false) -> shared_pointer<file> {
     auto instance = shared_pointer<file>{new file};
-    if(decompress && location.iendsWith(".zip")) {
-      Decode::ZIP archive;
-      if(archive.open(location) && archive.file.size() == 1) {
-        auto memory = archive.extract(archive.file.first());
-        instance->_open(memory.data(), memory.size());
-        return instance;
-      }
-    }
     auto memory = nall::file::read(location);
     instance->_open(memory.data(), memory.size());
     return instance;

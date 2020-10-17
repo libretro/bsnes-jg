@@ -5,8 +5,6 @@
 #include <nall/file-map.hpp>
 #include <nall/interpolation.hpp>
 #include <nall/stdint.hpp>
-#include <nall/decode/bmp.hpp>
-#include <nall/decode/png.hpp>
 
 namespace nall {
 
@@ -45,7 +43,6 @@ struct image {
   inline image(const image& source);
   inline image(image&& source);
   inline image(bool endian, uint depth, uint64_t alphaMask, uint64_t redMask, uint64_t greenMask, uint64_t blueMask);
-  inline image(const string& filename);
   inline image(const void* data, uint size);
   inline image(const vector<uint8_t>& buffer);
   template<uint Size> inline image(const uint8_t (&Name)[Size]);
@@ -63,7 +60,6 @@ struct image {
   inline auto write(uint8_t* data, uint64_t value) const -> void;
 
   inline auto free() -> void;
-  inline auto load(const string& filename) -> bool;
   inline auto copy(const void* data, uint pitch, uint width, uint height) -> void;
   inline auto allocate(uint width, uint height) -> void;
 
@@ -126,12 +122,6 @@ private:
   inline auto scaleLinear(uint width, uint height) -> void;
   inline auto scaleNearest(uint width, uint height) -> void;
 
-  //load.hpp
-  inline auto loadBMP(const string& filename) -> bool;
-  inline auto loadBMP(const uint8_t* data, uint size) -> bool;
-  inline auto loadPNG(const string& filename) -> bool;
-  inline auto loadPNG(const uint8_t* data, uint size) -> bool;
-
   //interpolation.hpp
   alwaysinline auto isplit(uint64_t* component, uint64_t color) -> void;
   alwaysinline auto imerge(const uint64_t* component) -> uint64_t;
@@ -161,7 +151,6 @@ private:
 
 #include <nall/image/static.hpp>
 #include <nall/image/core.hpp>
-#include <nall/image/load.hpp>
 #include <nall/image/interpolation.hpp>
 #include <nall/image/fill.hpp>
 #include <nall/image/scale.hpp>
