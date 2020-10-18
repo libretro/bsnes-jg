@@ -9,7 +9,7 @@ CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE
 INCLUDES := -I. -I..
 INCLUDES_GB := -I../sameboy
-WARNINGS := -Wno-multichar -Wno-narrowing -Wno-trigraphs
+WARNINGS :=
 WARNINGS_CO := -Wall
 WARNINGS_GB := -Wno-multichar
 LIBS := -lm -lstdc++
