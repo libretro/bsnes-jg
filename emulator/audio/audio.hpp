@@ -1,9 +1,6 @@
 #pragma once
 
-#include <nall/dsp/iir/dc-removal.hpp>
-#include <nall/dsp/iir/one-pole.hpp>
-#include <nall/dsp/iir/biquad.hpp>
-#include <nall/dsp/resampler/cubic.hpp>
+#include <nall/dsp/dsp.hpp>
 
 namespace Emulator {
 
