@@ -1,5 +1,6 @@
-#include <nall/random.hpp>
+#include <nall/arithmetic.hpp>
 #include <nall/vfs.hpp>
+
 using namespace nall;
 
 #include "heuristics.hpp"

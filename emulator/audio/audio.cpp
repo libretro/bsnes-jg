@@ -194,5 +194,3 @@ auto Audio::process() -> void {
 }
 
 }
-
-#undef double
