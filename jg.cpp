@@ -274,22 +274,8 @@ void Program::load() {
     auto title = superFamicom.title;
     auto region = superFamicom.region;
     
-    //sometimes menu options are skipped over in the main menu with cycle-based
-    //joypad polling
-    if (title == "Arcades Greatest Hits")
-        emulator->configure("Hacks/CPU/FastJoypadPolling", true);
-    
-    //the start button doesn't work in this game with cycle-based joypad polling
-    else if (title == "TAIKYOKU-IGO Goliath")
-        emulator->configure("Hacks/CPU/FastJoypadPolling", true);
-    
-    //holding up or down on the menu quickly cycles through options instead of
-    //stopping after each button press
-    else if (title == "WORLD MASTERS GOLF")
-        emulator->configure("Hacks/CPU/FastJoypadPolling", true);
-    
     //relies on mid-scanline rendering techniques
-    else if (title == "AIR STRIKE PATROL" || title == "DESERT FIGHTER")
+    if (title == "AIR STRIKE PATROL" || title == "DESERT FIGHTER")
         emulator->configure("Hacks/PPU/Fast", false);
     
     //the dialogue text is blurry due to an issue in the scanline-based
