@@ -1,3 +1,6 @@
+SOURCEDIR := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword \
+	$(MAKEFILE_LIST))))))
+
 CC ?= cc
 CXX ?= c++
 CFLAGS ?= -O2
@@ -7,8 +10,8 @@ FLAGS_CO := -fPIC -std=c89
 FLAGS_GB := -fPIC -std=c11
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE
-INCLUDES := -I. -I..
-INCLUDES_GB := -I../sameboy
+INCLUDES := -I$(SOURCEDIR)
+INCLUDES_GB := -I$(SOURCEDIR)/sameboy
 WARNINGS :=
 WARNINGS_CO := -Wall
 WARNINGS_GB := -Wno-multichar
@@ -87,15 +90,15 @@ OBJDIRS := objs objs/emulator objs/heuristics objs/sfc/interface \
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 
 # libco rules
-objs/libco/%.o: libco/%.c
+objs/libco/%.o: $(SOURCEDIR)/libco/%.c
 	$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
 
 # Game Boy rules
-objs/gb/Core/%.o: gb/Core/%.c
+objs/gb/Core/%.o: $(SOURCEDIR)/gb/Core/%.c
 	$(CC) $(CFLAGS) $(FLAGS_GB) $(INCLUDES_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) -c $< -o $@
 
 # SNES rules
-objs/%.o: %.cpp
+objs/%.o: $(SOURCEDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(FLAGS) $(INCLUDES) $(WARNINGS) -c $< -o $@
 
 all: maketree $(TARGET)
@@ -108,12 +111,12 @@ $(sort $(OBJDIRS)):
 $(TARGET): $(OBJS)
 	@mkdir -p $(NAME)
 	$(CXX) $^ $(LDFLAGS) $(LIBS) $(SHARED) -o $(NAME)/$(TARGET)
-	@cp Database/boards.bml $(NAME)/
+	@cp $(SOURCEDIR)/Database/boards.bml $(NAME)/
 
 clean:
 	rm -rf $(OBJDIRS) $(NAME)/
 
-install:
+install: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
 	@mkdir -p $(DESTDIR)$(LIBDIR)/jollygood
 	cp $(NAME)/$(TARGET) $(DESTDIR)$(LIBDIR)/jollygood/
