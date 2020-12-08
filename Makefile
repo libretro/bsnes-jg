@@ -133,4 +133,4 @@ install: all
 uninstall:
 	rm -rf $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
 	rm -rf $(DESTDIR)$(DOCDIR)
-	rm $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
+	rm -f $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
