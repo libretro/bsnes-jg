@@ -20,7 +20,9 @@ SHARED := -fPIC
 
 NAME := bsnes
 PREFIX ?= /usr/local
-DATADIR ?= $(PREFIX)/share
+DATAROOTDIR ?= $(PREFIX)/share
+DATADIR ?= $(DATAROOTDIR)
+DOCDIR ?= $(DATAROOTDIR)/doc/$(NAME)
 LIBDIR ?= $(PREFIX)/lib
 
 UNAME := $(shell uname -s)
@@ -118,10 +120,17 @@ clean:
 
 install: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
+	@mkdir -p $(DESTDIR)$(DOCDIR)
 	@mkdir -p $(DESTDIR)$(LIBDIR)/jollygood
 	cp $(NAME)/$(TARGET) $(DESTDIR)$(LIBDIR)/jollygood/
 	cp $(NAME)/boards.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
+	cp $(SOURCEDIR)/COPYING $(DESTDIR)$(DOCDIR)
+	cp $(SOURCEDIR)/LICENSE $(DESTDIR)$(DOCDIR)
+	cp $(SOURCEDIR)/README $(DESTDIR)$(DOCDIR)
+	cp $(SOURCEDIR)/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
+	cp $(SOURCEDIR)/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
 
 uninstall:
 	rm -rf $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
+	rm -rf $(DESTDIR)$(DOCDIR)
 	rm $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
