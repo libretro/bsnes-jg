@@ -130,6 +130,9 @@ install: all
 	cp $(SOURCEDIR)/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
 	cp $(SOURCEDIR)/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
 
+install-strip: install
+	strip $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
+
 uninstall:
 	rm -rf $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
 	rm -rf $(DESTDIR)$(DOCDIR)
