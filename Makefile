@@ -41,74 +41,91 @@ ifeq ($(UNAME), Linux)
 	LIBS += -Wl,--no-undefined
 endif
 
-CSRCS := objs/gb/Core/apu.c \
-	objs/gb/Core/camera.c \
-	objs/gb/Core/display.c \
-	objs/gb/Core/gb.c \
-	objs/gb/Core/joypad.c \
-	objs/gb/Core/mbc.c \
-	objs/gb/Core/memory.c \
-	objs/gb/Core/printer.c \
-	objs/gb/Core/random.c \
-	objs/gb/Core/rewind.c \
-	objs/gb/Core/rumble.c \
-	objs/gb/Core/save_state.c \
-	objs/gb/Core/sgb.c \
-	objs/gb/Core/sm83_cpu.c \
-	objs/gb/Core/symbol_hash.c \
-	objs/gb/Core/timing.c \
-	objs/gb/Core/workboy.c \
-	objs/libco/libco.c
+OBJDIR := objs
 
-CXXSRCS := objs/emulator/emulator.cpp \
-	objs/heuristics/heuristics.cpp \
-	objs/processor/arm7tdmi/arm7tdmi.cpp \
-	objs/processor/spc700/spc700.cpp \
-	objs/processor/wdc65816/wdc65816.cpp \
-	objs/sfc/cartridge/cartridge.cpp \
-	objs/sfc/controller/controller.cpp \
-	objs/sfc/coprocessor/coprocessor.cpp \
-	objs/sfc/cpu/cpu.cpp \
-	objs/sfc/dsp/dsp.cpp \
-	objs/sfc/expansion/expansion.cpp \
-	objs/sfc/interface/interface.cpp \
-	objs/sfc/memory/memory.cpp \
-	objs/sfc/ppu/ppu.cpp \
-	objs/sfc/ppu-fast/ppu.cpp \
-	objs/sfc/slot/slot.cpp \
-	objs/sfc/smp/smp.cpp \
-	objs/sfc/system/system.cpp \
-	objs/jg.cpp
+CSRCS := $(OBJDIR)/gb/Core/apu.c \
+	$(OBJDIR)/gb/Core/camera.c \
+	$(OBJDIR)/gb/Core/display.c \
+	$(OBJDIR)/gb/Core/gb.c \
+	$(OBJDIR)/gb/Core/joypad.c \
+	$(OBJDIR)/gb/Core/mbc.c \
+	$(OBJDIR)/gb/Core/memory.c \
+	$(OBJDIR)/gb/Core/printer.c \
+	$(OBJDIR)/gb/Core/random.c \
+	$(OBJDIR)/gb/Core/rewind.c \
+	$(OBJDIR)/gb/Core/rumble.c \
+	$(OBJDIR)/gb/Core/save_state.c \
+	$(OBJDIR)/gb/Core/sgb.c \
+	$(OBJDIR)/gb/Core/sm83_cpu.c \
+	$(OBJDIR)/gb/Core/symbol_hash.c \
+	$(OBJDIR)/gb/Core/timing.c \
+	$(OBJDIR)/gb/Core/workboy.c \
+	$(OBJDIR)/libco/libco.c
+
+CXXSRCS := $(OBJDIR)/emulator/emulator.cpp \
+	$(OBJDIR)/heuristics/heuristics.cpp \
+	$(OBJDIR)/processor/arm7tdmi/arm7tdmi.cpp \
+	$(OBJDIR)/processor/spc700/spc700.cpp \
+	$(OBJDIR)/processor/wdc65816/wdc65816.cpp \
+	$(OBJDIR)/sfc/cartridge/cartridge.cpp \
+	$(OBJDIR)/sfc/controller/controller.cpp \
+	$(OBJDIR)/sfc/coprocessor/coprocessor.cpp \
+	$(OBJDIR)/sfc/cpu/cpu.cpp \
+	$(OBJDIR)/sfc/dsp/dsp.cpp \
+	$(OBJDIR)/sfc/expansion/expansion.cpp \
+	$(OBJDIR)/sfc/interface/interface.cpp \
+	$(OBJDIR)/sfc/memory/memory.cpp \
+	$(OBJDIR)/sfc/ppu/ppu.cpp \
+	$(OBJDIR)/sfc/ppu-fast/ppu.cpp \
+	$(OBJDIR)/sfc/slot/slot.cpp \
+	$(OBJDIR)/sfc/smp/smp.cpp \
+	$(OBJDIR)/sfc/system/system.cpp \
+	$(OBJDIR)/jg.cpp
 
 # Object dirs
-OBJDIRS := objs objs/emulator objs/heuristics objs/sfc/interface \
-	objs/sfc/system objs/sfc/controller objs/sfc/cartridge objs/sfc/memory \
-	objs/sfc/cpu objs/sfc/smp objs/sfc/dsp objs/sfc/ppu objs/sfc/ppu-fast \
-	objs/sfc/expansion objs/sfc/coprocessor objs/sfc/slot \
-	objs/processor/arm7tdmi objs/processor/spc700 objs/processor/wdc65816 \
-	objs/gb/Core objs/libco
+OBJDIRS := $(OBJDIR)/emulator \
+	$(OBJDIR)/heuristics \
+	$(OBJDIR)/sfc/interface \
+	$(OBJDIR)/sfc/system \
+	$(OBJDIR)/sfc/controller \
+	$(OBJDIR)/sfc/cartridge \
+	$(OBJDIR)/sfc/memory \
+	$(OBJDIR)/sfc/cpu \
+	$(OBJDIR)/sfc/smp \
+	$(OBJDIR)/sfc/dsp \
+	$(OBJDIR)/sfc/ppu \
+	$(OBJDIR)/sfc/ppu-fast \
+	$(OBJDIR)/sfc/expansion \
+	$(OBJDIR)/sfc/coprocessor \
+	$(OBJDIR)/sfc/slot \
+	$(OBJDIR)/processor/arm7tdmi \
+	$(OBJDIR)/processor/spc700 \
+	$(OBJDIR)/processor/wdc65816 \
+	$(OBJDIR)/gb/Core \
+	$(OBJDIR)/libco
 
 # List of object files
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 
 # libco rules
-objs/libco/%.o: $(SOURCEDIR)/libco/%.c
+$(OBJDIR)/libco/%.o: $(SOURCEDIR)/libco/%.c maketree
 	$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
 
 # Game Boy rules
-objs/gb/Core/%.o: $(SOURCEDIR)/gb/Core/%.c
+$(OBJDIR)/gb/Core/%.o: $(SOURCEDIR)/gb/Core/%.c maketree
 	$(CC) $(CFLAGS) $(FLAGS_GB) $(INCLUDES_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) -c $< -o $@
 
 # SNES rules
-objs/%.o: $(SOURCEDIR)/%.cpp
+$(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp maketree
 	$(CXX) $(CXXFLAGS) $(FLAGS) $(INCLUDES) $(WARNINGS) -c $< -o $@
 
-all: maketree $(TARGET)
+all: $(TARGET)
 
-maketree: $(sort $(OBJDIRS))
+maketree: $(OBJDIR)/.tag
 
-$(sort $(OBJDIRS)):
-	@mkdir -p $@
+$(OBJDIR)/.tag:
+	@mkdir -p -- $(sort $(OBJDIRS))
+	@touch $@
 
 $(TARGET): $(OBJS)
 	@mkdir -p $(NAME)
@@ -116,7 +133,7 @@ $(TARGET): $(OBJS)
 	@cp $(SOURCEDIR)/Database/boards.bml $(NAME)/
 
 clean:
-	rm -rf $(OBJDIRS) $(NAME)/
+	rm -rf $(OBJDIR)/ $(NAME)/
 
 install: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
