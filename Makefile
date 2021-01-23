@@ -108,20 +108,18 @@ OBJDIRS := $(OBJDIR)/emulator \
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 
 # libco rules
-$(OBJDIR)/libco/%.o: $(SOURCEDIR)/libco/%.c maketree
+$(OBJDIR)/libco/%.o: $(SOURCEDIR)/libco/%.c $(OBJDIR)/.tag
 	$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
 
 # Game Boy rules
-$(OBJDIR)/gb/Core/%.o: $(SOURCEDIR)/gb/Core/%.c maketree
+$(OBJDIR)/gb/Core/%.o: $(SOURCEDIR)/gb/Core/%.c $(OBJDIR)/.tag
 	$(CC) $(CFLAGS) $(FLAGS_GB) $(INCLUDES_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) -c $< -o $@
 
 # SNES rules
-$(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp maketree
+$(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
 	$(CXX) $(CXXFLAGS) $(FLAGS) $(INCLUDES) $(WARNINGS) -c $< -o $@
 
 all: $(TARGET)
-
-maketree: $(OBJDIR)/.tag
 
 $(OBJDIR)/.tag:
 	@mkdir -p -- $(sort $(OBJDIRS))
