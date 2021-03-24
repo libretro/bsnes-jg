@@ -83,9 +83,9 @@ static jg_inputstate_t *input_device[NUMINPUTS];
 
 // Emulator settings
 static jg_setting_t settings_bsnes[] = { // name, default, min, max
-    { "aspect_ratio", 0, 0, 1 }, // 0 = 8:7, 1 = Auto Region
-    { "fast_ppu", 0, 0, 1 }, // 0 = Disabled, 1 = Enabled
-    { "mode7_scale", 1, 1, 8 }, // N = Scale Factor
+    { "aspect_ratio", "", 0, 0, 1 }, // 0 = 8:7, 1 = Auto Region
+    { "fast_ppu", "", 0, 0, 1 }, // 0 = Disabled, 1 = Enabled
+    { "mode7_scale", "", 1, 1, 8 }, // N = Scale Factor
 };
 
 enum {
