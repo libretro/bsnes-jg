@@ -19,6 +19,9 @@ macOS:
 FreeBSD:
   gmake CC=gcc CXX=g++
 
+OpenBSD:
+  gmake CC=clang CXX=clang++
+
 Windows (MSYS2):
   make
 
