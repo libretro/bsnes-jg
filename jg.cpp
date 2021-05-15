@@ -800,25 +800,21 @@ int jg_game_load() {
     }
     
     // Default input devices are SNES Controllers
-    inputinfo[0] = (jg_inputinfo_t){JG_INPUT_CONTROLLER, 0,
-        "pad1", "Controller 1", defs_snespad, 0, NDEFS_SNESPAD};
+    inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_PAD);
     emulator->connect(SuperFamicom::ID::Port::Controller1,
         SuperFamicom::ID::Device::Gamepad);
     
-    inputinfo[1] = (jg_inputinfo_t){JG_INPUT_CONTROLLER, 1,
-        "pad2", "Controller 2", defs_snespad, 0, NDEFS_SNESPAD};
+    inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_PAD);
     emulator->connect(SuperFamicom::ID::Port::Controller2,
         SuperFamicom::ID::Device::Gamepad);//*/
     
-    /*inputinfo[0] = (jg_inputinfo_t){JG_INPUT_POINTER, 0,
-        "mouse", "SNES Mouse", defs_snesmouse, 0, NDEFS_SNESMOUSE};
+    /*inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_MOUSE);
     emulator->connect(SuperFamicom::ID::Port::Controller1,
         SuperFamicom::ID::Device::Mouse);//*/
     
     // Plug in a Super Scope if the game supports it
     if (superscope) {
-        inputinfo[1] = (jg_inputinfo_t){JG_INPUT_GUN, 1,
-            "superscope", "Super Scope", defs_superscope, 0, NDEFS_SUPERSCOPE};
+        inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_SUPERSCOPE);
         emulator->connect(SuperFamicom::ID::Port::Controller2,
             SuperFamicom::ID::Device::SuperScope);
     }
