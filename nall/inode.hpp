@@ -85,6 +85,9 @@ struct inode {
     #elif defined(__OpenBSD__)
     // OpenBSD is a special case that must be handled separately from other BSDs
     case time::create: return min((uint)data.__st_birthtime, (uint)data.st_mtime);
+    #elif defined (__DragonFly__)
+    // DragonFly BSD does not support file creation time, use modified time instead
+    case time::create: return data.st_mtim.tv_sec;
     #elif defined(PLATFORM_BSD) || defined(PLATFORM_MACOS)
     //st_birthtime may return -1 or st_atime if it is not supported by the file system
     //the best that can be done in this case is to return st_mtime if it's older
