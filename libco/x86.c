@@ -92,34 +92,11 @@ cothread_t co_derive(void* memory, unsigned int size, void (*entrypoint)(void)) 
   return handle;
 }
 
-#ifdef __OpenBSD__
-#include <err.h>
-#include <stdint.h>
-cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
-  long pagesize, newsize;
-  pagesize = sysconf(_SC_PAGESIZE);
-  if (pagesize == -1)
-    err(1, "sysconf failed");
-  newsize = size / pagesize * pagesize + !!(size %pagesize) * pagesize;
-  void* memory = malloc(newsize);
-
-  if(!memory) return (cothread_t)0;
-
-  if ((uintptr_t)memory % pagesize)
-    err(1, "unaligned allocation");
-
-  memory = mmap(memory, newsize, PROT_READ|PROT_WRITE, MAP_FIXED|MAP_STACK|MAP_PRIVATE|MAP_ANON, -1, 0);
-  if (memory == MAP_FAILED)
-    err(1, "mmap failed");
-  return co_derive(memory, newsize, entrypoint);
-}
-#else
 cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
   void* memory = LIBCO_MALLOC(size);
   if(!memory) return (cothread_t)0;
   return co_derive(memory, size, entrypoint);
 }
-#endif
 
 void co_delete(cothread_t handle) {
   LIBCO_FREE(handle);
