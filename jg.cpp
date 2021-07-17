@@ -876,6 +876,13 @@ void jg_media_select() {
 void jg_media_insert() {
 }
 
+void jg_cheat_clear(void) {
+}
+
+void jg_cheat_set(const char *code) {
+    if (code) { }
+}
+
 // JG Functions that return values to the frontend
 jg_coreinfo_t* jg_get_coreinfo(const char *sys) { return &coreinfo; }
 jg_videoinfo_t* jg_get_videoinfo() { return &vidinfo; }
