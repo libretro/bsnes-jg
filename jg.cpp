@@ -663,7 +663,7 @@ void Program::hackPatchMemory(vector<uint8_t>& data) {
     }
 }
 
-auto decodeSNES(string& code) -> bool {
+bool decodeSNES(string& code) {
     //Game Genie
     if (code.size() == 9 && code[4u] == '-') {
         //strip '-'
@@ -1062,7 +1062,7 @@ void jg_cheat_clear() {
 }
 
 void jg_cheat_set(const char *code) {
-    string cheat = string(code);
+    string cheat = string(code).downcase();
     bool decoded = false;
 
     if (program->gameBoy.program)
