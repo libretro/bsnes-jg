@@ -292,11 +292,23 @@ uint32_t GB_convert_rgb15(GB_gameboy_t *gb, uint16_t color, bool for_border)
                 new_r = new_r * 7 / 8 + (    g + b) / 16;
                 new_g = new_g * 7 / 8 + (r   +   b) / 16;
                 new_b = new_b * 7 / 8 + (r + g    ) / 16;
-
                 
                 new_r = new_r * (224 - 32) / 255 + 32;
                 new_g = new_g * (220 - 36) / 255 + 36;
                 new_b = new_b * (216 - 40) / 255 + 40;
+            }
+            else if (gb->color_correction_mode == GB_COLOR_CORRECTION_LOW_CONTRAST) {
+                r = new_r;
+                g = new_r;
+                b = new_r;
+                
+                new_r = new_r * 7 / 8 + (    g + b) / 16;
+                new_g = new_g * 7 / 8 + (r   +   b) / 16;
+                new_b = new_b * 7 / 8 + (r + g    ) / 16;
+                
+                new_r = new_r * (162 - 67) / 255 + 67;
+                new_g = new_g * (167 - 62) / 255 + 62;
+                new_b = new_b * (157 - 58) / 255 + 58;
             }
             else if (gb->color_correction_mode == GB_COLOR_CORRECTION_PRESERVE_BRIGHTNESS) {
                 uint8_t old_max = MAX(r, MAX(g, b));
@@ -854,7 +866,7 @@ void GB_display_run(GB_gameboy_t *gb, uint8_t cycles)
         GB_STATE(gb, display, 21);
         GB_STATE(gb, display, 22);
         GB_STATE(gb, display, 23);
-        // GB_STATE(gb, display, 24);
+        GB_STATE(gb, display, 24);
         GB_STATE(gb, display, 25);
         GB_STATE(gb, display, 26);
         GB_STATE(gb, display, 27);
@@ -1287,7 +1299,9 @@ abort_fetching_object:
                 gb->wy_triggered = true;
             }
             GB_SLEEP(gb, display, 31, 2);
-            gb->mode_for_interrupt = 2;
+            if (gb->current_line != LINES - 1) {
+                gb->mode_for_interrupt = 2;
+            }
           
             // Todo: unverified timing
             gb->current_lcd_line++;
@@ -1305,20 +1319,22 @@ abort_fetching_object:
             gb->io_registers[GB_IO_LY] = gb->current_line;
             gb->ly_for_comparison = -1;
             GB_SLEEP(gb, display, 26, 2);
-            if (gb->current_line == LINES) {
-                gb->mode_for_interrupt = 2;
+            if (gb->current_line == LINES && !gb->stat_interrupt_line && (gb->io_registers[GB_IO_STAT] & 0x20)) {
+                gb->io_registers[GB_IO_IF] |= 2;
             }
-            GB_STAT_update(gb);
             GB_SLEEP(gb, display, 12, 2);
             gb->ly_for_comparison = gb->current_line;
-            
+            GB_STAT_update(gb);
+            GB_SLEEP(gb, display, 24, 1);
+
             if (gb->current_line == LINES) {
                 /* Entering VBlank state triggers the OAM interrupt */
                 gb->io_registers[GB_IO_STAT] &= ~3;
                 gb->io_registers[GB_IO_STAT] |= 1;
                 gb->io_registers[GB_IO_IF] |= 1;
-                gb->mode_for_interrupt = 2;
-                GB_STAT_update(gb);
+                if (!gb->stat_interrupt_line && (gb->io_registers[GB_IO_STAT] & 0x20)) {
+                    gb->io_registers[GB_IO_IF] |= 2;
+                }
                 gb->mode_for_interrupt = 1;
                 GB_STAT_update(gb);
                 
@@ -1350,8 +1366,7 @@ abort_fetching_object:
                 }
             }
             
-            GB_STAT_update(gb);
-            GB_SLEEP(gb, display, 13, LINE_LENGTH - 4);
+            GB_SLEEP(gb, display, 13, LINE_LENGTH - 5);
         }
         
         /* TODO: Verified on SGB2 and CGB-E. Actual interrupt timings not tested. */
