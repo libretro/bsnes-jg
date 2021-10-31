@@ -9,7 +9,7 @@ FLAGS := -fPIC -std=c++17 -fno-strict-aliasing -fwrapv
 FLAGS_CO := -fPIC -std=c89
 FLAGS_GB := -fPIC -std=c11
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
-	-D_GNU_SOURCE -DGB_VERSION=\"0.14.4\"
+	-D_GNU_SOURCE -DGB_VERSION=\"0.14.7\"
 
 PKGCONF ?= pkg-config
 CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
