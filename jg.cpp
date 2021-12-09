@@ -77,7 +77,7 @@ static jg_audioinfo_t audinfo = {
 };
 
 static jg_pathinfo_t pathinfo;
-static jg_gameinfo_t gameinfo;
+static jg_fileinfo_t gameinfo;
 static jg_inputinfo_t inputinfo[NUMINPUTS];
 static jg_inputstate_t *input_device[NUMINPUTS];
 
@@ -1077,17 +1077,39 @@ void jg_cheat_set(const char *code) {
 }
 
 // JG Functions that return values to the frontend
-jg_coreinfo_t* jg_get_coreinfo(const char *sys) { return &coreinfo; }
-jg_videoinfo_t* jg_get_videoinfo() { return &vidinfo; }
-jg_audioinfo_t* jg_get_audioinfo() { return &audinfo; }
-jg_inputinfo_t* jg_get_inputinfo(int port) { return &inputinfo[port]; }
+jg_coreinfo_t* jg_get_coreinfo(const char *sys) {
+    return &coreinfo;
+}
 
-void jg_setup_video() { }
-void jg_setup_audio() { }
+jg_videoinfo_t* jg_get_videoinfo() {
+    return &vidinfo;
+}
+
+jg_audioinfo_t* jg_get_audioinfo() {
+    return &audinfo;
+}
+
+jg_inputinfo_t* jg_get_inputinfo(int port) {
+    return &inputinfo[port];
+}
+
+void jg_setup_video() {
+}
+
+void jg_setup_audio() {
+}
 
 void jg_set_inputstate(jg_inputstate_t *ptr, int port) {
     input_device[port] = ptr;
 }
 
-void jg_set_gameinfo(jg_gameinfo_t info) { gameinfo = info; }
-void jg_set_paths(jg_pathinfo_t paths) { pathinfo = paths; }
+void jg_set_gameinfo(jg_fileinfo_t info) {
+    gameinfo = info;
+}
+
+void jg_set_auxinfo(jg_fileinfo_t info, int index) {
+}
+
+void jg_set_paths(jg_pathinfo_t paths) {
+    pathinfo = paths;
+}
