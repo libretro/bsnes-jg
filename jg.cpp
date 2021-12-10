@@ -77,6 +77,7 @@ static jg_audioinfo_t audinfo = {
 };
 
 static jg_pathinfo_t pathinfo;
+static jg_fileinfo_t addoninfo;
 static jg_fileinfo_t gameinfo;
 static jg_inputinfo_t inputinfo[NUMINPUTS];
 static jg_inputstate_t *input_device[NUMINPUTS];
@@ -133,7 +134,7 @@ struct Program : Emulator::Platform {
     void inputRumble(uint port, uint device, uint input, bool enable) override;
     
     void load();
-    vector<uint8_t> loadFile();
+    vector<uint8_t> loadFile(void *data, size_t size);
     bool loadSuperFamicom(string location);
     bool loadGameBoy(string location);
     bool loadBSMemory(string location);
@@ -529,12 +530,12 @@ shared_pointer<vfs::file> Program::openRomBSMemory(string name,
     return {};
 }
 
-vector<uint8_t> Program::loadFile() {
-    uint8_t *game = (uint8_t*)gameinfo.data;
+vector<uint8_t> Program::loadFile(void *data, size_t size) {
+    uint8_t *buf = (uint8_t*)data;
     vector<uint8_t> ret;
     
-    for (int i = 0; i < gameinfo.size; i++)
-        ret.append(game[i]);
+    for (int i = 0; i < size; ++i)
+        ret.append(buf[i]);
     
     return ret;
 }
@@ -543,7 +544,8 @@ bool Program::loadSuperFamicom(string location) {
     string manifest;
     vector<uint8_t> rom;
     
-    rom = addon ? file::read(location) : loadFile();
+    rom = addon ? addoninfo.size ? loadFile(addoninfo.data, addoninfo.size) :
+        file::read(location) : loadFile(gameinfo.data, gameinfo.size);
     
     if (rom.size() < 0x8000) return false;
     
@@ -605,7 +607,7 @@ bool Program::loadSuperFamicom(string location) {
 
 bool Program::loadGameBoy(string location) {
     vector<uint8_t> rom;
-    rom = loadFile();
+    rom = loadFile(gameinfo.data, gameinfo.size);
     
     if (rom.size() < 0x4000) return false;
     
@@ -622,7 +624,7 @@ bool Program::loadGameBoy(string location) {
 bool Program::loadBSMemory(string location) {
     string manifest;
     vector<uint8_t> rom;
-    rom = loadFile();
+    rom = loadFile(gameinfo.data, gameinfo.size);
     
     if (rom.size() < 0x8000) return false;
     
@@ -919,13 +921,14 @@ int jg_game_load() {
     // Load the game
     if (string(gameinfo.path).endsWith(".gb") ||
         string(gameinfo.path).endsWith(".gbc")) {
-        //string sgb_bios = string(pathinfo.bios, "/Super Game Boy (JU).sfc");
-        //string sgb_bios = string(pathinfo.bios, "/Super Game Boy (UE).sfc");
         string sgb_bios = string(pathinfo.bios, "/Super Game Boy 2 (J).sfc");
-        if (!file::exists(sgb_bios)) {
+        if (!addoninfo.size && !file::exists(sgb_bios)) {
             jg_cb_log(JG_LOG_ERR,
                 "Missing BIOS file \'Super Game Boy 2 (J).sfc\', exiting...\n");
             return 0;
+        }
+        else if (addoninfo.size) {
+            sgb_bios = string(addoninfo.fname);
         }
         
         program->superFamicom.location = sgb_bios;
@@ -934,11 +937,15 @@ int jg_game_load() {
     }
     else if (string(gameinfo.path).endsWith(".bs")) {
         string bsx_bios = string(pathinfo.bios, "/BsxBios.sfc");
-        if (!file::exists(bsx_bios)) {
+        if (!addoninfo.size && !file::exists(bsx_bios)) {
             jg_cb_log(JG_LOG_ERR,
                 "Missing BIOS file \'BsxBios.sfc\', exiting...\n");
             return 0;
         }
+        else {
+            bsx_bios = string(addoninfo.fname);
+        }
+        
         program->superFamicom.location = bsx_bios;
         program->bsMemory.location = string(gameinfo.path);
         addon = true;
@@ -1108,6 +1115,9 @@ void jg_set_gameinfo(jg_fileinfo_t info) {
 }
 
 void jg_set_auxinfo(jg_fileinfo_t info, int index) {
+    if (index)
+        return;
+    addoninfo = info;
 }
 
 void jg_set_paths(jg_pathinfo_t paths) {
