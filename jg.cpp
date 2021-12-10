@@ -921,32 +921,25 @@ int jg_game_load() {
     // Load the game
     if (string(gameinfo.path).endsWith(".gb") ||
         string(gameinfo.path).endsWith(".gbc")) {
-        string sgb_bios = string(pathinfo.bios, "/Super Game Boy 2 (J).sfc");
-        if (!addoninfo.size && !file::exists(sgb_bios)) {
+        
+        if (!addoninfo.size) {
             jg_cb_log(JG_LOG_ERR,
-                "Missing BIOS file \'Super Game Boy 2 (J).sfc\', exiting...\n");
+                "Super Game Boy ROM required for GB/GBC content, exiting...\n");
             return 0;
         }
-        else if (addoninfo.size) {
-            sgb_bios = string(addoninfo.fname);
-        }
         
-        program->superFamicom.location = sgb_bios;
+        program->superFamicom.location = string(addoninfo.path);
         program->gameBoy.location = string(gameinfo.path);
         addon = true;
     }
     else if (string(gameinfo.path).endsWith(".bs")) {
-        string bsx_bios = string(pathinfo.bios, "/BsxBios.sfc");
-        if (!addoninfo.size && !file::exists(bsx_bios)) {
+        if (!addoninfo.size) {
             jg_cb_log(JG_LOG_ERR,
-                "Missing BIOS file \'BsxBios.sfc\', exiting...\n");
+                "BS-X BIOS ROM required for BS-X content, exiting...\n");
             return 0;
         }
-        else {
-            bsx_bios = string(addoninfo.fname);
-        }
         
-        program->superFamicom.location = bsx_bios;
+        program->superFamicom.location = string(addoninfo.path);
         program->bsMemory.location = string(gameinfo.path);
         addon = true;
     }
