@@ -111,6 +111,8 @@ OBJDIRS := $(OBJDIR)/emulator \
 # List of object files
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 
+.PHONY: all clean install install-strip uninstall
+
 # libco rules
 $(OBJDIR)/libco/%.o: $(SOURCEDIR)/libco/%.c $(OBJDIR)/.tag
 	$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
