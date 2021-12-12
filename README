@@ -1,7 +1,8 @@
 bsnes-jg
 --------
-bsnes-jg is an emulator for the Super Nintendo Entertainment System/Super
-Famicom, including support for the Super Game Boy and BS-X Satellaview.
+bsnes-jg (aka BadgerSNES) is an emulator for the Super Nintendo Entertainment
+System/Super Famicom, including support for the Super Game Boy and BS-X
+Satellaview.
 
 This is a fork of bsnes v115. All UI code and unneeded support code has been
 removed, leaving only the portions required for emulation.
