@@ -87,7 +87,7 @@ CXXSRCS := $(OBJDIR)/emulator/emulator.cpp \
 	$(OBJDIR)/jg.cpp
 
 # Object dirs
-OBJDIRS := $(OBJDIR)/emulator \
+MKDIRS := $(OBJDIR)/emulator \
 	$(OBJDIR)/heuristics \
 	$(OBJDIR)/sfc/interface \
 	$(OBJDIR)/sfc/system \
@@ -128,7 +128,7 @@ $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
 all: $(TARGET)
 
 $(OBJDIR)/.tag:
-	@mkdir -p -- $(sort $(OBJDIRS))
+	@mkdir -p -- $(sort $(MKDIRS))
 	@touch $@
 
 $(TARGET): $(OBJS)
