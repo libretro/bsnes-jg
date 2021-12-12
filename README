@@ -41,6 +41,11 @@ SNES Control Pad
 SNES Mouse
 Super Scope
 
+Auxiliary Files
+---------------
+Super Game Boy ROM images, and the BS-X Satellaview BIOS must be loaded
+as auxiliary files.
+
 Settings
 --------
 aspect_ratio = 0
@@ -54,5 +59,3 @@ N = Scale Factor (1-8)
 
 Notes:
   States are incompatible between accurate PPU and fast PPU
-  Super Game Boy and BS-X content require auxiliary files to be
-   specified alongside the game ROM.
