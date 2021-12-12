@@ -972,6 +972,7 @@ int jg_game_load() {
     program->base_name = string(gameinfo.path);
     program->load();
     
+    // Set up inputs
     bool mouse = false;
     for (int i = 0; i < sizeof(db_mouse_games) / sizeof(string); ++i) {
         if ((string)gameinfo.md5 == db_mouse_games[i]) {
@@ -980,33 +981,14 @@ int jg_game_load() {
         }
     }
     
-    // Set up inputs
-    string title = program->superFamicom.title;
     bool superscope = false;
-    
-    // There must be a better way of doing this. But nall must be killed first.
-    // The requirement for offsets suggests something broken at deeper levels.
-    if (title == "BAZOOKA BLITZKRIEG" || title == "SFC DESTRUCTIVE") {
-        superscope = true;
-        ss_offset_x = 1;
-        ss_offset_y = 19;
-    }
-    else if(title == "T2 ARCADE") {
-        superscope = true;
-        ss_offset_x = 36;
-        ss_offset_y = -14;
-    }
-    else if(title == "X ZONE") {
-        superscope = true;
-        ss_offset_x = 40;
-        ss_offset_y = -7;
-    }
-    // Games that do not require an offset
-    else if (title == "BATTLE CLASH" || title == "Hunt for Red October" ||
-        title == "LAMBORGHINI AMERICAN" || title == "METAL COMBAT" ||
-        title == "OPERATION THUNDERBOLT" || title == "SUPER SCOPE 6" ||
-        title == "TINSTAR" || title == "YOSHI'S SAFARI") {
-        superscope = true;
+    for (int i = 0; i < sizeof(db_superscope_games) / sizeof(ssentry_t); ++i) {
+        if ((string)gameinfo.md5 == db_superscope_games[i].md5) {
+            superscope = true;
+            ss_offset_x = db_superscope_games[i].x;
+            ss_offset_y = db_superscope_games[i].y;
+            break;
+        }
     }
     
     // Default input devices are SNES Controllers

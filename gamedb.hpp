@@ -55,9 +55,6 @@ static string db_mouse_games[] = {
     "992d003e36eb35b063b2abce309dc959", // Super Nobunaga no Yabou - Zenkoku Ban (Japan) (Rev 1)
     "0edf50a2fc6957b29291030b002762c3", // Super Solitaire (Europe) (En,Fr,De,Es,It) (Proto)
     "2810c6f1191e23ed158ae4237d0519fe", // Super Solitaire (USA) (En,Fr,De,Es,It)
-    //"3af126f4b6e5e0af52ecc734fa5d12cf", // T2 - The Arcade Game (Europe)
-    //"060c2f08f03bfab47ec283b9562f4a2d", // T2 - The Arcade Game (Japan)
-    //"49a4cf748b491f6e7bdbfc86f2cf4d16", // T2 - The Arcade Game (USA)
     "5b19374bf681017280af4841c3d97adc", // Trump Island (Japan)
     "cdca5978f74062b38b5fde8c54c833ca", // Tokimeki Memorial - Densetsu no Ki no Shita de (Japan)
     "cd36eb8982de4bf8369deb9f2f23e590", // Tokimeki Memorial - Densetsu no Ki no Shita de (Japan) (Rev 1)
@@ -69,4 +66,34 @@ static string db_mouse_games[] = {
     "5bb4f9f013b8cd61e65fb6f0e07ff4f5", // Utopia - The Creation of a Nation (USA) (Beta)
     "42e9be5f98bb5ece06da79b3dbf26fa9", // Wonder Project J - Kikai no Shounen Pino (Japan)
     "df5744da0eb4342f2e3302ca5db81b01", // Zico Soccer (Japan)
+};
+
+struct ssentry_t {
+    string md5; int x; int y;
+};
+
+static ssentry_t db_superscope_games[] = {
+    { "391c2d0e4e81ca2139bc86080a2c4d2d", 0, 0 },    // Battle Clash (Europe)
+    { "d9b2a11d20a10fe4f82be4a92481d3d3", 0, 0 },    // Battle Clash (USA)
+    { "079eade13305bcc130e09597faeff4f0", 1, 19 },   // Bazooka Blitzkrieg (USA)
+    { "dad772810b232ccf10053cb24e13d850", 1, 19 },   // Destructive (Japan)
+    { "2335cdc8cd98be81d8eaef1ce73b951f", 0, 0 },    // Hunt for Red October, The (Europe)
+    { "083cc827e556260298859f21cbf6f352", 0, 0 },    // Hunt for Red October, The (Japan)
+    { "47d7b7ba3419b894002b0402685a0960", 0, 0 },    // Hunt for Red October, The (USA)
+    { "44a7735d6dceed9fb4eab61113daa410", 0, 0 },    // Metal Combat - Falcon's Revenge (Europe)
+    { "d4bc4f3cb46cc09d8db58f0ce0142646", 0, 0 },    // Metal Combat - Falcon's Revenge (USA)
+    { "6cd53158ac83005a5f7e09d1e78b87c9", 0, 0 },    // Nintendo Scope 6 (Europe)
+    { "be4f6b60a2ce518ba46c9f33e4fa0ff5", 0, 0 },    // Operation Thunderbolt (USA)
+    { "0e59675372ca0ca16c7a7158b5597f2c", 0, 0 },    // Space Bazooka (Japan)
+    { "df69587755e80a5a2b0ec747aef19d74", 0, 0 },    // Super Scope 6 (Japan)
+    { "a17d52680cc29e46ce41da360e8febe3", 0, 0 },    // Super Scope 6 (USA)
+    { "3af126f4b6e5e0af52ecc734fa5d12cf", 36, -14 }, // T2 - The Arcade Game (Europe)
+    { "060c2f08f03bfab47ec283b9562f4a2d", 36, -14 }, // T2 - The Arcade Game (Japan)
+    { "49a4cf748b491f6e7bdbfc86f2cf4d16", 36, -14 }, // T2 - The Arcade Game (USA)
+    { "54981549724b1da80e7f52407f9c83cf", 0, 0 },    // Tin Star (USA)
+    { "966498b44281629893f0e5b5a6558cf2", 40, -7 },  // X Zone (Europe)
+    { "a316475dfca41b864b7be021afbcad00", 40, -7 },  // X Zone (Japan, USA)
+    { "044d6d9860e635d55bbb6192b5cbb121", 0, 0 },    // Yoshi's Safari (Europe)
+    { "70db2519602d9d6e6dc6fa0069ed54da", 0, 0 },    // Yoshi's Safari (USA)
+    { "ad04758596f502576972ea3b163e8f13", 0, 0 },    // Yoshi no Road Hunting (Japan)
 };
