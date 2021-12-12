@@ -413,6 +413,26 @@ int16 pollInputDevices(uint port, uint device, uint input) {
                 return 0;
         }
     }
+    if (device == SuperFamicom::ID::Device::Mouse) {
+        switch (input) {
+            case 0: { // X
+                int ret = input_device[port]->axis[0] / 2;
+                input_device[port]->axis[0] -= ret;
+                return ret;
+            }
+            case 1: { // Y
+                int ret = input_device[port]->axis[1] / 2;
+                input_device[port]->axis[1] -= ret;
+                return ret;
+            }
+            case 2: { // Left Click
+                return input_device[port]->button[0];
+            }
+            case 3: { // Right Click
+                return input_device[port]->button[1];
+            }
+        }
+    }
     /*else if (device == SuperFamicom::ID::Device::Justifier) {
         switch (input) {
             case 0: // X
