@@ -38,6 +38,7 @@ bsnes-jg uses a game database to determine which input devices must be
 plugged in. The following input devices are currently supported:
 
 SNES Control Pad
+SNES Mouse
 Super Scope
 
 Settings

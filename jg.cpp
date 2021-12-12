@@ -33,6 +33,8 @@
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
 
+#include "gamedb.hpp"
+
 #define SAMPLERATE 48000
 #define FRAMERATE 60
 #define FRAMERATE_PAL 50
@@ -970,6 +972,14 @@ int jg_game_load() {
     program->base_name = string(gameinfo.path);
     program->load();
     
+    bool mouse = false;
+    for (int i = 0; i < sizeof(db_mouse_games) / sizeof(string); ++i) {
+        if ((string)gameinfo.md5 == db_mouse_games[i]) {
+            mouse = true;
+            break;
+        }
+    }
+    
     // Set up inputs
     string title = program->superFamicom.title;
     bool superscope = false;
@@ -1006,11 +1016,14 @@ int jg_game_load() {
     
     inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_PAD);
     emulator->connect(SuperFamicom::ID::Port::Controller2,
-        SuperFamicom::ID::Device::Gamepad);//*/
+        SuperFamicom::ID::Device::Gamepad);
     
-    /*inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_MOUSE);
-    emulator->connect(SuperFamicom::ID::Port::Controller1,
-        SuperFamicom::ID::Device::Mouse);//*/
+    // Plug in a mouse if the game supports it
+    if (mouse) {
+        inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_MOUSE);
+        emulator->connect(SuperFamicom::ID::Port::Controller1,
+            SuperFamicom::ID::Device::Mouse);
+    }
     
     // Plug in a Super Scope if the game supports it
     if (superscope) {
