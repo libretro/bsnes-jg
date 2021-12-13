@@ -81,6 +81,7 @@ static jg_audioinfo_t audinfo = {
 static jg_pathinfo_t pathinfo;
 static jg_fileinfo_t addoninfo;
 static jg_fileinfo_t gameinfo;
+static jg_fileinfo_t sufamiinfo;
 static jg_inputinfo_t inputinfo[NUMINPUTS];
 static jg_inputstate_t *input_device[NUMINPUTS];
 
@@ -277,7 +278,7 @@ shared_pointer<vfs::file> Program::open(uint id, string name,
             result = openRomBSMemory(name, mode);
         }
     }
-    if (id == 4) { // Sufami Turbo - Slot A
+    else if (id == 4) { // Sufami Turbo - Slot A
         if (name == "manifest.bml" && mode == vfs::file::mode::read) {
             result =
                 vfs::memory::file::open(sufamiTurboA.manifest.data<uint8_t>(),
@@ -291,8 +292,7 @@ shared_pointer<vfs::file> Program::open(uint id, string name,
             result = openRomSufamiTurboA(name, mode);
         }
     }
-
-    if (id == 5) { // Sufami Turbo - Slot B
+    else if (id == 5) { // Sufami Turbo - Slot B
         if (name == "manifest.bml" && mode == vfs::file::mode::read) {
             result =
                 vfs::memory::file::open(sufamiTurboB.manifest.data<uint8_t>(),
@@ -548,13 +548,11 @@ shared_pointer<vfs::file> Program::openRomSuperFamicom(string name,
     
     if (name == "save.ram") {
         string save_path = { pathinfo.save, "/", gameinfo.name, ".srm" };
-        const char *save = nullptr;
         return vfs::fs::file::open(save_path, mode);
     }
     
     if (name == "download.ram") {
         string ram_path = { pathinfo.save, "/", gameinfo.name, ".psr" };
-        const char *save = nullptr;
         return vfs::fs::file::open(ram_path, mode);
     }
     
@@ -571,13 +569,11 @@ shared_pointer<vfs::file> Program::openRomGameBoy(string name,
 
     if (name == "save.ram") {
         string save_path = { pathinfo.save, "/", gameinfo.name, ".srm" };
-        const char *save = nullptr;
         return vfs::fs::file::open(save_path, mode);
     }
     
     if (name == "time.rtc") {
         string save_path = { pathinfo.save, "/", gameinfo.name, ".rtc" };
-        const char *save = nullptr;
         return vfs::fs::file::open(save_path, mode);
     }
 
@@ -609,8 +605,12 @@ shared_pointer<vfs::file> Program::openRomSufamiTurboA(string name,
     }
     
     if (name == "save.ram") {
-        string save_path = { pathinfo.save, "/", gameinfo.name, ".srm" };
-        const char *save = nullptr;
+        string save_path;
+        if (sufamiinfo.size)
+            save_path = { pathinfo.save, "/", sufamiinfo.name, ".srm" };
+        else
+            save_path = { pathinfo.save, "/", gameinfo.name, ".srm" };
+        
         return vfs::fs::file::open(save_path, mode);
     }
     
@@ -620,13 +620,12 @@ shared_pointer<vfs::file> Program::openRomSufamiTurboA(string name,
 shared_pointer<vfs::file> Program::openRomSufamiTurboB(string name,
     vfs::file::mode mode) {
     if (name == "program.rom" && mode == vfs::file::mode::read) {
-        return vfs::memory::file::open(sufamiTurboA.program.data(),
-            sufamiTurboA.program.size());
+        return vfs::memory::file::open(sufamiTurboB.program.data(),
+            sufamiTurboB.program.size());
     }
     
     if (name == "save.ram") {
         string save_path = { pathinfo.save, "/", gameinfo.name, ".srm" };
-        const char *save = nullptr;
         return vfs::fs::file::open(save_path, mode);
     }
     
@@ -754,7 +753,11 @@ bool Program::loadBSMemory(string location) {
 bool Program::loadSufamiTurboA(string location) {
     string manifest;
     vector<uint8_t> rom;
-    rom = loadFile(gameinfo.data, gameinfo.size);
+    
+    if (sufamiinfo.size)
+        rom = loadFile(sufamiinfo.data, sufamiinfo.size);
+    else
+        rom = loadFile(gameinfo.data, gameinfo.size);
     
     if (rom.size() < 0x20000) return false;
     
@@ -772,13 +775,16 @@ bool Program::loadSufamiTurboA(string location) {
     
     sufamiTurboA.manifest = manifest ? manifest : heuristics.manifest();
     sufamiTurboA.document = BML::unserialize(sufamiTurboA.manifest);
-    sufamiTurboA.location = location;
+    sufamiTurboA.location = string(gameinfo.path);//location;
     
     sufamiTurboA.program = rom;
     return true;
 }
 
 bool Program::loadSufamiTurboB(string location) {
+    if (!sufamiinfo.size)
+        return false;
+    
     string manifest;
     vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
@@ -793,7 +799,7 @@ bool Program::loadSufamiTurboB(string location) {
     if (auto document = BML::unserialize(string::read(dbpath))) {
         if (auto game = document[{"game(sha256=", sha256, ")"}]) {
             manifest = BML::serialize(game);
-            sufamiTurboA.verified = true;
+            sufamiTurboB.verified = true;
         }
     }
     
@@ -1109,7 +1115,14 @@ int jg_game_load() {
         }
         
         program->superFamicom.location = string(addoninfo.path);
-        program->sufamiTurboA.location = string(gameinfo.path);
+        
+        if (sufamiinfo.size) {
+            program->sufamiTurboA.location = string(sufamiinfo.path);
+            program->sufamiTurboB.location = string(gameinfo.path);
+        }
+        else {
+            program->sufamiTurboA.location = string(gameinfo.path);
+        }
         addon = true;
     }
     else {
@@ -1270,9 +1283,11 @@ void jg_set_gameinfo(jg_fileinfo_t info) {
 }
 
 void jg_set_auxinfo(jg_fileinfo_t info, int index) {
-    if (index)
-        return;
-    addoninfo = info;
+    if (index == 0)
+        addoninfo = info;
+    else if (index == 1)
+        sufamiinfo = info;
+    return;
 }
 
 void jg_set_paths(jg_pathinfo_t paths) {
