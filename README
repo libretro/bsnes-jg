@@ -1,8 +1,8 @@
 bsnes-jg
 --------
 bsnes-jg (aka BadgerSNES) is an emulator for the Super Nintendo Entertainment
-System/Super Famicom, including support for the Super Game Boy and BS-X
-Satellaview.
+System/Super Famicom, including support for the Super Game Boy, BS-X
+Satellaview, and Sufami Turbo.
 
 This is a fork of bsnes v115. All UI code and unneeded support code has been
 removed, leaving only the portions required for emulation.
@@ -44,8 +44,9 @@ Super Scope
 
 Auxiliary Files
 ---------------
-Super Game Boy ROM images, and the BS-X Satellaview BIOS must be loaded
-as auxiliary files.
+Super Game Boy ROM images, the BS-X Satellaview BIOS, and the Sufami Turbo
+must be loaded as auxiliary files. Sufami Turbo Slot A must also be loaded
+in this manner when loading two Sufami Turbo cartridges.
 
 Settings
 --------
