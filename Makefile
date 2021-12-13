@@ -14,7 +14,7 @@ CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 PKGCONF ?= pkg-config
 CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
 
-INCLUDES := -I$(SOURCEDIR) $(CFLAGS_JG)
+INCLUDES := -I$(SOURCEDIR)/. $(CFLAGS_JG)
 INCLUDES_GB := -I$(SOURCEDIR)/sameboy
 WARNINGS :=
 WARNINGS_CO := -Wall
@@ -115,15 +115,22 @@ OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 
 # libco rules
 $(OBJDIR)/libco/%.o: $(SOURCEDIR)/libco/%.c $(OBJDIR)/.tag
-	$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
+	$(info $(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c \
+		$(SUBST $(SOURCEDIR)/,,$<) -o $@)
+	@$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
 
 # Game Boy rules
 $(OBJDIR)/gb/Core/%.o: $(SOURCEDIR)/gb/Core/%.c $(OBJDIR)/.tag
-	$(CC) $(CFLAGS) $(FLAGS_GB) $(INCLUDES_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) -c $< -o $@
+	$(info $(CC) $(CFLAGS) $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
+		$(subst $(SOURCEDIR)/,,$(INCLUDES_GB) -c $<) -o $@)
+	@$(CC) $(CFLAGS) $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
+		$(INCLUDES_GB) -c $< -o $@
 
 # SNES rules
 $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
-	$(CXX) $(CXXFLAGS) $(FLAGS) $(INCLUDES) $(WARNINGS) -c $< -o $@
+	$(info $(CXX) $(CXXFLAGS) $(FLAGS) $(WARNINGS) \
+		$(subst $(SOURCEDIR)/,,$(INCLUDES) -c $<) -o $@)
+	@$(CXX) $(CXXFLAGS) $(FLAGS) $(WARNINGS) $(INCLUDES) -c $< -o $@
 
 all: $(TARGET)
 
