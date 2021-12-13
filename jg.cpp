@@ -454,17 +454,21 @@ int16 pollInputDevices(uint port, uint device, uint input) {
                     ret = input_device[port]->button[0];
                 return ret;
             }
-            case 3: // Cursor
+            case 3: { // Cursor
                 return input_device[port]->button[2];
-            case 4: // Turbo
+            }
+            case 4: { // Turbo
                 return input_device[port]->button[3];
-            case 5: // Pause
+            }
+            case 5: { // Pause
                 return input_device[port]->button[4];
-            default:
+            }
+            default: {
                 return 0;
+            }
         }
     }
-    if (device == SuperFamicom::ID::Device::Mouse) {
+    else if (device == SuperFamicom::ID::Device::Mouse) {
         switch (input) {
             case 0: { // X
                 int ret = input_device[port]->axis[0] / 2;
@@ -484,28 +488,29 @@ int16 pollInputDevices(uint port, uint device, uint input) {
             }
         }
     }
-    /*else if (device == SuperFamicom::ID::Device::Justifier) {
+    else if (device == SuperFamicom::ID::Device::Justifier) {
         switch (input) {
-            case 0: // X
-                return (input_device[port]->coord[0] / vidmult) + ss_offset_x;
-            case 1: // Y
-                return (input_device[port]->coord[1] / vidmult) + ss_offset_y;
-            case 2: {// Trigger
-                int ret = 0;
-                if (input_device[port]->button[1]) { // Offscreen
-                    input_device[port]->coord[0] = 1026;
-                    ret = 1;
-                }
-                else
-                    ret = input_device[port]->button[0];
+            case 0: { // X
+                int ret = input_device[port]->axis[0];
+                input_device[port]->axis[0] -= ret;
                 return ret;
             }
-            case 3: // Start
+            case 1: { // Y
+                int ret = input_device[port]->axis[1];
+                input_device[port]->axis[1] -= ret;
+                return ret;
+            }
+            case 2: { // Trigger
+                return input_device[port]->button[0];
+            }
+            case 3: { // Start
                 return input_device[port]->button[2];
-            default:
+            }
+            default: {
                 return 0;
+            }
         }
-    }*/
+    }
     
     return port > 1 ? 0 : input_device[port]->button[imap[input]];
 }
@@ -1151,6 +1156,15 @@ int jg_game_load() {
         }
     }
     
+    // Justifier support appears fundamentally broken at the core level
+    bool justifier = false;
+    for (int i = 0; i < sizeof(db_justifier_games) / sizeof(string); ++i) {
+        if ((string)gameinfo.md5 == db_justifier_games[i]) {
+            justifier = true;
+            break;
+        }
+    }
+    
     // Default input devices are SNES Controllers
     inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_PAD);
     emulator->connect(SuperFamicom::ID::Port::Controller1,
@@ -1174,11 +1188,11 @@ int jg_game_load() {
             SuperFamicom::ID::Device::SuperScope);
     }
     
-    // Justifier support appears fundamentally broken at the core level
-    /*inputinfo[1] = (jg_inputinfo_t){JG_INPUT_GUN, 1,
-        "justifier", "Justifier", defs_snesjustifier, 0, NDEFS_SNESJUSTIFIER};
-    emulator->connect(SuperFamicom::ID::Port::Controller2,
-        SuperFamicom::ID::Device::Justifier);*/
+    if (justifier) {
+        inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_JUSTIFIER);
+        emulator->connect(SuperFamicom::ID::Port::Controller2,
+            SuperFamicom::ID::Device::Justifier);
+    }
     
     // Set the aspect ratio
     if (settings_bsnes[ASPECT].value)

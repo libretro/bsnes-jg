@@ -97,3 +97,9 @@ static ssentry_t db_superscope_games[] = {
     { "70db2519602d9d6e6dc6fa0069ed54da", 0, 0 },    // Yoshi's Safari (USA)
     { "ad04758596f502576972ea3b163e8f13", 0, 0 },    // Yoshi no Road Hunting (Japan)
 };
+
+static string db_justifier_games[] = {
+    "42f3084ce3f529b46090b9e1d781717d", // Lethal Enforcers (Europe)
+    "3a33512ae5b1f2047bcd77e1d3e1ce4a", // Lethal Enforcers (Japan)
+    "928a0d7feeb4edee8d53203a575968e6", // Lethal Enforcers (USA)
+};
