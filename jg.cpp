@@ -440,10 +440,12 @@ int16 pollInputDevices(uint port, uint device, uint input) {
     //print("port: ", port, " device: ", device, " input: ", input, "\n");
     if (device == SuperFamicom::ID::Device::SuperScope) {
         switch (input) {
-            case 0: // X
+            case 0: { // X
                 return (input_device[port]->coord[0] / vidmult) + ss_offset_x;
-            case 1: // Y
+            }
+            case 1: { // Y
                 return (input_device[port]->coord[1] / vidmult) + ss_offset_y;
+            }
             case 2: { // Trigger
                 int ret = 0;
                 if (input_device[port]->button[1]) { // Offscreen
@@ -491,17 +493,20 @@ int16 pollInputDevices(uint port, uint device, uint input) {
     else if (device == SuperFamicom::ID::Device::Justifier) {
         switch (input) {
             case 0: { // X
-                int ret = input_device[port]->axis[0];
-                input_device[port]->axis[0] -= ret;
-                return ret;
+                return (input_device[port]->coord[0] / vidmult) + ss_offset_x;
             }
             case 1: { // Y
-                int ret = input_device[port]->axis[1];
-                input_device[port]->axis[1] -= ret;
-                return ret;
+                return (input_device[port]->coord[1] / vidmult) + ss_offset_y;
             }
             case 2: { // Trigger
-                return input_device[port]->button[0];
+                int ret = 0;
+                if (input_device[port]->button[1]) { // Offscreen
+                    input_device[port]->coord[0] = 1026;
+                    ret = 1;
+                }
+                else
+                    ret = input_device[port]->button[0];
+                return ret;
             }
             case 3: { // Start
                 return input_device[port]->button[2];
@@ -1156,7 +1161,6 @@ int jg_game_load() {
         }
     }
     
-    // Justifier support appears fundamentally broken at the core level
     bool justifier = false;
     for (int i = 0; i < sizeof(db_justifier_games) / sizeof(string); ++i) {
         if ((string)gameinfo.md5 == db_justifier_games[i]) {

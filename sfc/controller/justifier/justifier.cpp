@@ -90,29 +90,30 @@ auto Justifier::latch(bool data) -> void {
 }
 
 auto Justifier::latch() -> void {
-  /* active value is inverted here ... */
-
-  if(active != 0) {
-    int nx = platform->inputPoll(port, device, 0 + X);
+  if(!active) {
+    /*int nx = platform->inputPoll(port, device, 0 + X);
     int ny = platform->inputPoll(port, device, 0 + Y);
     player1.x = max(-16, min(256 + 16, nx + player1.x));
-    player1.y = max(-16, min((int)ppu.vdisp() + 16, ny + player1.y));
+    player1.y = max(-16, min((int)ppu.vdisp() + 16, ny + player1.y));*/
+    player1.x = platform->inputPoll(port, device, 0 + X);
+    player1.y = platform->inputPoll(port, device, 0 + Y);
     bool offscreen = (player1.x < 0 || player1.y < 0 || player1.x >= 256 || player1.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player1.x, player1.y);
   }
-
-  if(active != 1) {
-    int nx = platform->inputPoll(port, device, 4 + X);
+  else {
+    /*int nx = platform->inputPoll(port, device, 4 + X);
     int ny = platform->inputPoll(port, device, 4 + Y);
     player2.x = max(-16, min(256 + 16, nx + player2.x));
-    player2.y = max(-16, min((int)ppu.vdisp() + 16, ny + player2.y));
+    player2.y = max(-16, min((int)ppu.vdisp() + 16, ny + player2.y));*/
+    player2.x = platform->inputPoll(port, device, 4 + X);
+    player2.y = platform->inputPoll(port, device, 4 + Y);
     bool offscreen = (player2.x < 0 || player2.y < 0 || player2.x >= 256 || player2.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player2.x, player2.y);
   }
 }
 
 auto Justifier::draw(uint16_t* data, uint pitch, uint width, uint height) -> void {
-  pitch >>= 1;
+  /*pitch >>= 1;
   float scaleX = (float)width  / 256.0;
   float scaleY = (float)height / (float)ppu.vdisp();
   int length = (float)width / 256.0 * 4.0;
@@ -144,7 +145,6 @@ auto Justifier::draw(uint16_t* data, uint pitch, uint width, uint height) -> voi
   if(chained)
   { int x = player2.x * scaleX;
     int y = player2.y * scaleY;
-
     uint16_t color = 0x7c00;
     uint16_t black = 0x0000;
 
@@ -158,5 +158,5 @@ auto Justifier::draw(uint16_t* data, uint pitch, uint width, uint height) -> voi
     plot(x, y + length + 1, black);
     for(int px = x - length; px <= x + length; px++) plot(px, y, color);
     for(int py = y - length; py <= y + length; py++) plot(x, py, color);
-  }
+  }*/
 }
