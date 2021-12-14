@@ -5,7 +5,10 @@
 
 namespace SuperFamicom {
 
-#include "serialization.cpp"
+auto DIP::serialize(serializer& s) -> void {
+  s.integer(value);
+}
+
 DIP dip;
 
 auto DIP::power() -> void {
