@@ -1,7 +1,5 @@
 #pragma once
 
-#include <nall/file-buffer.hpp>
-
 namespace nall {
 
 struct file : inode {

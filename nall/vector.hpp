@@ -1,10 +1,5 @@
 #pragma once
 
-#include <new>
-
-#include <nall/bit.hpp>
-#include <nall/merge-sort.hpp>
-
 namespace nall {
 
 template<typename T>

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <nall/arithmetic.hpp>
-
 //cannot use constructor inheritance due to needing to call virtual reset();
 //instead, define a macro to reduce boilerplate code in every Hash subclass
 #define nallHash(Name) \

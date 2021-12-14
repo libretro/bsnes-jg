@@ -1,7 +1,5 @@
 #pragma once
 
-#include <nall/intrinsics.hpp>
-
 #if defined(ENDIAN_LSB)
   //little-endian: uint8_t[] { 0x01, 0x02, 0x03, 0x04 } == 0x04030201
   #define order_lsb1(a)               a

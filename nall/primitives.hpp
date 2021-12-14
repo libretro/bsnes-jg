@@ -1,7 +1,5 @@
 #pragma once
 
-#include <nall/serializer.hpp>
-
 namespace nall {
   struct Boolean;
   template<uint Precision = 64> struct Natural;

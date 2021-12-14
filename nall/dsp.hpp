@@ -1,7 +1,5 @@
 #pragma once
 
-#include <nall/queue.hpp>
-
 namespace nall::DSP {
 
 }

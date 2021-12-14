@@ -1,10 +1,5 @@
 #pragma once
 
-#include <algorithm>
-
-#include <nall/memory.hpp>
-#include <nall/file-buffer.hpp>
-
 namespace nall {
 
 struct image {

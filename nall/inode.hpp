@@ -3,8 +3,6 @@
 //generic abstraction layer for common storage operations against both files and directories
 //these functions are not recursive; use directory::create() and directory::remove() for recursion
 
-#include <nall/string.hpp>
-
 namespace nall {
 
 struct inode {
