@@ -1,5 +1,7 @@
 #ifdef DSP1_CPP
 
+#include "dsp1emu.hpp"
+
 // DSP-1's emulation code
 //
 // Based on research by Overload, The Dumper, Neviksti and Andreas Naive
