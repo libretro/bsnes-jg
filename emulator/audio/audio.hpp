@@ -1,8 +1,5 @@
 #pragma once
 
-#include <nall/queue.hpp>
-#include <nall/dsp.hpp>
-
 namespace Emulator {
 
 struct Interface;

@@ -22,7 +22,9 @@
 #include <nall/vector.hpp>
 #include <nall/string.hpp>
 #include <nall/inode.hpp>
+#include <nall/queue.hpp>
 #include <nall/arithmetic.hpp>
+#include <nall/dsp.hpp>
 #include <nall/hash.hpp>
 #include <nall/markup.hpp>
 #include <nall/file-buffer.hpp>
