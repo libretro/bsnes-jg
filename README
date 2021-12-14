@@ -40,14 +40,15 @@ plugged in. The following input devices are currently supported:
 
 SNES Control Pad
 SNES Mouse
+Super Multitap
 Super Scope
 Justifier
 
 Auxiliary Files
 ---------------
 Super Game Boy ROM images, the BS-X Satellaview BIOS, and the Sufami Turbo
-must be loaded as auxiliary files. Sufami Turbo Slot A must also be loaded
-in this manner when loading two Sufami Turbo cartridges.
+ROM must be loaded as auxiliary files. Sufami Turbo Slot A cartridges must
+also be loaded in this manner when loading two Sufami Turbo cartridges.
 
 Settings
 --------
