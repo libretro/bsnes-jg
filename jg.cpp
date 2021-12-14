@@ -39,7 +39,7 @@
 #define FRAMERATE 60
 #define FRAMERATE_PAL 50
 #define CHANNELS 2
-#define NUMINPUTS 2
+#define NUMINPUTS 5
 
 #define ASPECT_NTSC 1.3061224
 #define ASPECT_PAL 1.4257812
@@ -493,10 +493,10 @@ int16 pollInputDevices(uint port, uint device, uint input) {
     else if (device == SuperFamicom::ID::Device::Justifier) {
         switch (input) {
             case 0: { // X
-                return (input_device[port]->coord[0] / vidmult) + ss_offset_x;
+                return input_device[port]->coord[0] / vidmult;
             }
             case 1: { // Y
-                return (input_device[port]->coord[1] / vidmult) + ss_offset_y;
+                return input_device[port]->coord[1] / vidmult;
             }
             case 2: { // Trigger
                 int ret = 0;
@@ -515,6 +515,9 @@ int16 pollInputDevices(uint port, uint device, uint input) {
                 return 0;
             }
         }
+    }
+    else if (device == SuperFamicom::ID::Device::SuperMultitap) {
+        return input_device[(input / 12) + 1]->button[imap[input % 12]];
     }
     
     return port > 1 ? 0 : input_device[port]->button[imap[input]];
