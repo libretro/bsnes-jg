@@ -272,6 +272,19 @@ static mtentry_t db_multitap_games[] = {
     { "9697253eac2b9137d803271d47c402fb", 4 }, // WCW Super Brawl Wrestling (USA)
     { "c9621e6293ab2de3fe03439ba09969a2", 4 }, // WWF Raw (Europe)
     { "6852754ebd4115e1db335b6492586c8b", 4 }, // WWF Raw (USA)
+    
+    // Super Game Boy Enhanced Game Boy games
+    { "9fb9c42cf52dcfdcfbad5e61ae1b5777", 4 }, // Bomberman Collection (Japan) (SGB Enhanced)
+    { "2cad6ee6df3402aeb8f8ab7921517779", 4 }, // Bomberman GB (Japan) (SGB Enhanced)
+    { "7e4c9c3620bea7b633394beb67e9680b", 4 }, // Bomberman GB (USA, Europe) (SGB Enhanced)
+    { "4ab78239e79ba059d0d7aa7a629a9474", 4 }, // Bomberman GB 2 (Japan) (SGB Enhanced)
+    { "3addab2611566ab072fc996f8a81b224", 4 }, // Bomberman GB 3 (Japan) (SGB Enhanced)
+    { "8ac5c061641b2a8b4c44b46ef693aeef", 4 }, // F-1 Race (World) (Rev 1)
+    { "3ad6a2e9c2872cd8f92d86e18332262c", 4 }, // F-1 Race (World)
+    { "05ba7f165dab1ffd49b63b4f5c704c02", 5 }, // Faceball 2000 (USA)
+    { "b67196db786a67cdfe50d6d2e902aa11", 4 }, // Jinsei Game (Japan) (SGB Enhanced)
+    { "9ba2999ef3ecf9e27ac6c88e995c9d7a", 4 }, // Super R.C. Pro-Am (USA, Europe)
+    { "14fe7234ee4bcb14adf20c743f084a35", 4 }, // Wario Blast Featuring Bomberman! (USA, Europe) (SGB Enhanced)
 };
 
 struct ssentry_t {
