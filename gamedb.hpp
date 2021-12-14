@@ -1,4 +1,9 @@
-// Mouse Games - MD5 Hash
+static string db_justifier_games[] = {
+    "42f3084ce3f529b46090b9e1d781717d", // Lethal Enforcers (Europe)
+    "3a33512ae5b1f2047bcd77e1d3e1ce4a", // Lethal Enforcers (Japan)
+    "928a0d7feeb4edee8d53203a575968e6", // Lethal Enforcers (USA)
+};
+
 static string db_mouse_games[] = {
     "76392b4b33146fe4fac5b26358a9b9f4", // ACME Animation Factory (Europe)
     "4623fc6ecf936f67c21e2d4bcadabf80", // ACME Animation Factory (USA)
@@ -68,6 +73,44 @@ static string db_mouse_games[] = {
     "df5744da0eb4342f2e3302ca5db81b01", // Zico Soccer (Japan)
 };
 
+struct mtentry_t {
+    string md5; int players;
+};
+
+static mtentry_t db_multitap_games[] = {
+    { "6f76a0bc204424863a9ba846f5183996", 5 }, // Bakukyuu Renpatsu!! Super B-Daman (Japan)
+    { "0af9942d16a95e484c5b689e80ccb6ae", 5 }, // Bakutou Dochers - Bumps-jima wa Oosawagi (Japan)
+    { "7537f4b1bb522c1b65b2a623bbe3982a", 4 }, // Barkley Shut Up and Jam! (Europe)
+    { "c153b93d685c7f9afabcde953b97b211", 4 }, // Barkley Shut Up and Jam! (USA)
+    { "f0c2849e45efdf55ad078d78de427c42", 5 }, // Battle Cross (Japan)
+    { "cbeed25156db82fe6e87c3d57ffaa37d", 5 }, // Battle Jockey (Japan)
+    { "8ee34ea0392d7f637fe96d82e034270d", 5 }, // Bill Walsh College Football (USA)
+    { "43d7b44bd4655316c130c20b1c95a664", 4 }, // Capcom's Soccer Shootout (USA) (Beta)
+    { "6f805455e3bff392c51c65fc07eed939", 4 }, // Capcom's Soccer Shootout (USA)
+    { "b428007a4cc5344c18de547a5212ac22", 4 }, // College Slam (USA) (Beta)
+    { "2d854d5e4cf1e6277c12a0def1ca49c3", 4 }, // College Slam (USA)
+    { "18c356623ae0407119ceae8c06edfa7a", 3 }, // Crystal Beans from Dungeon Explorer (Japan)
+    { "931c9baff50537c97c69f0b54dd2b3d5", 3 }, // Dragon - The Bruce Lee Story (Europe)
+    { "103152554973d6db6e53013eb10c383f", 3 }, // Dragon - The Bruce Lee Story (USA)
+    { "bf0c7779579125fd2868f42669b6e67c", 5 }, // Dream Basketball - Dunk & Hoop (Japan)
+    { "2a41d00e04f6b3d785320867ed63f351", 5 }, // Dynamic Stadium (Japan)
+    { "76d7ade004f309504b2229118c7cf93c", 5 }, // ESPN National Hockey Night (USA)
+    { "ca3d4c3e4c3d4716b82b3b91aefd16b0", 5 }, // FIFA - Road to World Cup 98 (Europe) (En,Fr,De,Es,It,Sv) (A8FE)
+    { "29b3e4be108867b5742aacdb7f554956", 5 }, // FIFA - Road to World Cup 98 (Europe) (En,Fr,De,Es,It,Sv) (A8FP)
+    { "a668ab370210847e7922c58a9ea7fddb", 5 }, // FIFA International Soccer (Europe)
+    { "a04c2348002ecb96b0739ad2f7bdf51c", 5 }, // FIFA International Soccer (Japan)
+    { "ad986d7bcf92de548441e03fc60b4ee7", 5 }, // FIFA International Soccer (USA)
+    { "ee9652bef0f7930ba02ec06028dd5bd2", 5 }, // FIFA Soccer 96 (Europe) (En,Fr,De,Es,It,Sv)
+    { "8b3448cce7440268d34fa7b4c46c5966", 5 }, // FIFA Soccer 96 (USA) (En,Fr,De,Es,It,Sv)
+    { "c4b3ea8ce3780425ef7d8ce2f5951400", 5 }, // FIFA Soccer 97 (USA) (En,Fr,De,Es,It,Sv)
+    { "e76185ddf24f2ccd4b57bd25990a179f", 5 }, // Fever Pitch Soccer (Europe) (Beta)
+    { "c2a0a1f3c9687e8c08e531986a8b2cb8", 5 }, // Fever Pitch Soccer (Europe) (En,Fr,De,Es,It)
+    { "4106c9d86f490566cc87ca763d74ce66", 4 }, // FireStriker (USA) (Beta)
+    { "a9bb24a7622114b91ca85dcb30026830", 4 }, // FireStriker (USA)
+    { "665fc614ef687fd2158e738cc1fd710d", 5 }, // From TV Animation Slam Dunk - SD Heat Up!! (Japan)
+
+};
+
 struct ssentry_t {
     string md5; int x; int y;
 };
@@ -96,10 +139,4 @@ static ssentry_t db_superscope_games[] = {
     { "044d6d9860e635d55bbb6192b5cbb121", 0, 0 },    // Yoshi's Safari (Europe)
     { "70db2519602d9d6e6dc6fa0069ed54da", 0, 0 },    // Yoshi's Safari (USA)
     { "ad04758596f502576972ea3b163e8f13", 0, 0 },    // Yoshi no Road Hunting (Japan)
-};
-
-static string db_justifier_games[] = {
-    "42f3084ce3f529b46090b9e1d781717d", // Lethal Enforcers (Europe)
-    "3a33512ae5b1f2047bcd77e1d3e1ce4a", // Lethal Enforcers (Japan)
-    "928a0d7feeb4edee8d53203a575968e6", // Lethal Enforcers (USA)
 };

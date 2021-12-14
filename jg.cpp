@@ -1146,6 +1146,14 @@ int jg_game_load() {
     program->load();
     
     // Set up inputs
+    int multitap = 0;
+    for (int i = 0; i < sizeof(db_multitap_games) / sizeof(mtentry_t); ++i) {
+        if ((string)gameinfo.md5 == db_multitap_games[i].md5) {
+            multitap = db_multitap_games[i].players;
+            break;
+        }
+    }
+    
     bool mouse = false;
     for (int i = 0; i < sizeof(db_mouse_games) / sizeof(string); ++i) {
         if ((string)gameinfo.md5 == db_mouse_games[i]) {
@@ -1181,21 +1189,24 @@ int jg_game_load() {
     emulator->connect(SuperFamicom::ID::Port::Controller2,
         SuperFamicom::ID::Device::Gamepad);
     
-    // Plug in a mouse if the game supports it
-    if (mouse) {
+    if (multitap) {
+        for (int i = 2; (i < multitap) && (i < 5); ++i)
+            inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
+        
+        emulator->connect(SuperFamicom::ID::Port::Controller2,
+            SuperFamicom::ID::Device::SuperMultitap);
+    }
+    else if (mouse) { // Plug in a mouse if the game supports it
         inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_MOUSE);
         emulator->connect(SuperFamicom::ID::Port::Controller1,
             SuperFamicom::ID::Device::Mouse);
     }
-    
-    // Plug in a Super Scope if the game supports it
-    if (superscope) {
+    else if (superscope) { // Plug in a Super Scope if the game supports it
         inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_SUPERSCOPE);
         emulator->connect(SuperFamicom::ID::Port::Controller2,
             SuperFamicom::ID::Device::SuperScope);
     }
-    
-    if (justifier) {
+    else if (justifier) { // Plug in a Justifier if the game supports it
         inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_JUSTIFIER);
         emulator->connect(SuperFamicom::ID::Port::Controller2,
             SuperFamicom::ID::Device::Justifier);
