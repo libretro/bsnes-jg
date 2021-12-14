@@ -1,6 +1,4 @@
 #include <sfc/sfc.hpp>
-#include <sfc/expansion/satellaview/satellaview.cpp>
-//#include <sfc/expansion/21fx/21fx.cpp>
 
 namespace SuperFamicom {
 
