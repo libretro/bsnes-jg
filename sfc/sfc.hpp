@@ -147,7 +147,7 @@ namespace SuperFamicom {
   #include <sfc/coprocessor/dsp1.hpp>
   #include <sfc/coprocessor/dsp2.hpp>
   #include <sfc/coprocessor/dsp4.hpp>
-  #include <sfc/coprocessor/epsonrtc/epsonrtc.hpp>
+  #include <sfc/coprocessor/epsonrtc.hpp>
   #include <sfc/coprocessor/event/event.hpp>
   #include <sfc/coprocessor/hitachidsp/hitachidsp.hpp>
   #include <sfc/coprocessor/icd/icd.hpp>
