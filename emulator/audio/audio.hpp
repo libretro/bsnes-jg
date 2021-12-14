@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nall/dsp/dsp.hpp>
+#include <nall/dsp.hpp>
 
 namespace Emulator {
 
