@@ -74,7 +74,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/processor/wdc65816/wdc65816.cpp \
 	$(OBJDIR)/sfc/cartridge/cartridge.cpp \
 	$(OBJDIR)/sfc/controller/controller.cpp \
-	$(OBJDIR)/sfc/coprocessor/armdsp/armdsp.cpp \
+	$(OBJDIR)/sfc/coprocessor/armdsp.cpp \
 	$(OBJDIR)/sfc/coprocessor/cx4/cx4.cpp \
 	$(OBJDIR)/sfc/coprocessor/dip/dip.cpp \
 	$(OBJDIR)/sfc/coprocessor/dsp1/dsp1.cpp \
@@ -126,7 +126,6 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/ppu \
 	$(OBJDIR)/sfc/ppu-fast \
 	$(OBJDIR)/sfc/expansion/satellaview \
-	$(OBJDIR)/sfc/coprocessor/armdsp \
 	$(OBJDIR)/sfc/coprocessor/cx4 \
 	$(OBJDIR)/sfc/coprocessor/dip \
 	$(OBJDIR)/sfc/coprocessor/dsp1 \
