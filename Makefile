@@ -94,7 +94,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/sfc/coprocessor/sharprtc.cpp \
 	$(OBJDIR)/sfc/coprocessor/spc7110.cpp \
 	$(OBJDIR)/sfc/coprocessor/st0010.cpp \
-	$(OBJDIR)/sfc/coprocessor/superfx/superfx.cpp \
+	$(OBJDIR)/sfc/coprocessor/superfx.cpp \
 	$(OBJDIR)/sfc/cpu/cpu.cpp \
 	$(OBJDIR)/sfc/dsp/dsp.cpp \
 	$(OBJDIR)/sfc/expansion/expansion.cpp \
@@ -127,7 +127,7 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/ppu \
 	$(OBJDIR)/sfc/ppu-fast \
 	$(OBJDIR)/sfc/expansion/satellaview \
-	$(OBJDIR)/sfc/coprocessor/superfx \
+	$(OBJDIR)/sfc/coprocessor \
 	$(OBJDIR)/sfc/slot/bsmemory \
 	$(OBJDIR)/sfc/slot/sufamiturbo \
 	$(OBJDIR)/processor/arm7tdmi \
