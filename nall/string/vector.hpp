@@ -12,13 +12,6 @@ auto vector<string>::append() -> type& {
   return *this;
 }
 
-auto vector<string>::isort() -> type& {
-  sort([](const string& x, const string& y) {
-    return memory::icompare(x.data(), x.size(), y.data(), y.size()) < 0;
-  });
-  return *this;
-}
-
 auto vector<string>::find(string_view source) const -> maybe<uint> {
   for(uint n = 0; n < size(); n++) {
     if(operator[](n).equals(source)) return n;
