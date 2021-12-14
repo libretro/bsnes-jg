@@ -89,7 +89,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/sfc/coprocessor/msu1.cpp \
 	$(OBJDIR)/sfc/coprocessor/necdsp.cpp \
 	$(OBJDIR)/sfc/coprocessor/obc1.cpp \
-	$(OBJDIR)/sfc/coprocessor/sa1/sa1.cpp \
+	$(OBJDIR)/sfc/coprocessor/sa1.cpp \
 	$(OBJDIR)/sfc/coprocessor/sdd1/sdd1.cpp \
 	$(OBJDIR)/sfc/coprocessor/sharprtc/sharprtc.cpp \
 	$(OBJDIR)/sfc/coprocessor/spc7110/spc7110.cpp \
@@ -127,7 +127,6 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/ppu \
 	$(OBJDIR)/sfc/ppu-fast \
 	$(OBJDIR)/sfc/expansion/satellaview \
-	$(OBJDIR)/sfc/coprocessor/sa1 \
 	$(OBJDIR)/sfc/coprocessor/sdd1 \
 	$(OBJDIR)/sfc/coprocessor/sharprtc \
 	$(OBJDIR)/sfc/coprocessor/spc7110 \
