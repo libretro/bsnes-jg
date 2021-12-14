@@ -1,14 +1,6 @@
 #pragma once
 
-#include <nall/platform.hpp>
-#include <nall/array-span.hpp>
-#include <nall/array-view.hpp>
 #include <nall/inode.hpp>
-#include <nall/range.hpp>
-#include <nall/stdint.hpp>
-#include <nall/string.hpp>
-#include <nall/utility.hpp>
-#include <nall/varint.hpp>
 #include <nall/hash/sha256.hpp>
 
 namespace nall {

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <nall/range.hpp>
-#include <nall/shared-pointer.hpp>
-
 namespace nall::vfs {
 
 struct file {

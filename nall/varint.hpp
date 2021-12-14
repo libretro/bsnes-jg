@@ -1,7 +1,5 @@
 #pragma once
 
-#include <nall/stdint.hpp>
-
 namespace nall {
 
 struct varint {

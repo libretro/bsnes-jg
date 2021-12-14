@@ -1,7 +1,5 @@
 #pragma once
 
-#include <nall/stdint.hpp>
-
 namespace nall {
 
 template<uint bits> inline auto uclamp(const uintmax x) -> uintmax {

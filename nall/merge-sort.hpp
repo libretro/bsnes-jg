@@ -1,7 +1,6 @@
 #pragma once
 
 #include <algorithm>
-#include <nall/utility.hpp>
 
 //class:   merge sort
 //average: O(n log n)

@@ -3,16 +3,10 @@
 #include <libco/libco.h>
 
 #include <nall/platform.hpp>
-#include <nall/adaptive-array.hpp>
 #include <nall/any.hpp>
 #include <nall/endian.hpp>
 #include <nall/image.hpp>
 #include <nall/literals.hpp>
-#include <nall/serializer.hpp>
-#include <nall/shared-pointer.hpp>
-#include <nall/string.hpp>
-#include <nall/unique-pointer.hpp>
-#include <nall/vector.hpp>
 #include <nall/vfs.hpp>
 using namespace nall;
 

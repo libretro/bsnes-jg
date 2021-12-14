@@ -1,7 +1,6 @@
 #pragma once
 
 #include <nall/algorithm.hpp>
-#include <nall/stdint.hpp>
 
 namespace nall::memory {
   template<typename T = uint8_t> inline auto allocate(uint size) -> T*;

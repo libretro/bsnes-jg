@@ -1,6 +1,5 @@
 #pragma once
 
-#include <typeinfo>
 #include <nall/traits.hpp>
 
 namespace nall {
