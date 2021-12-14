@@ -1,7 +1,7 @@
 #pragma once
 
 #include <nall/inode.hpp>
-#include <nall/hash/sha256.hpp>
+#include <nall/hash.hpp>
 
 namespace nall {
 
