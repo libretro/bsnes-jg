@@ -1,4 +1,4 @@
-#include <processor/processor.hpp>
+#include <emulator/emulator.hpp>
 #include "spc700.hpp"
 
 namespace Processor {
