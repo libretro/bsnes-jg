@@ -13,7 +13,7 @@ template<typename T> struct array_view {
     _size = 0;
   }
 
-  inline array_view(nullptr_t) {
+  inline array_view(std::nullptr_t) {
     _data = nullptr;
     _size = 0;
   }

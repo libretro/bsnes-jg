@@ -13,7 +13,7 @@ template<typename T> struct array_span : array_view<T> {
     super::_size = 0;
   }
 
-  inline array_span(nullptr_t) {
+  inline array_span(std::nullptr_t) {
     super::_data = nullptr;
     super::_size = 0;
   }

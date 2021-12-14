@@ -132,7 +132,7 @@ template<typename T> auto fill(void* target, uint capacity, const T& value) -> T
 
 template<typename T, typename U, typename... P> auto assign(T* target, const U& value, P&&... p) -> void {
   *target++ = value;
-  assign(target, forward<P>(p)...);
+  assign(target, std::forward<P>(p)...);
 }
 
 template<uint size, typename T> auto readl(const void* source) -> T {

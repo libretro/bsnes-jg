@@ -282,7 +282,7 @@ template<typename T> struct stringify<T*> {
 //
 
 template<typename T> auto make_string(T value) -> stringify<T> {
-  return stringify<T>(forward<T>(value));
+  return stringify<T>(std::forward<T>(value));
 }
 
 }

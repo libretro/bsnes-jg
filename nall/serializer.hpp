@@ -166,7 +166,7 @@ struct serializer {
 
   serializer() = default;
   serializer(const serializer& s) { operator=(s); }
-  serializer(serializer&& s) { operator=(move(s)); }
+  serializer(serializer&& s) { operator=(std::move(s)); }
 
   serializer(uint capacity) {
     _mode = Save;

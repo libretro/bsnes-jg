@@ -81,7 +81,7 @@ L   idle();
 
 auto WDC65816::instructionExchangeCE() -> void {
 L idleIRQ();
-  swap(CF, EF);
+  std::swap(CF, EF);
   if(EF) {
     XF = 1;
     MF = 1;

@@ -10,7 +10,7 @@ template<typename T> struct array;
 template<typename T, uint Size> struct array<T[Size]> {
   array() = default;
 
-  array(const initializer_list<T>& source) {
+  array(const std::initializer_list<T>& source) {
     uint index = 0;
     for(auto& value : source) {
       operator[](index++) = value;

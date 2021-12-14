@@ -13,7 +13,7 @@ struct vector_base {
 
   //core.hpp
   vector_base() = default;
-  vector_base(const initializer_list<T>& values);
+  vector_base(const std::initializer_list<T>& values);
   vector_base(const type& source);
   vector_base(type&& source);
   ~vector_base();
@@ -90,9 +90,9 @@ struct vector_base {
   auto removeByValue(const T& value) -> bool;
 
   auto takeLeft() -> T;
-  auto takeFirst() -> T { return move(takeLeft()); }
+  auto takeFirst() -> T { return std::move(takeLeft()); }
   auto takeRight() -> T;
-  auto takeLast() -> T { return move(takeRight()); }
+  auto takeLast() -> T { return std::move(takeRight()); }
   auto take(uint64_t offset) -> T;
 
   //iterator.hpp

@@ -43,7 +43,7 @@ string_view::string_view(const string& source) {
 
 template<typename... P>
 string_view::string_view(P&&... p) {
-  _string = new string{forward<P>(p)...};
+  _string = new string{std::forward<P>(p)...};
   _data = _string->data();
   _size = _string->size();
 }

@@ -6,7 +6,7 @@
 #define Half DeclareType(HalfBits)
 
 //pick the larger of two types to prevent unnecessary data clamping
-#define Cast (typename conditional<sizeof(Pair) >= sizeof(T), Pair, T>::type)
+#define Cast (typename std::conditional<sizeof(Pair) >= sizeof(T), Pair, T>::type)
 
 namespace nall {
 //namespace Arithmetic {
@@ -126,27 +126,27 @@ alwaysinline auto operator"" DeclareUDL(PairBits)(const char* s) -> Pair {
 #undef ConcatenateUDL
 #undef DeclareUDL
 
-template<typename T> alwaysinline auto _set(Pair& lhs, const T& rhs) -> enable_if_t<(sizeof(Pair) == sizeof(T))> {
+template<typename T> alwaysinline auto _set(Pair& lhs, const T& rhs) -> std::enable_if_t<(sizeof(Pair) == sizeof(T))> {
   lhs = rhs;
 }
 
-template<typename T> alwaysinline auto _set(Pair& lhs, const T& rhs) -> enable_if_t<(sizeof(Pair) > sizeof(T))> {
+template<typename T> alwaysinline auto _set(Pair& lhs, const T& rhs) -> std::enable_if_t<(sizeof(Pair) > sizeof(T))> {
   lhs = {0, rhs};
 }
 
-template<typename T> alwaysinline auto _set(Pair& lhs, const T& rhs) -> enable_if_t<(sizeof(Pair) < sizeof(T))> {
+template<typename T> alwaysinline auto _set(Pair& lhs, const T& rhs) -> std::enable_if_t<(sizeof(Pair) < sizeof(T))> {
   lhs = {lower(rhs) >> TypeBits, lower(rhs)};
 }
 
-template<typename T> alwaysinline auto _get(const Pair& lhs, T& rhs) -> enable_if_t<(sizeof(T) == sizeof(Pair))> {
+template<typename T> alwaysinline auto _get(const Pair& lhs, T& rhs) -> std::enable_if_t<(sizeof(T) == sizeof(Pair))> {
   rhs = lhs;
 }
 
-template<typename T> alwaysinline auto _get(const Pair& lhs, T& rhs) -> enable_if_t<(sizeof(T) > sizeof(Pair))> {
+template<typename T> alwaysinline auto _get(const Pair& lhs, T& rhs) -> std::enable_if_t<(sizeof(T) > sizeof(Pair))> {
   rhs = {0, lhs};
 }
 
-template<typename T> alwaysinline auto _get(const Pair& lhs, T& rhs) -> enable_if_t<(sizeof(T) < sizeof(Pair))> {
+template<typename T> alwaysinline auto _get(const Pair& lhs, T& rhs) -> std::enable_if_t<(sizeof(T) < sizeof(Pair))> {
   rhs = lower(lhs);
 }
 
@@ -278,7 +278,7 @@ template<typename T> alwaysinline auto ror(const Pair& lhs, const T& rhs) -> Pai
   return lhs >> rhs | lhs << (PairBits - rhs);
 }
 
-#define EI enable_if_t<is_integral<T>::value>
+#define EI std::enable_if_t<std::is_integral<T>::value>
 
 template<typename T, EI> auto& operator*= (T& lhs, const Pair& rhs) { return lhs = lhs *  T(rhs); }
 template<typename T, EI> auto& operator/= (T& lhs, const Pair& rhs) { return lhs = lhs /  T(rhs); }
