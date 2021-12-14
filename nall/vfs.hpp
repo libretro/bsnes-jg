@@ -1,7 +1,5 @@
 #pragma once
 
-#include <nall/file.hpp>
-
 namespace nall::vfs {
 
 struct file {

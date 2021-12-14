@@ -109,14 +109,6 @@ struct Node {
     return std::swap(shared->_children[x], shared->_children[y]), true;
   }
 
-  auto sort(function<bool (Node, Node)> comparator = [](auto x, auto y) {
-    return nall::string::compare(x.shared->_name, y.shared->_name) < 0;
-  }) -> void {
-    nall::sort(shared->_children.data(), shared->_children.size(), [&](auto x, auto y) {
-      return comparator(x, y);  //this call converts SharedNode objects to Node objects
-    });
-  }
-
   auto operator[](int position) -> Node {
     if(position >= size()) return {};
     return shared->_children[position];

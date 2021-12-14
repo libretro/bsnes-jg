@@ -1,8 +1,5 @@
 #pragma once
 
-#include <nall/inode.hpp>
-#include <nall/hash.hpp>
-
 namespace nall {
 
 //on Windows (at least for 7 and earlier), FILE* is not buffered

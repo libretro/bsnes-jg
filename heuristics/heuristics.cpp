@@ -1,3 +1,17 @@
+#include <nall/stdint.hpp>
+#include <nall/platform.hpp>
+#include <nall/algorithm.hpp>
+#include <nall/atoi.hpp>
+#include <nall/bit.hpp>
+#include <nall/iterator.hpp>
+#include <nall/array.hpp>
+#include <nall/maybe.hpp>
+#include <nall/memory.hpp>
+#include <nall/serializer.hpp>
+#include <nall/primitives.hpp>
+#include <nall/vector.hpp>
+#include <nall/string.hpp>
+#include <nall/arithmetic.hpp>
 #include <nall/hash.hpp>
 #include <nall/location.hpp>
 

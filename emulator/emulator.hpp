@@ -2,13 +2,34 @@
 
 #include <libco/libco.h>
 
+#include <nall/stdint.hpp>
 #include <nall/platform.hpp>
+#include <nall/algorithm.hpp>
 #include <nall/any.hpp>
+#include <nall/atoi.hpp>
+#include <nall/bit.hpp>
+#include <nall/intrinsics.hpp>
 #include <nall/endian.hpp>
+#include <nall/function.hpp>
+#include <nall/iterator.hpp>
+#include <nall/array.hpp>
+#include <nall/maybe.hpp>
+#include <nall/memory.hpp>
+#include <nall/serializer.hpp>
+#include <nall/primitives.hpp>
+#include <nall/shared-pointer.hpp>
+#include <nall/varint.hpp>
+#include <nall/vector.hpp>
+#include <nall/string.hpp>
+#include <nall/inode.hpp>
+#include <nall/arithmetic.hpp>
+#include <nall/hash.hpp>
 #include <nall/image.hpp>
 #include <nall/literals.hpp>
 #include <nall/location.hpp>
 #include <nall/markup.hpp>
+#include <nall/file-buffer.hpp>
+#include <nall/file.hpp>
 #include <nall/vfs.hpp>
 using namespace nall;
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <nall/maybe.hpp>
-
 namespace nall {
 
 template<typename T> struct shared_pointer;

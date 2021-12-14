@@ -3,8 +3,6 @@
 //multi-precision arithmetic
 //warning: each size is quadratically more expensive than the size before it!
 
-#include <nall/string.hpp>
-
 namespace nall {
 
   template<typename T, std::enable_if_t<std::is_unsigned<T>::value>>

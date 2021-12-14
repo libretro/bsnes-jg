@@ -1,23 +1,5 @@
 #pragma once
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <algorithm>
-#include <initializer_list>
-#include <memory>
-
-#include <nall/platform.hpp>
-#include <nall/atoi.hpp>
-#include <nall/function.hpp>
-#include <nall/memory.hpp>
-#include <nall/primitives.hpp>
-#include <nall/shared-pointer.hpp>
-#include <nall/varint.hpp>
-#include <nall/vector.hpp>
-
 namespace nall {
 
 struct string;
