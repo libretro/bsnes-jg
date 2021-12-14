@@ -158,7 +158,7 @@ namespace SuperFamicom {
   #include <sfc/coprocessor/sa1.hpp>
   #include <sfc/coprocessor/sdd1.hpp>
   #include <sfc/coprocessor/sharprtc.hpp>
-  #include <sfc/coprocessor/spc7110/spc7110.hpp>
+  #include <sfc/coprocessor/spc7110.hpp>
   #include <sfc/coprocessor/st0010/st0010.hpp>
   #include <sfc/coprocessor/superfx/superfx.hpp>
   #include <sfc/expansion/expansion.hpp>
