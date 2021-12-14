@@ -3,16 +3,6 @@
 //only allocators may access _data or modify _size and _capacity
 //all other functions must use data(), size(), capacity()
 
-#if defined(NALL_STRING_ALLOCATOR_ADAPTIVE)
-  #include <nall/string/allocator/adaptive.hpp>
-#elif defined(NALL_STRING_ALLOCATOR_COPY_ON_WRITE)
-  #include <nall/string/allocator/copy-on-write.hpp>
-#elif defined(NALL_STRING_ALLOCATOR_SMALL_STRING_OPTIMIZATION)
-  #include <nall/string/allocator/small-string-optimization.hpp>
-#elif defined(NALL_STRING_ALLOCATOR_VECTOR)
-  #include <nall/string/allocator/vector.hpp>
-#endif
-
 namespace nall {
 
 auto string::operator[](uint position) const -> const char& {

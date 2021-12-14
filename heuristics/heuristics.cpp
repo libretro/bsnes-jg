@@ -1,4 +1,5 @@
 #include <nall/hash.hpp>
+#include <nall/location.hpp>
 
 using namespace nall;
 

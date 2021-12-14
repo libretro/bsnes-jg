@@ -7,6 +7,8 @@
 #include <nall/endian.hpp>
 #include <nall/image.hpp>
 #include <nall/literals.hpp>
+#include <nall/location.hpp>
+#include <nall/markup.hpp>
 #include <nall/vfs.hpp>
 using namespace nall;
 

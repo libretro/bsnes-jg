@@ -326,11 +326,83 @@ struct string_format : vector<string> {
 
 inline auto operator"" _s(const char* value, std::size_t) -> string { return {value}; }
 
+struct string_pascal {
+  using type = string_pascal;
+
+  string_pascal(const char* text = nullptr) {
+    if(text && *text) {
+      uint size = strlen(text);
+      _data = memory::allocate<char>(sizeof(uint) + size + 1);
+      ((uint*)_data)[0] = size;
+      memory::copy(_data + sizeof(uint), text, size);
+      _data[sizeof(uint) + size] = 0;
+    }
+  }
+
+  string_pascal(const string& text) {
+    if(text.size()) {
+      _data = memory::allocate<char>(sizeof(uint) + text.size() + 1);
+      ((uint*)_data)[0] = text.size();
+      memory::copy(_data + sizeof(uint), text.data(), text.size());
+      _data[sizeof(uint) + text.size()] = 0;
+    }
+  }
+
+  string_pascal(const string_pascal& source) { operator=(source); }
+  string_pascal(string_pascal&& source) { operator=(std::move(source)); }
+
+  ~string_pascal() {
+    if(_data) memory::free(_data);
+  }
+
+  explicit operator bool() const { return _data; }
+  operator const char*() const { return _data ? _data + sizeof(uint) : nullptr; }
+  operator string() const { return _data ? string{_data + sizeof(uint)} : ""; }
+
+  auto operator=(const string_pascal& source) -> type& {
+    if(this == &source) return *this;
+    if(_data) { memory::free(_data); _data = nullptr; }
+    if(source._data) {
+      uint size = source.size();
+      _data = memory::allocate<char>(sizeof(uint) + size);
+      memory::copy(_data, source._data, sizeof(uint) + size);
+    }
+    return *this;
+  }
+
+  auto operator=(string_pascal&& source) -> type& {
+    if(this == &source) return *this;
+    if(_data) memory::free(_data);
+    _data = source._data;
+    source._data = nullptr;
+    return *this;
+  }
+
+  auto operator==(string_view source) const -> bool {
+    return size() == source.size() && memory::compare(data(), source.data(), size()) == 0;
+  }
+
+  auto operator!=(string_view source) const -> bool {
+    return size() != source.size() || memory::compare(data(), source.data(), size()) != 0;
+  }
+
+  auto data() const -> char* {
+    if(!_data) return nullptr;
+    return _data + sizeof(uint);
+  }
+
+  auto size() const -> uint {
+    if(!_data) return 0;
+    return ((uint*)_data)[0];
+  }
+
+protected:
+  char* _data = nullptr;
+};
+
 }
 
-#include <nall/string/view.hpp>
-#include <nall/string/pascal.hpp>
-
+#include <nall/string/adaptive.hpp>
 #include <nall/string/atoi.hpp>
 #include <nall/string/cast.hpp>
 #include <nall/string/compare.hpp>
@@ -345,9 +417,4 @@ inline auto operator"" _s(const char* value, std::size_t) -> string { return {va
 #include <nall/string/utf8.hpp>
 #include <nall/string/utility.hpp>
 #include <nall/string/vector.hpp>
-
-#include <nall/string/markup/node.hpp>
-#include <nall/string/markup/find.hpp>
-#include <nall/string/markup/bml.hpp>
-
-#include <nall/string/transform/cml.hpp>
+#include <nall/string/view.hpp>
