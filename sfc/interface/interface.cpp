@@ -1,3 +1,5 @@
+#include <nall/platform.hpp>
+#include <nall/image.hpp>
 #include <sfc/sfc.hpp>
 
 namespace SuperFamicom {
