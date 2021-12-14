@@ -24,9 +24,6 @@
 #include <nall/inode.hpp>
 #include <nall/arithmetic.hpp>
 #include <nall/hash.hpp>
-#include <nall/image.hpp>
-#include <nall/literals.hpp>
-#include <nall/location.hpp>
 #include <nall/markup.hpp>
 #include <nall/file-buffer.hpp>
 #include <nall/file.hpp>
