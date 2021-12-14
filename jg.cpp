@@ -26,12 +26,12 @@
 #include <cstdio>
 #include <stdint.h>
 
-#include <emulator/emulator.hpp>
-#include <sfc/interface/interface.hpp>
-#include <heuristics/heuristics.hpp>
-
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
+
+#include "emulator/emulator.hpp"
+#include "sfc/interface/interface.hpp"
+#include "heuristics/heuristics.hpp"
 
 #include "gamedb.hpp"
 
