@@ -72,12 +72,6 @@ struct SHA256 : Hash {
     return result;
   }
 
-  auto value() const -> uint256_t {
-    uint256_t value = 0;
-    for(auto byte : output()) value = value << 8 | byte;
-    return value;
-  }
-
 private:
   auto byte(uint8_t value) -> void {
     uint32_t shift = (3 - (queued & 3)) * 8;
