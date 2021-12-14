@@ -66,7 +66,8 @@ CSRCS := $(OBJDIR)/gb/Core/apu.c \
 	$(OBJDIR)/gb/Core/workboy.c \
 	$(OBJDIR)/libco/libco.c
 
-CXXSRCS := $(OBJDIR)/emulator/emulator.cpp \
+CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
+	$(OBJDIR)/emulator/emulator.cpp \
 	$(OBJDIR)/heuristics/heuristics.cpp \
 	$(OBJDIR)/processor/arm7tdmi/arm7tdmi.cpp \
 	$(OBJDIR)/processor/spc700/spc700.cpp \
@@ -87,7 +88,7 @@ CXXSRCS := $(OBJDIR)/emulator/emulator.cpp \
 	$(OBJDIR)/jg.cpp
 
 # Object dirs
-MKDIRS := $(OBJDIR)/emulator \
+MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/heuristics \
 	$(OBJDIR)/sfc/interface \
 	$(OBJDIR)/sfc/system \

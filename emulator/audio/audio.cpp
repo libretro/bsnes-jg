@@ -1,3 +1,5 @@
+#include <emulator/emulator.hpp>
+
 namespace Emulator {
 
 auto Stream::reset(uint channelCount, double inputFrequency, double outputFrequency) -> void {
