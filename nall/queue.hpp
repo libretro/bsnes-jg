@@ -2,9 +2,6 @@
 
 //simple circular ring buffer
 
-#include <nall/range.hpp>
-#include <nall/serializer.hpp>
-
 namespace nall {
 
 template<typename T>

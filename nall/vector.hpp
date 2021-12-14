@@ -2,17 +2,8 @@
 
 #include <new>
 
-#include <nall/array-span.hpp>
-#include <nall/array-view.hpp>
 #include <nall/bit.hpp>
-#include <nall/function.hpp>
-#include <nall/iterator.hpp>
-#include <nall/maybe.hpp>
-#include <nall/memory.hpp>
 #include <nall/merge-sort.hpp>
-#include <nall/range.hpp>
-#include <nall/traits.hpp>
-#include <nall/view.hpp>
 
 namespace nall {
 

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <nall/function.hpp>
 #include <nall/maybe.hpp>
-#include <nall/traits.hpp>
-#include <nall/vector.hpp>
 
 namespace nall {
 

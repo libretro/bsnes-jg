@@ -10,19 +10,13 @@
 #include <memory>
 
 #include <nall/platform.hpp>
-#include <nall/array-view.hpp>
 #include <nall/atoi.hpp>
 #include <nall/function.hpp>
-#include <nall/intrinsics.hpp>
 #include <nall/memory.hpp>
 #include <nall/primitives.hpp>
 #include <nall/shared-pointer.hpp>
-#include <nall/stdint.hpp>
-#include <nall/unique-pointer.hpp>
-#include <nall/utility.hpp>
 #include <nall/varint.hpp>
 #include <nall/vector.hpp>
-#include <nall/view.hpp>
 
 namespace nall {
 

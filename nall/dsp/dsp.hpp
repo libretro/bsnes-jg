@@ -1,7 +1,6 @@
 #pragma once
 
 #include <nall/queue.hpp>
-#include <nall/serializer.hpp>
 
 namespace nall::DSP {
 

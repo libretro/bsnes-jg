@@ -4,7 +4,6 @@
 
 #include <nall/memory.hpp>
 #include <nall/file-buffer.hpp>
-#include <nall/stdint.hpp>
 
 namespace nall {
 

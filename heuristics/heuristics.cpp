@@ -1,4 +1,5 @@
 #include <nall/arithmetic.hpp>
+#include <nall/intrinsics.hpp>
 #include <nall/vfs.hpp>
 
 using namespace nall;

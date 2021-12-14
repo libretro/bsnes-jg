@@ -12,10 +12,6 @@
 //- floating-point usage is not portable across different implementations
 
 #include <nall/array.hpp>
-#include <nall/range.hpp>
-#include <nall/stdint.hpp>
-#include <nall/traits.hpp>
-#include <nall/utility.hpp>
 
 namespace nall {
 
