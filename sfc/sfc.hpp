@@ -142,7 +142,7 @@ namespace SuperFamicom {
   #include <sfc/cartridge/cartridge.hpp>
   #include <sfc/controller/controller.hpp>
   #include <sfc/coprocessor/armdsp.hpp>
-  #include <sfc/coprocessor/cx4/cx4.hpp>
+  #include <sfc/coprocessor/cx4.hpp>
   #include <sfc/coprocessor/dip/dip.hpp>
   #include <sfc/coprocessor/dsp1/dsp1.hpp>
   #include <sfc/coprocessor/dsp2/dsp2.hpp>
