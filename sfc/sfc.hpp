@@ -151,7 +151,7 @@ namespace SuperFamicom {
   #include <sfc/coprocessor/event.hpp>
   #include <sfc/coprocessor/hitachidsp.hpp>
   #include <sfc/coprocessor/icd.hpp>
-  #include <sfc/coprocessor/mcc/mcc.hpp>
+  #include <sfc/coprocessor/mcc.hpp>
   #include <sfc/coprocessor/msu1/msu1.hpp>
   #include <sfc/coprocessor/necdsp/necdsp.hpp>
   #include <sfc/coprocessor/obc1/obc1.hpp>
