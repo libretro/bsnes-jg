@@ -71,6 +71,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/heuristics/heuristics.cpp \
 	$(OBJDIR)/processor/arm7tdmi/arm7tdmi.cpp \
 	$(OBJDIR)/processor/spc700/spc700.cpp \
+	$(OBJDIR)/processor/upd96050/upd96050.cpp \
 	$(OBJDIR)/processor/wdc65816/wdc65816.cpp \
 	$(OBJDIR)/sfc/cartridge/cartridge.cpp \
 	$(OBJDIR)/sfc/controller/controller.cpp \
@@ -86,7 +87,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/sfc/coprocessor/icd.cpp \
 	$(OBJDIR)/sfc/coprocessor/mcc.cpp \
 	$(OBJDIR)/sfc/coprocessor/msu1.cpp \
-	$(OBJDIR)/sfc/coprocessor/necdsp/necdsp.cpp \
+	$(OBJDIR)/sfc/coprocessor/necdsp.cpp \
 	$(OBJDIR)/sfc/coprocessor/obc1/obc1.cpp \
 	$(OBJDIR)/sfc/coprocessor/sa1/sa1.cpp \
 	$(OBJDIR)/sfc/coprocessor/sdd1/sdd1.cpp \
@@ -126,7 +127,6 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/ppu \
 	$(OBJDIR)/sfc/ppu-fast \
 	$(OBJDIR)/sfc/expansion/satellaview \
-	$(OBJDIR)/sfc/coprocessor/necdsp \
 	$(OBJDIR)/sfc/coprocessor/obc1 \
 	$(OBJDIR)/sfc/coprocessor/sa1 \
 	$(OBJDIR)/sfc/coprocessor/sdd1 \
@@ -138,6 +138,7 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/slot/sufamiturbo \
 	$(OBJDIR)/processor/arm7tdmi \
 	$(OBJDIR)/processor/spc700 \
+	$(OBJDIR)/processor/upd96050 \
 	$(OBJDIR)/processor/wdc65816 \
 	$(OBJDIR)/gb/Core \
 	$(OBJDIR)/libco

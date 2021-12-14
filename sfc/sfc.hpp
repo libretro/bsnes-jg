@@ -153,7 +153,7 @@ namespace SuperFamicom {
   #include <sfc/coprocessor/icd.hpp>
   #include <sfc/coprocessor/mcc.hpp>
   #include <sfc/coprocessor/msu1.hpp>
-  #include <sfc/coprocessor/necdsp/necdsp.hpp>
+  #include <sfc/coprocessor/necdsp.hpp>
   #include <sfc/coprocessor/obc1/obc1.hpp>
   #include <sfc/coprocessor/sa1/sa1.hpp>
   #include <sfc/coprocessor/sdd1/sdd1.hpp>
