@@ -5,9 +5,64 @@
 
 #include <nall/string.hpp>
 
-#include <nall/arithmetic/unsigned.hpp>
-
 namespace nall {
+
+  template<typename T, std::enable_if_t<std::is_unsigned<T>::value>>
+  inline auto upper(T value) -> T {
+    return value >> sizeof(T) * 4;
+  }
+
+  template<typename T, std::enable_if_t<std::is_unsigned<T>::value>>
+  inline auto lower(T value) -> T {
+    static const T Mask = ~T(0) >> sizeof(T) * 4;
+    return value & Mask;
+  }
+
+  template<typename T, typename U, std::enable_if_t<std::is_unsigned<T>::value>, std::enable_if_t<std::is_unsigned<U>::value>>
+  inline auto mul(T lhs, U rhs) -> uintmax {
+    return lhs * rhs;
+  }
+
+  template<typename T, std::enable_if_t<std::is_unsigned<T>::value>>
+  inline auto square(T value) -> uintmax {
+    return value * value;
+  }
+
+  template<typename T, typename U>
+  inline auto rol(T lhs, U rhs, std::enable_if_t<std::is_unsigned<T>::value>* = 0) -> T {
+    return lhs << rhs | lhs >> sizeof(T) * 8 - rhs;
+  }
+
+  template<typename T, typename U>
+  inline auto ror(T lhs, U rhs, std::enable_if_t<std::is_unsigned<T>::value>* = 0) -> T {
+    return lhs >> rhs | lhs << sizeof(T) * 8 - rhs;
+  }
+
+#if INTMAX_BITS >= 128
+  inline auto operator"" _u128(const char* s) -> uint128_t {
+    uint128_t p = 0;
+    if(s[0] == '0' && (s[1] == 'x' || s[1] == 'X')) {
+      s += 2;
+      while(*s) {
+        auto c = *s++;
+        if(c == '\'');
+        else if(c >= '0' && c <= '9') p = (p << 4) + (c - '0');
+        else if(c >= 'a' && c <= 'f') p = (p << 4) + (c - 'a' + 10);
+        else if(c >= 'A' && c <= 'F') p = (p << 4) + (c - 'A' + 10);
+        else break;
+      }
+    } else {
+      while(*s) {
+        auto c = *s++;
+        if(c == '\'');
+        else if(c >= '0' && c <= '9') p = (p << 3) + (p << 1) + (c - '0');
+        else break;
+      }
+    }
+    return p;
+  }
+#endif
+
   template<uint Bits> struct ArithmeticNatural;
   template<> struct ArithmeticNatural<  8> { using type =   uint8_t; };
   template<> struct ArithmeticNatural< 16> { using type =  uint16_t; };
@@ -16,71 +71,4 @@ namespace nall {
   #if INTMAX_BITS >= 128
   template<> struct ArithmeticNatural<128> { using type = uint128_t; };
   #endif
-}
-
-#if INTMAX_BITS < 128
-#define PairBits 128
-#define TypeBits  64
-#define HalfBits  32
-#include <nall/arithmetic/natural.hpp>
-#undef PairBits
-#undef TypeBits
-#undef HalfBits
-#endif
-
-#define PairBits 256
-#define TypeBits 128
-#define HalfBits  64
-#include <nall/arithmetic/natural.hpp>
-#undef PairBits
-#undef TypeBits
-#undef HalfBits
-
-#define PairBits 512
-#define TypeBits 256
-#define HalfBits 128
-#include <nall/arithmetic/natural.hpp>
-#undef PairBits
-#undef TypeBits
-#undef HalfBits
-
-#define PairBits 1024
-#define TypeBits  512
-#define HalfBits  256
-#include <nall/arithmetic/natural.hpp>
-#undef PairBits
-#undef TypeBits
-#undef HalfBits
-
-#define PairBits 2048
-#define TypeBits 1024
-#define HalfBits  512
-#include <nall/arithmetic/natural.hpp>
-#undef PairBits
-#undef TypeBits
-#undef HalfBits
-
-#define PairBits 4096
-#define TypeBits 2048
-#define HalfBits 1024
-#include <nall/arithmetic/natural.hpp>
-#undef PairBits
-#undef TypeBits
-#undef HalfBits
-
-#define PairBits 8192
-#define TypeBits 4096
-#define HalfBits 2048
-#include <nall/arithmetic/natural.hpp>
-#undef PairBits
-#undef TypeBits
-#undef HalfBits
-
-namespace nall {
-  //TODO: these types are for expressing smaller bit ranges in class interfaces
-  //for instance, XChaCha20 taking a 192-bit nonce
-  //however, they still allow more bits than expressed ...
-  //some sort of wrapper needs to be devised to ensure these sizes are masked and wrap appropriately
-
-  using uint192_t = uint256_t;
 }

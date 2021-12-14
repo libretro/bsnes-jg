@@ -1,6 +1,5 @@
-#include <nall/arithmetic.hpp>
-#include <nall/intrinsics.hpp>
-#include <nall/vfs.hpp>
+#include <nall/hash.hpp>
+#include <nall/location.hpp>
 
 using namespace nall;
 

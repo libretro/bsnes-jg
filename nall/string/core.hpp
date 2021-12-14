@@ -3,16 +3,6 @@
 //only allocators may access _data or modify _size and _capacity
 //all other functions must use data(), size(), capacity()
 
-#if defined(NALL_STRING_ALLOCATOR_ADAPTIVE)
-  #include <nall/string/allocator/adaptive.hpp>
-#elif defined(NALL_STRING_ALLOCATOR_COPY_ON_WRITE)
-  #include <nall/string/allocator/copy-on-write.hpp>
-#elif defined(NALL_STRING_ALLOCATOR_SMALL_STRING_OPTIMIZATION)
-  #include <nall/string/allocator/small-string-optimization.hpp>
-#elif defined(NALL_STRING_ALLOCATOR_VECTOR)
-  #include <nall/string/allocator/vector.hpp>
-#endif
-
 namespace nall {
 
 auto string::operator[](uint position) const -> const char& {
@@ -30,16 +20,16 @@ auto string::operator()(uint position, char fallback) const -> char {
 
 template<typename... P> auto string::assign(P&&... p) -> string& {
   resize(0);
-  return append(forward<P>(p)...);
+  return append(std::forward<P>(p)...);
 }
 
 template<typename T, typename... P> auto string::prepend(const T& value, P&&... p) -> string& {
-  if constexpr(sizeof...(p)) prepend(forward<P>(p)...);
+  if constexpr(sizeof...(p)) prepend(std::forward<P>(p)...);
   return _prepend(make_string(value));
 }
 
 template<typename... P> auto string::prepend(const nall::string_format& value, P&&... p) -> string& {
-  if constexpr(sizeof...(p)) prepend(forward<P>(p)...);
+  if constexpr(sizeof...(p)) prepend(std::forward<P>(p)...);
   return format(value);
 }
 
@@ -52,13 +42,13 @@ template<typename T> auto string::_prepend(const stringify<T>& source) -> string
 
 template<typename T, typename... P> auto string::append(const T& value, P&&... p) -> string& {
   _append(make_string(value));
-  if constexpr(sizeof...(p) > 0) append(forward<P>(p)...);
+  if constexpr(sizeof...(p) > 0) append(std::forward<P>(p)...);
   return *this;
 }
 
 template<typename... P> auto string::append(const nall::string_format& value, P&&... p) -> string& {
   format(value);
-  if constexpr(sizeof...(p)) append(forward<P>(p)...);
+  if constexpr(sizeof...(p)) append(std::forward<P>(p)...);
   return *this;
 }
 

@@ -13,7 +13,7 @@ struct vector_base {
 
   //core.hpp
   vector_base() = default;
-  vector_base(const initializer_list<T>& values);
+  vector_base(const std::initializer_list<T>& values);
   vector_base(const type& source);
   vector_base(type&& source);
   ~vector_base();
@@ -90,9 +90,9 @@ struct vector_base {
   auto removeByValue(const T& value) -> bool;
 
   auto takeLeft() -> T;
-  auto takeFirst() -> T { return move(takeLeft()); }
+  auto takeFirst() -> T { return std::move(takeLeft()); }
   auto takeRight() -> T;
-  auto takeLast() -> T { return move(takeRight()); }
+  auto takeLast() -> T { return std::move(takeRight()); }
   auto take(uint64_t offset) -> T;
 
   //iterator.hpp
@@ -108,16 +108,6 @@ struct vector_base {
   auto rbegin() const -> reverse_iterator_const<T> { return {data(), size() - 1}; }
   auto rend() const -> reverse_iterator_const<T> { return {data(), (uint64_t)-1}; }
 
-  //utility.hpp
-  auto fill(const T& value = {}) -> void;
-  auto sort(const function<bool (const T& lhs, const T& rhs)>& comparator = [](auto& lhs, auto& rhs) { return lhs < rhs; }) -> void;
-  auto reverse() -> void;
-  auto find(const function<bool (const T& lhs)>& comparator) -> maybe<uint64_t>;
-  auto find(const T& value) const -> maybe<uint64_t>;
-  auto findSorted(const T& value) const -> maybe<uint64_t>;
-  auto foreach(const function<void (const T&)>& callback) -> void;
-  auto foreach(const function<void (uint, const T&)>& callback) -> void;
-
 protected:
   T* _pool = nullptr;   //pointer to first initialized element in pool
   uint64_t _size = 0;   //number of initialized elements in pool
@@ -130,12 +120,9 @@ protected:
 #define vector vector_base
 #include <nall/vector/core.hpp>
 #include <nall/vector/assign.hpp>
-#include <nall/vector/compare.hpp>
 #include <nall/vector/memory.hpp>
 #include <nall/vector/access.hpp>
 #include <nall/vector/modify.hpp>
-#include <nall/vector/iterator.hpp>
-#include <nall/vector/utility.hpp>
 #undef vector
 
 namespace nall {
@@ -143,5 +130,3 @@ namespace nall {
     using vector_base<T>::vector_base;
   };
 }
-
-#include <nall/vector/specialization/uint8_t.hpp>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nall/dsp/dsp.hpp>
+#include <nall/dsp.hpp>
 
 namespace Emulator {
 
@@ -65,7 +65,7 @@ struct Stream {
   auto write(const double samples[]) -> void;
 
   template<typename... P> auto sample(P&&... p) -> void {
-    double samples[sizeof...(P)] = {forward<P>(p)...};
+    double samples[sizeof...(P)] = {std::forward<P>(p)...};
     write(samples);
   }
 

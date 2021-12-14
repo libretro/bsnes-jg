@@ -2,7 +2,7 @@
 
 namespace nall {
 
-template<typename T> vector<T>::vector(const initializer_list<T>& values) {
+template<typename T> vector<T>::vector(const std::initializer_list<T>& values) {
   reserveRight(values.size());
   for(auto& value : values) append(value);
 }
@@ -12,7 +12,7 @@ template<typename T> vector<T>::vector(const vector<T>& source) {
 }
 
 template<typename T> vector<T>::vector(vector<T>&& source) {
-  operator=(move(source));
+  operator=(std::move(source));
 }
 
 template<typename T> vector<T>::~vector() {

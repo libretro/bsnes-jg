@@ -4,18 +4,11 @@ namespace nall {
 
 template<typename... P> auto vector<string>::append(const string& data, P&&... p) -> type& {
   vector_base::append(data);
-  append(forward<P>(p)...);
+  append(std::forward<P>(p)...);
   return *this;
 }
 
 auto vector<string>::append() -> type& {
-  return *this;
-}
-
-auto vector<string>::isort() -> type& {
-  sort([](const string& x, const string& y) {
-    return memory::icompare(x.data(), x.size(), y.data(), y.size()) < 0;
-  });
   return *this;
 }
 

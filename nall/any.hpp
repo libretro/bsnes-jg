@@ -1,13 +1,11 @@
 #pragma once
 
-#include <nall/traits.hpp>
-
 namespace nall {
 
 struct any {
   any() = default;
   any(const any& source) { operator=(source); }
-  any(any&& source) { operator=(move(source)); }
+  any(any&& source) { operator=(std::move(source)); }
   template<typename T> any(const T& value) { operator=(value); }
   ~any() { reset(); }
 
@@ -19,26 +17,26 @@ struct any {
   }
 
   template<typename T> auto is() const -> bool {
-    return type() == typeid(typename remove_reference<T>::type);
+    return type() == typeid(typename std::remove_reference<T>::type);
   }
 
   template<typename T> auto get() -> T& {
     if(!is<T>()) throw;
-    return static_cast<holder<typename remove_reference<T>::type>*>(container)->value;
+    return static_cast<holder<typename std::remove_reference<T>::type>*>(container)->value;
   }
 
   template<typename T> auto get() const -> const T& {
     if(!is<T>()) throw;
-    return static_cast<holder<typename remove_reference<T>::type>*>(container)->value;
+    return static_cast<holder<typename std::remove_reference<T>::type>*>(container)->value;
   }
 
   template<typename T> auto get(const T& fallback) const -> const T& {
     if(!is<T>()) return fallback;
-    return static_cast<holder<typename remove_reference<T>::type>*>(container)->value;
+    return static_cast<holder<typename std::remove_reference<T>::type>*>(container)->value;
   }
 
   template<typename T> auto operator=(const T& value) -> any& {
-    using auto_t = typename conditional<is_array<T>::value, typename remove_extent<typename add_const<T>::type>::type*, T>::type;
+    using auto_t = typename std::conditional<std::is_array<T>::value, typename std::remove_extent<typename std::add_const<T>::type>::type*, T>::type;
 
     if(type() == typeid(auto_t)) {
       static_cast<holder<auto_t>*>(container)->value = (auto_t)value;

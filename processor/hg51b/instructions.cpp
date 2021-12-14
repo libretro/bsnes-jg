@@ -305,7 +305,7 @@ auto HG51B::instructionSUBR(uint8 imm, uint5 shift) -> void {
 }
 
 auto HG51B::instructionSWAP(uint24& a, uint4 reg) -> void {
-  swap(a, r.gpr[reg]);
+  std::swap(a, r.gpr[reg]);
 }
 
 auto HG51B::instructionSXB() -> void {

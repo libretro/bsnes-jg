@@ -6,10 +6,10 @@ template<uint Precision> struct Integer {
   static_assert(Precision >= 1 && Precision <= 64);
   static inline constexpr auto bits() -> uint { return Precision; }
   using stype =
-    conditional_t<bits() <=  8,  int8_t,
-    conditional_t<bits() <= 16, int16_t,
-    conditional_t<bits() <= 32, int32_t,
-    conditional_t<bits() <= 64, int64_t,
+    std::conditional_t<bits() <=  8,  int8_t,
+    std::conditional_t<bits() <= 16, int16_t,
+    std::conditional_t<bits() <= 32, int32_t,
+    std::conditional_t<bits() <= 64, int64_t,
     void>>>>;
   using utype = typename Natural<Precision>::utype;
   static inline constexpr auto mask() -> utype { return ~0ull >> 64 - Precision; }

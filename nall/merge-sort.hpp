@@ -25,24 +25,24 @@ template<typename T, typename Comparator> auto sort(T list[], uint size, const C
 
   //sort smaller blocks using an O(n^2) algorithm (which for small sizes, increases performance)
   if(size < 64) {
-    //insertion sort requires a copy (via move construction)
+    //insertion sort requires a copy (via std::move construction)
     #if defined(NALL_MERGE_SORT_INSERTION)
     for(int i = 1, j; i < size; i++) {
-      T copy(move(list[i]));
+      T copy(std::move(list[i]));
       for(j = i - 1; j >= 0; j--) {
         if(!lessthan(copy, list[j])) break;
-        list[j + 1] = move(list[j]);
+        list[j + 1] = std::move(list[j]);
       }
-      list[j + 1] = move(copy);
+      list[j + 1] = std::move(copy);
     }
-    //selection sort requires a swap
+    //selection sort requires a std::swap
     #elif defined(NALL_MERGE_SORT_SELECTION)
     for(uint i = 0; i < size; i++) {
       uint min = i;
       for(uint j = i + 1; j < size; j++) {
         if(lessthan(list[j], list[min])) min = j;
       }
-      if(min != i) swap(list[i], list[min]);
+      if(min != i) std::swap(list[i], list[min]);
     }
     #endif
     return;
@@ -59,16 +59,16 @@ template<typename T, typename Comparator> auto sort(T list[], uint size, const C
   uint offset = 0, left = 0, right = middle;
   while(left < middle && right < size) {
     if(!lessthan(list[right], list[left])) {
-      new(buffer + offset++) T(move(list[left++]));
+      new(buffer + offset++) T(std::move(list[left++]));
     } else {
-      new(buffer + offset++) T(move(list[right++]));
+      new(buffer + offset++) T(std::move(list[right++]));
     }
   }
-  while(left < middle) new(buffer + offset++) T(move(list[left++]));
-  while(right < size ) new(buffer + offset++) T(move(list[right++]));
+  while(left < middle) new(buffer + offset++) T(std::move(list[left++]));
+  while(right < size ) new(buffer + offset++) T(std::move(list[right++]));
 
   for(uint i = 0; i < size; i++) {
-    list[i] = move(buffer[i]);
+    list[i] = std::move(buffer[i]);
     buffer[i].~T();
   }
   memory::free(buffer);

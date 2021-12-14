@@ -10,10 +10,10 @@ template<int Precision, int Index> struct BitField<Precision, Index> {
   static_assert(Precision >= 1 && Precision <= 64);
   enum : uint { bits = Precision };
   using type =
-    conditional_t<bits <=  8,  uint8_t,
-    conditional_t<bits <= 16, uint16_t,
-    conditional_t<bits <= 32, uint32_t,
-    conditional_t<bits <= 64, uint64_t,
+    std::conditional_t<bits <=  8,  uint8_t,
+    std::conditional_t<bits <= 16, uint16_t,
+    std::conditional_t<bits <= 32, uint32_t,
+    std::conditional_t<bits <= 64, uint64_t,
     void>>>>;
   enum : uint { shift = Index < 0 ? Precision + Index : Index };
   enum : type { mask = 1ull << shift };
@@ -67,10 +67,10 @@ template<int Precision> struct BitField<Precision> {
   static_assert(Precision >= 1 && Precision <= 64);
   enum : uint { bits = Precision };
   using type =
-    conditional_t<bits <=  8,  uint8_t,
-    conditional_t<bits <= 16, uint16_t,
-    conditional_t<bits <= 32, uint32_t,
-    conditional_t<bits <= 64, uint64_t,
+    std::conditional_t<bits <=  8,  uint8_t,
+    std::conditional_t<bits <= 16, uint16_t,
+    std::conditional_t<bits <= 32, uint32_t,
+    std::conditional_t<bits <= 64, uint64_t,
     void>>>>;
 
   BitField(const BitField&) = delete;

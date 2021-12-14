@@ -38,16 +38,6 @@ struct image {
     uint _shift;
   };
 
-  //core.hpp
-  inline image(const image& source);
-  inline image(image&& source);
-  inline image(bool endian, uint depth, uint64_t alphaMask, uint64_t redMask, uint64_t greenMask, uint64_t blueMask);
-  inline image(const void* data, uint size);
-  inline image(const vector<uint8_t>& buffer);
-  template<uint Size> inline image(const uint8_t (&Name)[Size]);
-  inline image();
-  inline ~image();
-
   inline auto operator=(const image& source) -> image&;
   inline auto operator=(image&& source) -> image&;
 
@@ -86,9 +76,6 @@ struct image {
   alwaysinline auto blue() const { return _blue; }
 
 private:
-  //core.hpp
-  inline auto allocate(uint width, uint height, uint stride) -> uint8_t*;
-
   uint8_t* _data   = nullptr;
   uint _width  = 0;
   uint _height = 0;
@@ -102,7 +89,27 @@ private:
   channel _blue {255u <<  0, 8,  0};
 };
 
+auto image::bitDepth(uint64_t color) -> unsigned {
+  unsigned depth = 0;
+  if(color) while((color & 1) == 0) color >>= 1;
+  while((color & 1) == 1) { color >>= 1; depth++; }
+  return depth;
 }
 
-#include <nall/image/static.hpp>
-#include <nall/image/core.hpp>
+auto image::bitShift(uint64_t color) -> unsigned {
+  unsigned shift = 0;
+  if(color) while((color & 1) == 0) { color >>= 1; shift++; }
+  return shift;
+}
+
+auto image::normalize(uint64_t color, unsigned sourceDepth, unsigned targetDepth) -> uint64_t {
+  if(sourceDepth == 0 || targetDepth == 0) return 0;
+  while(sourceDepth < targetDepth) {
+    color = (color << sourceDepth) | color;
+    sourceDepth += sourceDepth;
+  }
+  if(targetDepth < sourceDepth) color >>= (sourceDepth - targetDepth);
+  return color;
+}
+
+}

@@ -10,10 +10,10 @@ template<int Precision, int Lo, int Hi> struct BitRange<Precision, Lo, Hi> {
   static_assert(Precision >= 1 && Precision <= 64);
   enum : uint { bits = Precision };
   using type =
-    conditional_t<bits <=  8,  uint8_t,
-    conditional_t<bits <= 16, uint16_t,
-    conditional_t<bits <= 32, uint32_t,
-    conditional_t<bits <= 64, uint64_t,
+    std::conditional_t<bits <=  8,  uint8_t,
+    std::conditional_t<bits <= 16, uint16_t,
+    std::conditional_t<bits <= 32, uint32_t,
+    std::conditional_t<bits <= 64, uint64_t,
     void>>>>;
   enum : uint { lo = Lo < 0 ? Precision + Lo : Lo };
   enum : uint { hi = Hi < 0 ? Precision + Hi : Hi };
@@ -133,10 +133,10 @@ template<int Precision> struct BitRange<Precision> {
   static_assert(Precision >= 1 && Precision <= 64);
   enum : uint { bits = Precision };
   using type =
-    conditional_t<bits <=  8,  uint8_t,
-    conditional_t<bits <= 16, uint16_t,
-    conditional_t<bits <= 32, uint32_t,
-    conditional_t<bits <= 64, uint64_t,
+    std::conditional_t<bits <=  8,  uint8_t,
+    std::conditional_t<bits <= 16, uint16_t,
+    std::conditional_t<bits <= 32, uint32_t,
+    std::conditional_t<bits <= 64, uint64_t,
     void>>>>;
 
   BitRange(const BitRange& source) = delete;
@@ -157,7 +157,7 @@ template<int Precision> struct BitRange<Precision> {
     static_assert(sizeof(T) == sizeof(type));
     if(lo < 0) lo = Precision + lo;
     if(hi < 0) hi = Precision + hi;
-    if(lo > hi) swap(lo, hi);
+    if(lo > hi) std::swap(lo, hi);
     mask = ~0ull >> 64 - (hi - lo + 1) << lo;
     shift = lo;
   }
