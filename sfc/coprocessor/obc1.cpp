@@ -2,7 +2,14 @@
 
 namespace SuperFamicom {
 
-#include "serialization.cpp"
+auto OBC1::serialize(serializer& s) -> void {
+  s.array(ram.data(), ram.size());
+
+  s.integer(status.address);
+  s.integer(status.baseptr);
+  s.integer(status.shift);
+}
+
 OBC1 obc1;
 
 auto OBC1::unload() -> void {
