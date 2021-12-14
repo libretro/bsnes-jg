@@ -71,29 +71,30 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/heuristics/heuristics.cpp \
 	$(OBJDIR)/processor/arm7tdmi/arm7tdmi.cpp \
 	$(OBJDIR)/processor/spc700/spc700.cpp \
+	$(OBJDIR)/processor/upd96050/upd96050.cpp \
 	$(OBJDIR)/processor/wdc65816/wdc65816.cpp \
 	$(OBJDIR)/sfc/cartridge/cartridge.cpp \
 	$(OBJDIR)/sfc/controller/controller.cpp \
-	$(OBJDIR)/sfc/coprocessor/armdsp/armdsp.cpp \
-	$(OBJDIR)/sfc/coprocessor/cx4/cx4.cpp \
-	$(OBJDIR)/sfc/coprocessor/dip/dip.cpp \
-	$(OBJDIR)/sfc/coprocessor/dsp1/dsp1.cpp \
-	$(OBJDIR)/sfc/coprocessor/dsp2/dsp2.cpp \
-	$(OBJDIR)/sfc/coprocessor/dsp4/dsp4.cpp \
-	$(OBJDIR)/sfc/coprocessor/epsonrtc/epsonrtc.cpp \
-	$(OBJDIR)/sfc/coprocessor/event/event.cpp \
-	$(OBJDIR)/sfc/coprocessor/hitachidsp/hitachidsp.cpp \
-	$(OBJDIR)/sfc/coprocessor/icd/icd.cpp \
-	$(OBJDIR)/sfc/coprocessor/mcc/mcc.cpp \
-	$(OBJDIR)/sfc/coprocessor/msu1/msu1.cpp \
-	$(OBJDIR)/sfc/coprocessor/necdsp/necdsp.cpp \
-	$(OBJDIR)/sfc/coprocessor/obc1/obc1.cpp \
-	$(OBJDIR)/sfc/coprocessor/sa1/sa1.cpp \
-	$(OBJDIR)/sfc/coprocessor/sdd1/sdd1.cpp \
-	$(OBJDIR)/sfc/coprocessor/sharprtc/sharprtc.cpp \
-	$(OBJDIR)/sfc/coprocessor/spc7110/spc7110.cpp \
-	$(OBJDIR)/sfc/coprocessor/st0010/st0010.cpp \
-	$(OBJDIR)/sfc/coprocessor/superfx/superfx.cpp \
+	$(OBJDIR)/sfc/coprocessor/armdsp.cpp \
+	$(OBJDIR)/sfc/coprocessor/cx4.cpp \
+	$(OBJDIR)/sfc/coprocessor/dip.cpp \
+	$(OBJDIR)/sfc/coprocessor/dsp1.cpp \
+	$(OBJDIR)/sfc/coprocessor/dsp2.cpp \
+	$(OBJDIR)/sfc/coprocessor/dsp4.cpp \
+	$(OBJDIR)/sfc/coprocessor/epsonrtc.cpp \
+	$(OBJDIR)/sfc/coprocessor/event.cpp \
+	$(OBJDIR)/sfc/coprocessor/hitachidsp.cpp \
+	$(OBJDIR)/sfc/coprocessor/icd.cpp \
+	$(OBJDIR)/sfc/coprocessor/mcc.cpp \
+	$(OBJDIR)/sfc/coprocessor/msu1.cpp \
+	$(OBJDIR)/sfc/coprocessor/necdsp.cpp \
+	$(OBJDIR)/sfc/coprocessor/obc1.cpp \
+	$(OBJDIR)/sfc/coprocessor/sa1.cpp \
+	$(OBJDIR)/sfc/coprocessor/sdd1.cpp \
+	$(OBJDIR)/sfc/coprocessor/sharprtc.cpp \
+	$(OBJDIR)/sfc/coprocessor/spc7110.cpp \
+	$(OBJDIR)/sfc/coprocessor/st0010.cpp \
+	$(OBJDIR)/sfc/coprocessor/superfx.cpp \
 	$(OBJDIR)/sfc/cpu/cpu.cpp \
 	$(OBJDIR)/sfc/dsp/dsp.cpp \
 	$(OBJDIR)/sfc/expansion/expansion.cpp \
@@ -126,30 +127,12 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/ppu \
 	$(OBJDIR)/sfc/ppu-fast \
 	$(OBJDIR)/sfc/expansion/satellaview \
-	$(OBJDIR)/sfc/coprocessor/armdsp \
-	$(OBJDIR)/sfc/coprocessor/cx4 \
-	$(OBJDIR)/sfc/coprocessor/dip \
-	$(OBJDIR)/sfc/coprocessor/dsp1 \
-	$(OBJDIR)/sfc/coprocessor/dsp2 \
-	$(OBJDIR)/sfc/coprocessor/dsp4 \
-	$(OBJDIR)/sfc/coprocessor/epsonrtc \
-	$(OBJDIR)/sfc/coprocessor/event \
-	$(OBJDIR)/sfc/coprocessor/hitachidsp \
-	$(OBJDIR)/sfc/coprocessor/icd \
-	$(OBJDIR)/sfc/coprocessor/mcc \
-	$(OBJDIR)/sfc/coprocessor/msu1 \
-	$(OBJDIR)/sfc/coprocessor/necdsp \
-	$(OBJDIR)/sfc/coprocessor/obc1 \
-	$(OBJDIR)/sfc/coprocessor/sa1 \
-	$(OBJDIR)/sfc/coprocessor/sdd1 \
-	$(OBJDIR)/sfc/coprocessor/sharprtc \
-	$(OBJDIR)/sfc/coprocessor/spc7110 \
-	$(OBJDIR)/sfc/coprocessor/st0010 \
-	$(OBJDIR)/sfc/coprocessor/superfx \
+	$(OBJDIR)/sfc/coprocessor \
 	$(OBJDIR)/sfc/slot/bsmemory \
 	$(OBJDIR)/sfc/slot/sufamiturbo \
 	$(OBJDIR)/processor/arm7tdmi \
 	$(OBJDIR)/processor/spc700 \
+	$(OBJDIR)/processor/upd96050 \
 	$(OBJDIR)/processor/wdc65816 \
 	$(OBJDIR)/gb/Core \
 	$(OBJDIR)/libco
