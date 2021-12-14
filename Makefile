@@ -82,7 +82,8 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/sfc/memory/memory.cpp \
 	$(OBJDIR)/sfc/ppu/ppu.cpp \
 	$(OBJDIR)/sfc/ppu-fast/ppu.cpp \
-	$(OBJDIR)/sfc/slot/slot.cpp \
+	$(OBJDIR)/sfc/slot/bsmemory/bsmemory.cpp \
+	$(OBJDIR)/sfc/slot/sufamiturbo/sufamiturbo.cpp \
 	$(OBJDIR)/sfc/smp/smp.cpp \
 	$(OBJDIR)/sfc/system/system.cpp \
 	$(OBJDIR)/jg.cpp
@@ -102,7 +103,8 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/ppu-fast \
 	$(OBJDIR)/sfc/expansion \
 	$(OBJDIR)/sfc/coprocessor \
-	$(OBJDIR)/sfc/slot \
+	$(OBJDIR)/sfc/slot/bsmemory \
+	$(OBJDIR)/sfc/slot/sufamiturbo \
 	$(OBJDIR)/processor/arm7tdmi \
 	$(OBJDIR)/processor/spc700 \
 	$(OBJDIR)/processor/wdc65816 \
