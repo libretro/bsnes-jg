@@ -88,14 +88,10 @@ static jg_inputstate_t *input_device[NUMINPUTS];
 // Emulator settings
 static jg_setting_t settings_bsnes[] = { // name, default, min, max
     { "aspect_ratio", "", 0, 0, 1 }, // 0 = 8:7, 1 = Auto Region
-    { "fast_ppu", "", 0, 0, 1 }, // 0 = Disabled, 1 = Enabled
-    { "mode7_scale", "", 1, 1, 8 }, // N = Scale Factor
 };
 
 enum {
     ASPECT,
-    FASTPPU,
-    M7SCALE,
 };
 
 static vector<string> cheatList;
@@ -318,32 +314,8 @@ void Program::load() {
     auto title = superFamicom.title;
     auto region = superFamicom.region;
     
-    //relies on mid-scanline rendering techniques
-    if (title == "AIR STRIKE PATROL" || title == "DESERT FIGHTER")
-        emulator->configure("Hacks/PPU/Fast", false);
-    
-    //the dialogue text is blurry due to an issue in the scanline-based
-    //renderer's color math support
-    else if (title == "マーヴェラス")
-        emulator->configure("Hacks/PPU/Fast", false);
-    
-    //stage 2 uses pseudo-hires in a way that's not compatible with the
-    //scanline-based renderer
-    else if (title == "SFC クレヨンシンチャン")
-        emulator->configure("Hacks/PPU/Fast", false);
-    
-    //title screen game select (after choosing a game) changes OAM tiledata
-    //address mid-frame. This is only supported by the cycle-based PPU renderer
-    else if (title == "Winter olympics")
-        emulator->configure("Hacks/PPU/Fast", false);
-    
-    //title screen shows remnants of the flag after choosing a language with the
-    //scanline-based renderer
-    else if (title == "WORLD CUP STRIKER")
-        emulator->configure("Hacks/PPU/Fast", false);
-    
     //relies on cycle-accurate writes to the echo buffer
-    else if (title == "KOUSHIEN_2")
+    if (title == "KOUSHIEN_2")
         emulator->configure("Hacks/DSP/Fast", false);
     
     //will hang immediately
@@ -1079,12 +1051,9 @@ int jg_game_load() {
     emulator->configure("Hacks/SA1/Overclock", 100);
     emulator->configure("Hacks/SuperFX/Overclock", 100);
     
-    emulator->configure("Hacks/PPU/Fast",
-        settings_bsnes[FASTPPU].value ? true : false);
     emulator->configure("Hacks/PPU/Deinterlace", false);
     emulator->configure("Hacks/PPU/NoSpriteLimit", false);
     emulator->configure("Hacks/PPU/NoVRAMBlocking", false);
-    emulator->configure("Hacks/PPU/Mode7/Scale", settings_bsnes[M7SCALE].value);
     emulator->configure("Hacks/PPU/Mode7/Perspective", false);
     emulator->configure("Hacks/PPU/Mode7/Supersample", false);
     emulator->configure("Hacks/PPU/Mode7/Mosaic", false);

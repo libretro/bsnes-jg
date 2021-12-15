@@ -201,20 +201,12 @@ auto PPU::cycle() -> void {
 }
 
 auto PPU::latchCounters(uint hcounter, uint vcounter) -> void {
-  if(system.fastPPU()) {
-    return ppufast.latchCounters(hcounter, vcounter);
-  }
-
   io.hcounter = hcounter;
   io.vcounter = vcounter;
   latch.counters = 1;
 }
 
 auto PPU::latchCounters() -> void {
-  if(system.fastPPU()) {
-    return ppufast.latchCounters();
-  }
-
   cpu.synchronizePPU();
   io.hcounter = hdot();
   io.vcounter = vcounter();
@@ -1875,10 +1867,6 @@ auto PPU::serialize(serializer& s) -> void {
   s.integer(display.overscan);
   s.integer(display.vdisp);
 
-  if(system.fastPPU()) {
-    return ppufast.serialize(s);
-  }
-
   Thread::serialize(s);
   PPUcounter::serialize(s);
 
@@ -2221,16 +2209,10 @@ auto PPU::load() -> bool {
   ppu2.version = max(1, min(3, configuration.system.ppu2.version));
   vram.mask = configuration.system.ppu1.vram.size / sizeof(uint16) - 1;
   if(vram.mask != 0xffff) vram.mask = 0x7fff;
-  return true && ppufast.load();
+  return true;
 }
 
 auto PPU::power(bool reset) -> void {
-  if(system.fastPPU()) {
-    create(PPUfast::Enter, system.cpuFrequency());
-    ppufast.power(reset);
-    return;
-  }
-
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
   memory::fill<uint16>(output, 512 * 480);
@@ -2338,10 +2320,6 @@ auto PPU::power(bool reset) -> void {
 }
 
 auto PPU::refresh() -> void {
-  if(system.fastPPU()) {
-    return ppufast.refresh();
-  }
-
   if(system.runAhead) return;
 
   auto output = this->output;

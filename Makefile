@@ -102,7 +102,6 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/sfc/interface/interface.cpp \
 	$(OBJDIR)/sfc/memory/memory.cpp \
 	$(OBJDIR)/sfc/ppu/ppu.cpp \
-	$(OBJDIR)/sfc/ppu-fast/ppu.cpp \
 	$(OBJDIR)/sfc/slot/bsmemory/bsmemory.cpp \
 	$(OBJDIR)/sfc/slot/sufamiturbo/sufamiturbo.cpp \
 	$(OBJDIR)/sfc/smp/smp.cpp \

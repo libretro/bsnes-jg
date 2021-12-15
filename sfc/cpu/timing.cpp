@@ -134,7 +134,6 @@ auto CPU::scanline() -> void {
   if(vcounter() == ppu.vdisp()) {
     if(auto device = controllerPort2.device) device->latch();  //light guns
     synchronizePPU();
-    if(system.fastPPU()) PPUfast::Line::flush();
     scheduler.leave(Scheduler::Event::Frame);
   }
 }

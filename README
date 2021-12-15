@@ -54,12 +54,3 @@ Settings
 --------
 aspect_ratio = 0
 0 = 8:7, 1 = Auto Region
-
-fast_ppu = 0
-0 = Disabled, 1 = Enabled
-
-mode7_scale = 1
-N = Scale Factor (1-8)
-
-Notes:
-  States are incompatible between accurate PPU and fast PPU
