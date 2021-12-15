@@ -106,7 +106,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/sfc/dsp.cpp \
 	$(OBJDIR)/sfc/dsp/SPC_DSP.cpp \
 	$(OBJDIR)/sfc/expansion/expansion.cpp \
-	$(OBJDIR)/sfc/expansion/satellaview/satellaview.cpp \
+	$(OBJDIR)/sfc/expansion/satellaview.cpp \
 	$(OBJDIR)/sfc/interface.cpp \
 	$(OBJDIR)/sfc/memory.cpp \
 	$(OBJDIR)/sfc/ppu.cpp \
@@ -118,7 +118,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 
 # TODO: Do we need this?
 # https://github.com/defparam/21FX
-#	$(OBJDIR)/sfc/expansion/21fx/21fx.cpp \
+#	$(OBJDIR)/sfc/expansion/21fx.cpp \
 
 # Object dirs
 MKDIRS := $(OBJDIR)/emulator/audio \
@@ -126,13 +126,11 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/processor \
 	$(OBJDIR)/sfc/controller \
 	$(OBJDIR)/sfc/dsp \
-	$(OBJDIR)/sfc/expansion/satellaview \
+	$(OBJDIR)/sfc/expansion \
 	$(OBJDIR)/sfc/coprocessor \
 	$(OBJDIR)/sfc/slot \
 	$(OBJDIR)/gb/Core \
 	$(OBJDIR)/libco
-
-#	$(OBJDIR)/sfc/expansion/21fx \
 
 # List of object files
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
