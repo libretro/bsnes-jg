@@ -1,3 +1,7 @@
+#include <sfc/sfc.hpp>
+
+namespace SuperFamicom {
+
 Mouse::Mouse(uint port) : Controller(port) {
   latched = 0;
   counter = 0;
@@ -83,4 +87,6 @@ auto Mouse::latch(bool data) -> void {
 
   x = min(127, x);
   y = min(127, y);
+}
+
 }
