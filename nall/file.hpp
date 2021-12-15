@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sys/stat.h>
+
 namespace nall {
 
 struct file : inode {
@@ -20,16 +22,6 @@ struct file : inode {
         return true;
       }
     }
-    return false;
-  }
-
-  //attempt to rename file first
-  //this will fail if paths point to different file systems; fall back to copy+remove in this case
-  static auto move(const string& sourcename, const string& targetname) -> bool {
-    if(sourcename == targetname) return true;
-    if(rename(sourcename, targetname)) return true;
-    if(!writable(sourcename)) return false;
-    if(copy(sourcename, targetname)) return remove(sourcename), true;
     return false;
   }
 

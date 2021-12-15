@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unistd.h>
+
 namespace nall {
 
 //on Windows (at least for 7 and earlier), FILE* is not buffered
