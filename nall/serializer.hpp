@@ -11,6 +11,8 @@
 //- only plain-old-data can be stored. complex classes must provide serialize(serializer&);
 //- floating-point usage is not portable across different implementations
 
+#include <string.h>
+
 namespace nall {
 
 struct serializer;
