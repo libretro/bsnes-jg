@@ -131,9 +131,57 @@ namespace SuperFamicom {
     static inline auto PAL() -> bool;
   };
 
+  //PPUcounter emulates the H/V latch counters of the S-PPU2.
+  //
+  //real hardware has the S-CPU maintain its own copy of these counters that are
+  //updated based on the state of the S-PPU Vblank and Hblank pins. emulating this
+  //would require full lock-step synchronization for every clock tick.
+  //to bypass this and allow the two to run out-of-order, both the CPU and PPU
+  //classes inherit PPUcounter and keep their own counters.
+  //the timers are kept in sync, as the only differences occur on V=240 and V=261,
+  //based on interlace. thus, we need only synchronize and fetch interlace at any
+  //point before this in the frame, which is handled internally by this class at
+  //V=128.
+
+  struct PPUcounter {
+    alwaysinline auto tick() -> void;
+    alwaysinline auto tick(uint clocks) -> void; private:
+    alwaysinline auto tickScanline() -> void; public:
+
+    alwaysinline auto interlace() const -> bool;
+    alwaysinline auto field() const -> bool;
+    alwaysinline auto vcounter() const -> uint;
+    alwaysinline auto hcounter() const -> uint;
+    alwaysinline auto hdot() const -> uint; private:
+    alwaysinline auto vperiod() const -> uint; public:
+    alwaysinline auto hperiod() const -> uint;
+
+    alwaysinline auto vcounter(uint offset) const -> uint;
+    alwaysinline auto hcounter(uint offset) const -> uint;
+
+    inline auto reset() -> void;
+    auto serialize(serializer&) -> void;
+
+    function<void ()> scanline;
+
+  private:
+    struct {
+      bool interlace = 0;
+      bool field = 0;
+      uint vperiod = 0;
+      uint hperiod = 0;
+      uint vcounter = 0;
+      uint hcounter = 0;
+    } time;
+
+    struct {
+      uint vperiod = 0;
+      uint hperiod = 0;
+    } last;
+  };
+
   #include <sfc/system.hpp>
-  #include <sfc/memory/memory.hpp>
-  #include <sfc/ppu/counter.hpp>
+  #include <sfc/memory.hpp>
 
   #include <sfc/cpu.hpp>
   #include <sfc/dsp.hpp>
@@ -166,8 +214,123 @@ namespace SuperFamicom {
   #include <sfc/slot/bsmemory.hpp>
   #include <sfc/slot/sufamiturbo.hpp>
 
-  #include <sfc/memory/memory-inline.hpp>
-  #include <sfc/ppu/counter-inline.hpp>
+  auto Bus::mirror(uint addr, uint size) -> uint {
+    if(size == 0) return 0;
+    uint base = 0;
+    uint mask = 1 << 23;
+    while(addr >= size) {
+      while(!(addr & mask)) mask >>= 1;
+      addr -= mask;
+      if(size > mask) {
+        size -= mask;
+        base += mask;
+      }
+      mask >>= 1;
+    }
+    return base + addr;
+  }
+
+  auto Bus::reduce(uint addr, uint mask) -> uint {
+    while(mask) {
+      uint bits = (mask & -mask) - 1;
+      addr = ((addr >> 1) & ~bits) | (addr & bits);
+      mask = (mask & (mask - 1)) >> 1;
+    }
+    return addr;
+  }
+
+  auto Bus::read(uint addr, uint8 data) -> uint8 {
+    return reader[lookup[addr]](target[addr], data);
+  }
+
+  auto Bus::write(uint addr, uint8 data) -> void {
+    return writer[lookup[addr]](target[addr], data);
+  }
+
+  auto PPUcounter::tick() -> void {
+    time.hcounter += 2;  //increment by smallest unit of time.
+    if(time.hcounter == hperiod()) {
+      last.hperiod = hperiod();
+      time.hcounter = 0;
+      tickScanline();
+    }
+  }
+
+  auto PPUcounter::tick(uint clocks) -> void {
+    time.hcounter += clocks;
+    if(time.hcounter >= hperiod()) {
+      last.hperiod = hperiod();
+      time.hcounter -= hperiod();
+      tickScanline();
+    }
+  }
+
+  auto PPUcounter::tickScanline() -> void {
+    if(++time.vcounter == 128) {
+      //it's not important when this is captured: it is only needed at V=240 or V=311.
+      time.interlace = ppu.interlace();
+      time.vperiod += interlace() && !field();
+    }
+
+    if(vcounter() == vperiod()) {
+      last.vperiod = vperiod();
+      //this may be off by one until V=128, hence why vperiod() is a private function.
+      time.vperiod = Region::NTSC() ? 262 : 312;
+      time.vcounter = 0;
+      time.field ^= 1;
+    }
+
+    time.hperiod = 1364;
+    //NTSC and PAL scanline rates would not match up with color clocks if every scanline were 1364 clocks.
+    //to offset for this error, NTSC has one short scanline, and PAL has one long scanline.
+    if(Region::NTSC() && interlace() == 0 && field() == 1 && vcounter() == 240) time.hperiod -= 4;
+    if(Region::PAL()  && interlace() == 1 && field() == 1 && vcounter() == 311) time.hperiod += 4;
+    if(scanline) scanline();
+  }
+
+  auto PPUcounter::interlace() const -> bool { return time.interlace; }
+  auto PPUcounter::field() const -> bool { return time.field; }
+  auto PPUcounter::vcounter() const -> uint { return time.vcounter; }
+  auto PPUcounter::hcounter() const -> uint { return time.hcounter; }
+  auto PPUcounter::vperiod() const -> uint { return time.vperiod; }
+  auto PPUcounter::hperiod() const -> uint { return time.hperiod; }
+
+  auto PPUcounter::vcounter(uint offset) const -> uint {
+    if(offset <= hcounter()) return vcounter();
+    if(vcounter() > 0) return vcounter() - 1;
+    return last.vperiod - 1;
+  }
+
+  auto PPUcounter::hcounter(uint offset) const -> uint {
+    if(offset <= hcounter()) return hcounter() - offset;
+    return hcounter() + last.hperiod - offset;
+  }
+
+  //one PPU dot = 4 CPU clocks.
+  //
+  //PPU dots 323 and 327 are 6 CPU clocks long.
+  //this does not apply to NTSC non-interlace scanline 240 on odd fields. this is
+  //because the PPU skips one dot to alter the color burst phase of the video signal.
+  //it is not known what happens for PAL 1368 clock scanlines.
+  //
+  //dot 323 range = {1292, 1294, 1296}
+  //dot 327 range = {1310, 1312, 1314}
+
+  auto PPUcounter::hdot() const -> uint {
+    if(hperiod() == 1360) {
+      return hcounter() >> 2;
+    } else {
+      return hcounter() - ((hcounter() > 1292) << 1) - ((hcounter() > 1310) << 1) >> 2;
+    }
+  }
+
+  auto PPUcounter::reset() -> void {
+    time = {};
+    last = {};
+
+    time.vperiod = last.vperiod = Region::NTSC() ? 262 : 312;
+    time.hperiod = last.hperiod = 1364;
+  }
 }
 
 #include <sfc/interface.hpp>
