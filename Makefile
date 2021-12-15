@@ -113,7 +113,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/sfc/slot/bsmemory/bsmemory.cpp \
 	$(OBJDIR)/sfc/slot/sufamiturbo/sufamiturbo.cpp \
 	$(OBJDIR)/sfc/smp.cpp \
-	$(OBJDIR)/sfc/system/system.cpp \
+	$(OBJDIR)/sfc/system.cpp \
 	$(OBJDIR)/jg.cpp
 
 # TODO: Do we need this?
@@ -124,7 +124,6 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/heuristics \
 	$(OBJDIR)/processor \
-	$(OBJDIR)/sfc/system \
 	$(OBJDIR)/sfc/controller \
 	$(OBJDIR)/sfc/memory \
 	$(OBJDIR)/sfc/dsp \

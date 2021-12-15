@@ -129,7 +129,7 @@ namespace SuperFamicom {
     static inline auto PAL() -> bool;
   };
 
-  #include <sfc/system/system.hpp>
+  #include <sfc/system.hpp>
   #include <sfc/memory/memory.hpp>
   #include <sfc/ppu/counter.hpp>
 
