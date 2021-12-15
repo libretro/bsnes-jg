@@ -14,7 +14,7 @@ CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 PKGCONF ?= pkg-config
 CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
 
-INCLUDES := -I$(SOURCEDIR)/. $(CFLAGS_JG)
+INCLUDES := -I$(SOURCEDIR)/. -I$(SOURCEDIR)/deps $(CFLAGS_JG)
 INCLUDES_GB := -I$(SOURCEDIR)/sameboy
 WARNINGS :=
 WARNINGS_CO := -Wall
@@ -138,7 +138,7 @@ OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 .PHONY: all clean install install-strip uninstall
 
 # libco rules
-$(OBJDIR)/libco/%.o: $(SOURCEDIR)/libco/%.c $(OBJDIR)/.tag
+$(OBJDIR)/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
 	$(info $(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c \
 		$(SUBST $(SOURCEDIR)/,,$<) -o $@)
 	@$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
