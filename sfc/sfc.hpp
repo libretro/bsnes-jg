@@ -14,7 +14,7 @@
 #include <processor/hg51b.hpp>
 #include <processor/spc700.hpp>
 #include <processor/upd96050.hpp>
-#include <processor/wdc65816/wdc65816.hpp>
+#include <processor/wdc65816.hpp>
 
 extern "C" {
   #include <gb/Core/gb.h>
