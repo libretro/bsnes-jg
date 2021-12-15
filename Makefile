@@ -68,7 +68,6 @@ CSRCS := $(OBJDIR)/gb/Core/apu.c \
 
 CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 	$(OBJDIR)/emulator/emulator.cpp \
-	$(OBJDIR)/heuristics/heuristics.cpp \
 	$(OBJDIR)/sfc/cartridge.cpp \
 	$(OBJDIR)/sfc/controller/controller.cpp \
 	$(OBJDIR)/sfc/controller/gamepad.cpp \
@@ -101,6 +100,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 	$(OBJDIR)/sfc/dsp/SPC_DSP.cpp \
 	$(OBJDIR)/sfc/expansion/expansion.cpp \
 	$(OBJDIR)/sfc/expansion/satellaview.cpp \
+	$(OBJDIR)/sfc/heuristics.cpp \
 	$(OBJDIR)/sfc/interface.cpp \
 	$(OBJDIR)/sfc/memory.cpp \
 	$(OBJDIR)/sfc/ppu.cpp \
@@ -122,7 +122,6 @@ CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 
 # Object dirs
 MKDIRS := $(OBJDIR)/emulator \
-	$(OBJDIR)/heuristics \
 	$(OBJDIR)/sfc/controller \
 	$(OBJDIR)/sfc/dsp \
 	$(OBJDIR)/sfc/expansion \
