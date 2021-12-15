@@ -66,7 +66,7 @@ CSRCS := $(OBJDIR)/gb/Core/apu.c \
 	$(OBJDIR)/gb/Core/workboy.c \
 	$(OBJDIR)/libco/libco.c
 
-CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
+CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 	$(OBJDIR)/emulator/emulator.cpp \
 	$(OBJDIR)/heuristics/heuristics.cpp \
 	$(OBJDIR)/sfc/cartridge.cpp \
@@ -121,7 +121,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 #	$(OBJDIR)/sfc/expansion/21fx.cpp \
 
 # Object dirs
-MKDIRS := $(OBJDIR)/emulator/audio \
+MKDIRS := $(OBJDIR)/emulator \
 	$(OBJDIR)/heuristics \
 	$(OBJDIR)/sfc/controller \
 	$(OBJDIR)/sfc/dsp \

@@ -33,8 +33,8 @@
 using namespace nall;
 
 #include <emulator/types.hpp>
-#include <emulator/memory/memory.hpp>
-#include <emulator/audio/audio.hpp>
+#include <emulator/memory.hpp>
+#include <emulator/audio.hpp>
 
 namespace Emulator {
   //incremented only when serialization format changes
