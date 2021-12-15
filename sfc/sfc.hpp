@@ -7,12 +7,12 @@
 #include <emulator/random.hpp>
 #include <emulator/cheat.hpp>
 
-#include <processor/arm7tdmi.hpp>
-#include <processor/gsu.hpp>
-#include <processor/hg51b.hpp>
-#include <processor/spc700.hpp>
-#include <processor/upd96050.hpp>
-#include <processor/wdc65816.hpp>
+#include "processor/arm7tdmi.hpp"
+#include "processor/gsu.hpp"
+#include "processor/hg51b.hpp"
+#include "processor/spc700.hpp"
+#include "processor/upd96050.hpp"
+#include "processor/wdc65816.hpp"
 
 inline constexpr auto operator"" _KiB(unsigned long long value) {
   return value * 1024;
