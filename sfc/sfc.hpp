@@ -19,8 +19,8 @@ inline constexpr auto operator"" _KiB(unsigned long long value) {
 }
 
 extern "C" {
-  #include <gb/Core/gb.h>
-  #include <gb/Core/random.h>
+  #include <gb/gb.h>
+  #include <gb/random.h>
 }
 
 namespace SuperFamicom {

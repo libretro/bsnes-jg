@@ -47,23 +47,23 @@ endif
 
 OBJDIR := objs
 
-CSRCS := $(OBJDIR)/deps/gb/Core/apu.c \
-	$(OBJDIR)/deps/gb/Core/camera.c \
-	$(OBJDIR)/deps/gb/Core/display.c \
-	$(OBJDIR)/deps/gb/Core/gb.c \
-	$(OBJDIR)/deps/gb/Core/joypad.c \
-	$(OBJDIR)/deps/gb/Core/mbc.c \
-	$(OBJDIR)/deps/gb/Core/memory.c \
-	$(OBJDIR)/deps/gb/Core/printer.c \
-	$(OBJDIR)/deps/gb/Core/random.c \
-	$(OBJDIR)/deps/gb/Core/rewind.c \
-	$(OBJDIR)/deps/gb/Core/rumble.c \
-	$(OBJDIR)/deps/gb/Core/save_state.c \
-	$(OBJDIR)/deps/gb/Core/sgb.c \
-	$(OBJDIR)/deps/gb/Core/sm83_cpu.c \
-	$(OBJDIR)/deps/gb/Core/symbol_hash.c \
-	$(OBJDIR)/deps/gb/Core/timing.c \
-	$(OBJDIR)/deps/gb/Core/workboy.c \
+CSRCS := $(OBJDIR)/deps/gb/apu.c \
+	$(OBJDIR)/deps/gb/camera.c \
+	$(OBJDIR)/deps/gb/display.c \
+	$(OBJDIR)/deps/gb/gb.c \
+	$(OBJDIR)/deps/gb/joypad.c \
+	$(OBJDIR)/deps/gb/mbc.c \
+	$(OBJDIR)/deps/gb/memory.c \
+	$(OBJDIR)/deps/gb/printer.c \
+	$(OBJDIR)/deps/gb/random.c \
+	$(OBJDIR)/deps/gb/rewind.c \
+	$(OBJDIR)/deps/gb/rumble.c \
+	$(OBJDIR)/deps/gb/save_state.c \
+	$(OBJDIR)/deps/gb/sgb.c \
+	$(OBJDIR)/deps/gb/sm83_cpu.c \
+	$(OBJDIR)/deps/gb/symbol_hash.c \
+	$(OBJDIR)/deps/gb/timing.c \
+	$(OBJDIR)/deps/gb/workboy.c \
 	$(OBJDIR)/deps/libco/libco.c
 
 CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
@@ -121,7 +121,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 #	$(OBJDIR)/sfc/expansion/21fx.cpp \
 
 # Object dirs
-MKDIRS := $(OBJDIR)/deps/gb/Core \
+MKDIRS := $(OBJDIR)/deps/gb \
 	$(OBJDIR)/deps/libco \
 	$(OBJDIR)/emulator \
 	$(OBJDIR)/sfc/controller \
@@ -143,7 +143,7 @@ $(OBJDIR)/deps/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
 	@$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
 
 # Game Boy rules
-$(OBJDIR)/deps/gb/Core/%.o: $(SOURCEDIR)/deps/gb/Core/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag
 	$(info $(CC) $(CFLAGS) $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
 		$(subst $(SOURCEDIR)/,,$(INCLUDES_GB) -c $<) -o $@)
 	@$(CC) $(CFLAGS) $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
