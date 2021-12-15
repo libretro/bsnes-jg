@@ -1,5 +1,7 @@
 #pragma once
 
+#include <assert.h>
+
 namespace nall {
 
 struct nothing_t {};

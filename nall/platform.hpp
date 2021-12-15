@@ -12,27 +12,7 @@ namespace Math {
   #include <shellapi.h>
   #include <nall/windows/guard.hpp>
   #include <nall/windows/utf8.hpp>
-#endif
 
-#include <initializer_list>
-#include <string>
-#include <typeinfo>
-
-#include <assert.h>
-#include <math.h>
-#include <utime.h>
-#include <fcntl.h>
-#include <unistd.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#if !defined(PLATFORM_WINDOWS)
-  #include <pwd.h>
-  #include <grp.h>
-#endif
-
-#if defined(PLATFORM_WINDOWS)
   inline auto mkdir(const char* path, int mode) -> int { return _wmkdir(nall::utf16_t(path)); }
 #endif
 

@@ -3,6 +3,17 @@
 //generic abstraction layer for common storage operations against both files and directories
 //these functions are not recursive; use directory::create() and directory::remove() for recursion
 
+#include <sys/stat.h>
+
+#include <fcntl.h>
+#include <unistd.h>
+#include <utime.h>
+
+#if !defined(_WIN32)
+  #include <pwd.h>
+  #include <grp.h>
+#endif
+
 namespace nall {
 
 struct inode {
