@@ -1,4 +1,4 @@
-#include "SPC_DSP.h"
+#include <sfc/dsp/SPC_DSP.h>
 
 struct DSP {
   shared_pointer<Emulator::Stream> stream;

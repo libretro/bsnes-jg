@@ -1,10 +1,5 @@
 // snes_spc 0.9.0. http://www.slack.net/~ant/
 
-#include "SPC_DSP.h"
-
-#include "blargg_endian.h"
-#include <string.h>
-
 /* Copyright (C) 2007 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
 General Public License as published by the Free Software Foundation; either
@@ -16,6 +11,12 @@ details. You should have received a copy of the GNU Lesser General Public
 License along with this module; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
+#include <sfc/sfc.hpp>
+
+namespace SuperFamicom {
+
+#include "SPC_DSP.h"
+#include "blargg_endian.h"
 #include "blargg_source.h"
 
 #ifdef BLARGG_ENABLE_OPTIMIZER
@@ -25,6 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #if INT_MAX < 0x7FFFFFFF
 	#error "Requires that int type have at least 32 bits"
 #endif
+
 
 // TODO: add to blargg_endian.h
 #define GET_LE16SA( addr )      ((BOOST::int16_t) GET_LE16( addr ))
@@ -1046,3 +1048,5 @@ void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
 	copier.extra();
 }
 #endif
+
+}
