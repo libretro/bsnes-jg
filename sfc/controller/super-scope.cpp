@@ -85,7 +85,7 @@ auto SuperScope::data() -> uint2 {
   case 7: return 0;  //noise (1 = yes)
   }
 
-  unreachable;
+  return 0; // unreachable
 }
 
 auto SuperScope::latch(bool data) -> void {

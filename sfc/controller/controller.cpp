@@ -16,7 +16,7 @@ auto Controller::iobit() -> bool {
   case ID::Port::Controller1: return cpu.pio() & 0x40;
   case ID::Port::Controller2: return cpu.pio() & 0x80;
   }
-  unreachable;
+  return 0; // unreachable
 }
 
 auto Controller::iobit(bool data) -> void {

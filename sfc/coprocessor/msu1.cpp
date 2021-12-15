@@ -159,7 +159,7 @@ auto MSU1::readIO(uint addr, uint8) -> uint8 {
   case 0x2007: return '1';
   }
 
-  unreachable;
+  return 0; // unreachable
 }
 
 auto MSU1::writeIO(uint addr, uint8 data) -> void {

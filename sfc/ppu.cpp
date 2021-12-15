@@ -221,7 +221,7 @@ auto PPU::addressVRAM() const -> uint16 {
   case 2: return address & 0xfe00 | address << 3 & 0x01f8 | address >> 6 & 7;
   case 3: return address & 0xfc00 | address << 3 & 0x03f8 | address >> 7 & 7;
   }
-  unreachable;
+  return 0; // unreachable
 }
 
 auto PPU::readVRAM() -> uint16 {

@@ -434,7 +434,7 @@ auto SDD1::mmcRead(uint addr) -> uint8 {
   case 2: return rom.read((r4806 & 0xf) << 20 | addr & 0xfffff);  //e0-ef:0000-ffff
   case 3: return rom.read((r4807 & 0xf) << 20 | addr & 0xfffff);  //f0-ff:0000-ffff
   }
-  unreachable;
+  return 0; // unreachable
 }
 
 //map address=00-3f,80-bf:8000-ffff

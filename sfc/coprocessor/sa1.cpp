@@ -170,7 +170,7 @@ auto SA1::BWRAM::readBitmap(uint20 address, uint8 data) -> uint8 {
     case 3: return read(address) >> 6 & 3;
     }
   }
-  unreachable;
+  return 0; // unreachable
 }
 
 auto SA1::BWRAM::writeBitmap(uint20 address, uint8 data) -> void {

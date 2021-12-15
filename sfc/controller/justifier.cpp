@@ -83,7 +83,7 @@ auto Justifier::data() -> uint2 {
   case 31: return 0;
   }
 
-  unreachable;
+  return 0; // unreachable
 }
 
 auto Justifier::latch(bool data) -> void {

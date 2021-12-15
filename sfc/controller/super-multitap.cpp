@@ -45,7 +45,7 @@ auto SuperMultitap::data() -> uint2 {
   case 10: return A.l << 0 | B.l << 1;
   case 11: return A.r << 0 | B.r << 1;
   }
-  unreachable;
+  return 0; // unreachable
 }
 
 auto SuperMultitap::latch(bool data) -> void {

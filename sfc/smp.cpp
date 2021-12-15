@@ -52,7 +52,7 @@ auto SMP::portRead(uint2 port) const -> uint8 {
   if(port == 1) return io.cpu1;
   if(port == 2) return io.cpu2;
   if(port == 3) return io.cpu3;
-  unreachable;
+  return 0; // unreachable
 }
 
 auto SMP::portWrite(uint2 port, uint8 data) -> void {

@@ -36,7 +36,7 @@ auto ARM7TDMI::r(uint4 index) -> GPR& {
   }
   case 15: return processor.r15;
   }
-  unreachable;
+  throw; // unreachable
 }
 
 auto ARM7TDMI::cpsr() -> PSR& {
@@ -197,7 +197,7 @@ auto ARM7TDMI::TST(uint4 mode) -> bool {
   case 14: return true;                                   //AL (always)
   case 15: return false;                                  //NV (never)
   }
-  unreachable;
+  return 0; // unreachable
 }
 
 auto ARM7TDMI::fetch() -> void {

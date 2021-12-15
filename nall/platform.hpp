@@ -7,32 +7,19 @@ namespace Math {
 
 #if defined(PLATFORM_WINDOWS)
   #include <nall/windows/guard.hpp>
-  #include <initguid.h>
-  #include <cguid.h>
   #include <windows.h>
-  #include <direct.h>
-  #include <io.h>
   #include <wchar.h>
-  #include <shlobj.h>
   #include <shellapi.h>
   #include <nall/windows/guard.hpp>
   #include <nall/windows/utf8.hpp>
 #endif
 
-#include <atomic>
-#include <limits>
-#include <mutex>
-#include <utility>
+#include <initializer_list>
+#include <string>
+#include <typeinfo>
 
 #include <assert.h>
-#include <errno.h>
-#include <limits.h>
 #include <math.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <utime.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -41,8 +28,6 @@ namespace Math {
 #include <sys/stat.h>
 
 #if !defined(PLATFORM_WINDOWS)
-  #include <dlfcn.h>
-  #include <unistd.h>
   #include <pwd.h>
   #include <grp.h>
 #endif
@@ -61,13 +46,3 @@ namespace Math {
   #define noinline
   #define alwaysinline  inline
 #endif
-
-//P0627: [[unreachable]] -- impossible to simulate with identical syntax, must omit brackets ...
-#if defined(COMPILER_CLANG) || defined(COMPILER_GCC)
-  #define unreachable __builtin_unreachable()
-#else
-  #define unreachable throw
-#endif
-
-#define export $export
-#define register $register
