@@ -180,39 +180,39 @@ namespace SuperFamicom {
     } last;
   };
 
-  #include <sfc/system.hpp>
-  #include <sfc/memory.hpp>
+  #include "system.hpp"
+  #include "memory.hpp"
 
-  #include <sfc/cpu.hpp>
-  #include <sfc/dsp.hpp>
-  #include <sfc/ppu.hpp>
-  #include <sfc/smp.hpp>
+  #include "cpu.hpp"
+  #include "dsp.hpp"
+  #include "ppu.hpp"
+  #include "smp.hpp"
 
-  #include <sfc/cartridge.hpp>
-  #include <sfc/controller/controller.hpp>
-  #include <sfc/coprocessor/armdsp.hpp>
-  #include <sfc/coprocessor/cx4.hpp>
-  #include <sfc/coprocessor/dip.hpp>
-  #include <sfc/coprocessor/dsp1.hpp>
-  #include <sfc/coprocessor/dsp2.hpp>
-  #include <sfc/coprocessor/dsp4.hpp>
-  #include <sfc/coprocessor/epsonrtc.hpp>
-  #include <sfc/coprocessor/event.hpp>
-  #include <sfc/coprocessor/hitachidsp.hpp>
-  #include <sfc/coprocessor/icd.hpp>
-  #include <sfc/coprocessor/mcc.hpp>
-  #include <sfc/coprocessor/msu1.hpp>
-  #include <sfc/coprocessor/necdsp.hpp>
-  #include <sfc/coprocessor/obc1.hpp>
-  #include <sfc/coprocessor/sa1.hpp>
-  #include <sfc/coprocessor/sdd1.hpp>
-  #include <sfc/coprocessor/sharprtc.hpp>
-  #include <sfc/coprocessor/spc7110.hpp>
-  #include <sfc/coprocessor/st0010.hpp>
-  #include <sfc/coprocessor/superfx.hpp>
-  #include <sfc/expansion/expansion.hpp>
-  #include <sfc/slot/bsmemory.hpp>
-  #include <sfc/slot/sufamiturbo.hpp>
+  #include "cartridge.hpp"
+  #include "controller/controller.hpp"
+  #include "coprocessor/armdsp.hpp"
+  #include "coprocessor/cx4.hpp"
+  #include "coprocessor/dip.hpp"
+  #include "coprocessor/dsp1.hpp"
+  #include "coprocessor/dsp2.hpp"
+  #include "coprocessor/dsp4.hpp"
+  #include "coprocessor/epsonrtc.hpp"
+  #include "coprocessor/event.hpp"
+  #include "coprocessor/hitachidsp.hpp"
+  #include "coprocessor/icd.hpp"
+  #include "coprocessor/mcc.hpp"
+  #include "coprocessor/msu1.hpp"
+  #include "coprocessor/necdsp.hpp"
+  #include "coprocessor/obc1.hpp"
+  #include "coprocessor/sa1.hpp"
+  #include "coprocessor/sdd1.hpp"
+  #include "coprocessor/sharprtc.hpp"
+  #include "coprocessor/spc7110.hpp"
+  #include "coprocessor/st0010.hpp"
+  #include "coprocessor/superfx.hpp"
+  #include "expansion/expansion.hpp"
+  #include "slot/bsmemory.hpp"
+  #include "slot/sufamiturbo.hpp"
 
   auto Bus::mirror(uint addr, uint size) -> uint {
     if(size == 0) return 0;
@@ -333,4 +333,4 @@ namespace SuperFamicom {
   }
 }
 
-#include <sfc/interface.hpp>
+#include "interface.hpp"
