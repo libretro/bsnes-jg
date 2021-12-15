@@ -64,7 +64,7 @@ CSRCS := $(OBJDIR)/deps/gb/Core/apu.c \
 	$(OBJDIR)/deps/gb/Core/symbol_hash.c \
 	$(OBJDIR)/deps/gb/Core/timing.c \
 	$(OBJDIR)/deps/gb/Core/workboy.c \
-	$(OBJDIR)/libco/libco.c
+	$(OBJDIR)/deps/libco/libco.c
 
 CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 	$(OBJDIR)/emulator/emulator.cpp \
@@ -122,14 +122,14 @@ CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 
 # Object dirs
 MKDIRS := $(OBJDIR)/deps/gb/Core \
+	$(OBJDIR)/deps/libco \
 	$(OBJDIR)/emulator \
 	$(OBJDIR)/sfc/controller \
 	$(OBJDIR)/sfc/dsp \
 	$(OBJDIR)/sfc/expansion \
 	$(OBJDIR)/sfc/coprocessor \
 	$(OBJDIR)/sfc/processor \
-	$(OBJDIR)/sfc/slot \
-	$(OBJDIR)/libco
+	$(OBJDIR)/sfc/slot
 
 # List of object files
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
@@ -137,7 +137,7 @@ OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 .PHONY: all clean install install-strip uninstall
 
 # libco rules
-$(OBJDIR)/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
 	$(info $(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c \
 		$(SUBST $(SOURCEDIR)/,,$<) -o $@)
 	@$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
@@ -184,8 +184,8 @@ install: all
 	cp $(SOURCEDIR)/COPYING $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/LICENSE $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/README $(DESTDIR)$(DOCDIR)
-	cp $(SOURCEDIR)/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
 	cp $(SOURCEDIR)/deps/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
+	cp $(SOURCEDIR)/deps/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
 
 install-strip: install
 	strip $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
