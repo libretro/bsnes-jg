@@ -1,5 +1,7 @@
 #pragma once
 
+#include <limits.h>
+
 namespace nall {
 
 struct string;
