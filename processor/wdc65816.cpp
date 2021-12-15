@@ -3,7 +3,36 @@
 
 namespace Processor {
 
-#include "wdc65816/registers.hpp"
+#define PC r.pc
+#define A  r.a
+#define X  r.x
+#define Y  r.y
+#define Z  r.z
+#define S  r.s
+#define D  r.d
+#define B  r.b
+#define P  r.p
+
+#define CF r.p.c
+#define ZF r.p.z
+#define IF r.p.i
+#define DF r.p.d
+#define XF r.p.x
+#define MF r.p.m
+#define VF r.p.v
+#define NF r.p.n
+#define EF r.e
+
+#define U r.u
+#define V r.v
+#define W r.w
+
+#define E if(r.e)
+#define N if(!r.e)
+#define L lastCycle();
+
+#define alu(...) (this->*op)(__VA_ARGS__)
+
 //immediate, 2-cycle opcodes with idle cycle will become bus read
 //when an IRQ is to be triggered immediately after opcode completion.
 //this affects the following opcodes:
@@ -1360,13 +1389,13 @@ auto WDC65816::instruction() -> void {
     if(XF) {
       #define opX(id, name, ...) case id: return instruction##name##8(__VA_ARGS__);
       #define x(name) &WDC65816::algorithm##name##8
-      #include "wdc65816/instruction.hpp"
+      #include "wdc65816_instruction.hpp"
       #undef opX
       #undef x
     } else {
       #define opX(id, name, ...) case id: return instruction##name##16(__VA_ARGS__);
       #define x(name) &WDC65816::algorithm##name##16
-      #include "wdc65816/instruction.hpp"
+      #include "wdc65816_instruction.hpp"
       #undef opX
       #undef x
     }
@@ -1378,13 +1407,13 @@ auto WDC65816::instruction() -> void {
     if(XF) {
       #define opX(id, name, ...) case id: return instruction##name##8(__VA_ARGS__);
       #define x(name) &WDC65816::algorithm##name##8
-      #include "wdc65816/instruction.hpp"
+      #include "wdc65816_instruction.hpp"
       #undef opX
       #undef x
     } else {
       #define opX(id, name, ...) case id: return instruction##name##16(__VA_ARGS__);
       #define x(name) &WDC65816::algorithm##name##16
-      #include "wdc65816/instruction.hpp"
+      #include "wdc65816_instruction.hpp"
       #undef opX
       #undef x
     }
@@ -1413,8 +1442,6 @@ auto WDC65816::power() -> void {
 
   r.vector = 0xfffc;  //reset vector address
 }
-
-#include "wdc65816/registers.hpp"
 
 auto WDC65816::serialize(serializer& s) -> void {
   s.integer(r.pc.d);
