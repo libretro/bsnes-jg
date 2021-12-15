@@ -1,4 +1,3 @@
-#include <nall/platform.hpp>
 #include <sfc/sfc.hpp>
 
 namespace SuperFamicom {
