@@ -9,7 +9,7 @@
 
 #include <nall/literals.hpp>
 
-#include <processor/arm7tdmi/arm7tdmi.hpp>
+#include <processor/arm7tdmi.hpp>
 #include <processor/gsu/gsu.hpp>
 #include <processor/hg51b/hg51b.hpp>
 #include <processor/spc700/spc700.hpp>

@@ -69,7 +69,7 @@ CSRCS := $(OBJDIR)/gb/Core/apu.c \
 CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/emulator/emulator.cpp \
 	$(OBJDIR)/heuristics/heuristics.cpp \
-	$(OBJDIR)/processor/arm7tdmi/arm7tdmi.cpp \
+	$(OBJDIR)/processor/arm7tdmi.cpp \
 	$(OBJDIR)/processor/spc700/spc700.cpp \
 	$(OBJDIR)/processor/upd96050/upd96050.cpp \
 	$(OBJDIR)/processor/wdc65816/wdc65816.cpp \
@@ -129,7 +129,6 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/coprocessor \
 	$(OBJDIR)/sfc/slot/bsmemory \
 	$(OBJDIR)/sfc/slot/sufamiturbo \
-	$(OBJDIR)/processor/arm7tdmi \
 	$(OBJDIR)/processor/spc700 \
 	$(OBJDIR)/processor/upd96050 \
 	$(OBJDIR)/processor/wdc65816 \
