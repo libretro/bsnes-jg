@@ -1,5 +1,4 @@
 #include <nall/platform.hpp>
-#include <nall/image.hpp>
 #include <sfc/sfc.hpp>
 
 namespace SuperFamicom {
@@ -34,12 +33,22 @@ auto Interface::color(uint32 color) -> uint64 {
   uint b = color >> 10 & 31;
   uint l = color >> 15 & 15;
 
+  auto normalize = [](uint64 color, unsigned sourceDepth, unsigned targetDepth) {
+    if(sourceDepth == 0 || targetDepth == 0) return (uint64)0;
+    while(sourceDepth < targetDepth) {
+      color = (color << sourceDepth) | color;
+      sourceDepth += sourceDepth;
+    }
+    if(targetDepth < sourceDepth) color >>= (sourceDepth - targetDepth);
+    return color;
+  };
+
   //luma=0 is not 100% black; but it's much darker than normal linear scaling
   //exact effect seems to be analog; requires > 24-bit color depth to represent accurately
   double L = (1.0 + l) / 16.0 * (l ? 1.0 : 0.25);
-  uint64 R = L * image::normalize(r, 5, 16);
-  uint64 G = L * image::normalize(g, 5, 16);
-  uint64 B = L * image::normalize(b, 5, 16);
+  uint64 R = L * normalize(r, 5, 16);
+  uint64 G = L * normalize(g, 5, 16);
+  uint64 B = L * normalize(b, 5, 16);
 
   if(SuperFamicom::configuration.video.colorEmulation) {
     static const uint8 gammaRamp[32] = {
