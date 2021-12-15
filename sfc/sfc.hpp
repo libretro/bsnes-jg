@@ -133,7 +133,7 @@ namespace SuperFamicom {
   #include <sfc/memory/memory.hpp>
   #include <sfc/ppu/counter/counter.hpp>
 
-  #include <sfc/cpu/cpu.hpp>
+  #include <sfc/cpu.hpp>
   #include <sfc/smp/smp.hpp>
   #include <sfc/dsp/dsp.hpp>
   #include <sfc/ppu/ppu.hpp>

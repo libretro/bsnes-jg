@@ -102,7 +102,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/sfc/coprocessor/spc7110.cpp \
 	$(OBJDIR)/sfc/coprocessor/st0010.cpp \
 	$(OBJDIR)/sfc/coprocessor/superfx.cpp \
-	$(OBJDIR)/sfc/cpu/cpu.cpp \
+	$(OBJDIR)/sfc/cpu.cpp \
 	$(OBJDIR)/sfc/dsp/dsp.cpp \
 	$(OBJDIR)/sfc/expansion/expansion.cpp \
 	$(OBJDIR)/sfc/expansion/satellaview/satellaview.cpp \
@@ -127,7 +127,6 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/system \
 	$(OBJDIR)/sfc/controller \
 	$(OBJDIR)/sfc/memory \
-	$(OBJDIR)/sfc/cpu \
 	$(OBJDIR)/sfc/smp \
 	$(OBJDIR)/sfc/dsp \
 	$(OBJDIR)/sfc/ppu \
