@@ -167,6 +167,7 @@ $(TARGET): $(OBJS)
 	$(CXX) $^ $(LDFLAGS) $(LIBS) $(SHARED) -o $(NAME)/$(TARGET)
 	@cp $(SOURCEDIR)/Database/boards.bml $(NAME)/
 	@cp $(SOURCEDIR)/Database/BS\ Memory.bml $(NAME)/
+	@cp $(SOURCEDIR)/Database/Sufami\ Turbo.bml $(NAME)/
 	@cp $(SOURCEDIR)/Database/Super\ Famicom.bml $(NAME)/
 
 clean:
@@ -179,8 +180,8 @@ install: all
 	cp $(NAME)/$(TARGET) $(DESTDIR)$(LIBDIR)/jollygood/
 	cp $(NAME)/boards.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 	cp $(NAME)/BS\ Memory.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
-	cp $(NAME)/Super\ Famicom.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 	cp $(NAME)/Sufami\ Turbo.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
+	cp $(NAME)/Super\ Famicom.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 	cp $(SOURCEDIR)/COPYING $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/LICENSE $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/README $(DESTDIR)$(DOCDIR)
