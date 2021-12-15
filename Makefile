@@ -70,6 +70,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/emulator/emulator.cpp \
 	$(OBJDIR)/heuristics/heuristics.cpp \
 	$(OBJDIR)/processor/arm7tdmi.cpp \
+	$(OBJDIR)/processor/gsu.cpp \
 	$(OBJDIR)/processor/spc700/spc700.cpp \
 	$(OBJDIR)/processor/upd96050/upd96050.cpp \
 	$(OBJDIR)/processor/wdc65816/wdc65816.cpp \
