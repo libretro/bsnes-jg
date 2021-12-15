@@ -13,7 +13,6 @@
 #include <nall/string.hpp>
 #include <nall/arithmetic.hpp>
 #include <nall/hash.hpp>
-#include <nall/location.hpp>
 
 using namespace nall;
 
@@ -63,11 +62,16 @@ BSMemory::operator bool() const {
 string BSMemory::manifest() const {
   if(!operator bool()) return {};
 
+  std::string gamename(location);
+  gamename = gamename.substr(0, gamename.find_last_of("."));
+  gamename = gamename.substr(gamename.find_last_of("\\") + 1);
+  gamename = gamename.substr(gamename.find_last_of("/") + 1);
+  
   string output;
   output.append("game\n");
   output.append("  sha256: ", Hash::SHA256(data).digest(), "\n");
-  output.append("  label:  ", Location::prefix(location), "\n");
-  output.append("  name:   ", Location::prefix(location), "\n");
+  output.append("  label:  ", gamename.c_str(), "\n");
+  output.append("  name:   ", gamename.c_str(), "\n");
   output.append("  board\n");
   output.append(Memory{}.type("Flash").size(data.size()).content("Program").text());
   return output;
@@ -328,11 +332,16 @@ string GameBoy::manifest() const {
   if(mapper == "MBC3" && rtc) rtcSize = 13;
   if(mapper == "TAMA" && rtc) rtcSize = 21;
 
+  std::string gamename(location);
+  gamename = gamename.substr(0, gamename.find_last_of("."));
+  gamename = gamename.substr(gamename.find_last_of("\\") + 1);
+  gamename = gamename.substr(gamename.find_last_of("/") + 1);
+
   string output;
   output.append("game\n");
   output.append("  sha256: ", Hash::SHA256(data).digest(), "\n");
-  output.append("  label:  ", Location::prefix(location), "\n");
-  output.append("  name:   ", Location::prefix(location), "\n");
+  output.append("  label:  ", gamename.c_str(), "\n");
+  output.append("  name:   ", gamename.c_str(), "\n");
   output.append("  title:  ", title, "\n");
 if(serial)
   output.append("  serial: ", serial, "\n");
@@ -368,11 +377,16 @@ string SufamiTurbo::manifest() const {
   uint romSize = data[0x36] * 0x20000;  //128KB
   uint ramSize = data[0x37] *   0x800;  //  2KB
 
+  std::string gamename(location);
+  gamename = gamename.substr(0, gamename.find_last_of("."));
+  gamename = gamename.substr(gamename.find_last_of("\\") + 1);
+  gamename = gamename.substr(gamename.find_last_of("/") + 1);
+  
   string output;
   output.append("game\n");
   output.append("  sha256: ", Hash::SHA256(data).digest(), "\n");
-  output.append("  label:  ", Location::prefix(location), "\n");
-  output.append("  name:   ", Location::prefix(location), "\n");
+  output.append("  label:  ", gamename.c_str(), "\n");
+  output.append("  name:   ", gamename.c_str(), "\n");
   output.append("  board\n");
   output.append(Memory{}.type("ROM").size(data.size()).content("Program").text());
 if(ramSize)
@@ -409,11 +423,16 @@ SuperFamicom::operator bool() const {
 string SuperFamicom::manifest() const {
   if(!operator bool()) return {};
 
+  std::string gamename(location);
+  gamename = gamename.substr(0, gamename.find_last_of("."));
+  gamename = gamename.substr(gamename.find_last_of("\\") + 1);
+  gamename = gamename.substr(gamename.find_last_of("/") + 1);
+
   string output;
   output.append("game\n");
   output.append("  sha256:   ", Hash::SHA256(data).digest(), "\n");
-  output.append("  label:    ", Location::prefix(location), "\n");
-  output.append("  name:     ", Location::prefix(location), "\n");
+  output.append("  label:    ", gamename.c_str(), "\n");
+  output.append("  name:     ", gamename.c_str(), "\n");
   output.append("  title:    ", title(), "\n");
   output.append("  region:   ", region(), "\n");
   output.append("  revision: ", revision(), "\n");

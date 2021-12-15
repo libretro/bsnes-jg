@@ -31,7 +31,6 @@
 
 #include "emulator/emulator.hpp"
 #include "heuristics/heuristics.hpp"
-#include "nall/location.hpp"
 #include "sfc/interface/interface.hpp"
 
 #include "gamedb.hpp"
@@ -550,14 +549,18 @@ shared_pointer<vfs::file> Program::openRomSuperFamicom(string name,
     }
     
     if (name == "msu1/data.rom") {
-        return vfs::fs::file::open({Location::notsuffix(superFamicom.location),
-            ".msu"}, mode);
+        std::string location(superFamicom.location);
+        return vfs::fs::file::open(
+            {location.substr(0, location.find_last_of(".")).c_str(), ".msu"},
+            mode);
     }
     
     if (name.match("msu1/track*.pcm")) {
         name.trimLeft("msu1/track", 1L);
-        return vfs::fs::file::open({Location::notsuffix(superFamicom.location),
-            name}, mode);
+        std::string location(superFamicom.location);
+        return vfs::fs::file::open(
+            {location.substr(0, location.find_last_of(".")).c_str(), name},
+            mode);
     }
     
     if (name == "save.ram") {
