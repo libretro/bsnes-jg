@@ -73,7 +73,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/processor/gsu.cpp \
 	$(OBJDIR)/processor/hg51b.cpp \
 	$(OBJDIR)/processor/spc700.cpp \
-	$(OBJDIR)/processor/upd96050/upd96050.cpp \
+	$(OBJDIR)/processor/upd96050.cpp \
 	$(OBJDIR)/processor/wdc65816/wdc65816.cpp \
 	$(OBJDIR)/sfc/cartridge/cartridge.cpp \
 	$(OBJDIR)/sfc/controller/controller.cpp \
@@ -131,7 +131,6 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/coprocessor \
 	$(OBJDIR)/sfc/slot/bsmemory \
 	$(OBJDIR)/sfc/slot/sufamiturbo \
-	$(OBJDIR)/processor/upd96050 \
 	$(OBJDIR)/processor/wdc65816 \
 	$(OBJDIR)/gb/Core \
 	$(OBJDIR)/libco
