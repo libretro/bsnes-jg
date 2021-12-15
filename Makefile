@@ -75,7 +75,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/processor/spc700.cpp \
 	$(OBJDIR)/processor/upd96050.cpp \
 	$(OBJDIR)/processor/wdc65816.cpp \
-	$(OBJDIR)/sfc/cartridge/cartridge.cpp \
+	$(OBJDIR)/sfc/cartridge.cpp \
 	$(OBJDIR)/sfc/controller/controller.cpp \
 	$(OBJDIR)/sfc/controller/gamepad.cpp \
 	$(OBJDIR)/sfc/controller/justifier.cpp \
@@ -102,17 +102,18 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/sfc/coprocessor/spc7110.cpp \
 	$(OBJDIR)/sfc/coprocessor/st0010.cpp \
 	$(OBJDIR)/sfc/coprocessor/superfx.cpp \
-	$(OBJDIR)/sfc/cpu/cpu.cpp \
-	$(OBJDIR)/sfc/dsp/dsp.cpp \
+	$(OBJDIR)/sfc/cpu.cpp \
+	$(OBJDIR)/sfc/dsp.cpp \
+	$(OBJDIR)/sfc/dsp/SPC_DSP.cpp \
 	$(OBJDIR)/sfc/expansion/expansion.cpp \
 	$(OBJDIR)/sfc/expansion/satellaview/satellaview.cpp \
-	$(OBJDIR)/sfc/interface/interface.cpp \
+	$(OBJDIR)/sfc/interface.cpp \
 	$(OBJDIR)/sfc/memory/memory.cpp \
-	$(OBJDIR)/sfc/ppu/ppu.cpp \
-	$(OBJDIR)/sfc/slot/bsmemory/bsmemory.cpp \
-	$(OBJDIR)/sfc/slot/sufamiturbo/sufamiturbo.cpp \
-	$(OBJDIR)/sfc/smp/smp.cpp \
-	$(OBJDIR)/sfc/system/system.cpp \
+	$(OBJDIR)/sfc/ppu.cpp \
+	$(OBJDIR)/sfc/slot/bsmemory.cpp \
+	$(OBJDIR)/sfc/slot/sufamiturbo.cpp \
+	$(OBJDIR)/sfc/smp.cpp \
+	$(OBJDIR)/sfc/system.cpp \
 	$(OBJDIR)/jg.cpp
 
 # TODO: Do we need this?
@@ -123,20 +124,12 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/heuristics \
 	$(OBJDIR)/processor \
-	$(OBJDIR)/sfc/interface \
-	$(OBJDIR)/sfc/system \
 	$(OBJDIR)/sfc/controller \
-	$(OBJDIR)/sfc/cartridge \
 	$(OBJDIR)/sfc/memory \
-	$(OBJDIR)/sfc/cpu \
-	$(OBJDIR)/sfc/smp \
 	$(OBJDIR)/sfc/dsp \
-	$(OBJDIR)/sfc/ppu \
-	$(OBJDIR)/sfc/ppu-fast \
 	$(OBJDIR)/sfc/expansion/satellaview \
 	$(OBJDIR)/sfc/coprocessor \
-	$(OBJDIR)/sfc/slot/bsmemory \
-	$(OBJDIR)/sfc/slot/sufamiturbo \
+	$(OBJDIR)/sfc/slot \
 	$(OBJDIR)/gb/Core \
 	$(OBJDIR)/libco
 

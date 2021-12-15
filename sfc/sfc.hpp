@@ -131,16 +131,16 @@ namespace SuperFamicom {
     static inline auto PAL() -> bool;
   };
 
-  #include <sfc/system/system.hpp>
+  #include <sfc/system.hpp>
   #include <sfc/memory/memory.hpp>
-  #include <sfc/ppu/counter/counter.hpp>
+  #include <sfc/ppu/counter.hpp>
 
-  #include <sfc/cpu/cpu.hpp>
-  #include <sfc/smp/smp.hpp>
-  #include <sfc/dsp/dsp.hpp>
-  #include <sfc/ppu/ppu.hpp>
+  #include <sfc/cpu.hpp>
+  #include <sfc/dsp.hpp>
+  #include <sfc/ppu.hpp>
+  #include <sfc/smp.hpp>
 
-  #include <sfc/cartridge/cartridge.hpp>
+  #include <sfc/cartridge.hpp>
   #include <sfc/controller/controller.hpp>
   #include <sfc/coprocessor/armdsp.hpp>
   #include <sfc/coprocessor/cx4.hpp>
@@ -163,10 +163,11 @@ namespace SuperFamicom {
   #include <sfc/coprocessor/st0010.hpp>
   #include <sfc/coprocessor/superfx.hpp>
   #include <sfc/expansion/expansion.hpp>
-  #include <sfc/slot/slot.hpp>
+  #include <sfc/slot/bsmemory.hpp>
+  #include <sfc/slot/sufamiturbo.hpp>
 
   #include <sfc/memory/memory-inline.hpp>
-  #include <sfc/ppu/counter/counter-inline.hpp>
+  #include <sfc/ppu/counter-inline.hpp>
 }
 
-#include <sfc/interface/interface.hpp>
+#include <sfc/interface.hpp>

@@ -1,3 +1,7 @@
+#include <sfc/sfc.hpp>
+
+namespace SuperFamicom {
+
 auto Cartridge::loadBoard(string board) -> Markup::Node {
   string output;
 
@@ -727,4 +731,354 @@ auto Cartridge::loadMSU1() -> void {
   has.MSU1 = true;
 
   bus.map({&MSU1::readIO, &msu1}, {&MSU1::writeIO, &msu1}, "00-3f,80-bf:2000-2007");
+}
+
+auto Cartridge::saveCartridge(Markup::Node node) -> void {
+  if(auto node = board["memory(type=RAM,content=Save)"]) saveRAM(node);
+  if(auto node = board["processor(identifier=MCC)"]) saveMCC(node);
+  if(auto node = board["processor(architecture=W65C816S)"]) saveSA1(node);
+  if(auto node = board["processor(architecture=GSU)"]) saveSuperFX(node);
+  if(auto node = board["processor(architecture=ARM6)"]) saveARMDSP(node);
+  if(auto node = board["processor(architecture=HG51BS169)"]) saveHitachiDSP(node);
+  if(auto node = board["processor(architecture=uPD7725)"]) saveuPD7725(node);
+  if(auto node = board["processor(architecture=uPD96050)"]) saveuPD96050(node);
+  if(auto node = board["rtc(manufacturer=Epson)"]) saveEpsonRTC(node);
+  if(auto node = board["rtc(manufacturer=Sharp)"]) saveSharpRTC(node);
+  if(auto node = board["processor(identifier=SPC7110)"]) saveSPC7110(node);
+  if(auto node = board["processor(identifier=OBC1)"]) saveOBC1(node);
+}
+
+auto Cartridge::saveCartridgeBSMemory(Markup::Node node) -> void {
+  if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=Flash,content=Program)"]}) {
+    if(auto fp = platform->open(bsmemory.pathID, memory.name(), File::Write)) {
+      if (bsmemory.memory.data() != nullptr) {
+        fp->write(bsmemory.memory.data(), memory.size);
+      }
+    }
+  }
+}
+
+auto Cartridge::saveCartridgeSufamiTurboA(Markup::Node node) -> void {
+  if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
+    if(memory.nonVolatile) {
+      if(auto fp = platform->open(sufamiturboA.pathID, memory.name(), File::Write)) {
+        fp->write(sufamiturboA.ram.data(), memory.size);
+      }
+    }
+  }
+}
+
+auto Cartridge::saveCartridgeSufamiTurboB(Markup::Node node) -> void {
+  if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
+    if(memory.nonVolatile) {
+      if(auto fp = platform->open(sufamiturboB.pathID, memory.name(), File::Write)) {
+        fp->write(sufamiturboB.ram.data(), memory.size);
+      }
+    }
+  }
+}
+
+//
+
+auto Cartridge::saveMemory(Memory& ram, Markup::Node node) -> void {
+  if(auto memory = game.memory(node)) {
+    if(memory->type == "RAM" && !memory->nonVolatile) return;
+    if(memory->type == "RTC" && !memory->nonVolatile) return;
+    if(auto fp = platform->open(pathID(), memory->name(), File::Write)) {
+      fp->write(ram.data(), ram.size());
+    }
+  }
+}
+
+//memory(type=RAM,content=Save)
+auto Cartridge::saveRAM(Markup::Node node) -> void {
+  saveMemory(ram, node);
+}
+
+//processor(identifier=MCC)
+auto Cartridge::saveMCC(Markup::Node node) -> void {
+  if(auto mcu = node["mcu"]) {
+    if(auto memory = mcu["memory(type=RAM,content=Download)"]) {
+      saveMemory(mcc.psram, memory);
+    }
+  }
+}
+
+//processor(architecture=W65C816S)
+auto Cartridge::saveSA1(Markup::Node node) -> void {
+  if(auto memory = node["memory(type=RAM,content=Save)"]) {
+    saveMemory(sa1.bwram, memory);
+  }
+
+  if(auto memory = node["memory(type=RAM,content=Internal)"]) {
+    saveMemory(sa1.iram, memory);
+  }
+}
+
+//processor(architecture=GSU)
+auto Cartridge::saveSuperFX(Markup::Node node) -> void {
+  if(auto memory = node["memory(type=RAM,content=Save)"]) {
+    saveMemory(superfx.ram, memory);
+  }
+}
+
+//processor(architecture=ARM6)
+auto Cartridge::saveARMDSP(Markup::Node node) -> void {
+  if(auto memory = node["memory(type=RAM,content=Data,architecture=ARM6)"]) {
+    if(auto file = game.memory(memory)) {
+      if(file->nonVolatile) {
+        if(auto fp = platform->open(ID::SuperFamicom, file->name(), File::Write)) {
+          for(auto n : range(16 * 1024)) fp->write(armdsp.programRAM[n]);
+        }
+      }
+    }
+  }
+}
+
+//processor(architecture=HG51BS169)
+auto Cartridge::saveHitachiDSP(Markup::Node node) -> void {
+  saveMemory(hitachidsp.ram, node["ram"]);
+
+  if(auto memory = node["memory(type=RAM,content=Save)"]) {
+    saveMemory(hitachidsp.ram, memory);
+  }
+
+  if(auto memory = node["memory(type=RAM,content=Data,architecture=HG51BS169)"]) {
+    if(auto file = game.memory(memory)) {
+      if(file->nonVolatile) {
+        if(auto fp = platform->open(ID::SuperFamicom, file->name(), File::Write)) {
+          for(auto n : range(3 * 1024)) fp->write(hitachidsp.dataRAM[n]);
+        }
+      }
+    }
+  }
+}
+
+//processor(architecture=uPD7725)
+auto Cartridge::saveuPD7725(Markup::Node node) -> void {
+  if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD7725)"]) {
+    if(auto file = game.memory(memory)) {
+      if(file->nonVolatile) {
+        if(auto fp = platform->open(ID::SuperFamicom, file->name(), File::Write)) {
+          for(auto n : range(256)) fp->writel(necdsp.dataRAM[n], 2);
+        }
+      }
+    }
+  }
+}
+
+//processor(architecture=uPD96050)
+auto Cartridge::saveuPD96050(Markup::Node node) -> void {
+  if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD96050)"]) {
+    if(auto file = game.memory(memory)) {
+      if(file->nonVolatile) {
+        if(auto fp = platform->open(ID::SuperFamicom, file->name(), File::Write)) {
+          for(auto n : range(2 * 1024)) fp->writel(necdsp.dataRAM[n], 2);
+        }
+      }
+    }
+  }
+}
+
+//rtc(manufacturer=Epson)
+auto Cartridge::saveEpsonRTC(Markup::Node node) -> void {
+  if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Epson)"]) {
+    if(auto file = game.memory(memory)) {
+      if(file->nonVolatile) {
+        if(auto fp = platform->open(ID::SuperFamicom, file->name(), File::Write)) {
+          uint8 data[16] = {0};
+          epsonrtc.save(data);
+          fp->write(data, 16);
+        }
+      }
+    }
+  }
+}
+
+//rtc(manufacturer=Sharp)
+auto Cartridge::saveSharpRTC(Markup::Node node) -> void {
+  if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Sharp)"]) {
+    if(auto file = game.memory(memory)) {
+      if(file->nonVolatile) {
+        if(auto fp = platform->open(ID::SuperFamicom, file->name(), File::Write)) {
+          uint8 data[16] = {0};
+          sharprtc.save(data);
+          fp->write(data, 16);
+        }
+      }
+    }
+  }
+}
+
+//processor(identifier=SPC7110)
+auto Cartridge::saveSPC7110(Markup::Node node) -> void {
+  if(auto memory = node["memory(type=RAM,content=Save)"]) {
+    saveMemory(spc7110.ram, memory);
+  }
+}
+
+//processor(identifier=OBC1)
+auto Cartridge::saveOBC1(Markup::Node node) -> void {
+  if(auto memory = node["memory(type=RAM,content=Save)"]) {
+    saveMemory(obc1.ram, memory);
+  }
+}
+
+auto Cartridge::serialize(serializer& s) -> void {
+  s.array(ram.data(), ram.size());
+}
+
+Cartridge cartridge;
+
+auto Cartridge::hashes() const -> vector<string> {
+  vector<string> hashes;
+  hashes.append(game.sha256);
+  if(slotGameBoy.sha256) hashes.append(slotGameBoy.sha256);
+  if(slotBSMemory.sha256) hashes.append(slotBSMemory.sha256);
+  if(slotSufamiTurboA.sha256) hashes.append(slotSufamiTurboA.sha256);
+  if(slotSufamiTurboB.sha256) hashes.append(slotSufamiTurboB.sha256);
+  return hashes;
+}
+
+auto Cartridge::manifests() const -> vector<string> {
+  vector<string> manifests;
+  manifests.append(string{BML::serialize(game.document), "\n", BML::serialize(board)});
+  if(slotGameBoy.document) manifests.append(BML::serialize(slotGameBoy.document));
+  if(slotBSMemory.document) manifests.append(BML::serialize(slotBSMemory.document));
+  if(slotSufamiTurboA.document) manifests.append(BML::serialize(slotSufamiTurboA.document));
+  if(slotSufamiTurboB.document) manifests.append(BML::serialize(slotSufamiTurboB.document));
+  return manifests;
+}
+
+auto Cartridge::titles() const -> vector<string> {
+  vector<string> titles;
+  titles.append(game.label);
+  if(slotGameBoy.label) titles.append(slotGameBoy.label);
+  if(slotBSMemory.label) titles.append(slotBSMemory.label);
+  if(slotSufamiTurboA.label) titles.append(slotSufamiTurboA.label);
+  if(slotSufamiTurboB.label) titles.append(slotSufamiTurboB.label);
+  return titles;
+}
+
+auto Cartridge::title() const -> string {
+  if(slotGameBoy.label) return slotGameBoy.label;
+  if(has.MCC && slotBSMemory.label) return slotBSMemory.label;
+  if(slotBSMemory.label) return {game.label, " + ", slotBSMemory.label};
+  if(slotSufamiTurboA.label && slotSufamiTurboB.label) return {slotSufamiTurboA.label, " + ", slotSufamiTurboB.label};
+  if(slotSufamiTurboA.label) return slotSufamiTurboA.label;
+  if(slotSufamiTurboB.label) return slotSufamiTurboB.label;
+  if(has.Cx4 || has.DSP1 || has.DSP2 || has.DSP4 || has.ST0010) return {"[HLE] ", game.label};
+  return game.label;
+}
+
+auto Cartridge::load() -> bool {
+  information = {};
+  has = {};
+  game = {};
+  slotGameBoy = {};
+  slotBSMemory = {};
+  slotSufamiTurboA = {};
+  slotSufamiTurboB = {};
+
+  if(auto loaded = platform->load(ID::SuperFamicom, "Super Famicom", "sfc", {"Auto", "NTSC", "PAL"})) {
+    information.pathID = loaded.pathID;
+    information.region = loaded.option;
+  } else return false;
+
+  if(auto fp = platform->open(ID::SuperFamicom, "manifest.bml", File::Read, File::Required)) {
+    game.load(fp->reads());
+  } else return false;
+
+  loadCartridge(game.document);
+
+  //Game Boy
+  if(cartridge.has.ICD) {
+    information.sha256 = "";  //Game Boy cartridge not loaded yet: set later via loadGameBoy()
+  }
+
+  //BS Memory
+  else if(cartridge.has.MCC && cartridge.has.BSMemorySlot) {
+    information.sha256 = Hash::SHA256({bsmemory.memory.data(), bsmemory.memory.size()}).digest();
+  }
+
+  //Sufami Turbo
+  else if(cartridge.has.SufamiTurboSlotA || cartridge.has.SufamiTurboSlotB) {
+    Hash::SHA256 sha;
+    if(cartridge.has.SufamiTurboSlotA) sha.input(sufamiturboA.rom.data(), sufamiturboA.rom.size());
+    if(cartridge.has.SufamiTurboSlotB) sha.input(sufamiturboB.rom.data(), sufamiturboB.rom.size());
+    information.sha256 = sha.digest();
+  }
+
+  //Super Famicom
+  else {
+    Hash::SHA256 sha;
+    //hash each ROM image that exists; any with size() == 0 is ignored by sha256_chunk()
+    sha.input(rom.data(), rom.size());
+    sha.input(mcc.rom.data(), mcc.rom.size());
+    sha.input(sa1.rom.data(), sa1.rom.size());
+    sha.input(superfx.rom.data(), superfx.rom.size());
+    sha.input(hitachidsp.rom.data(), hitachidsp.rom.size());
+    sha.input(spc7110.prom.data(), spc7110.prom.size());
+    sha.input(spc7110.drom.data(), spc7110.drom.size());
+    sha.input(sdd1.rom.data(), sdd1.rom.size());
+    //hash all firmware that exists
+    vector<uint8> buffer;
+    buffer = armdsp.firmware();
+    sha.input(buffer.data(), buffer.size());
+    buffer = hitachidsp.firmware();
+    sha.input(buffer.data(), buffer.size());
+    buffer = necdsp.firmware();
+    sha.input(buffer.data(), buffer.size());
+    //finalize hash
+    information.sha256 = sha.digest();
+  }
+
+  return true;
+}
+
+auto Cartridge::loadBSMemory() -> bool {
+  if(auto fp = platform->open(bsmemory.pathID, "manifest.bml", File::Read, File::Required)) {
+    slotBSMemory.load(fp->reads());
+  } else return false;
+  loadCartridgeBSMemory(slotBSMemory.document);
+  return true;
+}
+
+auto Cartridge::loadSufamiTurboA() -> bool {
+  if(auto fp = platform->open(sufamiturboA.pathID, "manifest.bml", File::Read, File::Required)) {
+    slotSufamiTurboA.load(fp->reads());
+  } else return false;
+  loadCartridgeSufamiTurboA(slotSufamiTurboA.document);
+  return true;
+}
+
+auto Cartridge::loadSufamiTurboB() -> bool {
+  if(auto fp = platform->open(sufamiturboB.pathID, "manifest.bml", File::Read, File::Required)) {
+    slotSufamiTurboB.load(fp->reads());
+  } else return false;
+  loadCartridgeSufamiTurboB(slotSufamiTurboB.document);
+  return true;
+}
+
+auto Cartridge::save() -> void {
+  saveCartridge(game.document);
+  if(has.GameBoySlot) {
+    icd.save();
+  }
+  if(has.BSMemorySlot) {
+    saveCartridgeBSMemory(slotBSMemory.document);
+  }
+  if(has.SufamiTurboSlotA) {
+    saveCartridgeSufamiTurboA(slotSufamiTurboA.document);
+  }
+  if(has.SufamiTurboSlotB) {
+    saveCartridgeSufamiTurboB(slotSufamiTurboB.document);
+  }
+}
+
+auto Cartridge::unload() -> void {
+  rom.reset();
+  ram.reset();
+}
+
 }
