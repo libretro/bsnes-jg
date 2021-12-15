@@ -31,7 +31,7 @@
 
 #include "emulator/emulator.hpp"
 #include "heuristics/heuristics.hpp"
-#include "sfc/interface/interface.hpp"
+#include "sfc/interface.hpp"
 
 #include "gamedb.hpp"
 

@@ -167,4 +167,4 @@ namespace SuperFamicom {
   #include <sfc/ppu/counter-inline.hpp>
 }
 
-#include <sfc/interface/interface.hpp>
+#include <sfc/interface.hpp>
