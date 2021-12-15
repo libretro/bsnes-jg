@@ -1,3 +1,7 @@
+#include <sfc/sfc.hpp>
+
+namespace SuperFamicom {
+
 Gamepad::Gamepad(uint port) : Controller(port) {
   latched = 0;
   counter = 0;
@@ -45,4 +49,6 @@ auto Gamepad::latch(bool data) -> void {
     l      = platform->inputPoll(port, ID::Device::Gamepad, L);
     r      = platform->inputPoll(port, ID::Device::Gamepad, R);
   }
+}
+
 }

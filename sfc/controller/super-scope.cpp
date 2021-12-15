@@ -10,6 +10,10 @@
 //require manual polling of PIO ($4201.d6) to determine when iobit was written.
 //Note that no commercial game ever utilizes a Super Scope in port 1.
 
+#include <sfc/sfc.hpp>
+
+namespace SuperFamicom {
+
 SuperScope::SuperScope(uint port) : Controller(port) {
   latched = 0;
   counter = 0;
@@ -130,4 +134,6 @@ auto SuperScope::draw(uint16_t* data, uint pitch, uint width, uint height) -> vo
   plot(x, y + length + 1, black);
   for(int px = x - length; px <= x + length; px++) plot(px, y, color);
   for(int py = y - length; py <= y + length; py++) plot(x, py, color);*/
+}
+
 }

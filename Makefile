@@ -77,6 +77,11 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/processor/wdc65816.cpp \
 	$(OBJDIR)/sfc/cartridge/cartridge.cpp \
 	$(OBJDIR)/sfc/controller/controller.cpp \
+	$(OBJDIR)/sfc/controller/gamepad.cpp \
+	$(OBJDIR)/sfc/controller/justifier.cpp \
+	$(OBJDIR)/sfc/controller/mouse.cpp \
+	$(OBJDIR)/sfc/controller/super-multitap.cpp \
+	$(OBJDIR)/sfc/controller/super-scope.cpp \
 	$(OBJDIR)/sfc/coprocessor/armdsp.cpp \
 	$(OBJDIR)/sfc/coprocessor/cx4.cpp \
 	$(OBJDIR)/sfc/coprocessor/dip.cpp \

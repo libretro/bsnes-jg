@@ -1,3 +1,7 @@
+#include <sfc/sfc.hpp>
+
+namespace SuperFamicom {
+
 Justifier::Justifier(uint port, bool chained):
 Controller(port),
 chained(chained),
@@ -102,4 +106,6 @@ auto Justifier::latch() -> void {
     bool offscreen = (player2.x < 0 || player2.y < 0 || player2.x >= 256 || player2.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player2.x, player2.y);
   }
+}
+
 }

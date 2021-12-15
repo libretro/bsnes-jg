@@ -39,8 +39,8 @@ struct ControllerPort {
 extern ControllerPort controllerPort1;
 extern ControllerPort controllerPort2;
 
-#include "gamepad/gamepad.hpp"
-#include "mouse/mouse.hpp"
-#include "super-multitap/super-multitap.hpp"
-#include "super-scope/super-scope.hpp"
-#include "justifier/justifier.hpp"
+#include "gamepad.hpp"
+#include "justifier.hpp"
+#include "mouse.hpp"
+#include "super-multitap.hpp"
+#include "super-scope.hpp"

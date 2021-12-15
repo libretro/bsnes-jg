@@ -1,3 +1,7 @@
+#include <sfc/sfc.hpp>
+
+namespace SuperFamicom {
+
 SuperMultitap::SuperMultitap(uint port) : Controller(port) {
   latched = 0;
   counter1 = 0;
@@ -67,4 +71,6 @@ auto SuperMultitap::latch(bool data) -> void {
       gamepad.r      = platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + R);
     }
   }
+}
+
 }

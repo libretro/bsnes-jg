@@ -4,11 +4,6 @@ namespace SuperFamicom {
 
 ControllerPort controllerPort1;
 ControllerPort controllerPort2;
-#include "gamepad/gamepad.cpp"
-#include "mouse/mouse.cpp"
-#include "super-multitap/super-multitap.cpp"
-#include "super-scope/super-scope.cpp"
-#include "justifier/justifier.cpp"
 
 Controller::Controller(uint port) : port(port) {
 }
