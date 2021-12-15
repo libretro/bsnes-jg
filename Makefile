@@ -75,7 +75,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/processor/spc700.cpp \
 	$(OBJDIR)/processor/upd96050.cpp \
 	$(OBJDIR)/processor/wdc65816.cpp \
-	$(OBJDIR)/sfc/cartridge/cartridge.cpp \
+	$(OBJDIR)/sfc/cartridge.cpp \
 	$(OBJDIR)/sfc/controller/controller.cpp \
 	$(OBJDIR)/sfc/controller/gamepad.cpp \
 	$(OBJDIR)/sfc/controller/justifier.cpp \
@@ -126,7 +126,6 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/interface \
 	$(OBJDIR)/sfc/system \
 	$(OBJDIR)/sfc/controller \
-	$(OBJDIR)/sfc/cartridge \
 	$(OBJDIR)/sfc/memory \
 	$(OBJDIR)/sfc/cpu \
 	$(OBJDIR)/sfc/smp \
