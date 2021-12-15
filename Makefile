@@ -47,23 +47,23 @@ endif
 
 OBJDIR := objs
 
-CSRCS := $(OBJDIR)/gb/Core/apu.c \
-	$(OBJDIR)/gb/Core/camera.c \
-	$(OBJDIR)/gb/Core/display.c \
-	$(OBJDIR)/gb/Core/gb.c \
-	$(OBJDIR)/gb/Core/joypad.c \
-	$(OBJDIR)/gb/Core/mbc.c \
-	$(OBJDIR)/gb/Core/memory.c \
-	$(OBJDIR)/gb/Core/printer.c \
-	$(OBJDIR)/gb/Core/random.c \
-	$(OBJDIR)/gb/Core/rewind.c \
-	$(OBJDIR)/gb/Core/rumble.c \
-	$(OBJDIR)/gb/Core/save_state.c \
-	$(OBJDIR)/gb/Core/sgb.c \
-	$(OBJDIR)/gb/Core/sm83_cpu.c \
-	$(OBJDIR)/gb/Core/symbol_hash.c \
-	$(OBJDIR)/gb/Core/timing.c \
-	$(OBJDIR)/gb/Core/workboy.c \
+CSRCS := $(OBJDIR)/deps/gb/Core/apu.c \
+	$(OBJDIR)/deps/gb/Core/camera.c \
+	$(OBJDIR)/deps/gb/Core/display.c \
+	$(OBJDIR)/deps/gb/Core/gb.c \
+	$(OBJDIR)/deps/gb/Core/joypad.c \
+	$(OBJDIR)/deps/gb/Core/mbc.c \
+	$(OBJDIR)/deps/gb/Core/memory.c \
+	$(OBJDIR)/deps/gb/Core/printer.c \
+	$(OBJDIR)/deps/gb/Core/random.c \
+	$(OBJDIR)/deps/gb/Core/rewind.c \
+	$(OBJDIR)/deps/gb/Core/rumble.c \
+	$(OBJDIR)/deps/gb/Core/save_state.c \
+	$(OBJDIR)/deps/gb/Core/sgb.c \
+	$(OBJDIR)/deps/gb/Core/sm83_cpu.c \
+	$(OBJDIR)/deps/gb/Core/symbol_hash.c \
+	$(OBJDIR)/deps/gb/Core/timing.c \
+	$(OBJDIR)/deps/gb/Core/workboy.c \
 	$(OBJDIR)/libco/libco.c
 
 CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
@@ -121,14 +121,14 @@ CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 #	$(OBJDIR)/sfc/expansion/21fx.cpp \
 
 # Object dirs
-MKDIRS := $(OBJDIR)/emulator \
+MKDIRS := $(OBJDIR)/deps/gb/Core \
+	$(OBJDIR)/emulator \
 	$(OBJDIR)/sfc/controller \
 	$(OBJDIR)/sfc/dsp \
 	$(OBJDIR)/sfc/expansion \
 	$(OBJDIR)/sfc/coprocessor \
 	$(OBJDIR)/sfc/processor \
 	$(OBJDIR)/sfc/slot \
-	$(OBJDIR)/gb/Core \
 	$(OBJDIR)/libco
 
 # List of object files
@@ -143,7 +143,7 @@ $(OBJDIR)/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
 	@$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
 
 # Game Boy rules
-$(OBJDIR)/gb/Core/%.o: $(SOURCEDIR)/gb/Core/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/gb/Core/%.o: $(SOURCEDIR)/deps/gb/Core/%.c $(OBJDIR)/.tag
 	$(info $(CC) $(CFLAGS) $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
 		$(subst $(SOURCEDIR)/,,$(INCLUDES_GB) -c $<) -o $@)
 	@$(CC) $(CFLAGS) $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
@@ -185,7 +185,7 @@ install: all
 	cp $(SOURCEDIR)/LICENSE $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/README $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
-	cp $(SOURCEDIR)/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
+	cp $(SOURCEDIR)/deps/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
 
 install-strip: install
 	strip $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
