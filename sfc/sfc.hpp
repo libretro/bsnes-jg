@@ -161,7 +161,8 @@ namespace SuperFamicom {
   #include <sfc/coprocessor/st0010.hpp>
   #include <sfc/coprocessor/superfx.hpp>
   #include <sfc/expansion/expansion.hpp>
-  #include <sfc/slot/slot.hpp>
+  #include <sfc/slot/bsmemory.hpp>
+  #include <sfc/slot/sufamiturbo/sufamiturbo.hpp>
 
   #include <sfc/memory/memory-inline.hpp>
   #include <sfc/ppu/counter-inline.hpp>
