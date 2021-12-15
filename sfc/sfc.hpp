@@ -131,12 +131,12 @@ namespace SuperFamicom {
 
   #include <sfc/system/system.hpp>
   #include <sfc/memory/memory.hpp>
-  #include <sfc/ppu/counter/counter.hpp>
+  #include <sfc/ppu/counter.hpp>
 
   #include <sfc/cpu.hpp>
   #include <sfc/smp/smp.hpp>
   #include <sfc/dsp.hpp>
-  #include <sfc/ppu/ppu.hpp>
+  #include <sfc/ppu.hpp>
 
   #include <sfc/cartridge.hpp>
   #include <sfc/controller/controller.hpp>
@@ -164,7 +164,7 @@ namespace SuperFamicom {
   #include <sfc/slot/slot.hpp>
 
   #include <sfc/memory/memory-inline.hpp>
-  #include <sfc/ppu/counter/counter-inline.hpp>
+  #include <sfc/ppu/counter-inline.hpp>
 }
 
 #include <sfc/interface/interface.hpp>
