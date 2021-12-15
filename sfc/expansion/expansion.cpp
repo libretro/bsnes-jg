@@ -10,8 +10,6 @@ Expansion::Expansion() {
 Expansion::~Expansion() {
 }
 
-//
-
 auto ExpansionPort::connect(uint deviceID) -> void {
   if(!system.loaded()) return;
   delete device;
