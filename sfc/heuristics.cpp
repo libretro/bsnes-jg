@@ -1,4 +1,5 @@
 #include <nall/stdint.hpp>
+#include <nall/intrinsics.hpp>
 #include <nall/platform.hpp>
 #include <nall/algorithm.hpp>
 #include <nall/atoi.hpp>

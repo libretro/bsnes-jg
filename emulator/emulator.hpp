@@ -3,12 +3,12 @@
 #include <libco/libco.h>
 
 #include <nall/stdint.hpp>
+#include <nall/intrinsics.hpp>
 #include <nall/platform.hpp>
 #include <nall/algorithm.hpp>
 #include <nall/any.hpp>
 #include <nall/atoi.hpp>
 #include <nall/bit.hpp>
-#include <nall/intrinsics.hpp>
 #include <nall/endian.hpp>
 #include <nall/function.hpp>
 #include <nall/iterator.hpp>
