@@ -134,9 +134,9 @@ namespace SuperFamicom {
   #include <sfc/ppu/counter.hpp>
 
   #include <sfc/cpu.hpp>
-  #include <sfc/smp/smp.hpp>
   #include <sfc/dsp.hpp>
   #include <sfc/ppu.hpp>
+  #include <sfc/smp.hpp>
 
   #include <sfc/cartridge.hpp>
   #include <sfc/controller/controller.hpp>
