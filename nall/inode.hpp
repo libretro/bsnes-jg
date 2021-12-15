@@ -40,7 +40,7 @@ struct inode {
   }
 
   static auto hidden(const string& name) -> bool {
-    #if defined(PLATFORM_WINDOWS)
+    #if defined(_WIN32)
     auto attributes = GetFileAttributes(utf16_t(name));
     return attributes & FILE_ATTRIBUTE_HIDDEN;
     #else
@@ -68,7 +68,7 @@ struct inode {
   }
 
   static auto owner(const string& name) -> string {
-    #if !defined(PLATFORM_WINDOWS)
+    #if !defined(_WIN32)
     struct passwd* pw = getpwuid(uid(name));
     if(pw && pw->pw_name) return pw->pw_name;
     #endif
@@ -76,7 +76,7 @@ struct inode {
   }
 
   static auto group(const string& name) -> string {
-    #if !defined(PLATFORM_WINDOWS)
+    #if !defined(_WIN32)
     struct group* gr = getgrgid(gid(name));
     if(gr && gr->gr_name) return gr->gr_name;
     #endif
@@ -87,7 +87,7 @@ struct inode {
     struct stat data{};
     stat(name, &data);
     switch(mode) {
-    #if defined(PLATFORM_WINDOWS)
+    #if defined(_WIN32)
     //on Windows, the last status change time (ctime) holds the file creation time instead
     case time::create: return data.st_ctime;
     #elif defined(__OpenBSD__)
@@ -96,7 +96,7 @@ struct inode {
     #elif defined (__DragonFly__)
     // DragonFly BSD does not support file creation time, use modified time instead
     case time::create: return data.st_mtime;
-    #elif defined(PLATFORM_BSD) || defined(PLATFORM_MACOS)
+    #elif defined(__APPLE__) || defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__)
     //st_birthtime may return -1 or st_atime if it is not supported by the file system
     //the best that can be done in this case is to return st_mtime if it's older
     case time::create: return min((uint)data.st_birthtime, (uint)data.st_mtime);
@@ -114,7 +114,7 @@ struct inode {
   }
 
   static auto setMode(const string& name, uint mode) -> bool {
-    #if !defined(PLATFORM_WINDOWS)
+    #if !defined(_WIN32)
     return chmod(name, mode) == 0;
     #else
     return _wchmod(utf16_t(name), (mode & 0400 ? _S_IREAD : 0) | (mode & 0200 ? _S_IWRITE : 0)) == 0;
@@ -122,7 +122,7 @@ struct inode {
   }
 
   static auto setOwner(const string& name, const string& owner) -> bool {
-    #if !defined(PLATFORM_WINDOWS)
+    #if !defined(_WIN32)
     struct passwd* pwd = getpwnam(owner);
     if(!pwd) return false;
     return chown(name, pwd->pw_uid, inode::gid(name)) == 0;
@@ -132,7 +132,7 @@ struct inode {
   }
 
   static auto setGroup(const string& name, const string& group) -> bool {
-    #if !defined(PLATFORM_WINDOWS)
+    #if !defined(_WIN32)
     struct group* grp = getgrnam(group);
     if(!grp) return false;
     return chown(name, inode::uid(name), grp->gr_gid) == 0;
@@ -164,7 +164,7 @@ struct inode {
 
   //returns false if 'name' is a directory that is not empty
   static auto remove(const string& name) -> bool {
-    #if defined(PLATFORM_WINDOWS)
+    #if defined(_WIN32)
     if(name.endsWith("/")) return _wrmdir(utf16_t(name)) == 0;
     return _wunlink(utf16_t(name)) == 0;
     #else

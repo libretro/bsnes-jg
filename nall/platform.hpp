@@ -5,7 +5,7 @@ namespace Math {
   static const long double Pi = 3.14159265358979323846;
 }
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(_WIN32)
   #include <nall/windows/guard.hpp>
   #include <windows.h>
   #include <wchar.h>

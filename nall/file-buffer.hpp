@@ -156,10 +156,10 @@ struct file_buffer {
 
   auto truncate(uint64_t size) -> bool {
     if(!fileHandle) return false;
-    #if defined(API_POSIX)
-    return ftruncate(fileno(fileHandle), size) == 0;
-    #elif defined(API_WINDOWS)
+    #if defined(_WIN32)
     return _chsize(fileno(fileHandle), size) == 0;
+    #else
+    return ftruncate(fileno(fileHandle), size) == 0;
     #endif
   }
 
@@ -172,16 +172,16 @@ struct file_buffer {
     close();
 
     switch(fileMode = mode_) {
-    #if defined(API_POSIX)
-    case mode::read:   fileHandle = fopen(filename, "rb" ); break;
-    case mode::write:  fileHandle = fopen(filename, "wb+"); break;  //need read permission for buffering
-    case mode::modify: fileHandle = fopen(filename, "rb+"); break;
-    case mode::append: fileHandle = fopen(filename, "wb+"); break;
-    #elif defined(API_WINDOWS)
+    #if defined(_WIN32)
     case mode::read:   fileHandle = _wfopen(utf16_t(filename), L"rb" ); break;
     case mode::write:  fileHandle = _wfopen(utf16_t(filename), L"wb+"); break;
     case mode::modify: fileHandle = _wfopen(utf16_t(filename), L"rb+"); break;
     case mode::append: fileHandle = _wfopen(utf16_t(filename), L"wb+"); break;
+    #else
+    case mode::read:   fileHandle = fopen(filename, "rb" ); break;
+    case mode::write:  fileHandle = fopen(filename, "wb+"); break;  //need read permission for buffering
+    case mode::modify: fileHandle = fopen(filename, "rb+"); break;
+    case mode::append: fileHandle = fopen(filename, "wb+"); break;
     #endif
     }
     if(!fileHandle) return false;

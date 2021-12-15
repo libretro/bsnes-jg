@@ -34,37 +34,37 @@ struct file : inode {
   }
 
   static auto truncate(const string& filename, uint64_t size) -> bool {
-    #if defined(API_POSIX)
-    return truncate(filename, size) == 0;
-    #elif defined(API_WINDOWS)
+    #if defined(_WIN32)
     if(auto fp = _wfopen(utf16_t(filename), L"rb+")) {
       bool result = _chsize(fileno(fp), size) == 0;
       fclose(fp);
       return result;
     }
     return false;
+    #else
+    return truncate(filename, size) == 0;
     #endif
   }
 
   //returns false if specified filename is a directory
   static auto exists(const string& filename) -> bool {
-    #if defined(API_POSIX)
-    struct stat data;
-    if(stat(filename, &data) != 0) return false;
-    #elif defined(API_WINDOWS)
+    #if defined(_WIN32)
     struct __stat64 data;
     if(_wstat64(utf16_t(filename), &data) != 0) return false;
+    #else
+    struct stat data;
+    if(stat(filename, &data) != 0) return false;
     #endif
     return !(data.st_mode & S_IFDIR);
   }
 
   static auto size(const string& filename) -> uint64_t {
-    #if defined(API_POSIX)
-    struct stat data;
-    stat(filename, &data);
-    #elif defined(API_WINDOWS)
+    #if defined(_WIN32)
     struct __stat64 data;
     _wstat64(utf16_t(filename), &data);
+    #else
+    struct stat data;
+    stat(filename, &data);
     #endif
     return S_ISREG(data.st_mode) ? data.st_size : 0u;
   }
