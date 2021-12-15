@@ -69,10 +69,12 @@ CSRCS := $(OBJDIR)/gb/Core/apu.c \
 CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 	$(OBJDIR)/emulator/emulator.cpp \
 	$(OBJDIR)/heuristics/heuristics.cpp \
-	$(OBJDIR)/processor/arm7tdmi/arm7tdmi.cpp \
-	$(OBJDIR)/processor/spc700/spc700.cpp \
-	$(OBJDIR)/processor/upd96050/upd96050.cpp \
-	$(OBJDIR)/processor/wdc65816/wdc65816.cpp \
+	$(OBJDIR)/processor/arm7tdmi.cpp \
+	$(OBJDIR)/processor/gsu.cpp \
+	$(OBJDIR)/processor/hg51b.cpp \
+	$(OBJDIR)/processor/spc700.cpp \
+	$(OBJDIR)/processor/upd96050.cpp \
+	$(OBJDIR)/processor/wdc65816.cpp \
 	$(OBJDIR)/sfc/cartridge/cartridge.cpp \
 	$(OBJDIR)/sfc/controller/controller.cpp \
 	$(OBJDIR)/sfc/coprocessor/armdsp.cpp \
@@ -115,6 +117,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio/audio.cpp \
 # Object dirs
 MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/heuristics \
+	$(OBJDIR)/processor \
 	$(OBJDIR)/sfc/interface \
 	$(OBJDIR)/sfc/system \
 	$(OBJDIR)/sfc/controller \
@@ -129,10 +132,6 @@ MKDIRS := $(OBJDIR)/emulator/audio \
 	$(OBJDIR)/sfc/coprocessor \
 	$(OBJDIR)/sfc/slot/bsmemory \
 	$(OBJDIR)/sfc/slot/sufamiturbo \
-	$(OBJDIR)/processor/arm7tdmi \
-	$(OBJDIR)/processor/spc700 \
-	$(OBJDIR)/processor/upd96050 \
-	$(OBJDIR)/processor/wdc65816 \
 	$(OBJDIR)/gb/Core \
 	$(OBJDIR)/libco
 

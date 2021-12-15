@@ -1,3 +1,115 @@
+#include <emulator/emulator.hpp>
+#include "hg51b.hpp"
+
+namespace Processor {
+
+auto HG51B::readRegister(uint7 address) -> uint24 {
+  switch(address) {
+  case 0x01: return r.mul >> 24 & 0xffffff;
+  case 0x02: return r.mul >>  0 & 0xffffff;
+  case 0x03: return r.mdr;
+  case 0x08: return r.rom;
+  case 0x0c: return r.ram;
+  case 0x13: return r.mar;
+  case 0x1c: return r.dpr;
+  case 0x20: return r.pc;
+  case 0x28: return r.p;
+  case 0x2e:
+    io.bus.enable  = 1;
+    io.bus.reading = 1;
+    io.bus.pending = 1 + io.wait.rom;
+    io.bus.address = r.mar;
+    return 0x000000;
+  case 0x2f:
+    io.bus.enable  = 1;
+    io.bus.reading = 1;
+    io.bus.pending = 1 + io.wait.ram;
+    io.bus.address = r.mar;
+    return 0x000000;
+
+  //constant registers
+  case 0x50: return 0x000000;
+  case 0x51: return 0xffffff;
+  case 0x52: return 0x00ff00;
+  case 0x53: return 0xff0000;
+  case 0x54: return 0x00ffff;
+  case 0x55: return 0xffff00;
+  case 0x56: return 0x800000;
+  case 0x57: return 0x7fffff;
+  case 0x58: return 0x008000;
+  case 0x59: return 0x007fff;
+  case 0x5a: return 0xff7fff;
+  case 0x5b: return 0xffff7f;
+  case 0x5c: return 0x010000;
+  case 0x5d: return 0xfeffff;
+  case 0x5e: return 0x000100;
+  case 0x5f: return 0x00feff;
+
+  //general purpose registers
+  case 0x60: case 0x70: return r.gpr[ 0];
+  case 0x61: case 0x71: return r.gpr[ 1];
+  case 0x62: case 0x72: return r.gpr[ 2];
+  case 0x63: case 0x73: return r.gpr[ 3];
+  case 0x64: case 0x74: return r.gpr[ 4];
+  case 0x65: case 0x75: return r.gpr[ 5];
+  case 0x66: case 0x76: return r.gpr[ 6];
+  case 0x67: case 0x77: return r.gpr[ 7];
+  case 0x68: case 0x78: return r.gpr[ 8];
+  case 0x69: case 0x79: return r.gpr[ 9];
+  case 0x6a: case 0x7a: return r.gpr[10];
+  case 0x6b: case 0x7b: return r.gpr[11];
+  case 0x6c: case 0x7c: return r.gpr[12];
+  case 0x6d: case 0x7d: return r.gpr[13];
+  case 0x6e: case 0x7e: return r.gpr[14];
+  case 0x6f: case 0x7f: return r.gpr[15];
+  }
+
+  return 0x000000;  //verified
+}
+
+auto HG51B::writeRegister(uint7 address, uint24 data) -> void {
+  switch(address) {
+  case 0x01: r.mul = r.mul &  0xffffffull | data << 24; return;
+  case 0x02: r.mul = r.mul & ~0xffffffull | data <<  0; return;
+  case 0x03: r.mdr = data; return;
+  case 0x08: r.rom = data; return;
+  case 0x0c: r.ram = data; return;
+  case 0x13: r.mar = data; return;
+  case 0x1c: r.dpr = data; return;
+  case 0x20: r.pc = data; return;
+  case 0x28: r.p = data; return;
+  case 0x2e:
+    io.bus.enable  = 1;
+    io.bus.writing = 1;
+    io.bus.pending = 1 + io.wait.rom;
+    io.bus.address = r.mar;
+    return;
+  case 0x2f:
+    io.bus.enable  = 1;
+    io.bus.writing = 1;
+    io.bus.pending = 1 + io.wait.ram;
+    io.bus.address = r.mar;
+    return;
+
+  case 0x60: case 0x70: r.gpr[ 0] = data; return;
+  case 0x61: case 0x71: r.gpr[ 1] = data; return;
+  case 0x62: case 0x72: r.gpr[ 2] = data; return;
+  case 0x63: case 0x73: r.gpr[ 3] = data; return;
+  case 0x64: case 0x74: r.gpr[ 4] = data; return;
+  case 0x65: case 0x75: r.gpr[ 5] = data; return;
+  case 0x66: case 0x76: r.gpr[ 6] = data; return;
+  case 0x67: case 0x77: r.gpr[ 7] = data; return;
+  case 0x68: case 0x78: r.gpr[ 8] = data; return;
+  case 0x69: case 0x79: r.gpr[ 9] = data; return;
+  case 0x6a: case 0x7a: r.gpr[10] = data; return;
+  case 0x6b: case 0x7b: r.gpr[11] = data; return;
+  case 0x6c: case 0x7c: r.gpr[12] = data; return;
+  case 0x6d: case 0x7d: r.gpr[13] = data; return;
+  case 0x6e: case 0x7e: r.gpr[14] = data; return;
+  case 0x6f: case 0x7f: r.gpr[15] = data; return;
+  }
+}
+
 HG51B::HG51B() {
   #define bind(id, name, ...) { \
     if(instructionTable[id]) throw; \
@@ -636,4 +748,525 @@ HG51B::HG51B() {
   for(uint opcode : range(65536)) {
     if(!instructionTable[opcode]) throw;
   }
+}
+
+auto HG51B::push() -> void {
+  stack[7] = stack[6];
+  stack[6] = stack[5];
+  stack[5] = stack[4];
+  stack[4] = stack[3];
+  stack[3] = stack[2];
+  stack[2] = stack[1];
+  stack[1] = stack[0];
+  stack[0] = r.pb << 8 | r.pc << 0;
+}
+
+auto HG51B::pull() -> void {
+  auto pc  = stack[0];
+  stack[0] = stack[1];
+  stack[1] = stack[2];
+  stack[2] = stack[3];
+  stack[3] = stack[4];
+  stack[4] = stack[5];
+  stack[5] = stack[6];
+  stack[6] = stack[7];
+  stack[7] = 0x0000;
+
+  r.pb = pc >> 8;
+  r.pc = pc >> 0;
+}
+
+auto HG51B::algorithmADD(uint24 x, uint24 y) -> uint24 {
+  int z = x + y;
+  r.n = z & 0x800000;
+  r.z = (uint24)z == 0;
+  r.c = z > 0xffffff;
+  r.v = ~(x ^ y) & (x ^ z) & 0x800000;
+  return z;
+}
+
+auto HG51B::algorithmAND(uint24 x, uint24 y) -> uint24 {
+  x = x & y;
+  r.n = x & 0x800000;
+  r.z = x == 0;
+  return x;
+}
+
+auto HG51B::algorithmASR(uint24 a, uint5 s) -> uint24 {
+  if(s > 24) s = 0;
+  a = (int24)a >> s;
+  r.n = a & 0x800000;
+  r.z = a == 0;
+  return a;
+}
+
+auto HG51B::algorithmMUL(int24 x, int24 y) -> uint48 {
+  return (int48)x * (int48)y;
+}
+
+auto HG51B::algorithmOR(uint24 x, uint24 y) -> uint24 {
+  x = x | y;
+  r.n = x & 0x800000;
+  r.z = x == 0;
+  return x;
+}
+
+auto HG51B::algorithmROR(uint24 a, uint5 s) -> uint24 {
+  if(s > 24) s = 0;
+  a = (a >> s) | (a << 24 - s);
+  r.n = a & 0x800000;
+  r.z = a == 0;
+  return a;
+}
+
+auto HG51B::algorithmSHL(uint24 a, uint5 s) -> uint24 {
+  if(s > 24) s = 0;
+  a = a << s;
+  r.n = a & 0x800000;
+  r.z = a == 0;
+  return a;
+}
+
+auto HG51B::algorithmSHR(uint24 a, uint5 s) -> uint24 {
+  if(s > 24) s = 0;
+  a = a >> s;
+  r.n = a & 0x800000;
+  r.z = a == 0;
+  return a;
+}
+
+auto HG51B::algorithmSUB(uint24 x, uint24 y) -> uint24 {
+  int z = x - y;
+  r.n = z & 0x800000;
+  r.z = (uint24)z == 0;
+  r.c = z >= 0;
+  r.v = ~(x ^ y) & (x ^ z) & 0x800000;
+  return z;
+}
+
+auto HG51B::algorithmSX(uint24 x) -> uint24 {
+  r.n = x & 0x800000;
+  r.z = x == 0;
+  return x;
+}
+
+auto HG51B::algorithmXNOR(uint24 x, uint24 y) -> uint24 {
+  x = ~x ^ y;
+  r.n = x & 0x800000;
+  r.z = x == 0;
+  return x;
+}
+
+auto HG51B::algorithmXOR(uint24 x, uint24 y) -> uint24 {
+  x = x ^ y;
+  r.n = x & 0x800000;
+  r.z = x == 0;
+  return x;
+}
+
+auto HG51B::instructionADD(uint7 reg, uint5 shift) -> void {
+  r.a = algorithmADD(r.a << shift, readRegister(reg));
+}
+
+auto HG51B::instructionADD(uint8 imm, uint5 shift) -> void {
+  r.a = algorithmADD(r.a << shift, imm);
+}
+
+auto HG51B::instructionAND(uint7 reg, uint5 shift) -> void {
+  r.a = algorithmAND(r.a << shift, readRegister(reg));
+}
+
+auto HG51B::instructionAND(uint8 imm, uint5 shift) -> void {
+  r.a = algorithmAND(r.a << shift, imm);
+}
+
+auto HG51B::instructionASR(uint7 reg) -> void {
+  r.a = algorithmASR(r.a, readRegister(reg));
+}
+
+auto HG51B::instructionASR(uint5 imm) -> void {
+  r.a = algorithmASR(r.a, imm);
+}
+
+auto HG51B::instructionCLEAR() -> void {
+  r.a = 0;
+  r.p = 0;
+  r.ram = 0;
+  r.dpr = 0;
+}
+
+auto HG51B::instructionCMP(uint7 reg, uint5 shift) -> void {
+  algorithmSUB(r.a << shift, readRegister(reg));
+}
+
+auto HG51B::instructionCMP(uint8 imm, uint5 shift) -> void {
+  algorithmSUB(r.a << shift, imm);
+}
+
+auto HG51B::instructionCMPR(uint7 reg, uint5 shift) -> void {
+  algorithmSUB(readRegister(reg), r.a << shift);
+}
+
+auto HG51B::instructionCMPR(uint8 imm, uint5 shift) -> void {
+  algorithmSUB(imm, r.a << shift);
+}
+
+auto HG51B::instructionHALT() -> void {
+  halt();
+}
+
+auto HG51B::instructionINC(uint24& reg) -> void {
+  reg++;
+}
+
+auto HG51B::instructionJMP(uint8 data, uint1 far, const uint1& take) -> void {
+  if(!take) return;
+  if(far) r.pb = r.p;
+  r.pc = data;
+  step(2);
+}
+
+auto HG51B::instructionJSR(uint8 data, uint1 far, const uint1& take) -> void {
+  if(!take) return;
+  push();
+  if(far) r.pb = r.p;
+  r.pc = data;
+  step(2);
+}
+
+auto HG51B::instructionLD(uint24& out, uint7 reg) -> void {
+  out = readRegister(reg);
+}
+
+auto HG51B::instructionLD(uint15& out, uint4 reg) -> void {
+  out = r.gpr[reg];
+}
+
+auto HG51B::instructionLD(uint24& out, uint8 imm) -> void {
+  out = imm;
+}
+
+auto HG51B::instructionLD(uint15& out, uint8 imm) -> void {
+  out = imm;
+}
+
+auto HG51B::instructionLDL(uint15& out, uint8 imm) -> void {
+  out = out & 0x7f00 | imm << 0;
+}
+
+auto HG51B::instructionLDH(uint15& out, uint7 imm) -> void {
+  out = out & 0x00ff | (imm & 0x7f) << 8;
+}
+
+auto HG51B::instructionMUL(uint7 reg) -> void {
+  r.mul = algorithmMUL(r.a, readRegister(reg));
+}
+
+auto HG51B::instructionMUL(uint8 imm) -> void {
+  r.mul = algorithmMUL(r.a, imm);
+}
+
+auto HG51B::instructionNOP() -> void {
+}
+
+auto HG51B::instructionOR(uint7 reg, uint5 shift) -> void {
+  r.a = algorithmOR(r.a << shift, readRegister(reg));
+}
+
+auto HG51B::instructionOR(uint8 imm, uint5 shift) -> void {
+  r.a = algorithmOR(r.a << shift, imm);
+}
+
+auto HG51B::instructionRDRAM(uint2 byte, uint24& a) -> void {
+  uint12 address = a;
+  if(address >= 0xc00) address -= 0x400;
+  r.ram.byte(byte) = dataRAM[address];
+}
+
+auto HG51B::instructionRDRAM(uint2 byte, uint8 imm) -> void {
+  uint12 address = r.dpr + imm;
+  if(address >= 0xc00) address -= 0x400;
+  r.ram.byte(byte) = dataRAM[address];
+}
+
+auto HG51B::instructionRDROM(uint24& reg) -> void {
+  r.rom = dataROM[(uint10)reg];
+}
+
+auto HG51B::instructionRDROM(uint10 imm) -> void {
+  r.rom = dataROM[imm];
+}
+
+auto HG51B::instructionROR(uint7 reg) -> void {
+  r.a = algorithmROR(r.a, readRegister(reg));
+}
+
+auto HG51B::instructionROR(uint5 imm) -> void {
+  r.a = algorithmROR(r.a, imm);
+}
+
+auto HG51B::instructionRTS() -> void {
+  pull();
+  step(2);
+}
+
+auto HG51B::instructionSKIP(uint1 take, const uint1& flag) -> void {
+  if(flag != take) return;
+  advance();
+  step(1);
+}
+
+auto HG51B::instructionSHL(uint7 reg) -> void {
+  r.a = algorithmSHL(r.a, readRegister(reg));
+}
+
+auto HG51B::instructionSHL(uint5 imm) -> void {
+  r.a = algorithmSHL(r.a, imm);
+}
+
+auto HG51B::instructionSHR(uint7 reg) -> void {
+  r.a = algorithmSHR(r.a, readRegister(reg));
+}
+
+auto HG51B::instructionSHR(uint5 imm) -> void {
+  r.a = algorithmSHR(r.a, imm);
+}
+
+auto HG51B::instructionST(uint7 reg, uint24& in) -> void {
+  writeRegister(reg, in);
+}
+
+auto HG51B::instructionSUB(uint7 reg, uint5 shift) -> void {
+  r.a = algorithmSUB(r.a << shift, readRegister(reg));
+}
+
+auto HG51B::instructionSUB(uint8 imm, uint5 shift) -> void {
+  r.a = algorithmSUB(r.a << shift, imm);
+}
+
+auto HG51B::instructionSUBR(uint7 reg, uint5 shift) -> void {
+  r.a = algorithmSUB(readRegister(reg), r.a << shift);
+}
+
+auto HG51B::instructionSUBR(uint8 imm, uint5 shift) -> void {
+  r.a = algorithmSUB(imm, r.a << shift);
+}
+
+auto HG51B::instructionSWAP(uint24& a, uint4 reg) -> void {
+  std::swap(a, r.gpr[reg]);
+}
+
+auto HG51B::instructionSXB() -> void {
+  r.a = algorithmSX((int8)r.a);
+}
+
+auto HG51B::instructionSXW() -> void {
+  r.a = algorithmSX((int16)r.a);
+}
+
+auto HG51B::instructionWAIT() -> void {
+  if(!io.bus.enable) return;
+  return step(io.bus.pending);
+}
+
+auto HG51B::instructionWRRAM(uint2 byte, uint24& a) -> void {
+  uint12 address = a;
+  if(address >= 0xc00) address -= 0x400;
+  dataRAM[address] = r.ram.byte(byte);
+}
+
+auto HG51B::instructionWRRAM(uint2 byte, uint8 imm) -> void {
+  uint12 address = r.dpr + imm;
+  if(address >= 0xc00) address -= 0x400;
+  dataRAM[address] = r.ram.byte(byte);
+}
+
+auto HG51B::instructionXNOR(uint7 reg, uint5 shift) -> void {
+  r.a = algorithmXNOR(r.a << shift, readRegister(reg));
+}
+
+auto HG51B::instructionXNOR(uint8 imm, uint5 shift) -> void {
+  r.a = algorithmXNOR(r.a << shift, imm);
+}
+
+auto HG51B::instructionXOR(uint7 reg, uint5 shift) -> void {
+  r.a = algorithmXOR(r.a << shift, readRegister(reg));
+}
+
+auto HG51B::instructionXOR(uint8 imm, uint5 shift) -> void {
+  r.a = algorithmXOR(r.a << shift, imm);
+}
+
+auto HG51B::serialize(serializer& s) -> void {
+  s.array(programRAM[0]);
+  s.array(programRAM[1]);
+  s.array(dataRAM);
+
+  s.integer(r.pb);
+  s.integer(r.pc);
+
+  s.boolean(r.n);
+  s.boolean(r.z);
+  s.boolean(r.c);
+  s.boolean(r.v);
+  s.boolean(r.i);
+
+  s.integer(r.a);
+  s.integer(r.p);
+  s.integer(r.mul);
+  s.integer(r.mdr);
+  s.integer(r.rom);
+  s.integer(r.ram);
+  s.integer(r.mar);
+  s.integer(r.dpr);
+  s.array(r.gpr);
+
+  s.integer(io.lock);
+  s.integer(io.halt);
+  s.integer(io.irq);
+  s.integer(io.rom);
+  s.array(io.vector);
+
+  s.integer(io.wait.rom);
+  s.integer(io.wait.ram);
+
+  s.integer(io.suspend.enable);
+  s.integer(io.suspend.duration);
+
+  s.integer(io.cache.enable);
+  s.integer(io.cache.page);
+  s.array(io.cache.lock);
+  s.array(io.cache.address);
+  s.integer(io.cache.base);
+  s.integer(io.cache.pb);
+  s.integer(io.cache.pc);
+
+  s.integer(io.dma.enable);
+  s.integer(io.dma.source);
+  s.integer(io.dma.target);
+  s.integer(io.dma.length);
+
+  s.integer(io.bus.enable);
+  s.integer(io.bus.reading);
+  s.integer(io.bus.writing);
+  s.integer(io.bus.pending);
+  s.integer(io.bus.address);
+
+  s.array(stack);
+}
+
+auto HG51B::lock() -> void {
+  io.lock = 1;
+}
+
+auto HG51B::halt() -> void {
+  io.halt = 1;
+}
+
+auto HG51B::wait(uint24 address) -> uint {
+  if(isROM(address)) return 1 + io.wait.rom;
+  if(isRAM(address)) return 1 + io.wait.ram;
+  return 1;
+}
+
+auto HG51B::main() -> void {
+  if(io.lock) return step(1);
+  if(io.suspend.enable) return suspend();
+  if(io.cache.enable) return cache(), void();
+  if(io.dma.enable) return dma();
+  if(io.halt) return step(1);
+  return execute();
+}
+
+auto HG51B::step(uint clocks) -> void {
+  if(io.bus.enable) {
+    if(io.bus.pending > clocks) {
+      io.bus.pending -= clocks;
+    } else {
+      io.bus.enable = 0;
+      io.bus.pending = 0;
+      if(io.bus.reading) io.bus.reading = 0, r.mdr = read(io.bus.address);
+      if(io.bus.writing) io.bus.writing = 0, write(io.bus.address, r.mdr);
+    }
+  }
+}
+
+auto HG51B::execute() -> void {
+  if(!cache()) return halt();
+  auto opcode = programRAM[io.cache.page][r.pc];
+  advance();
+  step(1);
+  instructionTable[opcode]();
+}
+
+auto HG51B::advance() -> void {
+  if(++r.pc == 0) {
+    if(io.cache.page == 1) return halt();
+    io.cache.page = 1;
+    if(io.cache.lock[io.cache.page]) return halt();
+    r.pb = r.p;
+    if(!cache()) return halt();
+  }
+}
+
+auto HG51B::suspend() -> void {
+  if(!io.suspend.duration) return step(1);  //indefinite
+  step(io.suspend.duration);
+  io.suspend.duration = 0;
+  io.suspend.enable = 0;
+}
+
+auto HG51B::cache() -> bool {
+  uint24 address = io.cache.base + r.pb * 512;
+
+  //try to use the current page ...
+  if(io.cache.address[io.cache.page] == address) return io.cache.enable = 0, true;
+  //if it's not valid, try to use the other page ...
+  io.cache.page ^= 1;
+  if(io.cache.address[io.cache.page] == address) return io.cache.enable = 0, true;
+  //if it's not valid, try to load into the other page ...
+  if(io.cache.lock[io.cache.page]) io.cache.page ^= 1;
+  //if it's locked, try to load into the first page ...
+  if(io.cache.lock[io.cache.page]) return io.cache.enable = 0, false;
+
+  io.cache.address[io.cache.page] = address;
+  for(uint offset : range(256)) {
+    step(wait(address));
+    programRAM[io.cache.page][offset]  = read(address++) << 0;
+    programRAM[io.cache.page][offset] |= read(address++) << 8;
+  }
+  return io.cache.enable = 0, true;
+}
+
+auto HG51B::dma() -> void {
+  for(uint offset : range(io.dma.length)) {
+    uint24 source = io.dma.source + offset;
+    uint24 target = io.dma.target + offset;
+
+    if(isROM(source) && isROM(target)) return lock();
+    if(isRAM(source) && isRAM(target)) return lock();
+
+    step(wait(source));
+    auto data = read(source);
+
+    step(wait(target));
+    write(target, data);
+  }
+
+  io.dma.enable = 0;
+}
+
+auto HG51B::running() const -> bool {
+  return io.cache.enable || io.dma.enable || io.bus.pending || !io.halt;
+}
+
+auto HG51B::busy() const -> bool {
+  return io.cache.enable || io.dma.enable || io.bus.pending;
+}
+
+auto HG51B::power() -> void {
+  r = {};
+  io = {};
+}
+
 }
