@@ -58,8 +58,8 @@ struct HG51B {
   auto instructionCMPR(uint8_t imm, nall::Natural< 5> shift) -> void;
   auto instructionHALT() -> void;
   auto instructionINC(nall::Natural<24>& reg) -> void;
-  auto instructionJMP(uint8_t data, uint1 far, const uint1& take) -> void;
-  auto instructionJSR(uint8_t data, uint1 far, const uint1& take) -> void;
+  auto instructionJMP(uint8_t data, nall::Natural< 1> far, const nall::Natural< 1>& take) -> void;
+  auto instructionJSR(uint8_t data, nall::Natural< 1> far, const nall::Natural< 1>& take) -> void;
   auto instructionLD(nall::Natural<24>& out, nall::Natural< 7> reg) -> void;
   auto instructionLD(nall::Natural<15>& out, nall::Natural< 4> reg) -> void;
   auto instructionLD(nall::Natural<24>& out, uint8_t imm) -> void;
@@ -82,7 +82,7 @@ struct HG51B {
   auto instructionSHL(nall::Natural< 5> imm) -> void;
   auto instructionSHR(nall::Natural< 7> reg) -> void;
   auto instructionSHR(nall::Natural< 5> imm) -> void;
-  auto instructionSKIP(uint1 take, const uint1& flag) -> void;
+  auto instructionSKIP(nall::Natural< 1> take, const nall::Natural< 1>& flag) -> void;
   auto instructionST(nall::Natural< 7> reg, nall::Natural<24>& in) -> void;
   auto instructionSUB(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
   auto instructionSUB(uint8_t imm, nall::Natural< 5> shift) -> void;
@@ -133,10 +133,10 @@ protected:
   } r;
 
   struct IO {
-    uint1 lock;
-    uint1 halt = 1;
-    uint1 irq;      //0 = enable, 1 = disable
-    uint1 rom = 1;  //0 = 2 ROMs, 1 = 1 ROM
+    nall::Natural< 1> lock;
+    nall::Natural< 1> halt = 1;
+    nall::Natural< 1> irq;      //0 = enable, 1 = disable
+    nall::Natural< 1> rom = 1;  //0 = 2 ROMs, 1 = 1 ROM
     uint8_t vector[32];
 
     struct Wait {
@@ -145,14 +145,14 @@ protected:
     } wait;
 
     struct Suspend {
-      uint1 enable;
+      nall::Natural< 1> enable;
       uint8_t duration;
     } suspend;
 
     struct Cache {
-      uint1  enable;
-      uint1  page;
-      uint1  lock[2];
+      nall::Natural< 1>  enable;
+      nall::Natural< 1>  page;
+      nall::Natural< 1>  lock[2];
       nall::Natural<24> address[2];  //cache address is in bytes; so 24-bit
       nall::Natural<24> base;        //base address is also in bytes
       nall::Natural<15> pb;
@@ -160,16 +160,16 @@ protected:
     } cache;
 
     struct DMA {
-      uint1  enable;
+      nall::Natural< 1>  enable;
       nall::Natural<24> source;
       nall::Natural<24> target;
       uint16_t length;
     } dma;
 
     struct Bus {
-      uint1  enable;
-      uint1  reading;
-      uint1  writing;
+      nall::Natural< 1>  enable;
+      nall::Natural< 1>  reading;
+      nall::Natural< 1>  writing;
       nall::Natural< 4>  pending;
       nall::Natural<24> address;
     } bus;

@@ -148,7 +148,7 @@ private:
     nall::Natural< 9>  vtime = 0x1ff;
 
     //$420d
-    uint1 fastROM = 0;
+    nall::Natural< 1> fastROM = 0;
 
     //$4214-$4217
     uint16_t rddiv = 0;
@@ -189,18 +189,18 @@ private:
     inline auto hdmaAdvance() -> void;
 
     //$420b
-    uint1 dmaEnable = 0;
+    nall::Natural< 1> dmaEnable = 0;
 
     //$420c
-    uint1 hdmaEnable = 0;
+    nall::Natural< 1> hdmaEnable = 0;
 
     //$43x0
     nall::Natural< 3> transferMode = 7;
-    uint1 fixedTransfer = 1;
-    uint1 reverseTransfer = 1;
-    uint1 unused = 1;
-    uint1 indirect = 1;
-    uint1 direction = 1;
+    nall::Natural< 1> fixedTransfer = 1;
+    nall::Natural< 1> reverseTransfer = 1;
+    nall::Natural< 1> unused = 1;
+    nall::Natural< 1> indirect = 1;
+    nall::Natural< 1> direction = 1;
 
     //$43x1
     uint8_t targetAddress = 0xff;
@@ -230,8 +230,8 @@ private:
     uint8_t unknown = 0xff;
 
     //internal state
-    uint1 hdmaCompleted = 0;
-    uint1 hdmaDoTransfer = 0;
+    nall::Natural< 1> hdmaCompleted = 0;
+    nall::Natural< 1> hdmaDoTransfer = 0;
 
     maybe<Channel&> next;
 

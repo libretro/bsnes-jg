@@ -429,7 +429,7 @@ auto PPU::writeIO(unsigned addr, uint8_t data) -> void {
 
   //OAMDATA
   case 0x2104: {
-    uint1 latchBit = io.oamAddress & 1;
+    nall::Natural< 1> latchBit = io.oamAddress & 1;
     nall::Natural<10> address = io.oamAddress++;
     if(latchBit == 0) latch.oam = data;
     if(address & 0x200) {

@@ -33,15 +33,15 @@ private:
     uint8_t apu3 = 0;
 
     //$00f0
-    uint1 timersDisable = 0;
-    uint1 ramWritable = 1;
-    uint1 ramDisable = 0;
-    uint1 timersEnable = 1;
+    nall::Natural< 1> timersDisable = 0;
+    nall::Natural< 1> ramWritable = 1;
+    nall::Natural< 1> ramDisable = 0;
+    nall::Natural< 1> timersEnable = 1;
     nall::Natural< 2> externalWaitStates = 0;
     nall::Natural< 2> internalWaitStates = 0;
 
     //$00f1
-    uint1 iplromEnable = 1;
+    nall::Natural< 1> iplromEnable = 1;
 
     //$00f2
     uint8_t dspAddr = 0;

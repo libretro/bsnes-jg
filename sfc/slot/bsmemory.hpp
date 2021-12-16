@@ -45,7 +45,7 @@ struct BSMemory : Thread, Memory {
 
 private:
   struct Pin {
-    uint1 writable;  // => /WP
+    nall::Natural< 1> writable;  // => /WP
   } pin;
 
   struct Chip {
@@ -81,18 +81,18 @@ private:
 
     nall::Natural< 4>  id;
     uint32_t erased;
-    uint1  locked;
-    uint1  erasing;
+    nall::Natural< 1>  locked;
+    nall::Natural< 1>  erasing;
 
     struct Status {
       auto operator()() -> uint8_t;
 
-      uint1 vppLow;
-      uint1 queueFull;
-      uint1 aborted;
-      uint1 failed;
-      uint1 locked = 1;
-      uint1 ready = 1;
+      nall::Natural< 1> vppLow;
+      nall::Natural< 1> queueFull;
+      nall::Natural< 1> aborted;
+      nall::Natural< 1> failed;
+      nall::Natural< 1> locked = 1;
+      nall::Natural< 1> ready = 1;
     } status;
   } blocks[64];  //8mbit = 16; 16mbit = 32; 32mbit = 64
 
@@ -104,11 +104,11 @@ private:
     struct Status {
       auto operator()() -> uint8_t;
 
-      uint1 vppLow;
-      uint1 writeFailed;
-      uint1 eraseFailed;
-      uint1 eraseSuspended;
-      uint1 ready = 1;
+      nall::Natural< 1> vppLow;
+      nall::Natural< 1> writeFailed;
+      nall::Natural< 1> eraseFailed;
+      nall::Natural< 1> eraseSuspended;
+      nall::Natural< 1> ready = 1;
     } status;
   } compatible;
 
@@ -116,14 +116,14 @@ private:
     struct Status {
       auto operator()() -> uint8_t;
 
-      uint1 page;
-      uint1 pageReady = 1;
-      uint1 pageAvailable = 1;
-      uint1 queueFull;
-      uint1 sleeping;
-      uint1 failed;
-      uint1 suspended;
-      uint1 ready = 1;
+      nall::Natural< 1> page;
+      nall::Natural< 1> pageReady = 1;
+      nall::Natural< 1> pageAvailable = 1;
+      nall::Natural< 1> queueFull;
+      nall::Natural< 1> sleeping;
+      nall::Natural< 1> failed;
+      nall::Natural< 1> suspended;
+      nall::Natural< 1> ready = 1;
     } status;
   } global;
 
@@ -156,7 +156,7 @@ private:
     auto serialize(serializer&) -> void;
 
     struct History {
-      uint1  valid;
+      nall::Natural< 1>  valid;
       nall::Natural<24> address;
       uint8_t  data;
     } history[4];

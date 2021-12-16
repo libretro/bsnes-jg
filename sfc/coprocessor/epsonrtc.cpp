@@ -27,7 +27,7 @@ auto EpsonRTC::rtcRead(nall::Natural< 4> addr) -> nall::Natural< 4> {
   case 11: return yearhi;
   case 12: return weekday | resync << 3;
   case 13: {
-    uint1 readflag = irqflag & !irqmask;
+    nall::Natural< 1> readflag = irqflag & !irqmask;
     irqflag = 0;
     return hold | calendar << 1 | readflag << 2 | roundseconds << 3;
   }

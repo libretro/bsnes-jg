@@ -20,10 +20,10 @@ auto uPD96050::exec() -> void {
 auto uPD96050::execOP(nall::Natural<24> opcode) -> void {
   nall::Natural< 2> pselect = opcode >> 20;  //P select
   nall::Natural< 4> alu     = opcode >> 16;  //ALU operation mode
-  uint1 asl     = opcode >> 15;  //accumulator select
+  nall::Natural< 1> asl     = opcode >> 15;  //accumulator select
   nall::Natural< 2> dpl     = opcode >> 13;  //DP low modify
   nall::Natural< 4> dphm    = opcode >>  9;  //DP high XOR modify
-  uint1 rpdcr   = opcode >>  8;  //RP decrement
+  nall::Natural< 1> rpdcr   = opcode >>  8;  //RP decrement
   nall::Natural< 4> src     = opcode >>  4;  //move source
   nall::Natural< 4> dst     = opcode >>  0;  //move destination
 
@@ -322,10 +322,10 @@ auto uPD96050::disassemble(nall::Natural<14> ip) -> string {
   if(type == 0 || type == 1) {  //OP,RT
     nall::Natural< 2> pselect = opcode >> 20;
     nall::Natural< 4> alu     = opcode >> 16;
-    uint1 asl     = opcode >> 15;
+    nall::Natural< 1> asl     = opcode >> 15;
     nall::Natural< 2> dpl     = opcode >> 13;
     nall::Natural< 4> dphm    = opcode >>  9;
-    uint1 rpdcr   = opcode >>  8;
+    nall::Natural< 1> rpdcr   = opcode >>  8;
     nall::Natural< 4> src     = opcode >>  4;
     nall::Natural< 4> dst     = opcode >>  0;
 

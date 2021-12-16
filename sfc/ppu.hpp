@@ -69,9 +69,9 @@ private:
     uint8_t bgofsPPU1;
     nall::Natural< 3> bgofsPPU2;
     uint8_t mode7;
-    uint1 counters;
-    uint1 hcounter;
-    uint1 vcounter;
+    nall::Natural< 1> counters;
+    nall::Natural< 1> hcounter;
+    nall::Natural< 1> vcounter;
 
     nall::Natural<10> oamAddress;
     uint8_t cgramAddress;
@@ -79,17 +79,17 @@ private:
 
   struct IO {
     //$2100  INIDISP
-    uint1 displayDisable;
+    nall::Natural< 1> displayDisable;
     nall::Natural< 4> displayBrightness;
 
     //$2102  OAMADDL
     //$2103  OAMADDH
     nall::Natural<10> oamBaseAddress;
     nall::Natural<10> oamAddress;
-    uint1 oamPriority;
+    nall::Natural< 1> oamPriority;
 
     //$2105  BGMODE
-    uint1 bgPriority;
+    nall::Natural< 1> bgPriority;
     uint8_t bgMode;
 
     //$210d  BG1HOFS
@@ -99,7 +99,7 @@ private:
     uint16_t voffsetMode7;
 
     //$2115  VMAIN
-    uint1 vramIncrementMode;
+    nall::Natural< 1> vramIncrementMode;
     nall::Natural< 2> vramMapping;
     uint8_t vramIncrementSize;
 
@@ -109,8 +109,8 @@ private:
 
     //$211a  M7SEL
     nall::Natural< 2> repeatMode7;
-    uint1 vflipMode7;
-    uint1 hflipMode7;
+    nall::Natural< 1> vflipMode7;
+    nall::Natural< 1> hflipMode7;
 
     //$211b  M7A
     uint16_t m7a;
@@ -132,13 +132,13 @@ private:
 
     //$2121  CGADD
     uint8_t cgramAddress;
-    uint1 cgramAddressLatch;
+    nall::Natural< 1> cgramAddressLatch;
 
     //$2133  SETINI
-    uint1 extbg;
-    uint1 pseudoHires;
-    uint1 overscan;
-    uint1 interlace;
+    nall::Natural< 1> extbg;
+    nall::Natural< 1> pseudoHires;
+    nall::Natural< 1> overscan;
+    nall::Natural< 1> interlace;
 
     //$213c  OPHCT
     uint16_t hcounter;
@@ -194,13 +194,13 @@ struct Background {
     uint16_t tiledataAddress;
     uint16_t screenAddress;
     nall::Natural< 2> screenSize;
-    uint1 tileSize;
+    nall::Natural< 1> tileSize;
 
     uint8_t mode;
     uint8_t priority[2];
 
-    uint1 aboveEnable;
-    uint1 belowEnable;
+    nall::Natural< 1> aboveEnable;
+    nall::Natural< 1> belowEnable;
 
     uint16_t hoffset;
     uint16_t voffset;
@@ -218,7 +218,7 @@ struct Background {
   } output;
 
   struct Mosaic {
-     uint1 enable;
+     nall::Natural< 1> enable;
     uint16_t hcounter;
     uint16_t hoffset;
     Pixel  pixel;
@@ -236,8 +236,8 @@ struct Background {
     uint8_t palette;
     nall::Natural< 3> paletteGroup;
     uint8_t priority;
-    uint1 hmirror;
-    uint1 vmirror;
+    nall::Natural< 1> hmirror;
+    nall::Natural< 1> vmirror;
     uint16_t data[4];
   } tiles[66];
 
@@ -258,12 +258,12 @@ struct OAM {
     nall::Natural< 9> x;
     uint8_t y;
     uint8_t character;
-    uint1 nameselect;
-    uint1 vflip;
-    uint1 hflip;
+    nall::Natural< 1> nameselect;
+    nall::Natural< 1> vflip;
+    nall::Natural< 1> hflip;
     nall::Natural< 2> priority;
     nall::Natural< 3> palette;
-    uint1 size;
+    nall::Natural< 1> size;
   } object[128];
 };
 
@@ -284,9 +284,9 @@ struct Object {
   OAM oam;
 
   struct IO {
-    uint1 aboveEnable;
-    uint1 belowEnable;
-    uint1 interlace;
+    nall::Natural< 1> aboveEnable;
+    nall::Natural< 1> belowEnable;
+    nall::Natural< 1> interlace;
 
     nall::Natural< 3> baseSize;
     nall::Natural< 2> nameselect;
@@ -295,8 +295,8 @@ struct Object {
 
     uint8_t priority[4];
 
-    uint1 timeOver;
-    uint1 rangeOver;
+    nall::Natural< 1> timeOver;
+    nall::Natural< 1> rangeOver;
   } io;
 
   struct Latch {
@@ -304,16 +304,16 @@ struct Object {
   } latch;
 
   struct Item {
-     uint1 valid;
+     nall::Natural< 1> valid;
      nall::Natural< 7> index;
   };
 
   struct Tile {
-     uint1 valid;
+     nall::Natural< 1> valid;
      nall::Natural< 9> x;
      nall::Natural< 2> priority;
      uint8_t palette;
-     uint1 hflip;
+     nall::Natural< 1> hflip;
      uint32_t data;
   };
 
@@ -408,13 +408,13 @@ struct Screen {
   nall::Natural<15> cgram[256];
 
   struct IO {
-    uint1 blendMode;
-    uint1 directColor;
+    nall::Natural< 1> blendMode;
+    nall::Natural< 1> directColor;
 
-    uint1 colorMode;
-    uint1 colorHalve;
+    nall::Natural< 1> colorMode;
+    nall::Natural< 1> colorHalve;
     struct Layer {
-      uint1 colorEnable;
+      nall::Natural< 1> colorEnable;
     } bg1, bg2, bg3, bg4, obj, back;
 
     nall::Natural< 5> colorBlue;
@@ -425,11 +425,11 @@ struct Screen {
   struct Math {
     struct Screen {
       nall::Natural<15> color;
-       uint1 colorEnable;
+       nall::Natural< 1> colorEnable;
     } above, below;
-    uint1 transparent;
-    uint1 blendMode;
-    uint1 colorHalve;
+    nall::Natural< 1> transparent;
+    nall::Natural< 1> blendMode;
+    nall::Natural< 1> colorHalve;
   } math;
 
   friend class PPU;

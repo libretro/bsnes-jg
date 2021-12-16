@@ -27,22 +27,22 @@ struct MCC {
 
 private:
   struct IRQ {
-    uint1 flag;    //bit 0
-    uint1 enable;  //bit 1
+    nall::Natural< 1> flag;    //bit 0
+    nall::Natural< 1> enable;  //bit 1
   } irq;
 
   struct Registers {
-    uint1 mapping;             //bit  2 (0 = ignore A15; 1 = use A15)
-    uint1 psramEnableLo;       //bit  3
-    uint1 psramEnableHi;       //bit  4
+    nall::Natural< 1> mapping;             //bit  2 (0 = ignore A15; 1 = use A15)
+    nall::Natural< 1> psramEnableLo;       //bit  3
+    nall::Natural< 1> psramEnableHi;       //bit  4
     nall::Natural< 2> psramMapping;        //bits 5-6
-    uint1 romEnableLo;         //bit  7
-    uint1 romEnableHi;         //bit  8
-    uint1 exEnableLo;          //bit  9
-    uint1 exEnableHi;          //bit 10
-    uint1 exMapping;           //bit 11
-    uint1 internallyWritable;  //bit 12 (1 = MCC allows writes to BS Memory Cassette)
-    uint1 externallyWritable;  //bit 13 (1 = BS Memory Cassette allows writes to flash memory)
+    nall::Natural< 1> romEnableLo;         //bit  7
+    nall::Natural< 1> romEnableHi;         //bit  8
+    nall::Natural< 1> exEnableLo;          //bit  9
+    nall::Natural< 1> exEnableHi;          //bit 10
+    nall::Natural< 1> exMapping;           //bit 11
+    nall::Natural< 1> internallyWritable;  //bit 12 (1 = MCC allows writes to BS Memory Cassette)
+    nall::Natural< 1> externallyWritable;  //bit 13 (1 = BS Memory Cassette allows writes to flash memory)
   } r, w;
 
   //bit 14 = commit

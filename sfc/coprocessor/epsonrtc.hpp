@@ -23,27 +23,27 @@ struct EpsonRTC : Thread {
   nall::Natural< 4> mdr;
   nall::Natural< 4> offset;
   unsigned wait;
-  uint1 ready;
-  uint1 holdtick;
+  nall::Natural< 1> ready;
+  nall::Natural< 1> holdtick;
 
   nall::Natural< 4> secondlo;
   nall::Natural< 3> secondhi;
-  uint1 batteryfailure;
+  nall::Natural< 1> batteryfailure;
 
   nall::Natural< 4> minutelo;
   nall::Natural< 3> minutehi;
-  uint1 resync;
+  nall::Natural< 1> resync;
 
   nall::Natural< 4> hourlo;
   nall::Natural< 2> hourhi;
-  uint1 meridian;
+  nall::Natural< 1> meridian;
 
   nall::Natural< 4> daylo;
   nall::Natural< 2> dayhi;
-  uint1 dayram;
+  nall::Natural< 1> dayram;
 
   nall::Natural< 4> monthlo;
-  uint1 monthhi;
+  nall::Natural< 1> monthhi;
   nall::Natural< 2> monthram;
 
   nall::Natural< 4> yearlo;
@@ -51,19 +51,19 @@ struct EpsonRTC : Thread {
 
   nall::Natural< 3> weekday;
 
-  uint1 hold;
-  uint1 calendar;
-  uint1 irqflag;
-  uint1 roundseconds;
+  nall::Natural< 1> hold;
+  nall::Natural< 1> calendar;
+  nall::Natural< 1> irqflag;
+  nall::Natural< 1> roundseconds;
 
-  uint1 irqmask;
-  uint1 irqduty;
+  nall::Natural< 1> irqmask;
+  nall::Natural< 1> irqduty;
   nall::Natural< 2> irqperiod;
 
-  uint1 pause;
-  uint1 stop;
-  uint1 atime;  //astronomical time (24-hour mode)
-  uint1 test;
+  nall::Natural< 1> pause;
+  nall::Natural< 1> stop;
+  nall::Natural< 1> atime;  //astronomical time (24-hour mode)
+  nall::Natural< 1> test;
 
   //memory.cpp
   auto rtcReset() -> void;

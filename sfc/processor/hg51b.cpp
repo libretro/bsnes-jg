@@ -135,40 +135,40 @@ HG51B::HG51B() {
 
   //JMP imm
   for(uint8_t data : range(256))
-  for(uint1 null : range(  2))
-  for(uint1 far  : range(  2)) {
+  for(nall::Natural< 1> null : range(  2))
+  for(nall::Natural< 1> far  : range(  2)) {
     auto opcode = pattern("0000 10f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, 1);
   }
 
   //JMP EQ,imm
   for(uint8_t data : range(256))
-  for(uint1 null : range(  2))
-  for(uint1 far  : range(  2)) {
+  for(nall::Natural< 1> null : range(  2))
+  for(nall::Natural< 1> far  : range(  2)) {
     auto opcode = pattern("0000 11f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.z);
   }
 
   //JMP GE,imm
   for(uint8_t data : range(256))
-  for(uint1 null : range(  2))
-  for(uint1 far  : range(  2)) {
+  for(nall::Natural< 1> null : range(  2))
+  for(nall::Natural< 1> far  : range(  2)) {
     auto opcode = pattern("0001 00f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.c);
   }
 
   //JMP MI,imm
   for(uint8_t data : range(256))
-  for(uint1 null : range(  2))
-  for(uint1 far  : range(  2)) {
+  for(nall::Natural< 1> null : range(  2))
+  for(nall::Natural< 1> far  : range(  2)) {
     auto opcode = pattern("0001 01f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.n);
   }
 
   //JMP VS,imm
   for(uint8_t data : range(256))
-  for(uint1 null : range(  2))
-  for(uint1 far  : range(  2)) {
+  for(nall::Natural< 1> null : range(  2))
+  for(nall::Natural< 1> far  : range(  2)) {
     auto opcode = pattern("0001 10f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.v);
   }
@@ -186,28 +186,28 @@ HG51B::HG51B() {
   }
 
   //SKIP V
-  for(uint1 take : range(  2))
+  for(nall::Natural< 1> take : range(  2))
   for(nall::Natural< 7> null : range(128)) {
     auto opcode = pattern("0010 0100 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.v);
   }
 
   //SKIP C
-  for(uint1 take : range(  2))
+  for(nall::Natural< 1> take : range(  2))
   for(nall::Natural< 7> null : range(128)) {
     auto opcode = pattern("0010 0101 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.c);
   }
 
   //SKIP Z
-  for(uint1 take : range(  2))
+  for(nall::Natural< 1> take : range(  2))
   for(nall::Natural< 7> null : range(128)) {
     auto opcode = pattern("0010 0110 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.z);
   }
 
   //SKIP N
-  for(uint1 take : range(  2))
+  for(nall::Natural< 1> take : range(  2))
   for(nall::Natural< 7> null : range(128)) {
     auto opcode = pattern("0010 0111 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.n);
@@ -215,40 +215,40 @@ HG51B::HG51B() {
 
   //JSR
   for(uint8_t data : range(256))
-  for(uint1 null : range(  2))
-  for(uint1 far  : range(  2)) {
+  for(nall::Natural< 1> null : range(  2))
+  for(nall::Natural< 1> far  : range(  2)) {
     auto opcode = pattern("0010 10f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, 1);
   }
 
   //JSR EQ,imm
   for(uint8_t data : range(256))
-  for(uint1 null : range(  2))
-  for(uint1 far  : range(  2)) {
+  for(nall::Natural< 1> null : range(  2))
+  for(nall::Natural< 1> far  : range(  2)) {
     auto opcode = pattern("0010 11f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.z);
   }
 
   //JSR GE,imm
   for(uint8_t data : range(256))
-  for(uint1 null : range(  2))
-  for(uint1 far  : range(  2)) {
+  for(nall::Natural< 1> null : range(  2))
+  for(nall::Natural< 1> far  : range(  2)) {
     auto opcode = pattern("0011 00f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.c);
   }
 
   //JSR MI,imm
   for(uint8_t data : range(256))
-  for(uint1 null : range(  2))
-  for(uint1 far  : range(  2)) {
+  for(nall::Natural< 1> null : range(  2))
+  for(nall::Natural< 1> far  : range(  2)) {
     auto opcode = pattern("0011 01f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.n);
   }
 
   //JSR VS,imm
   for(uint8_t data : range(256))
-  for(uint1 null : range(  2))
-  for(uint1 far  : range(  2)) {
+  for(nall::Natural< 1> null : range(  2))
+  for(nall::Natural< 1> far  : range(  2)) {
     auto opcode = pattern("0011 10f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.v);
   }
@@ -273,7 +273,7 @@ HG51B::HG51B() {
 
   //CMPR A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
-  for(uint1 null  : range(  2))
+  for(nall::Natural< 1> null  : range(  2))
   for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("0100 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, CMPR, reg, shifts[shift]);
@@ -288,7 +288,7 @@ HG51B::HG51B() {
 
   //CMP A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
-  for(uint1 null  : range(  2))
+  for(nall::Natural< 1> null  : range(  2))
   for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("0101 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, CMP, reg, shifts[shift]);
@@ -333,21 +333,21 @@ HG51B::HG51B() {
 
   //LD A,reg
   for(nall::Natural< 7> reg  : range(128))
-  for(uint1 null : range(  2)) {
+  for(nall::Natural< 1> null : range(  2)) {
     auto opcode = pattern("0110 0000 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, LD, r.a, reg);
   }
 
   //LD MDR,reg
   for(nall::Natural< 7> reg  : range(128))
-  for(uint1 null : range(  2)) {
+  for(nall::Natural< 1> null : range(  2)) {
     auto opcode = pattern("0110 0001 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, LD, r.mdr, reg);
   }
 
   //LD MAR,reg
   for(nall::Natural< 7> reg  : range(128))
-  for(uint1 null : range(  2)) {
+  for(nall::Natural< 1> null : range(  2)) {
     auto opcode = pattern("0110 0010 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, LD, r.mar, reg);
   }
@@ -457,7 +457,7 @@ HG51B::HG51B() {
 
   //LD PH,imm
   for(nall::Natural< 7> imm  : range(128))
-  for(uint1 null : range(  2)) {
+  for(nall::Natural< 1> null : range(  2)) {
     auto opcode = pattern("0111 1101 .iii iiii");
     bind(opcode | imm << 0 | null << 7, LDH, r.p, imm);
   }
@@ -470,7 +470,7 @@ HG51B::HG51B() {
 
   //ADD A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
-  for(uint1 null  : range(  2))
+  for(nall::Natural< 1> null  : range(  2))
   for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1000 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, ADD, reg, shifts[shift]);
@@ -485,7 +485,7 @@ HG51B::HG51B() {
 
   //SUBR A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
-  for(uint1 null  : range(  2))
+  for(nall::Natural< 1> null  : range(  2))
   for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1000 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, SUBR, reg, shifts[shift]);
@@ -500,7 +500,7 @@ HG51B::HG51B() {
 
   //SUB A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
-  for(uint1 null  : range(  2))
+  for(nall::Natural< 1> null  : range(  2))
   for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1001 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, SUB, reg, shifts[shift]);
@@ -529,7 +529,7 @@ HG51B::HG51B() {
 
   //XNOR A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
-  for(uint1 null  : range(  2))
+  for(nall::Natural< 1> null  : range(  2))
   for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1010 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, XNOR, reg, shifts[shift]);
@@ -544,7 +544,7 @@ HG51B::HG51B() {
 
   //XOR A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
-  for(uint1 null  : range(  2))
+  for(nall::Natural< 1> null  : range(  2))
   for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1010 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, XOR, reg, shifts[shift]);
@@ -559,7 +559,7 @@ HG51B::HG51B() {
 
   //AND A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
-  for(uint1 null  : range(  2))
+  for(nall::Natural< 1> null  : range(  2))
   for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1011 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, AND, reg, shifts[shift]);
@@ -574,7 +574,7 @@ HG51B::HG51B() {
 
   //OR A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
-  for(uint1 null  : range(  2))
+  for(nall::Natural< 1> null  : range(  2))
   for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1011 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, OR, reg, shifts[shift]);
@@ -645,14 +645,14 @@ HG51B::HG51B() {
 
   //ST reg,A
   for(nall::Natural< 7> reg  : range(128))
-  for(uint1 null : range(  2)) {
+  for(nall::Natural< 1> null : range(  2)) {
     auto opcode = pattern("1110 0000 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ST, reg, r.a);
   }
 
   //ST reg,MDR
   for(nall::Natural< 7> reg  : range(128))
-  for(uint1 null : range(  2)) {
+  for(nall::Natural< 1> null : range(  2)) {
     auto opcode = pattern("1110 0001 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ST, reg, r.mdr);
   }
@@ -919,14 +919,14 @@ auto HG51B::instructionINC(nall::Natural<24>& reg) -> void {
   reg++;
 }
 
-auto HG51B::instructionJMP(uint8_t data, uint1 far, const uint1& take) -> void {
+auto HG51B::instructionJMP(uint8_t data, nall::Natural< 1> far, const nall::Natural< 1>& take) -> void {
   if(!take) return;
   if(far) r.pb = r.p;
   r.pc = data;
   step(2);
 }
 
-auto HG51B::instructionJSR(uint8_t data, uint1 far, const uint1& take) -> void {
+auto HG51B::instructionJSR(uint8_t data, nall::Natural< 1> far, const nall::Natural< 1>& take) -> void {
   if(!take) return;
   push();
   if(far) r.pb = r.p;
@@ -1010,7 +1010,7 @@ auto HG51B::instructionRTS() -> void {
   step(2);
 }
 
-auto HG51B::instructionSKIP(uint1 take, const uint1& flag) -> void {
+auto HG51B::instructionSKIP(nall::Natural< 1> take, const nall::Natural< 1>& flag) -> void {
   if(flag != take) return;
   advance();
   step(1);

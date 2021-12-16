@@ -45,10 +45,10 @@ private:
   nall::Natural< 7> packetSize;
 
   nall::Natural< 2> joypID;
-  uint1 joypLock;
-  uint1 pulseLock;
-  uint1 strobeLock;
-  uint1 packetLock;
+  nall::Natural< 1> joypLock;
+  nall::Natural< 1> pulseLock;
+  nall::Natural< 1> strobeLock;
+  nall::Natural< 1> packetLock;
   Packet joypPacket;
   nall::Natural< 4> packetOffset;
   uint8_t bitData;
