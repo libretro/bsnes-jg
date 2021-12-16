@@ -97,7 +97,7 @@ private:
   } blocks[64];  //8mbit = 16; 16mbit = 32; 32mbit = 64
 
   struct Blocks : BlockInformation {
-    auto operator()(uint6 id) -> Block&;
+    auto operator()(nall::Natural< 6> id) -> Block&;
   } block;
 
   struct Compatible {

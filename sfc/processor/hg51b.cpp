@@ -719,7 +719,7 @@ HG51B::HG51B() {
 
   //SWAP A,Rn
   for(uint4 reg  : range(16))
-  for(uint6 null : range(64)) {
+  for(nall::Natural< 6> null : range(64)) {
     auto opcode = pattern("1111 00.. .... rrrr");
     bind(opcode | reg << 0 | null << 4, SWAP, r.a, reg);
   }

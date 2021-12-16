@@ -93,7 +93,7 @@ auto BSMemory::Enter() -> void {
 auto BSMemory::main() -> void {
   if(ROM) return step(1'000'000);  //1 second
 
-  for(uint6 id : range(block.count())) {
+  for(nall::Natural< 6> id : range(block.count())) {
     if(block(id).erasing) return block(id).erase();
     block(id).status.ready = 1;
   }
@@ -167,7 +167,7 @@ auto BSMemory::unload() -> void {
     manifest.append("  vendor: 0x", hex(chip.vendor,  4L), "\n");
     manifest.append("  device: 0x", hex(chip.device,  4L), "\n");
     manifest.append("  serial: 0x", hex(chip.serial, 12L), "\n");
-    for(uint6 id : range(block.count())) {
+    for(nall::Natural< 6> id : range(block.count())) {
       manifest.append("  block\n");
       manifest.append("    id: ", id, "\n");
       manifest.append("    erased: ", (unsigned)block(id).erased, "\n");
@@ -295,7 +295,7 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
 
   //clear status register
   if(queue.data(0) == 0x50) {
-    for(uint6 id : range(block.count())) {
+    for(nall::Natural< 6> id : range(block.count())) {
       block(id).status.vppLow = 0;
       block(id).status.failed = 0;
     }
@@ -373,7 +373,7 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
   if(queue.data(0) == 0x97) {
   if(queue.size() < 2) return;
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
-    for(uint6 id : range(block.count())) block(id).update();
+    for(nall::Natural< 6> id : range(block.count())) block(id).update();
     return queue.flush();
   }
 
@@ -383,7 +383,7 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
     page.write(0x06, 0x06);  //unknown constant
     page.write(0x07, 0x00);  //unknown constant
-    for(uint6 id : range(block.count())) {
+    for(nall::Natural< 6> id : range(block.count())) {
       uint8_t address;
       address += (id >> 0 & 3) * 0x08;  //verified for LH28F800SUT-ZI
       address += (id >> 2 & 3) * 0x40;  //verified for LH28F800SUT-ZI
@@ -402,7 +402,7 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
   if(queue.data(0) == 0xa7) {
   if(queue.size() < 2) return;
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
-    for(uint6 id : range(block.count())) block(id).erase();
+    for(nall::Natural< 6> id : range(block.count())) block(id).erase();
     mode = Mode::CompatibleStatus;
     return queue.flush();
   }
@@ -556,7 +556,7 @@ auto BSMemory::Block::update() -> void {
 
 //
 
-auto BSMemory::Blocks::operator()(uint6 id) -> Block& {
+auto BSMemory::Blocks::operator()(nall::Natural< 6> id) -> Block& {
   return self->blocks[id & count() - 1];
 }
 
