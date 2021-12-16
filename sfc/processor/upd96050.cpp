@@ -165,7 +165,7 @@ auto uPD96050::execRT(nall::Natural<24> opcode) -> void {
 
 auto uPD96050::execJP(nall::Natural<24> opcode) -> void {
   uint9 brch = opcode >> 13;  //branch
-  uint11 na  = opcode >>  2;  //next address
+  nall::Natural<11> na  = opcode >>  2;  //next address
   uint2 bank = opcode >>  0;  //bank address
 
   nall::Natural<14> jp = regs.pc & 0x2000 | bank << 11 | na << 0;
@@ -426,7 +426,7 @@ auto uPD96050::disassemble(nall::Natural<14> ip) -> string {
 
   if(type == 2) {  //JP
     uint9 brch = opcode >> 13;
-    uint11 na  = opcode >>  2;
+    nall::Natural<11> na  = opcode >>  2;
     uint8_t bank = opcode >>  0;
 
     nall::Natural<14> jp = (regs.pc & 0x2000) | (bank << 11) | (na << 0);

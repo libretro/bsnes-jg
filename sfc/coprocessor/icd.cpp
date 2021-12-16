@@ -20,7 +20,7 @@ auto ICD::ppuWrite(uint2 color) -> void {
   auto y = (uint3)vcounter;
   if(x >= 160) return;  //unverified behavior
 
-  uint11 address = writeBank * 512 + y * 2 + x / 8 * 16;
+  nall::Natural<11> address = writeBank * 512 + y * 2 + x / 8 * 16;
   output[address + 0] = (output[address + 0] << 1) | !!(color & 1);
   output[address + 1] = (output[address + 1] << 1) | !!(color & 2);
 }

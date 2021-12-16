@@ -95,7 +95,7 @@ struct ARM7TDMI {
   auto thumbInstructionAdjustStack(uint7, uint1) -> void;
   auto thumbInstructionBranchExchange(uint4) -> void;
   auto thumbInstructionBranchFarPrefix(int11) -> void;
-  auto thumbInstructionBranchFarSuffix(uint11) -> void;
+  auto thumbInstructionBranchFarSuffix(nall::Natural<11>) -> void;
   auto thumbInstructionBranchNear(int11) -> void;
   auto thumbInstructionBranchTest(int8_t, uint4) -> void;
   auto thumbInstructionImmediate(uint8_t, uint3, uint2) -> void;
@@ -259,7 +259,7 @@ struct ARM7TDMI {
   auto thumbDisassembleAdjustStack(uint7, uint1) -> string;
   auto thumbDisassembleBranchExchange(uint4) -> string;
   auto thumbDisassembleBranchFarPrefix(int11) -> string;
-  auto thumbDisassembleBranchFarSuffix(uint11) -> string;
+  auto thumbDisassembleBranchFarSuffix(nall::Natural<11>) -> string;
   auto thumbDisassembleBranchNear(int11) -> string;
   auto thumbDisassembleBranchTest(int8_t, uint4) -> string;
   auto thumbDisassembleImmediate(uint8_t, uint3, uint2) -> string;

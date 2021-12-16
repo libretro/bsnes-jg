@@ -14,4 +14,3 @@ using  uint6 = nall::Natural< 6>;
 using  uint7 = nall::Natural< 7>;
 using  uint9 = nall::Natural< 9>;
 using uint10 = nall::Natural<10>;
-using uint11 = nall::Natural<11>;

@@ -630,17 +630,17 @@ auto ARM7TDMI::thumbInitialize() -> void {
     bind(opcode, BranchExchange, m);
   }
 
-  for(uint11 displacement : range(2048)) {
+  for(nall::Natural<11> displacement : range(2048)) {
     auto opcode = pattern("1111 0??? ???? ????") | displacement << 0;
     bind(opcode, BranchFarPrefix, displacement);
   }
 
-  for(uint11 displacement : range(2048)) {
+  for(nall::Natural<11> displacement : range(2048)) {
     auto opcode = pattern("1111 1??? ???? ????") | displacement << 0;
     bind(opcode, BranchFarSuffix, displacement);
   }
 
-  for(uint11 displacement : range(2048)) {
+  for(nall::Natural<11> displacement : range(2048)) {
     auto opcode = pattern("1110 0??? ???? ????") | displacement << 0;
     bind(opcode, BranchNear, displacement);
   }
@@ -1134,7 +1134,7 @@ auto ARM7TDMI::thumbInstructionBranchFarPrefix
 }
 
 auto ARM7TDMI::thumbInstructionBranchFarSuffix
-(uint11 displacement) -> void {
+(nall::Natural<11> displacement) -> void {
   r(15) = r(14) + (displacement * 2);
   r(14) = pipeline.decode.address | 1;
 }
@@ -1666,14 +1666,14 @@ auto ARM7TDMI::thumbDisassembleBranchExchange
 
 auto ARM7TDMI::thumbDisassembleBranchFarPrefix
 (int11 displacementHi) -> string {
-  uint11 displacementLo = read(Half | Nonsequential, (_pc & ~1) + 2);
+  nall::Natural<11> displacementLo = read(Half | Nonsequential, (_pc & ~1) + 2);
   int22 displacement = displacementHi << 11 | displacementLo << 0;
   uint32_t address = _pc + 4 + displacement * 2;
   return {"bl 0x", hex(address, 8L)};
 }
 
 auto ARM7TDMI::thumbDisassembleBranchFarSuffix
-(uint11 displacement) -> string {
+(nall::Natural<11> displacement) -> string {
   return {"bl (suffix)"};
 }
 
