@@ -130,7 +130,7 @@ struct Program : Emulator::Platform {
     void videoFrame(const uint16* data, uint pitch, uint width, uint height,
         uint scale) override;
     void audioFrame(const double* samples, uint channels) override;
-    int16 inputPoll(uint port, uint device, uint input) override;
+    int16_t inputPoll(uint port, uint device, uint input) override;
     void inputRumble(uint port, uint device, uint input, bool enable) override;
     
     void load();
@@ -155,10 +155,6 @@ struct Program : Emulator::Platform {
         openRomSufamiTurboB(string name, vfs::file::mode mode);
     
     void hackPatchMemory(vector<uint8_t>& data);
-    
-    string base_name;
-    
-    bool overscan = true;
 
 public: 
     struct Game {
@@ -452,7 +448,7 @@ int16 pollInputDevices(uint port, uint device, uint input) {
     return port > 1 ? 0 : input_device[port]->button[imap[input]];
 }
 
-int16 Program::inputPoll(uint port, uint device, uint input) {
+int16_t Program::inputPoll(uint port, uint device, uint input) {
     return pollInputDevices(port, device, input);
 }
 
@@ -1020,9 +1016,6 @@ int jg_game_load() {
     emulator->configure("Hacks/Coprocessor/DelayedSync", false); // default true
     emulator->configure("Hacks/Coprocessor/PreferHLE", true);
     
-    // Overscan should be drawn because the frontend does the clipping
-    program->overscan = true;
-    
     // Load the game
     if (string(gameinfo.path).endsWith(".gb") ||
         string(gameinfo.path).endsWith(".gbc")) {
@@ -1071,7 +1064,6 @@ int jg_game_load() {
         program->superFamicom.location = string(gameinfo.path);
     }
     
-    program->base_name = string(gameinfo.path);
     program->load();
     
     // Set up inputs
