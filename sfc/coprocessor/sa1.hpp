@@ -83,8 +83,8 @@ struct SA1 : Processor::WDC65816, Thread {
     auto readLinear(unsigned address, uint8_t data = 0) -> uint8_t;
     auto writeLinear(unsigned address, uint8_t data) -> void;
 
-    auto readBitmap(uint20 address, uint8_t data = 0) -> uint8_t;
-    auto writeBitmap(uint20 address, uint8_t data) -> void;
+    auto readBitmap(nall::Natural<20> address, uint8_t data = 0) -> uint8_t;
+    auto writeBitmap(nall::Natural<20> address, uint8_t data) -> void;
 
     bool dma;
   } bwram;

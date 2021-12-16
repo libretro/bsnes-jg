@@ -150,7 +150,7 @@ auto SA1::BWRAM::writeLinear(unsigned address, uint8_t data) -> void {
   return write(address, data);
 }
 
-auto SA1::BWRAM::readBitmap(uint20 address, uint8_t data) -> uint8_t {
+auto SA1::BWRAM::readBitmap(nall::Natural<20> address, uint8_t data) -> uint8_t {
   if(sa1.mmio.bbf == 0) {
     //4bpp
     unsigned shift = address & 1;
@@ -173,7 +173,7 @@ auto SA1::BWRAM::readBitmap(uint20 address, uint8_t data) -> uint8_t {
   return 0; // unreachable
 }
 
-auto SA1::BWRAM::writeBitmap(uint20 address, uint8_t data) -> void {
+auto SA1::BWRAM::writeBitmap(nall::Natural<20> address, uint8_t data) -> void {
   if(sa1.mmio.bbf == 0) {
     //4bpp
     unsigned shift = address & 1;
