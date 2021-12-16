@@ -37,7 +37,6 @@ auto Configuration::process(Markup::Node document, bool load) -> void {
   bind(boolean, "Hacks/PPU/Mode7/Supersample", hacks.ppu.mode7.supersample);
   bind(boolean, "Hacks/PPU/Mode7/Mosaic", hacks.ppu.mode7.mosaic);
   bind(boolean, "Hacks/DSP/Fast", hacks.dsp.fast);
-  bind(boolean, "Hacks/DSP/Cubic", hacks.dsp.cubic);
   bind(boolean, "Hacks/DSP/EchoShadow", hacks.dsp.echoShadow);
   bind(boolean, "Hacks/Coprocessor/DelayedSync", hacks.coprocessor.delayedSync);
   bind(boolean, "Hacks/Coprocessor/PreferHLE", hacks.coprocessor.preferHLE);

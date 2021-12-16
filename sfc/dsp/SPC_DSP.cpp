@@ -143,33 +143,16 @@ inline int SPC_DSP::interpolate( voice_t const* v )
 	int const* in = &v->buf [(v->interp_pos >> 12) + v->buf_pos];
   //in[3] is the newest sample, in[0] is the oldest sample
 
-	if(configuration.hacks.dsp.cubic) {
-    float a = in[0] / 32768.0;
-    float b = in[1] / 32768.0;
-    float c = in[2] / 32768.0;
-    float d = in[3] / 32768.0;
+	// Make pointers into gaussian based on fractional position between samples
+	int offset = v->interp_pos >> 4 & 0xFF;
+	short const* fwd = gauss + 255 - offset;
+	short const* rev = gauss       + offset; // mirror left half of gaussian
 
-		float A = d - c - a + b;
-		float B = a - b - A;
-		float C = c - a;
-		float D = b;
-
-		float P = (v->interp_pos & 0xFFF) / 4096.0;
-		float O = (A * P * P * P) + (B * P * P) + (C * P) + (D);
-
-    out = O * 32768.0;
-	} else {
-		// Make pointers into gaussian based on fractional position between samples
-		int offset = v->interp_pos >> 4 & 0xFF;
-		short const* fwd = gauss + 255 - offset;
-		short const* rev = gauss       + offset; // mirror left half of gaussian
-
-		out  = (fwd [  0] * in [0]) >> 11;
-		out += (fwd [256] * in [1]) >> 11;
-		out += (rev [256] * in [2]) >> 11;
-		out = (int16_t) out;
-		out += (rev [  0] * in [3]) >> 11;
-	}
+	out  = (fwd [  0] * in [0]) >> 11;
+	out += (fwd [256] * in [1]) >> 11;
+	out += (rev [256] * in [2]) >> 11;
+	out = (int16_t) out;
+	out += (rev [  0] * in [3]) >> 11;
 
 	CLAMP16( out );
 	out &= ~1;
