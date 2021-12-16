@@ -271,7 +271,7 @@ template<typename T> struct stringify<T*> {
       memory::copy(_data, "(nullptr)", 10);
     } else {
       memory::copy(_data, "0x", 2);
-      fromNatural(_data + 2, (uintptr)source);
+      fromNatural(_data + 2, (uintptr_t)source);
     }
   }
   auto data() const -> const char* { return _data; }

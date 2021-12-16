@@ -116,7 +116,7 @@ struct shared_pointer {
 
   template<typename U, typename = std::enable_if_t<is_compatible<U>::value>>
   auto operator=(const shared_pointer<U>& source) -> shared_pointer& {
-    if((uintptr)this != (uintptr)&source) {
+    if((uintptr_t)this != (uintptr_t)&source) {
       reset();
       if((bool)source) {
         manager = source.manager;
@@ -128,7 +128,7 @@ struct shared_pointer {
 
   template<typename U, typename = std::enable_if_t<is_compatible<U>::value>>
   auto operator=(shared_pointer&& source) -> shared_pointer& {
-    if((uintptr)this != (uintptr)&source) {
+    if((uintptr_t)this != (uintptr_t)&source) {
       reset();
       manager = source.manager;
       source.manager = nullptr;

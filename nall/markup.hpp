@@ -32,7 +32,7 @@ struct ManagedNode {
 protected:
   string _name;
   string _value;
-  uintptr _metadata = 0;
+  uintptr_t _metadata = 0;
   vector<SharedNode> _children;
 
   inline auto _evaluate(string query) const -> bool;
