@@ -83,7 +83,7 @@ struct ARM7TDMI {
   auto armInstructionMoveToStatusFromRegister(uint4, uint4, uint1) -> void;
   auto armInstructionMultiply(uint4, uint4, uint4, uint4, uint1, uint1) -> void;
   auto armInstructionMultiplyLong(uint4, uint4, uint4, uint4, uint1, uint1, uint1) -> void;
-  auto armInstructionSoftwareInterrupt(uint24 immediate) -> void;
+  auto armInstructionSoftwareInterrupt(nall::Natural<24> immediate) -> void;
   auto armInstructionUndefined() -> void;
 
   //instructions-thumb.cpp
@@ -248,7 +248,7 @@ struct ARM7TDMI {
   auto armDisassembleMoveToStatusFromRegister(uint4, uint4, uint1) -> string;
   auto armDisassembleMultiply(uint4, uint4, uint4, uint4, uint1, uint1) -> string;
   auto armDisassembleMultiplyLong(uint4, uint4, uint4, uint4, uint1, uint1, uint1) -> string;
-  auto armDisassembleSoftwareInterrupt(uint24) -> string;
+  auto armDisassembleSoftwareInterrupt(nall::Natural<24>) -> string;
   auto armDisassembleUndefined() -> string;
 
   auto thumbDisassembleALU(uint3, uint3, uint4) -> string;

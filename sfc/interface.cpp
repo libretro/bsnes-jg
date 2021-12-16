@@ -323,7 +323,7 @@ auto Interface::unserialize(serializer& s) -> bool {
   return system.unserialize(s);
 }
 
-auto Interface::read(uint24 address) -> uint8_t {
+auto Interface::read(nall::Natural<24> address) -> uint8_t {
   return cpu.readDisassembler(address);
 }
 

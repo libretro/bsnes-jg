@@ -16,7 +16,7 @@ struct HG51B {
   virtual auto write(unsigned address, uint8_t data) -> void = 0;
   virtual auto lock() -> void;
   virtual auto halt() -> void;
-  auto wait(uint24 address) -> unsigned;
+  auto wait(nall::Natural<24> address) -> unsigned;
   auto main() -> void;
   auto execute() -> void;
   auto advance() -> void;
@@ -32,18 +32,18 @@ struct HG51B {
   auto push() -> void;
   auto pull() -> void;
 
-  auto algorithmADD(uint24 x, uint24 y) -> uint24;
-  auto algorithmAND(uint24 x, uint24 y) -> uint24;
-  auto algorithmASR(uint24 a, uint5 s) -> uint24;
+  auto algorithmADD(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
+  auto algorithmAND(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
+  auto algorithmASR(nall::Natural<24> a, uint5 s) -> nall::Natural<24>;
   auto algorithmMUL(int24 x, int24 y) -> nall::Natural<48>;
-  auto algorithmOR(uint24 x, uint24 y) -> uint24;
-  auto algorithmROR(uint24 a, uint5 s) -> uint24;
-  auto algorithmSHL(uint24 a, uint5 s) -> uint24;
-  auto algorithmSHR(uint24 a, uint5 s) -> uint24;
-  auto algorithmSUB(uint24 x, uint24 y) -> uint24;
-  auto algorithmSX(uint24 x) -> uint24;
-  auto algorithmXNOR(uint24 x, uint24 y) -> uint24;
-  auto algorithmXOR(uint24 x, uint24 y) -> uint24;
+  auto algorithmOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
+  auto algorithmROR(nall::Natural<24> a, uint5 s) -> nall::Natural<24>;
+  auto algorithmSHL(nall::Natural<24> a, uint5 s) -> nall::Natural<24>;
+  auto algorithmSHR(nall::Natural<24> a, uint5 s) -> nall::Natural<24>;
+  auto algorithmSUB(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
+  auto algorithmSX(nall::Natural<24> x) -> nall::Natural<24>;
+  auto algorithmXNOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
+  auto algorithmXOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
 
   auto instructionADD(uint7 reg, uint5 shift) -> void;
   auto instructionADD(uint8_t imm, uint5 shift) -> void;
@@ -57,12 +57,12 @@ struct HG51B {
   auto instructionCMPR(uint7 reg, uint5 shift) -> void;
   auto instructionCMPR(uint8_t imm, uint5 shift) -> void;
   auto instructionHALT() -> void;
-  auto instructionINC(uint24& reg) -> void;
+  auto instructionINC(nall::Natural<24>& reg) -> void;
   auto instructionJMP(uint8_t data, uint1 far, const uint1& take) -> void;
   auto instructionJSR(uint8_t data, uint1 far, const uint1& take) -> void;
-  auto instructionLD(uint24& out, uint7 reg) -> void;
+  auto instructionLD(nall::Natural<24>& out, uint7 reg) -> void;
   auto instructionLD(uint15& out, uint4 reg) -> void;
-  auto instructionLD(uint24& out, uint8_t imm) -> void;
+  auto instructionLD(nall::Natural<24>& out, uint8_t imm) -> void;
   auto instructionLD(uint15& out, uint8_t imm) -> void;
   auto instructionLDL(uint15& out, uint8_t imm) -> void;
   auto instructionLDH(uint15& out, uint7 imm) -> void;
@@ -71,9 +71,9 @@ struct HG51B {
   auto instructionNOP() -> void;
   auto instructionOR(uint7 reg, uint5 shift) -> void;
   auto instructionOR(uint8_t imm, uint5 shift) -> void;
-  auto instructionRDRAM(uint2 byte, uint24& a) -> void;
+  auto instructionRDRAM(uint2 byte, nall::Natural<24>& a) -> void;
   auto instructionRDRAM(uint2 byte, uint8_t imm) -> void;
-  auto instructionRDROM(uint24& reg) -> void;
+  auto instructionRDROM(nall::Natural<24>& reg) -> void;
   auto instructionRDROM(uint10 imm) -> void;
   auto instructionROR(uint7 reg) -> void;
   auto instructionROR(uint5 imm) -> void;
@@ -83,16 +83,16 @@ struct HG51B {
   auto instructionSHR(uint7 reg) -> void;
   auto instructionSHR(uint5 imm) -> void;
   auto instructionSKIP(uint1 take, const uint1& flag) -> void;
-  auto instructionST(uint7 reg, uint24& in) -> void;
+  auto instructionST(uint7 reg, nall::Natural<24>& in) -> void;
   auto instructionSUB(uint7 reg, uint5 shift) -> void;
   auto instructionSUB(uint8_t imm, uint5 shift) -> void;
   auto instructionSUBR(uint7 reg, uint5 shift) -> void;
   auto instructionSUBR(uint8_t imm, uint5 shift) -> void;
-  auto instructionSWAP(uint24& a, uint4 reg) -> void;
+  auto instructionSWAP(nall::Natural<24>& a, uint4 reg) -> void;
   auto instructionSXB() -> void;
   auto instructionSXW() -> void;
   auto instructionWAIT() -> void;
-  auto instructionWRRAM(uint2 byte, uint24& a) -> void;
+  auto instructionWRRAM(uint2 byte, nall::Natural<24>& a) -> void;
   auto instructionWRRAM(uint2 byte, uint8_t imm) -> void;
   auto instructionXNOR(uint7 reg, uint5 shift) -> void;
   auto instructionXNOR(uint8_t imm, uint5 shift) -> void;
@@ -103,12 +103,12 @@ struct HG51B {
   auto serialize(serializer&) -> void;
 
   uint16_t programRAM[2][256];  //instruction cache
-  uint24 dataROM[1024];
+  nall::Natural<24> dataROM[1024];
   uint8_t dataRAM[3072];
 
   //registers.cpp
-  auto readRegister(uint7 address) -> uint24;
-  auto writeRegister(uint7 address, uint24 data) -> void;
+  auto readRegister(uint7 address) -> nall::Natural<24>;
+  auto writeRegister(uint7 address, nall::Natural<24> data) -> void;
 
 protected:
   struct Registers {
@@ -121,15 +121,15 @@ protected:
     Boolean v;  //overflow
     Boolean i;  //interrupt
 
-    uint24 a;              //accumulator
+    nall::Natural<24> a;              //accumulator
     uint15 p;              //page register
     nall::Natural<48> mul; //multiplier
-    uint24 mdr;            //bus memory data register
-    uint24 rom;            //data ROM data buffer
-    uint24 ram;            //data RAM data buffer
-    uint24 mar;            //bus memory address register
-    uint24 dpr;            //data RAM address pointer
-    uint24 gpr[16];        //general purpose registers
+    nall::Natural<24> mdr;            //bus memory data register
+    nall::Natural<24> rom;            //data ROM data buffer
+    nall::Natural<24> ram;            //data RAM data buffer
+    nall::Natural<24> mar;            //bus memory address register
+    nall::Natural<24> dpr;            //data RAM address pointer
+    nall::Natural<24> gpr[16];        //general purpose registers
   } r;
 
   struct IO {
@@ -153,16 +153,16 @@ protected:
       uint1  enable;
       uint1  page;
       uint1  lock[2];
-      uint24 address[2];  //cache address is in bytes; so 24-bit
-      uint24 base;        //base address is also in bytes
+      nall::Natural<24> address[2];  //cache address is in bytes; so 24-bit
+      nall::Natural<24> base;        //base address is also in bytes
       uint15 pb;
       uint8_t  pc;
     } cache;
 
     struct DMA {
       uint1  enable;
-      uint24 source;
-      uint24 target;
+      nall::Natural<24> source;
+      nall::Natural<24> target;
       uint16_t length;
     } dma;
 
@@ -171,7 +171,7 @@ protected:
       uint1  reading;
       uint1  writing;
       uint4  pending;
-      uint24 address;
+      nall::Natural<24> address;
     } bus;
   } io;
 

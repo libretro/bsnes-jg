@@ -1481,32 +1481,32 @@ auto WDC65816::disassemble() -> string {
   return disassemble(r.pc.d, r.e, r.p.m, r.p.x);
 }
 
-auto WDC65816::disassemble(uint24 address, bool e, bool m, bool x) -> string {
+auto WDC65816::disassemble(nall::Natural<24> address, bool e, bool m, bool x) -> string {
   string s;
 
-  uint24 pc = address;
+  nall::Natural<24> pc = address;
   s = {hex(pc, 6), "  "};
 
   string name;
   string operand;
-  maybe<uint24> effective;
+  maybe<nall::Natural<24>> effective;
 
-  auto read = [&](uint24 address) -> uint8_t {
+  auto read = [&](nall::Natural<24> address) -> uint8_t {
     //$00-3f,80-bf:2000-5fff: do not attempt to read I/O registers from the disassembler:
     //this is because such reads are much more likely to have side effects to emulation.
     if((address & 0x40ffff) >= 0x2000 && (address & 0x40ffff) <= 0x5fff) return 0x00;
     return readDisassembler(address);
   };
 
-  auto readByte = [&](uint24 address) -> uint8_t {
+  auto readByte = [&](nall::Natural<24> address) -> uint8_t {
     return read(address);
   };
-  auto readWord = [&](uint24 address) -> uint16_t {
+  auto readWord = [&](nall::Natural<24> address) -> uint16_t {
     uint16_t data = readByte(address + 0) << 0;
     return data | readByte(address + 1) << 8;
   };
-  auto readLong = [&](uint24 address) -> uint24 {
-    uint24 data = readByte(address + 0) << 0;
+  auto readLong = [&](nall::Natural<24> address) -> nall::Natural<24> {
+    nall::Natural<24> data = readByte(address + 0) << 0;
     return data | readWord(address + 1) << 8;
   };
 
@@ -1517,7 +1517,7 @@ auto WDC65816::disassemble(uint24 address, bool e, bool m, bool x) -> string {
 
   uint8_t operandByte = operand0 << 0;
   uint16_t operandWord = operand0 << 0 | operand1 << 8;
-  uint24 operandLong = operand0 << 0 | operand1 << 8 | operand2 << 16;
+  nall::Natural<24> operandLong = operand0 << 0 | operand1 << 8 | operand2 << 16;
 
   auto absolute = [&]() -> string {
     effective = r.b << 16 | operandWord;

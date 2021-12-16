@@ -38,7 +38,7 @@ struct WDC65816 {
     inline r24(unsigned data) : d(data) {}
     inline auto& operator=(unsigned data) { d = data; return *this; }
 
-    uint24 d;
+    nall::Natural<24> d;
     struct { uint16_t order_lsb2(w, x); };
     struct {  uint8_t order_lsb4(l, h, b, y); };
   };
@@ -230,7 +230,7 @@ struct WDC65816 {
 
   //disassembler.cpp
   auto disassemble() -> string;
-  auto disassemble(uint24 addr, bool e, bool m, bool x) -> string;
+  auto disassemble(nall::Natural<24> addr, bool e, bool m, bool x) -> string;
 
   struct f8 {
     bool c = 0;  //carry
@@ -276,7 +276,7 @@ struct WDC65816 {
     bool stp = 0;  //raised during stp, never cleared
 
     uint16_t vector;  //interrupt vector address
-    uint24 mar;     //memory address register
+    nall::Natural<24> mar;     //memory address register
      r8 mdr;      //memory data register
 
     r24 u;  //temporary register

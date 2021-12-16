@@ -278,19 +278,19 @@ auto PPU::readIO(unsigned addr, uint8_t data) -> uint8_t {
 
   //MPYL
   case 0x2134: {
-    uint24 result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
+    nall::Natural<24> result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
     return ppu1.mdr = result.byte(0);
   }
 
   //MPYM
   case 0x2135: {
-    uint24 result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
+    nall::Natural<24> result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
     return ppu1.mdr = result.byte(1);
   }
 
   //MPYH
   case 0x2136: {
-    uint24 result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
+    nall::Natural<24> result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
     return ppu1.mdr = result.byte(2);
   }
 

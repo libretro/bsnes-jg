@@ -10,10 +10,10 @@ struct uPD96050 {
   auto exec() -> void;
   auto serialize(serializer&) -> void;
 
-  auto execOP(uint24 opcode) -> void;
-  auto execRT(uint24 opcode) -> void;
-  auto execJP(uint24 opcode) -> void;
-  auto execLD(uint24 opcode) -> void;
+  auto execOP(nall::Natural<24> opcode) -> void;
+  auto execRT(nall::Natural<24> opcode) -> void;
+  auto execJP(nall::Natural<24> opcode) -> void;
+  auto execLD(nall::Natural<24> opcode) -> void;
 
   auto readSR() -> uint8_t;
   auto writeSR(uint8_t data) -> void;
@@ -27,7 +27,7 @@ struct uPD96050 {
   auto disassemble(uint14 ip) -> string;
 
   enum class Revision : unsigned { uPD7725, uPD96050 } revision;
-  uint24 programROM[16384];
+  nall::Natural<24> programROM[16384];
   uint16_t dataROM[2048];
   uint16_t dataRAM[2048];
 

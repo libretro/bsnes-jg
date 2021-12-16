@@ -41,9 +41,9 @@ S21FX::~S21FX() {
   //given that this is the only device that hooks the reset vector like this,
   //it's not worth the added complexity to support some form of reversible bus mapping hooks
   unsigned vector = resetVector;
-  bus.map([vector](uint24 addr, uint8_t) -> uint8_t {
+  bus.map([vector](nall::Natural<24> addr, uint8_t) -> uint8_t {
     return vector >> addr * 8;
-  }, [](uint24, uint8_t) -> void {
+  }, [](nall::Natural<24>, uint8_t) -> void {
   }, "00:fffc-fffd", 2);
 
   if(link.open()) link.close();

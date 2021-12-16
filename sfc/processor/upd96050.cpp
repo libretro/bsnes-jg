@@ -4,7 +4,7 @@
 namespace Processor {
 
 auto uPD96050::exec() -> void {
-  uint24 opcode = programROM[regs.pc++];
+  nall::Natural<24> opcode = programROM[regs.pc++];
   switch(opcode >> 22) {
   case 0: execOP(opcode); break;
   case 1: execRT(opcode); break;
@@ -17,7 +17,7 @@ auto uPD96050::exec() -> void {
   regs.n = result <<  1;  //store low 15-bits + zero
 }
 
-auto uPD96050::execOP(uint24 opcode) -> void {
+auto uPD96050::execOP(nall::Natural<24> opcode) -> void {
   uint2 pselect = opcode >> 20;  //P select
   uint4 alu     = opcode >> 16;  //ALU operation mode
   uint1 asl     = opcode >> 15;  //accumulator select
@@ -158,12 +158,12 @@ auto uPD96050::execOP(uint24 opcode) -> void {
   }
 }
 
-auto uPD96050::execRT(uint24 opcode) -> void {
+auto uPD96050::execRT(nall::Natural<24> opcode) -> void {
   execOP(opcode);
   regs.pc = regs.stack[--regs.sp];
 }
 
-auto uPD96050::execJP(uint24 opcode) -> void {
+auto uPD96050::execJP(nall::Natural<24> opcode) -> void {
   uint9 brch = opcode >> 13;  //branch
   uint11 na  = opcode >>  2;  //next address
   uint2 bank = opcode >>  0;  //bank address
@@ -225,7 +225,7 @@ auto uPD96050::execJP(uint24 opcode) -> void {
   }
 }
 
-auto uPD96050::execLD(uint24 opcode) -> void {
+auto uPD96050::execLD(nall::Natural<24> opcode) -> void {
   uint16_t id = opcode >> 6;  //immediate data
   uint4 dst = opcode >> 0;  //destination
 
@@ -316,7 +316,7 @@ auto uPD96050::writeDP(uint12 addr, uint8_t data) -> void {
 
 auto uPD96050::disassemble(uint14 ip) -> string {
   string output = {hex(ip, 4L), "  "};
-  uint24 opcode = programROM[ip];
+  nall::Natural<24> opcode = programROM[ip];
   uint2 type = opcode >> 22;
 
   if(type == 0 || type == 1) {  //OP,RT

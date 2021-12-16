@@ -147,9 +147,9 @@ private:
   struct Queue {
     auto flush() -> void;
     auto pop() -> void;
-    auto push(uint24 address, uint8_t data) -> void;
+    auto push(nall::Natural<24> address, uint8_t data) -> void;
     auto size() -> unsigned;
-    auto address(unsigned index) -> uint24;
+    auto address(unsigned index) -> nall::Natural<24>;
     auto data(unsigned index) -> uint8_t;
 
     //serialization.cpp
@@ -157,7 +157,7 @@ private:
 
     struct History {
       uint1  valid;
-      uint24 address;
+      nall::Natural<24> address;
       uint8_t  data;
     } history[4];
   } queue;

@@ -3,7 +3,7 @@
 
 namespace Processor {
 
-auto HG51B::readRegister(uint7 address) -> uint24 {
+auto HG51B::readRegister(uint7 address) -> nall::Natural<24> {
   switch(address) {
   case 0x01: return r.mul >> 24 & 0xffffff;
   case 0x02: return r.mul >>  0 & 0xffffff;
@@ -67,7 +67,7 @@ auto HG51B::readRegister(uint7 address) -> uint24 {
   return 0x000000;  //verified
 }
 
-auto HG51B::writeRegister(uint7 address, uint24 data) -> void {
+auto HG51B::writeRegister(uint7 address, nall::Natural<24> data) -> void {
   switch(address) {
   case 0x01: r.mul = r.mul &  0xffffffull | data << 24; return;
   case 0x02: r.mul = r.mul & ~0xffffffull | data <<  0; return;
@@ -776,23 +776,23 @@ auto HG51B::pull() -> void {
   r.pc = pc >> 0;
 }
 
-auto HG51B::algorithmADD(uint24 x, uint24 y) -> uint24 {
+auto HG51B::algorithmADD(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24> {
   int z = x + y;
   r.n = z & 0x800000;
-  r.z = (uint24)z == 0;
+  r.z = (nall::Natural<24>)z == 0;
   r.c = z > 0xffffff;
   r.v = ~(x ^ y) & (x ^ z) & 0x800000;
   return z;
 }
 
-auto HG51B::algorithmAND(uint24 x, uint24 y) -> uint24 {
+auto HG51B::algorithmAND(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24> {
   x = x & y;
   r.n = x & 0x800000;
   r.z = x == 0;
   return x;
 }
 
-auto HG51B::algorithmASR(uint24 a, uint5 s) -> uint24 {
+auto HG51B::algorithmASR(nall::Natural<24> a, uint5 s) -> nall::Natural<24> {
   if(s > 24) s = 0;
   a = (int24)a >> s;
   r.n = a & 0x800000;
@@ -804,14 +804,14 @@ auto HG51B::algorithmMUL(int24 x, int24 y) -> nall::Natural<48> {
   return (nall::Integer<48>)x * (nall::Integer<48>)y;
 }
 
-auto HG51B::algorithmOR(uint24 x, uint24 y) -> uint24 {
+auto HG51B::algorithmOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24> {
   x = x | y;
   r.n = x & 0x800000;
   r.z = x == 0;
   return x;
 }
 
-auto HG51B::algorithmROR(uint24 a, uint5 s) -> uint24 {
+auto HG51B::algorithmROR(nall::Natural<24> a, uint5 s) -> nall::Natural<24> {
   if(s > 24) s = 0;
   a = (a >> s) | (a << 24 - s);
   r.n = a & 0x800000;
@@ -819,7 +819,7 @@ auto HG51B::algorithmROR(uint24 a, uint5 s) -> uint24 {
   return a;
 }
 
-auto HG51B::algorithmSHL(uint24 a, uint5 s) -> uint24 {
+auto HG51B::algorithmSHL(nall::Natural<24> a, uint5 s) -> nall::Natural<24> {
   if(s > 24) s = 0;
   a = a << s;
   r.n = a & 0x800000;
@@ -827,7 +827,7 @@ auto HG51B::algorithmSHL(uint24 a, uint5 s) -> uint24 {
   return a;
 }
 
-auto HG51B::algorithmSHR(uint24 a, uint5 s) -> uint24 {
+auto HG51B::algorithmSHR(nall::Natural<24> a, uint5 s) -> nall::Natural<24> {
   if(s > 24) s = 0;
   a = a >> s;
   r.n = a & 0x800000;
@@ -835,29 +835,29 @@ auto HG51B::algorithmSHR(uint24 a, uint5 s) -> uint24 {
   return a;
 }
 
-auto HG51B::algorithmSUB(uint24 x, uint24 y) -> uint24 {
+auto HG51B::algorithmSUB(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24> {
   int z = x - y;
   r.n = z & 0x800000;
-  r.z = (uint24)z == 0;
+  r.z = (nall::Natural<24>)z == 0;
   r.c = z >= 0;
   r.v = ~(x ^ y) & (x ^ z) & 0x800000;
   return z;
 }
 
-auto HG51B::algorithmSX(uint24 x) -> uint24 {
+auto HG51B::algorithmSX(nall::Natural<24> x) -> nall::Natural<24> {
   r.n = x & 0x800000;
   r.z = x == 0;
   return x;
 }
 
-auto HG51B::algorithmXNOR(uint24 x, uint24 y) -> uint24 {
+auto HG51B::algorithmXNOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24> {
   x = ~x ^ y;
   r.n = x & 0x800000;
   r.z = x == 0;
   return x;
 }
 
-auto HG51B::algorithmXOR(uint24 x, uint24 y) -> uint24 {
+auto HG51B::algorithmXOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24> {
   x = x ^ y;
   r.n = x & 0x800000;
   r.z = x == 0;
@@ -915,7 +915,7 @@ auto HG51B::instructionHALT() -> void {
   halt();
 }
 
-auto HG51B::instructionINC(uint24& reg) -> void {
+auto HG51B::instructionINC(nall::Natural<24>& reg) -> void {
   reg++;
 }
 
@@ -934,7 +934,7 @@ auto HG51B::instructionJSR(uint8_t data, uint1 far, const uint1& take) -> void {
   step(2);
 }
 
-auto HG51B::instructionLD(uint24& out, uint7 reg) -> void {
+auto HG51B::instructionLD(nall::Natural<24>& out, uint7 reg) -> void {
   out = readRegister(reg);
 }
 
@@ -942,7 +942,7 @@ auto HG51B::instructionLD(uint15& out, uint4 reg) -> void {
   out = r.gpr[reg];
 }
 
-auto HG51B::instructionLD(uint24& out, uint8_t imm) -> void {
+auto HG51B::instructionLD(nall::Natural<24>& out, uint8_t imm) -> void {
   out = imm;
 }
 
@@ -977,7 +977,7 @@ auto HG51B::instructionOR(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmOR(r.a << shift, imm);
 }
 
-auto HG51B::instructionRDRAM(uint2 byte, uint24& a) -> void {
+auto HG51B::instructionRDRAM(uint2 byte, nall::Natural<24>& a) -> void {
   uint12 address = a;
   if(address >= 0xc00) address -= 0x400;
   r.ram.byte(byte) = dataRAM[address];
@@ -989,7 +989,7 @@ auto HG51B::instructionRDRAM(uint2 byte, uint8_t imm) -> void {
   r.ram.byte(byte) = dataRAM[address];
 }
 
-auto HG51B::instructionRDROM(uint24& reg) -> void {
+auto HG51B::instructionRDROM(nall::Natural<24>& reg) -> void {
   r.rom = dataROM[(uint10)reg];
 }
 
@@ -1032,7 +1032,7 @@ auto HG51B::instructionSHR(uint5 imm) -> void {
   r.a = algorithmSHR(r.a, imm);
 }
 
-auto HG51B::instructionST(uint7 reg, uint24& in) -> void {
+auto HG51B::instructionST(uint7 reg, nall::Natural<24>& in) -> void {
   writeRegister(reg, in);
 }
 
@@ -1052,7 +1052,7 @@ auto HG51B::instructionSUBR(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmSUB(imm, r.a << shift);
 }
 
-auto HG51B::instructionSWAP(uint24& a, uint4 reg) -> void {
+auto HG51B::instructionSWAP(nall::Natural<24>& a, uint4 reg) -> void {
   std::swap(a, r.gpr[reg]);
 }
 
@@ -1069,7 +1069,7 @@ auto HG51B::instructionWAIT() -> void {
   return step(io.bus.pending);
 }
 
-auto HG51B::instructionWRRAM(uint2 byte, uint24& a) -> void {
+auto HG51B::instructionWRRAM(uint2 byte, nall::Natural<24>& a) -> void {
   uint12 address = a;
   if(address >= 0xc00) address -= 0x400;
   dataRAM[address] = r.ram.byte(byte);
@@ -1163,7 +1163,7 @@ auto HG51B::halt() -> void {
   io.halt = 1;
 }
 
-auto HG51B::wait(uint24 address) -> unsigned {
+auto HG51B::wait(nall::Natural<24> address) -> unsigned {
   if(isROM(address)) return 1 + io.wait.rom;
   if(isRAM(address)) return 1 + io.wait.ram;
   return 1;
@@ -1217,7 +1217,7 @@ auto HG51B::suspend() -> void {
 }
 
 auto HG51B::cache() -> bool {
-  uint24 address = io.cache.base + r.pb * 512;
+  nall::Natural<24> address = io.cache.base + r.pb * 512;
 
   //try to use the current page ...
   if(io.cache.address[io.cache.page] == address) return io.cache.enable = 0, true;
@@ -1240,8 +1240,8 @@ auto HG51B::cache() -> bool {
 
 auto HG51B::dma() -> void {
   for(unsigned offset : range(io.dma.length)) {
-    uint24 source = io.dma.source + offset;
-    uint24 target = io.dma.target + offset;
+    nall::Natural<24> source = io.dma.source + offset;
+    nall::Natural<24> target = io.dma.target + offset;
 
     if(isROM(source) && isROM(target)) return lock();
     if(isRAM(source) && isRAM(target)) return lock();

@@ -1049,7 +1049,7 @@ auto ARM7TDMI::armInstructionMultiplyLong
 }
 
 auto ARM7TDMI::armInstructionSoftwareInterrupt
-(uint24 immediate) -> void {
+(nall::Natural<24> immediate) -> void {
   exception(PSR::SVC, 0x08);
 }
 
@@ -1612,7 +1612,7 @@ auto ARM7TDMI::armDisassembleMultiplyLong
 }
 
 auto ARM7TDMI::armDisassembleSoftwareInterrupt
-(uint24 immediate) -> string {
+(nall::Natural<24> immediate) -> string {
   return {"swi #0x", hex(immediate, 6L)};
 }
 

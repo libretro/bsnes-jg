@@ -172,12 +172,12 @@ private:
     template<unsigned Clocks, bool Synchronize> inline auto step() -> void;
     inline auto edge() -> void;
 
-    inline auto validA(uint24 address) -> bool;
-    inline auto readA(uint24 address) -> uint8_t;
+    inline auto validA(nall::Natural<24> address) -> bool;
+    inline auto readA(nall::Natural<24> address) -> uint8_t;
     inline auto readB(uint8_t address, bool valid) -> uint8_t;
-    inline auto writeA(uint24 address, uint8_t data) -> void;
+    inline auto writeA(nall::Natural<24> address, uint8_t data) -> void;
     inline auto writeB(uint8_t address, uint8_t data, bool valid) -> void;
-    inline auto transfer(uint24 address, uint2 index) -> void;
+    inline auto transfer(nall::Natural<24> address, uint2 index) -> void;
 
     inline auto dmaRun() -> void;
     inline auto hdmaActive() -> bool;

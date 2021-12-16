@@ -237,7 +237,7 @@ auto SA1::IRAM::writeSA1(unsigned address, uint8_t data) -> void {
 auto SA1::dmaNormal() -> void {
   while(mmio.dtc--) {
     uint8_t data = r.mdr;
-    uint24 source = mmio.dsa++;
+    nall::Natural<24> source = mmio.dsa++;
     uint16_t target = mmio.dda++;
 
     if(mmio.sd == DMA::SourceROM && mmio.dd == DMA::DestBWRAM) {
@@ -572,7 +572,7 @@ auto SA1::readIOSA1(unsigned address, uint8_t) -> uint8_t {
 
   //(VDPL) variable-length data read port low
   case 0x230c: {
-    uint24 data;
+    nall::Natural<24> data;
     data.byte(0) = readVBR(mmio.va + 0);
     data.byte(1) = readVBR(mmio.va + 1);
     data.byte(2) = readVBR(mmio.va + 2);
@@ -583,7 +583,7 @@ auto SA1::readIOSA1(unsigned address, uint8_t) -> uint8_t {
 
   //(VDPH) variable-length data read port high
   case 0x230d: {
-    uint24 data;
+    nall::Natural<24> data;
     data.byte(0) = readVBR(mmio.va + 0);
     data.byte(1) = readVBR(mmio.va + 1);
     data.byte(2) = readVBR(mmio.va + 2);

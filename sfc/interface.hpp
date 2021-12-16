@@ -61,7 +61,7 @@ struct Interface : Emulator::Interface {
   auto serialize(bool synchronize = true) -> serializer override;
   auto unserialize(serializer&) -> bool override;
 
-  auto read(uint24 address) -> uint8_t override;
+  auto read(nall::Natural<24> address) -> uint8_t override;
   auto cheats(const vector<string>&) -> void override;
 
   auto configuration() -> string override;
