@@ -1129,7 +1129,7 @@ auto ARM7TDMI::thumbInstructionBranchExchange
 }
 
 auto ARM7TDMI::thumbInstructionBranchFarPrefix
-(int11 displacement) -> void {
+(nall::Integer<11> displacement) -> void {
   r(14) = r(15) + (displacement * 2 << 11);
 }
 
@@ -1140,7 +1140,7 @@ auto ARM7TDMI::thumbInstructionBranchFarSuffix
 }
 
 auto ARM7TDMI::thumbInstructionBranchNear
-(int11 displacement) -> void {
+(nall::Integer<11> displacement) -> void {
   r(15) = r(15) + displacement * 2;
 }
 
@@ -1665,7 +1665,7 @@ auto ARM7TDMI::thumbDisassembleBranchExchange
 }
 
 auto ARM7TDMI::thumbDisassembleBranchFarPrefix
-(int11 displacementHi) -> string {
+(nall::Integer<11> displacementHi) -> string {
   nall::Natural<11> displacementLo = read(Half | Nonsequential, (_pc & ~1) + 2);
   nall::Integer<22> displacement = displacementHi << 11 | displacementLo << 0;
   uint32_t address = _pc + 4 + displacement * 2;
@@ -1678,7 +1678,7 @@ auto ARM7TDMI::thumbDisassembleBranchFarSuffix
 }
 
 auto ARM7TDMI::thumbDisassembleBranchNear
-(int11 displacement) -> string {
+(nall::Integer<11> displacement) -> string {
   uint32_t address = _pc + 4 + displacement * 2;
   return {"b 0x", hex(address, 8L)};
 }

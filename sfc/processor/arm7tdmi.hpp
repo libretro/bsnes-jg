@@ -94,9 +94,9 @@ struct ARM7TDMI {
   auto thumbInstructionAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>) -> void;
   auto thumbInstructionAdjustStack(nall::Natural< 7>, nall::Natural< 1>) -> void;
   auto thumbInstructionBranchExchange(nall::Natural< 4>) -> void;
-  auto thumbInstructionBranchFarPrefix(int11) -> void;
+  auto thumbInstructionBranchFarPrefix(nall::Integer<11>) -> void;
   auto thumbInstructionBranchFarSuffix(nall::Natural<11>) -> void;
-  auto thumbInstructionBranchNear(int11) -> void;
+  auto thumbInstructionBranchNear(nall::Integer<11>) -> void;
   auto thumbInstructionBranchTest(int8_t, nall::Natural< 4>) -> void;
   auto thumbInstructionImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>) -> void;
   auto thumbInstructionLoadLiteral(uint8_t, nall::Natural< 3>) -> void;
@@ -258,9 +258,9 @@ struct ARM7TDMI {
   auto thumbDisassembleAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>) -> string;
   auto thumbDisassembleAdjustStack(nall::Natural< 7>, nall::Natural< 1>) -> string;
   auto thumbDisassembleBranchExchange(nall::Natural< 4>) -> string;
-  auto thumbDisassembleBranchFarPrefix(int11) -> string;
+  auto thumbDisassembleBranchFarPrefix(nall::Integer<11>) -> string;
   auto thumbDisassembleBranchFarSuffix(nall::Natural<11>) -> string;
-  auto thumbDisassembleBranchNear(int11) -> string;
+  auto thumbDisassembleBranchNear(nall::Integer<11>) -> string;
   auto thumbDisassembleBranchTest(int8_t, nall::Natural< 4>) -> string;
   auto thumbDisassembleImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>) -> string;
   auto thumbDisassembleLoadLiteral(uint8_t, nall::Natural< 3>) -> string;
