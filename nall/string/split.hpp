@@ -3,7 +3,7 @@
 namespace nall {
 
 template<bool Insensitive, bool Quoted>
-auto vector<string>::_split(string_view source, string_view find, long limit) -> type& {
+auto vector<string>::_split(string_view source, string_view find, long limit) -> vector<string>& {
   reset();
   if(limit <= 0 || find.size() == 0) return *this;
 

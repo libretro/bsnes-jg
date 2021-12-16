@@ -52,7 +52,7 @@ string_view::~string_view() {
   if(_string) delete _string;
 }
 
-auto string_view::operator=(const string_view& source) -> type& {
+auto string_view::operator=(const string_view& source) -> string_view& {
   if(this == &source) return *this;
   _string = nullptr;
   _data = source._data;
@@ -60,7 +60,7 @@ auto string_view::operator=(const string_view& source) -> type& {
   return *this;
 };
 
-auto string_view::operator=(string_view&& source) -> type& {
+auto string_view::operator=(string_view&& source) -> string_view& {
   if(this == &source) return *this;
   _string = source._string;
   _data = source._data;

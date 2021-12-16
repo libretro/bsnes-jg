@@ -4,13 +4,11 @@ namespace nall {
 
 template<typename T>
 struct vector_base {
-  using type = vector_base;
-
   //core.hpp
   vector_base() = default;
   vector_base(const std::initializer_list<T>& values);
-  vector_base(const type& source);
-  vector_base(type&& source);
+  vector_base(const vector_base& source);
+  vector_base(vector_base&& source);
   ~vector_base();
 
   explicit operator bool() const;
@@ -22,12 +20,12 @@ struct vector_base {
   template<typename Cast = T> auto data() const -> const Cast*;
 
   //assign.hpp
-  auto operator=(const type& source) -> type&;
-  auto operator=(type&& source) -> type&;
+  auto operator=(const vector_base& source) -> vector_base&;
+  auto operator=(vector_base&& source) -> vector_base&;
 
   //compare.hpp
-  auto operator==(const type& source) const -> bool;
-  auto operator!=(const type& source) const -> bool;
+  auto operator==(const vector_base& source) const -> bool;
+  auto operator!=(const vector_base& source) const -> bool;
 
   //memory.hpp
   auto reset() -> void;
@@ -66,13 +64,13 @@ struct vector_base {
   //modify.hpp
   auto prepend(const T& value) -> void;
   auto prepend(T&& value) -> void;
-  auto prepend(const type& values) -> void;
-  auto prepend(type&& values) -> void;
+  auto prepend(const vector_base& values) -> void;
+  auto prepend(vector_base&& values) -> void;
 
   auto append(const T& value) -> void;
   auto append(T&& value) -> void;
-  auto append(const type& values) -> void;
-  auto append(type&& values) -> void;
+  auto append(const vector_base& values) -> void;
+  auto append(vector_base&& values) -> void;
 
   auto insert(uint64_t offset, const T& value) -> void;
 

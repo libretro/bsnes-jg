@@ -2,13 +2,13 @@
 
 namespace nall {
 
-template<typename... P> auto vector<string>::append(const string& data, P&&... p) -> type& {
+template<typename... P> auto vector<string>::append(const string& data, P&&... p) -> vector<string>& {
   vector_base::append(data);
   append(std::forward<P>(p)...);
   return *this;
 }
 
-auto vector<string>::append() -> type& {
+auto vector<string>::append() -> vector<string>& {
   return *this;
 }
 
@@ -43,7 +43,7 @@ auto vector<string>::merge(string_view separator) const -> string {
   return output;
 }
 
-auto vector<string>::strip() -> type& {
+auto vector<string>::strip() -> vector<string>& {
   for(unsigned n = 0; n < size(); n++) {
     operator[](n).strip();
   }

@@ -4,7 +4,6 @@ namespace nall {
 
 struct Boolean {
   static inline constexpr auto bits() -> unsigned { return 1; }
-  using btype = bool;
 
   inline Boolean() : data(false) {}
   template<typename T> inline Boolean(const T& value) : data(value) {}
@@ -24,7 +23,7 @@ struct Boolean {
   inline auto serialize(serializer& s) { s(data); }
 
 private:
-  btype data;
+  bool data;
 };
 
 }

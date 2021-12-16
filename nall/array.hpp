@@ -3,8 +3,6 @@
 namespace nall {
 
 template<typename T> struct array_view {
-  using type = array_view;
-
   inline array_view() {
     _data = nullptr;
     _size = 0;
@@ -30,14 +28,14 @@ template<typename T> struct array_view {
     return _data;
   }
 
-  inline auto operator++() -> type& { _data++; _size--; return *this; }
-  inline auto operator--() -> type& { _data--; _size++; return *this; }
+  inline auto operator++() -> array_view& { _data++; _size--; return *this; }
+  inline auto operator--() -> array_view& { _data--; _size++; return *this; }
 
-  inline auto operator++(int) -> type { auto copy = *this; ++(*this); return copy; }
-  inline auto operator--(int) -> type { auto copy = *this; --(*this); return copy; }
+  inline auto operator++(int) -> array_view { auto copy = *this; ++(*this); return copy; }
+  inline auto operator--(int) -> array_view { auto copy = *this; --(*this); return copy; }
 
-  inline auto operator-=(int distance) -> type& { _data -= distance; _size += distance; return *this; }
-  inline auto operator+=(int distance) -> type& { _data += distance; _size -= distance; return *this; }
+  inline auto operator-=(int distance) -> array_view& { _data -= distance; _size += distance; return *this; }
+  inline auto operator+=(int distance) -> array_view& { _data += distance; _size -= distance; return *this; }
 
   inline auto operator[](unsigned index) const -> const T& {
     #ifdef DEBUG
@@ -68,7 +66,7 @@ template<typename T> struct array_view {
     return value;
   }
 
-  auto view(unsigned offset, unsigned length) const -> type {
+  auto view(unsigned offset, unsigned length) const -> array_view {
     #ifdef DEBUG
     struct out_of_bounds {};
     if(offset + length >= _size) throw out_of_bounds{};
@@ -82,48 +80,45 @@ protected:
 };
 
 template<typename T> struct array_span : array_view<T> {
-  using type = array_span;
-  using super = array_view<T>;
-
   inline array_span() {
-    super::_data = nullptr;
-    super::_size = 0;
+    array_view<T>::_data = nullptr;
+    array_view<T>::_size = 0;
   }
 
   inline array_span(std::nullptr_t) {
-    super::_data = nullptr;
-    super::_size = 0;
+    array_view<T>::_data = nullptr;
+    array_view<T>::_size = 0;
   }
 
   inline array_span(void* data, uint64_t size) {
-    super::_data = (T*)data;
-    super::_size = (int)size;
+    array_view<T>::_data = (T*)data;
+    array_view<T>::_size = (int)size;
   }
 
-  inline operator T*() { return (T*)super::operator const T*(); }
+  inline operator T*() { return (T*)array_view<T>::operator const T*(); }
 
-  inline auto operator[](unsigned index) -> T& { return (T&)super::operator[](index); }
+  inline auto operator[](unsigned index) -> T& { return (T&)array_view<T>::operator[](index); }
 
-  template<typename U = T> inline auto data() -> U* { return (U*)super::_data; }
+  template<typename U = T> inline auto data() -> U* { return (U*)array_view<T>::_data; }
 
-  inline auto begin() -> iterator<T> { return {(T*)super::_data, (unsigned)0}; }
-  inline auto end() -> iterator<T> { return {(T*)super::_data, (unsigned)super::_size}; }
+  inline auto begin() -> iterator<T> { return {(T*)array_view<T>::_data, (unsigned)0}; }
+  inline auto end() -> iterator<T> { return {(T*)array_view<T>::_data, (unsigned)array_view<T>::_size}; }
 
-  inline auto rbegin() -> reverse_iterator<T> { return {(T*)super::_data, (unsigned)super::_size - 1}; }
-  inline auto rend() -> reverse_iterator<T> { return {(T*)super::_data, (unsigned)-1}; }
+  inline auto rbegin() -> reverse_iterator<T> { return {(T*)array_view<T>::_data, (unsigned)array_view<T>::_size - 1}; }
+  inline auto rend() -> reverse_iterator<T> { return {(T*)array_view<T>::_data, (unsigned)-1}; }
 
   auto write(T value) -> void {
     operator[](0) = value;
-    super::_data++;
-    super::_size--;
+    array_view<T>::_data++;
+    array_view<T>::_size--;
   }
 
-  auto span(unsigned offset, unsigned length) const -> type {
+  auto span(unsigned offset, unsigned length) const -> array_span {
     #ifdef DEBUG
     struct out_of_bounds {};
-    if(offset + length >= super::_size) throw out_of_bounds{};
+    if(offset + length >= array_view<T>::_size) throw out_of_bounds{};
     #endif
-    return {super::_data + offset, length};
+    return {array_view<T>::_data + offset, length};
   }
 
   //array_span<uint8_t> specializations

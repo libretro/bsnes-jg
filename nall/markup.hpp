@@ -11,15 +11,15 @@ struct ManagedNode {
   ManagedNode(const string& name) : _name(name) {}
   ManagedNode(const string& name, const string& value) : _name(name), _value(value) {}
 
-  auto clone() const -> SharedNode {
-    SharedNode clone{new ManagedNode(_name, _value)};
+  auto clone() const -> shared_pointer<ManagedNode> {
+    shared_pointer<ManagedNode> clone{new ManagedNode(_name, _value)};
     for(auto& child : _children) {
       clone->_children.append(child->clone());
     }
     return clone;
   }
 
-  auto copy(SharedNode source) -> void {
+  auto copy(shared_pointer<ManagedNode> source) -> void {
     _name = source->_name;
     _value = source->_value;
     _metadata = source->_metadata;
@@ -33,7 +33,7 @@ protected:
   string _name;
   string _value;
   uintptr_t _metadata = 0;
-  vector<SharedNode> _children;
+  vector<shared_pointer<ManagedNode>> _children;
 
   inline auto _evaluate(string query) const -> bool;
   inline auto _find(const string& query) const -> vector<Node>;
@@ -45,7 +45,7 @@ protected:
 
 struct Node {
   Node() : shared(new ManagedNode) {}
-  Node(const SharedNode& source) : shared(source ? source : new ManagedNode) {}
+  Node(const shared_pointer<ManagedNode>& source) : shared(source ? source : new ManagedNode) {}
   Node(const nall::string& name) : shared(new ManagedNode(name)) {}
   Node(const nall::string& name, const nall::string& value) : shared(new ManagedNode(name, value)) {}
 
@@ -133,7 +133,7 @@ struct Node {
   auto end() const -> iterator { return iterator(*this, size()); }
 
 protected:
-  SharedNode shared;
+  shared_pointer<ManagedNode> shared;
 };
 
 auto ManagedNode::_evaluate(string query) const -> bool {
@@ -274,9 +274,6 @@ namespace nall::BML {
 
 //metadata is used to store nesting level
 
-struct ManagedNode;
-using SharedNode = shared_pointer<ManagedNode>;
-
 struct ManagedNode : Markup::ManagedNode {
 protected:
   //test to verify if a valid character for a node name
@@ -335,7 +332,7 @@ protected:
       while(*p == ' ') p++;  //skip excess spaces
       if(*(p + 0) == '/' && *(p + 1) == '/') break;  //skip comments
 
-      SharedNode node(new ManagedNode);
+      shared_pointer<ManagedNode> node(new ManagedNode);
       unsigned length = 0;
       while(valid(p[length])) length++;
       if(length == 0) throw "Invalid attribute name";
@@ -363,7 +360,7 @@ protected:
         continue;
       }
 
-      SharedNode node(new ManagedNode);
+      shared_pointer<ManagedNode> node(new ManagedNode);
       node->parseNode(text, y, spacing);
       _children.append(node);
     }
@@ -400,7 +397,7 @@ protected:
     auto text = document.split("\n");
     unsigned y = 0;
     while(y < text.size()) {
-      SharedNode node(new ManagedNode);
+      shared_pointer<ManagedNode> node(new ManagedNode);
       node->parseNode(text, y, spacing);
       if(node->_metadata > 0) throw "Root nodes cannot be indented";
       _children.append(node);
@@ -411,7 +408,7 @@ protected:
 };
 
 inline auto unserialize(const string& markup, string_view spacing = {}) -> Markup::Node {
-  SharedNode node(new ManagedNode);
+  shared_pointer<ManagedNode> node(new ManagedNode);
   try {
     node->parse(markup, spacing);
   } catch(const char* error) {

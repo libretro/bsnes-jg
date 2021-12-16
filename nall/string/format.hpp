@@ -5,7 +5,7 @@ namespace nall {
 //nall::format is a vector<string> of parameters that can be applied to a string
 //each {#} token will be replaced with its appropriate format parameter
 
-auto string::format(const nall::string_format& params) -> type& {
+auto string::format(const nall::string_format& params) -> string& {
   auto size = (int)this->size();
   auto data = memory::allocate<char>(size);
   memory::copy(data, this->data(), size);

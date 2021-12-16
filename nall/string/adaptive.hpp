@@ -35,7 +35,7 @@ auto string::data() const -> const T* {
   return (const T*)_data;
 }
 
-auto string::reset() -> type& {
+auto string::reset() -> string& {
   if(_capacity >= SSO && !--*_refs) memory::free(_data);
   _data = nullptr;
   _capacity = SSO - 1;
@@ -43,7 +43,7 @@ auto string::reset() -> type& {
   return *this;
 }
 
-auto string::reserve(unsigned capacity) -> type& {
+auto string::reserve(unsigned capacity) -> string& {
   if(capacity <= _capacity) return *this;
   capacity = bit::round(capacity + 1) - 1;
   if(_capacity < SSO) {
@@ -59,13 +59,13 @@ auto string::reserve(unsigned capacity) -> type& {
   return *this;
 }
 
-auto string::resize(unsigned size) -> type& {
+auto string::resize(unsigned size) -> string& {
   reserve(size);
   get()[_size = size] = 0;
   return *this;
 }
 
-auto string::operator=(const string& source) -> type& {
+auto string::operator=(const string& source) -> string& {
   if(&source == this) return *this;
   reset();
   if(source._capacity >= SSO) {
@@ -82,7 +82,7 @@ auto string::operator=(const string& source) -> type& {
   return *this;
 }
 
-auto string::operator=(string&& source) -> type& {
+auto string::operator=(string&& source) -> string& {
   if(&source == this) return *this;
   reset();
   memory::copy(this, &source, sizeof(string));

@@ -25,7 +25,6 @@ struct shared_pointer {
     return shared_pointer<T>{new T{std::forward<P>(p)...}};
   }
 
-  using type = T;
   shared_pointer_manager* manager = nullptr;
 
   template<typename U>
@@ -219,7 +218,6 @@ struct shared_pointer {
 
 template<typename T>
 struct shared_pointer_weak {
-  using type = T;
   shared_pointer_manager* manager = nullptr;
 
   shared_pointer_weak() {

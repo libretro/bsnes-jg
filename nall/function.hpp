@@ -5,8 +5,6 @@ namespace nall {
 template<typename T> struct function;
 
 template<typename R, typename... P> struct function<auto (P...) -> R> {
-  using cast = auto (*)(P...) -> R;
-
   //value = true if auto L::operator()(P...) -> R exists
   template<typename L> struct is_compatible {
     template<typename T> static auto exists(T*) -> const typename std::is_same<R, decltype(std::declval<T>().operator()(std::declval<P>()...))>::type;
