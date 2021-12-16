@@ -24,6 +24,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include <vector>
 #include <stdint.h>
 
 #include <jg/jg.h>
@@ -635,8 +636,8 @@ bool Program::loadSuperFamicom(string location) {
     string manifest;
     vector<uint8_t> rom;
     
-    rom = addon ? addoninfo.size ? loadFile(addoninfo.data, addoninfo.size) :
-        file::read(location) : loadFile(gameinfo.data, gameinfo.size);
+    rom = addon ? loadFile(addoninfo.data, addoninfo.size) :
+        loadFile(gameinfo.data, gameinfo.size);
     
     if (rom.size() < 0x8000) return false;
     
@@ -1211,23 +1212,23 @@ int jg_game_unload() {
 }
 
 int jg_state_load(const char *filename) {
-    vector<uint8_t> memory;
-    memory = file::read(filename);
-    serializer s(memory.data(), (uint)memory.size());
+    std::ifstream stream(filename, std::ios::in | std::ios::binary);
+    std::vector<uint8_t> state((std::istreambuf_iterator<char>(stream)),
+        std::istreambuf_iterator<char>());
+    stream.close();
+    serializer s(state.data(), state.size());
     return emulator->unserialize(s);
 }
 
 int jg_state_save(const char *filename) {
     serializer s = emulator->serialize();
-    FILE *file;
-    file = fopen(filename, "wb");
-    if (!file)
-        return 0;
-    
-    fwrite(s.data(), s.size(), sizeof(uint8_t), file);
-    fclose(file);
-    
-    return 1;
+    std::ofstream stream(filename, std::ios::out | std::ios::binary);
+    if (stream.is_open()) {
+        stream.write((const char*)s.data(), s.size());
+        stream.close();
+        return 1;
+    }
+    return 0;
 }
 
 void jg_media_select() {
