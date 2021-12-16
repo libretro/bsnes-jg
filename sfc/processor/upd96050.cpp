@@ -50,7 +50,7 @@ auto uPD96050::execOP(uint24 opcode) -> void {
   if(alu) {
     uint16 p, q, r;
     Flag flag;
-    boolean c;
+    Boolean c;
 
     switch(pselect) {
     case 0: p = dataRAM[regs.dp]; break;

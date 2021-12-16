@@ -98,17 +98,17 @@ private:
     uint hdmaPosition = 0;
     bool hdmaTriggered = 0;
 
-    boolean nmiValid = 0;
-    boolean nmiLine = 0;
-    boolean nmiTransition = 0;
-    boolean nmiPending = 0;
-    boolean nmiHold = 0;
+    Boolean nmiValid = 0;
+    Boolean nmiLine = 0;
+    Boolean nmiTransition = 0;
+    Boolean nmiPending = 0;
+    Boolean nmiHold = 0;
 
-    boolean irqValid = 0;
-    boolean irqLine = 0;
-    boolean irqTransition = 0;
-    boolean irqPending = 0;
-    boolean irqHold = 0;
+    Boolean irqValid = 0;
+    Boolean irqLine = 0;
+    Boolean irqTransition = 0;
+    Boolean irqPending = 0;
+    Boolean irqHold = 0;
 
     bool resetPending = 0;
     bool interruptPending = 0;
@@ -126,11 +126,11 @@ private:
     uint17 wramAddress = 0;
 
     //$4200
-    boolean hirqEnable = 0;
-    boolean virqEnable = 0;
-    boolean irqEnable = 0;
-    boolean nmiEnable = 0;
-    boolean autoJoypadPoll = 0;
+    Boolean hirqEnable = 0;
+    Boolean virqEnable = 0;
+    Boolean irqEnable = 0;
+    Boolean nmiEnable = 0;
+    Boolean autoJoypadPoll = 0;
 
     //$4201
     uint8 pio = 0xff;

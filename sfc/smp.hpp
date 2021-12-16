@@ -78,8 +78,8 @@ private:
     uint8   stage1 = 0;
     uint8   stage2 = 0;
     uint4   stage3 = 0;
-    boolean line = 0;
-    boolean enable = 0;
+    Boolean line = 0;
+    Boolean enable = 0;
     uint8   target = 0;
 
     auto step(uint clocks) -> void;

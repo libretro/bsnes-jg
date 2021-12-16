@@ -48,12 +48,12 @@ struct uPD96050 {
 
     auto serialize(serializer&) -> void;
 
-    boolean ov0;  //overflow 0
-    boolean ov1;  //overflow 1
-    boolean z;    //zero
-    boolean c;    //carry
-    boolean s0;   //sign 0
-    boolean s1;   //sign 1
+    Boolean ov0;  //overflow 0
+    Boolean ov1;  //overflow 1
+    Boolean z;    //zero
+    Boolean c;    //carry
+    Boolean s0;   //sign 0
+    Boolean s1;   //sign 1
   };
 
   struct Status {
@@ -80,21 +80,21 @@ struct uPD96050 {
 
     auto serialize(serializer&) -> void;
 
-    boolean p0;    //output port 0
-    boolean p1;    //output port 1
-    boolean ei;    //enable interrupts
-    boolean sic;   //serial input control  (0 = 16-bit; 1 = 8-bit)
-    boolean soc;   //serial output control (0 = 16-bit; 1 = 8-bit)
-    boolean drc;   //data register size    (0 = 16-bit; 1 = 8-bit)
-    boolean dma;   //data register DMA mode
-    boolean drs;   //data register status  (1 = active; 0 = stopped)
-    boolean usf0;  //user flag 0
-    boolean usf1;  //user flag 1
-    boolean rqm;   //request for master (=1 on internal access; =0 on external access)
+    Boolean p0;    //output port 0
+    Boolean p1;    //output port 1
+    Boolean ei;    //enable interrupts
+    Boolean sic;   //serial input control  (0 = 16-bit; 1 = 8-bit)
+    Boolean soc;   //serial output control (0 = 16-bit; 1 = 8-bit)
+    Boolean drc;   //data register size    (0 = 16-bit; 1 = 8-bit)
+    Boolean dma;   //data register DMA mode
+    Boolean drs;   //data register status  (1 = active; 0 = stopped)
+    Boolean usf0;  //user flag 0
+    Boolean usf1;  //user flag 1
+    Boolean rqm;   //request for master (=1 on internal access; =0 on external access)
 
     //internal
-    boolean siack;  //serial input acknowledge
-    boolean soack;  //serial output acknowledge
+    Boolean siack;  //serial input acknowledge
+    Boolean soack;  //serial output acknowledge
   };
 
   struct Registers {

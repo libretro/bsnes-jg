@@ -193,7 +193,7 @@ auto MSU1::writeIO(uint addr, uint8 data) -> void {
     if(io.audioError) break;
     io.audioPlay = bool(data & 1);
     io.audioRepeat = bool(data & 2);
-    boolean audioResume = bool(data & 4);
+    Boolean audioResume = bool(data & 4);
     if(!io.audioPlay && audioResume) {
       io.audioResumeTrack = io.audioTrack;
       io.audioResumeOffset = io.audioPlayOffset;

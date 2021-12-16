@@ -1371,7 +1371,7 @@ static const string _conditions[] = {
 #define _comp(mode) (mode >=  8 && mode <= 11)
 #define _math(mode) (mode <=  7 || mode == 12 || mode == 14)
 
-auto ARM7TDMI::disassemble(maybe<uint32> pc, maybe<boolean> thumb) -> string {
+auto ARM7TDMI::disassemble(maybe<uint32> pc, maybe<Boolean> thumb) -> string {
   if(!pc) pc = pipeline.execute.address;
   if(!thumb) thumb = cpsr().t;
 

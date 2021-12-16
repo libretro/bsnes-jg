@@ -42,11 +42,11 @@ private:
     uint32 audioResumeTrack;
     uint32 audioResumeOffset;
 
-    boolean audioError;
-    boolean audioPlay;
-    boolean audioRepeat;
-    boolean audioBusy;
-    boolean dataBusy;
+    Boolean audioError;
+    Boolean audioPlay;
+    Boolean audioRepeat;
+    Boolean audioBusy;
+    Boolean dataBusy;
   } io;
 };
 

@@ -12,7 +12,7 @@ private:
   bool latched;
   uint counter;
 
-  boolean b, y, select, start;
-  boolean up, down, left, right;
-  boolean a, x, l, r;
+  Boolean b, y, select, start;
+  Boolean up, down, left, right;
+  Boolean a, x, l, r;
 };

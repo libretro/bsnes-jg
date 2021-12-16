@@ -167,8 +167,8 @@ public:
         string location;
         string manifest;
         Markup::Node document;
-        boolean patched;
-        boolean verified;
+        Boolean patched;
+        Boolean verified;
     };
     
     struct SuperFamicom : Game {

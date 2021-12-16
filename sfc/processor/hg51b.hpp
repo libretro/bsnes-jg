@@ -115,11 +115,11 @@ protected:
     uint15 pb;  //program bank
     uint8  pc;  //program counter
 
-    boolean n;  //negative
-    boolean z;  //zero
-    boolean c;  //carry
-    boolean v;  //overflow
-    boolean i;  //interrupt
+    Boolean n;  //negative
+    Boolean z;  //zero
+    Boolean c;  //carry
+    Boolean v;  //overflow
+    Boolean i;  //interrupt
 
     uint24 a;        //accumulator
     uint15 p;        //page register

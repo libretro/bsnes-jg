@@ -191,7 +191,7 @@ struct Game {
 
   inline auto load(string) -> void;
   inline auto memory(Markup::Node) -> maybe<Memory>;
-  inline auto oscillator(natural = 0) -> maybe<Oscillator>;
+  inline auto oscillator(Natural<> = 0) -> maybe<Oscillator>;
 
   struct Memory {
     Memory() = default;
@@ -200,12 +200,12 @@ struct Game {
     inline auto name() const -> string;
 
     string type;
-    natural size;
+    Natural<> size;
     string content;
     string manufacturer;
     string architecture;
     string identifier;
-    boolean nonVolatile;
+    Boolean nonVolatile;
   };
 
   struct Oscillator {
@@ -213,7 +213,7 @@ struct Game {
     inline Oscillator(Markup::Node);
     explicit operator bool() const { return frequency; }
 
-    natural frequency;
+    Natural<> frequency;
   };
 
   Markup::Node document;
@@ -268,7 +268,7 @@ auto Game::memory(Markup::Node node) -> maybe<Memory> {
   return nothing;
 }
 
-auto Game::oscillator(natural index) -> maybe<Oscillator> {
+auto Game::oscillator(Natural<> index) -> maybe<Oscillator> {
   if(index < oscillatorList.size()) return oscillatorList[index];
   return nothing;
 }
