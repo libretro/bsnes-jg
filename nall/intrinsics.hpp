@@ -5,7 +5,6 @@
 namespace nall {
 
 #if defined(__clang__)
-  #define COMPILER_CLANG
   #pragma clang diagnostic warning "-Wreturn-type"
   #pragma clang diagnostic ignored "-Wunused-result"
   #pragma clang diagnostic ignored "-Wunknown-pragmas"
@@ -18,7 +17,6 @@ namespace nall {
   #pragma clang diagnostic ignored "-Wshift-count-overflow"
   #pragma clang diagnostic ignored "-Wtrigraphs"
 #elif defined(__GNUC__)
-  #define COMPILER_GCC
   #pragma GCC diagnostic warning "-Wreturn-type"
   #pragma GCC diagnostic ignored "-Wunused-result"
   #pragma GCC diagnostic ignored "-Wunknown-pragmas"
@@ -26,11 +24,7 @@ namespace nall {
   #pragma GCC diagnostic ignored "-Wswitch-bool"
   #pragma GCC diagnostic ignored "-Wtrigraphs"
 #elif defined(_MSC_VER)
-  #define COMPILER_MICROSOFT
   #pragma warning(disable:4996)  //libc "deprecation" warnings
-#else
-  #warning "unable to detect compiler"
-  #define COMPILER_UNKNOWN
 #endif
 
 }
