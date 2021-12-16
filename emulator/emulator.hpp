@@ -30,7 +30,6 @@ using std::any;
 #include <nall/hash.hpp>
 #include <nall/markup.hpp>
 #include <nall/file-buffer.hpp>
-#include <nall/file.hpp>
 #include <nall/vfs.hpp>
 using namespace nall;
 

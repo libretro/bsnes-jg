@@ -114,13 +114,6 @@ struct file : vfs::file {
     return instance;
   }
 
-  static auto open(string location, bool decompress = false) -> shared_pointer<file> {
-    auto instance = shared_pointer<file>{new file};
-    auto memory = nall::file::read(location);
-    instance->_open(memory.data(), memory.size());
-    return instance;
-  }
-
   auto data() const -> const uint8_t* { return _data; }
   auto size() const -> uintmax override { return _size; }
   auto offset() const -> uintmax override { return _offset; }
