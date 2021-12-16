@@ -938,7 +938,7 @@ auto HG51B::instructionLD(nall::Natural<24>& out, uint7 reg) -> void {
   out = readRegister(reg);
 }
 
-auto HG51B::instructionLD(uint15& out, uint4 reg) -> void {
+auto HG51B::instructionLD(nall::Natural<15>& out, uint4 reg) -> void {
   out = r.gpr[reg];
 }
 
@@ -946,15 +946,15 @@ auto HG51B::instructionLD(nall::Natural<24>& out, uint8_t imm) -> void {
   out = imm;
 }
 
-auto HG51B::instructionLD(uint15& out, uint8_t imm) -> void {
+auto HG51B::instructionLD(nall::Natural<15>& out, uint8_t imm) -> void {
   out = imm;
 }
 
-auto HG51B::instructionLDL(uint15& out, uint8_t imm) -> void {
+auto HG51B::instructionLDL(nall::Natural<15>& out, uint8_t imm) -> void {
   out = out & 0x7f00 | imm << 0;
 }
 
-auto HG51B::instructionLDH(uint15& out, uint7 imm) -> void {
+auto HG51B::instructionLDH(nall::Natural<15>& out, uint7 imm) -> void {
   out = out & 0x00ff | (imm & 0x7f) << 8;
 }
 

@@ -35,7 +35,7 @@ private:
   alwaysinline auto readOAM(uint10 address) -> uint8_t;
   alwaysinline auto writeOAM(uint10 address, uint8_t data) -> void;
   alwaysinline auto readCGRAM(bool byte, uint8_t address) -> uint8_t;
-  alwaysinline auto writeCGRAM(uint8_t address, uint15 data) -> void;
+  alwaysinline auto writeCGRAM(uint8_t address, nall::Natural<15> data) -> void;
   auto readIO(unsigned address, uint8_t data) -> uint8_t;
   auto writeIO(unsigned address, uint8_t data) -> void;
   auto updateVideoMode() -> void;
@@ -395,17 +395,17 @@ struct Screen {
   auto below(bool hires) -> uint16_t;
   auto above() -> uint16_t;
 
-  auto blend(unsigned x, unsigned y) const -> uint15;
-  alwaysinline auto paletteColor(uint8_t palette) const -> uint15;
-  alwaysinline auto directColor(uint8_t palette, uint3 paletteGroup) const -> uint15;
-  alwaysinline auto fixedColor() const -> uint15;
+  auto blend(unsigned x, unsigned y) const -> nall::Natural<15>;
+  alwaysinline auto paletteColor(uint8_t palette) const -> nall::Natural<15>;
+  alwaysinline auto directColor(uint8_t palette, uint3 paletteGroup) const -> nall::Natural<15>;
+  alwaysinline auto fixedColor() const -> nall::Natural<15>;
 
   auto serialize(serializer&) -> void;
 
   uint16_t *lineA;
   uint16_t *lineB;
 
-  uint15 cgram[256];
+  nall::Natural<15> cgram[256];
 
   struct IO {
     uint1 blendMode;
@@ -424,7 +424,7 @@ struct Screen {
 
   struct Math {
     struct Screen {
-      uint15 color;
+      nall::Natural<15> color;
        uint1 colorEnable;
     } above, below;
     uint1 transparent;

@@ -61,11 +61,11 @@ struct HG51B {
   auto instructionJMP(uint8_t data, uint1 far, const uint1& take) -> void;
   auto instructionJSR(uint8_t data, uint1 far, const uint1& take) -> void;
   auto instructionLD(nall::Natural<24>& out, uint7 reg) -> void;
-  auto instructionLD(uint15& out, uint4 reg) -> void;
+  auto instructionLD(nall::Natural<15>& out, uint4 reg) -> void;
   auto instructionLD(nall::Natural<24>& out, uint8_t imm) -> void;
-  auto instructionLD(uint15& out, uint8_t imm) -> void;
-  auto instructionLDL(uint15& out, uint8_t imm) -> void;
-  auto instructionLDH(uint15& out, uint7 imm) -> void;
+  auto instructionLD(nall::Natural<15>& out, uint8_t imm) -> void;
+  auto instructionLDL(nall::Natural<15>& out, uint8_t imm) -> void;
+  auto instructionLDH(nall::Natural<15>& out, uint7 imm) -> void;
   auto instructionMUL(uint7 reg) -> void;
   auto instructionMUL(uint8_t imm) -> void;
   auto instructionNOP() -> void;
@@ -112,7 +112,7 @@ struct HG51B {
 
 protected:
   struct Registers {
-    uint15 pb;    //program bank
+    nall::Natural<15> pb;    //program bank
     uint8_t  pc;  //program counter
 
     Boolean n;  //negative
@@ -122,7 +122,7 @@ protected:
     Boolean i;  //interrupt
 
     nall::Natural<24> a;              //accumulator
-    uint15 p;              //page register
+    nall::Natural<15> p;              //page register
     nall::Natural<48> mul; //multiplier
     nall::Natural<24> mdr;            //bus memory data register
     nall::Natural<24> rom;            //data ROM data buffer
@@ -155,7 +155,7 @@ protected:
       uint1  lock[2];
       nall::Natural<24> address[2];  //cache address is in bytes; so 24-bit
       nall::Natural<24> base;        //base address is also in bytes
-      uint15 pb;
+      nall::Natural<15> pb;
       uint8_t  pc;
     } cache;
 
