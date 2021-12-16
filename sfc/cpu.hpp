@@ -177,7 +177,7 @@ private:
     inline auto readB(uint8_t address, bool valid) -> uint8_t;
     inline auto writeA(nall::Natural<24> address, uint8_t data) -> void;
     inline auto writeB(uint8_t address, uint8_t data, bool valid) -> void;
-    inline auto transfer(nall::Natural<24> address, uint2 index) -> void;
+    inline auto transfer(nall::Natural<24> address, nall::Natural< 2> index) -> void;
 
     inline auto dmaRun() -> void;
     inline auto hdmaActive() -> bool;

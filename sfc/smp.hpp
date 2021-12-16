@@ -4,8 +4,8 @@ struct SMP : Processor::SPC700, Thread {
   inline auto synchronizing() const -> bool override { return scheduler.synchronizing(); }
 
   //io.cpp
-  auto portRead(uint2 port) const -> uint8_t;
-  auto portWrite(uint2 port, uint8_t data) -> void;
+  auto portRead(nall::Natural< 2> port) const -> uint8_t;
+  auto portWrite(nall::Natural< 2> port, uint8_t data) -> void;
 
   //smp.cpp
   auto synchronizeCPU() -> void;
@@ -37,8 +37,8 @@ private:
     uint1 ramWritable = 1;
     uint1 ramDisable = 0;
     uint1 timersEnable = 1;
-    uint2 externalWaitStates = 0;
-    uint2 internalWaitStates = 0;
+    nall::Natural< 2> externalWaitStates = 0;
+    nall::Natural< 2> internalWaitStates = 0;
 
     //$00f1
     uint1 iplromEnable = 1;

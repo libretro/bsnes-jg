@@ -8,7 +8,7 @@ SuperMultitap::SuperMultitap(unsigned port) : Controller(port) {
   counter2 = 0;
 }
 
-auto SuperMultitap::data() -> uint2 {
+auto SuperMultitap::data() -> nall::Natural< 2> {
   if(latched) return 2;  //device detection
   unsigned counter, a, b;
 

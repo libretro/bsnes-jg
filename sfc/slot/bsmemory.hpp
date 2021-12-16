@@ -142,7 +142,7 @@ private:
     PulseOnErase,
     Disable,
   };};
-  uint2 readyBusyMode;
+  nall::Natural< 2> readyBusyMode;
 
   struct Queue {
     auto flush() -> void;

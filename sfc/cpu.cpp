@@ -87,7 +87,7 @@ auto CPU::Channel::writeB(uint8_t address, uint8_t data, bool valid) -> void {
   if(valid) bus.write(0x2100 | address, data);
 }
 
-auto CPU::Channel::transfer(nall::Natural<24> addressA, uint2 index) -> void {
+auto CPU::Channel::transfer(nall::Natural<24> addressA, nall::Natural< 2> index) -> void {
   uint8_t addressB = targetAddress;
   switch(transferMode) {
   case 1: case 5: addressB += index.bit(0); break;
@@ -114,7 +114,7 @@ auto CPU::Channel::dmaRun() -> void {
   step<8,0>();
   edge();
 
-  uint2 index = 0;
+  nall::Natural< 2> index = 0;
   do {
     transfer(sourceBank << 16 | sourceAddress, index++);
     if(!fixedTransfer) !reverseTransfer ? sourceAddress++ : sourceAddress--;
@@ -179,7 +179,7 @@ auto CPU::Channel::hdmaTransfer() -> void {
   if(!hdmaDoTransfer) return;
 
   static const unsigned lengths[8] = {1, 2, 2, 4, 4, 4, 2, 4};
-  for(uint2 index : range(lengths[transferMode])) {
+  for(nall::Natural< 2> index : range(lengths[transferMode])) {
     nall::Natural<24> address = !indirect ? sourceBank << 16 | hdmaAddress++ : indirectBank << 16 | indirectAddress++;
     transfer(address, index);
   }
@@ -812,8 +812,8 @@ auto CPU::joypadEdge() -> void {
 
   if(status.autoJoypadCounter >= 2 && !(status.autoJoypadCounter & 1)) {
     //sixteen bits are shifted into joy{1-4}, one bit per 256 clocks
-    uint2 port0 = controllerPort1.device->data();
-    uint2 port1 = controllerPort2.device->data();
+    nall::Natural< 2> port0 = controllerPort1.device->data();
+    nall::Natural< 2> port1 = controllerPort2.device->data();
 
     io.joy1 = io.joy1 << 1 | port0.bit(0);
     io.joy2 = io.joy2 << 1 | port1.bit(0);

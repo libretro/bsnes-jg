@@ -31,7 +31,7 @@ device(!chained ? ID::Device::Justifier : ID::Device::Justifiers)
   }
 }
 
-auto Justifier::data() -> uint2 {
+auto Justifier::data() -> nall::Natural< 2> {
   if(counter >= 32) return 1;
 
   if(counter == 0) {

@@ -47,7 +47,7 @@ auto SMP::readDisassembler(uint16_t address) -> uint8_t {
   return readRAM(address);
 }
 
-auto SMP::portRead(uint2 port) const -> uint8_t {
+auto SMP::portRead(nall::Natural< 2> port) const -> uint8_t {
   if(port == 0) return io.cpu0;
   if(port == 1) return io.cpu1;
   if(port == 2) return io.cpu2;
@@ -55,7 +55,7 @@ auto SMP::portRead(uint2 port) const -> uint8_t {
   return 0; // unreachable
 }
 
-auto SMP::portWrite(uint2 port, uint8_t data) -> void {
+auto SMP::portWrite(nall::Natural< 2> port, uint8_t data) -> void {
   if(port == 0) io.apu0 = data;
   if(port == 1) io.apu1 = data;
   if(port == 2) io.apu2 = data;

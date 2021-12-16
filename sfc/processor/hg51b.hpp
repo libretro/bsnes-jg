@@ -71,8 +71,8 @@ struct HG51B {
   auto instructionNOP() -> void;
   auto instructionOR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
   auto instructionOR(uint8_t imm, nall::Natural< 5> shift) -> void;
-  auto instructionRDRAM(uint2 byte, nall::Natural<24>& a) -> void;
-  auto instructionRDRAM(uint2 byte, uint8_t imm) -> void;
+  auto instructionRDRAM(nall::Natural< 2> byte, nall::Natural<24>& a) -> void;
+  auto instructionRDRAM(nall::Natural< 2> byte, uint8_t imm) -> void;
   auto instructionRDROM(nall::Natural<24>& reg) -> void;
   auto instructionRDROM(nall::Natural<10> imm) -> void;
   auto instructionROR(nall::Natural< 7> reg) -> void;
@@ -92,8 +92,8 @@ struct HG51B {
   auto instructionSXB() -> void;
   auto instructionSXW() -> void;
   auto instructionWAIT() -> void;
-  auto instructionWRRAM(uint2 byte, nall::Natural<24>& a) -> void;
-  auto instructionWRRAM(uint2 byte, uint8_t imm) -> void;
+  auto instructionWRRAM(nall::Natural< 2> byte, nall::Natural<24>& a) -> void;
+  auto instructionWRRAM(nall::Natural< 2> byte, uint8_t imm) -> void;
   auto instructionXNOR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
   auto instructionXNOR(uint8_t imm, nall::Natural< 5> shift) -> void;
   auto instructionXOR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;

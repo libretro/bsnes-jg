@@ -5,7 +5,7 @@ struct Justifier : Controller {
 
   Justifier(unsigned port, bool chained);
 
-  auto data() -> uint2;
+  auto data() -> nall::Natural< 2>;
   auto latch(bool data) -> void;
   auto latch() -> void override;
 

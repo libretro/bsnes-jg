@@ -68,8 +68,8 @@ struct ARM7TDMI {
   auto armInstructionBranch(int24, uint1) -> void;
   auto armInstructionBranchExchangeRegister(nall::Natural< 4>) -> void;
   auto armInstructionDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, uint1, nall::Natural< 4>) -> void;
-  auto armInstructionDataImmediateShift(nall::Natural< 4>, uint2, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, uint1, nall::Natural< 4>) -> void;
-  auto armInstructionDataRegisterShift(nall::Natural< 4>, uint2, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, uint1, nall::Natural< 4>) -> void;
+  auto armInstructionDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, uint1, nall::Natural< 4>) -> void;
+  auto armInstructionDataRegisterShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, uint1, nall::Natural< 4>) -> void;
   auto armInstructionLoadImmediate(uint8_t, uint1, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1) -> void;
   auto armInstructionLoadRegister(nall::Natural< 4>, uint1, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1) -> void;
   auto armInstructionMemorySwap(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, uint1) -> void;
@@ -77,7 +77,7 @@ struct ARM7TDMI {
   auto armInstructionMoveHalfRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1, uint1) -> void;
   auto armInstructionMoveImmediateOffset(nall::Natural<12>, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1, uint1, uint1) -> void;
   auto armInstructionMoveMultiple(uint16_t, nall::Natural< 4>, uint1, uint1, uint1, uint1, uint1) -> void;
-  auto armInstructionMoveRegisterOffset(nall::Natural< 4>, uint2, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1, uint1, uint1) -> void;
+  auto armInstructionMoveRegisterOffset(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1, uint1, uint1) -> void;
   auto armInstructionMoveToRegisterFromStatus(nall::Natural< 4>, uint1) -> void;
   auto armInstructionMoveToStatusFromImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, uint1) -> void;
   auto armInstructionMoveToStatusFromRegister(nall::Natural< 4>, nall::Natural< 4>, uint1) -> void;
@@ -88,7 +88,7 @@ struct ARM7TDMI {
 
   //instructions-thumb.cpp
   auto thumbInstructionALU(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 4>) -> void;
-  auto thumbInstructionALUExtended(nall::Natural< 4>, nall::Natural< 4>, uint2) -> void;
+  auto thumbInstructionALUExtended(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 2>) -> void;
   auto thumbInstructionAddRegister(uint8_t, nall::Natural< 3>, uint1) -> void;
   auto thumbInstructionAdjustImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, uint1) -> void;
   auto thumbInstructionAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, uint1) -> void;
@@ -98,7 +98,7 @@ struct ARM7TDMI {
   auto thumbInstructionBranchFarSuffix(nall::Natural<11>) -> void;
   auto thumbInstructionBranchNear(int11) -> void;
   auto thumbInstructionBranchTest(int8_t, nall::Natural< 4>) -> void;
-  auto thumbInstructionImmediate(uint8_t, nall::Natural< 3>, uint2) -> void;
+  auto thumbInstructionImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>) -> void;
   auto thumbInstructionLoadLiteral(uint8_t, nall::Natural< 3>) -> void;
   auto thumbInstructionMoveByteImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, uint1) -> void;
   auto thumbInstructionMoveHalfImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, uint1) -> void;
@@ -106,7 +106,7 @@ struct ARM7TDMI {
   auto thumbInstructionMoveRegisterOffset(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>) -> void;
   auto thumbInstructionMoveStack(uint8_t, nall::Natural< 3>, uint1) -> void;
   auto thumbInstructionMoveWordImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, uint1) -> void;
-  auto thumbInstructionShiftImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, uint2) -> void;
+  auto thumbInstructionShiftImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 2>) -> void;
   auto thumbInstructionSoftwareInterrupt(uint8_t) -> void;
   auto thumbInstructionStackMultiple(uint8_t, uint1, uint1) -> void;
   auto thumbInstructionUndefined() -> void;
@@ -233,8 +233,8 @@ struct ARM7TDMI {
   auto armDisassembleBranch(int24, uint1) -> string;
   auto armDisassembleBranchExchangeRegister(nall::Natural< 4>) -> string;
   auto armDisassembleDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, uint1, nall::Natural< 4>) -> string;
-  auto armDisassembleDataImmediateShift(nall::Natural< 4>, uint2, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, uint1, nall::Natural< 4>) -> string;
-  auto armDisassembleDataRegisterShift(nall::Natural< 4>, uint2, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, uint1, nall::Natural< 4>) -> string;
+  auto armDisassembleDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, uint1, nall::Natural< 4>) -> string;
+  auto armDisassembleDataRegisterShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, uint1, nall::Natural< 4>) -> string;
   auto armDisassembleLoadImmediate(uint8_t, uint1, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1) -> string;
   auto armDisassembleLoadRegister(nall::Natural< 4>, uint1, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1) -> string;
   auto armDisassembleMemorySwap(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, uint1) -> string;
@@ -242,7 +242,7 @@ struct ARM7TDMI {
   auto armDisassembleMoveHalfRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1, uint1) -> string;
   auto armDisassembleMoveImmediateOffset(nall::Natural<12>, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1, uint1, uint1) -> string;
   auto armDisassembleMoveMultiple(uint16_t, nall::Natural< 4>, uint1, uint1, uint1, uint1, uint1) -> string;
-  auto armDisassembleMoveRegisterOffset(nall::Natural< 4>, uint2, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1, uint1, uint1) -> string;
+  auto armDisassembleMoveRegisterOffset(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, uint1, uint1, uint1, uint1, uint1) -> string;
   auto armDisassembleMoveToRegisterFromStatus(nall::Natural< 4>, uint1) -> string;
   auto armDisassembleMoveToStatusFromImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, uint1) -> string;
   auto armDisassembleMoveToStatusFromRegister(nall::Natural< 4>, nall::Natural< 4>, uint1) -> string;
@@ -252,7 +252,7 @@ struct ARM7TDMI {
   auto armDisassembleUndefined() -> string;
 
   auto thumbDisassembleALU(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 4>) -> string;
-  auto thumbDisassembleALUExtended(nall::Natural< 4>, nall::Natural< 4>, uint2) -> string;
+  auto thumbDisassembleALUExtended(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 2>) -> string;
   auto thumbDisassembleAddRegister(uint8_t, nall::Natural< 3>, uint1) -> string;
   auto thumbDisassembleAdjustImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, uint1) -> string;
   auto thumbDisassembleAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, uint1) -> string;
@@ -262,7 +262,7 @@ struct ARM7TDMI {
   auto thumbDisassembleBranchFarSuffix(nall::Natural<11>) -> string;
   auto thumbDisassembleBranchNear(int11) -> string;
   auto thumbDisassembleBranchTest(int8_t, nall::Natural< 4>) -> string;
-  auto thumbDisassembleImmediate(uint8_t, nall::Natural< 3>, uint2) -> string;
+  auto thumbDisassembleImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>) -> string;
   auto thumbDisassembleLoadLiteral(uint8_t, nall::Natural< 3>) -> string;
   auto thumbDisassembleMoveByteImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, uint1) -> string;
   auto thumbDisassembleMoveHalfImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, uint1) -> string;
@@ -270,7 +270,7 @@ struct ARM7TDMI {
   auto thumbDisassembleMoveRegisterOffset(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>) -> string;
   auto thumbDisassembleMoveStack(uint8_t, nall::Natural< 3>, uint1) -> string;
   auto thumbDisassembleMoveWordImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, uint1) -> string;
-  auto thumbDisassembleShiftImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, uint2) -> string;
+  auto thumbDisassembleShiftImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 2>) -> string;
   auto thumbDisassembleSoftwareInterrupt(uint8_t) -> string;
   auto thumbDisassembleStackMultiple(uint8_t, uint1, uint1) -> string;
   auto thumbDisassembleUndefined() -> string;

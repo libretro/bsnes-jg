@@ -35,7 +35,7 @@ SuperScope::SuperScope(unsigned port) : Controller(port) {
   prev = 0;
 }
 
-auto SuperScope::data() -> uint2 {
+auto SuperScope::data() -> nall::Natural< 2> {
   if(counter >= 8) return 1;
 
   if(counter == 0) {

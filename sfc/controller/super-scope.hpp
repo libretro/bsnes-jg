@@ -5,7 +5,7 @@ struct SuperScope : Controller {
 
   SuperScope(unsigned port);
 
-  auto data() -> uint2;
+  auto data() -> nall::Natural< 2>;
   auto latch(bool data) -> void;
   auto latch() -> void override;
   auto draw(uint16_t* data, unsigned pitch, unsigned width, unsigned height) -> void override;

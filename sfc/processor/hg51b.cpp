@@ -274,14 +274,14 @@ HG51B::HG51B() {
   //CMPR A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("0100 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, CMPR, reg, shifts[shift]);
   }
 
   //CMPR A<<s,imm
   for(uint8_t imm   : range(256))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("0100 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, CMPR, imm, shifts[shift]);
   }
@@ -289,14 +289,14 @@ HG51B::HG51B() {
   //CMP A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("0101 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, CMP, reg, shifts[shift]);
   }
 
   //CMP A<<s,imm
   for(uint8_t imm   : range(256))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("0101 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, CMP, imm, shifts[shift]);
   }
@@ -471,14 +471,14 @@ HG51B::HG51B() {
   //ADD A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1000 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, ADD, reg, shifts[shift]);
   }
 
   //ADD A<<s,imm
   for(uint8_t imm   : range(256))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1000 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, ADD, imm, shifts[shift]);
   }
@@ -486,14 +486,14 @@ HG51B::HG51B() {
   //SUBR A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1000 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, SUBR, reg, shifts[shift]);
   }
 
   //SUBR A<<s,imm
   for(uint8_t imm   : range(256))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1000 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, SUBR, imm, shifts[shift]);
   }
@@ -501,14 +501,14 @@ HG51B::HG51B() {
   //SUB A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1001 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, SUB, reg, shifts[shift]);
   }
 
   //SUB A<<s,imm
   for(uint8_t imm   : range(256))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1001 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, SUB, imm, shifts[shift]);
   }
@@ -522,7 +522,7 @@ HG51B::HG51B() {
 
   //MUL imm
   for(uint8_t imm  : range(256))
-  for(uint2 null : range(  4)) {
+  for(nall::Natural< 2> null : range(  4)) {
     auto opcode = pattern("1001 11.. iiii iiii");
     bind(opcode | imm << 0 | null << 8, MUL, imm);
   }
@@ -530,14 +530,14 @@ HG51B::HG51B() {
   //XNOR A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1010 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, XNOR, reg, shifts[shift]);
   }
 
   //XNOR A<<s,imm
   for(uint8_t imm   : range(256))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1010 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, XNOR, imm, shifts[shift]);
   }
@@ -545,14 +545,14 @@ HG51B::HG51B() {
   //XOR A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1010 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, XOR, reg, shifts[shift]);
   }
 
   //XOR A<<s,imm
   for(uint8_t imm   : range(256))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1010 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, XOR, imm, shifts[shift]);
   }
@@ -560,14 +560,14 @@ HG51B::HG51B() {
   //AND A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1011 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, AND, reg, shifts[shift]);
   }
 
   //AND A<<s,imm
   for(uint8_t imm   : range(256))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1011 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, AND, imm, shifts[shift]);
   }
@@ -575,14 +575,14 @@ HG51B::HG51B() {
   //OR A<<s,reg
   for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1011 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, OR, reg, shifts[shift]);
   }
 
   //OR A<<s,imm
   for(uint8_t imm   : range(256))
-  for(uint2 shift : range(  4)) {
+  for(nall::Natural< 2> shift : range(  4)) {
     auto opcode = pattern("1011 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, OR, imm, shifts[shift]);
   }
@@ -977,13 +977,13 @@ auto HG51B::instructionOR(uint8_t imm, nall::Natural< 5> shift) -> void {
   r.a = algorithmOR(r.a << shift, imm);
 }
 
-auto HG51B::instructionRDRAM(uint2 byte, nall::Natural<24>& a) -> void {
+auto HG51B::instructionRDRAM(nall::Natural< 2> byte, nall::Natural<24>& a) -> void {
   nall::Natural<12> address = a;
   if(address >= 0xc00) address -= 0x400;
   r.ram.byte(byte) = dataRAM[address];
 }
 
-auto HG51B::instructionRDRAM(uint2 byte, uint8_t imm) -> void {
+auto HG51B::instructionRDRAM(nall::Natural< 2> byte, uint8_t imm) -> void {
   nall::Natural<12> address = r.dpr + imm;
   if(address >= 0xc00) address -= 0x400;
   r.ram.byte(byte) = dataRAM[address];
@@ -1069,13 +1069,13 @@ auto HG51B::instructionWAIT() -> void {
   return step(io.bus.pending);
 }
 
-auto HG51B::instructionWRRAM(uint2 byte, nall::Natural<24>& a) -> void {
+auto HG51B::instructionWRRAM(nall::Natural< 2> byte, nall::Natural<24>& a) -> void {
   nall::Natural<12> address = a;
   if(address >= 0xc00) address -= 0x400;
   dataRAM[address] = r.ram.byte(byte);
 }
 
-auto HG51B::instructionWRRAM(uint2 byte, uint8_t imm) -> void {
+auto HG51B::instructionWRRAM(nall::Natural< 2> byte, uint8_t imm) -> void {
   nall::Natural<12> address = r.dpr + imm;
   if(address >= 0xc00) address -= 0x400;
   dataRAM[address] = r.ram.byte(byte);

@@ -17,7 +17,7 @@ struct Controller {
 
   auto iobit() -> bool;
   auto iobit(bool data) -> void;
-  virtual auto data() -> uint2 { return 0; }
+  virtual auto data() -> nall::Natural< 2> { return 0; }
   virtual auto latch(bool data) -> void {}
   virtual auto latch() -> void {}  //light guns
   virtual auto draw(uint16_t* output, unsigned pitch, unsigned width, unsigned height) -> void {}  //light guns

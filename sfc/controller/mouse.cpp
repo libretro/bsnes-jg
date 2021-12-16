@@ -15,7 +15,7 @@ Mouse::Mouse(unsigned port) : Controller(port) {
   r = 0;
 }
 
-auto Mouse::data() -> uint2 {
+auto Mouse::data() -> nall::Natural< 2> {
   if(latched == 1) {
     speed = (speed + 1) % 3;
     return 0;

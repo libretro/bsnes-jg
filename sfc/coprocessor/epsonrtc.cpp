@@ -183,7 +183,7 @@ auto EpsonRTC::save(uint8_t* data) -> void {
   }
 }
 
-auto EpsonRTC::irq(uint2 period) -> void {
+auto EpsonRTC::irq(nall::Natural< 2> period) -> void {
   if(stop || pause) return;
 
   if(period == irqperiod) irqflag = 1;

@@ -35,7 +35,7 @@ private:
     uint1 mapping;             //bit  2 (0 = ignore A15; 1 = use A15)
     uint1 psramEnableLo;       //bit  3
     uint1 psramEnableHi;       //bit  4
-    uint2 psramMapping;        //bits 5-6
+    nall::Natural< 2> psramMapping;        //bits 5-6
     uint1 romEnableLo;         //bit  7
     uint1 romEnableHi;         //bit  8
     uint1 exEnableLo;          //bit  9

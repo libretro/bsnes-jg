@@ -73,7 +73,7 @@ private:
   uint8_t r480c;  //decompression status
 
   bool dcuPending;
-  uint2 dcuMode;
+  nall::Natural< 2> dcuMode;
   nall::Natural<23> dcuAddress;
   unsigned dcuOffset;
   uint8_t dcuTile[32];

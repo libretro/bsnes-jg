@@ -18,7 +18,7 @@ struct EpsonRTC : Thread {
   nall::Natural<21> clocks;
   unsigned seconds;
 
-  uint2 chipselect;
+  nall::Natural< 2> chipselect;
   enum class State : unsigned { Mode, Seek, Read, Write } state;
   nall::Natural< 4> mdr;
   nall::Natural< 4> offset;
@@ -35,16 +35,16 @@ struct EpsonRTC : Thread {
   uint1 resync;
 
   nall::Natural< 4> hourlo;
-  uint2 hourhi;
+  nall::Natural< 2> hourhi;
   uint1 meridian;
 
   nall::Natural< 4> daylo;
-  uint2 dayhi;
+  nall::Natural< 2> dayhi;
   uint1 dayram;
 
   nall::Natural< 4> monthlo;
   uint1 monthhi;
-  uint2 monthram;
+  nall::Natural< 2> monthram;
 
   nall::Natural< 4> yearlo;
   nall::Natural< 4> yearhi;
@@ -58,7 +58,7 @@ struct EpsonRTC : Thread {
 
   uint1 irqmask;
   uint1 irqduty;
-  uint2 irqperiod;
+  nall::Natural< 2> irqperiod;
 
   uint1 pause;
   uint1 stop;
@@ -74,7 +74,7 @@ struct EpsonRTC : Thread {
   auto save(uint8_t* data) -> void;
 
   //time.cpp
-  auto irq(uint2 period) -> void;
+  auto irq(nall::Natural< 2> period) -> void;
   auto duty() -> void;
   auto roundSeconds() -> void;
   auto tick() -> void;

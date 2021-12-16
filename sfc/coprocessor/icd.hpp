@@ -18,7 +18,7 @@ struct ICD : Emulator::Platform, Thread {
   //interface.cpp
   auto ppuHreset() -> void;
   auto ppuVreset() -> void;
-  auto ppuWrite(uint2 color) -> void;
+  auto ppuWrite(nall::Natural< 2> color) -> void;
   auto apuWrite(float left, float right) -> void;
   auto joypWrite(bool p14, bool p15) -> void;
 
@@ -44,7 +44,7 @@ private:
   Packet packet[64];
   nall::Natural< 7> packetSize;
 
-  uint2 joypID;
+  nall::Natural< 2> joypID;
   uint1 joypLock;
   uint1 pulseLock;
   uint1 strobeLock;
@@ -55,9 +55,9 @@ private:
   nall::Natural< 3> bitOffset;
 
   uint8_t output[4 * 512];
-  uint2 readBank;
+  nall::Natural< 2> readBank;
   nall::Natural< 9> readAddress;
-  uint2 writeBank;
+  nall::Natural< 2> writeBank;
 
   uint8_t r6003;      //control port
   uint8_t r6004;      //joypad 1

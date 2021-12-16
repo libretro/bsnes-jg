@@ -15,7 +15,7 @@ auto ICD::ppuVreset() -> void {
   vcounter = 0;
 }
 
-auto ICD::ppuWrite(uint2 color) -> void {
+auto ICD::ppuWrite(nall::Natural< 2> color) -> void {
   auto x = (uint8_t)hcounter++;
   auto y = (nall::Natural< 3>)vcounter;
   if(x >= 160) return;  //unverified behavior

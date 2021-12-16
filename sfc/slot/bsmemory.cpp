@@ -390,7 +390,7 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
       address += (id >> 4 & 1) * 0x20;  //guessed for LH28F016SU
       address += (id >> 5 & 1) * 0x04;  //guessed for LH28F032SU; will overwrite unknown constants
       uint32_t erased = 1 << 31 | block(id).erased;  //unknown if d31 is set when erased == 0
-      for(uint2 byte : range(4)) {
+      for(nall::Natural< 2> byte : range(4)) {
         page.write(address + byte, erased >> byte * 8);  //little endian
       }
     }

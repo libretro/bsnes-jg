@@ -5,7 +5,7 @@ struct Mouse : Controller {
 
   Mouse(unsigned port);
 
-  auto data() -> uint2;
+  auto data() -> nall::Natural< 2>;
   auto latch(bool data) -> void;
 
 private:

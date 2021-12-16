@@ -18,10 +18,10 @@ auto uPD96050::exec() -> void {
 }
 
 auto uPD96050::execOP(nall::Natural<24> opcode) -> void {
-  uint2 pselect = opcode >> 20;  //P select
+  nall::Natural< 2> pselect = opcode >> 20;  //P select
   nall::Natural< 4> alu     = opcode >> 16;  //ALU operation mode
   uint1 asl     = opcode >> 15;  //accumulator select
-  uint2 dpl     = opcode >> 13;  //DP low modify
+  nall::Natural< 2> dpl     = opcode >> 13;  //DP low modify
   nall::Natural< 4> dphm    = opcode >>  9;  //DP high XOR modify
   uint1 rpdcr   = opcode >>  8;  //RP decrement
   nall::Natural< 4> src     = opcode >>  4;  //move source
@@ -166,7 +166,7 @@ auto uPD96050::execRT(nall::Natural<24> opcode) -> void {
 auto uPD96050::execJP(nall::Natural<24> opcode) -> void {
   nall::Natural< 9> brch = opcode >> 13;  //branch
   nall::Natural<11> na  = opcode >>  2;  //next address
-  uint2 bank = opcode >>  0;  //bank address
+  nall::Natural< 2> bank = opcode >>  0;  //bank address
 
   nall::Natural<14> jp = regs.pc & 0x2000 | bank << 11 | na << 0;
 
@@ -317,13 +317,13 @@ auto uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) -> void {
 auto uPD96050::disassemble(nall::Natural<14> ip) -> string {
   string output = {hex(ip, 4L), "  "};
   nall::Natural<24> opcode = programROM[ip];
-  uint2 type = opcode >> 22;
+  nall::Natural< 2> type = opcode >> 22;
 
   if(type == 0 || type == 1) {  //OP,RT
-    uint2 pselect = opcode >> 20;
+    nall::Natural< 2> pselect = opcode >> 20;
     nall::Natural< 4> alu     = opcode >> 16;
     uint1 asl     = opcode >> 15;
-    uint2 dpl     = opcode >> 13;
+    nall::Natural< 2> dpl     = opcode >> 13;
     nall::Natural< 4> dphm    = opcode >>  9;
     uint1 rpdcr   = opcode >>  8;
     nall::Natural< 4> src     = opcode >>  4;
