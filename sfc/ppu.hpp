@@ -32,8 +32,8 @@ private:
   alwaysinline auto addressVRAM() const -> uint16_t;
   alwaysinline auto readVRAM() -> uint16_t;
   alwaysinline auto writeVRAM(bool byte, uint8_t data) -> void;
-  alwaysinline auto readOAM(uint10 address) -> uint8_t;
-  alwaysinline auto writeOAM(uint10 address, uint8_t data) -> void;
+  alwaysinline auto readOAM(nall::Natural<10> address) -> uint8_t;
+  alwaysinline auto writeOAM(nall::Natural<10> address, uint8_t data) -> void;
   alwaysinline auto readCGRAM(bool byte, uint8_t address) -> uint8_t;
   alwaysinline auto writeCGRAM(uint8_t address, nall::Natural<15> data) -> void;
   auto readIO(unsigned address, uint8_t data) -> uint8_t;
@@ -73,7 +73,7 @@ private:
     uint1 hcounter;
     uint1 vcounter;
 
-    uint10 oamAddress;
+    nall::Natural<10> oamAddress;
     uint8_t cgramAddress;
   } latch;
 
@@ -84,8 +84,8 @@ private:
 
     //$2102  OAMADDL
     //$2103  OAMADDH
-    uint10 oamBaseAddress;
-    uint10 oamAddress;
+    nall::Natural<10> oamBaseAddress;
+    nall::Natural<10> oamAddress;
     uint1 oamPriority;
 
     //$2105  BGMODE
@@ -232,7 +232,7 @@ struct Background {
 
   struct Tile {
     uint16_t address;
-    uint10 character;
+    nall::Natural<10> character;
     uint8_t palette;
     uint3 paletteGroup;
     uint8_t priority;
@@ -248,8 +248,8 @@ struct Background {
 };
 
 struct OAM {
-  auto read(uint10 address) -> uint8_t;
-  auto write(uint10 address, uint8_t data) -> void;
+  auto read(nall::Natural<10> address) -> uint8_t;
+  auto write(nall::Natural<10> address, uint8_t data) -> void;
 
   struct Object {
     alwaysinline auto width() const -> unsigned;

@@ -122,13 +122,13 @@ HG51B::HG51B() {
   static const uint5 shifts[] = {0, 1, 8, 16};
 
   //NOP
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("0000 00.. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //???
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("0000 01.. .... ....");
     bind(opcode | null << 0, NOP);
   }
@@ -174,13 +174,13 @@ HG51B::HG51B() {
   }
 
   //WAIT
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("0001 11.. .... ....");
     bind(opcode | null << 0, WAIT);
   }
 
   //???
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("0010 00.. .... ....");
     bind(opcode | null << 0, NOP);
   }
@@ -254,19 +254,19 @@ HG51B::HG51B() {
   }
 
   //RTS
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("0011 11.. .... ....");
     bind(opcode | null << 0, RTS);
   }
 
   //INC MAR
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("0100 00.. .... ....");
     bind(opcode | null << 0, INC, r.mar);
   }
 
   //???
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("0100 01.. .... ....");
     bind(opcode | null << 0, NOP);
   }
@@ -326,7 +326,7 @@ HG51B::HG51B() {
   }
 
   //???
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("0101 11.. .... ....");
     bind(opcode | null << 0, NOP);
   }
@@ -432,19 +432,19 @@ HG51B::HG51B() {
   }
 
   //RDROM A
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("0111 00.. .... ....");
     bind(opcode | null << 0, RDROM, r.a);
   }
 
   //RDROM imm
-  for(uint10 imm : range(1024)) {
+  for(nall::Natural<10> imm : range(1024)) {
     auto opcode = pattern("0111 01ii iiii iiii");
     bind(opcode | imm << 0, RDROM, imm);
   }
 
   //???
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("0111 10.. .... ....");
     bind(opcode | null << 0, NOP);
   }
@@ -664,7 +664,7 @@ HG51B::HG51B() {
   }
 
   //???
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("1110 01.. .... ....");
     bind(opcode | null << 0, NOP);
   }
@@ -725,19 +725,19 @@ HG51B::HG51B() {
   }
 
   //???
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("1111 01.. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //CLEAR
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("1111 10.. .... ....");
     bind(opcode | null << 0, CLEAR);
   }
 
   //HALT
-  for(uint10 null : range(1024)) {
+  for(nall::Natural<10> null : range(1024)) {
     auto opcode = pattern("1111 11.. .... ....");
     bind(opcode | null << 0, HALT);
   }
@@ -990,10 +990,10 @@ auto HG51B::instructionRDRAM(uint2 byte, uint8_t imm) -> void {
 }
 
 auto HG51B::instructionRDROM(nall::Natural<24>& reg) -> void {
-  r.rom = dataROM[(uint10)reg];
+  r.rom = dataROM[(nall::Natural<10>)reg];
 }
 
-auto HG51B::instructionRDROM(uint10 imm) -> void {
+auto HG51B::instructionRDROM(nall::Natural<10> imm) -> void {
   r.rom = dataROM[imm];
 }
 

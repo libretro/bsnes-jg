@@ -74,7 +74,7 @@ struct HG51B {
   auto instructionRDRAM(uint2 byte, nall::Natural<24>& a) -> void;
   auto instructionRDRAM(uint2 byte, uint8_t imm) -> void;
   auto instructionRDROM(nall::Natural<24>& reg) -> void;
-  auto instructionRDROM(uint10 imm) -> void;
+  auto instructionRDROM(nall::Natural<10> imm) -> void;
   auto instructionROR(uint7 reg) -> void;
   auto instructionROR(uint5 imm) -> void;
   auto instructionRTS() -> void;

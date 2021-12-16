@@ -237,12 +237,12 @@ auto PPU::writeVRAM(bool byte, uint8_t data) -> void {
   if(byte == 1) vram[address] = vram[address] & 0x00ff | data << 8;
 }
 
-auto PPU::readOAM(uint10 addr) -> uint8_t {
+auto PPU::readOAM(nall::Natural<10> addr) -> uint8_t {
   if(!io.displayDisable && vcounter() < vdisp()) addr = latch.oamAddress;
   return obj.oam.read(addr);
 }
 
-auto PPU::writeOAM(uint10 addr, uint8_t data) -> void {
+auto PPU::writeOAM(nall::Natural<10> addr, uint8_t data) -> void {
   if(!io.displayDisable && vcounter() < vdisp()) addr = latch.oamAddress;
   obj.oam.write(addr, data);
 }
@@ -430,7 +430,7 @@ auto PPU::writeIO(unsigned addr, uint8_t data) -> void {
   //OAMDATA
   case 0x2104: {
     uint1 latchBit = io.oamAddress & 1;
-    uint10 address = io.oamAddress++;
+    nall::Natural<10> address = io.oamAddress++;
     if(latchBit == 0) latch.oam = data;
     if(address & 0x200) {
       writeOAM(address, data);
@@ -1275,7 +1275,7 @@ auto PPU::Background::power() -> void {
   mosaic.enable = random();
 }
 
-auto PPU::OAM::read(uint10 address) -> uint8_t {
+auto PPU::OAM::read(nall::Natural<10> address) -> uint8_t {
   if(!(address & 0x200)) {
     unsigned n = address >> 2;  //object#
     address &= 3;
@@ -1304,7 +1304,7 @@ auto PPU::OAM::read(uint10 address) -> uint8_t {
   }
 }
 
-auto PPU::OAM::write(uint10 address, uint8_t data) -> void {
+auto PPU::OAM::write(nall::Natural<10> address, uint8_t data) -> void {
   if(!(address & 0x200)) {
     unsigned n = address >> 2;  //object#
     address &= 3;
