@@ -119,7 +119,7 @@ HG51B::HG51B() {
   #define pattern(s) \
     std::integral_constant<uint16_t, bit::test(s)>::value
 
-  static const uint5 shifts[] = {0, 1, 8, 16};
+  static const nall::Natural< 5> shifts[] = {0, 1, 8, 16};
 
   //NOP
   for(nall::Natural<10> null : range(1024)) {
@@ -595,8 +595,8 @@ HG51B::HG51B() {
   }
 
   //SHR A,imm
-  for(uint5 imm  : range(32))
-  for(uint5 null : range(32)) {
+  for(nall::Natural< 5> imm  : range(32))
+  for(nall::Natural< 5> null : range(32)) {
     auto opcode = pattern("1100 01.. ...i iiii");
     bind(opcode | imm << 0 | null << 5, SHR, imm);
   }
@@ -609,8 +609,8 @@ HG51B::HG51B() {
   }
 
   //ASR A,imm
-  for(uint5 imm  : range(32))
-  for(uint5 null : range(32)) {
+  for(nall::Natural< 5> imm  : range(32))
+  for(nall::Natural< 5> null : range(32)) {
     auto opcode = pattern("1100 11.. ...i iiii");
     bind(opcode | imm << 0 | null << 5, ASR, imm);
   }
@@ -623,8 +623,8 @@ HG51B::HG51B() {
   }
 
   //ROR A,imm
-  for(uint5 imm  : range(32))
-  for(uint5 null : range(32)) {
+  for(nall::Natural< 5> imm  : range(32))
+  for(nall::Natural< 5> null : range(32)) {
     auto opcode = pattern("1101 01.. ...i iiii");
     bind(opcode | imm << 0 | null << 5, ROR, imm);
   }
@@ -637,8 +637,8 @@ HG51B::HG51B() {
   }
 
   //SHL A,imm
-  for(uint5 imm  : range(32))
-  for(uint5 null : range(32)) {
+  for(nall::Natural< 5> imm  : range(32))
+  for(nall::Natural< 5> null : range(32)) {
     auto opcode = pattern("1101 11.. ...i iiii");
     bind(opcode | imm << 0 | null << 5, SHL, imm);
   }
@@ -792,7 +792,7 @@ auto HG51B::algorithmAND(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natu
   return x;
 }
 
-auto HG51B::algorithmASR(nall::Natural<24> a, uint5 s) -> nall::Natural<24> {
+auto HG51B::algorithmASR(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24> {
   if(s > 24) s = 0;
   a = (int24)a >> s;
   r.n = a & 0x800000;
@@ -811,7 +811,7 @@ auto HG51B::algorithmOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natur
   return x;
 }
 
-auto HG51B::algorithmROR(nall::Natural<24> a, uint5 s) -> nall::Natural<24> {
+auto HG51B::algorithmROR(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24> {
   if(s > 24) s = 0;
   a = (a >> s) | (a << 24 - s);
   r.n = a & 0x800000;
@@ -819,7 +819,7 @@ auto HG51B::algorithmROR(nall::Natural<24> a, uint5 s) -> nall::Natural<24> {
   return a;
 }
 
-auto HG51B::algorithmSHL(nall::Natural<24> a, uint5 s) -> nall::Natural<24> {
+auto HG51B::algorithmSHL(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24> {
   if(s > 24) s = 0;
   a = a << s;
   r.n = a & 0x800000;
@@ -827,7 +827,7 @@ auto HG51B::algorithmSHL(nall::Natural<24> a, uint5 s) -> nall::Natural<24> {
   return a;
 }
 
-auto HG51B::algorithmSHR(nall::Natural<24> a, uint5 s) -> nall::Natural<24> {
+auto HG51B::algorithmSHR(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24> {
   if(s > 24) s = 0;
   a = a >> s;
   r.n = a & 0x800000;
@@ -864,19 +864,19 @@ auto HG51B::algorithmXOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natu
   return x;
 }
 
-auto HG51B::instructionADD(nall::Natural< 7> reg, uint5 shift) -> void {
+auto HG51B::instructionADD(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void {
   r.a = algorithmADD(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionADD(uint8_t imm, uint5 shift) -> void {
+auto HG51B::instructionADD(uint8_t imm, nall::Natural< 5> shift) -> void {
   r.a = algorithmADD(r.a << shift, imm);
 }
 
-auto HG51B::instructionAND(nall::Natural< 7> reg, uint5 shift) -> void {
+auto HG51B::instructionAND(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void {
   r.a = algorithmAND(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionAND(uint8_t imm, uint5 shift) -> void {
+auto HG51B::instructionAND(uint8_t imm, nall::Natural< 5> shift) -> void {
   r.a = algorithmAND(r.a << shift, imm);
 }
 
@@ -884,7 +884,7 @@ auto HG51B::instructionASR(nall::Natural< 7> reg) -> void {
   r.a = algorithmASR(r.a, readRegister(reg));
 }
 
-auto HG51B::instructionASR(uint5 imm) -> void {
+auto HG51B::instructionASR(nall::Natural< 5> imm) -> void {
   r.a = algorithmASR(r.a, imm);
 }
 
@@ -895,19 +895,19 @@ auto HG51B::instructionCLEAR() -> void {
   r.dpr = 0;
 }
 
-auto HG51B::instructionCMP(nall::Natural< 7> reg, uint5 shift) -> void {
+auto HG51B::instructionCMP(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void {
   algorithmSUB(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionCMP(uint8_t imm, uint5 shift) -> void {
+auto HG51B::instructionCMP(uint8_t imm, nall::Natural< 5> shift) -> void {
   algorithmSUB(r.a << shift, imm);
 }
 
-auto HG51B::instructionCMPR(nall::Natural< 7> reg, uint5 shift) -> void {
+auto HG51B::instructionCMPR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void {
   algorithmSUB(readRegister(reg), r.a << shift);
 }
 
-auto HG51B::instructionCMPR(uint8_t imm, uint5 shift) -> void {
+auto HG51B::instructionCMPR(uint8_t imm, nall::Natural< 5> shift) -> void {
   algorithmSUB(imm, r.a << shift);
 }
 
@@ -969,11 +969,11 @@ auto HG51B::instructionMUL(uint8_t imm) -> void {
 auto HG51B::instructionNOP() -> void {
 }
 
-auto HG51B::instructionOR(nall::Natural< 7> reg, uint5 shift) -> void {
+auto HG51B::instructionOR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void {
   r.a = algorithmOR(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionOR(uint8_t imm, uint5 shift) -> void {
+auto HG51B::instructionOR(uint8_t imm, nall::Natural< 5> shift) -> void {
   r.a = algorithmOR(r.a << shift, imm);
 }
 
@@ -1001,7 +1001,7 @@ auto HG51B::instructionROR(nall::Natural< 7> reg) -> void {
   r.a = algorithmROR(r.a, readRegister(reg));
 }
 
-auto HG51B::instructionROR(uint5 imm) -> void {
+auto HG51B::instructionROR(nall::Natural< 5> imm) -> void {
   r.a = algorithmROR(r.a, imm);
 }
 
@@ -1020,7 +1020,7 @@ auto HG51B::instructionSHL(nall::Natural< 7> reg) -> void {
   r.a = algorithmSHL(r.a, readRegister(reg));
 }
 
-auto HG51B::instructionSHL(uint5 imm) -> void {
+auto HG51B::instructionSHL(nall::Natural< 5> imm) -> void {
   r.a = algorithmSHL(r.a, imm);
 }
 
@@ -1028,7 +1028,7 @@ auto HG51B::instructionSHR(nall::Natural< 7> reg) -> void {
   r.a = algorithmSHR(r.a, readRegister(reg));
 }
 
-auto HG51B::instructionSHR(uint5 imm) -> void {
+auto HG51B::instructionSHR(nall::Natural< 5> imm) -> void {
   r.a = algorithmSHR(r.a, imm);
 }
 
@@ -1036,19 +1036,19 @@ auto HG51B::instructionST(nall::Natural< 7> reg, nall::Natural<24>& in) -> void 
   writeRegister(reg, in);
 }
 
-auto HG51B::instructionSUB(nall::Natural< 7> reg, uint5 shift) -> void {
+auto HG51B::instructionSUB(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void {
   r.a = algorithmSUB(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionSUB(uint8_t imm, uint5 shift) -> void {
+auto HG51B::instructionSUB(uint8_t imm, nall::Natural< 5> shift) -> void {
   r.a = algorithmSUB(r.a << shift, imm);
 }
 
-auto HG51B::instructionSUBR(nall::Natural< 7> reg, uint5 shift) -> void {
+auto HG51B::instructionSUBR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void {
   r.a = algorithmSUB(readRegister(reg), r.a << shift);
 }
 
-auto HG51B::instructionSUBR(uint8_t imm, uint5 shift) -> void {
+auto HG51B::instructionSUBR(uint8_t imm, nall::Natural< 5> shift) -> void {
   r.a = algorithmSUB(imm, r.a << shift);
 }
 
@@ -1081,19 +1081,19 @@ auto HG51B::instructionWRRAM(uint2 byte, uint8_t imm) -> void {
   dataRAM[address] = r.ram.byte(byte);
 }
 
-auto HG51B::instructionXNOR(nall::Natural< 7> reg, uint5 shift) -> void {
+auto HG51B::instructionXNOR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void {
   r.a = algorithmXNOR(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionXNOR(uint8_t imm, uint5 shift) -> void {
+auto HG51B::instructionXNOR(uint8_t imm, nall::Natural< 5> shift) -> void {
   r.a = algorithmXNOR(r.a << shift, imm);
 }
 
-auto HG51B::instructionXOR(nall::Natural< 7> reg, uint5 shift) -> void {
+auto HG51B::instructionXOR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void {
   r.a = algorithmXOR(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionXOR(uint8_t imm, uint5 shift) -> void {
+auto HG51B::instructionXOR(uint8_t imm, nall::Natural< 5> shift) -> void {
   r.a = algorithmXOR(r.a << shift, imm);
 }
 

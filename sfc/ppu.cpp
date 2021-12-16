@@ -1130,7 +1130,7 @@ auto PPU::Background::fetchNameTable() -> void {
   unsigned hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
   unsigned vscreen = io.screenSize.bit(1) ? 32 << 5 + io.screenSize.bit(0) : 0;
 
-  uint16_t offset = (uint5)htile << 0 | (uint5)vtile << 5;
+  uint16_t offset = (nall::Natural< 5>)htile << 0 | (nall::Natural< 5>)vtile << 5;
   if(htile & 0x20) offset += hscreen;
   if(vtile & 0x20) offset += vscreen;
 
@@ -1184,7 +1184,7 @@ auto PPU::Background::fetchOffset(unsigned y) -> void {
   unsigned hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
   unsigned vscreen = io.screenSize.bit(1) ? 32 << 5 + io.screenSize.bit(0) : 0;
 
-  uint16_t offset = (uint5)htile << 0 | (uint5)vtile << 5;
+  uint16_t offset = (nall::Natural< 5>)htile << 0 | (nall::Natural< 5>)vtile << 5;
   if(htile & 0x20) offset += hscreen;
   if(vtile & 0x20) offset += vscreen;
 

@@ -667,7 +667,7 @@ auto ARM7TDMI::thumbInitialize() -> void {
 
   for(uint3 d : range(8))
   for(uint3 n : range(8))
-  for(uint5 immediate : range(32))
+  for(nall::Natural< 5> immediate : range(32))
   for(uint1 mode : range(2)) {
     auto opcode = pattern("0111 ???? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 11;
     bind(opcode, MoveByteImmediate, d, n, immediate, mode);
@@ -675,7 +675,7 @@ auto ARM7TDMI::thumbInitialize() -> void {
 
   for(uint3 d : range(8))
   for(uint3 n : range(8))
-  for(uint5 immediate : range(32))
+  for(nall::Natural< 5> immediate : range(32))
   for(uint1 mode : range(2)) {
     auto opcode = pattern("1000 ???? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 11;
     bind(opcode, MoveHalfImmediate, d, n, immediate, mode);
@@ -705,7 +705,7 @@ auto ARM7TDMI::thumbInitialize() -> void {
 
   for(uint3 d : range(8))
   for(uint3 n : range(8))
-  for(uint5 offset : range(32))
+  for(nall::Natural< 5> offset : range(32))
   for(uint1 mode : range(2)) {
     auto opcode = pattern("0110 ???? ???? ????") | d << 0 | n << 3 | offset << 6 | mode << 11;
     bind(opcode, MoveWordImmediate, d, n, offset, mode);
@@ -713,7 +713,7 @@ auto ARM7TDMI::thumbInitialize() -> void {
 
   for(uint3 d : range(8))
   for(uint3 m : range(8))
-  for(uint5 immediate : range(32))
+  for(nall::Natural< 5> immediate : range(32))
   for(uint2 mode : range(4)) {
     if(mode == 3) continue;
     auto opcode = pattern("000? ???? ???? ????") | d << 0 | m << 3 | immediate << 6 | mode << 11;
@@ -816,7 +816,7 @@ auto ARM7TDMI::armInstructionDataImmediate
 }
 
 auto ARM7TDMI::armInstructionDataImmediateShift
-(uint4 m, uint2 type, uint5 shift, uint4 d, uint4 n, uint1 save, uint4 mode) -> void {
+(uint4 m, uint2 type, nall::Natural< 5> shift, uint4 d, uint4 n, uint1 save, uint4 mode) -> void {
   uint32_t rm = r(m);
   carry = cpsr().c;
 
@@ -969,7 +969,7 @@ auto ARM7TDMI::armInstructionMoveMultiple
 }
 
 auto ARM7TDMI::armInstructionMoveRegisterOffset
-(uint4 m, uint2 type, uint5 shift, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 byte, uint1 up, uint1 pre) -> void {
+(uint4 m, uint2 type, nall::Natural< 5> shift, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 byte, uint1 up, uint1 pre) -> void {
   uint32_t rm = r(m);
   uint32_t rd = r(d);
   uint32_t rn = r(n);
@@ -1167,7 +1167,7 @@ auto ARM7TDMI::thumbInstructionLoadLiteral
 }
 
 auto ARM7TDMI::thumbInstructionMoveByteImmediate
-(uint3 d, uint3 n, uint5 offset, uint1 mode) -> void {
+(uint3 d, uint3 n, nall::Natural< 5> offset, uint1 mode) -> void {
   switch(mode) {
   case 0: store(Byte | Nonsequential, r(n) + offset, r(d)); break;  //STRB
   case 1: r(d) = load(Byte | Nonsequential, r(n) + offset); break;  //LDRB
@@ -1175,7 +1175,7 @@ auto ARM7TDMI::thumbInstructionMoveByteImmediate
 }
 
 auto ARM7TDMI::thumbInstructionMoveHalfImmediate
-(uint3 d, uint3 n, uint5 offset, uint1 mode) -> void {
+(uint3 d, uint3 n, nall::Natural< 5> offset, uint1 mode) -> void {
   switch(mode) {
   case 0: store(Half | Nonsequential, r(n) + offset * 2, r(d)); break;  //STRH
   case 1: r(d) = load(Half | Nonsequential, r(n) + offset * 2); break;  //LDRH
@@ -1222,7 +1222,7 @@ auto ARM7TDMI::thumbInstructionMoveStack
 }
 
 auto ARM7TDMI::thumbInstructionMoveWordImmediate
-(uint3 d, uint3 n, uint5 offset, uint1 mode) -> void {
+(uint3 d, uint3 n, nall::Natural< 5> offset, uint1 mode) -> void {
   switch(mode) {
   case 0: store(Word | Nonsequential, r(n) + offset * 4, r(d)); break;  //STR
   case 1: r(d) = load(Word | Nonsequential, r(n) + offset * 4); break;  //LDR
@@ -1230,7 +1230,7 @@ auto ARM7TDMI::thumbInstructionMoveWordImmediate
 }
 
 auto ARM7TDMI::thumbInstructionShiftImmediate
-(uint3 d, uint3 m, uint5 immediate, uint2 mode) -> void {
+(uint3 d, uint3 m, nall::Natural< 5> immediate, uint2 mode) -> void {
   switch(mode) {
   case 0: r(d) = BIT(LSL(r(m), immediate)); break;  //LSL
   case 1: r(d) = BIT(LSR(r(m), immediate ? (unsigned)immediate : 32)); break;  //LSR
@@ -1441,7 +1441,7 @@ auto ARM7TDMI::armDisassembleDataImmediate
 }
 
 auto ARM7TDMI::armDisassembleDataImmediateShift
-(uint4 m, uint2 type, uint5 shift, uint4 d, uint4 n, uint1 save, uint4 mode) -> string {
+(uint4 m, uint2 type, nall::Natural< 5> shift, uint4 d, uint4 n, uint1 save, uint4 mode) -> string {
   static const string opcode[] = {
     "and", "eor", "sub", "rsb", "add", "adc", "sbc", "rsc",
     "tst", "teq", "cmp", "cmn", "orr", "mov", "bic", "mvn",
@@ -1557,7 +1557,7 @@ auto ARM7TDMI::armDisassembleMoveMultiple
 }
 
 auto ARM7TDMI::armDisassembleMoveRegisterOffset
-(uint4 m, uint2 type, uint5 shift, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 byte, uint1 up, uint1 pre) -> string {
+(uint4 m, uint2 type, nall::Natural< 5> shift, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 byte, uint1 up, uint1 pre) -> string {
   return {mode ? "ldr" : "str", _c, byte ? "b" : "", " ", _r[d], ",[", _r[n],
     pre == 0 ? "]" : "",
     ",", up ? "+" : "-", _r[m],
@@ -1703,12 +1703,12 @@ auto ARM7TDMI::thumbDisassembleLoadLiteral
 }
 
 auto ARM7TDMI::thumbDisassembleMoveByteImmediate
-(uint3 d, uint3 n, uint5 offset, uint1 mode) -> string {
+(uint3 d, uint3 n, nall::Natural< 5> offset, uint1 mode) -> string {
   return {mode ? "ldrb" : "strb", " ", _r[d], ",[", _r[n], ",#0x", hex(offset, 2L), "]"};
 }
 
 auto ARM7TDMI::thumbDisassembleMoveHalfImmediate
-(uint3 d, uint3 n, uint5 offset, uint1 mode) -> string {
+(uint3 d, uint3 n, nall::Natural< 5> offset, uint1 mode) -> string {
   return {mode ? "ldrh" : "strh", " ", _r[d], ",[", _r[n], ",#0x", hex(offset * 2, 2L), "]"};
 }
 
@@ -1734,12 +1734,12 @@ auto ARM7TDMI::thumbDisassembleMoveStack
 }
 
 auto ARM7TDMI::thumbDisassembleMoveWordImmediate
-(uint3 d, uint3 n, uint5 offset, uint1 mode) -> string {
+(uint3 d, uint3 n, nall::Natural< 5> offset, uint1 mode) -> string {
   return {mode ? "ldr" : "str", " ", _r[d], ",[", _r[n], ",#0x", hex(offset * 4, 2L), "]"};
 }
 
 auto ARM7TDMI::thumbDisassembleShiftImmediate
-(uint3 d, uint3 m, uint5 immediate, uint2 mode) -> string {
+(uint3 d, uint3 m, nall::Natural< 5> immediate, uint2 mode) -> string {
   static const string opcode[] = {"lsl", "lsr", "asr"};
   return {opcode[mode], " ", _r[d], ",", _r[m], ",#", immediate};
 }

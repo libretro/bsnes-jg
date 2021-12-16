@@ -157,8 +157,8 @@ struct Mosaic {
   //serialization.cpp
   auto serialize(serializer&) -> void;
 
-  uint5 size;
-  uint5 vcounter;
+  nall::Natural< 5> size;
+  nall::Natural< 5> vcounter;
 };
 
 struct Background {
@@ -417,9 +417,9 @@ struct Screen {
       uint1 colorEnable;
     } bg1, bg2, bg3, bg4, obj, back;
 
-    uint5 colorBlue;
-    uint5 colorGreen;
-    uint5 colorRed;
+    nall::Natural< 5> colorBlue;
+    nall::Natural< 5> colorGreen;
+    nall::Natural< 5> colorRed;
   } io;
 
   struct Math {
