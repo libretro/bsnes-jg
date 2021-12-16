@@ -92,7 +92,7 @@ struct ARM7TDMI {
   auto thumbInstructionAddRegister(uint8_t, uint3, uint1) -> void;
   auto thumbInstructionAdjustImmediate(uint3, uint3, uint3, uint1) -> void;
   auto thumbInstructionAdjustRegister(uint3, uint3, uint3, uint1) -> void;
-  auto thumbInstructionAdjustStack(uint7, uint1) -> void;
+  auto thumbInstructionAdjustStack(nall::Natural< 7>, uint1) -> void;
   auto thumbInstructionBranchExchange(uint4) -> void;
   auto thumbInstructionBranchFarPrefix(int11) -> void;
   auto thumbInstructionBranchFarSuffix(nall::Natural<11>) -> void;
@@ -256,7 +256,7 @@ struct ARM7TDMI {
   auto thumbDisassembleAddRegister(uint8_t, uint3, uint1) -> string;
   auto thumbDisassembleAdjustImmediate(uint3, uint3, uint3, uint1) -> string;
   auto thumbDisassembleAdjustRegister(uint3, uint3, uint3, uint1) -> string;
-  auto thumbDisassembleAdjustStack(uint7, uint1) -> string;
+  auto thumbDisassembleAdjustStack(nall::Natural< 7>, uint1) -> string;
   auto thumbDisassembleBranchExchange(uint4) -> string;
   auto thumbDisassembleBranchFarPrefix(int11) -> string;
   auto thumbDisassembleBranchFarSuffix(nall::Natural<11>) -> string;

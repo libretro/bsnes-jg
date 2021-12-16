@@ -45,48 +45,48 @@ struct HG51B {
   auto algorithmXNOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
   auto algorithmXOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
 
-  auto instructionADD(uint7 reg, uint5 shift) -> void;
+  auto instructionADD(nall::Natural< 7> reg, uint5 shift) -> void;
   auto instructionADD(uint8_t imm, uint5 shift) -> void;
-  auto instructionAND(uint7 reg, uint5 shift) -> void;
+  auto instructionAND(nall::Natural< 7> reg, uint5 shift) -> void;
   auto instructionAND(uint8_t imm, uint5 shift) -> void;
-  auto instructionASR(uint7 reg) -> void;
+  auto instructionASR(nall::Natural< 7> reg) -> void;
   auto instructionASR(uint5 imm) -> void;
   auto instructionCLEAR() -> void;
-  auto instructionCMP(uint7 reg, uint5 shift) -> void;
+  auto instructionCMP(nall::Natural< 7> reg, uint5 shift) -> void;
   auto instructionCMP(uint8_t imm, uint5 shift) -> void;
-  auto instructionCMPR(uint7 reg, uint5 shift) -> void;
+  auto instructionCMPR(nall::Natural< 7> reg, uint5 shift) -> void;
   auto instructionCMPR(uint8_t imm, uint5 shift) -> void;
   auto instructionHALT() -> void;
   auto instructionINC(nall::Natural<24>& reg) -> void;
   auto instructionJMP(uint8_t data, uint1 far, const uint1& take) -> void;
   auto instructionJSR(uint8_t data, uint1 far, const uint1& take) -> void;
-  auto instructionLD(nall::Natural<24>& out, uint7 reg) -> void;
+  auto instructionLD(nall::Natural<24>& out, nall::Natural< 7> reg) -> void;
   auto instructionLD(nall::Natural<15>& out, uint4 reg) -> void;
   auto instructionLD(nall::Natural<24>& out, uint8_t imm) -> void;
   auto instructionLD(nall::Natural<15>& out, uint8_t imm) -> void;
   auto instructionLDL(nall::Natural<15>& out, uint8_t imm) -> void;
-  auto instructionLDH(nall::Natural<15>& out, uint7 imm) -> void;
-  auto instructionMUL(uint7 reg) -> void;
+  auto instructionLDH(nall::Natural<15>& out, nall::Natural< 7> imm) -> void;
+  auto instructionMUL(nall::Natural< 7> reg) -> void;
   auto instructionMUL(uint8_t imm) -> void;
   auto instructionNOP() -> void;
-  auto instructionOR(uint7 reg, uint5 shift) -> void;
+  auto instructionOR(nall::Natural< 7> reg, uint5 shift) -> void;
   auto instructionOR(uint8_t imm, uint5 shift) -> void;
   auto instructionRDRAM(uint2 byte, nall::Natural<24>& a) -> void;
   auto instructionRDRAM(uint2 byte, uint8_t imm) -> void;
   auto instructionRDROM(nall::Natural<24>& reg) -> void;
   auto instructionRDROM(nall::Natural<10> imm) -> void;
-  auto instructionROR(uint7 reg) -> void;
+  auto instructionROR(nall::Natural< 7> reg) -> void;
   auto instructionROR(uint5 imm) -> void;
   auto instructionRTS() -> void;
-  auto instructionSHL(uint7 reg) -> void;
+  auto instructionSHL(nall::Natural< 7> reg) -> void;
   auto instructionSHL(uint5 imm) -> void;
-  auto instructionSHR(uint7 reg) -> void;
+  auto instructionSHR(nall::Natural< 7> reg) -> void;
   auto instructionSHR(uint5 imm) -> void;
   auto instructionSKIP(uint1 take, const uint1& flag) -> void;
-  auto instructionST(uint7 reg, nall::Natural<24>& in) -> void;
-  auto instructionSUB(uint7 reg, uint5 shift) -> void;
+  auto instructionST(nall::Natural< 7> reg, nall::Natural<24>& in) -> void;
+  auto instructionSUB(nall::Natural< 7> reg, uint5 shift) -> void;
   auto instructionSUB(uint8_t imm, uint5 shift) -> void;
-  auto instructionSUBR(uint7 reg, uint5 shift) -> void;
+  auto instructionSUBR(nall::Natural< 7> reg, uint5 shift) -> void;
   auto instructionSUBR(uint8_t imm, uint5 shift) -> void;
   auto instructionSWAP(nall::Natural<24>& a, uint4 reg) -> void;
   auto instructionSXB() -> void;
@@ -94,9 +94,9 @@ struct HG51B {
   auto instructionWAIT() -> void;
   auto instructionWRRAM(uint2 byte, nall::Natural<24>& a) -> void;
   auto instructionWRRAM(uint2 byte, uint8_t imm) -> void;
-  auto instructionXNOR(uint7 reg, uint5 shift) -> void;
+  auto instructionXNOR(nall::Natural< 7> reg, uint5 shift) -> void;
   auto instructionXNOR(uint8_t imm, uint5 shift) -> void;
-  auto instructionXOR(uint7 reg, uint5 shift) -> void;
+  auto instructionXOR(nall::Natural< 7> reg, uint5 shift) -> void;
   auto instructionXOR(uint8_t imm, uint5 shift) -> void;
 
   //serialization.cpp
@@ -107,8 +107,8 @@ struct HG51B {
   uint8_t dataRAM[3072];
 
   //registers.cpp
-  auto readRegister(uint7 address) -> nall::Natural<24>;
-  auto writeRegister(uint7 address, nall::Natural<24> data) -> void;
+  auto readRegister(nall::Natural< 7> address) -> nall::Natural<24>;
+  auto writeRegister(nall::Natural< 7> address, nall::Natural<24> data) -> void;
 
 protected:
   struct Registers {

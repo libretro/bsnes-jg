@@ -3,7 +3,7 @@
 
 namespace Processor {
 
-auto HG51B::readRegister(uint7 address) -> nall::Natural<24> {
+auto HG51B::readRegister(nall::Natural< 7> address) -> nall::Natural<24> {
   switch(address) {
   case 0x01: return r.mul >> 24 & 0xffffff;
   case 0x02: return r.mul >>  0 & 0xffffff;
@@ -67,7 +67,7 @@ auto HG51B::readRegister(uint7 address) -> nall::Natural<24> {
   return 0x000000;  //verified
 }
 
-auto HG51B::writeRegister(uint7 address, nall::Natural<24> data) -> void {
+auto HG51B::writeRegister(nall::Natural< 7> address, nall::Natural<24> data) -> void {
   switch(address) {
   case 0x01: r.mul = r.mul &  0xffffffull | data << 24; return;
   case 0x02: r.mul = r.mul & ~0xffffffull | data <<  0; return;
@@ -187,28 +187,28 @@ HG51B::HG51B() {
 
   //SKIP V
   for(uint1 take : range(  2))
-  for(uint7 null : range(128)) {
+  for(nall::Natural< 7> null : range(128)) {
     auto opcode = pattern("0010 0100 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.v);
   }
 
   //SKIP C
   for(uint1 take : range(  2))
-  for(uint7 null : range(128)) {
+  for(nall::Natural< 7> null : range(128)) {
     auto opcode = pattern("0010 0101 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.c);
   }
 
   //SKIP Z
   for(uint1 take : range(  2))
-  for(uint7 null : range(128)) {
+  for(nall::Natural< 7> null : range(128)) {
     auto opcode = pattern("0010 0110 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.z);
   }
 
   //SKIP N
   for(uint1 take : range(  2))
-  for(uint7 null : range(128)) {
+  for(nall::Natural< 7> null : range(128)) {
     auto opcode = pattern("0010 0111 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.n);
   }
@@ -272,7 +272,7 @@ HG51B::HG51B() {
   }
 
   //CMPR A<<s,reg
-  for(uint7 reg   : range(128))
+  for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("0100 10ss .rrr rrrr");
@@ -287,7 +287,7 @@ HG51B::HG51B() {
   }
 
   //CMP A<<s,reg
-  for(uint7 reg   : range(128))
+  for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("0101 00ss .rrr rrrr");
@@ -332,21 +332,21 @@ HG51B::HG51B() {
   }
 
   //LD A,reg
-  for(uint7 reg  : range(128))
+  for(nall::Natural< 7> reg  : range(128))
   for(uint1 null : range(  2)) {
     auto opcode = pattern("0110 0000 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, LD, r.a, reg);
   }
 
   //LD MDR,reg
-  for(uint7 reg  : range(128))
+  for(nall::Natural< 7> reg  : range(128))
   for(uint1 null : range(  2)) {
     auto opcode = pattern("0110 0001 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, LD, r.mdr, reg);
   }
 
   //LD MAR,reg
-  for(uint7 reg  : range(128))
+  for(nall::Natural< 7> reg  : range(128))
   for(uint1 null : range(  2)) {
     auto opcode = pattern("0110 0010 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, LD, r.mar, reg);
@@ -456,7 +456,7 @@ HG51B::HG51B() {
   }
 
   //LD PH,imm
-  for(uint7 imm  : range(128))
+  for(nall::Natural< 7> imm  : range(128))
   for(uint1 null : range(  2)) {
     auto opcode = pattern("0111 1101 .iii iiii");
     bind(opcode | imm << 0 | null << 7, LDH, r.p, imm);
@@ -469,7 +469,7 @@ HG51B::HG51B() {
   }
 
   //ADD A<<s,reg
-  for(uint7 reg   : range(128))
+  for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1000 00ss .rrr rrrr");
@@ -484,7 +484,7 @@ HG51B::HG51B() {
   }
 
   //SUBR A<<s,reg
-  for(uint7 reg   : range(128))
+  for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1000 10ss .rrr rrrr");
@@ -499,7 +499,7 @@ HG51B::HG51B() {
   }
 
   //SUB A<<s,reg
-  for(uint7 reg   : range(128))
+  for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1001 00ss .rrr rrrr");
@@ -514,7 +514,7 @@ HG51B::HG51B() {
   }
 
   //MUL reg
-  for(uint7 reg  : range(128))
+  for(nall::Natural< 7> reg  : range(128))
   for(uint3 null : range(  8)) {
     auto opcode = pattern("1001 10.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, MUL, reg);
@@ -528,7 +528,7 @@ HG51B::HG51B() {
   }
 
   //XNOR A<<s,reg
-  for(uint7 reg   : range(128))
+  for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1010 00ss .rrr rrrr");
@@ -543,7 +543,7 @@ HG51B::HG51B() {
   }
 
   //XOR A<<s,reg
-  for(uint7 reg   : range(128))
+  for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1010 10ss .rrr rrrr");
@@ -558,7 +558,7 @@ HG51B::HG51B() {
   }
 
   //AND A<<s,reg
-  for(uint7 reg   : range(128))
+  for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1011 00ss .rrr rrrr");
@@ -573,7 +573,7 @@ HG51B::HG51B() {
   }
 
   //OR A<<s,reg
-  for(uint7 reg   : range(128))
+  for(nall::Natural< 7> reg   : range(128))
   for(uint1 null  : range(  2))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1011 10ss .rrr rrrr");
@@ -588,7 +588,7 @@ HG51B::HG51B() {
   }
 
   //SHR A,reg
-  for(uint7 reg  : range(128))
+  for(nall::Natural< 7> reg  : range(128))
   for(uint3 null : range(  8)) {
     auto opcode = pattern("1100 00.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, SHR, reg);
@@ -602,7 +602,7 @@ HG51B::HG51B() {
   }
 
   //ASR A,reg
-  for(uint7 reg  : range(128))
+  for(nall::Natural< 7> reg  : range(128))
   for(uint3 null : range(  8)) {
     auto opcode = pattern("1100 10.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ASR, reg);
@@ -616,7 +616,7 @@ HG51B::HG51B() {
   }
 
   //ROR A,reg
-  for(uint7 reg  : range(128))
+  for(nall::Natural< 7> reg  : range(128))
   for(uint3 null : range(  8)) {
     auto opcode = pattern("1101 00.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ROR, reg);
@@ -630,7 +630,7 @@ HG51B::HG51B() {
   }
 
   //SHL A,reg
-  for(uint7 reg  : range(128))
+  for(nall::Natural< 7> reg  : range(128))
   for(uint3 null : range(  8)) {
     auto opcode = pattern("1101 10.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, SHL, reg);
@@ -644,14 +644,14 @@ HG51B::HG51B() {
   }
 
   //ST reg,A
-  for(uint7 reg  : range(128))
+  for(nall::Natural< 7> reg  : range(128))
   for(uint1 null : range(  2)) {
     auto opcode = pattern("1110 0000 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ST, reg, r.a);
   }
 
   //ST reg,MDR
-  for(uint7 reg  : range(128))
+  for(nall::Natural< 7> reg  : range(128))
   for(uint1 null : range(  2)) {
     auto opcode = pattern("1110 0001 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ST, reg, r.mdr);
@@ -864,7 +864,7 @@ auto HG51B::algorithmXOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natu
   return x;
 }
 
-auto HG51B::instructionADD(uint7 reg, uint5 shift) -> void {
+auto HG51B::instructionADD(nall::Natural< 7> reg, uint5 shift) -> void {
   r.a = algorithmADD(r.a << shift, readRegister(reg));
 }
 
@@ -872,7 +872,7 @@ auto HG51B::instructionADD(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmADD(r.a << shift, imm);
 }
 
-auto HG51B::instructionAND(uint7 reg, uint5 shift) -> void {
+auto HG51B::instructionAND(nall::Natural< 7> reg, uint5 shift) -> void {
   r.a = algorithmAND(r.a << shift, readRegister(reg));
 }
 
@@ -880,7 +880,7 @@ auto HG51B::instructionAND(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmAND(r.a << shift, imm);
 }
 
-auto HG51B::instructionASR(uint7 reg) -> void {
+auto HG51B::instructionASR(nall::Natural< 7> reg) -> void {
   r.a = algorithmASR(r.a, readRegister(reg));
 }
 
@@ -895,7 +895,7 @@ auto HG51B::instructionCLEAR() -> void {
   r.dpr = 0;
 }
 
-auto HG51B::instructionCMP(uint7 reg, uint5 shift) -> void {
+auto HG51B::instructionCMP(nall::Natural< 7> reg, uint5 shift) -> void {
   algorithmSUB(r.a << shift, readRegister(reg));
 }
 
@@ -903,7 +903,7 @@ auto HG51B::instructionCMP(uint8_t imm, uint5 shift) -> void {
   algorithmSUB(r.a << shift, imm);
 }
 
-auto HG51B::instructionCMPR(uint7 reg, uint5 shift) -> void {
+auto HG51B::instructionCMPR(nall::Natural< 7> reg, uint5 shift) -> void {
   algorithmSUB(readRegister(reg), r.a << shift);
 }
 
@@ -934,7 +934,7 @@ auto HG51B::instructionJSR(uint8_t data, uint1 far, const uint1& take) -> void {
   step(2);
 }
 
-auto HG51B::instructionLD(nall::Natural<24>& out, uint7 reg) -> void {
+auto HG51B::instructionLD(nall::Natural<24>& out, nall::Natural< 7> reg) -> void {
   out = readRegister(reg);
 }
 
@@ -954,11 +954,11 @@ auto HG51B::instructionLDL(nall::Natural<15>& out, uint8_t imm) -> void {
   out = out & 0x7f00 | imm << 0;
 }
 
-auto HG51B::instructionLDH(nall::Natural<15>& out, uint7 imm) -> void {
+auto HG51B::instructionLDH(nall::Natural<15>& out, nall::Natural< 7> imm) -> void {
   out = out & 0x00ff | (imm & 0x7f) << 8;
 }
 
-auto HG51B::instructionMUL(uint7 reg) -> void {
+auto HG51B::instructionMUL(nall::Natural< 7> reg) -> void {
   r.mul = algorithmMUL(r.a, readRegister(reg));
 }
 
@@ -969,7 +969,7 @@ auto HG51B::instructionMUL(uint8_t imm) -> void {
 auto HG51B::instructionNOP() -> void {
 }
 
-auto HG51B::instructionOR(uint7 reg, uint5 shift) -> void {
+auto HG51B::instructionOR(nall::Natural< 7> reg, uint5 shift) -> void {
   r.a = algorithmOR(r.a << shift, readRegister(reg));
 }
 
@@ -997,7 +997,7 @@ auto HG51B::instructionRDROM(nall::Natural<10> imm) -> void {
   r.rom = dataROM[imm];
 }
 
-auto HG51B::instructionROR(uint7 reg) -> void {
+auto HG51B::instructionROR(nall::Natural< 7> reg) -> void {
   r.a = algorithmROR(r.a, readRegister(reg));
 }
 
@@ -1016,7 +1016,7 @@ auto HG51B::instructionSKIP(uint1 take, const uint1& flag) -> void {
   step(1);
 }
 
-auto HG51B::instructionSHL(uint7 reg) -> void {
+auto HG51B::instructionSHL(nall::Natural< 7> reg) -> void {
   r.a = algorithmSHL(r.a, readRegister(reg));
 }
 
@@ -1024,7 +1024,7 @@ auto HG51B::instructionSHL(uint5 imm) -> void {
   r.a = algorithmSHL(r.a, imm);
 }
 
-auto HG51B::instructionSHR(uint7 reg) -> void {
+auto HG51B::instructionSHR(nall::Natural< 7> reg) -> void {
   r.a = algorithmSHR(r.a, readRegister(reg));
 }
 
@@ -1032,11 +1032,11 @@ auto HG51B::instructionSHR(uint5 imm) -> void {
   r.a = algorithmSHR(r.a, imm);
 }
 
-auto HG51B::instructionST(uint7 reg, nall::Natural<24>& in) -> void {
+auto HG51B::instructionST(nall::Natural< 7> reg, nall::Natural<24>& in) -> void {
   writeRegister(reg, in);
 }
 
-auto HG51B::instructionSUB(uint7 reg, uint5 shift) -> void {
+auto HG51B::instructionSUB(nall::Natural< 7> reg, uint5 shift) -> void {
   r.a = algorithmSUB(r.a << shift, readRegister(reg));
 }
 
@@ -1044,7 +1044,7 @@ auto HG51B::instructionSUB(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmSUB(r.a << shift, imm);
 }
 
-auto HG51B::instructionSUBR(uint7 reg, uint5 shift) -> void {
+auto HG51B::instructionSUBR(nall::Natural< 7> reg, uint5 shift) -> void {
   r.a = algorithmSUB(readRegister(reg), r.a << shift);
 }
 
@@ -1081,7 +1081,7 @@ auto HG51B::instructionWRRAM(uint2 byte, uint8_t imm) -> void {
   dataRAM[address] = r.ram.byte(byte);
 }
 
-auto HG51B::instructionXNOR(uint7 reg, uint5 shift) -> void {
+auto HG51B::instructionXNOR(nall::Natural< 7> reg, uint5 shift) -> void {
   r.a = algorithmXNOR(r.a << shift, readRegister(reg));
 }
 
@@ -1089,7 +1089,7 @@ auto HG51B::instructionXNOR(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmXNOR(r.a << shift, imm);
 }
 
-auto HG51B::instructionXOR(uint7 reg, uint5 shift) -> void {
+auto HG51B::instructionXOR(nall::Natural< 7> reg, uint5 shift) -> void {
   r.a = algorithmXOR(r.a << shift, readRegister(reg));
 }
 

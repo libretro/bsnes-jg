@@ -241,7 +241,7 @@ struct Background {
     uint16_t data[4];
   } tiles[66];
 
-  uint7 renderingIndex;
+  nall::Natural< 7> renderingIndex;
   uint3 pixelCounter;
 
   friend class PPU;
@@ -272,7 +272,7 @@ struct Object {
   alwaysinline auto setFirstSprite() -> void;
   auto frame() -> void;
   auto scanline() -> void;
-  auto evaluate(uint7 index) -> void;
+  auto evaluate(nall::Natural< 7> index) -> void;
   auto run() -> void;
   auto fetch() -> void;
   auto power() -> void;
@@ -291,7 +291,7 @@ struct Object {
     uint3 baseSize;
     uint2 nameselect;
     uint16_t tiledataAddress;
-    uint7 firstSprite;
+    nall::Natural< 7> firstSprite;
 
     uint8_t priority[4];
 
@@ -300,12 +300,12 @@ struct Object {
   } io;
 
   struct Latch {
-     uint7 firstSprite;
+     nall::Natural< 7> firstSprite;
   } latch;
 
   struct Item {
      uint1 valid;
-     uint7 index;
+     nall::Natural< 7> index;
   };
 
   struct Tile {

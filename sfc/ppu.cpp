@@ -1012,8 +1012,8 @@ auto PPU::Background::runMode7() -> void {
   int pixelY = originY + c * x >> 8;
   uint16_t paletteAddress = (uint3)pixelY << 3 | (uint3)pixelX;
 
-  uint7 tileX = pixelX >> 3;
-  uint7 tileY = pixelY >> 3;
+  nall::Natural< 7> tileX = pixelX >> 3;
+  nall::Natural< 7> tileY = pixelY >> 3;
   uint16_t tileAddress = tileY << 7 | tileX;
 
   bool outOfBounds = (pixelX | pixelY) & ~1023;
@@ -1384,14 +1384,14 @@ auto PPU::Object::scanline() -> void {
   if(t.y >= ppu.vdisp() - 1 || ppu.io.displayDisable) return;
 }
 
-auto PPU::Object::evaluate(uint7 index) -> void {
+auto PPU::Object::evaluate(nall::Natural< 7> index) -> void {
   if(ppu.io.displayDisable) return;
   if(t.itemCount > 32) return;
 
   auto oamItem = t.item[t.active];
   auto oamTile = t.tile[t.active];
 
-  uint7 sprite = latch.firstSprite + index;
+  nall::Natural< 7> sprite = latch.firstSprite + index;
   if(!onScanline(oam.object[sprite])) return;
   ppu.latch.oamAddress = sprite;
 

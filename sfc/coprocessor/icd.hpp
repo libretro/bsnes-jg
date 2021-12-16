@@ -42,7 +42,7 @@ private:
     uint8_t data[16];
   };
   Packet packet[64];
-  uint7 packetSize;
+  nall::Natural< 7> packetSize;
 
   uint2 joypID;
   uint1 joypLock;

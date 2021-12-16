@@ -618,7 +618,7 @@ auto ARM7TDMI::thumbInitialize() -> void {
     bind(opcode, AdjustRegister, d, n, m, mode);
   }
 
-  for(uint7 immediate : range(128))
+  for(nall::Natural< 7> immediate : range(128))
   for(uint1 mode : range(2)) {
     auto opcode = pattern("1011 0000 ???? ????") | immediate << 0 | mode << 7;
     bind(opcode, AdjustStack, immediate, mode);
@@ -1114,7 +1114,7 @@ auto ARM7TDMI::thumbInstructionAdjustRegister
 }
 
 auto ARM7TDMI::thumbInstructionAdjustStack
-(uint7 immediate, uint1 mode) -> void {
+(nall::Natural< 7> immediate, uint1 mode) -> void {
   switch(mode) {
   case 0: r(13) = r(13) + immediate * 4; break;  //ADD
   case 1: r(13) = r(13) - immediate * 4; break;  //SUB
@@ -1655,7 +1655,7 @@ auto ARM7TDMI::thumbDisassembleAdjustRegister
 }
 
 auto ARM7TDMI::thumbDisassembleAdjustStack
-(uint7 immediate, uint1 mode) -> string {
+(nall::Natural< 7> immediate, uint1 mode) -> string {
   return {!mode ? "add" : "sub", " sp,#0x", hex(immediate * 4, 3L)};
 }
 

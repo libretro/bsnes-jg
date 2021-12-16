@@ -155,7 +155,7 @@ auto CPU::Channel::hdmaSetup() -> void {
 auto CPU::Channel::hdmaReload() -> void {
   auto data = readA(cpu.r.mar = sourceBank << 16 | hdmaAddress);
 
-  if((uint7)lineCounter == 0) {
+  if((nall::Natural< 7>)lineCounter == 0) {
     lineCounter = data;
     hdmaAddress++;
 
