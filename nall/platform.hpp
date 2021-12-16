@@ -16,10 +16,10 @@ namespace Math {
   inline auto mkdir(const char* path, int mode) -> int { return _wmkdir(nall::utf16_t(path)); }
 #endif
 
-#if defined(COMPILER_CLANG) || defined(COMPILER_GCC)
+#if defined(__clang__) || defined(__GNUC__)
   #define noinline   __attribute__((noinline))
   #define alwaysinline  inline __attribute__((always_inline))
-#elif defined(COMPILER_MICROSOFT)
+#elif defined(_MSC_VER)
   #define noinline   __declspec(noinline)
   #define alwaysinline  inline __forceinline
 #else
