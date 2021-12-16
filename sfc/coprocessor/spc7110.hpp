@@ -74,7 +74,7 @@ private:
 
   bool dcuPending;
   uint2 dcuMode;
-  uint23 dcuAddress;
+  nall::Natural<23> dcuAddress;
   unsigned dcuOffset;
   uint8_t dcuTile[32];
   Decompressor* decompressor;

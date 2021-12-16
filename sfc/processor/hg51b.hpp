@@ -175,7 +175,7 @@ protected:
     } bus;
   } io;
 
-  uint23 stack[8];
+  nall::Natural<23> stack[8];
   function<void ()> instructionTable[65536];
 };
 
