@@ -1010,7 +1010,7 @@ auto PPU::Background::runMode7() -> void {
 
   int pixelX = originX + a * x >> 8;
   int pixelY = originY + c * x >> 8;
-  uint16_t paletteAddress = (uint3)pixelY << 3 | (uint3)pixelX;
+  uint16_t paletteAddress = (nall::Natural< 3>)pixelY << 3 | (nall::Natural< 3>)pixelX;
 
   nall::Natural< 7> tileX = pixelX >> 3;
   nall::Natural< 7> tileY = pixelY >> 3;
@@ -1830,7 +1830,7 @@ auto PPU::Screen::paletteColor(uint8_t palette) const -> nall::Natural<15> {
   return cgram[palette];
 }
 
-auto PPU::Screen::directColor(uint8_t palette, uint3 paletteGroup) const -> nall::Natural<15> {
+auto PPU::Screen::directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const -> nall::Natural<15> {
   //palette = -------- BBGGGRRR
   //group   = -------- -----bgr
   //output  = 0BBb00GG Gg0RRRr0

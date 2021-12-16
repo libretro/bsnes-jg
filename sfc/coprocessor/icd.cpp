@@ -7,7 +7,7 @@ ICD icd;
 auto ICD::ppuHreset() -> void {
   hcounter = 0;
   vcounter++;
-  if((uint3)vcounter == 0) writeBank++;
+  if((nall::Natural< 3>)vcounter == 0) writeBank++;
 }
 
 auto ICD::ppuVreset() -> void {
@@ -17,7 +17,7 @@ auto ICD::ppuVreset() -> void {
 
 auto ICD::ppuWrite(uint2 color) -> void {
   auto x = (uint8_t)hcounter++;
-  auto y = (uint3)vcounter;
+  auto y = (nall::Natural< 3>)vcounter;
   if(x >= 160) return;  //unverified behavior
 
   nall::Natural<11> address = writeBank * 512 + y * 2 + x / 8 * 16;

@@ -171,10 +171,10 @@ auto SPC700::algorithmSBW(uint16_t x, uint16_t y) -> uint16_t {
   return z;
 }
 
-auto SPC700::instructionAbsoluteBitModify(uint3 mode) -> void {
+auto SPC700::instructionAbsoluteBitModify(nall::Natural< 3> mode) -> void {
   uint16_t address = fetch();
   address |= fetch() << 8;
-  uint3 bit = address >> 13;
+  nall::Natural< 3> bit = address >> 13;
   address &= 0x1fff;
   uint8_t data = read(address);
   switch(mode) {
@@ -212,7 +212,7 @@ auto SPC700::instructionAbsoluteBitModify(uint3 mode) -> void {
   }
 }
 
-auto SPC700::instructionAbsoluteBitSet(uint3 bit, bool value) -> void {
+auto SPC700::instructionAbsoluteBitSet(nall::Natural< 3> bit, bool value) -> void {
   uint8_t address = fetch();
   uint8_t data = load(address);
   data &= ~(1 << bit);
@@ -265,7 +265,7 @@ auto SPC700::instructionBranch(bool take) -> void {
   PC += (int8_t)data;
 }
 
-auto SPC700::instructionBranchBit(uint3 bit, bool match) -> void {
+auto SPC700::instructionBranchBit(nall::Natural< 3> bit, bool match) -> void {
   uint8_t address = fetch();
   uint8_t data = load(address);
   idle();

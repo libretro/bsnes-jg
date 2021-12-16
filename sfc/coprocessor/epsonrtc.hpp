@@ -27,11 +27,11 @@ struct EpsonRTC : Thread {
   uint1 holdtick;
 
   nall::Natural< 4> secondlo;
-  uint3 secondhi;
+  nall::Natural< 3> secondhi;
   uint1 batteryfailure;
 
   nall::Natural< 4> minutelo;
-  uint3 minutehi;
+  nall::Natural< 3> minutehi;
   uint1 resync;
 
   nall::Natural< 4> hourlo;
@@ -49,7 +49,7 @@ struct EpsonRTC : Thread {
   nall::Natural< 4> yearlo;
   nall::Natural< 4> yearhi;
 
-  uint3 weekday;
+  nall::Natural< 3> weekday;
 
   uint1 hold;
   uint1 calendar;

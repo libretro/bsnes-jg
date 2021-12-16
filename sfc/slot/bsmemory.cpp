@@ -208,7 +208,7 @@ auto BSMemory::read(unsigned address, uint8_t data) -> uint8_t {
   if(mode == Mode::Chip) {
     if(address == 0) return chip.vendor;  //only appears once
     if(address == 1) return chip.device;  //only appears once
-    if((uint3)address == 2) return 0x63;  //unknown constant: repeats every eight bytes
+    if((nall::Natural< 3>)address == 2) return 0x63;  //unknown constant: repeats every eight bytes
     return 0x20;  //unknown constant: fills in all remaining bytes
   }
 

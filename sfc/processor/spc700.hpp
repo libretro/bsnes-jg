@@ -47,15 +47,15 @@ struct SPC700 {
   using fpb = auto (SPC700::*)(uint8_t, uint8_t) -> uint8_t;
   using fpw = auto (SPC700::*)(uint16_t, uint16_t) -> uint16_t;
 
-  auto instructionAbsoluteBitModify(uint3) -> void;
-  auto instructionAbsoluteBitSet(uint3, bool) -> void;
+  auto instructionAbsoluteBitModify(nall::Natural< 3>) -> void;
+  auto instructionAbsoluteBitSet(nall::Natural< 3>, bool) -> void;
   auto instructionAbsoluteRead(fpb, uint8_t&) -> void;
   auto instructionAbsoluteModify(fps) -> void;
   auto instructionAbsoluteWrite(uint8_t&) -> void;
   auto instructionAbsoluteIndexedRead(fpb, uint8_t&) -> void;
   auto instructionAbsoluteIndexedWrite(uint8_t&) -> void;
   auto instructionBranch(bool) -> void;
-  auto instructionBranchBit(uint3, bool) -> void;
+  auto instructionBranchBit(nall::Natural< 3>, bool) -> void;
   auto instructionBranchNotDirect() -> void;
   auto instructionBranchNotDirectDecrement() -> void;
   auto instructionBranchNotDirectIndexed(uint8_t&) -> void;

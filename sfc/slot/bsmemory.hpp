@@ -134,7 +134,7 @@ private:
     CompatibleStatus,
     ExtendedStatus,
   };};
-  uint3 mode;
+  nall::Natural< 3> mode;
 
   struct ReadyBusyMode { enum : unsigned {
     EnableToLevelMode,

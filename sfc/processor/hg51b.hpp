@@ -140,8 +140,8 @@ protected:
     uint8_t vector[32];
 
     struct Wait {
-      uint3 rom = 3;
-      uint3 ram = 3;
+      nall::Natural< 3> rom = 3;
+      nall::Natural< 3> ram = 3;
     } wait;
 
     struct Suspend {

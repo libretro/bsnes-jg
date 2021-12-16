@@ -515,7 +515,7 @@ HG51B::HG51B() {
 
   //MUL reg
   for(nall::Natural< 7> reg  : range(128))
-  for(uint3 null : range(  8)) {
+  for(nall::Natural< 3> null : range(  8)) {
     auto opcode = pattern("1001 10.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, MUL, reg);
   }
@@ -589,7 +589,7 @@ HG51B::HG51B() {
 
   //SHR A,reg
   for(nall::Natural< 7> reg  : range(128))
-  for(uint3 null : range(  8)) {
+  for(nall::Natural< 3> null : range(  8)) {
     auto opcode = pattern("1100 00.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, SHR, reg);
   }
@@ -603,7 +603,7 @@ HG51B::HG51B() {
 
   //ASR A,reg
   for(nall::Natural< 7> reg  : range(128))
-  for(uint3 null : range(  8)) {
+  for(nall::Natural< 3> null : range(  8)) {
     auto opcode = pattern("1100 10.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ASR, reg);
   }
@@ -617,7 +617,7 @@ HG51B::HG51B() {
 
   //ROR A,reg
   for(nall::Natural< 7> reg  : range(128))
-  for(uint3 null : range(  8)) {
+  for(nall::Natural< 3> null : range(  8)) {
     auto opcode = pattern("1101 00.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ROR, reg);
   }
@@ -631,7 +631,7 @@ HG51B::HG51B() {
 
   //SHL A,reg
   for(nall::Natural< 7> reg  : range(128))
-  for(uint3 null : range(  8)) {
+  for(nall::Natural< 3> null : range(  8)) {
     auto opcode = pattern("1101 10.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, SHL, reg);
   }

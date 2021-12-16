@@ -52,7 +52,7 @@ private:
   Packet joypPacket;
   nall::Natural< 4> packetOffset;
   uint8_t bitData;
-  uint3 bitOffset;
+  nall::Natural< 3> bitOffset;
 
   uint8_t output[4 * 512];
   uint2 readBank;

@@ -195,7 +195,7 @@ private:
     uint1 hdmaEnable = 0;
 
     //$43x0
-    uint3 transferMode = 7;
+    nall::Natural< 3> transferMode = 7;
     uint1 fixedTransfer = 1;
     uint1 reverseTransfer = 1;
     uint1 unused = 1;

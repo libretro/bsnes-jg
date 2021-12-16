@@ -67,7 +67,7 @@ private:
     uint8_t oam;
     uint8_t cgram;
     uint8_t bgofsPPU1;
-    uint3 bgofsPPU2;
+    nall::Natural< 3> bgofsPPU2;
     uint8_t mode7;
     uint1 counters;
     uint1 hcounter;
@@ -209,7 +209,7 @@ struct Background {
   struct Pixel {
     uint8_t priority;  //0 = none (transparent)
     uint8_t palette;
-    uint3 paletteGroup;
+    nall::Natural< 3> paletteGroup;
   } above, below;
 
   struct Output {
@@ -234,7 +234,7 @@ struct Background {
     uint16_t address;
     nall::Natural<10> character;
     uint8_t palette;
-    uint3 paletteGroup;
+    nall::Natural< 3> paletteGroup;
     uint8_t priority;
     uint1 hmirror;
     uint1 vmirror;
@@ -242,7 +242,7 @@ struct Background {
   } tiles[66];
 
   nall::Natural< 7> renderingIndex;
-  uint3 pixelCounter;
+  nall::Natural< 3> pixelCounter;
 
   friend class PPU;
 };
@@ -262,7 +262,7 @@ struct OAM {
     uint1 vflip;
     uint1 hflip;
     uint2 priority;
-    uint3 palette;
+    nall::Natural< 3> palette;
     uint1 size;
   } object[128];
 };
@@ -288,7 +288,7 @@ struct Object {
     uint1 belowEnable;
     uint1 interlace;
 
-    uint3 baseSize;
+    nall::Natural< 3> baseSize;
     uint2 nameselect;
     uint16_t tiledataAddress;
     nall::Natural< 7> firstSprite;
@@ -397,7 +397,7 @@ struct Screen {
 
   auto blend(unsigned x, unsigned y) const -> nall::Natural<15>;
   alwaysinline auto paletteColor(uint8_t palette) const -> nall::Natural<15>;
-  alwaysinline auto directColor(uint8_t palette, uint3 paletteGroup) const -> nall::Natural<15>;
+  alwaysinline auto directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const -> nall::Natural<15>;
   alwaysinline auto fixedColor() const -> nall::Natural<15>;
 
   auto serialize(serializer&) -> void;
