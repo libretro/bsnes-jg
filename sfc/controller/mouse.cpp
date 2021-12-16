@@ -85,8 +85,8 @@ auto Mouse::latch(bool data) -> void {
   x = (double)x * multiplier;
   y = (double)y * multiplier;
 
-  x = min(127, x);
-  y = min(127, y);
+  x = std::min(127, x);
+  y = std::min(127, y);
 }
 
 }

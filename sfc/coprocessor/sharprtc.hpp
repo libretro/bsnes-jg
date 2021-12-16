@@ -40,7 +40,7 @@ struct SharpRTC : Thread {
   auto tickMonth() -> void;
   auto tickYear() -> void;
 
-  auto calculateWeekday(unsigned year, unsigned month, unsigned day) -> unsigned;
+  auto calculateWeekday(int year, int month, int day) -> unsigned;
 };
 
 extern SharpRTC sharprtc;

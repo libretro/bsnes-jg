@@ -365,7 +365,7 @@ auto SuperFX::writeIO(unsigned addr, uint8_t data) -> void {
 
 auto SuperFX::step(unsigned clocks) -> void {
   if(regs.romcl) {
-    regs.romcl -= min(clocks, regs.romcl);
+    regs.romcl -= std::min(clocks, regs.romcl);
     if(regs.romcl == 0) {
       regs.sfr.r = 0;
       regs.romdr = read((regs.rombr << 16) + regs.r[14]);
@@ -373,7 +373,7 @@ auto SuperFX::step(unsigned clocks) -> void {
   }
 
   if(regs.ramcl) {
-    regs.ramcl -= min(clocks, regs.ramcl);
+    regs.ramcl -= std::min(clocks, regs.ramcl);
     if(regs.ramcl == 0) {
       write(0x700000 + (regs.rambr << 16) + regs.ramar, regs.ramdr);
     }
@@ -456,7 +456,7 @@ auto SuperFX::unload() -> void {
 }
 
 auto SuperFX::power() -> void {
-  double overclock = max(1.0, min(8.0, configuration.hacks.superfx.overclock / 100.0));
+  double overclock = std::max(1.0, std::min(8.0, configuration.hacks.superfx.overclock / 100.0));
 
   GSU::power();
   create(SuperFX::Enter, Frequency * overclock);

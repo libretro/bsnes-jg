@@ -43,7 +43,7 @@ auto string::hash() const -> unsigned {
 
 auto string::remove(unsigned offset, unsigned length) -> string& {
   char* p = get();
-  length = min(length, size());
+  length = std::min(length, size());
   memory::move(p + offset, p + offset + length, size() - length);
   return resize(size() - length);
 }

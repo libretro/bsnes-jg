@@ -515,7 +515,7 @@ auto EpsonRTC::synchronize(uint64_t timestamp) -> void {
   time_t systime = timestamp;
   tm* timeinfo = localtime(&systime);
 
-  unsigned second = min(59, timeinfo->tm_sec);
+  unsigned second = std::min(59, timeinfo->tm_sec);
   secondlo = second % 10;
   secondhi = second / 10;
 

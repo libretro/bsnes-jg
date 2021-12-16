@@ -2205,8 +2205,8 @@ auto PPU::Enter() -> void {
 }
 
 auto PPU::load() -> bool {
-  ppu1.version = max(1, min(1, configuration.system.ppu1.version));
-  ppu2.version = max(1, min(3, configuration.system.ppu2.version));
+  ppu1.version = std::max(1, std::min(1, (int)configuration.system.ppu1.version));
+  ppu2.version = std::max(1, std::min(3, (int)configuration.system.ppu2.version));
   vram.mask = configuration.system.ppu1.vram.size / sizeof(uint16_t) - 1;
   if(vram.mask != 0xffff) vram.mask = 0x7fff;
   return true;

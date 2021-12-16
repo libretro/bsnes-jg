@@ -105,7 +105,7 @@ auto string::_allocate() -> void {
 //COW -> Unique
 auto string::_copy() -> void {
   auto _temp = memory::allocate<char>(_capacity + 1 + sizeof(unsigned));
-  memory::copy(_temp, _data, _size = min(_capacity, _size));
+  memory::copy(_temp, _data, _size = std::min(_capacity, _size));
   _temp[_size] = 0;
   --*_refs;
   _data = _temp;

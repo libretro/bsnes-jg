@@ -54,7 +54,7 @@ auto free(void* target) -> void {
 template<typename T> auto compare(const void* target, unsigned capacity, const void* source, unsigned size) -> int {
   auto t = (uint8_t*)target;
   auto s = (uint8_t*)source;
-  auto l = min(capacity, size) * sizeof(T);
+  auto l = std::min(capacity, size) * sizeof(T);
   while(l--) {
     auto x = *t++;
     auto y = *s++;
@@ -71,7 +71,7 @@ template<typename T> auto compare(const void* target, const void* source, unsign
 template<typename T> auto icompare(const void* target, unsigned capacity, const void* source, unsigned size) -> int {
   auto t = (uint8_t*)target;
   auto s = (uint8_t*)source;
-  auto l = min(capacity, size) * sizeof(T);
+  auto l = std::min(capacity, size) * sizeof(T);
   while(l--) {
     auto x = *t++;
     auto y = *s++;
@@ -89,7 +89,7 @@ template<typename T> auto icompare(const void* target, const void* source, unsig
 template<typename T> auto copy(void* target, unsigned capacity, const void* source, unsigned size) -> T* {
   auto t = (uint8_t*)target;
   auto s = (uint8_t*)source;
-  auto l = min(capacity, size) * sizeof(T);
+  auto l = std::min(capacity, size) * sizeof(T);
   while(l--) *t++ = *s++;
   return (T*)target;
 }
@@ -101,7 +101,7 @@ template<typename T> auto copy(void* target, const void* source, unsigned size) 
 template<typename T> auto move(void* target, unsigned capacity, const void* source, unsigned size) -> T* {
   auto t = (uint8_t*)target;
   auto s = (uint8_t*)source;
-  auto l = min(capacity, size) * sizeof(T);
+  auto l = std::min(capacity, size) * sizeof(T);
   if(t < s) {
     while(l--) *t++ = *s++;
   } else {

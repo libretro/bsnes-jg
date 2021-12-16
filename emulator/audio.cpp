@@ -34,7 +34,7 @@ auto Stream::setFrequency(double inputFrequency, maybe<double> outputFrequency) 
 
   if(this->inputFrequency >= this->outputFrequency * 2) {
     //add a low-pass filter to prevent aliasing during resampling
-    double cutoffFrequency = min(25000.0, this->outputFrequency / 2.0 - 2000.0);
+    double cutoffFrequency = std::min(25000.0, this->outputFrequency / 2.0 - 2000.0);
     for(auto& channel : channels) {
       unsigned passes = 3;
       for(unsigned pass : range(passes)) {
@@ -156,7 +156,7 @@ auto Audio::setBalance(double balance) -> void {
 }
 
 auto Audio::createStream(unsigned channels, double frequency) -> shared_pointer<Stream> {
-  _channels = max(_channels, channels);
+  _channels = std::max(_channels, channels);
   shared_pointer<Stream> stream = new Stream;
   stream->reset(channels, frequency, _frequency);
   _streams.append(stream);
@@ -183,7 +183,7 @@ auto Audio::process() -> void {
     }
 
     for(auto c : range(_channels)) {
-      samples[c] = max(-1.0, min(+1.0, samples[c] * _volume));
+      samples[c] = std::max(-1.0, std::min(+1.0, samples[c] * _volume));
     }
 
     if(_channels == 2) {

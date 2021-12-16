@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace nall {
 
 constexpr inline auto toBinary_(const char* s, uintmax sum = 0) -> uintmax {

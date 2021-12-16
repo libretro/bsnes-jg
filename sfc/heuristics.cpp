@@ -1,7 +1,6 @@
 #include <nall/stdint.hpp>
 #include <nall/intrinsics.hpp>
 #include <nall/platform.hpp>
-#include <nall/algorithm.hpp>
 #include <nall/atoi.hpp>
 #include <nall/bit.hpp>
 #include <nall/iterator.hpp>
@@ -935,7 +934,7 @@ unsigned SuperFamicom::scoreHeader(unsigned address) {
   if(address == 0x7fb0 && mapMode == 0x20) score += 2;
   if(address == 0xffb0 && mapMode == 0x21) score += 2;
 
-  return max(0, score);
+  return std::max(0, score);
 }
 
 auto SuperFamicom::firmwareARM() const -> string {
