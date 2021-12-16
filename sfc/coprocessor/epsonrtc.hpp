@@ -15,7 +15,7 @@ struct EpsonRTC : Thread {
 
   auto serialize(serializer&) -> void;
 
-  uint21 clocks;
+  nall::Natural<21> clocks;
   unsigned seconds;
 
   uint2 chipselect;

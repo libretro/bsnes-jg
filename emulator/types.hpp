@@ -20,4 +20,3 @@ using uint14 = nall::Natural<14>;
 using uint15 = nall::Natural<15>;
 using uint17 = nall::Natural<17>;
 using uint20 = nall::Natural<20>;
-using uint21 = nall::Natural<21>;
