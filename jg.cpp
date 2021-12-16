@@ -310,50 +310,6 @@ shared_pointer<vfs::file> Program::open(uint id, string name,
 void Program::load() {
     emulator->unload();
     emulator->load();
-    
-    // per-game hack overrides
-    auto title = superFamicom.title;
-    auto region = superFamicom.region;
-    
-    //relies on cycle-accurate writes to the echo buffer
-    if (title == "KOUSHIEN_2")
-        emulator->configure("Hacks/DSP/Fast", false);
-    
-    //will hang immediately
-    else if (title == "RENDERING RANGER R2")
-        emulator->configure("Hacks/DSP/Fast", false);
-    
-    //will hang sometimes in the "Bach in Time" stage
-    else if (title == "BUBSY II" && region == "PAL")
-        emulator->configure("Hacks/DSP/Fast", false);
-    
-    //fixes for an errant scanline on the title screen due to writing to PPU
-    //registers too late
-    else if (title == "ADVENTURES OF FRANKEN" && region == "PAL")
-        emulator->configure("Hacks/PPU/RenderCycle", 32);
-    
-    else if (title == "FIREPOWER 2000" || title == "SUPER SWIV")
-        emulator->configure("Hacks/PPU/RenderCycle", 32);
-    
-    else if (title == "NHL '94" || title == "NHL PROHOCKEY'94")
-        emulator->configure("Hacks/PPU/RenderCycle", 32);
-    
-    else if (title == "Sugoro Quest++")
-        emulator->configure("Hacks/PPU/RenderCycle", 128);
-    
-    else if (emulator->configuration("Hacks/Hotfixes")) {
-        //this game transfers uninitialized memory into video RAM: this can
-        //cause a row of invalid tiles to appear in the background of stage 12.
-        //this one is a bug in the original game, so only enable it if the
-        //hotfixes option has been enabled.
-        if (title == "The Hurricanes")
-            emulator->configure("Hacks/Entropy", "None");
-        
-        //Frisky Tom attract sequence sometimes hangs when WRAM is initialized
-        //to pseudo-random patterns
-        else if (title == "ニチブツ・アーケード・クラシックス")
-            emulator->configure("Hacks/Entropy", "None");
-    }
 }
 
 Emulator::Platform::Load Program::load(uint id, string name, string type,
@@ -1045,7 +1001,6 @@ int jg_game_load() {
     emulator->configure("Video/BlurEmulation", false);
     
     emulator->configure("Hacks/Entropy", "Low");
-    emulator->configure("Hacks/Hotfixes", false);
     
     emulator->configure("Hacks/CPU/Overclock", 100);
     emulator->configure("Hacks/CPU/FastMath", false);
