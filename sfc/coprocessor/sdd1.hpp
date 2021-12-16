@@ -2,16 +2,16 @@ struct SDD1 {
   auto unload() -> void;
   auto power() -> void;
 
-  auto ioRead(uint addr, uint8_t data) -> uint8_t;
-  auto ioWrite(uint addr, uint8_t data) -> void;
+  auto ioRead(unsigned addr, uint8_t data) -> uint8_t;
+  auto ioWrite(unsigned addr, uint8_t data) -> void;
 
-  auto dmaRead(uint addr, uint8_t data) -> uint8_t;
-  auto dmaWrite(uint addr, uint8_t data) -> void;
+  auto dmaRead(unsigned addr, uint8_t data) -> uint8_t;
+  auto dmaWrite(unsigned addr, uint8_t data) -> void;
 
-  auto mmcRead(uint addr) -> uint8_t;
+  auto mmcRead(unsigned addr) -> uint8_t;
 
-  auto mcuRead(uint addr, uint8_t data) -> uint8_t;
-  auto mcuWrite(uint addr, uint8_t data) -> void;
+  auto mcuRead(unsigned addr, uint8_t data) -> uint8_t;
+  auto mcuWrite(unsigned addr, uint8_t data) -> void;
 
   auto serialize(serializer&) -> void;
 
@@ -35,14 +35,14 @@ public:
   struct Decompressor {
     struct IM {  //input manager
       IM(SDD1::Decompressor& self) : self(self) {}
-      auto init(uint offset) -> void;
+      auto init(unsigned offset) -> void;
       auto getCodeWord(uint8_t codeLength) -> uint8_t;
       auto serialize(serializer&) -> void;
 
     private:
       Decompressor& self;
-      uint offset;
-      uint bitCount;
+      unsigned offset;
+      unsigned bitCount;
     };
 
     struct GCD {  //golomb-code decoder
@@ -90,7 +90,7 @@ public:
 
     struct CM {  //context model
       CM(SDD1::Decompressor& self) : self(self) {}
-      auto init(uint offset) -> void;
+      auto init(unsigned offset) -> void;
       auto getBit() -> uint8_t;
       auto serialize(serializer&) -> void;
 
@@ -105,7 +105,7 @@ public:
 
     struct OL {  //output logic
       OL(SDD1::Decompressor& self) : self(self) {}
-      auto init(uint offset) -> void;
+      auto init(unsigned offset) -> void;
       auto decompress() -> uint8_t;
       auto serialize(serializer&) -> void;
 
@@ -116,7 +116,7 @@ public:
     };
 
     Decompressor();
-    auto init(uint offset) -> void;
+    auto init(unsigned offset) -> void;
     auto read() -> uint8_t;
     auto serialize(serializer&) -> void;
 

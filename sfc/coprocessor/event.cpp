@@ -45,7 +45,7 @@ auto Event::main() -> void {
   synchronizeCPU();
 }
 
-auto Event::step(uint clocks) -> void {
+auto Event::step(unsigned clocks) -> void {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
@@ -72,9 +72,9 @@ auto Event::power() -> void {
   scoreSecondsRemaining = 0;
 }
 
-auto Event::mcuRead(uint addr, uint8_t data) -> uint8_t {
+auto Event::mcuRead(unsigned addr, uint8_t data) -> uint8_t {
   if(board == Board::CampusChallenge92) {
-    uint id = 0;
+    unsigned id = 0;
     if(select == 0x09) id = 1;
     if(select == 0x05) id = 2;
     if(select == 0x03) id = 3;
@@ -87,7 +87,7 @@ auto Event::mcuRead(uint addr, uint8_t data) -> uint8_t {
   }
 
   if(board == Board::PowerFest94) {
-    uint id = 0;
+    unsigned id = 0;
     if(select == 0x09) id = 1;
     if(select == 0x0c) id = 2;
     if(select == 0x0a) id = 3;
@@ -108,17 +108,17 @@ auto Event::mcuRead(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto Event::mcuWrite(uint addr, uint8_t data) -> void {
+auto Event::mcuWrite(unsigned addr, uint8_t data) -> void {
 }
 
-auto Event::read(uint addr, uint8_t data) -> uint8_t {
+auto Event::read(unsigned addr, uint8_t data) -> uint8_t {
   if(addr == 0x106000 || addr == 0xc00000) {
     return status;
   }
   return data;
 }
 
-auto Event::write(uint addr, uint8_t data) -> void {
+auto Event::write(unsigned addr, uint8_t data) -> void {
   if(addr == 0x206000 || addr == 0xe00000) {
     select = data;
     if(timer && data == 0x09) {

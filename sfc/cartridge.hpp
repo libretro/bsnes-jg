@@ -1,5 +1,5 @@
 struct Cartridge {
-  auto pathID() const -> uint { return information.pathID; }
+  auto pathID() const -> unsigned { return information.pathID; }
   auto region() const -> string { return information.region; }
   auto headerTitle() const -> string { return game.title; }
 
@@ -18,7 +18,7 @@ struct Cartridge {
   WritableMemory ram;
 
   struct Information {
-    uint pathID = 0;
+    unsigned pathID = 0;
     string region;
     string sha256;
   } information;
@@ -73,8 +73,8 @@ private:
   auto loadCartridgeSufamiTurboB(Markup::Node) -> void;
 
   auto loadMemory(Memory&, Markup::Node, bool required) -> void;
-  template<typename T> auto loadMap(Markup::Node, T&) -> uint;
-  auto loadMap(Markup::Node, const function<uint8_t (uint, uint8_t)>&, const function<void (uint, uint8_t)>&) -> uint;
+  template<typename T> auto loadMap(Markup::Node, T&) -> unsigned;
+  auto loadMap(Markup::Node, const function<uint8_t (unsigned, uint8_t)>&, const function<void (unsigned, uint8_t)>&) -> unsigned;
 
   auto loadROM(Markup::Node) -> void;
   auto loadRAM(Markup::Node) -> void;
@@ -88,7 +88,7 @@ private:
   auto loadSA1(Markup::Node) -> void;
   auto loadSuperFX(Markup::Node) -> void;
   auto loadARMDSP(Markup::Node) -> void;
-  auto loadHitachiDSP(Markup::Node, uint roms) -> void;
+  auto loadHitachiDSP(Markup::Node, unsigned roms) -> void;
   auto loaduPD7725(Markup::Node) -> void;
   auto loaduPD96050(Markup::Node) -> void;
   auto loadEpsonRTC(Markup::Node) -> void;

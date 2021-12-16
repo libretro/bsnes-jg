@@ -19,7 +19,7 @@ struct queue {
     _size = source._size;
     _read = source._read;
     _write = source._write;
-    for(uint n : range(_capacity)) _data[n] = source._data[n];
+    for(unsigned n : range(_capacity)) _data[n] = source._data[n];
     return *this;
   }
 
@@ -35,8 +35,8 @@ struct queue {
     return *this;
   }
 
-  template<typename U = T> auto capacity() const -> uint { return _capacity * sizeof(T) / sizeof(U); }
-  template<typename U = T> auto size() const -> uint { return _size * sizeof(T) / sizeof(U); }
+  template<typename U = T> auto capacity() const -> unsigned { return _capacity * sizeof(T) / sizeof(U); }
+  template<typename U = T> auto size() const -> unsigned { return _size * sizeof(T) / sizeof(U); }
   auto empty() const -> bool { return _size == 0; }
   auto pending() const -> bool { return _size > 0; }
   auto full() const -> bool { return _size >= (int)_capacity; }
@@ -55,14 +55,14 @@ struct queue {
     _write = 0;
   }
 
-  auto resize(uint capacity, const T& value = {}) -> void {
+  auto resize(unsigned capacity, const T& value = {}) -> void {
     delete[] _data;
     _data = new T[capacity];
     _capacity = capacity;
     _size = 0;
     _read = 0;
     _write = 0;
-    for(uint n : range(_capacity)) _data[n] = value;
+    for(unsigned n : range(_capacity)) _data[n] = value;
   }
 
   auto flush() -> void {
@@ -75,7 +75,7 @@ struct queue {
     _size = 0;
     _read = 0;
     _write = 0;
-    for(uint n : range(_capacity)) _data[n] = value;
+    for(unsigned n : range(_capacity)) _data[n] = value;
   }
 
   auto read() -> T {
@@ -101,10 +101,10 @@ struct queue {
 
 private:
   T* _data = nullptr;
-  uint _capacity = 0;
+  unsigned _capacity = 0;
   int _size = 0;
-  uint _read = 0;
-  uint _write = 0;
+  unsigned _read = 0;
+  unsigned _write = 0;
 };
 
 }

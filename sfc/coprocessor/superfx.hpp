@@ -14,16 +14,16 @@ struct SuperFX : Processor::GSU, Thread {
   //bus.cpp
   struct CPUROM : Memory {
     auto data() -> uint8_t *override;
-    auto size() const -> uint override;
-    auto read(uint, uint8_t) -> uint8_t override;
-    auto write(uint, uint8_t) -> void override;
+    auto size() const -> unsigned override;
+    auto read(unsigned, uint8_t) -> uint8_t override;
+    auto write(unsigned, uint8_t) -> void override;
   };
 
   struct CPURAM : Memory {
     auto data() -> uint8_t *override;
-    auto size() const -> uint override;
-    auto read(uint, uint8_t) -> uint8_t override;
-    auto write(uint, uint8_t) -> void override;
+    auto size() const -> unsigned override;
+    auto read(unsigned, uint8_t) -> uint8_t override;
+    auto write(unsigned, uint8_t) -> void override;
   };
 
   //core.cpp
@@ -35,8 +35,8 @@ struct SuperFX : Processor::GSU, Thread {
   auto flushPixelCache(PixelCache& cache) -> void;
 
   //memory.cpp
-  auto read(uint addr, uint8_t data = 0x00) -> uint8_t override;
-  auto write(uint addr, uint8_t data) -> void override;
+  auto read(unsigned addr, uint8_t data = 0x00) -> uint8_t override;
+  auto write(unsigned addr, uint8_t data) -> void override;
 
   auto readOpcode(uint16_t addr) -> uint8_t;
   alwaysinline auto peekpipe() -> uint8_t;
@@ -47,11 +47,11 @@ struct SuperFX : Processor::GSU, Thread {
   auto writeCache(uint16_t addr, uint8_t data) -> void;
 
   //io.cpp
-  auto readIO(uint addr, uint8_t data) -> uint8_t;
-  auto writeIO(uint addr, uint8_t data) -> void;
+  auto readIO(unsigned addr, uint8_t data) -> uint8_t;
+  auto writeIO(unsigned addr, uint8_t data) -> void;
 
   //timing.cpp
-  auto step(uint clocks) -> void override;
+  auto step(unsigned clocks) -> void override;
 
   auto syncROMBuffer() -> void override;
   auto readROMBuffer() -> uint8_t override;
@@ -64,14 +64,14 @@ struct SuperFX : Processor::GSU, Thread {
   //serialization.cpp
   auto serialize(serializer&) -> void;
 
-  uint Frequency;
+  unsigned Frequency;
 
   CPUROM cpurom;
   CPURAM cpuram;
 
 private:
-  uint romMask;
-  uint ramMask;
+  unsigned romMask;
+  unsigned ramMask;
 };
 
 extern SuperFX superfx;

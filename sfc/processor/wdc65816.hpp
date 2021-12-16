@@ -10,14 +10,14 @@ struct WDC65816 {
   virtual auto idle() -> void = 0;
   virtual auto idleBranch() -> void {}
   virtual auto idleJump() -> void {}
-  virtual auto read(uint addr) -> uint8_t = 0;
-  virtual auto write(uint addr, uint8_t data) -> void = 0;
+  virtual auto read(unsigned addr) -> uint8_t = 0;
+  virtual auto write(unsigned addr, uint8_t data) -> void = 0;
   virtual auto lastCycle() -> void = 0;
   virtual auto interruptPending() const -> bool = 0;
   virtual auto interrupt() -> void;
   virtual auto synchronizing() const -> bool = 0;
 
-  virtual auto readDisassembler(uint addr) -> uint8_t { return 0; }
+  virtual auto readDisassembler(unsigned addr) -> uint8_t { return 0; }
 
   inline auto irq() const -> bool { return r.irq; }
   inline auto irq(bool line) -> void { r.irq = line; }
@@ -26,8 +26,8 @@ struct WDC65816 {
 
   union r16 {
     inline r16() : w(0) {}
-    inline r16(uint data) : w(data) {}
-    inline auto& operator=(uint data) { w = data; return *this; }
+    inline r16(unsigned data) : w(data) {}
+    inline auto& operator=(unsigned data) { w = data; return *this; }
 
     uint16_t w;
     struct { uint8_t order_lsb2(l, h); };
@@ -35,8 +35,8 @@ struct WDC65816 {
 
   union r24 {
     inline r24() : d(0) {}
-    inline r24(uint data) : d(data) {}
-    inline auto& operator=(uint data) { d = data; return *this; }
+    inline r24(unsigned data) : d(data) {}
+    inline auto& operator=(unsigned data) { d = data; return *this; }
 
     uint24 d;
     struct { uint16_t order_lsb2(w, x); };
@@ -56,15 +56,15 @@ struct WDC65816 {
                auto push(uint8_t data) -> void;
   alwaysinline auto pullN() -> uint8_t;
   alwaysinline auto pushN(uint8_t data) -> void;
-  alwaysinline auto readDirect(uint address) -> uint8_t;
-  alwaysinline auto writeDirect(uint address, uint8_t data) -> void;
-  alwaysinline auto readDirectN(uint address) -> uint8_t;
-  alwaysinline auto readBank(uint address) -> uint8_t;
-  alwaysinline auto writeBank(uint address, uint8_t data) -> void;
-  alwaysinline auto readLong(uint address) -> uint8_t;
-  alwaysinline auto writeLong(uint address, uint8_t data) -> void;
-  alwaysinline auto readStack(uint address) -> uint8_t;
-  alwaysinline auto writeStack(uint address, uint8_t data) -> void;
+  alwaysinline auto readDirect(unsigned address) -> uint8_t;
+  alwaysinline auto writeDirect(unsigned address, uint8_t data) -> void;
+  alwaysinline auto readDirectN(unsigned address) -> uint8_t;
+  alwaysinline auto readBank(unsigned address) -> uint8_t;
+  alwaysinline auto writeBank(unsigned address, uint8_t data) -> void;
+  alwaysinline auto readLong(unsigned address) -> uint8_t;
+  alwaysinline auto writeLong(unsigned address, uint8_t data) -> void;
+  alwaysinline auto readStack(unsigned address) -> uint8_t;
+  alwaysinline auto writeStack(unsigned address, uint8_t data) -> void;
 
   //algorithms.cpp
   using  alu8 = auto (WDC65816::*)( uint8_t) ->  uint8_t;
@@ -242,11 +242,11 @@ struct WDC65816 {
     bool v = 0;  //overflow
     bool n = 0;  //negative
 
-    inline operator uint() const {
+    inline operator unsigned() const {
       return c << 0 | z << 1 | i << 2 | d << 3 | x << 4 | m << 5 | v << 6 | n << 7;
     }
 
-    inline auto& operator=(uint data) {
+    inline auto& operator=(unsigned data) {
       c = data & 0x01;
       z = data & 0x02;
       i = data & 0x04;

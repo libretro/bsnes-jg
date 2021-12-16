@@ -2,13 +2,13 @@ struct ICD : Emulator::Platform, Thread {
   shared_pointer<Emulator::Stream> stream;
   Emulator::Cheat cheats;
 
-  inline auto pathID() const -> uint { return information.pathID; }
+  inline auto pathID() const -> unsigned { return information.pathID; }
 
   auto synchronizeCPU() -> void;
   static auto Enter() -> void;
   auto main() -> void;
-  auto step(uint clocks) -> void;
-  auto clockFrequency() const -> uint;
+  auto step(unsigned clocks) -> void;
+  auto clockFrequency() const -> unsigned;
 
   auto load() -> bool;
   auto save() -> void;
@@ -23,8 +23,8 @@ struct ICD : Emulator::Platform, Thread {
   auto joypWrite(bool p14, bool p15) -> void;
 
   //io.cpp
-  auto readIO(uint addr, uint8_t data) -> uint8_t;
-  auto writeIO(uint addr, uint8_t data) -> void;
+  auto readIO(unsigned addr, uint8_t data) -> uint8_t;
+  auto writeIO(unsigned addr, uint8_t data) -> void;
 
   //boot-roms.cpp
   static const uint8_t SGB1BootROM[256];
@@ -33,8 +33,8 @@ struct ICD : Emulator::Platform, Thread {
   //serialization.cpp
   auto serialize(serializer&) -> void;
 
-  uint Revision = 0;
-  uint Frequency = 0;
+  unsigned Revision = 0;
+  unsigned Frequency = 0;
 
 private:
   struct Packet {
@@ -71,7 +71,7 @@ private:
   uint8_t vcounter;
 
   struct Information {
-    uint pathID = 0;
+    unsigned pathID = 0;
   } information;
 
 public:

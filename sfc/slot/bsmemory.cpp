@@ -74,7 +74,7 @@ auto BSMemory::Queue::serialize(serializer& s) -> void {
 
 BSMemory::BSMemory() {
   page.self = this;
-  uint blockID = 0;
+  unsigned blockID = 0;
   for(auto& block : blocks) block.self = this, block.id = blockID++;
   block.self = this;
 }
@@ -103,7 +103,7 @@ auto BSMemory::main() -> void {
   step(10'000);  //10 milliseconds
 }
 
-auto BSMemory::step(uint clocks) -> void {
+auto BSMemory::step(unsigned clocks) -> void {
   clock += clocks * (uint64_t)cpu.frequency;
   synchronizeCPU();
 }
@@ -143,7 +143,7 @@ auto BSMemory::load() -> bool {
     if(auto node = document["flash/serial"]) {
       chip.serial = node.natural();
     }
-    for(uint id : range(block.count())) {
+    for(unsigned id : range(block.count())) {
       if(auto node = document[{"flash/block(id=", id, ")"}]) {
         if(auto erased = node["erased"]) {
           block(id).erased = erased.natural();
@@ -170,7 +170,7 @@ auto BSMemory::unload() -> void {
     for(uint6 id : range(block.count())) {
       manifest.append("  block\n");
       manifest.append("    id: ", id, "\n");
-      manifest.append("    erased: ", (uint)block(id).erased, "\n");
+      manifest.append("    erased: ", (unsigned)block(id).erased, "\n");
       manifest.append("    locked: ", (bool)block(id).locked, "\n");
     }
     fp->writes(manifest);
@@ -197,11 +197,11 @@ auto BSMemory::data() -> uint8_t* {
   return memory.data();
 }
 
-auto BSMemory::size() const -> uint {
+auto BSMemory::size() const -> unsigned {
   return memory.size();
 }
 
-auto BSMemory::read(uint address, uint8_t data) -> uint8_t {
+auto BSMemory::read(unsigned address, uint8_t data) -> uint8_t {
   if(!size()) return data;
   if(ROM) return memory.read(bus.mirror(address, size()));
 
@@ -229,7 +229,7 @@ auto BSMemory::read(uint address, uint8_t data) -> uint8_t {
   return block(address >> block.bitCount()).read(address);  //Mode::Flash
 }
 
-auto BSMemory::write(uint address, uint8_t data) -> void {
+auto BSMemory::write(unsigned address, uint8_t data) -> void {
   if(!size() || ROM) return;
   queue.push(address, data);
 
@@ -239,7 +239,7 @@ auto BSMemory::write(uint address, uint8_t data) -> void {
     uint16_t count;  //1 - 65536
     count  = queue.data(!(queue.address(1) & 1) ? 1 : 2) << 0;
     count |= queue.data(!(queue.address(1) & 1) ? 2 : 1) << 8;
-    uint address = queue.address(2);
+    unsigned address = queue.address(2);
     do {
       block(address >> block.bitCount()).write(address, page.read(address));
       address++;
@@ -487,18 +487,18 @@ auto BSMemory::Page::write(uint8_t address, uint8_t data) -> void {
 
 //
 
-auto BSMemory::BlockInformation::bitCount() const -> uint { return 16; }
-auto BSMemory::BlockInformation::byteCount() const -> uint { return 1 << bitCount(); }
-auto BSMemory::BlockInformation::count() const -> uint { return self->size() >> bitCount(); }
+auto BSMemory::BlockInformation::bitCount() const -> unsigned { return 16; }
+auto BSMemory::BlockInformation::byteCount() const -> unsigned { return 1 << bitCount(); }
+auto BSMemory::BlockInformation::count() const -> unsigned { return self->size() >> bitCount(); }
 
 //
 
-auto BSMemory::Block::read(uint address) -> uint8_t {
+auto BSMemory::Block::read(unsigned address) -> uint8_t {
   address &= byteCount() - 1;
   return self->memory.read(id << bitCount() | address);
 }
 
-auto BSMemory::Block::write(uint address, uint8_t data) -> void {
+auto BSMemory::Block::write(unsigned address, uint8_t data) -> void {
   if(!self->writable() && status.locked) {
     status.failed = 1;
     return self->failed();
@@ -528,7 +528,7 @@ auto BSMemory::Block::erase() -> void {
     return;
   }
 
-  for(uint address : range(byteCount())) {
+  for(unsigned address : range(byteCount())) {
     self->memory.write(id << bitCount() | address, 0xff);
   }
 
@@ -623,7 +623,7 @@ auto BSMemory::Queue::push(uint24 address, uint8_t data) -> void {
   if(!history[3].valid) { history[3] = {true, address, data}; return; }
 }
 
-auto BSMemory::Queue::size() -> uint {
+auto BSMemory::Queue::size() -> unsigned {
   if(history[3].valid) return 4;
   if(history[2].valid) return 3;
   if(history[1].valid) return 2;
@@ -631,12 +631,12 @@ auto BSMemory::Queue::size() -> uint {
   return 0;
 }
 
-auto BSMemory::Queue::address(uint index) -> uint24 {
+auto BSMemory::Queue::address(unsigned index) -> uint24 {
   if(index > 3 || !history[index].valid) return 0;
   return history[index].address;
 }
 
-auto BSMemory::Queue::data(uint index) -> uint8_t {
+auto BSMemory::Queue::data(unsigned index) -> uint8_t {
   if(index > 3 || !history[index].valid) return 0;
   return history[index].data;
 }

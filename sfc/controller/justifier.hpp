@@ -1,9 +1,9 @@
 struct Justifier : Controller {
-  enum : uint {
+  enum : unsigned {
     X, Y, Trigger, Start,
   };
 
-  Justifier(uint port, bool chained);
+  Justifier(unsigned port, bool chained);
 
   auto data() -> uint2;
   auto latch(bool data) -> void;
@@ -11,10 +11,10 @@ struct Justifier : Controller {
 
 //private:
   const bool chained;  //true if the second justifier is attached to the first
-  const uint device;
+  const unsigned device;
   bool latched;
-  uint counter;
-  uint prev;
+  unsigned counter;
+  unsigned prev;
 
   bool active;
   struct Player {

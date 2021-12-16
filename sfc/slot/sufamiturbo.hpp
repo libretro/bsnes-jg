@@ -3,7 +3,7 @@ struct SufamiTurboCartridge {
   auto power() -> void;
   auto serialize(serializer&) -> void;
 
-  uint pathID = 0;
+  unsigned pathID = 0;
   ReadableMemory rom;
   WritableMemory ram;
 };

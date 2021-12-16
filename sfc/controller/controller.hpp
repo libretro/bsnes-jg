@@ -12,7 +12,7 @@
 //  7:    gnd
 
 struct Controller {
-  Controller(uint port);
+  Controller(unsigned port);
   virtual ~Controller();
 
   auto iobit() -> bool;
@@ -20,19 +20,19 @@ struct Controller {
   virtual auto data() -> uint2 { return 0; }
   virtual auto latch(bool data) -> void {}
   virtual auto latch() -> void {}  //light guns
-  virtual auto draw(uint16_t* output, uint pitch, uint width, uint height) -> void {}  //light guns
+  virtual auto draw(uint16_t* output, unsigned pitch, unsigned width, unsigned height) -> void {}  //light guns
 
-  const uint port;
+  const unsigned port;
 };
 
 struct ControllerPort {
-  auto connect(uint deviceID) -> void;
+  auto connect(unsigned deviceID) -> void;
 
-  auto power(uint port) -> void;
+  auto power(unsigned port) -> void;
   auto unload() -> void;
   auto serialize(serializer&) -> void;
 
-  uint port;
+  unsigned port;
   Controller* device = nullptr;
 };
 

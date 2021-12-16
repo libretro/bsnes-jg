@@ -4,25 +4,25 @@ struct EpsonRTC : Thread {
   auto synchronizeCPU() -> void;
   static auto Enter() -> void;
   auto main() -> void;
-  auto step(uint clocks) -> void;
+  auto step(unsigned clocks) -> void;
 
   auto initialize() -> void;
   auto power() -> void;
   auto synchronize(uint64_t timestamp) -> void;
 
-  auto read(uint addr, uint8_t data) -> uint8_t;
-  auto write(uint addr, uint8_t data) -> void;
+  auto read(unsigned addr, uint8_t data) -> uint8_t;
+  auto write(unsigned addr, uint8_t data) -> void;
 
   auto serialize(serializer&) -> void;
 
   uint21 clocks;
-  uint seconds;
+  unsigned seconds;
 
   uint2 chipselect;
-  enum class State : uint { Mode, Seek, Read, Write } state;
+  enum class State : unsigned { Mode, Seek, Read, Write } state;
   uint4 mdr;
   uint4 offset;
-  uint wait;
+  unsigned wait;
   uint1 ready;
   uint1 holdtick;
 

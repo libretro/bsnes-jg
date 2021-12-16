@@ -294,12 +294,12 @@ auto EpsonRTC::tickDay() -> void {
   weekday = (weekday + 1) + (weekday == 6);
 
   //January - December = 0x01 - 0x09; 0x10 - 0x12
-  static const uint daysinmonth[32] = {
+  static const unsigned daysinmonth[32] = {
     30, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 30, 31, 30,
     31, 30, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30,
   };
 
-  uint days = daysinmonth[monthhi << 4 | monthlo];
+  unsigned days = daysinmonth[monthhi << 4 | monthlo];
   if(days == 28) {
     //add one day for leap years
     if((yearhi & 1) == 0 && ((yearlo - 0) & 3) == 0) days++;
@@ -373,7 +373,7 @@ auto EpsonRTC::serialize(serializer& s) -> void {
   s.integer(seconds);
 
   s.integer(chipselect);
-  s.integer((uint&)state);
+  s.integer((unsigned&)state);
   s.integer(mdr);
   s.integer(offset);
   s.integer(wait);
@@ -452,7 +452,7 @@ auto EpsonRTC::main() -> void {
   synchronizeCPU();
 }
 
-auto EpsonRTC::step(uint clocks) -> void {
+auto EpsonRTC::step(unsigned clocks) -> void {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
@@ -515,15 +515,15 @@ auto EpsonRTC::synchronize(uint64_t timestamp) -> void {
   time_t systime = timestamp;
   tm* timeinfo = localtime(&systime);
 
-  uint second = min(59, timeinfo->tm_sec);
+  unsigned second = min(59, timeinfo->tm_sec);
   secondlo = second % 10;
   secondhi = second / 10;
 
-  uint minute = timeinfo->tm_min;
+  unsigned minute = timeinfo->tm_min;
   minutelo = minute % 10;
   minutehi = minute / 10;
 
-  uint hour = timeinfo->tm_hour;
+  unsigned hour = timeinfo->tm_hour;
   if(atime) {
     hourlo = hour % 10;
     hourhi = hour / 10;
@@ -535,15 +535,15 @@ auto EpsonRTC::synchronize(uint64_t timestamp) -> void {
     hourhi = hour / 10;
   }
 
-  uint day = timeinfo->tm_mday;
+  unsigned day = timeinfo->tm_mday;
   daylo = day % 10;
   dayhi = day / 10;
 
-  uint month = 1 + timeinfo->tm_mon;
+  unsigned month = 1 + timeinfo->tm_mon;
   monthlo = month % 10;
   monthhi = month / 10;
 
-  uint year = timeinfo->tm_year % 100;
+  unsigned year = timeinfo->tm_year % 100;
   yearlo = year % 10;
   yearhi = year / 10;
 
@@ -552,7 +552,7 @@ auto EpsonRTC::synchronize(uint64_t timestamp) -> void {
   resync = true;  //alert program that time has changed
 }
 
-auto EpsonRTC::read(uint addr, uint8_t data) -> uint8_t {
+auto EpsonRTC::read(unsigned addr, uint8_t data) -> uint8_t {
   cpu.synchronizeCoprocessors();
   addr &= 3;
 
@@ -577,7 +577,7 @@ auto EpsonRTC::read(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto EpsonRTC::write(uint addr, uint8_t data) -> void {
+auto EpsonRTC::write(unsigned addr, uint8_t data) -> void {
   cpu.synchronizeCoprocessors();
   addr &= 3, data &= 15;
 

@@ -5,7 +5,7 @@ namespace SuperFamicom {
 ControllerPort controllerPort1;
 ControllerPort controllerPort2;
 
-Controller::Controller(uint port) : port(port) {
+Controller::Controller(unsigned port) : port(port) {
 }
 
 Controller::~Controller() {
@@ -28,7 +28,7 @@ auto Controller::iobit(bool data) -> void {
 
 //
 
-auto ControllerPort::connect(uint deviceID) -> void {
+auto ControllerPort::connect(unsigned deviceID) -> void {
   if(!system.loaded()) return;
   delete device;
 
@@ -43,7 +43,7 @@ auto ControllerPort::connect(uint deviceID) -> void {
   }
 }
 
-auto ControllerPort::power(uint port) -> void {
+auto ControllerPort::power(unsigned port) -> void {
   this->port = port;
 }
 

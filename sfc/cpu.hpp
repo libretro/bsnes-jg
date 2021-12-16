@@ -25,27 +25,27 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
 
   //memory.cpp
   auto idle() -> void override;
-  auto read(uint addr) -> uint8_t override;
-  auto write(uint addr, uint8_t data) -> void override;
-  auto readDisassembler(uint addr) -> uint8_t override;
+  auto read(unsigned addr) -> uint8_t override;
+  auto write(unsigned addr, uint8_t data) -> void override;
+  auto readDisassembler(unsigned addr) -> uint8_t override;
 
   //io.cpp
-  auto readRAM(uint address, uint8_t data) -> uint8_t;
-  auto readAPU(uint address, uint8_t data) -> uint8_t;
-  auto readCPU(uint address, uint8_t data) -> uint8_t;
-  auto readDMA(uint address, uint8_t data) -> uint8_t;
-  auto writeRAM(uint address, uint8_t data) -> void;
-  auto writeAPU(uint address, uint8_t data) -> void;
-  auto writeCPU(uint address, uint8_t data) -> void;
-  auto writeDMA(uint address, uint8_t data) -> void;
+  auto readRAM(unsigned address, uint8_t data) -> uint8_t;
+  auto readAPU(unsigned address, uint8_t data) -> uint8_t;
+  auto readCPU(unsigned address, uint8_t data) -> uint8_t;
+  auto readDMA(unsigned address, uint8_t data) -> uint8_t;
+  auto writeRAM(unsigned address, uint8_t data) -> void;
+  auto writeAPU(unsigned address, uint8_t data) -> void;
+  auto writeCPU(unsigned address, uint8_t data) -> void;
+  auto writeDMA(unsigned address, uint8_t data) -> void;
 
   //timing.cpp
-  inline auto dmaCounter() const -> uint;
-  inline auto joypadCounter() const -> uint;
+  inline auto dmaCounter() const -> unsigned;
+  inline auto joypadCounter() const -> unsigned;
 
   alwaysinline auto stepOnce() -> void;
-  alwaysinline auto step(uint clocks) -> void;
-  template<uint Clocks, bool Synchronize> auto step() -> void;
+  alwaysinline auto step(unsigned clocks) -> void;
+  template<unsigned Clocks, bool Synchronize> auto step() -> void;
   auto scanline() -> void;
 
   alwaysinline auto aluEdge() -> void;
@@ -72,30 +72,30 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   vector<Thread*> coprocessors;
 
   struct Overclocking {
-    uint counter = 0;
-    uint target = 0;
+    unsigned counter = 0;
+    unsigned target = 0;
   } overclocking;
 
 private:
-  uint version = 2;  //allowed: 1, 2
+  unsigned version = 2;  //allowed: 1, 2
 
   struct Counter {
-    uint cpu = 0;
-    uint dma = 0;
+    unsigned cpu = 0;
+    unsigned dma = 0;
   } counter;
 
   struct Status {
-    uint clockCount = 0;
+    unsigned clockCount = 0;
 
     bool irqLock = 0;
 
-    uint dramRefreshPosition = 0;
-    uint dramRefresh = 0;  //0 = not refreshed; 1 = refresh active; 2 = refresh inactive
+    unsigned dramRefreshPosition = 0;
+    unsigned dramRefresh = 0;  //0 = not refreshed; 1 = refresh active; 2 = refresh inactive
 
-    uint hdmaSetupPosition = 0;
+    unsigned hdmaSetupPosition = 0;
     bool hdmaSetupTriggered = 0;
 
-    uint hdmaPosition = 0;
+    unsigned hdmaPosition = 0;
     bool hdmaTriggered = 0;
 
     Boolean nmiValid = 0;
@@ -118,7 +118,7 @@ private:
     bool hdmaPending = 0;
     bool hdmaMode = 0;  //0 = init, 1 = run
 
-    uint autoJoypadCounter = 33;  //state machine; 4224 / 128 = 33 (inactive)
+    unsigned autoJoypadCounter = 33;  //state machine; 4224 / 128 = 33 (inactive)
   } status;
 
   struct IO {
@@ -162,14 +162,14 @@ private:
   } io;
 
   struct ALU {
-    uint mpyctr = 0;
-    uint divctr = 0;
-    uint shift = 0;
+    unsigned mpyctr = 0;
+    unsigned divctr = 0;
+    unsigned shift = 0;
   } alu;
 
   struct Channel {
     //dma.cpp
-    template<uint Clocks, bool Synchronize> inline auto step() -> void;
+    template<unsigned Clocks, bool Synchronize> inline auto step() -> void;
     inline auto edge() -> void;
 
     inline auto validA(uint24 address) -> bool;

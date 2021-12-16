@@ -11,7 +11,7 @@ Satellaview::~Satellaview() {
   bus.unmap("00-3f,80-bf:2188-219f");
 }
 
-auto Satellaview::read(uint addr, uint8_t data) -> uint8_t {
+auto Satellaview::read(unsigned addr, uint8_t data) -> uint8_t {
   switch(addr &= 0xffff) {
   case 0x2188: return regs.r2188;
   case 0x2189: return regs.r2189;
@@ -22,7 +22,7 @@ auto Satellaview::read(uint addr, uint8_t data) -> uint8_t {
   case 0x2190: return regs.r2190;
 
   case 0x2192: {
-    uint counter = regs.rtcCounter++;
+    unsigned counter = regs.rtcCounter++;
     if(regs.rtcCounter >= 18) regs.rtcCounter = 0;
 
     if(counter == 0) {
@@ -67,7 +67,7 @@ auto Satellaview::read(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto Satellaview::write(uint addr, uint8_t data) -> void {
+auto Satellaview::write(unsigned addr, uint8_t data) -> void {
   switch(addr &= 0xffff) {
   case 0x2188: {
     regs.r2188 = data;

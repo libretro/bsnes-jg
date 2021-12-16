@@ -17,7 +17,7 @@ struct Decompressor {
 
   //inverse morton code transform: unpack big-endian packed pixels
   //returns odd bits in lower half; even bits in upper half
-  auto deinterleave(uint64_t data, uint bits) -> uint32_t {
+  auto deinterleave(uint64_t data, unsigned bits) -> uint32_t {
     data = data & (1ull << bits) - 1;
     data = 0x5555555555555555ull & (data << bits | data >> 1);
     data = 0x3333333333333333ull & (data | data >> 1);
@@ -28,7 +28,7 @@ struct Decompressor {
   }
 
   //extract a nibble and move it to the low four bits
-  auto moveToFront(uint64_t list, uint nibble) -> uint64_t {
+  auto moveToFront(uint64_t list, unsigned nibble) -> uint64_t {
     for(uint64_t n = 0, mask = ~15; n < 64; n += 4, mask <<= 4) {
       if((list >> n & 15) != nibble) continue;
       return list = (list & mask) + (list << 4 & ~mask) + nibble;
@@ -36,7 +36,7 @@ struct Decompressor {
     return list;
   }
 
-  auto initialize(uint mode, uint origin) -> void {
+  auto initialize(unsigned mode, unsigned origin) -> void {
     for(auto& root : context) for(auto& node : root) node = {0, 0};
     bpp = 1 << mode;
     offset = origin;
@@ -50,17 +50,17 @@ struct Decompressor {
   }
 
   auto decode() -> void {
-    for(uint pixel = 0; pixel < 8; pixel++) {
+    for(unsigned pixel = 0; pixel < 8; pixel++) {
       uint64_t map = colormap;
-      uint diff = 0;
+      unsigned diff = 0;
 
       if(bpp > 1) {
-        uint pa = (bpp == 2 ? pixels >>  2 & 3 : pixels >>  0 & 15);
-        uint pb = (bpp == 2 ? pixels >> 14 & 3 : pixels >> 28 & 15);
-        uint pc = (bpp == 2 ? pixels >> 16 & 3 : pixels >> 32 & 15);
+        unsigned pa = (bpp == 2 ? pixels >>  2 & 3 : pixels >>  0 & 15);
+        unsigned pb = (bpp == 2 ? pixels >> 14 & 3 : pixels >> 28 & 15);
+        unsigned pc = (bpp == 2 ? pixels >> 16 & 3 : pixels >> 32 & 15);
 
         if(pa != pb || pb != pc) {
-          uint match = pa ^ pb ^ pc;
+          unsigned match = pa ^ pb ^ pc;
           diff = 4;                        //no match; all pixels differ
           if((match ^ pc) == 0) diff = 3;  //a == b; pixel c differs
           if((match ^ pb) == 0) diff = 2;  //c == a; pixel b differs
@@ -74,10 +74,10 @@ struct Decompressor {
         map = moveToFront(map, pa);
       }
 
-      for(uint plane = 0; plane < bpp; plane++) {
-        uint bit = bpp > 1 ? 1 << plane : 1 << (pixel & 3);
-        uint history = bit - 1 & output;
-        uint set = 0;
+      for(unsigned plane = 0; plane < bpp; plane++) {
+        unsigned bit = bpp > 1 ? 1 << plane : 1 << (pixel & 3);
+        unsigned history = bit - 1 & output;
+        unsigned set = 0;
 
         if(bpp == 1) set = pixel >= 4;
         if(bpp == 2) set = diff;
@@ -112,7 +112,7 @@ struct Decompressor {
         if(symbol == LPS && model.probability > Half) ctx.swap ^= 1;
       }
 
-      uint index = output & (1 << bpp) - 1;
+      unsigned index = output & (1 << bpp) - 1;
       if(bpp == 1) index ^= pixels >> 15 & 1;
 
       pixels = pixels << bpp | (map >> 4 * index & 15);
@@ -142,8 +142,8 @@ struct Decompressor {
     s.integer(result);
   }
 
-  enum : uint { MPS = 0, LPS = 1 };
-  enum : uint { One = 0xaa, Half = 0x55, Max = 0xff };
+  enum : unsigned { MPS = 0, LPS = 1 };
+  enum : unsigned { One = 0xaa, Half = 0x55, Max = 0xff };
 
   struct ModelState {
     uint8_t probability;  //of the more probable symbol (MPS)
@@ -156,9 +156,9 @@ struct Decompressor {
     uint8_t swap;       //if 1, exchange the role of MPS and LPS
   } context[5][15];     //not all 75 contexts exists; this simplifies the code
 
-  uint bpp;             //bits per pixel (1bpp = 1; 2bpp = 2; 4bpp = 4)
-  uint offset;          //SPC7110 data ROM read offset
-  uint bits;            //bits remaining in input
+  unsigned bpp;             //bits per pixel (1bpp = 1; 2bpp = 2; 4bpp = 4)
+  unsigned offset;          //SPC7110 data ROM read offset
+  unsigned bits;            //bits remaining in input
   uint16_t range;       //arithmetic range: technically 8-bits, but Max+1 = 256
   uint16_t input;       //input data from SPC7110 data ROM
   uint8_t output;
@@ -194,10 +194,10 @@ Decompressor::ModelState Decompressor::evolution[53] = {
 };
 
 auto SPC7110::dcuLoadAddress() -> void {
-  uint table = r4801 | r4802 << 8 | r4803 << 16;
-  uint index = r4804 << 2;
+  unsigned table = r4801 | r4802 << 8 | r4803 << 16;
+  unsigned index = r4804 << 2;
 
-  uint address = table + index;
+  unsigned address = table + index;
   dcuMode     = dataromRead(address + 0);
   dcuAddress  = dataromRead(address + 1) << 16;
   dcuAddress |= dataromRead(address + 2) <<  8;
@@ -211,7 +211,7 @@ auto SPC7110::dcuBeginTransfer() -> void {
   decompressor->initialize(dcuMode, dcuAddress);
   decompressor->decode();
 
-  uint seek = r480b & 2 ? r4805 | r4806 << 8 : 0;
+  unsigned seek = r480b & 2 ? r4805 | r4806 << 8 : 0;
   while(seek--) decompressor->decode();
 
   r480c |= 0x80;
@@ -239,7 +239,7 @@ auto SPC7110::dcuRead() -> uint8_t {
         break;
       }
 
-      uint seek = r480b & 1 ? r4807 : (uint8_t)1;
+      unsigned seek = r480b & 1 ? r4807 : (uint8_t)1;
       while(seek--) decompressor->decode();
     }
   }
@@ -249,31 +249,31 @@ auto SPC7110::dcuRead() -> uint8_t {
   return data;
 }
 
-auto SPC7110::dataromRead(uint addr) -> uint8_t {
-  uint size = 1 << (r4834 & 3);  //size in MB
-  uint mask = 0x100000 * size - 1;
-  uint offset = addr & mask;
+auto SPC7110::dataromRead(unsigned addr) -> uint8_t {
+  unsigned size = 1 << (r4834 & 3);  //size in MB
+  unsigned mask = 0x100000 * size - 1;
+  unsigned offset = addr & mask;
   if((r4834 & 3) != 3 && (addr & 0x400000)) return 0x00;
   return drom.read(Bus::mirror(offset, drom.size()));
 }
 
-auto SPC7110::dataOffset() -> uint { return r4811 | r4812 << 8 | r4813 << 16; }
-auto SPC7110::dataAdjust() -> uint { return r4814 | r4815 << 8; }
-auto SPC7110::dataStride() -> uint { return r4816 | r4817 << 8; }
-auto SPC7110::setDataOffset(uint addr) -> void { r4811 = addr; r4812 = addr >> 8; r4813 = addr >> 16; }
-auto SPC7110::setDataAdjust(uint addr) -> void { r4814 = addr; r4815 = addr >> 8; }
+auto SPC7110::dataOffset() -> unsigned { return r4811 | r4812 << 8 | r4813 << 16; }
+auto SPC7110::dataAdjust() -> unsigned { return r4814 | r4815 << 8; }
+auto SPC7110::dataStride() -> unsigned { return r4816 | r4817 << 8; }
+auto SPC7110::setDataOffset(unsigned addr) -> void { r4811 = addr; r4812 = addr >> 8; r4813 = addr >> 16; }
+auto SPC7110::setDataAdjust(unsigned addr) -> void { r4814 = addr; r4815 = addr >> 8; }
 
 auto SPC7110::dataPortRead() -> void {
-  uint offset = dataOffset();
-  uint adjust = r4818 & 2 ? dataAdjust() : 0;
+  unsigned offset = dataOffset();
+  unsigned adjust = r4818 & 2 ? dataAdjust() : 0;
   if(r4818 & 8) adjust = (int16_t)adjust;
   r4810 = dataromRead(offset + adjust);
 }
 
 auto SPC7110::dataPortIncrement4810() -> void {
-  uint offset = dataOffset();
-  uint stride = r4818 & 1 ? dataStride() : 1;
-  uint adjust = dataAdjust();
+  unsigned offset = dataOffset();
+  unsigned stride = r4818 & 1 ? dataStride() : 1;
+  unsigned adjust = dataAdjust();
   if(r4818 & 4) stride = (int16_t)stride;
   if(r4818 & 8) adjust = (int16_t)adjust;
   if((r4818 & 16) == 0) setDataOffset(offset + stride);
@@ -283,8 +283,8 @@ auto SPC7110::dataPortIncrement4810() -> void {
 
 auto SPC7110::dataPortIncrement4814() -> void {
   if(r4818 >> 5 != 1) return;
-  uint offset = dataOffset();
-  uint adjust = dataAdjust();
+  unsigned offset = dataOffset();
+  unsigned adjust = dataAdjust();
   if(r4818 & 8) adjust = (int16_t)adjust;
   setDataOffset(offset + adjust);
   dataPortRead();
@@ -292,8 +292,8 @@ auto SPC7110::dataPortIncrement4814() -> void {
 
 auto SPC7110::dataPortIncrement4815() -> void {
   if(r4818 >> 5 != 2) return;
-  uint offset = dataOffset();
-  uint adjust = dataAdjust();
+  unsigned offset = dataOffset();
+  unsigned adjust = dataAdjust();
   if(r4818 & 8) adjust = (int16_t)adjust;
   setDataOffset(offset + adjust);
   dataPortRead();
@@ -301,8 +301,8 @@ auto SPC7110::dataPortIncrement4815() -> void {
 
 auto SPC7110::dataPortIncrement481a() -> void {
   if(r4818 >> 5 != 3) return;
-  uint offset = dataOffset();
-  uint adjust = dataAdjust();
+  unsigned offset = dataOffset();
+  unsigned adjust = dataAdjust();
   if(r4818 & 8) adjust = (int16_t)adjust;
   setDataOffset(offset + adjust);
   dataPortRead();
@@ -326,7 +326,7 @@ auto SPC7110::aluMultiply() -> void {
     uint16_t r0 = (uint16_t)(r4824 | r4825 << 8);
     uint16_t r1 = (uint16_t)(r4820 | r4821 << 8);
 
-    uint result = r0 * r1;
+    unsigned result = r0 * r1;
     r4828 = result;
     r4829 = result >> 8;
     r482a = result >> 16;
@@ -481,11 +481,11 @@ auto SPC7110::main() -> void {
   addClocks(1);
 }
 
-auto SPC7110::step(uint clocks) -> void {
+auto SPC7110::step(unsigned clocks) -> void {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
-auto SPC7110::addClocks(uint clocks) -> void {
+auto SPC7110::addClocks(unsigned clocks) -> void {
   step(clocks);
   synchronizeCPU();
 }
@@ -553,7 +553,7 @@ auto SPC7110::power() -> void {
   r4834 = 0x00;
 }
 
-auto SPC7110::read(uint addr, uint8_t data) -> uint8_t {
+auto SPC7110::read(unsigned addr, uint8_t data) -> uint8_t {
   cpu.synchronizeCoprocessors();
   if((addr & 0xff0000) == 0x500000) addr = 0x4800;  //$50:0000-ffff == $4800
   if((addr & 0xff0000) == 0x580000) addr = 0x4808;  //$58:0000-ffff == $4808
@@ -637,7 +637,7 @@ auto SPC7110::read(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto SPC7110::write(uint addr, uint8_t data) -> void {
+auto SPC7110::write(unsigned addr, uint8_t data) -> void {
   cpu.synchronizeCoprocessors();
   if((addr & 0xff0000) == 0x500000) addr = 0x4800;  //$50:0000-ffff == $4800
   if((addr & 0xff0000) == 0x580000) addr = 0x4808;  //$58:0000-ffff == $4808
@@ -701,8 +701,8 @@ auto SPC7110::write(uint addr, uint8_t data) -> void {
 
 //map address=00-3f,80-bf:8000-ffff mask=0x800000 => 00-3f:8000-ffff
 //map address=c0-ff:0000-ffff mask=0xc00000 => c0-ff:0000-ffff
-auto SPC7110::mcuromRead(uint addr, uint8_t data) -> uint8_t {
-  uint mask = (1 << (r4834 & 3)) - 1;  //8mbit, 16mbit, 32mbit, 64mbit DROM
+auto SPC7110::mcuromRead(unsigned addr, uint8_t data) -> uint8_t {
+  unsigned mask = (1 << (r4834 & 3)) - 1;  //8mbit, 16mbit, 32mbit, 64mbit DROM
 
   if(addr < 0x100000) {  //$00-0f,80-8f:8000-ffff; $c0-cf:0000-ffff
     addr &= 0x0fffff;
@@ -737,7 +737,7 @@ auto SPC7110::mcuromRead(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto SPC7110::mcuromWrite(uint addr, uint8_t data) -> void {
+auto SPC7110::mcuromWrite(unsigned addr, uint8_t data) -> void {
 }
 
 //===============
@@ -745,7 +745,7 @@ auto SPC7110::mcuromWrite(uint addr, uint8_t data) -> void {
 //===============
 
 //map address=00-3f,80-bf:6000-7fff mask=0x80e000 => 00-07:0000-ffff
-auto SPC7110::mcuramRead(uint addr, uint8_t) -> uint8_t {
+auto SPC7110::mcuramRead(unsigned addr, uint8_t) -> uint8_t {
   if(r4830 & 0x80) {
     addr = bus.mirror(addr, ram.size());
     return ram.read(addr);
@@ -753,7 +753,7 @@ auto SPC7110::mcuramRead(uint addr, uint8_t) -> uint8_t {
   return 0x00;
 }
 
-auto SPC7110::mcuramWrite(uint addr, uint8_t data) -> void {
+auto SPC7110::mcuramWrite(unsigned addr, uint8_t data) -> void {
   if(r4830 & 0x80) {
     addr = bus.mirror(addr, ram.size());
     ram.write(addr, data);

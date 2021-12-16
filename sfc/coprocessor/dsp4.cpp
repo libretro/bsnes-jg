@@ -114,7 +114,7 @@ auto DSP4::power() -> void {
   DSP4i::InitDSP4();
 }
 
-auto DSP4::read(uint addr, uint8_t data) -> uint8_t {
+auto DSP4::read(unsigned addr, uint8_t data) -> uint8_t {
   if(addr & 1) return 0x80;
 
   DSP4i::dsp4_address = addr;
@@ -122,7 +122,7 @@ auto DSP4::read(uint addr, uint8_t data) -> uint8_t {
   return DSP4i::dsp4_byte;
 }
 
-auto DSP4::write(uint addr, uint8_t data) -> void {
+auto DSP4::write(unsigned addr, uint8_t data) -> void {
   if(addr & 1) return;
 
   DSP4i::dsp4_address = addr;

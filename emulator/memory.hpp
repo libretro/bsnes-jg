@@ -2,10 +2,10 @@
 
 namespace Emulator::Memory {
 
-inline auto mirror(uint address, uint size) -> uint {
+inline auto mirror(unsigned address, unsigned size) -> unsigned {
   if(size == 0) return 0;
-  uint base = 0;
-  uint mask = 1 << 31;
+  unsigned base = 0;
+  unsigned mask = 1 << 31;
   while(address >= size) {
     while(!(address & mask)) mask >>= 1;
     address -= mask;
@@ -18,9 +18,9 @@ inline auto mirror(uint address, uint size) -> uint {
   return base + address;
 }
 
-inline auto reduce(uint address, uint mask) -> uint {
+inline auto reduce(unsigned address, unsigned mask) -> unsigned {
   while(mask) {
-    uint bits = (mask & -mask) - 1;
+    unsigned bits = (mask & -mask) - 1;
     address = address >> 1 & ~bits | address & bits;
     mask = (mask & mask - 1) >> 1;
   }
@@ -38,7 +38,7 @@ struct Readable {
     self.mask = 0;
   }
 
-  inline auto allocate(uint size, T fill = ~0ull) -> void {
+  inline auto allocate(unsigned size, T fill = ~0ull) -> void {
     if(!size) return reset();
     delete[] self.data;
     self.size = size;
@@ -49,7 +49,7 @@ struct Readable {
 
   inline auto load(shared_pointer<vfs::file> fp) -> void {
     fp->read(self.data, min(fp->size(), self.size * sizeof(T)));
-    for(uint address = self.size; address <= self.mask; address++) {
+    for(unsigned address = self.size; address <= self.mask; address++) {
       self.data[address] = self.data[mirror(address, self.size)];
     }
   }
@@ -60,15 +60,15 @@ struct Readable {
 
   explicit operator bool() const { return (bool)self.data; }
   inline auto data() const -> const T* { return self.data; }
-  inline auto size() const -> uint { return self.size; }
-  inline auto mask() const -> uint { return self.mask; }
+  inline auto size() const -> unsigned { return self.size; }
+  inline auto mask() const -> unsigned { return self.mask; }
 
-  inline auto operator[](uint address) const -> T { return self.data[address & self.mask]; }
-  inline auto read(uint address) const -> T { return self.data[address & self.mask]; }
-  inline auto write(uint address, T data) const -> void {}
+  inline auto operator[](unsigned address) const -> T { return self.data[address & self.mask]; }
+  inline auto read(unsigned address) const -> T { return self.data[address & self.mask]; }
+  inline auto write(unsigned address, T data) const -> void {}
 
   auto serialize(serializer& s) -> void {
-    const uint size = self.size;
+    const unsigned size = self.size;
     s.integer(self.size);
     s.integer(self.mask);
     if(self.size != size) allocate(self.size);
@@ -78,8 +78,8 @@ struct Readable {
 private:
   struct {
     T* data = nullptr;
-    uint size = 0;
-    uint mask = 0;
+    unsigned size = 0;
+    unsigned mask = 0;
   } self;
 };
 
@@ -94,7 +94,7 @@ struct Writable {
     self.mask = 0;
   }
 
-  inline auto allocate(uint size, T fill = ~0ull) -> void {
+  inline auto allocate(unsigned size, T fill = ~0ull) -> void {
     if(!size) return reset();
     delete[] self.data;
     self.size = size;
@@ -105,7 +105,7 @@ struct Writable {
 
   inline auto load(shared_pointer<vfs::file> fp) -> void {
     fp->read(self.data, min(fp->size(), self.size * sizeof(T)));
-    for(uint address = self.size; address <= self.mask; address++) {
+    for(unsigned address = self.size; address <= self.mask; address++) {
       self.data[address] = self.data[mirror(address, self.size)];
     }
   }
@@ -117,16 +117,16 @@ struct Writable {
   explicit operator bool() const { return (bool)self.data; }
   inline auto data() -> T* { return self.data; }
   inline auto data() const -> const T* { return self.data; }
-  inline auto size() const -> uint { return self.size; }
-  inline auto mask() const -> uint { return self.mask; }
+  inline auto size() const -> unsigned { return self.size; }
+  inline auto mask() const -> unsigned { return self.mask; }
 
-  inline auto operator[](uint address) -> T& { return self.data[address & self.mask]; }
-  inline auto operator[](uint address) const -> T { return self.data[address & self.mask]; }
-  inline auto read(uint address) const -> T { return self.data[address & self.mask]; }
-  inline auto write(uint address, T data) -> void { self.data[address & self.mask] = data; }
+  inline auto operator[](unsigned address) -> T& { return self.data[address & self.mask]; }
+  inline auto operator[](unsigned address) const -> T { return self.data[address & self.mask]; }
+  inline auto read(unsigned address) const -> T { return self.data[address & self.mask]; }
+  inline auto write(unsigned address, T data) -> void { self.data[address & self.mask] = data; }
 
   auto serialize(serializer& s) -> void {
-    const uint size = self.size;
+    const unsigned size = self.size;
     s.integer(self.size);
     s.integer(self.mask);
     if(self.size != size) allocate(self.size);
@@ -136,8 +136,8 @@ struct Writable {
 private:
   struct {
     T* data = nullptr;
-    uint size = 0;
-    uint mask = 0;
+    unsigned size = 0;
+    unsigned mask = 0;
   } self;
 };
 

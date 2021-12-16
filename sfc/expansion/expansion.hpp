@@ -4,7 +4,7 @@ struct Expansion : Thread {
 };
 
 struct ExpansionPort {
-  auto connect(uint deviceID) -> void;
+  auto connect(unsigned deviceID) -> void;
 
   auto power() -> void;
   auto unload() -> void;

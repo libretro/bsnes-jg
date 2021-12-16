@@ -1,8 +1,8 @@
 struct Cx4 {
   auto power() -> void;
 
-  auto read(uint addr, uint8_t data = 0) -> uint8_t;
-  auto write(uint addr, uint8_t data) -> void;
+  auto read(unsigned addr, uint8_t data = 0) -> uint8_t;
+  auto write(unsigned addr, uint8_t data) -> void;
 
   auto serialize(serializer&) -> void;
 

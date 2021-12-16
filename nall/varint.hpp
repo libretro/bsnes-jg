@@ -26,7 +26,7 @@ struct VariadicNatural {
   inline auto& operator /=(const uint64_t value) { return assign(data  / value); }
   inline auto& operator %=(const uint64_t value) { return assign(data  % value); }
 
-  inline auto resize(uint bits) {
+  inline auto resize(unsigned bits) {
     assert(bits <= 64);
     mask = ~0ull >> (64 - bits);
     data &= mask;
@@ -38,7 +38,7 @@ struct VariadicNatural {
   }
 
   struct Reference {
-    inline Reference(VariadicNatural& self, uint lo, uint hi) : self(self), Lo(lo), Hi(hi) {}
+    inline Reference(VariadicNatural& self, unsigned lo, unsigned hi) : self(self), Lo(lo), Hi(hi) {}
 
     inline operator uint64_t() const {
       const uint64_t RangeBits = Hi - Lo + 1;
@@ -55,13 +55,13 @@ struct VariadicNatural {
 
   private:
     VariadicNatural& self;
-    const uint Lo;
-    const uint Hi;
+    const unsigned Lo;
+    const unsigned Hi;
   };
 
-  inline auto bits(uint lo, uint hi) -> Reference { return {*this, lo < hi ? lo : hi, hi > lo ? hi : lo}; }
-  inline auto bit(uint index) -> Reference { return {*this, index, index}; }
-  inline auto byte(uint index) -> Reference { return {*this, index * 8 + 0, index * 8 + 7}; }
+  inline auto bits(unsigned lo, unsigned hi) -> Reference { return {*this, lo < hi ? lo : hi, hi > lo ? hi : lo}; }
+  inline auto bit(unsigned index) -> Reference { return {*this, index, index}; }
+  inline auto byte(unsigned index) -> Reference { return {*this, index * 8 + 0, index * 8 + 7}; }
 
 private:
   auto assign(uint64_t value) -> VariadicNatural& {

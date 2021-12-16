@@ -19,15 +19,15 @@ struct SA1 : Processor::WDC65816, Thread {
 
   //dma.cpp
   struct DMA {
-    enum CDEN : uint { DmaNormal = 0, DmaCharConversion = 1 };
-    enum SD : uint { SourceROM = 0, SourceBWRAM = 1, SourceIRAM = 2 };
-    enum DD : uint { DestIRAM = 0, DestBWRAM = 1 };
-    uint line;
+    enum CDEN : unsigned { DmaNormal = 0, DmaCharConversion = 1 };
+    enum SD : unsigned { SourceROM = 0, SourceBWRAM = 1, SourceIRAM = 2 };
+    enum DD : unsigned { DestIRAM = 0, DestBWRAM = 1 };
+    unsigned line;
   };
 
   auto dmaNormal() -> void;
   auto dmaCC1() -> void;
-  auto dmaCC1Read(uint addr) -> uint8_t;
+  auto dmaCC1Read(unsigned addr) -> uint8_t;
   auto dmaCC2() -> void;
 
   //memory.cpp
@@ -38,17 +38,17 @@ struct SA1 : Processor::WDC65816, Thread {
   alwaysinline auto idle() -> void override;
   alwaysinline auto idleJump() -> void override;
   alwaysinline auto idleBranch() -> void override;
-  alwaysinline auto read(uint address) -> uint8_t override;
-  alwaysinline auto write(uint address, uint8_t data) -> void override;
-  auto readVBR(uint address, uint8_t data = 0) -> uint8_t;
-  auto readDisassembler(uint address) -> uint8_t override;
+  alwaysinline auto read(unsigned address) -> uint8_t override;
+  alwaysinline auto write(unsigned address, uint8_t data) -> void override;
+  auto readVBR(unsigned address, uint8_t data = 0) -> uint8_t;
+  auto readDisassembler(unsigned address) -> uint8_t override;
 
   //io.cpp
-  auto readIOCPU(uint address, uint8_t data) -> uint8_t;
-  auto readIOSA1(uint address, uint8_t data) -> uint8_t;
-  auto writeIOCPU(uint address, uint8_t data) -> void;
-  auto writeIOSA1(uint address, uint8_t data) -> void;
-  auto writeIOShared(uint address, uint8_t data) -> void;
+  auto readIOCPU(unsigned address, uint8_t data) -> uint8_t;
+  auto readIOSA1(unsigned address, uint8_t data) -> uint8_t;
+  auto writeIOCPU(unsigned address, uint8_t data) -> void;
+  auto writeIOSA1(unsigned address, uint8_t data) -> void;
+  auto writeIOShared(unsigned address, uint8_t data) -> void;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
@@ -57,31 +57,31 @@ struct SA1 : Processor::WDC65816, Thread {
     //rom.cpp
     alwaysinline auto conflict() const -> bool;
 
-    alwaysinline auto read(uint address, uint8_t data = 0) -> uint8_t override;
-    alwaysinline auto write(uint address, uint8_t data) -> void override;
+    alwaysinline auto read(unsigned address, uint8_t data = 0) -> uint8_t override;
+    alwaysinline auto write(unsigned address, uint8_t data) -> void override;
 
-    auto readCPU(uint address, uint8_t data = 0) -> uint8_t;
-    auto writeCPU(uint address, uint8_t data) -> void;
+    auto readCPU(unsigned address, uint8_t data = 0) -> uint8_t;
+    auto writeCPU(unsigned address, uint8_t data) -> void;
 
-    auto readSA1(uint address, uint8_t data = 0) -> uint8_t;
-    auto writeSA1(uint address, uint8_t data) -> void;
+    auto readSA1(unsigned address, uint8_t data = 0) -> uint8_t;
+    auto writeSA1(unsigned address, uint8_t data) -> void;
   } rom;
 
   struct BWRAM : WritableMemory {
     //bwram.cpp
     alwaysinline auto conflict() const -> bool;
 
-    alwaysinline auto read(uint address, uint8_t data = 0) -> uint8_t override;
-    alwaysinline auto write(uint address, uint8_t data) -> void override;
+    alwaysinline auto read(unsigned address, uint8_t data = 0) -> uint8_t override;
+    alwaysinline auto write(unsigned address, uint8_t data) -> void override;
 
-    auto readCPU(uint address, uint8_t data = 0) -> uint8_t;
-    auto writeCPU(uint address, uint8_t data) -> void;
+    auto readCPU(unsigned address, uint8_t data = 0) -> uint8_t;
+    auto writeCPU(unsigned address, uint8_t data) -> void;
 
-    auto readSA1(uint address, uint8_t data = 0) -> uint8_t;
-    auto writeSA1(uint address, uint8_t data) -> void;
+    auto readSA1(unsigned address, uint8_t data = 0) -> uint8_t;
+    auto writeSA1(unsigned address, uint8_t data) -> void;
 
-    auto readLinear(uint address, uint8_t data = 0) -> uint8_t;
-    auto writeLinear(uint address, uint8_t data) -> void;
+    auto readLinear(unsigned address, uint8_t data = 0) -> uint8_t;
+    auto writeLinear(unsigned address, uint8_t data) -> void;
 
     auto readBitmap(uint20 address, uint8_t data = 0) -> uint8_t;
     auto writeBitmap(uint20 address, uint8_t data) -> void;
@@ -93,14 +93,14 @@ struct SA1 : Processor::WDC65816, Thread {
     //iram.cpp
     alwaysinline auto conflict() const -> bool;
 
-    alwaysinline auto read(uint address, uint8_t data = 0) -> uint8_t override;
-    alwaysinline auto write(uint address, uint8_t data) -> void override;
+    alwaysinline auto read(unsigned address, uint8_t data = 0) -> uint8_t override;
+    alwaysinline auto write(unsigned address, uint8_t data) -> void override;
 
-    auto readCPU(uint address, uint8_t data) -> uint8_t;
-    auto writeCPU(uint address, uint8_t data) -> void;
+    auto readCPU(unsigned address, uint8_t data) -> uint8_t;
+    auto writeCPU(unsigned address, uint8_t data) -> void;
 
-    auto readSA1(uint address, uint8_t data = 0) -> uint8_t;
-    auto writeSA1(uint address, uint8_t data) -> void;
+    auto readSA1(unsigned address, uint8_t data = 0) -> uint8_t;
+    auto writeSA1(unsigned address, uint8_t data) -> void;
   } iram;
 
 private:
@@ -178,19 +178,19 @@ private:
 
     //$2220 CXB
     bool cbmode;
-    uint cb;
+    unsigned cb;
 
     //$2221 DXB
     bool dbmode;
-    uint db;
+    unsigned db;
 
     //$2222 EXB
     bool ebmode;
-    uint eb;
+    unsigned eb;
 
     //$2223 FXB
     bool fbmode;
-    uint fb;
+    unsigned fb;
 
     //$2224 BMAPS
     uint8_t sbm;

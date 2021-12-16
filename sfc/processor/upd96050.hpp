@@ -26,13 +26,13 @@ struct uPD96050 {
 
   auto disassemble(uint14 ip) -> string;
 
-  enum class Revision : uint { uPD7725, uPD96050 } revision;
+  enum class Revision : unsigned { uPD7725, uPD96050 } revision;
   uint24 programROM[16384];
   uint16_t dataROM[2048];
   uint16_t dataRAM[2048];
 
   struct Flag {
-    inline operator uint() const {
+    inline operator unsigned() const {
       return ov0 << 0 | ov1 << 1 | z << 2 | c << 3 | s0 << 4 | s1 << 5;
     }
 
@@ -57,7 +57,7 @@ struct uPD96050 {
   };
 
   struct Status {
-    inline operator uint() const {
+    inline operator unsigned() const {
       bool _drs = drs & !drc;  //when DRC=1, DRS=0
       return p0 << 0 | p1 << 1 | ei << 7 | sic << 8 | soc << 9 | drc << 10
            | dma << 11 | _drs << 12 | usf0 << 13 | usf1 << 14 | rqm << 15;

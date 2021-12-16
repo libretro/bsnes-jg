@@ -12,11 +12,11 @@ struct Cheat {
       return true;
     }
 
-    uint address;
-    uint data;
-    maybe<uint> compare;
+    unsigned address;
+    unsigned data;
+    maybe<unsigned> compare;
     bool enable;
-    uint restore;
+    unsigned restore;
   };
 
   explicit operator bool() const {
@@ -27,7 +27,7 @@ struct Cheat {
     codes.reset();
   }
 
-  auto append(uint address, uint data, maybe<uint> compare = {}) -> void {
+  auto append(unsigned address, unsigned data, maybe<unsigned> compare = {}) -> void {
     codes.append({address, data, compare});
   }
 
@@ -42,7 +42,7 @@ struct Cheat {
     }
   }
 
-  auto find(uint address, uint compare) -> maybe<uint> {
+  auto find(unsigned address, unsigned compare) -> maybe<unsigned> {
     for(auto& code : codes) {
       if(code.address == address && (!code.compare || code.compare() == compare)) {
         return code.data;

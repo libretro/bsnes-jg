@@ -2,7 +2,7 @@
 
 namespace SuperFamicom {
 
-Gamepad::Gamepad(uint port) : Controller(port) {
+Gamepad::Gamepad(unsigned port) : Controller(port) {
   latched = 0;
   counter = 0;
 }

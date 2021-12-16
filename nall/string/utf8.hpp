@@ -7,8 +7,8 @@ namespace nall {
 //invalid case 1: byte 1 == 0b'01xxxxxx
 //invalid case 2: bytes 2-4 != 0b'10xxxxxx
 //invalid case 3: end of string without bytes 2-4 present
-auto characters(string_view self, int offset, int length) -> uint {
-  uint characters = 0;
+auto characters(string_view self, int offset, int length) -> unsigned {
+  unsigned characters = 0;
   if(offset < 0) offset = self.size() - abs(offset);
   if(offset >= 0 && offset < self.size()) {
     if(length < 0) length = self.size() - offset;
@@ -25,7 +25,7 @@ auto characters(string_view self, int offset, int length) -> uint {
   return characters;
 }
 
-auto string::characters(int offset, int length) const -> uint {
+auto string::characters(int offset, int length) const -> unsigned {
   return nall::characters(*this, offset, length);
 }
 

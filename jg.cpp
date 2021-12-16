@@ -123,15 +123,15 @@ struct Program : Emulator::Platform {
     Program();
     ~Program();
     
-    shared_pointer<vfs::file> open(uint id, string name, vfs::file::mode mode,
+    shared_pointer<vfs::file> open(unsigned id, string name, vfs::file::mode mode,
         bool required) override;
-    Emulator::Platform::Load load(uint id, string name, string type,
+    Emulator::Platform::Load load(unsigned id, string name, string type,
         vector<string> options = {}) override;
-    void videoFrame(const uint16_t *data, uint pitch, uint width, uint height,
-        uint scale) override;
-    void audioFrame(const double* samples, uint channels) override;
-    int16_t inputPoll(uint port, uint device, uint input) override;
-    void inputRumble(uint port, uint device, uint input, bool enable) override;
+    void videoFrame(const uint16_t *data, unsigned pitch, unsigned width, unsigned height,
+        unsigned scale) override;
+    void audioFrame(const double* samples, unsigned channels) override;
+    int16_t inputPoll(unsigned port, unsigned device, unsigned input) override;
+    void inputRumble(unsigned port, unsigned device, unsigned input, bool enable) override;
     
     void load();
     vector<uint8_t> loadFile(void *data, size_t size);
@@ -205,7 +205,7 @@ void Program::save() {
     emulator->save();
 }
 
-shared_pointer<vfs::file> Program::open(uint id, string name,
+shared_pointer<vfs::file> Program::open(unsigned id, string name,
     vfs::file::mode mode, bool required) {
     
     shared_pointer<vfs::file> result;
@@ -308,7 +308,7 @@ void Program::load() {
     emulator->load();
 }
 
-Emulator::Platform::Load Program::load(uint id, string name, string type,
+Emulator::Platform::Load Program::load(unsigned id, string name, string type,
     vector<string> options) {
     
     if (id == 1) {
@@ -339,8 +339,8 @@ Emulator::Platform::Load Program::load(uint id, string name, string type,
     return { id, options(0) };
 }
 
-void Program::videoFrame(const uint16_t *data, uint pitch, uint width,
-    uint height, uint scale) {
+void Program::videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
+    unsigned height, unsigned scale) {
     
     //print("p: ", pitch, " w: ", width, " h: ", height, "\n");
     vidmult = height / 240;
@@ -353,7 +353,7 @@ void Program::videoFrame(const uint16_t *data, uint pitch, uint width,
     vidinfo.buf = (void*)data;
 }
 
-void Program::audioFrame(const double* samples, uint channels) {
+void Program::audioFrame(const double* samples, unsigned channels) {
     float *abuf = (float*)audinfo.buf;
     abuf[audio_buffer_index++] = (float)samples[0];
     abuf[audio_buffer_index++] = (float)samples[1];
@@ -361,7 +361,7 @@ void Program::audioFrame(const double* samples, uint channels) {
 
 static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
 
-int16_t pollInputDevices(uint port, uint device, uint input) {
+int16_t pollInputDevices(unsigned port, unsigned device, unsigned input) {
     //print("port: ", port, " device: ", device, " input: ", input, "\n");
     if (device == SuperFamicom::ID::Device::SuperScope) {
         switch (input) {
@@ -448,11 +448,11 @@ int16_t pollInputDevices(uint port, uint device, uint input) {
     return port > 1 ? 0 : input_device[port]->button[imap[input]];
 }
 
-int16_t Program::inputPoll(uint port, uint device, uint input) {
+int16_t Program::inputPoll(unsigned port, unsigned device, unsigned input) {
     return pollInputDevices(port, device, input);
 }
 
-void Program::inputRumble(uint port, uint device, uint input, bool enable) {
+void Program::inputRumble(unsigned port, unsigned device, unsigned input, bool enable) {
 }
 
 shared_pointer<vfs::file> Program::openRomSuperFamicom(string name,
@@ -625,7 +625,7 @@ bool Program::loadSuperFamicom(string location) {
     superFamicom.document = BML::unserialize(superFamicom.manifest);
     superFamicom.location = location;
     
-    uint offset = 0;
+    unsigned offset = 0;
     if (auto size = heuristics.programRomSize()) {
         superFamicom.program.resize(size);
         memory::copy(&superFamicom.program[0], &rom[offset], size);
@@ -776,7 +776,7 @@ bool decodeSNES(string& code) {
         //strip '-'
         code = {code.slice(0, 4), code.slice(5, 4)};
         //validate
-        for (uint n : code) {
+        for (unsigned n : code) {
             if (n >= '0' && n <= '9') continue;
             if (n >= 'a' && n <= 'f') continue;
             return false;
@@ -787,7 +787,7 @@ bool decodeSNES(string& code) {
         uint32_t r = toHex(code);
         //abcd efgh ijkl mnop qrst uvwx
         //ijkl qrst opab cduv wxef ghmn
-        uint address =
+        unsigned address =
           (!!(r & 0x002000) << 23) | (!!(r & 0x001000) << 22)
         | (!!(r & 0x000800) << 21) | (!!(r & 0x000400) << 20)
         | (!!(r & 0x000020) << 19) | (!!(r & 0x000010) << 18)
@@ -800,7 +800,7 @@ bool decodeSNES(string& code) {
         | (!!(r & 0x020000) <<  5) | (!!(r & 0x010000) <<  4)
         | (!!(r & 0x000200) <<  3) | (!!(r & 0x000100) <<  2)
         | (!!(r & 0x000080) <<  1) | (!!(r & 0x000040) <<  0);
-        uint data = r >> 24;
+        unsigned data = r >> 24;
         code = {hex(address, 6L), "=", hex(data, 2L)};
         return true;
     }
@@ -808,7 +808,7 @@ bool decodeSNES(string& code) {
     //Pro Action Replay
     if (code.size() == 8) {
         //validate
-        for (uint n : code) {
+        for (unsigned n : code) {
             if (n >= '0' && n <= '9') continue;
             if (n >= 'a' && n <= 'f') continue;
             return false;
@@ -816,8 +816,8 @@ bool decodeSNES(string& code) {
         
         //decode
         uint32_t r = toHex(code);
-        uint address = r >> 8;
-        uint data = r & 0xff;
+        unsigned address = r >> 8;
+        unsigned data = r & 0xff;
         code = {hex(address, 6L), "=", hex(data, 2L)};
         return true;
     }
@@ -826,7 +826,7 @@ bool decodeSNES(string& code) {
     if (code.size() == 9 && code[6u] == '=') {
         string nibbles = {code.slice(0, 6), code.slice(7, 2)};
         //validate
-        for (uint n : nibbles) {
+        for (unsigned n : nibbles) {
             if (n >= '0' && n <= '9') continue;
             if (n >= 'a' && n <= 'f') continue;
             return false;
@@ -840,7 +840,7 @@ bool decodeSNES(string& code) {
         string nibbles =
             {code.slice(0, 6), code.slice(7, 2), code.slice(10, 2)};
         //validate
-        for (uint n : nibbles) {
+        for (unsigned n : nibbles) {
             if (n >= '0' && n <= '9') continue;
             if (n >= 'a' && n <= 'f') continue;
             return false;
@@ -854,7 +854,7 @@ bool decodeSNES(string& code) {
 }
 
 bool decodeGB(string& code) {
-    auto nibble = [&](const string& s, uint index) -> uint {
+    auto nibble = [&](const string& s, unsigned index) -> unsigned {
         if (index >= s.size()) return 0;
         if (s[index] >= '0' && s[index] <= '9') return s[index] - '0';
         return s[index] - 'a' + 10;
@@ -864,14 +864,14 @@ bool decodeGB(string& code) {
     if (code.size() == 7 && code[3u] == '-') {
         code = {code.slice(0, 3), code.slice(4, 3)};
         //validate
-        for (uint n : code) {
+        for (unsigned n : code) {
             if (n >= '0' && n <= '9') continue;
             if (n >= 'a' && n <= 'f') continue;
             return false;
         }
         
-        uint data = nibble(code, 0) << 4 | nibble(code, 1) << 0;
-        uint address = (nibble(code, 5) ^ 15) << 12 | nibble(code, 2) << 8 |
+        unsigned data = nibble(code, 0) << 4 | nibble(code, 1) << 0;
+        unsigned address = (nibble(code, 5) ^ 15) << 12 | nibble(code, 2) << 8 |
             nibble(code, 3) << 4 | nibble(code, 4) << 0;
         code = {hex(address, 4L), "=", hex(data, 2L)};
         return true;
@@ -881,18 +881,18 @@ bool decodeGB(string& code) {
     if (code.size() == 11 && code[3u] == '-' && code[7u] == '-') {
         code = {code.slice(0, 3), code.slice(4, 3), code.slice(8, 3)};
         //validate
-        for (uint n : code) {
+        for (unsigned n : code) {
             if (n >= '0' && n <= '9') continue;
             if (n >= 'a' && n <= 'f') continue;
             return false;
         }
         
-        uint data = nibble(code, 0) << 4 | nibble(code, 1) << 0;
-        uint address = (nibble(code, 5) ^ 15) << 12 | nibble(code, 2) << 8 |
+        unsigned data = nibble(code, 0) << 4 | nibble(code, 1) << 0;
+        unsigned address = (nibble(code, 5) ^ 15) << 12 | nibble(code, 2) << 8 |
             nibble(code, 3) << 4 | nibble(code, 4) << 0;
         uint8_t t = nibble(code, 6) << 4 | nibble(code, 8) << 0;
         t = t >> 2 | t << 6;
-        uint compare = t ^ 0xba;
+        unsigned compare = t ^ 0xba;
         code = {hex(address, 4L), "=", hex(compare, 2L), "?", hex(data, 2L)};
         return true;
     }
@@ -900,7 +900,7 @@ bool decodeGB(string& code) {
     //GameShark
     if (code.size() == 8) {
         //validate
-        for (uint n : code) {
+        for (unsigned n : code) {
             if (n >= '0' && n <= '9') continue;
             if (n >= 'a' && n <= 'f') continue;
             return false;
@@ -911,7 +911,7 @@ bool decodeGB(string& code) {
         //on them, so they're not supported.
         if (code[0u] != '0') return false;
         if (code[1u] != '1') return false;
-        uint data = toHex(code.slice(2, 2));
+        unsigned data = toHex(code.slice(2, 2));
         uint16_t address = toHex(code.slice(4, 4));
         address = address >> 8 | address << 8;
         code = {hex(address, 4L), "=", hex(data, 2L)};
@@ -922,7 +922,7 @@ bool decodeGB(string& code) {
     if (code.size() == 7 && code[4u] == '=') {
         string nibbles = {code.slice(0, 4), code.slice(5, 2)};
         //validate
-        for (uint n : nibbles) {
+        for (unsigned n : nibbles) {
             if (n >= '0' && n <= '9') continue;
             if (n >= 'a' && n <= 'f') continue;
             return false;
@@ -935,7 +935,7 @@ bool decodeGB(string& code) {
     if (code.size() == 10 && code[4u] == '=' && code[7u] == '?') {
         string nibbles = {code.slice(0, 4), code.slice(5, 2), code.slice(8, 2)};
         //validate
-        for (uint n : nibbles) {
+        for (unsigned n : nibbles) {
             if (n >= '0' && n <= '9') continue;
             if (n >= 'a' && n <= 'f') continue;
             return false;

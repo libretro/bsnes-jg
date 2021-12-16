@@ -59,22 +59,22 @@ namespace Emulator {
 struct Platform {
   struct Load {
     Load() = default;
-    Load(uint pathID, string option = "") : valid(true), pathID(pathID), option(option) {}
+    Load(unsigned pathID, string option = "") : valid(true), pathID(pathID), option(option) {}
     explicit operator bool() const { return valid; }
 
     bool valid = false;
-    uint pathID = 0;
+    unsigned pathID = 0;
     string option;
   };
 
-  virtual auto path(uint id) -> string { return ""; }
-  virtual auto open(uint id, string name, vfs::file::mode mode, bool required = false) -> shared_pointer<vfs::file> { return {}; }
-  virtual auto load(uint id, string name, string type, vector<string> options = {}) -> Load { return {}; }
-  virtual auto videoFrame(const uint16_t *data, uint pitch, uint width, uint height, uint scale) -> void {}
-  virtual auto audioFrame(const double* samples, uint channels) -> void {}
-  virtual auto inputPoll(uint port, uint device, uint input) -> int16_t { return 0; }
-  virtual auto inputRumble(uint port, uint device, uint input, bool enable) -> void {}
-  virtual auto dipSettings(Markup::Node node) -> uint { return 0; }
+  virtual auto path(unsigned id) -> string { return ""; }
+  virtual auto open(unsigned id, string name, vfs::file::mode mode, bool required = false) -> shared_pointer<vfs::file> { return {}; }
+  virtual auto load(unsigned id, string name, string type, vector<string> options = {}) -> Load { return {}; }
+  virtual auto videoFrame(const uint16_t *data, unsigned pitch, unsigned width, unsigned height, unsigned scale) -> void {}
+  virtual auto audioFrame(const double* samples, unsigned channels) -> void {}
+  virtual auto inputPoll(unsigned port, unsigned device, unsigned input) -> int16_t { return 0; }
+  virtual auto inputRumble(unsigned port, unsigned device, unsigned input, bool enable) -> void {}
+  virtual auto dipSettings(Markup::Node node) -> unsigned { return 0; }
   virtual auto notify(string text) -> void {}
 };
 
@@ -89,33 +89,33 @@ struct Interface {
   };
 
   struct Display {
-    struct Type { enum : uint {
+    struct Type { enum : unsigned {
       CRT,
       LCD,
     };};
-    uint id = 0;
+    unsigned id = 0;
     string name;
-    uint type = 0;
-    uint colors = 0;
-    uint width = 0;
-    uint height = 0;
-    uint internalWidth = 0;
-    uint internalHeight = 0;
+    unsigned type = 0;
+    unsigned colors = 0;
+    unsigned width = 0;
+    unsigned height = 0;
+    unsigned internalWidth = 0;
+    unsigned internalHeight = 0;
     double aspectCorrection = 0;
   };
 
   struct Port {
-    uint id;
+    unsigned id;
     string name;
   };
 
   struct Device {
-    uint id;
+    unsigned id;
     string name;
   };
 
   struct Input {
-    struct Type { enum : uint {
+    struct Type { enum : unsigned {
       Hat,
       Button,
       Trigger,
@@ -124,7 +124,7 @@ struct Interface {
       Rumble,
     };};
 
-    uint type;
+    unsigned type;
     string name;
   };
 
@@ -146,10 +146,10 @@ struct Interface {
 
   //system interface
   virtual auto ports() -> vector<Port> { return {}; }
-  virtual auto devices(uint port) -> vector<Device> { return {}; }
-  virtual auto inputs(uint device) -> vector<Input> { return {}; }
-  virtual auto connected(uint port) -> uint { return 0; }
-  virtual auto connect(uint port, uint device) -> void {}
+  virtual auto devices(unsigned port) -> vector<Device> { return {}; }
+  virtual auto inputs(unsigned device) -> vector<Input> { return {}; }
+  virtual auto connected(unsigned port) -> unsigned { return 0; }
+  virtual auto connect(unsigned port, unsigned device) -> void {}
   virtual auto power() -> void {}
   virtual auto reset() -> void {}
   virtual auto run() -> void {}
@@ -177,8 +177,8 @@ struct Interface {
   virtual auto get(const string& name) -> any { return {}; }
   virtual auto set(const string& name, const any& value) -> bool { return false; }
 
-  virtual auto frameSkip() -> uint { return 0; }
-  virtual auto setFrameSkip(uint frameSkip) -> void {}
+  virtual auto frameSkip() -> unsigned { return 0; }
+  virtual auto setFrameSkip(unsigned frameSkip) -> void {}
 
   virtual auto runAhead() -> bool { return false; }
   virtual auto setRunAhead(bool runAhead) -> void {}

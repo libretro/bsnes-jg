@@ -132,7 +132,7 @@ auto Cartridge::loadMemory(Memory& ram, Markup::Node node, bool required) -> voi
 }
 
 template<typename T>  //T = ReadableMemory, WritableMemory, ProtectableMemory
-auto Cartridge::loadMap(Markup::Node map, T& memory) -> uint {
+auto Cartridge::loadMap(Markup::Node map, T& memory) -> unsigned {
   auto addr = map["address"].text();
   auto size = map["size"].natural();
   auto base = map["base"].natural();
@@ -144,9 +144,9 @@ auto Cartridge::loadMap(Markup::Node map, T& memory) -> uint {
 
 auto Cartridge::loadMap(
   Markup::Node map,
-  const function<uint8_t (uint, uint8_t)>& reader,
-  const function<void  (uint, uint8_t)>& writer
-) -> uint {
+  const function<uint8_t (unsigned, uint8_t)>& reader,
+  const function<void  (unsigned, uint8_t)>& writer
+) -> unsigned {
   auto addr = map["address"].text();
   auto size = map["size"].natural();
   auto base = map["base"].natural();
@@ -406,7 +406,7 @@ auto Cartridge::loadARMDSP(Markup::Node node) -> void {
 }
 
 //processor(architecture=HG51BS169)
-auto Cartridge::loadHitachiDSP(Markup::Node node, uint roms) -> void {
+auto Cartridge::loadHitachiDSP(Markup::Node node, unsigned roms) -> void {
   for(auto& word : hitachidsp.dataROM) word = 0x000000;
   for(auto& word : hitachidsp.dataRAM) word = 0x00;
 

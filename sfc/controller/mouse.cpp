@@ -2,7 +2,7 @@
 
 namespace SuperFamicom {
 
-Mouse::Mouse(uint port) : Controller(port) {
+Mouse::Mouse(unsigned port) : Controller(port) {
   latched = 0;
   counter = 0;
 

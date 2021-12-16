@@ -11,14 +11,14 @@ namespace nall {
 //this speeds up Windows substantially, without harming performance elsewhere much
 
 struct file_buffer {
-  struct mode { enum : uint { read, write, modify, append }; };
-  struct index { enum : uint { absolute, relative }; };
+  struct mode { enum : unsigned { read, write, modify, append }; };
+  struct index { enum : unsigned { absolute, relative }; };
 
   file_buffer(const file_buffer&) = delete;
   auto operator=(const file_buffer&) -> file_buffer& = delete;
 
   file_buffer() = default;
-  file_buffer(const string& filename, uint mode) { open(filename, mode); }
+  file_buffer(const string& filename, unsigned mode) { open(filename, mode); }
 
   ~file_buffer() { close(); }
 
@@ -47,7 +47,7 @@ struct file_buffer {
     if(fileOffset > fileSize) fileSize = fileOffset;
   }
 
-  auto seek(int64_t offset, uint index_ = index::absolute) -> void {
+  auto seek(int64_t offset, unsigned index_ = index::absolute) -> void {
     if(!fileHandle) return;
     bufferFlush();
 
@@ -80,7 +80,7 @@ struct file_buffer {
     return fileSize;
   }
 
-  auto open(const string& filename, uint mode_) -> bool {
+  auto open(const string& filename, unsigned mode_) -> bool {
     close();
 
     switch(fileMode = mode_) {
@@ -120,7 +120,7 @@ private:
   FILE* fileHandle = nullptr;
   uint64_t fileOffset = 0;
   uint64_t fileSize = 0;
-  uint fileMode = mode::read;
+  unsigned fileMode = mode::read;
 
   auto bufferSynchronize() -> void {
     if(!fileHandle) return;

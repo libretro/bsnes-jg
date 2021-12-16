@@ -84,41 +84,41 @@ auto WDC65816::pushN(uint8_t data) -> void {
   write(S.w--, data);
 }
 
-auto WDC65816::readDirect(uint address) -> uint8_t {
+auto WDC65816::readDirect(unsigned address) -> uint8_t {
   if(EF && !D.l) return read(D.w | address & 0xff);
   return read(D.w + address & 0xffff);
 }
 
-auto WDC65816::writeDirect(uint address, uint8_t data) -> void {
+auto WDC65816::writeDirect(unsigned address, uint8_t data) -> void {
   if(EF && !D.l) return write(D.w | address & 0xff, data);
   write(D.w + address & 0xffff, data);
 }
 
-auto WDC65816::readDirectN(uint address) -> uint8_t {
+auto WDC65816::readDirectN(unsigned address) -> uint8_t {
   return read(D.w + address & 0xffff);
 }
 
-auto WDC65816::readBank(uint address) -> uint8_t {
+auto WDC65816::readBank(unsigned address) -> uint8_t {
   return read((B << 16) + address & 0xffffff);
 }
 
-auto WDC65816::writeBank(uint address, uint8_t data) -> void {
+auto WDC65816::writeBank(unsigned address, uint8_t data) -> void {
   write((B << 16) + address & 0xffffff, data);
 }
 
-auto WDC65816::readLong(uint address) -> uint8_t {
+auto WDC65816::readLong(unsigned address) -> uint8_t {
   return read(address & 0xffffff);
 }
 
-auto WDC65816::writeLong(uint address, uint8_t data) -> void {
+auto WDC65816::writeLong(unsigned address, uint8_t data) -> void {
   write(address & 0xffffff, data);
 }
 
-auto WDC65816::readStack(uint address) -> uint8_t {
+auto WDC65816::readStack(unsigned address) -> uint8_t {
   return read(S.w + address & 0xffff);
 }
 
-auto WDC65816::writeStack(uint address, uint8_t data) -> void {
+auto WDC65816::writeStack(unsigned address, uint8_t data) -> void {
   write(S.w + address & 0xffff, data);
 }
 

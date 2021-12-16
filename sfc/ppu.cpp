@@ -8,7 +8,7 @@ auto PPU::main() -> void {
   if(vcounter() == 0) {
     if(display.overscan && !io.overscan) {
       //when disabling overscan, clear the overscan area that won't be rendered to:
-      for(uint y = 1; y <= 240; y++) {
+      for(unsigned y = 1; y <= 240; y++) {
         if(y >= 8 && y <= 231) continue;
         auto output = ppu.output + y * 1024;
         memory::fill<uint16_t>(output, 1024);
@@ -83,7 +83,7 @@ auto PPU::cycleObjectEvaluate() -> void {
   obj.evaluate(hcounter() >> 3);
 }
 
-template<uint Cycle>
+template<unsigned Cycle>
 auto PPU::cycleBackgroundFetch() -> void {
   switch(io.bgMode) {
   case 0:
@@ -189,7 +189,7 @@ auto PPU::cycleRenderPixel() -> void {
   screen.run();
 }
 
-template<uint Cycle>
+template<unsigned Cycle>
 auto PPU::cycle() -> void {
   if constexpr(Cycle >=  0 && Cycle <= 1016 && (Cycle -  0) % 8 == 0) cycleObjectEvaluate();
   if constexpr(Cycle >=  0 && Cycle <= 1054 && (Cycle -  0) % 4 == 0) cycleBackgroundFetch<(Cycle - 0) / 4 & 7>();
@@ -200,7 +200,7 @@ auto PPU::cycle() -> void {
   step();
 }
 
-auto PPU::latchCounters(uint hcounter, uint vcounter) -> void {
+auto PPU::latchCounters(unsigned hcounter, unsigned vcounter) -> void {
   io.hcounter = hcounter;
   io.vcounter = vcounter;
   latch.counters = 1;
@@ -263,7 +263,7 @@ auto PPU::writeCGRAM(uint8_t addr, uint15 data) -> void {
   screen.cgram[addr] = data;
 }
 
-auto PPU::readIO(uint addr, uint8_t data) -> uint8_t {
+auto PPU::readIO(unsigned addr, uint8_t data) -> uint8_t {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {
@@ -391,7 +391,7 @@ auto PPU::readIO(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto PPU::writeIO(uint addr, uint8_t data) -> void {
+auto PPU::writeIO(unsigned addr, uint8_t data) -> void {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {
@@ -579,7 +579,7 @@ auto PPU::writeIO(uint addr, uint8_t data) -> void {
 
   //VMAIN
   case 0x2115: {
-    static const uint size[4] = {1, 32, 128, 128};
+    static const unsigned size[4] = {1, 32, 128, 128};
     io.vramIncrementSize = size[data & 3];
     io.vramMapping       = data >> 2 & 3;
     io.vramIncrementMode = data >> 7 & 1;
@@ -956,7 +956,7 @@ auto PPU::Mosaic::enable() const -> bool {
   return false;
 }
 
-auto PPU::Mosaic::voffset() const -> uint {
+auto PPU::Mosaic::voffset() const -> unsigned {
   return size - vcounter;
 }
 
@@ -991,8 +991,8 @@ auto PPU::Background::runMode7() -> void {
   int hoffset = (nall::Integer<13>)ppu.io.hoffsetMode7;
   int voffset = (nall::Integer<13>)ppu.io.voffsetMode7;
 
-  uint x = mosaic.hoffset;
-  uint y = ppu.vcounter();
+  unsigned x = mosaic.hoffset;
+  unsigned y = ppu.vcounter();
   if(ppu.bg1.mosaic.enable) y -= ppu.mosaic.voffset();  //BG2 vertical mosaic uses BG1 mosaic enable
 
   if(!mosaic.enable) {
@@ -1021,7 +1021,7 @@ auto PPU::Background::runMode7() -> void {
   uint8_t tile = ppu.io.repeatMode7 == 3 && outOfBounds ? 0 : ppu.vram[tileAddress] >> 0;
   uint8_t palette = ppu.io.repeatMode7 == 2 && outOfBounds ? 0 : ppu.vram[tile << 6 | paletteAddress] >> 8;
 
-  uint priority;
+  unsigned priority;
   if(id == ID::BG1) {
     priority = io.priority[0];
   } else if(id == ID::BG2) {
@@ -1073,13 +1073,13 @@ auto PPU::Background::begin() -> void {
 auto PPU::Background::fetchNameTable() -> void {
   if(ppu.vcounter() == 0) return;
 
-  uint nameTableIndex = ppu.hcounter() >> 5 << hires();
+  unsigned nameTableIndex = ppu.hcounter() >> 5 << hires();
   int x = (ppu.hcounter() & ~31) >> 2;
 
-  uint hpixel = x << hires();
-  uint vpixel = ppu.vcounter();
-  uint hscroll = io.hoffset;
-  uint vscroll = io.voffset;
+  unsigned hpixel = x << hires();
+  unsigned vpixel = ppu.vcounter();
+  unsigned hscroll = io.hoffset;
+  unsigned vscroll = io.voffset;
 
   if(hires()) {
     hscroll <<= 1;
@@ -1092,13 +1092,13 @@ auto PPU::Background::fetchNameTable() -> void {
   bool repeated = false;
   repeat:
 
-  uint hoffset = hpixel + hscroll;
-  uint voffset = vpixel + vscroll;
+  unsigned hoffset = hpixel + hscroll;
+  unsigned voffset = vpixel + vscroll;
 
   if(ppu.io.bgMode == 2 || ppu.io.bgMode == 4 || ppu.io.bgMode == 6) {
     auto hlookup = ppu.bg3.opt.hoffset;
     auto vlookup = ppu.bg3.opt.voffset;
-    uint valid = 1 << 13 + id;
+    unsigned valid = 1 << 13 + id;
 
     if(ppu.io.bgMode == 4) {
       if(hlookup & valid) {
@@ -1114,21 +1114,21 @@ auto PPU::Background::fetchNameTable() -> void {
     }
   }
 
-  uint width = 256 << hires();
-  uint hsize = width << io.tileSize << io.screenSize.bit(0);
-  uint vsize = width << io.tileSize << io.screenSize.bit(1);
+  unsigned width = 256 << hires();
+  unsigned hsize = width << io.tileSize << io.screenSize.bit(0);
+  unsigned vsize = width << io.tileSize << io.screenSize.bit(1);
 
   hoffset &= hsize - 1;
   voffset &= vsize - 1;
 
-  uint vtiles = 3 + io.tileSize;
-  uint htiles = !hires() ? vtiles : 4;
+  unsigned vtiles = 3 + io.tileSize;
+  unsigned htiles = !hires() ? vtiles : 4;
 
-  uint htile = hoffset >> htiles;
-  uint vtile = voffset >> vtiles;
+  unsigned htile = hoffset >> htiles;
+  unsigned vtile = voffset >> vtiles;
 
-  uint hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
-  uint vscreen = io.screenSize.bit(1) ? 32 << 5 + io.screenSize.bit(0) : 0;
+  unsigned hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
+  unsigned vscreen = io.screenSize.bit(1) ? 32 << 5 + io.screenSize.bit(0) : 0;
 
   uint16_t offset = (uint5)htile << 0 | (uint5)vtile << 5;
   if(htile & 0x20) offset += hscreen;
@@ -1147,15 +1147,15 @@ auto PPU::Background::fetchNameTable() -> void {
   if(htiles == 4 && bool(hoffset & 8) != tile.hmirror) tile.character +=  1;
   if(vtiles == 4 && bool(voffset & 8) != tile.vmirror) tile.character += 16;
 
-  uint characterMask = ppu.vram.mask >> 3 + io.mode;
-  uint characterIndex = io.tiledataAddress >> 3 + io.mode;
+  unsigned characterMask = ppu.vram.mask >> 3 + io.mode;
+  unsigned characterIndex = io.tiledataAddress >> 3 + io.mode;
   uint16_t origin = tile.character + characterIndex & characterMask;
 
   if(tile.vmirror) voffset ^= 7;
   tile.address = (origin << 3 + io.mode) + (voffset & 7);
 
-  uint paletteOffset = ppu.io.bgMode == 0 ? id << 5 : 0;
-  uint paletteSize = 2 << io.mode;
+  unsigned paletteOffset = ppu.io.bgMode == 0 ? id << 5 : 0;
+  unsigned paletteSize = 2 << io.mode;
   tile.palette = paletteOffset + (tile.paletteGroup << paletteSize);
 
   nameTableIndex++;
@@ -1166,23 +1166,23 @@ auto PPU::Background::fetchNameTable() -> void {
   }
 }
 
-auto PPU::Background::fetchOffset(uint y) -> void {
+auto PPU::Background::fetchOffset(unsigned y) -> void {
   if(ppu.vcounter() == 0) return;
 
-  uint characterIndex = ppu.hcounter() >> 5 << hires();
-  uint x = characterIndex << 3;
+  unsigned characterIndex = ppu.hcounter() >> 5 << hires();
+  unsigned x = characterIndex << 3;
 
-  uint hoffset = x + (io.hoffset & ~7);
-  uint voffset = y + (io.voffset);
+  unsigned hoffset = x + (io.hoffset & ~7);
+  unsigned voffset = y + (io.voffset);
 
-  uint vtiles = 3 + io.tileSize;
-  uint htiles = !hires() ? vtiles : 4;
+  unsigned vtiles = 3 + io.tileSize;
+  unsigned htiles = !hires() ? vtiles : 4;
 
-  uint htile = hoffset >> htiles;
-  uint vtile = voffset >> vtiles;
+  unsigned htile = hoffset >> htiles;
+  unsigned vtile = voffset >> vtiles;
 
-  uint hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
-  uint vscreen = io.screenSize.bit(1) ? 32 << 5 + io.screenSize.bit(0) : 0;
+  unsigned hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
+  unsigned vscreen = io.screenSize.bit(1) ? 32 << 5 + io.screenSize.bit(0) : 0;
 
   uint16_t offset = (uint5)htile << 0 | (uint5)vtile << 5;
   if(htile & 0x20) offset += hscreen;
@@ -1193,10 +1193,10 @@ auto PPU::Background::fetchOffset(uint y) -> void {
   if(y == 8) opt.voffset = ppu.vram[address];
 }
 
-auto PPU::Background::fetchCharacter(uint index, bool half) -> void {
+auto PPU::Background::fetchCharacter(unsigned index, bool half) -> void {
   if(ppu.vcounter() == 0) return;
 
-  uint characterIndex = (ppu.hcounter() >> 5 << hires()) + half;
+  unsigned characterIndex = (ppu.hcounter() >> 5 << hires()) + half;
 
   auto& tile = tiles[characterIndex];
   uint16_t data = ppu.vram[tile.address + (index << 3)];
@@ -1235,11 +1235,11 @@ auto PPU::Background::run(bool screen) -> void {
 
   Pixel pixel;
   pixel.priority = tile.priority;
-  pixel.palette = color ? uint(tile.palette + color) : 0;
+  pixel.palette = color ? unsigned(tile.palette + color) : 0;
   pixel.paletteGroup = tile.paletteGroup;
   if(++pixelCounter == 0) renderingIndex++;
 
-  uint x = ppu.hcounter() - 56 >> 2;
+  unsigned x = ppu.hcounter() - 56 >> 2;
 
   if(x == 0 && (!hires() || screen == Screen::Below)) {
     mosaic.hcounter = ppu.mosaic.size;
@@ -1277,7 +1277,7 @@ auto PPU::Background::power() -> void {
 
 auto PPU::OAM::read(uint10 address) -> uint8_t {
   if(!(address & 0x200)) {
-    uint n = address >> 2;  //object#
+    unsigned n = address >> 2;  //object#
     address &= 3;
     if(address == 0) return object[n].x & 0xff;
     if(address == 1) return object[n].y;
@@ -1290,7 +1290,7 @@ auto PPU::OAM::read(uint10 address) -> uint8_t {
     | object[n].vflip      << 7
     );
   } else {
-    uint n = (address & 0x1f) << 2;  //object#
+    unsigned n = (address & 0x1f) << 2;  //object#
     return (
       object[n + 0].x >> 8 << 0
     | object[n + 0].size   << 1
@@ -1306,7 +1306,7 @@ auto PPU::OAM::read(uint10 address) -> uint8_t {
 
 auto PPU::OAM::write(uint10 address, uint8_t data) -> void {
   if(!(address & 0x200)) {
-    uint n = address >> 2;  //object#
+    unsigned n = address >> 2;  //object#
     address &= 3;
     if(address == 0) { object[n].x = object[n].x & 0x100 | data; return; }
     if(address == 1) { object[n].y = data; return; }
@@ -1317,7 +1317,7 @@ auto PPU::OAM::write(uint10 address, uint8_t data) -> void {
     object[n].hflip      = data >> 6 & 1;
     object[n].vflip      = data >> 7 & 1;
   } else {
-    uint n = (address & 0x1f) << 2;  //object#
+    unsigned n = (address & 0x1f) << 2;  //object#
     object[n + 0].x    = object[n + 0].x & 0xff | bool(data & 0x01) << 8;
     object[n + 0].size = bool(data & 0x02);
     object[n + 1].x    = object[n + 1].x & 0xff | bool(data & 0x04) << 8;
@@ -1329,23 +1329,23 @@ auto PPU::OAM::write(uint10 address, uint8_t data) -> void {
   }
 }
 
-auto PPU::OAM::Object::width() const -> uint {
+auto PPU::OAM::Object::width() const -> unsigned {
   if(size == 0) {
-    static const uint width[] = { 8,  8,  8, 16, 16, 32, 16, 16};
+    static const unsigned width[] = { 8,  8,  8, 16, 16, 32, 16, 16};
     return width[ppu.obj.io.baseSize];
   } else {
-    static const uint width[] = {16, 32, 64, 32, 64, 64, 32, 32};
+    static const unsigned width[] = {16, 32, 64, 32, 64, 64, 32, 32};
     return width[ppu.obj.io.baseSize];
   }
 }
 
-auto PPU::OAM::Object::height() const -> uint {
+auto PPU::OAM::Object::height() const -> unsigned {
   if(size == 0) {
     if(ppu.obj.io.interlace && ppu.obj.io.baseSize >= 6) return 16;  //hardware quirk
-    static const uint height[] = { 8,  8,  8, 16, 16, 32, 32, 32};
+    static const unsigned height[] = { 8,  8,  8, 16, 16, 32, 32, 32};
     return height[ppu.obj.io.baseSize];
   } else {
-    static const uint height[] = {16, 32, 64, 32, 64, 64, 64, 32};
+    static const unsigned height[] = {16, 32, 64, 32, 64, 64, 64, 32};
     return height[ppu.obj.io.baseSize];
   }
 }
@@ -1357,7 +1357,7 @@ auto PPU::Object::addressReset() -> void {
 }
 
 auto PPU::Object::setFirstSprite() -> void {
-  io.firstSprite = !ppu.io.oamPriority ? 0 : uint(ppu.io.oamAddress >> 2);
+  io.firstSprite = !ppu.io.oamPriority ? 0 : unsigned(ppu.io.oamAddress >> 2);
 }
 
 auto PPU::Object::frame() -> void {
@@ -1377,8 +1377,8 @@ auto PPU::Object::scanline() -> void {
   auto oamItem = t.item[t.active];
   auto oamTile = t.tile[t.active];
 
-  for(uint n : range(32)) oamItem[n].valid = false;
-  for(uint n : range(34)) oamTile[n].valid = false;
+  for(unsigned n : range(32)) oamItem[n].valid = false;
+  for(unsigned n : range(34)) oamTile[n].valid = false;
 
   if(t.y == ppu.vdisp() && !ppu.io.displayDisable) addressReset();
   if(t.y >= ppu.vdisp() - 1 || ppu.io.displayDisable) return;
@@ -1402,7 +1402,7 @@ auto PPU::Object::evaluate(uint7 index) -> void {
 
 auto PPU::Object::onScanline(PPU::OAM::Object& sprite) -> bool {
   if(sprite.x > 256 && sprite.x + sprite.width() - 1 < 512) return false;
-  uint height = sprite.height() >> io.interlace;
+  unsigned height = sprite.height() >> io.interlace;
   if(t.y >= sprite.y && t.y < sprite.y + height) return true;
   if(sprite.y + height >= 256 && t.y < (sprite.y + height & 255)) return true;
   return false;
@@ -1413,16 +1413,16 @@ auto PPU::Object::run() -> void {
   output.below.priority = 0;
 
   auto oamTile = t.tile[!t.active];
-  uint x = t.x++;
+  unsigned x = t.x++;
 
-  for(uint n : range(34)) {
+  for(unsigned n : range(34)) {
     const auto& tile = oamTile[n];
     if(!tile.valid) break;
 
     int px = x - (int9)tile.x;
     if(px & ~7) continue;
 
-    uint color = 0, shift = tile.hflip ? px : 7 - px;
+    unsigned color = 0, shift = tile.hflip ? px : 7 - px;
     color += tile.data >> shift +  0 & 1;
     color += tile.data >> shift +  7 & 2;
     color += tile.data >> shift + 14 & 4;
@@ -1446,7 +1446,7 @@ auto PPU::Object::fetch() -> void {
   auto oamItem = t.item[t.active];
   auto oamTile = t.tile[t.active];
 
-  for(uint i : reverse(range(32))) {
+  for(unsigned i : reverse(range(32))) {
     if(!oamItem[i].valid) continue;
 
     if(ppu.io.displayDisable || ppu.vcounter() >= ppu.vdisp() - 1) {
@@ -1457,7 +1457,7 @@ auto PPU::Object::fetch() -> void {
     ppu.latch.oamAddress = 0x0200 + (oamItem[i].index >> 2);
     const auto& sprite = oam.object[oamItem[i].index];
 
-    uint tileWidth = sprite.width() >> 3;
+    unsigned tileWidth = sprite.width() >> 3;
     int x = sprite.x;
     int y = t.y - sprite.y & 0xff;
     if(io.interlace) y <<= 1;
@@ -1484,20 +1484,20 @@ auto PPU::Object::fetch() -> void {
     uint16_t chrx =  (sprite.character & 15);
     uint16_t chry = ((sprite.character >> 4) + (y >> 3) & 15) << 4;
 
-    for(uint tx : range(tileWidth)) {
-      uint sx = x + (tx << 3) & 511;
+    for(unsigned tx : range(tileWidth)) {
+      unsigned sx = x + (tx << 3) & 511;
       if(x != 256 && sx >= 256 && sx + 7 < 512) continue;
       if(t.tileCount++ >= 34) break;
 
-      uint n = t.tileCount - 1;
+      unsigned n = t.tileCount - 1;
       oamTile[n].valid = true;
       oamTile[n].x = sx;
       oamTile[n].priority = sprite.priority;
       oamTile[n].palette = 128 + (sprite.palette << 4);
       oamTile[n].hflip = sprite.hflip;
 
-      uint mx = !sprite.hflip ? tx : tileWidth - 1 - tx;
-      uint pos = tiledataAddress + ((chry + (chrx + mx & 15)) << 4);
+      unsigned mx = !sprite.hflip ? tx : tileWidth - 1 - tx;
+      unsigned pos = tiledataAddress + ((chry + (chrx + mx & 15)) << 4);
       uint16_t address = (pos & 0xfff0) + (y & 7);
 
       if(!ppu.io.displayDisable)
@@ -1534,12 +1534,12 @@ auto PPU::Object::power() -> void {
   t.tileCount = 0;
 
   t.active = 0;
-  for(uint p : range(2)) {
-    for(uint n : range(32)) {
+  for(unsigned p : range(2)) {
+    for(unsigned n : range(32)) {
       t.item[p][n].valid = false;
       t.item[p][n].index = 0;
     }
-    for(uint n : range(34)) {
+    for(unsigned n : range(34)) {
       t.tile[p][n].valid = false;
       t.tile[p][n].x = 0;
       t.tile[p][n].priority = 0;
@@ -1611,7 +1611,7 @@ auto PPU::Window::run() -> void {
   output.below.colorEnable = array[io.col.belowMask];
 }
 
-auto PPU::Window::test(bool oneEnable, bool one, bool twoEnable, bool two, uint mask) -> bool {
+auto PPU::Window::test(bool oneEnable, bool one, bool twoEnable, bool two, unsigned mask) -> bool {
   if(!oneEnable) return two && twoEnable;
   if(!twoEnable) return one;
   if(mask == 0) return (one | two);
@@ -1713,7 +1713,7 @@ auto PPU::Screen::run() -> void {
 auto PPU::Screen::below(bool hires) -> uint16_t {
   if(ppu.io.displayDisable || (!ppu.io.overscan && ppu.vcounter() >= 225)) return 0;
 
-  uint priority = 0;
+  unsigned priority = 0;
   if(ppu.bg1.output.below.priority) {
     priority = ppu.bg1.output.below.priority;
     if(io.directColor && (ppu.io.bgMode == 3 || ppu.io.bgMode == 4 || ppu.io.bgMode == 7)) {
@@ -1752,7 +1752,7 @@ auto PPU::Screen::below(bool hires) -> uint16_t {
 auto PPU::Screen::above() -> uint16_t {
   if(ppu.io.displayDisable || (!ppu.io.overscan && ppu.vcounter() >= 225)) return 0;
 
-  uint priority = 0;
+  unsigned priority = 0;
   if(ppu.bg1.output.above.priority) {
     priority = ppu.bg1.output.above.priority;
     if(io.directColor && (ppu.io.bgMode == 3 || ppu.io.bgMode == 4 || ppu.io.bgMode == 7)) {
@@ -1805,18 +1805,18 @@ auto PPU::Screen::above() -> uint16_t {
   );
 }
 
-auto PPU::Screen::blend(uint x, uint y) const -> uint15 {
+auto PPU::Screen::blend(unsigned x, unsigned y) const -> uint15 {
   if(!io.colorMode) {  //add
     if(!math.colorHalve) {
-      uint sum = x + y;
-      uint carry = (sum - ((x ^ y) & 0x0421)) & 0x8420;
+      unsigned sum = x + y;
+      unsigned carry = (sum - ((x ^ y) & 0x0421)) & 0x8420;
       return (sum - carry) | (carry - (carry >> 5));
     } else {
       return (x + y - ((x ^ y) & 0x0421)) >> 1;
     }
   } else {  //sub
-    uint diff = x - y + 0x8420;
-    uint borrow = (diff - ((x ^ y) & 0x8420)) & 0x8420;
+    unsigned diff = x - y + 0x8420;
+    unsigned borrow = (diff - ((x ^ y) & 0x8420)) & 0x8420;
     if(!math.colorHalve) {
       return   (diff - borrow) & (borrow - (borrow >> 5));
     } else {
@@ -2160,14 +2160,14 @@ bg4(Background::ID::BG4) {
   ppu1.version = 1;  //allowed values: 1
   ppu2.version = 3;  //allowed values: 1, 2, 3
 
-  for(uint l = 0; l < 16; l++) {
-    for(uint r = 0; r < 32; r++) {
-      for(uint g = 0; g < 32; g++) {
-        for(uint b = 0; b < 32; b++) {
+  for(unsigned l = 0; l < 16; l++) {
+    for(unsigned r = 0; r < 32; r++) {
+      for(unsigned g = 0; g < 32; g++) {
+        for(unsigned b = 0; b < 32; b++) {
           double luma = (double)l / 15.0;
-          uint ar = (luma * r + 0.5);
-          uint ag = (luma * g + 0.5);
-          uint ab = (luma * b + 0.5);
+          unsigned ar = (luma * r + 0.5);
+          unsigned ag = (luma * g + 0.5);
+          unsigned ab = (luma * b + 0.5);
           lightTable[l][(r << 10) + (g << 5) + b] = (ab << 10) + (ag << 5) + ar;
         }
       }
@@ -2188,7 +2188,7 @@ auto PPU::step() -> void {
   synchronizeCPU();
 }
 
-auto PPU::step(uint clocks) -> void {
+auto PPU::step(unsigned clocks) -> void {
   clocks >>= 1;
   while(clocks--) {
     tick(2);
@@ -2217,8 +2217,8 @@ auto PPU::power(bool reset) -> void {
   PPUcounter::reset();
   memory::fill<uint16_t>(output, 512 * 480);
 
-  function<uint8_t (uint, uint8_t)> reader{&PPU::readIO, this};
-  function<void  (uint, uint8_t)> writer{&PPU::writeIO, this};
+  function<uint8_t (unsigned, uint8_t)> reader{&PPU::readIO, this};
+  function<void  (unsigned, uint8_t)> writer{&PPU::writeIO, this};
   bus.map(reader, writer, "00-3f,80-bf:2100-213f");
 
   if(!reset) random.array((uint8_t*)vram.data, sizeof(vram.data));
@@ -2327,9 +2327,9 @@ auto PPU::refresh() -> void {
   auto width  = 512;
   auto height = 480;
   if(configuration.video.blurEmulation) {
-    for(uint y : range(height)) {
+    for(unsigned y : range(height)) {
       auto data = output + y * pitch;
-      for(uint x : range(width - 1)) {
+      for(unsigned x : range(width - 1)) {
         auto a = data[x + 0];
         auto b = data[x + 1];
         data[x] = (a + b - ((a ^ b) & 0x0421)) >> 1;

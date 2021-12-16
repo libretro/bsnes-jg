@@ -14,8 +14,8 @@ auto System::serialize(bool synchronize) -> serializer {
   if(!information.serializeSize[synchronize]) return {};  //should never occur
   if(synchronize) runToSave();
 
-  uint signature = 0x31545342;
-  uint serializeSize = information.serializeSize[synchronize];
+  unsigned signature = 0x31545342;
+  unsigned serializeSize = information.serializeSize[synchronize];
   char version[16] = {};
   char description[512] = {};
   memory::copy(&version, (const char*)Emulator::SerializerVersion, Emulator::SerializerVersion.size());
@@ -32,8 +32,8 @@ auto System::serialize(bool synchronize) -> serializer {
 }
 
 auto System::unserialize(serializer& s) -> bool {
-  uint signature = 0;
-  uint serializeSize = 0;
+  unsigned signature = 0;
+  unsigned serializeSize = 0;
   char version[16] = {};
   char description[512] = {};
   bool synchronize = false;
@@ -109,11 +109,11 @@ auto System::serializeAll(serializer& s, bool synchronize) -> void {
 //perform dry-run state save:
 //determines exactly how many bytes are needed to save state for this cartridge,
 //as amount varies per game (eg different RAM sizes, special chips, etc.)
-auto System::serializeInit(bool synchronize) -> uint {
+auto System::serializeInit(bool synchronize) -> unsigned {
   serializer s;
 
-  uint signature = 0;
-  uint serializeSize = 0;
+  unsigned signature = 0;
+  unsigned serializeSize = 0;
   char version[16] = {};
   char description[512] = {};
 

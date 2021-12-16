@@ -5,7 +5,7 @@
 namespace Processor {
 
 struct ARM7TDMI {
-  enum : uint {
+  enum : unsigned {
     Nonsequential = 1 << 0,  //N cycle
     Sequential    = 1 << 1,  //S cycle
     Prefetch      = 1 << 2,  //instruction fetch
@@ -17,10 +17,10 @@ struct ARM7TDMI {
     Signed        = 1 << 8,  //sign-extend
   };
 
-  virtual auto step(uint clocks) -> void = 0;
+  virtual auto step(unsigned clocks) -> void = 0;
   virtual auto sleep() -> void = 0;
-  virtual auto get(uint mode, uint32_t address) -> uint32_t = 0;
-  virtual auto set(uint mode, uint32_t address, uint32_t word) -> void = 0;
+  virtual auto get(unsigned mode, uint32_t address) -> uint32_t = 0;
+  virtual auto set(unsigned mode, uint32_t address, uint32_t word) -> void = 0;
 
   //arm7tdmi.cpp
   ARM7TDMI();
@@ -37,10 +37,10 @@ struct ARM7TDMI {
 
   //memory.cpp
   auto idle() -> void;
-  auto read(uint mode, uint32_t address) -> uint32_t;
-  auto load(uint mode, uint32_t address) -> uint32_t;
-  auto write(uint mode, uint32_t address, uint32_t word) -> void;
-  auto store(uint mode, uint32_t address, uint32_t word) -> void;
+  auto read(unsigned mode, uint32_t address) -> uint32_t;
+  auto load(unsigned mode, uint32_t address) -> uint32_t;
+  auto write(unsigned mode, uint32_t address, uint32_t word) -> void;
+  auto store(unsigned mode, uint32_t address, uint32_t word) -> void;
 
   //algorithms.cpp
   auto ADD(uint32_t, uint32_t, bool) -> uint32_t;
@@ -57,7 +57,7 @@ struct ARM7TDMI {
   //instruction.cpp
   auto fetch() -> void;
   auto instruction() -> void;
-  auto exception(uint mode, uint32_t address) -> void;
+  auto exception(unsigned mode, uint32_t address) -> void;
   auto armInitialize() -> void;
   auto thumbInitialize() -> void;
 
@@ -133,7 +133,7 @@ struct ARM7TDMI {
   };
 
   struct PSR {
-    enum : uint {
+    enum : unsigned {
       USR = 0x10,  //user
       FIQ = 0x11,  //fast interrupt
       IRQ = 0x12,  //interrupt

@@ -8,11 +8,11 @@ auto SuperFX::CPUROM::data() -> uint8_t* {
   return superfx.rom.data();
 }
 
-auto SuperFX::CPUROM::size() const -> uint {
+auto SuperFX::CPUROM::size() const -> unsigned {
   return superfx.rom.size();
 }
 
-auto SuperFX::CPUROM::read(uint addr, uint8_t data) -> uint8_t {
+auto SuperFX::CPUROM::read(unsigned addr, uint8_t data) -> uint8_t {
   if(superfx.regs.sfr.g && superfx.regs.scmr.ron) {
     static const uint8_t vector[16] = {
       0x00, 0x01, 0x00, 0x01, 0x04, 0x01, 0x00, 0x01,
@@ -23,7 +23,7 @@ auto SuperFX::CPUROM::read(uint addr, uint8_t data) -> uint8_t {
   return superfx.rom.read(addr, data);
 }
 
-auto SuperFX::CPUROM::write(uint addr, uint8_t data) -> void {
+auto SuperFX::CPUROM::write(unsigned addr, uint8_t data) -> void {
   superfx.rom.write(addr, data);
 }
 
@@ -31,16 +31,16 @@ auto SuperFX::CPURAM::data() -> uint8_t* {
   return superfx.ram.data();
 }
 
-auto SuperFX::CPURAM::size() const -> uint {
+auto SuperFX::CPURAM::size() const -> unsigned {
   return superfx.ram.size();
 }
 
-auto SuperFX::CPURAM::read(uint addr, uint8_t data) -> uint8_t {
+auto SuperFX::CPURAM::read(unsigned addr, uint8_t data) -> uint8_t {
   if(superfx.regs.sfr.g && superfx.regs.scmr.ran) return data;
   return superfx.ram.read(addr, data);
 }
 
-auto SuperFX::CPURAM::write(uint addr, uint8_t data) -> void {
+auto SuperFX::CPURAM::write(unsigned addr, uint8_t data) -> void {
   superfx.ram.write(addr, data);
 }
 
@@ -95,20 +95,20 @@ auto SuperFX::rpix(uint8_t x, uint8_t y) -> uint8_t {
   flushPixelCache(pixelcache[1]);
   flushPixelCache(pixelcache[0]);
 
-  uint cn;  //character number
+  unsigned cn;  //character number
   switch(regs.por.obj ? 3 : regs.scmr.ht) {
   case 0: cn = ((x & 0xf8) << 1) + ((y & 0xf8) >> 3); break;
   case 1: cn = ((x & 0xf8) << 1) + ((x & 0xf8) >> 1) + ((y & 0xf8) >> 3); break;
   case 2: cn = ((x & 0xf8) << 1) + ((x & 0xf8) << 0) + ((y & 0xf8) >> 3); break;
   case 3: cn = ((y & 0x80) << 2) + ((x & 0x80) << 1) + ((y & 0x78) << 1) + ((x & 0x78) >> 3); break;
   }
-  uint bpp = 2 << (regs.scmr.md - (regs.scmr.md >> 1));  // = [regs.scmr.md]{ 2, 4, 4, 8 };
-  uint addr = 0x700000 + (cn * (bpp << 3)) + (regs.scbr << 10) + ((y & 0x07) * 2);
+  unsigned bpp = 2 << (regs.scmr.md - (regs.scmr.md >> 1));  // = [regs.scmr.md]{ 2, 4, 4, 8 };
+  unsigned addr = 0x700000 + (cn * (bpp << 3)) + (regs.scbr << 10) + ((y & 0x07) * 2);
   uint8_t data = 0x00;
   x = (x & 7) ^ 7;
 
-  for(uint n : range(bpp)) {
-    uint byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
+  for(unsigned n : range(bpp)) {
+    unsigned byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
     step(regs.clsr ? 5 : 6);
     data |= ((read(addr + byte) >> x) & 1) << n;
   }
@@ -122,20 +122,20 @@ auto SuperFX::flushPixelCache(PixelCache& cache) -> void {
   uint8_t x = cache.offset << 3;
   uint8_t y = cache.offset >> 5;
 
-  uint cn;  //character number
+  unsigned cn;  //character number
   switch(regs.por.obj ? 3 : regs.scmr.ht) {
   case 0: cn = ((x & 0xf8) << 1) + ((y & 0xf8) >> 3); break;
   case 1: cn = ((x & 0xf8) << 1) + ((x & 0xf8) >> 1) + ((y & 0xf8) >> 3); break;
   case 2: cn = ((x & 0xf8) << 1) + ((x & 0xf8) << 0) + ((y & 0xf8) >> 3); break;
   case 3: cn = ((y & 0x80) << 2) + ((x & 0x80) << 1) + ((y & 0x78) << 1) + ((x & 0x78) >> 3); break;
   }
-  uint bpp = 2 << (regs.scmr.md - (regs.scmr.md >> 1));  // = [regs.scmr.md]{ 2, 4, 4, 8 };
-  uint addr = 0x700000 + (cn * (bpp << 3)) + (regs.scbr << 10) + ((y & 0x07) * 2);
+  unsigned bpp = 2 << (regs.scmr.md - (regs.scmr.md >> 1));  // = [regs.scmr.md]{ 2, 4, 4, 8 };
+  unsigned addr = 0x700000 + (cn * (bpp << 3)) + (regs.scbr << 10) + ((y & 0x07) * 2);
 
-  for(uint n : range(bpp)) {
-    uint byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
+  for(unsigned n : range(bpp)) {
+    unsigned byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
     uint8_t data = 0x00;
-    for(uint x : range(8)) data |= ((cache.data[x] >> n) & 1) << x;
+    for(unsigned x : range(8)) data |= ((cache.data[x] >> n) & 1) << x;
     if(cache.bitpend != 0xff) {
       step(regs.clsr ? 5 : 6);
       data &= cache.bitpend;
@@ -148,7 +148,7 @@ auto SuperFX::flushPixelCache(PixelCache& cache) -> void {
   cache.bitpend = 0x00;
 }
 
-auto SuperFX::read(uint addr, uint8_t data) -> uint8_t {
+auto SuperFX::read(unsigned addr, uint8_t data) -> uint8_t {
   if((addr & 0xc00000) == 0x000000) {  //$00-3f:0000-7fff,:8000-ffff
     while(!regs.scmr.ron) {
       step(6);
@@ -179,7 +179,7 @@ auto SuperFX::read(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto SuperFX::write(uint addr, uint8_t data) -> void {
+auto SuperFX::write(unsigned addr, uint8_t data) -> void {
   if((addr & 0xe00000) == 0x600000) {  //$60-7f:0000-ffff
     while(!regs.scmr.ran) {
       step(6);
@@ -194,9 +194,9 @@ auto SuperFX::readOpcode(uint16_t addr) -> uint8_t {
   uint16_t offset = addr - regs.cbr;
   if(offset < 512) {
     if(cache.valid[offset >> 4] == false) {
-      uint dp = offset & 0xfff0;
-      uint sp = (regs.pbr << 16) + ((regs.cbr + dp) & 0xfff0);
-      for(uint n : range(16)) {
+      unsigned dp = offset & 0xfff0;
+      unsigned sp = (regs.pbr << 16) + ((regs.cbr + dp) & 0xfff0);
+      for(unsigned n : range(16)) {
         step(regs.clsr ? 5 : 6);
         cache.buffer[dp++] = read(sp++);
       }
@@ -235,7 +235,7 @@ auto SuperFX::pipe() -> uint8_t {
 }
 
 auto SuperFX::flushCache() -> void {
-  for(uint n : range(32)) cache.valid[n] = false;
+  for(unsigned n : range(32)) cache.valid[n] = false;
 }
 
 auto SuperFX::readCache(uint16_t addr) -> uint8_t {
@@ -249,7 +249,7 @@ auto SuperFX::writeCache(uint16_t addr, uint8_t data) -> void {
   if((addr & 15) == 15) cache.valid[addr >> 4] = true;
 }
 
-auto SuperFX::readIO(uint addr, uint8_t) -> uint8_t {
+auto SuperFX::readIO(unsigned addr, uint8_t) -> uint8_t {
   cpu.synchronizeCoprocessors();
   addr = 0x3000 | addr & 0x3ff;
 
@@ -301,7 +301,7 @@ auto SuperFX::readIO(uint addr, uint8_t) -> uint8_t {
   return 0x00;
 }
 
-auto SuperFX::writeIO(uint addr, uint8_t data) -> void {
+auto SuperFX::writeIO(unsigned addr, uint8_t data) -> void {
   cpu.synchronizeCoprocessors();
   addr = 0x3000 | addr & 0x3ff;
 
@@ -310,7 +310,7 @@ auto SuperFX::writeIO(uint addr, uint8_t data) -> void {
   }
 
   if(addr >= 0x3000 && addr <= 0x301f) {
-    uint n = (addr >> 1) & 15;
+    unsigned n = (addr >> 1) & 15;
     if((addr & 1) == 0) {
       regs.r[n] = (regs.r[n] & 0xff00) | data;
     } else {
@@ -363,7 +363,7 @@ auto SuperFX::writeIO(uint addr, uint8_t data) -> void {
   }
 }
 
-auto SuperFX::step(uint clocks) -> void {
+auto SuperFX::step(unsigned clocks) -> void {
   if(regs.romcl) {
     regs.romcl -= min(clocks, regs.romcl);
     if(regs.romcl == 0) {
@@ -464,9 +464,9 @@ auto SuperFX::power() -> void {
   romMask = rom.size() - 1;
   ramMask = ram.size() - 1;
 
-  for(uint n : range(512)) cache.buffer[n] = 0x00;
-  for(uint n : range(32)) cache.valid[n] = false;
-  for(uint n : range(2)) {
+  for(unsigned n : range(512)) cache.buffer[n] = 0x00;
+  for(unsigned n : range(32)) cache.valid[n] = false;
+  for(unsigned n : range(2)) {
     pixelcache[n].offset = ~0;
     pixelcache[n].bitpend = 0x00;
   }

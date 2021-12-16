@@ -3,8 +3,8 @@
 namespace nall::vfs {
 
 struct file {
-  enum class mode : uint { read, write, modify, create };
-  enum class index : uint { absolute, relative };
+  enum class mode : unsigned { read, write, modify, create };
+  enum class index : unsigned { absolute, relative };
 
   virtual ~file() = default;
 
@@ -24,13 +24,13 @@ struct file {
     while(bytes--) *data++ = read();
   }
 
-  auto readl(uint bytes) -> uintmax {
+  auto readl(unsigned bytes) -> uintmax {
     uintmax data = 0;
     for(auto n : range(bytes)) data |= (uintmax)read() << n * 8;
     return data;
   }
 
-  auto readm(uint bytes) -> uintmax {
+  auto readm(unsigned bytes) -> uintmax {
     uintmax data = 0;
     for(auto n : range(bytes)) data = data << 8 | read();
     return data;
@@ -48,7 +48,7 @@ struct file {
     while(bytes--) write(*data++);
   }
 
-  auto writel(uintmax data, uint bytes) -> void {
+  auto writel(uintmax data, unsigned bytes) -> void {
     for(auto n : range(bytes)) write(data), data >>= 8;
   }
 
@@ -77,7 +77,7 @@ struct file : vfs::file {
   }
 
   auto seek(intmax offset_, index index_) -> void override {
-    _fp.seek(offset_, (uint)index_);
+    _fp.seek(offset_, (unsigned)index_);
   }
 
   auto read() -> uint8_t override {
@@ -94,7 +94,7 @@ private:
   auto operator=(const file&) -> file& = delete;
 
   auto _open(string location_, mode mode_) -> bool {
-    if(!_fp.open(location_, (uint)mode_)) return false;
+    if(!_fp.open(location_, (unsigned)mode_)) return false;
     return true;
   }
 

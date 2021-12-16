@@ -23,8 +23,8 @@ struct SMP : Processor::SPC700, Thread {
 private:
   struct IO {
     //timing
-    uint clockCounter = 0;
-    uint dspCounter = 0;
+    unsigned clockCounter = 0;
+    unsigned dspCounter = 0;
 
     //external
     uint8_t apu0 = 0;
@@ -72,7 +72,7 @@ private:
   inline auto writeIO(uint16_t address, uint8_t data) -> void;
 
   //timing.cpp
-  template<uint Frequency>
+  template<unsigned Frequency>
   struct Timer {
     uint8_t stage0 = 0;
     uint8_t stage1 = 0;
@@ -82,7 +82,7 @@ private:
     Boolean enable = 0;
     uint8_t target = 0;
 
-    auto step(uint clocks) -> void;
+    auto step(unsigned clocks) -> void;
     auto synchronizeStage1() -> void;
   };
 
@@ -92,9 +92,9 @@ private:
 
   inline auto wait(maybe<uint16_t> address = nothing, bool half = false) -> void;
   inline auto waitIdle(maybe<uint16_t> address = nothing, bool half = false) -> void;
-  inline auto step(uint clocks) -> void;
-  inline auto stepIdle(uint clocks) -> void;
-  inline auto stepTimers(uint clocks) -> void;
+  inline auto step(unsigned clocks) -> void;
+  inline auto stepIdle(unsigned clocks) -> void;
+  inline auto stepTimers(unsigned clocks) -> void;
 };
 
 extern SMP smp;

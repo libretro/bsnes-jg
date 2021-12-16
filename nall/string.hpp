@@ -15,7 +15,7 @@ struct string_view {
   inline string_view(const string_view& source);
   inline string_view(string_view&& source);
   inline string_view(const char* data);
-  inline string_view(const char* data, uint size);
+  inline string_view(const char* data, unsigned size);
   inline string_view(const string& source);
   template<typename... P> inline string_view(P&&... p);
   inline ~string_view();
@@ -26,7 +26,7 @@ struct string_view {
   inline explicit operator bool() const;
   inline operator const char*() const;
   inline auto data() const -> const char*;
-  inline auto size() const -> uint;
+  inline auto size() const -> unsigned;
 
   inline auto begin() const { return &_data[0]; }
   inline auto end() const { return &_data[size()]; }
@@ -59,24 +59,24 @@ inline auto tokenize(const char* s, const char* p) -> bool;
 inline auto tokenize(vector<string>& list, const char* s, const char* p) -> bool;
 
 //utf8.hpp
-inline auto characters(string_view self, int offset = 0, int length = -1) -> uint;
+inline auto characters(string_view self, int offset = 0, int length = -1) -> unsigned;
 
 //utility.hpp
 inline auto slice(string_view self, int offset = 0, int length = -1) -> string;
 template<typename T> inline auto fromInteger(char* result, T value) -> char*;
 template<typename T> inline auto fromNatural(char* result, T value) -> char*;
-template<typename T> inline auto fromReal(char* str, T value) -> uint;
+template<typename T> inline auto fromReal(char* str, T value) -> unsigned;
 
 struct string {
   using type = string;
 
 protected:
   #if defined(NALL_STRING_ALLOCATOR_ADAPTIVE)
-  enum : uint { SSO = 24 };
+  enum : unsigned { SSO = 24 };
   union {
     struct {  //copy-on-write
       char* _data;
-      uint* _refs;
+      unsigned* _refs;
     };
     struct {  //small-string-optimization
       char _text[SSO];
@@ -89,13 +89,13 @@ protected:
 
   #if defined(NALL_STRING_ALLOCATOR_COPY_ON_WRITE)
   char* _data;
-  mutable uint* _refs;
+  mutable unsigned* _refs;
   inline auto _allocate() -> char*;
   inline auto _copy() -> char*;
   #endif
 
   #if defined(NALL_STRING_ALLOCATOR_SMALL_STRING_OPTIMIZATION)
-  enum : uint { SSO = 24 };
+  enum : unsigned { SSO = 24 };
   union {
     char* _data;
     char _text[SSO];
@@ -106,8 +106,8 @@ protected:
   char* _data;
   #endif
 
-  uint _capacity;
-  uint _size;
+  unsigned _capacity;
+  unsigned _size;
 
 public:
   inline string();
@@ -116,11 +116,11 @@ public:
   inline string(string&& source) : string() { operator=(std::move(source)); }
   template<typename T = char> inline auto get() -> T*;
   template<typename T = char> inline auto data() const -> const T*;
-  template<typename T = char> auto size() const -> uint { return _size / sizeof(T); }
-  template<typename T = char> auto capacity() const -> uint { return _capacity / sizeof(T); }
+  template<typename T = char> auto size() const -> unsigned { return _size / sizeof(T); }
+  template<typename T = char> auto capacity() const -> unsigned { return _capacity / sizeof(T); }
   inline auto reset() -> type&;
-  inline auto reserve(uint) -> type&;
-  inline auto resize(uint) -> type&;
+  inline auto reserve(unsigned) -> type&;
+  inline auto resize(unsigned) -> type&;
   inline auto operator=(const string&) -> type&;
   inline auto operator=(string&&) -> type&;
 
@@ -166,8 +166,8 @@ public:
   inline auto real() const -> double;
 
   //core.hpp
-  inline auto operator[](uint) const -> const char&;
-  inline auto operator()(uint, char = 0) const -> char;
+  inline auto operator[](unsigned) const -> const char&;
+  inline auto operator()(unsigned, char = 0) const -> char;
   template<typename... P> inline auto assign(P&&...) -> type&;
   template<typename T, typename... P> inline auto prepend(const T&, P&&...) -> type&;
   template<typename... P> inline auto prepend(const nall::string_format&, P&&...) -> type&;
@@ -175,32 +175,32 @@ public:
   template<typename T, typename... P> inline auto append(const T&, P&&...) -> type&;
   template<typename... P> inline auto append(const nall::string_format&, P&&...) -> type&;
   template<typename T> inline auto _append(const stringify<T>&) -> type&;
-  inline auto length() const -> uint;
+  inline auto length() const -> unsigned;
 
   //find.hpp
-  inline auto contains(string_view characters) const -> maybe<uint>;
+  inline auto contains(string_view characters) const -> maybe<unsigned>;
 
-  template<bool, bool> inline auto _find(int, string_view) const -> maybe<uint>;
+  template<bool, bool> inline auto _find(int, string_view) const -> maybe<unsigned>;
 
-  inline auto find(string_view source) const -> maybe<uint>;
-  inline auto ifind(string_view source) const -> maybe<uint>;
-  inline auto qfind(string_view source) const -> maybe<uint>;
-  inline auto iqfind(string_view source) const -> maybe<uint>;
+  inline auto find(string_view source) const -> maybe<unsigned>;
+  inline auto ifind(string_view source) const -> maybe<unsigned>;
+  inline auto qfind(string_view source) const -> maybe<unsigned>;
+  inline auto iqfind(string_view source) const -> maybe<unsigned>;
 
-  inline auto findFrom(int offset, string_view source) const -> maybe<uint>;
-  inline auto ifindFrom(int offset, string_view source) const -> maybe<uint>;
+  inline auto findFrom(int offset, string_view source) const -> maybe<unsigned>;
+  inline auto ifindFrom(int offset, string_view source) const -> maybe<unsigned>;
 
-  inline auto findNext(int offset, string_view source) const -> maybe<uint>;
-  inline auto ifindNext(int offset, string_view source) const -> maybe<uint>;
+  inline auto findNext(int offset, string_view source) const -> maybe<unsigned>;
+  inline auto ifindNext(int offset, string_view source) const -> maybe<unsigned>;
 
-  inline auto findPrevious(int offset, string_view source) const -> maybe<uint>;
-  inline auto ifindPrevious(int offset, string_view source) const -> maybe<uint>;
+  inline auto findPrevious(int offset, string_view source) const -> maybe<unsigned>;
+  inline auto ifindPrevious(int offset, string_view source) const -> maybe<unsigned>;
 
   //format.hpp
   inline auto format(const nall::string_format& params) -> type&;
 
   //compare.hpp
-  template<bool> inline static auto _compare(const char*, uint, const char*, uint) -> int;
+  template<bool> inline static auto _compare(const char*, unsigned, const char*, unsigned) -> int;
 
   inline static auto compare(string_view, string_view) -> int;
   inline static auto icompare(string_view, string_view) -> int;
@@ -257,14 +257,14 @@ public:
   inline auto stripRight() -> type&;
 
   //utf8.hpp
-  inline auto characters(int offset = 0, int length = -1) const -> uint;
+  inline auto characters(int offset = 0, int length = -1) const -> unsigned;
 
   //utility.hpp
   inline static auto read(string_view filename) -> string;
-  inline static auto repeat(string_view pattern, uint times) -> string;
+  inline static auto repeat(string_view pattern, unsigned times) -> string;
   inline auto fill(char fill = ' ') -> type&;
-  inline auto hash() const -> uint;
-  inline auto remove(uint offset, uint length) -> type&;
+  inline auto hash() const -> unsigned;
+  inline auto remove(unsigned offset, unsigned length) -> type&;
   inline auto reverse() -> type&;
   inline auto size(int length, char fill = ' ') -> type&;
   inline auto slice(int offset = 0, int length = -1) const -> string;
@@ -288,8 +288,8 @@ template<> struct vector<string> : vector_base<string> {
   inline auto append() -> type&;
 
   inline auto isort() -> type&;
-  inline auto find(string_view source) const -> maybe<uint>;
-  inline auto ifind(string_view source) const -> maybe<uint>;
+  inline auto find(string_view source) const -> maybe<unsigned>;
+  inline auto ifind(string_view source) const -> maybe<unsigned>;
   inline auto match(string_view pattern) const -> vector<string>;
   inline auto merge(string_view separator) const -> string;
   inline auto strip() -> type&;
@@ -313,20 +313,20 @@ struct string_pascal {
 
   string_pascal(const char* text = nullptr) {
     if(text && *text) {
-      uint size = strlen(text);
-      _data = memory::allocate<char>(sizeof(uint) + size + 1);
-      ((uint*)_data)[0] = size;
-      memory::copy(_data + sizeof(uint), text, size);
-      _data[sizeof(uint) + size] = 0;
+      unsigned size = strlen(text);
+      _data = memory::allocate<char>(sizeof(unsigned) + size + 1);
+      ((unsigned*)_data)[0] = size;
+      memory::copy(_data + sizeof(unsigned), text, size);
+      _data[sizeof(unsigned) + size] = 0;
     }
   }
 
   string_pascal(const string& text) {
     if(text.size()) {
-      _data = memory::allocate<char>(sizeof(uint) + text.size() + 1);
-      ((uint*)_data)[0] = text.size();
-      memory::copy(_data + sizeof(uint), text.data(), text.size());
-      _data[sizeof(uint) + text.size()] = 0;
+      _data = memory::allocate<char>(sizeof(unsigned) + text.size() + 1);
+      ((unsigned*)_data)[0] = text.size();
+      memory::copy(_data + sizeof(unsigned), text.data(), text.size());
+      _data[sizeof(unsigned) + text.size()] = 0;
     }
   }
 
@@ -338,16 +338,16 @@ struct string_pascal {
   }
 
   explicit operator bool() const { return _data; }
-  operator const char*() const { return _data ? _data + sizeof(uint) : nullptr; }
-  operator string() const { return _data ? string{_data + sizeof(uint)} : ""; }
+  operator const char*() const { return _data ? _data + sizeof(unsigned) : nullptr; }
+  operator string() const { return _data ? string{_data + sizeof(unsigned)} : ""; }
 
   auto operator=(const string_pascal& source) -> type& {
     if(this == &source) return *this;
     if(_data) { memory::free(_data); _data = nullptr; }
     if(source._data) {
-      uint size = source.size();
-      _data = memory::allocate<char>(sizeof(uint) + size);
-      memory::copy(_data, source._data, sizeof(uint) + size);
+      unsigned size = source.size();
+      _data = memory::allocate<char>(sizeof(unsigned) + size);
+      memory::copy(_data, source._data, sizeof(unsigned) + size);
     }
     return *this;
   }
@@ -370,12 +370,12 @@ struct string_pascal {
 
   auto data() const -> char* {
     if(!_data) return nullptr;
-    return _data + sizeof(uint);
+    return _data + sizeof(unsigned);
   }
 
-  auto size() const -> uint {
+  auto size() const -> unsigned {
     if(!_data) return 0;
-    return ((uint*)_data)[0];
+    return ((unsigned*)_data)[0];
   }
 
 protected:

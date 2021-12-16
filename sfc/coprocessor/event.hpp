@@ -18,15 +18,15 @@ struct Event : Thread {
   auto synchronizeCPU() -> void;
   static auto Enter() -> void;
   auto main() -> void;
-  auto step(uint clocks) -> void;
+  auto step(unsigned clocks) -> void;
   auto unload() -> void;
   auto power() -> void;
 
-  auto mcuRead(uint addr, uint8_t) -> uint8_t;
-  auto mcuWrite(uint addr, uint8_t) -> void;
+  auto mcuRead(unsigned addr, uint8_t) -> uint8_t;
+  auto mcuWrite(unsigned addr, uint8_t) -> void;
 
-  auto read(uint addr, uint8_t data) -> uint8_t;
-  auto write(uint addr, uint8_t data) -> void;
+  auto read(unsigned addr, uint8_t data) -> uint8_t;
+  auto write(unsigned addr, uint8_t data) -> void;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
@@ -34,8 +34,8 @@ struct Event : Thread {
 public:
   ReadableMemory rom[4];
 
-  enum class Board : uint { Unknown, CampusChallenge92, PowerFest94 } board;
-  uint timer;
+  enum class Board : unsigned { Unknown, CampusChallenge92, PowerFest94 } board;
+  unsigned timer;
 
 private:
   uint8_t status;
@@ -44,8 +44,8 @@ private:
   bool timerActive;
   bool scoreActive;
 
-  uint timerSecondsRemaining;
-  uint scoreSecondsRemaining;
+  unsigned timerSecondsRemaining;
+  unsigned scoreSecondsRemaining;
 };
 
 extern Event event;

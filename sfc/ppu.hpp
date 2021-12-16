@@ -1,7 +1,7 @@
 struct PPU : Thread, PPUcounter {
   alwaysinline auto interlace() const -> bool { return display.interlace; }
   alwaysinline auto overscan() const -> bool { return display.overscan; }
-  alwaysinline auto vdisp() const -> uint { return display.vdisp; }
+  alwaysinline auto vdisp() const -> unsigned { return display.vdisp; }
 
   PPU();
   ~PPU();
@@ -13,21 +13,21 @@ struct PPU : Thread, PPUcounter {
 
   auto main() -> void;
   noinline auto cycleObjectEvaluate() -> void;
-  template<uint Cycle> noinline auto cycleBackgroundFetch() -> void;
+  template<unsigned Cycle> noinline auto cycleBackgroundFetch() -> void;
   noinline auto cycleBackgroundBegin() -> void;
   noinline auto cycleBackgroundBelow() -> void;
   noinline auto cycleBackgroundAbove() -> void;
   noinline auto cycleRenderPixel() -> void;
-  template<uint> auto cycle() -> void;
+  template<unsigned> auto cycle() -> void;
 
-  auto latchCounters(uint hcounter, uint vcounter) -> void;
+  auto latchCounters(unsigned hcounter, unsigned vcounter) -> void;
   auto latchCounters() -> void;
 
   auto serialize(serializer&) -> void;
 
 private:
   alwaysinline auto step() -> void;
-  alwaysinline auto step(uint clocks) -> void;
+  alwaysinline auto step(unsigned clocks) -> void;
 
   alwaysinline auto addressVRAM() const -> uint16_t;
   alwaysinline auto readVRAM() -> uint16_t;
@@ -36,12 +36,12 @@ private:
   alwaysinline auto writeOAM(uint10 address, uint8_t data) -> void;
   alwaysinline auto readCGRAM(bool byte, uint8_t address) -> uint8_t;
   alwaysinline auto writeCGRAM(uint8_t address, uint15 data) -> void;
-  auto readIO(uint address, uint8_t data) -> uint8_t;
-  auto writeIO(uint address, uint8_t data) -> void;
+  auto readIO(unsigned address, uint8_t data) -> uint8_t;
+  auto writeIO(unsigned address, uint8_t data) -> void;
   auto updateVideoMode() -> void;
 
   struct VRAM {
-    auto& operator[](uint address) { return data[address & mask]; }
+    auto& operator[](unsigned address) { return data[address & mask]; }
     uint16_t data[64 * 1024];
     uint16_t mask = 0x7fff;
   } vram;
@@ -52,7 +52,7 @@ private:
   struct {
     bool interlace;
     bool overscan;
-    uint vdisp;
+    unsigned vdisp;
   } display;
 
   auto refresh() -> void;
@@ -150,7 +150,7 @@ private:
 struct Mosaic {
   //mosaic.cpp
   alwaysinline auto enable() const -> bool;
-  alwaysinline auto voffset() const -> uint;
+  alwaysinline auto voffset() const -> unsigned;
   auto scanline() -> void;
   auto power() -> void;
 
@@ -162,7 +162,7 @@ struct Mosaic {
 };
 
 struct Background {
-  Background(uint id) : id(id) {}
+  Background(unsigned id) : id(id) {}
 
   alwaysinline auto hires() const -> bool;
 
@@ -171,8 +171,8 @@ struct Background {
   auto scanline() -> void;
   auto begin() -> void;
   auto fetchNameTable() -> void;
-  auto fetchOffset(uint y) -> void;
-  auto fetchCharacter(uint index, bool half = 0) -> void;
+  auto fetchOffset(unsigned y) -> void;
+  auto fetchCharacter(unsigned index, bool half = 0) -> void;
   auto run(bool screen) -> void;
   auto power() -> void;
 
@@ -182,13 +182,13 @@ struct Background {
 
   auto serialize(serializer&) -> void;
 
-  struct ID { enum : uint { BG1, BG2, BG3, BG4 }; };
-  const uint id;
+  struct ID { enum : unsigned { BG1, BG2, BG3, BG4 }; };
+  const unsigned id;
 
-  struct Mode { enum : uint { BPP2, BPP4, BPP8, Mode7, Inactive }; };
-  struct ScreenSize { enum : uint { Size32x32, Size32x64, Size64x32, Size64x64 }; };
-  struct TileSize { enum : uint { Size8x8, Size16x16 }; };
-  struct Screen { enum : uint { Above, Below }; };
+  struct Mode { enum : unsigned { BPP2, BPP4, BPP8, Mode7, Inactive }; };
+  struct ScreenSize { enum : unsigned { Size32x32, Size32x64, Size64x32, Size64x64 }; };
+  struct TileSize { enum : unsigned { Size8x8, Size16x16 }; };
+  struct Screen { enum : unsigned { Above, Below }; };
 
   struct IO {
     uint16_t tiledataAddress;
@@ -252,8 +252,8 @@ struct OAM {
   auto write(uint10 address, uint8_t data) -> void;
 
   struct Object {
-    alwaysinline auto width() const -> uint;
-    alwaysinline auto height() const -> uint;
+    alwaysinline auto width() const -> unsigned;
+    alwaysinline auto height() const -> unsigned;
 
     uint9 x;
     uint8_t y;
@@ -318,11 +318,11 @@ struct Object {
   };
 
   struct State {
-    uint x;
-    uint y;
+    unsigned x;
+    unsigned y;
 
-    uint itemCount;
-    uint tileCount;
+    unsigned itemCount;
+    unsigned tileCount;
 
     bool active;
     Item item[2][32];
@@ -342,7 +342,7 @@ struct Object {
 struct Window {
   auto scanline() -> void;
   auto run() -> void;
-  auto test(bool oneEnable, bool one, bool twoEnable, bool two, uint mask) -> bool;
+  auto test(bool oneEnable, bool one, bool twoEnable, bool two, unsigned mask) -> bool;
   auto power() -> void;
 
   auto serialize(serializer&) -> void;
@@ -381,7 +381,7 @@ struct Window {
   } output;
 
   struct {
-    uint x;
+    unsigned x;
   };
 
   friend class PPU;
@@ -395,7 +395,7 @@ struct Screen {
   auto below(bool hires) -> uint16_t;
   auto above() -> uint16_t;
 
-  auto blend(uint x, uint y) const -> uint15;
+  auto blend(unsigned x, unsigned y) const -> uint15;
   alwaysinline auto paletteColor(uint8_t palette) const -> uint15;
   alwaysinline auto directColor(uint8_t palette, uint3 paletteGroup) const -> uint15;
   alwaysinline auto fixedColor() const -> uint15;

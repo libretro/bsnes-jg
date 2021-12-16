@@ -70,7 +70,7 @@ auto MSU1::main() -> void {
   synchronizeCPU();
 }
 
-auto MSU1::step(uint clocks) -> void {
+auto MSU1::step(unsigned clocks) -> void {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
@@ -132,7 +132,7 @@ auto MSU1::audioOpen() -> void {
   io.audioError = true;
 }
 
-auto MSU1::readIO(uint addr, uint8_t) -> uint8_t {
+auto MSU1::readIO(unsigned addr, uint8_t) -> uint8_t {
   cpu.synchronizeCoprocessors();
 
   switch(0x2000 | addr & 7) {
@@ -162,7 +162,7 @@ auto MSU1::readIO(uint addr, uint8_t) -> uint8_t {
   return 0; // unreachable
 }
 
-auto MSU1::writeIO(uint addr, uint8_t data) -> void {
+auto MSU1::writeIO(unsigned addr, uint8_t data) -> void {
   cpu.synchronizeCoprocessors();
 
   switch(0x2000 | addr & 7) {

@@ -12,15 +12,15 @@ auto vector<string>::append() -> type& {
   return *this;
 }
 
-auto vector<string>::find(string_view source) const -> maybe<uint> {
-  for(uint n = 0; n < size(); n++) {
+auto vector<string>::find(string_view source) const -> maybe<unsigned> {
+  for(unsigned n = 0; n < size(); n++) {
     if(operator[](n).equals(source)) return n;
   }
   return {};
 }
 
-auto vector<string>::ifind(string_view source) const -> maybe<uint> {
-  for(uint n = 0; n < size(); n++) {
+auto vector<string>::ifind(string_view source) const -> maybe<unsigned> {
+  for(unsigned n = 0; n < size(); n++) {
     if(operator[](n).iequals(source)) return n;
   }
   return {};
@@ -28,7 +28,7 @@ auto vector<string>::ifind(string_view source) const -> maybe<uint> {
 
 auto vector<string>::match(string_view pattern) const -> vector<string> {
   vector<string> result;
-  for(uint n = 0; n < size(); n++) {
+  for(unsigned n = 0; n < size(); n++) {
     if(operator[](n).match(pattern)) result.append(operator[](n));
   }
   return result;
@@ -36,7 +36,7 @@ auto vector<string>::match(string_view pattern) const -> vector<string> {
 
 auto vector<string>::merge(string_view separator) const -> string {
   string output;
-  for(uint n = 0; n < size(); n++) {
+  for(unsigned n = 0; n < size(); n++) {
     output.append(operator[](n));
     if(n < size() - 1) output.append(separator.data());
   }
@@ -44,7 +44,7 @@ auto vector<string>::merge(string_view separator) const -> string {
 }
 
 auto vector<string>::strip() -> type& {
-  for(uint n = 0; n < size(); n++) {
+  for(unsigned n = 0; n < size(); n++) {
     operator[](n).strip();
   }
   return *this;

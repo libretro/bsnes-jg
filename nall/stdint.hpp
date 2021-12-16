@@ -35,5 +35,3 @@
   using intmax = intmax_t;
   using uintmax = uintmax_t;
 #endif
-
-using uint = unsigned int;

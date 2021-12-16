@@ -5,7 +5,7 @@ namespace SuperFamicom {
 auto NECDSP::firmware() const -> vector<uint8_t> {
   vector<uint8_t> buffer;
   if(!cartridge.has.NECDSP) return buffer;
-  uint plength = 2048, dlength = 1024;
+  unsigned plength = 2048, dlength = 1024;
   if(revision == Revision::uPD96050) plength = 16384, dlength = 2048;
   buffer.reserve(plength * 3 + dlength * 2);
 
@@ -47,11 +47,11 @@ auto NECDSP::main() -> void {
   synchronizeCPU();
 }
 
-auto NECDSP::step(uint clocks) -> void {
+auto NECDSP::step(unsigned clocks) -> void {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
-auto NECDSP::read(uint addr, uint8_t) -> uint8_t {
+auto NECDSP::read(unsigned addr, uint8_t) -> uint8_t {
   cpu.synchronizeCoprocessors();
   if(addr & 1) {
     return uPD96050::readSR();
@@ -60,7 +60,7 @@ auto NECDSP::read(uint addr, uint8_t) -> uint8_t {
   }
 }
 
-auto NECDSP::write(uint addr, uint8_t data) -> void {
+auto NECDSP::write(unsigned addr, uint8_t data) -> void {
   cpu.synchronizeCoprocessors();
   if(addr & 1) {
     return uPD96050::writeSR(data);
@@ -69,12 +69,12 @@ auto NECDSP::write(uint addr, uint8_t data) -> void {
   }
 }
 
-auto NECDSP::readRAM(uint addr, uint8_t) -> uint8_t {
+auto NECDSP::readRAM(unsigned addr, uint8_t) -> uint8_t {
   cpu.synchronizeCoprocessors();
   return uPD96050::readDP(addr);
 }
 
-auto NECDSP::writeRAM(uint addr, uint8_t data) -> void {
+auto NECDSP::writeRAM(unsigned addr, uint8_t data) -> void {
   cpu.synchronizeCoprocessors();
   return uPD96050::writeDP(addr, data);
 }

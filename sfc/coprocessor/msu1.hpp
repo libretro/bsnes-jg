@@ -4,15 +4,15 @@ struct MSU1 : Thread {
   auto synchronizeCPU() -> void;
   static auto Enter() -> void;
   auto main() -> void;
-  auto step(uint clocks) -> void;
+  auto step(unsigned clocks) -> void;
   auto unload() -> void;
   auto power() -> void;
 
   auto dataOpen() -> void;
   auto audioOpen() -> void;
 
-  auto readIO(uint addr, uint8_t data) -> uint8_t;
-  auto writeIO(uint addr, uint8_t data) -> void;
+  auto readIO(unsigned addr, uint8_t data) -> uint8_t;
+  auto writeIO(unsigned addr, uint8_t data) -> void;
 
   auto serialize(serializer&) -> void;
 
@@ -20,7 +20,7 @@ private:
   shared_pointer<vfs::file> dataFile;
   shared_pointer<vfs::file> audioFile;
 
-  enum Flag : uint {
+  enum Flag : unsigned {
     Revision       = 0x02,  //max: 0x07
     AudioError     = 0x08,
     AudioPlaying   = 0x10,

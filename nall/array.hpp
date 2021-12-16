@@ -39,7 +39,7 @@ template<typename T> struct array_view {
   inline auto operator-=(int distance) -> type& { _data -= distance; _size += distance; return *this; }
   inline auto operator+=(int distance) -> type& { _data += distance; _size -= distance; return *this; }
 
-  inline auto operator[](uint index) const -> const T& {
+  inline auto operator[](unsigned index) const -> const T& {
     #ifdef DEBUG
     struct out_of_bounds {};
     if(index >= _size) throw out_of_bounds{};
@@ -47,7 +47,7 @@ template<typename T> struct array_view {
     return _data[index];
   }
 
-  inline auto operator()(uint index, const T& fallback = {}) const -> T {
+  inline auto operator()(unsigned index, const T& fallback = {}) const -> T {
     if(index >= _size) return fallback;
     return _data[index];
   }
@@ -55,11 +55,11 @@ template<typename T> struct array_view {
   template<typename U = T> inline auto data() const -> const U* { return (const U*)_data; }
   template<typename U = T> inline auto size() const -> uint64_t { return _size * sizeof(T) / sizeof(U); }
 
-  inline auto begin() const -> iterator_const<T> { return {_data, (uint)0}; }
-  inline auto end() const -> iterator_const<T> { return {_data, (uint)_size}; }
+  inline auto begin() const -> iterator_const<T> { return {_data, (unsigned)0}; }
+  inline auto end() const -> iterator_const<T> { return {_data, (unsigned)_size}; }
 
-  inline auto rbegin() const -> reverse_iterator_const<T> { return {_data, (uint)_size - 1}; }
-  inline auto rend() const -> reverse_iterator_const<T> { return {_data, (uint)-1}; }
+  inline auto rbegin() const -> reverse_iterator_const<T> { return {_data, (unsigned)_size - 1}; }
+  inline auto rend() const -> reverse_iterator_const<T> { return {_data, (unsigned)-1}; }
 
   auto read() -> T {
     auto value = operator[](0);
@@ -68,7 +68,7 @@ template<typename T> struct array_view {
     return value;
   }
 
-  auto view(uint offset, uint length) const -> type {
+  auto view(unsigned offset, unsigned length) const -> type {
     #ifdef DEBUG
     struct out_of_bounds {};
     if(offset + length >= _size) throw out_of_bounds{};
@@ -102,15 +102,15 @@ template<typename T> struct array_span : array_view<T> {
 
   inline operator T*() { return (T*)super::operator const T*(); }
 
-  inline auto operator[](uint index) -> T& { return (T&)super::operator[](index); }
+  inline auto operator[](unsigned index) -> T& { return (T&)super::operator[](index); }
 
   template<typename U = T> inline auto data() -> U* { return (U*)super::_data; }
 
-  inline auto begin() -> iterator<T> { return {(T*)super::_data, (uint)0}; }
-  inline auto end() -> iterator<T> { return {(T*)super::_data, (uint)super::_size}; }
+  inline auto begin() -> iterator<T> { return {(T*)super::_data, (unsigned)0}; }
+  inline auto end() -> iterator<T> { return {(T*)super::_data, (unsigned)super::_size}; }
 
-  inline auto rbegin() -> reverse_iterator<T> { return {(T*)super::_data, (uint)super::_size - 1}; }
-  inline auto rend() -> reverse_iterator<T> { return {(T*)super::_data, (uint)-1}; }
+  inline auto rbegin() -> reverse_iterator<T> { return {(T*)super::_data, (unsigned)super::_size - 1}; }
+  inline auto rend() -> reverse_iterator<T> { return {(T*)super::_data, (unsigned)-1}; }
 
   auto write(T value) -> void {
     operator[](0) = value;
@@ -118,7 +118,7 @@ template<typename T> struct array_span : array_view<T> {
     super::_size--;
   }
 
-  auto span(uint offset, uint length) const -> type {
+  auto span(unsigned offset, unsigned length) const -> type {
     #ifdef DEBUG
     struct out_of_bounds {};
     if(offset + length >= super::_size) throw out_of_bounds{};
@@ -127,7 +127,7 @@ template<typename T> struct array_span : array_view<T> {
   }
 
   //array_span<uint8_t> specializations
-  template<typename U> auto writel(U value, uint size) -> void;
+  template<typename U> auto writel(U value, unsigned size) -> void;
 };
 
 template<> inline auto array_span<uint8_t>::write(uint8_t value) -> void {
@@ -136,18 +136,18 @@ template<> inline auto array_span<uint8_t>::write(uint8_t value) -> void {
   _size--;
 }
 
-template<> template<typename U> inline auto array_span<uint8_t>::writel(U value, uint size) -> void {
-  for(uint byte : range(size)) write(value >> byte * 8);
+template<> template<typename U> inline auto array_span<uint8_t>::writel(U value, unsigned size) -> void {
+  for(unsigned byte : range(size)) write(value >> byte * 8);
 }
 
 template<typename T> struct array;
 
 //usage: int x[256] => array<int[256]> x
-template<typename T, uint Size> struct array<T[Size]> {
+template<typename T, unsigned Size> struct array<T[Size]> {
   array() = default;
 
   array(const std::initializer_list<T>& source) {
-    uint index = 0;
+    unsigned index = 0;
     for(auto& value : source) {
       operator[](index++) = value;
     }
@@ -161,7 +161,7 @@ template<typename T, uint Size> struct array<T[Size]> {
     return {data(), size()};
   }
 
-  alwaysinline auto operator[](uint index) -> T& {
+  alwaysinline auto operator[](unsigned index) -> T& {
     #ifdef DEBUG
     struct out_of_bounds {};
     if(index >= Size) throw out_of_bounds{};
@@ -169,7 +169,7 @@ template<typename T, uint Size> struct array<T[Size]> {
     return values[index];
   }
 
-  alwaysinline auto operator[](uint index) const -> const T& {
+  alwaysinline auto operator[](unsigned index) const -> const T& {
     #ifdef DEBUG
     struct out_of_bounds {};
     if(index >= Size) throw out_of_bounds{};
@@ -177,7 +177,7 @@ template<typename T, uint Size> struct array<T[Size]> {
     return values[index];
   }
 
-  alwaysinline auto operator()(uint index, const T& fallback = {}) const -> const T& {
+  alwaysinline auto operator()(unsigned index, const T& fallback = {}) const -> const T& {
     if(index >= Size) return fallback;
     return values[index];
   }
@@ -189,7 +189,7 @@ template<typename T, uint Size> struct array<T[Size]> {
 
   auto data() -> T* { return values; }
   auto data() const -> const T* { return values; }
-  auto size() const -> uint { return Size; }
+  auto size() const -> unsigned { return Size; }
 
   auto begin() -> T* { return &values[0]; }
   auto end() -> T* { return &values[Size]; }
@@ -201,7 +201,7 @@ private:
   T values[Size];
 };
 
-template<typename T, T... p> auto from_array(uint index) -> T {
+template<typename T, T... p> auto from_array(unsigned index) -> T {
   static const array<T[sizeof...(p)]> table{p...};
   struct out_of_bounds {};
   #if defined(DEBUG)
@@ -210,7 +210,7 @@ template<typename T, T... p> auto from_array(uint index) -> T {
   return table[index];
 }
 
-template<int64_t... p> auto from_array(uint index) -> int64_t {
+template<int64_t... p> auto from_array(unsigned index) -> int64_t {
   static const array<int64_t[sizeof...(p)]> table{p...};
   struct out_of_bounds {};
   #if defined(DEBUG)

@@ -110,7 +110,7 @@ auto ICD::joypWrite(bool p14, bool p15) -> void {
   packetLock = 1;
 }
 
-auto ICD::readIO(uint addr, uint8_t data) -> uint8_t {
+auto ICD::readIO(unsigned addr, uint8_t data) -> uint8_t {
   addr &= 0x40ffff;
 
   //LY counter
@@ -149,7 +149,7 @@ auto ICD::readIO(uint addr, uint8_t data) -> uint8_t {
   return 0x00;
 }
 
-auto ICD::writeIO(uint addr, uint8_t data) -> void {
+auto ICD::writeIO(unsigned addr, uint8_t data) -> void {
   addr &= 0xffff;
 
   //VRAM port
@@ -321,13 +321,13 @@ auto ICD::main() -> void {
   synchronizeCPU();
 }
 
-auto ICD::step(uint clocks) -> void {
+auto ICD::step(unsigned clocks) -> void {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
 //SGB1 uses the CPU oscillator (~2.4% faster than a real Game Boy)
 //SGB2 uses a dedicated oscillator (same speed as a real Game Boy)
-auto ICD::clockFrequency() const -> uint {
+auto ICD::clockFrequency() const -> unsigned {
   return Frequency ? Frequency : system.cpuFrequency();
 }
 

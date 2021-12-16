@@ -9,14 +9,14 @@ struct HG51B {
   HG51B();
 
   //hg51b.cpp
-  virtual auto step(uint clocks) -> void;
-  virtual auto isROM(uint address) -> bool = 0;
-  virtual auto isRAM(uint address) -> bool = 0;
-  virtual auto read(uint address) -> uint8_t = 0;
-  virtual auto write(uint address, uint8_t data) -> void = 0;
+  virtual auto step(unsigned clocks) -> void;
+  virtual auto isROM(unsigned address) -> bool = 0;
+  virtual auto isRAM(unsigned address) -> bool = 0;
+  virtual auto read(unsigned address) -> uint8_t = 0;
+  virtual auto write(unsigned address, uint8_t data) -> void = 0;
   virtual auto lock() -> void;
   virtual auto halt() -> void;
-  auto wait(uint24 address) -> uint;
+  auto wait(uint24 address) -> unsigned;
   auto main() -> void;
   auto execute() -> void;
   auto advance() -> void;

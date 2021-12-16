@@ -1,17 +1,17 @@
 struct SuperMultitap : Controller {
-  enum : uint {
+  enum : unsigned {
     Up, Down, Left, Right, B, A, Y, X, L, R, Select, Start,
   };
 
-  SuperMultitap(uint port);
+  SuperMultitap(unsigned port);
 
   auto data() -> uint2;
   auto latch(bool data) -> void;
 
 private:
   bool latched;
-  uint counter1;
-  uint counter2;
+  unsigned counter1;
+  unsigned counter2;
 
   struct Gamepad {
     Boolean b, y, select, start;

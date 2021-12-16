@@ -1,18 +1,18 @@
 struct Mouse : Controller {
-  enum : uint {
+  enum : unsigned {
     X, Y, Left, Right,
   };
 
-  Mouse(uint port);
+  Mouse(unsigned port);
 
   auto data() -> uint2;
   auto latch(bool data) -> void;
 
 private:
   bool latched;
-  uint counter;
+  unsigned counter;
 
-  uint speed;  //0 = slow, 1 = normal, 2 = fast
+  unsigned speed;  //0 = slow, 1 = normal, 2 = fast
   int  x;      //x-coordinate
   int  y;      //y-coordinate
   bool dx;     //x-direction

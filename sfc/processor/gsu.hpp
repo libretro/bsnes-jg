@@ -7,30 +7,30 @@ struct GSU {
     uint16_t data = 0;
     bool modified = false;
 
-    inline operator uint() const {
+    inline operator unsigned() const {
       return data;
     }
 
-    inline auto assign(uint value) -> uint16_t {
+    inline auto assign(unsigned value) -> uint16_t {
       modified = true;
       return data = value;
     }
 
     inline auto operator++() { return assign(data + 1); }
     inline auto operator--() { return assign(data - 1); }
-    inline auto operator++(int) { uint r = data; assign(data + 1); return r; }
-    inline auto operator--(int) { uint r = data; assign(data - 1); return r; }
-    inline auto operator   = (uint i) { return assign(i); }
-    inline auto operator  |= (uint i) { return assign(data | i); }
-    inline auto operator  ^= (uint i) { return assign(data ^ i); }
-    inline auto operator  &= (uint i) { return assign(data & i); }
-    inline auto operator <<= (uint i) { return assign(data << i); }
-    inline auto operator >>= (uint i) { return assign(data >> i); }
-    inline auto operator  += (uint i) { return assign(data + i); }
-    inline auto operator  -= (uint i) { return assign(data - i); }
-    inline auto operator  *= (uint i) { return assign(data * i); }
-    inline auto operator  /= (uint i) { return assign(data / i); }
-    inline auto operator  %= (uint i) { return assign(data % i); }
+    inline auto operator++(int) { unsigned r = data; assign(data + 1); return r; }
+    inline auto operator--(int) { unsigned r = data; assign(data - 1); return r; }
+    inline auto operator   = (unsigned i) { return assign(i); }
+    inline auto operator  |= (unsigned i) { return assign(data | i); }
+    inline auto operator  ^= (unsigned i) { return assign(data ^ i); }
+    inline auto operator  &= (unsigned i) { return assign(data & i); }
+    inline auto operator <<= (unsigned i) { return assign(data << i); }
+    inline auto operator >>= (unsigned i) { return assign(data >> i); }
+    inline auto operator  += (unsigned i) { return assign(data + i); }
+    inline auto operator  -= (unsigned i) { return assign(data - i); }
+    inline auto operator  *= (unsigned i) { return assign(data * i); }
+    inline auto operator  /= (unsigned i) { return assign(data / i); }
+    inline auto operator  %= (unsigned i) { return assign(data % i); }
 
     inline auto operator   = (const Register& value) { return assign(value); }
 
@@ -56,21 +56,21 @@ struct GSU {
 
     BitRange<16,8,9> alt{&data};  //composite instruction mode
 
-    inline operator uint() const { return data & 0x9f7e; }
-    inline auto& operator=(const uint value) { return data = value, *this; }
+    inline operator unsigned() const { return data & 0x9f7e; }
+    inline auto& operator=(const unsigned value) { return data = value, *this; }
   };
 
   struct SCMR {
-    uint ht;
+    unsigned ht;
     bool ron;
     bool ran;
-    uint md;
+    unsigned md;
 
-    operator uint() const {
+    operator unsigned() const {
       return ((ht >> 1) << 5) | (ron << 4) | (ran << 3) | ((ht & 1) << 2) | (md);
     }
 
-    auto& operator=(uint data) {
+    auto& operator=(unsigned data) {
       ht  = (bool)(data & 0x20) << 1;
       ht |= (bool)(data & 0x04) << 0;
       ron = data & 0x10;
@@ -87,11 +87,11 @@ struct GSU {
     bool dither;
     bool transparent;
 
-    operator uint() const {
+    operator unsigned() const {
       return (obj << 4) | (freezehigh << 3) | (highnibble << 2) | (dither << 1) | (transparent);
     }
 
-    auto& operator=(uint data) {
+    auto& operator=(unsigned data) {
       obj         = data & 0x10;
       freezehigh  = data & 0x08;
       highnibble  = data & 0x04;
@@ -105,11 +105,11 @@ struct GSU {
     bool irq;
     bool ms0;
 
-    operator uint() const {
+    operator unsigned() const {
       return (irq << 7) | (ms0 << 5);
     }
 
-    auto& operator=(uint data) {
+    auto& operator=(unsigned data) {
       irq = data & 0x80;
       ms0 = data & 0x20;
       return *this;
@@ -135,15 +135,15 @@ struct GSU {
     CFGR cfgr;          //config register
     bool clsr;          //clock select register
 
-    uint romcl;         //clock ticks until romdr is valid
+    unsigned romcl;         //clock ticks until romdr is valid
     uint8_t romdr;      //ROM buffer data register
 
-    uint ramcl;         //clock ticks until ramdr is valid
+    unsigned ramcl;         //clock ticks until ramdr is valid
     uint16_t ramar;     //RAM buffer address register
     uint8_t ramdr;      //RAM buffer data register
 
-    uint sreg;
-    uint dreg;
+    unsigned sreg;
+    unsigned dreg;
     auto& sr() { return r[sreg]; }  //source register (from)
     auto& dr() { return r[dreg]; }  //destination register (to)
 
@@ -168,7 +168,7 @@ struct GSU {
     uint8_t data[8];
   } pixelcache[2];
 
-  virtual auto step(uint clocks) -> void = 0;
+  virtual auto step(unsigned clocks) -> void = 0;
 
   virtual auto stop() -> void = 0;
   virtual auto color(uint8_t source) -> uint8_t = 0;
@@ -183,53 +183,53 @@ struct GSU {
   virtual auto writeRAMBuffer(uint16_t addr, uint8_t data) -> void = 0;
   virtual auto flushCache() -> void = 0;
 
-  virtual auto read(uint addr, uint8_t data = 0x00) -> uint8_t = 0;
-  virtual auto write(uint addr, uint8_t data) -> void = 0;
+  virtual auto read(unsigned addr, uint8_t data = 0x00) -> uint8_t = 0;
+  virtual auto write(unsigned addr, uint8_t data) -> void = 0;
 
   //gsu.cpp
   auto power() -> void;
 
   //instructions.cpp
-  auto instructionADD_ADC(uint n) -> void;
+  auto instructionADD_ADC(unsigned n) -> void;
   auto instructionALT1() -> void;
   auto instructionALT2() -> void;
   auto instructionALT3() -> void;
-  auto instructionAND_BIC(uint n) -> void;
+  auto instructionAND_BIC(unsigned n) -> void;
   auto instructionASR_DIV2() -> void;
   auto instructionBranch(bool c) -> void;
   auto instructionCACHE() -> void;
   auto instructionCOLOR_CMODE() -> void;
-  auto instructionDEC(uint n) -> void;
+  auto instructionDEC(unsigned n) -> void;
   auto instructionFMULT_LMULT() -> void;
-  auto instructionFROM_MOVES(uint n) -> void;
+  auto instructionFROM_MOVES(unsigned n) -> void;
   auto instructionGETB() -> void;
   auto instructionGETC_RAMB_ROMB() -> void;
   auto instructionHIB() -> void;
-  auto instructionIBT_LMS_SMS(uint n) -> void;
-  auto instructionINC(uint n) -> void;
-  auto instructionIWT_LM_SM(uint n) -> void;
-  auto instructionJMP_LJMP(uint n) -> void;
-  auto instructionLINK(uint n) -> void;
-  auto instructionLoad(uint n) -> void;
+  auto instructionIBT_LMS_SMS(unsigned n) -> void;
+  auto instructionINC(unsigned n) -> void;
+  auto instructionIWT_LM_SM(unsigned n) -> void;
+  auto instructionJMP_LJMP(unsigned n) -> void;
+  auto instructionLINK(unsigned n) -> void;
+  auto instructionLoad(unsigned n) -> void;
   auto instructionLOB() -> void;
   auto instructionLOOP() -> void;
   auto instructionLSR() -> void;
   auto instructionMERGE() -> void;
-  auto instructionMULT_UMULT(uint n) -> void;
+  auto instructionMULT_UMULT(unsigned n) -> void;
   auto instructionNOP() -> void;
   auto instructionNOT() -> void;
-  auto instructionOR_XOR(uint n) -> void;
+  auto instructionOR_XOR(unsigned n) -> void;
   auto instructionPLOT_RPIX() -> void;
   auto instructionROL() -> void;
   auto instructionROR() -> void;
   auto instructionSBK() -> void;
   auto instructionSEX() -> void;
-  auto instructionStore(uint n) -> void;
+  auto instructionStore(unsigned n) -> void;
   auto instructionSTOP() -> void;
-  auto instructionSUB_SBC_CMP(uint n) -> void;
+  auto instructionSUB_SBC_CMP(unsigned n) -> void;
   auto instructionSWAP() -> void;
-  auto instructionTO_MOVE(uint n) -> void;
-  auto instructionWITH(uint n) -> void;
+  auto instructionTO_MOVE(unsigned n) -> void;
+  auto instructionWITH(unsigned n) -> void;
 
   //switch.cpp
   auto instruction(uint8_t opcode) -> void;

@@ -14,11 +14,11 @@ DIP dip;
 auto DIP::power() -> void {
 }
 
-auto DIP::read(uint, uint8_t) -> uint8_t {
+auto DIP::read(unsigned, uint8_t) -> uint8_t {
   return value;
 }
 
-auto DIP::write(uint, uint8_t) -> void {
+auto DIP::write(unsigned, uint8_t) -> void {
 }
 
 }

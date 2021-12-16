@@ -2,9 +2,9 @@
 
 namespace nall {
 
-template<uint Precision> struct Natural {
+template<unsigned Precision> struct Natural {
   static_assert(Precision >= 1 && Precision <= 64);
-  static inline constexpr auto bits() -> uint { return Precision; }
+  static inline constexpr auto bits() -> unsigned { return Precision; }
   using utype =
     std::conditional_t<bits() <=  8,  uint8_t,
     std::conditional_t<bits() <= 16, uint16_t,
@@ -14,7 +14,7 @@ template<uint Precision> struct Natural {
   static inline constexpr auto mask() -> utype { return ~0ull >> 64 - Precision; }
 
   inline Natural() : data(0) {}
-  template<uint Bits> inline Natural(Natural<Bits> value) { data = cast(value); }
+  template<unsigned Bits> inline Natural(Natural<Bits> value) { data = cast(value); }
   template<typename T> inline Natural(const T& value) { data = cast(value); }
   explicit inline Natural(const char* value) { data = cast(toNatural(value)); }
 
@@ -58,13 +58,13 @@ template<uint Precision> struct Natural {
   inline auto slice(int index) const { return Natural<>{bit(index)}; }
   inline auto slice(int lo, int hi) const { return Natural<>{bit(lo, hi)}; }
 
-  inline auto clamp(uint bits) -> utype {
+  inline auto clamp(unsigned bits) -> utype {
     const uint64_t b = 1ull << bits - 1;
     const uint64_t m = b * 2 - 1;
     return data < m ? data : m;
   }
 
-  inline auto clip(uint bits) -> utype {
+  inline auto clip(unsigned bits) -> utype {
     const uint64_t b = 1ull << bits - 1;
     const uint64_t m = b * 2 - 1;
     return data & m;

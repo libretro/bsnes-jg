@@ -101,10 +101,10 @@ auto Interface::display() -> Display {
 }
 
 auto Interface::color(uint32_t color) -> uint64_t {
-  uint r = color >>  0 & 31;
-  uint g = color >>  5 & 31;
-  uint b = color >> 10 & 31;
-  uint l = color >> 15 & 15;
+  unsigned r = color >>  0 & 31;
+  unsigned g = color >>  5 & 31;
+  unsigned b = color >> 10 & 31;
+  unsigned l = color >> 15 & 15;
 
   auto normalize = [](uint64_t color, unsigned sourceDepth, unsigned targetDepth) {
     if(sourceDepth == 0 || targetDepth == 0) return (uint64_t)0;
@@ -177,7 +177,7 @@ auto Interface::ports() -> vector<Port> { return {
   {ID::Port::Expansion,   "Expansion Port"   }};
 }
 
-auto Interface::devices(uint port) -> vector<Device> {
+auto Interface::devices(unsigned port) -> vector<Device> {
   if(port == ID::Port::Controller1) return {
     {ID::Device::None,    "None"   },
     {ID::Device::Gamepad, "Gamepad"},
@@ -203,7 +203,7 @@ auto Interface::devices(uint port) -> vector<Device> {
   return {};
 }
 
-auto Interface::inputs(uint device) -> vector<Input> {
+auto Interface::inputs(unsigned device) -> vector<Input> {
   using Type = Input::Type;
 
   if(device == ID::Device::None) return {
@@ -233,7 +233,7 @@ auto Interface::inputs(uint device) -> vector<Input> {
 
   if(device == ID::Device::SuperMultitap) {
     vector<Input> inputs;
-    for(uint p = 2; p <= 5; p++) inputs.append({
+    for(unsigned p = 2; p <= 5; p++) inputs.append({
       {Type::Hat,     {"Port ", p, " - ", "Up"    }},
       {Type::Hat,     {"Port ", p, " - ", "Down"  }},
       {Type::Hat,     {"Port ", p, " - ", "Left"  }},
@@ -286,14 +286,14 @@ auto Interface::inputs(uint device) -> vector<Input> {
   return {};
 }
 
-auto Interface::connected(uint port) -> uint {
+auto Interface::connected(unsigned port) -> unsigned {
   if(port == ID::Port::Controller1) return settings.controllerPort1;
   if(port == ID::Port::Controller2) return settings.controllerPort2;
   if(port == ID::Port::Expansion) return settings.expansionPort;
   return 0;
 }
 
-auto Interface::connect(uint port, uint device) -> void {
+auto Interface::connect(unsigned port, unsigned device) -> void {
   if(port == ID::Port::Controller1) controllerPort1.connect(settings.controllerPort1 = device);
   if(port == ID::Port::Controller2) controllerPort2.connect(settings.controllerPort2 = device);
   if(port == ID::Port::Expansion) expansionPort.connect(settings.expansionPort = device);
@@ -411,11 +411,11 @@ auto Interface::configure(string name, string value) -> bool {
   return SuperFamicom::configuration.write(name, value);
 }
 
-auto Interface::frameSkip() -> uint {
+auto Interface::frameSkip() -> unsigned {
   return system.frameSkip;
 }
 
-auto Interface::setFrameSkip(uint frameSkip) -> void {
+auto Interface::setFrameSkip(unsigned frameSkip) -> void {
   system.frameSkip = frameSkip;
   system.frameCounter = frameSkip;
 }

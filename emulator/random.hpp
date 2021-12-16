@@ -3,7 +3,7 @@
 namespace Emulator {
 
 struct Random {
-  enum class Entropy : uint { None, Low, High };
+  enum class Entropy : unsigned { None, Low, High };
 
   auto operator()() -> uint64_t {
     return random();
@@ -57,10 +57,10 @@ struct Random {
     }
 
     //Entropy::Low
-    uint lobit = random() & 3;
-    uint hibit = (lobit + 8 + (random() & 3)) & 15;
-    uint lovalue = random() & 255;
-    uint hivalue = random() & 255;
+    unsigned lobit = random() & 3;
+    unsigned hibit = (lobit + 8 + (random() & 3)) & 15;
+    unsigned lovalue = random() & 255;
+    unsigned hivalue = random() & 255;
     if((random() & 3) == 0) lovalue = 0;
     if((random() & 1) == 0) hivalue = ~lovalue;
 
@@ -74,7 +74,7 @@ struct Random {
   }
 
   auto serialize(serializer& s) -> void {
-    s.integer((uint&)_entropy);
+    s.integer((unsigned&)_entropy);
     s.integer(_state);
     s.integer(_increment);
   }

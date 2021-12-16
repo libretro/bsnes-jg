@@ -2,7 +2,7 @@
 
 namespace Emulator {
 
-auto Stream::reset(uint channelCount, double inputFrequency, double outputFrequency) -> void {
+auto Stream::reset(unsigned channelCount, double inputFrequency, double outputFrequency) -> void {
   channels.reset();
   channels.resize(channelCount);
 
@@ -36,8 +36,8 @@ auto Stream::setFrequency(double inputFrequency, maybe<double> outputFrequency) 
     //add a low-pass filter to prevent aliasing during resampling
     double cutoffFrequency = min(25000.0, this->outputFrequency / 2.0 - 2000.0);
     for(auto& channel : channels) {
-      uint passes = 3;
-      for(uint pass : range(passes)) {
+      unsigned passes = 3;
+      for(unsigned pass : range(passes)) {
         DSP::IIR::Biquad filter;
         double q = DSP::IIR::Biquad::butterworth(passes * 2, pass);
         filter.reset(DSP::IIR::Biquad::Type::LowPass, cutoffFrequency, this->inputFrequency, q);
@@ -55,9 +55,9 @@ auto Stream::addDCRemovalFilter() -> void {
   }
 }
 
-auto Stream::addLowPassFilter(double cutoffFrequency, Filter::Order order, uint passes) -> void {
+auto Stream::addLowPassFilter(double cutoffFrequency, Filter::Order order, unsigned passes) -> void {
   for(auto& channel : channels) {
-    for(uint pass : range(passes)) {
+    for(unsigned pass : range(passes)) {
       if(order == Filter::Order::First) {
         Filter filter{Filter::Mode::OnePole, Filter::Type::LowPass, Filter::Order::First};
         filter.onePole.reset(DSP::IIR::OnePole::Type::LowPass, cutoffFrequency, inputFrequency);
@@ -73,9 +73,9 @@ auto Stream::addLowPassFilter(double cutoffFrequency, Filter::Order order, uint 
   }
 }
 
-auto Stream::addHighPassFilter(double cutoffFrequency, Filter::Order order, uint passes) -> void {
+auto Stream::addHighPassFilter(double cutoffFrequency, Filter::Order order, unsigned passes) -> void {
   for(auto& channel : channels) {
-    for(uint pass : range(passes)) {
+    for(unsigned pass : range(passes)) {
       if(order == Filter::Order::First) {
         Filter filter{Filter::Mode::OnePole, Filter::Type::HighPass, Filter::Order::First};
         filter.onePole.reset(DSP::IIR::OnePole::Type::HighPass, cutoffFrequency, inputFrequency);
@@ -91,13 +91,13 @@ auto Stream::addHighPassFilter(double cutoffFrequency, Filter::Order order, uint
   }
 }
 
-auto Stream::pending() const -> uint {
+auto Stream::pending() const -> unsigned {
   if(!channels) return 0;
   return channels[0].resampler.pending();
 }
 
-auto Stream::read(double samples[]) -> uint {
-  for(uint c : range(channels.size())) samples[c] = channels[c].resampler.read();
+auto Stream::read(double samples[]) -> unsigned {
+  for(unsigned c : range(channels.size())) samples[c] = channels[c].resampler.read();
   return channels.size();
 }
 
@@ -155,7 +155,7 @@ auto Audio::setBalance(double balance) -> void {
   _balance = balance;
 }
 
-auto Audio::createStream(uint channels, double frequency) -> shared_pointer<Stream> {
+auto Audio::createStream(unsigned channels, double frequency) -> shared_pointer<Stream> {
   _channels = max(_channels, channels);
   shared_pointer<Stream> stream = new Stream;
   stream->reset(channels, frequency, _frequency);
@@ -174,7 +174,7 @@ auto Audio::process() -> void {
 
     for(auto& stream : _streams) {
       double buffer[_channels];
-      uint length = stream->read(buffer), offset = 0;
+      unsigned length = stream->read(buffer), offset = 0;
 
       for(auto& sample : samples) {
         sample += buffer[offset];

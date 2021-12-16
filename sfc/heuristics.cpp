@@ -106,11 +106,11 @@ string GameBoy::manifest() const {
   bool accelerometer = false;
   bool rumble = false;
 
-  uint romSize = 0;
-  uint ramSize = 0;
-  uint eepromSize = 0;
-  uint flashSize = 0;
-  uint rtcSize = 0;
+  unsigned romSize = 0;
+  unsigned ramSize = 0;
+  unsigned eepromSize = 0;
+  unsigned flashSize = 0;
+  unsigned rtcSize = 0;
 
   string mapper = "MBC0";
 
@@ -275,7 +275,7 @@ string GameBoy::manifest() const {
   //Game Boy Color (early games): title = $0134-0142; model = $0143
   //Game Boy Color (later games): title = $0134-013e; serial = $013f-0142; model = $0143
   string title;
-  for(uint n : range(black || clear ? 15 : 16)) {
+  for(unsigned n : range(black || clear ? 15 : 16)) {
     char byte = read(0x0134 + n);
     if(byte < 0x20 || byte > 0x7e) byte = ' ';
     title.append(byte);
@@ -375,8 +375,8 @@ SufamiTurbo::operator bool() const {
 string SufamiTurbo::manifest() const {
   if(!operator bool()) return {};
 
-  uint romSize = data[0x36] * 0x20000;  //128KB
-  uint ramSize = data[0x37] *   0x800;  //  2KB
+  unsigned romSize = data[0x36] * 0x20000;  //128KB
+  unsigned ramSize = data[0x37] *   0x800;  //  2KB
 
   std::string gamename(location);
   gamename = gamename.substr(0, gamename.find_last_of("."));
@@ -404,10 +404,10 @@ SuperFamicom::SuperFamicom(vector<uint8_t>& data, string location) : data(data),
 
   if(size() < 0x8000) return;  //ignore images too small to be valid
 
-  uint LoROM   = scoreHeader(  0x7fb0);
-  uint HiROM   = scoreHeader(  0xffb0);
-  uint ExLoROM = scoreHeader(0x407fb0);
-  uint ExHiROM = scoreHeader(0x40ffb0);
+  unsigned LoROM   = scoreHeader(  0x7fb0);
+  unsigned HiROM   = scoreHeader(  0xffb0);
+  unsigned ExLoROM = scoreHeader(0x407fb0);
+  unsigned ExHiROM = scoreHeader(0x40ffb0);
   if(ExLoROM) ExLoROM += 4;
   if(ExHiROM) ExHiROM += 4;
 
@@ -578,7 +578,7 @@ string SuperFamicom::revision() const {
   char C = data[headerAddress + 0x04];  //game code
   char D = data[headerAddress + 0x05];  //region code (new; sometimes ambiguous)
   auto E = data[headerAddress + 0x29];  //region code (old)
-  uint F = data[headerAddress + 0x2b];  //revision code
+  unsigned F = data[headerAddress + 0x2b];  //revision code
 
   auto valid = [](char n) { return (n >= '0' && n <= '9') || (n >= 'A' && n <= 'Z'); };
   if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) & valid(C) & valid(D)) {
@@ -685,7 +685,7 @@ string SuperFamicom::board() const {
 string SuperFamicom::title() const {
   string label;
 
-  for(uint n = 0; n < 0x15; n++) {
+  for(unsigned n = 0; n < 0x15; n++) {
     auto x = data[headerAddress + 0x10 + n];
     auto y = n == 0x14 ? 0 : data[headerAddress + 0x11 + n];
 
@@ -798,29 +798,29 @@ string SuperFamicom::serial() const {
   return "";
 }
 
-uint SuperFamicom::romSize() const {
+unsigned SuperFamicom::romSize() const {
   return size() - firmwareRomSize();
 }
 
-uint SuperFamicom::programRomSize() const {
+unsigned SuperFamicom::programRomSize() const {
   if(board().beginsWith("SPC7110-")) return 0x100000;
   if(board().beginsWith("EXSPC7110-")) return 0x100000;
   return romSize();
 }
 
-uint SuperFamicom::dataRomSize() const {
+unsigned SuperFamicom::dataRomSize() const {
   if(board().beginsWith("SPC7110-")) return romSize() - 0x100000;
   if(board().beginsWith("EXSPC7110-")) return 0x500000;
   return 0;
 }
 
-uint SuperFamicom::expansionRomSize() const {
+unsigned SuperFamicom::expansionRomSize() const {
   if(board().beginsWith("EXSPC7110-")) return 0x100000;
   return 0;
 }
 
 //detect if any firmware is appended to the ROM image, and return its size if so
-uint SuperFamicom::firmwareRomSize() const {
+unsigned SuperFamicom::firmwareRomSize() const {
   auto cartridgeTypeLo  = data[headerAddress + 0x26] & 15;
   auto cartridgeTypeHi  = data[headerAddress + 0x26] >> 4;
   auto cartridgeSubType = data[headerAddress + 0x0f];
@@ -853,14 +853,14 @@ uint SuperFamicom::firmwareRomSize() const {
   return 0;
 }
 
-uint SuperFamicom::ramSize() const {
+unsigned SuperFamicom::ramSize() const {
   auto ramSize = data[headerAddress + 0x28] & 15;
   if(ramSize > 8) ramSize = 8;
   if(ramSize > 0) return 1024 << ramSize;
   return 0;
 }
 
-uint SuperFamicom::expansionRamSize() const {
+unsigned SuperFamicom::expansionRamSize() const {
   if(data[headerAddress + 0x2a] == 0x33) {
     auto ramSize = data[headerAddress + 0x0d] & 15;
     if(ramSize > 8) ramSize = 8;
@@ -878,7 +878,7 @@ bool SuperFamicom::nonVolatile() const {
   return cartridgeTypeLo == 0x2 || cartridgeTypeLo == 0x5 || cartridgeTypeLo == 0x6;
 }
 
-uint SuperFamicom::scoreHeader(uint address) {
+unsigned SuperFamicom::scoreHeader(unsigned address) {
   int score = 0;
   if(size() < address + 0x50) return score;
 

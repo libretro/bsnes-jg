@@ -2,9 +2,9 @@
 
 namespace nall {
   struct Boolean;
-  template<uint Precision = 64> struct Natural;
-  template<uint Precision = 64> struct Integer;
-  template<uint Precision = 64> struct Real;
+  template<unsigned Precision = 64> struct Natural;
+  template<unsigned Precision = 64> struct Integer;
+  template<unsigned Precision = 64> struct Real;
 }
 
 #include <nall/primitives/bit-field.hpp>

@@ -1,6 +1,6 @@
 #pragma once
 
-using uint = unsigned;
+using unsigned = unsigned;
 
 namespace nall {
   //UTF-8 to UTF-16
@@ -32,10 +32,10 @@ namespace nall {
     auto data() -> wchar_t* { return buffer; }
     auto data() const -> const wchar_t* { return buffer; }
 
-    auto size() const -> uint { return length; }
+    auto size() const -> unsigned { return length; }
 
   private:
     wchar_t* buffer = nullptr;
-    uint length = 0;
+    unsigned length = 0;
   };
 }

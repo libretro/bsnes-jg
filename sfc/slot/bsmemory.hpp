@@ -16,8 +16,8 @@
 //suspend, resume, abort, ready/busy modes are not supported
 
 struct BSMemory : Thread, Memory {
-  uint pathID = 0;
-  uint ROM = 1;
+  unsigned pathID = 0;
+  unsigned ROM = 1;
 
   auto writable() const { return pin.writable; }
   auto writable(bool writable) { pin.writable = !ROM && writable; }
@@ -27,16 +27,16 @@ struct BSMemory : Thread, Memory {
   auto synchronizeCPU() -> void;
   static auto Enter() -> void;
   auto main() -> void;
-  auto step(uint clocks) -> void;
+  auto step(unsigned clocks) -> void;
 
   auto load() -> bool;
   auto unload() -> void;
   auto power() -> void;
 
   auto data() -> uint8_t *override;
-  auto size() const -> uint override;
-  auto read(uint address, uint8_t data) -> uint8_t override;
-  auto write(uint address, uint8_t data) -> void override;
+  auto size() const -> unsigned override;
+  auto read(unsigned address, uint8_t data) -> uint8_t override;
+  auto write(unsigned address, uint8_t data) -> void override;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
@@ -67,14 +67,14 @@ private:
   struct BlockInformation {
     BSMemory* self = nullptr;
 
-    inline auto bitCount() const -> uint;
-    inline auto byteCount() const -> uint;
-    inline auto count() const -> uint;
+    inline auto bitCount() const -> unsigned;
+    inline auto byteCount() const -> unsigned;
+    inline auto count() const -> unsigned;
   };
 
   struct Block : BlockInformation {
-    auto read(uint address) -> uint8_t;
-    auto write(uint address, uint8_t data) -> void;
+    auto read(unsigned address) -> uint8_t;
+    auto write(unsigned address, uint8_t data) -> void;
     auto erase() -> void;
     auto lock() -> void;
     auto update() -> void;
@@ -127,7 +127,7 @@ private:
     } status;
   } global;
 
-  struct Mode { enum : uint {
+  struct Mode { enum : unsigned {
     Flash,
     Chip,
     Page,
@@ -136,7 +136,7 @@ private:
   };};
   uint3 mode;
 
-  struct ReadyBusyMode { enum : uint {
+  struct ReadyBusyMode { enum : unsigned {
     EnableToLevelMode,
     PulseOnWrite,
     PulseOnErase,
@@ -148,9 +148,9 @@ private:
     auto flush() -> void;
     auto pop() -> void;
     auto push(uint24 address, uint8_t data) -> void;
-    auto size() -> uint;
-    auto address(uint index) -> uint24;
-    auto data(uint index) -> uint8_t;
+    auto size() -> unsigned;
+    auto address(unsigned index) -> uint24;
+    auto data(unsigned index) -> uint8_t;
 
     //serialization.cpp
     auto serialize(serializer&) -> void;

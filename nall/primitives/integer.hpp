@@ -2,9 +2,9 @@
 
 namespace nall {
 
-template<uint Precision> struct Integer {
+template<unsigned Precision> struct Integer {
   static_assert(Precision >= 1 && Precision <= 64);
-  static inline constexpr auto bits() -> uint { return Precision; }
+  static inline constexpr auto bits() -> unsigned { return Precision; }
   using stype =
     std::conditional_t<bits() <=  8,  int8_t,
     std::conditional_t<bits() <= 16, int16_t,
@@ -16,7 +16,7 @@ template<uint Precision> struct Integer {
   static inline constexpr auto sign() -> utype { return 1ull << Precision - 1; }
 
   inline Integer() : data(0) {}
-  template<uint Bits> inline Integer(Integer<Bits> value) { data = cast(value); }
+  template<unsigned Bits> inline Integer(Integer<Bits> value) { data = cast(value); }
   template<typename T> inline Integer(const T& value) { data = cast(value); }
   explicit inline Integer(const char* value) { data = cast(toInteger(value)); }
 

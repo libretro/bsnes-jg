@@ -46,7 +46,7 @@ auto CPU::hdmaRun() -> void {
   status.irqLock = true;
 }
 
-template<uint Clocks, bool Synchronize>
+template<unsigned Clocks, bool Synchronize>
 auto CPU::Channel::step() -> void {
   cpu.counter.dma += Clocks;
   cpu.step<Clocks, Synchronize>();
@@ -178,7 +178,7 @@ auto CPU::Channel::hdmaTransfer() -> void {
   dmaEnable = false;  //HDMA will stop active DMA mid-transfer
   if(!hdmaDoTransfer) return;
 
-  static const uint lengths[8] = {1, 2, 2, 4, 4, 4, 2, 4};
+  static const unsigned lengths[8] = {1, 2, 2, 4, 4, 4, 2, 4};
   for(uint2 index : range(lengths[transferMode])) {
     uint24 address = !indirect ? sourceBank << 16 | hdmaAddress++ : indirectBank << 16 | indirectAddress++;
     transfer(address, index);
@@ -200,7 +200,7 @@ auto CPU::idle() -> void {
   aluEdge();
 }
 
-auto CPU::read(uint address) -> uint8_t {
+auto CPU::read(unsigned address) -> uint8_t {
   if(address & 0x408000) {
     if(address & 0x800000 && io.fastROM) {
       status.clockCount = 6;
@@ -239,7 +239,7 @@ auto CPU::read(uint address) -> uint8_t {
   return data;
 }
 
-auto CPU::write(uint address, uint8_t data) -> void {
+auto CPU::write(unsigned address, uint8_t data) -> void {
   aluEdge();
 
   if(address & 0x408000) {
@@ -275,20 +275,20 @@ auto CPU::write(uint address, uint8_t data) -> void {
   bus.write(address, r.mdr = data);
 }
 
-auto CPU::readDisassembler(uint address) -> uint8_t {
+auto CPU::readDisassembler(unsigned address) -> uint8_t {
   return bus.read(address, r.mdr);
 }
 
-auto CPU::readRAM(uint addr, uint8_t data) -> uint8_t {
+auto CPU::readRAM(unsigned addr, uint8_t data) -> uint8_t {
   return wram[addr];
 }
 
-auto CPU::readAPU(uint addr, uint8_t data) -> uint8_t {
+auto CPU::readAPU(unsigned addr, uint8_t data) -> uint8_t {
   synchronizeSMP();
   return smp.portRead(addr & 3);
 }
 
-auto CPU::readCPU(uint addr, uint8_t data) -> uint8_t {
+auto CPU::readCPU(unsigned addr, uint8_t data) -> uint8_t {
   switch(addr & 0xffff) {
   case 0x2180:  //WMDATA
     return bus.read(0x7e0000 | io.wramAddress++, data);
@@ -346,7 +346,7 @@ auto CPU::readCPU(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto CPU::readDMA(uint addr, uint8_t data) -> uint8_t {
+auto CPU::readDMA(unsigned addr, uint8_t data) -> uint8_t {
   auto& channel = this->channels[addr >> 4 & 7];
 
   switch(addr & 0xff8f) {
@@ -379,16 +379,16 @@ auto CPU::readDMA(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto CPU::writeRAM(uint addr, uint8_t data) -> void {
+auto CPU::writeRAM(unsigned addr, uint8_t data) -> void {
   wram[addr] = data;
 }
 
-auto CPU::writeAPU(uint addr, uint8_t data) -> void {
+auto CPU::writeAPU(unsigned addr, uint8_t data) -> void {
   synchronizeSMP();
   return smp.portWrite(addr & 3, data);
 }
 
-auto CPU::writeCPU(uint addr, uint8_t data) -> void {
+auto CPU::writeCPU(unsigned addr, uint8_t data) -> void {
   switch(addr & 0xffff) {
 
   case 0x2180:  //WMDATA
@@ -513,7 +513,7 @@ auto CPU::writeCPU(uint addr, uint8_t data) -> void {
   }
 }
 
-auto CPU::writeDMA(uint addr, uint8_t data) -> void {
+auto CPU::writeDMA(unsigned addr, uint8_t data) -> void {
   auto& channel = this->channels[addr >> 4 & 7];
 
   switch(addr & 0xff8f) {
@@ -579,12 +579,12 @@ auto CPU::writeDMA(uint addr, uint8_t data) -> void {
 }
 
 //DMA clock divider
-auto CPU::dmaCounter() const -> uint {
+auto CPU::dmaCounter() const -> unsigned {
   return counter.cpu & 7;
 }
 
 //joypad auto-poll clock divider
-auto CPU::joypadCounter() const -> uint {
+auto CPU::joypadCounter() const -> unsigned {
   return counter.cpu & 127;
 }
 
@@ -595,7 +595,7 @@ auto CPU::stepOnce() -> void {
   if(joypadCounter() == 0) joypadEdge();
 }
 
-template<uint Clocks, bool Synchronize>
+template<unsigned Clocks, bool Synchronize>
 auto CPU::step() -> void {
   static_assert(Clocks == 2 || Clocks == 4 || Clocks == 6 || Clocks == 8 || Clocks == 10 || Clocks == 12);
 
@@ -662,7 +662,7 @@ auto CPU::step() -> void {
   }
 }
 
-auto CPU::step(uint clocks) -> void {
+auto CPU::step(unsigned clocks) -> void {
   switch(clocks) {
   case  2: return step< 2,1>();
   case  4: return step< 4,1>();
@@ -1061,7 +1061,7 @@ auto CPU::main() -> void {
 
   if(status.resetPending) {
     status.resetPending = 0;
-    for(uint repeat : range(22)) step<6,0>();  //step(132);
+    for(unsigned repeat : range(22)) step<6,0>();  //step(132);
     r.vector = 0xfffc;
     return interrupt();
   }
@@ -1083,8 +1083,8 @@ auto CPU::power(bool reset) -> void {
   PPUcounter::reset();
   PPUcounter::scanline = {&CPU::scanline, this};
 
-  function<uint8_t (uint, uint8_t)> reader;
-  function<void  (uint, uint8_t)> writer;
+  function<uint8_t (unsigned, uint8_t)> reader;
+  function<void  (unsigned, uint8_t)> writer;
 
   reader = {&CPU::readRAM, this};
   writer = {&CPU::writeRAM, this};
@@ -1114,7 +1114,7 @@ auto CPU::power(bool reset) -> void {
     }
   }
 
-  for(uint n : range(8)) {
+  for(unsigned n : range(8)) {
     channels[n] = {};
     if(n != 7) channels[n].next = channels[n + 1];
   }

@@ -9,10 +9,10 @@ auto ArmDSP::sleep() -> void {
   step(1);
 }
 
-auto ArmDSP::get(uint mode, uint32_t addr) -> uint32_t {
+auto ArmDSP::get(unsigned mode, uint32_t addr) -> uint32_t {
   step(1);
 
-  static auto memory = [&](const uint8_t* memory, uint mode, uint32_t addr) -> uint32_t {
+  static auto memory = [&](const uint8_t* memory, unsigned mode, uint32_t addr) -> uint32_t {
     if(mode & Word) {
       memory += addr & ~3;
       return memory[0] << 0 | memory[1] << 8 | memory[2] << 16 | memory[3] << 24;
@@ -50,10 +50,10 @@ auto ArmDSP::get(uint mode, uint32_t addr) -> uint32_t {
   return 0;
 }
 
-auto ArmDSP::set(uint mode, uint32_t addr, uint32_t word) -> void {
+auto ArmDSP::set(unsigned mode, uint32_t addr, uint32_t word) -> void {
   step(1);
 
-  static auto memory = [](uint8_t *memory, uint mode, uint32_t addr, uint32_t word) {
+  static auto memory = [](uint8_t *memory, unsigned mode, uint32_t addr, uint32_t word) {
     if(mode & Word) {
       memory += addr & ~3;
       *memory++ = word >>  0;
@@ -153,7 +153,7 @@ auto ArmDSP::main() -> void {
   instruction();
 }
 
-auto ArmDSP::step(uint clocks) -> void {
+auto ArmDSP::step(unsigned clocks) -> void {
   if(bridge.timer && --bridge.timer == 0);
   clock += clocks * (uint64_t)cpu.frequency;
   synchronizeCPU();
@@ -163,7 +163,7 @@ auto ArmDSP::step(uint clocks) -> void {
 //3800-3807 mirrored throughout
 //a0 ignored
 
-auto ArmDSP::read(uint addr, uint8_t) -> uint8_t {
+auto ArmDSP::read(unsigned addr, uint8_t) -> uint8_t {
   cpu.synchronizeCoprocessors();
 
   uint8_t data = 0x00;
@@ -187,7 +187,7 @@ auto ArmDSP::read(uint addr, uint8_t) -> uint8_t {
   return data;
 }
 
-auto ArmDSP::write(uint addr, uint8_t data) -> void {
+auto ArmDSP::write(unsigned addr, uint8_t data) -> void {
   cpu.synchronizeCoprocessors();
 
   addr &= 0xff06;

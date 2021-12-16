@@ -129,7 +129,7 @@ struct SPC700 {
     bool v = 0;  //overflow
     bool n = 0;  //negative
 
-    inline operator uint() const {
+    inline operator unsigned() const {
       return c << 0 | z << 1 | i << 2 | h << 3 | b << 4 | p << 5 | v << 6 | n << 7;
     }
 

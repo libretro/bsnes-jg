@@ -1,5 +1,5 @@
 struct System {
-  enum class Region : uint { NTSC, PAL };
+  enum class Region : unsigned { NTSC, PAL };
 
   inline auto loaded() const -> bool { return information.loaded; }
   inline auto region() const -> Region { return information.region; }
@@ -23,8 +23,8 @@ struct System {
   auto serialize(bool synchronize) -> serializer;
   auto unserialize(serializer&) -> bool;
 
-  uint frameSkip = 0;
-  uint frameCounter = 0;
+  unsigned frameSkip = 0;
+  unsigned frameCounter = 0;
   bool runAhead = 0;
 
 private:
@@ -35,7 +35,7 @@ private:
     Region region = Region::NTSC;
     double cpuFrequency = Emulator::Constants::Colorburst::NTSC * 6.0;
     double apuFrequency = 32040.0 * 768.0;
-    uint serializeSize[2] = {0, 0};
+    unsigned serializeSize[2] = {0, 0};
   } information;
 
   struct Hacks {
@@ -43,7 +43,7 @@ private:
   } hacks;
 
   auto serializeAll(serializer&, bool synchronize) -> void;
-  auto serializeInit(bool synchronize) -> uint;
+  auto serializeInit(bool synchronize) -> unsigned;
 
   friend class Cartridge;
 };

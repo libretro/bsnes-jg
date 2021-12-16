@@ -437,11 +437,11 @@ auto ST0010::power() -> void {
   memset(ram, 0x00, sizeof ram);
 }
 
-auto ST0010::read(uint addr, uint8_t data) -> uint8_t {
+auto ST0010::read(unsigned addr, uint8_t data) -> uint8_t {
   return readb(addr);
 }
 
-auto ST0010::write(uint addr, uint8_t data) -> void {
+auto ST0010::write(unsigned addr, uint8_t data) -> void {
   writeb(addr, data);
 
   if((addr & 0xfff) == 0x0021 && (data & 0x80)) {

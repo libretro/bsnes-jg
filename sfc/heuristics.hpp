@@ -52,9 +52,9 @@ struct GameBoy {
 private:
   vector<uint8_t>& data;
   string location;
-  uint headerAddress = 0;
+  unsigned headerAddress = 0;
   
-  uint8_t read(uint offset) const { return data[headerAddress + offset]; }
+  uint8_t read(unsigned offset) const { return data[headerAddress + offset]; }
 };
 
 struct SufamiTurbo {
@@ -79,18 +79,18 @@ struct SuperFamicom {
   string board() const;
   string title() const;
   string serial() const;
-  uint romSize() const;
-  uint programRomSize() const;
-  uint dataRomSize() const;
-  uint expansionRomSize() const;
-  uint firmwareRomSize() const;
-  uint ramSize() const;
-  uint expansionRamSize() const;
+  unsigned romSize() const;
+  unsigned programRomSize() const;
+  unsigned dataRomSize() const;
+  unsigned expansionRomSize() const;
+  unsigned firmwareRomSize() const;
+  unsigned ramSize() const;
+  unsigned expansionRamSize() const;
   bool nonVolatile() const;
 
 private:
-  uint size() const { return data.size(); }
-  uint scoreHeader(uint address);
+  unsigned size() const { return data.size(); }
+  unsigned scoreHeader(unsigned address);
   string firmwareARM() const;
   string firmwareEXNEC() const;
   string firmwareGB() const;
@@ -99,6 +99,6 @@ private:
 
   vector<uint8_t>& data;
   string location;
-  uint headerAddress = 0;
+  unsigned headerAddress = 0;
 };
 }

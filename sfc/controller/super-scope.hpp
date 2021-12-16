@@ -1,18 +1,18 @@
 struct SuperScope : Controller {
-  enum : uint {
+  enum : unsigned {
     X, Y, Trigger, Cursor, Turbo, Pause,
   };
 
-  SuperScope(uint port);
+  SuperScope(unsigned port);
 
   auto data() -> uint2;
   auto latch(bool data) -> void;
   auto latch() -> void override;
-  auto draw(uint16_t* data, uint pitch, uint width, uint height) -> void override;
+  auto draw(uint16_t* data, unsigned pitch, unsigned width, unsigned height) -> void override;
 
 private:
   bool latched;
-  uint counter;
+  unsigned counter;
 
   int x;
   int y;
@@ -27,5 +27,5 @@ private:
   bool triggerlock;
   bool pauselock;
 
-  uint prev;
+  unsigned prev;
 };

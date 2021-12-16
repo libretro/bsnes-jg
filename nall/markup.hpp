@@ -60,7 +60,7 @@ struct Node {
   auto value(nall::string& target) const -> bool { if(shared) target = string(); return (bool)shared; }
   auto value(bool& target) const -> bool { if(shared) target = boolean(); return (bool)shared; }
   auto value(int& target) const -> bool { if(shared) target = integer(); return (bool)shared; }
-  auto value(uint& target) const -> bool { if(shared) target = natural(); return (bool)shared; }
+  auto value(unsigned& target) const -> bool { if(shared) target = natural(); return (bool)shared; }
   auto value(double& target) const -> bool { if(shared) target = real(); return (bool)shared; }
 
   auto text() const -> nall::string { return value().strip(); }
@@ -81,7 +81,7 @@ struct Node {
   auto setValue(const nall::string& value = "") -> Node& { shared->_value = value; return *this; }
 
   auto reset() -> void { shared->_children.reset(); }
-  auto size() const -> uint { return shared->_children.size(); }
+  auto size() const -> unsigned { return shared->_children.size(); }
 
   auto prepend(const Node& node) -> void { shared->_children.prepend(node.shared); }
   auto append(const Node& node) -> void { shared->_children.append(node.shared); }
@@ -94,17 +94,17 @@ struct Node {
     return false;
   }
 
-  auto insert(uint position, const Node& node) -> bool {
+  auto insert(unsigned position, const Node& node) -> bool {
     if(position > size()) return false;  //used > instead of >= to allow indexed-equivalent of append()
     return shared->_children.insert(position, node.shared), true;
   }
 
-  auto remove(uint position) -> bool {
+  auto remove(unsigned position) -> bool {
     if(position >= size()) return false;
     return shared->_children.remove(position), true;
   }
 
-  auto swap(uint x, uint y) -> bool {
+  auto swap(unsigned x, unsigned y) -> bool {
     if(x >= size() || y >= size()) return false;
     return std::swap(shared->_children[x], shared->_children[y]), true;
   }
@@ -122,11 +122,11 @@ struct Node {
     auto operator*() -> Node { return {source.shared->_children[position]}; }
     auto operator!=(const iterator& source) const -> bool { return position != source.position; }
     auto operator++() -> iterator& { return position++, *this; }
-    iterator(const Node& source, uint position) : source(source), position(position) {}
+    iterator(const Node& source, unsigned position) : source(source), position(position) {}
 
   private:
     const Node& source;
-    uint position;
+    unsigned position;
   };
 
   auto begin() const -> iterator { return iterator(*this, 0); }
@@ -140,7 +140,7 @@ auto ManagedNode::_evaluate(string query) const -> bool {
   if(!query) return true;
 
   for(auto& rule : query.split(",")) {
-    enum class Comparator : uint { ID, EQ, NE, LT, LE, GT, GE };
+    enum class Comparator : unsigned { ID, EQ, NE, LT, LE, GT, GE };
     auto comparator = Comparator::ID;
          if(rule.match("*!=*")) comparator = Comparator::NE;
     else if(rule.match("*<=*")) comparator = Comparator::LE;
@@ -191,7 +191,7 @@ auto ManagedNode::_find(const string& query) const -> vector<Node> {
 
   auto path = query.split("/");
   string name = path.take(0), rule;
-  uint lo = 0u, hi = ~0u;
+  unsigned lo = 0u, hi = ~0u;
 
   if(name.match("*[*]")) {
     auto p = name.trimRight("]", 1L).split("[", 1L);
@@ -211,7 +211,7 @@ auto ManagedNode::_find(const string& query) const -> vector<Node> {
     rule = p(1);
   }
 
-  uint position = 0;
+  unsigned position = 0;
   for(auto& node : _children) {
     if(!node->_name.match(name)) continue;
     if(!node->_evaluate(rule)) continue;
@@ -285,22 +285,22 @@ protected:
   }
 
   //determine indentation level, without incrementing pointer
-  auto readDepth(const char* p) -> uint {
-    uint depth = 0;
+  auto readDepth(const char* p) -> unsigned {
+    unsigned depth = 0;
     while(p[depth] == '\t' || p[depth] == ' ') depth++;
     return depth;
   }
 
   //determine indentation level
-  auto parseDepth(const char*& p) -> uint {
-    uint depth = readDepth(p);
+  auto parseDepth(const char*& p) -> unsigned {
+    unsigned depth = readDepth(p);
     p += depth;
     return depth;
   }
 
   //read name
   auto parseName(const char*& p) -> void {
-    uint length = 0;
+    unsigned length = 0;
     while(valid(p[length])) length++;
     if(length == 0) throw "Invalid node name";
     _name = slice(p, 0, length);
@@ -309,19 +309,19 @@ protected:
 
   auto parseData(const char*& p, string_view spacing) -> void {
     if(*p == '=' && *(p + 1) == '\"') {
-      uint length = 2;
+      unsigned length = 2;
       while(p[length] && p[length] != '\n' && p[length] != '\"') length++;
       if(p[length] != '\"') throw "Unescaped value";
       _value = {slice(p, 2, length - 2), "\n"};
       p += length + 1;
     } else if(*p == '=') {
-      uint length = 1;
+      unsigned length = 1;
       while(p[length] && p[length] != '\n' && p[length] != '\"' && p[length] != ' ') length++;
       if(p[length] == '\"') throw "Illegal character in value";
       _value = {slice(p, 1, length - 1), "\n"};
       p += length;
     } else if(*p == ':') {
-      uint length = 1;
+      unsigned length = 1;
       while(p[length] && p[length] != '\n') length++;
       _value = {slice(p, 1, length - 1).trimLeft(spacing, 1L), "\n"};
       p += length;
@@ -336,7 +336,7 @@ protected:
       if(*(p + 0) == '/' && *(p + 1) == '/') break;  //skip comments
 
       SharedNode node(new ManagedNode);
-      uint length = 0;
+      unsigned length = 0;
       while(valid(p[length])) length++;
       if(length == 0) throw "Invalid attribute name";
       node->_name = slice(p, 0, length);
@@ -347,7 +347,7 @@ protected:
   }
 
   //read a node and all of its child nodes
-  auto parseNode(const vector<string>& text, uint& y, string_view spacing) -> void {
+  auto parseNode(const vector<string>& text, unsigned& y, string_view spacing) -> void {
     const char* p = text[y++];
     _metadata = parseDepth(p);
     parseName(p);
@@ -355,7 +355,7 @@ protected:
     parseAttributes(p, spacing);
 
     while(y < text.size()) {
-      uint depth = readDepth(text[y]);
+      unsigned depth = readDepth(text[y]);
       if(depth <= _metadata) break;
 
       if(text[y][depth] == ':') {
@@ -398,7 +398,7 @@ protected:
     if(document.size() == 0) return;  //empty document
 
     auto text = document.split("\n");
-    uint y = 0;
+    unsigned y = 0;
     while(y < text.size()) {
       SharedNode node(new ManagedNode);
       node->parseNode(text, y, spacing);
@@ -420,7 +420,7 @@ inline auto unserialize(const string& markup, string_view spacing = {}) -> Marku
   return (Markup::SharedNode&)node;
 }
 
-inline auto serialize(const Markup::Node& node, string_view spacing = {}, uint depth = 0) -> string {
+inline auto serialize(const Markup::Node& node, string_view spacing = {}, unsigned depth = 0) -> string {
   if(!node.name()) {
     string result;
     for(auto leaf : node) {

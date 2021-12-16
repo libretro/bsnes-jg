@@ -14,7 +14,7 @@
 
 namespace SuperFamicom {
 
-SuperScope::SuperScope(uint port) : Controller(port) {
+SuperScope::SuperScope(unsigned port) : Controller(port) {
   latched = 0;
   counter = 0;
 
@@ -106,7 +106,7 @@ auto SuperScope::latch() -> void {
   if(!offscreen) ppu.latchCounters(x, y);
 }
 
-auto SuperScope::draw(uint16_t* data, uint pitch, uint width, uint height) -> void {
+auto SuperScope::draw(uint16_t* data, unsigned pitch, unsigned width, unsigned height) -> void {
   /*pitch >>= 1;
   float scaleX = (float)width  / 256.0;
   float scaleY = (float)height / (float)ppu.vdisp();

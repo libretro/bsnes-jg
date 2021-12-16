@@ -77,7 +77,7 @@ auto string::strip() -> string& {
 }
 
 auto string::stripLeft() -> string& {
-  uint length = 0;
+  unsigned length = 0;
   while(length < size()) {
     char input = operator[](length);
     if(input != ' ' && input != '\t' && input != '\r' && input != '\n') break;
@@ -88,7 +88,7 @@ auto string::stripLeft() -> string& {
 }
 
 auto string::stripRight() -> string& {
-  uint length = 0;
+  unsigned length = 0;
   while(length < size()) {
     bool matched = false;
     char input = operator[](size() - length - 1);

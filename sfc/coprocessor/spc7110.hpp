@@ -7,20 +7,20 @@ struct SPC7110 : Thread {
   auto synchronizeCPU() -> void;
   static auto Enter() -> void;
   auto main() -> void;
-  auto step(uint clocks) -> void;
+  auto step(unsigned clocks) -> void;
   auto unload() -> void;
   auto power() -> void;
 
-  auto addClocks(uint clocks) -> void;
+  auto addClocks(unsigned clocks) -> void;
 
-  auto read(uint addr, uint8_t data) -> uint8_t;
-  auto write(uint addr, uint8_t data) -> void;
+  auto read(unsigned addr, uint8_t data) -> uint8_t;
+  auto write(unsigned addr, uint8_t data) -> void;
 
-  auto mcuromRead(uint addr, uint8_t data) -> uint8_t;
-  auto mcuromWrite(uint addr, uint8_t data) -> void;
+  auto mcuromRead(unsigned addr, uint8_t data) -> uint8_t;
+  auto mcuromWrite(unsigned addr, uint8_t data) -> void;
 
-  auto mcuramRead(uint addr, uint8_t data) -> uint8_t;
-  auto mcuramWrite(uint addr, uint8_t data) -> void;
+  auto mcuramRead(unsigned addr, uint8_t data) -> uint8_t;
+  auto mcuramWrite(unsigned addr, uint8_t data) -> void;
 
   auto serialize(serializer&) -> void;
 
@@ -29,19 +29,19 @@ struct SPC7110 : Thread {
   auto dcuBeginTransfer() -> void;
   auto dcuRead() -> uint8_t;
 
-  auto deinterleave1bpp(uint length) -> void;
-  auto deinterleave2bpp(uint length) -> void;
-  auto deinterleave4bpp(uint length) -> void;
+  auto deinterleave1bpp(unsigned length) -> void;
+  auto deinterleave2bpp(unsigned length) -> void;
+  auto deinterleave4bpp(unsigned length) -> void;
 
   //data.cpp
-  auto dataromRead(uint addr) -> uint8_t;
+  auto dataromRead(unsigned addr) -> uint8_t;
 
-  auto dataOffset() -> uint;
-  auto dataAdjust() -> uint;
-  auto dataStride() -> uint;
+  auto dataOffset() -> unsigned;
+  auto dataAdjust() -> unsigned;
+  auto dataStride() -> unsigned;
 
-  auto setDataOffset(uint addr) -> void;
-  auto setDataAdjust(uint addr) -> void;
+  auto setDataOffset(unsigned addr) -> void;
+  auto setDataAdjust(unsigned addr) -> void;
 
   auto dataPortRead() -> void;
 
@@ -75,7 +75,7 @@ private:
   bool dcuPending;
   uint2 dcuMode;
   uint23 dcuAddress;
-  uint dcuOffset;
+  unsigned dcuOffset;
   uint8_t dcuTile[32];
   Decompressor* decompressor;
 

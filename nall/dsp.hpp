@@ -9,7 +9,7 @@ namespace nall::DSP {
 namespace nall::DSP::IIR {
 
 struct Biquad {
-  enum class Type : uint {
+  enum class Type : unsigned {
     LowPass,
     HighPass,
     BandPass,
@@ -23,7 +23,7 @@ struct Biquad {
   inline auto process(double in) -> double;  //normalized sample (-1.0 to +1.0)
 
   inline static auto shelf(double gain, double slope) -> double;
-  inline static auto butterworth(uint order, uint phase) -> double;
+  inline static auto butterworth(unsigned order, unsigned phase) -> double;
 
 private:
   Type type;
@@ -159,7 +159,7 @@ auto Biquad::shelf(double gain, double slope) -> double {
 }
 
 //compute Q values for Nth-order butterworth filtering
-auto Biquad::butterworth(uint order, uint phase) -> double {
+auto Biquad::butterworth(unsigned order, unsigned phase) -> double {
   return -0.5 / cos(Math::Pi * (phase + order + 0.5) / order);
 }
 
@@ -184,7 +184,7 @@ auto DCRemoval::process(double in) -> double {
 }
 
 struct OnePole {
-  enum class Type : uint {
+  enum class Type : unsigned {
     LowPass,
     HighPass,
   };
@@ -228,7 +228,7 @@ struct Cubic {
   inline auto inputFrequency() const -> double { return _inputFrequency; }
   inline auto outputFrequency() const -> double { return _outputFrequency; }
 
-  inline auto reset(double inputFrequency, double outputFrequency = 0, uint queueSize = 0) -> void;
+  inline auto reset(double inputFrequency, double outputFrequency = 0, unsigned queueSize = 0) -> void;
   inline auto setInputFrequency(double inputFrequency) -> void;
   inline auto pending() const -> bool;
   inline auto read() -> double;
@@ -245,7 +245,7 @@ private:
   queue<double> _samples;
 };
 
-auto Cubic::reset(double inputFrequency, double outputFrequency, uint queueSize) -> void {
+auto Cubic::reset(double inputFrequency, double outputFrequency, unsigned queueSize) -> void {
   _inputFrequency = inputFrequency;
   _outputFrequency = outputFrequency ? outputFrequency : _inputFrequency;
 

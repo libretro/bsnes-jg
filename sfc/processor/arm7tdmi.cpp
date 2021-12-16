@@ -67,11 +67,11 @@ auto ARM7TDMI::idle() -> void {
   sleep();
 }
 
-auto ARM7TDMI::read(uint mode, uint32_t address) -> uint32_t {
+auto ARM7TDMI::read(unsigned mode, uint32_t address) -> uint32_t {
   return get(mode, address);
 }
 
-auto ARM7TDMI::load(uint mode, uint32_t address) -> uint32_t {
+auto ARM7TDMI::load(unsigned mode, uint32_t address) -> uint32_t {
   pipeline.nonsequential = true;
   auto word = get(Load | mode, address);
   if(mode & Half) {
@@ -91,12 +91,12 @@ auto ARM7TDMI::load(uint mode, uint32_t address) -> uint32_t {
   return word;
 }
 
-auto ARM7TDMI::write(uint mode, uint32_t address, uint32_t word) -> void {
+auto ARM7TDMI::write(unsigned mode, uint32_t address, uint32_t word) -> void {
   pipeline.nonsequential = true;
   return set(mode, address, word);
 }
 
-auto ARM7TDMI::store(uint mode, uint32_t address, uint32_t word) -> void {
+auto ARM7TDMI::store(unsigned mode, uint32_t address, uint32_t word) -> void {
   pipeline.nonsequential = true;
   if(mode & Half) { word &= 0xffff; word |= word << 16; }
   if(mode & Byte) { word &= 0xff; word |= word << 8; word |= word << 16; }
@@ -205,14 +205,14 @@ auto ARM7TDMI::fetch() -> void {
   pipeline.decode = pipeline.fetch;
   pipeline.decode.thumb = cpsr().t;
 
-  uint sequential = Sequential;
+  unsigned sequential = Sequential;
   if(pipeline.nonsequential) {
     pipeline.nonsequential = false;
     sequential = Nonsequential;
   }
 
-  uint mask = !cpsr().t ? 3 : 1;
-  uint size = !cpsr().t ? Word : Half;
+  unsigned mask = !cpsr().t ? 3 : 1;
+  unsigned size = !cpsr().t ? Word : Half;
 
   r(15).data += size >> 3;
   pipeline.fetch.address = r(15) & ~mask;
@@ -220,8 +220,8 @@ auto ARM7TDMI::fetch() -> void {
 }
 
 auto ARM7TDMI::instruction() -> void {
-  uint mask = !cpsr().t ? 3 : 1;
-  uint size = !cpsr().t ? Word : Half;
+  unsigned mask = !cpsr().t ? 3 : 1;
+  unsigned size = !cpsr().t ? Word : Half;
 
   if(pipeline.reload) {
     pipeline.reload = false;
@@ -248,7 +248,7 @@ auto ARM7TDMI::instruction() -> void {
   }
 }
 
-auto ARM7TDMI::exception(uint mode, uint32_t address) -> void {
+auto ARM7TDMI::exception(unsigned mode, uint32_t address) -> void {
   auto psr = cpsr();
   cpsr().m = mode;
   spsr() = psr;
@@ -261,7 +261,7 @@ auto ARM7TDMI::exception(uint mode, uint32_t address) -> void {
 
 auto ARM7TDMI::armInitialize() -> void {
   #define bind(id, name, ...) { \
-    uint index = (id & 0x0ff00000) >> 16 | (id & 0x000000f0) >> 4; \
+    unsigned index = (id & 0x0ff00000) >> 16 | (id & 0x000000f0) >> 4; \
     assert(!armInstruction[index]); \
     armInstruction[index] = [&](uint32_t opcode) { return armInstruction##name(arguments); }; \
     armDisassemble[index] = [&](uint32_t opcode) { return armDisassemble##name(arguments); }; \
@@ -822,8 +822,8 @@ auto ARM7TDMI::armInstructionDataImmediateShift
 
   switch(type) {
   case 0: rm = LSL(rm, shift); break;
-  case 1: rm = LSR(rm, shift ? (uint)shift : 32); break;
-  case 2: rm = ASR(rm, shift ? (uint)shift : 32); break;
+  case 1: rm = LSR(rm, shift ? (unsigned)shift : 32); break;
+  case 2: rm = ASR(rm, shift ? (unsigned)shift : 32); break;
   case 3: rm = shift ? ROR(rm, shift) : RRX(rm); break;
   }
 
@@ -840,7 +840,7 @@ auto ARM7TDMI::armInstructionDataRegisterShift
   case 0: rm = LSL(rm, rs < 33 ? rs : (uint8_t)33); break;
   case 1: rm = LSR(rm, rs < 33 ? rs : (uint8_t)33); break;
   case 2: rm = ASR(rm, rs < 32 ? rs : (uint8_t)32); break;
-  case 3: if(rs) rm = ROR(rm, rs & 31 ? uint(rs & 31) : 32); break;
+  case 3: if(rs) rm = ROR(rm, rs & 31 ? unsigned(rs & 31) : 32); break;
   }
 
   armALU(mode, d, n, rm);
@@ -942,8 +942,8 @@ auto ARM7TDMI::armInstructionMoveMultiple
   if(type && mode == 0) usr = true;
   if(usr) cpsr().m = PSR::USR;
 
-  uint sequential = Nonsequential;
-  for(uint m : range(16)) {
+  unsigned sequential = Nonsequential;
+  for(unsigned m : range(16)) {
     if(!(list & 1 << m)) continue;
     if(mode == 1) r(m) = read(Word | sequential, rn);
     if(mode == 0) write(Word | sequential, rn, r(m));
@@ -977,8 +977,8 @@ auto ARM7TDMI::armInstructionMoveRegisterOffset
 
   switch(type) {
   case 0: rm = LSL(rm, shift); break;
-  case 1: rm = LSR(rm, shift ? (uint)shift : 32); break;
-  case 2: rm = ASR(rm, shift ? (uint)shift : 32); break;
+  case 1: rm = LSR(rm, shift ? (unsigned)shift : 32); break;
+  case 2: rm = ASR(rm, shift ? (unsigned)shift : 32); break;
   case 3: rm = shift ? ROR(rm, shift) : RRX(rm); break;
   }
 
@@ -1186,7 +1186,7 @@ auto ARM7TDMI::thumbInstructionMoveMultiple
 (uint8_t list, uint3 n, uint1 mode) -> void {
   uint32_t rn = r(n);
 
-  for(uint m : range(8)) {
+  for(unsigned m : range(8)) {
     if(!(list & 1 << m)) continue;
     switch(mode) {
     case 0: write(Word | Nonsequential, rn, r(m)); break;  //STMIA
@@ -1233,8 +1233,8 @@ auto ARM7TDMI::thumbInstructionShiftImmediate
 (uint3 d, uint3 m, uint5 immediate, uint2 mode) -> void {
   switch(mode) {
   case 0: r(d) = BIT(LSL(r(m), immediate)); break;  //LSL
-  case 1: r(d) = BIT(LSR(r(m), immediate ? (uint)immediate : 32)); break;  //LSR
-  case 2: r(d) = BIT(ASR(r(m), immediate ? (uint)immediate : 32)); break;  //ASR
+  case 1: r(d) = BIT(LSR(r(m), immediate ? (unsigned)immediate : 32)); break;  //LSR
+  case 2: r(d) = BIT(ASR(r(m), immediate ? (unsigned)immediate : 32)); break;  //ASR
   }
 }
 
@@ -1251,8 +1251,8 @@ auto ARM7TDMI::thumbInstructionStackMultiple
   case 1: sp = r(13);  //POP
   }
 
-  uint sequential = Nonsequential;
-  for(uint m : range(8)) {
+  unsigned sequential = Nonsequential;
+  for(unsigned m : range(8)) {
     if(!(list & 1 << m)) continue;
     switch(mode) {
     case 0: write(Word | sequential, sp, r(m)); break;  //PUSH
@@ -1387,7 +1387,7 @@ auto ARM7TDMI::disassemble(maybe<uint32_t> pc, maybe<Boolean> thumb) -> string {
 
 auto ARM7TDMI::disassembleRegisters() -> string {
   string output;
-  for(uint n : range(16)) {
+  for(unsigned n : range(16)) {
     output.append(_r[n], ":", hex(r(n), 8L), " ");
   }
 
@@ -1452,8 +1452,8 @@ auto ARM7TDMI::armDisassembleDataImmediateShift
     _math(mode) ? string{_s, " ", _r[d], ",", _r[n]} : string{},
     ",", _r[m],
     type == 0 && shift ? string{" lsl #", shift} : string{},
-    type == 1 ? string{" lsr #", shift ? (uint)shift : 32} : string{},
-    type == 2 ? string{" asr #", shift ? (uint)shift : 32} : string{},
+    type == 1 ? string{" lsr #", shift ? (unsigned)shift : 32} : string{},
+    type == 2 ? string{" asr #", shift ? (unsigned)shift : 32} : string{},
     type == 3 && shift ? string{" ror #", shift} : string{},
     type == 3 && !shift ? " rrx" : ""};
 }
@@ -1562,8 +1562,8 @@ auto ARM7TDMI::armDisassembleMoveRegisterOffset
     pre == 0 ? "]" : "",
     ",", up ? "+" : "-", _r[m],
     type == 0 && shift ? string{" lsl #", shift} : string{},
-    type == 1 ? string{" lsr #", shift ? (uint)shift : 32} : string{},
-    type == 2 ? string{" asr #", shift ? (uint)shift : 32} : string{},
+    type == 1 ? string{" lsr #", shift ? (unsigned)shift : 32} : string{},
+    type == 2 ? string{" asr #", shift ? (unsigned)shift : 32} : string{},
     type == 3 && shift ? string{" ror #", shift} : string{},
     type == 3 && !shift ? " rrx" : "",
     pre == 1 ? "]" : "",
@@ -1715,7 +1715,7 @@ auto ARM7TDMI::thumbDisassembleMoveHalfImmediate
 auto ARM7TDMI::thumbDisassembleMoveMultiple
 (uint8_t list, uint3 n, uint1 mode) -> string {
   string registers;
-  for(uint m : range(8)) {
+  for(unsigned m : range(8)) {
     if((list & 1 << m)) registers.append(_r[m], ",");
   }
   registers.trimRight(",", 1L);
@@ -1752,7 +1752,7 @@ auto ARM7TDMI::thumbDisassembleSoftwareInterrupt
 auto ARM7TDMI::thumbDisassembleStackMultiple
 (uint8_t list, uint1 lrpc, uint1 mode) -> string {
   string registers;
-  for(uint m : range(8)) {
+  for(unsigned m : range(8)) {
     if((list & 1 << m)) registers.append(_r[m], ",");
   }
   if(lrpc) registers.append(!mode ? "lr," : "pc,");

@@ -239,10 +239,10 @@ auto SMP::writeIO(uint16_t address, uint8_t data) -> void {
 //other times (and more likely), the SMP will deadlock until the system is reset
 //the timers are not affected by this and advance by their expected values
 auto SMP::wait(maybe<uint16_t> addr, bool half) -> void {
-  static const uint cycleWaitStates[4] = {2, 4, 10, 20};
-  static const uint timerWaitStates[4] = {2, 4,  8, 16};
+  static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
+  static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
 
-  uint waitStates = io.externalWaitStates;
+  unsigned waitStates = io.externalWaitStates;
   if(!addr) waitStates = io.internalWaitStates;  //idle cycles
   else if((*addr & 0xfff0) == 0x00f0) waitStates = io.internalWaitStates;  //IO registers
   else if(*addr >= 0xffc0 && io.iplromEnable) waitStates = io.internalWaitStates;  //IPLROM
@@ -252,10 +252,10 @@ auto SMP::wait(maybe<uint16_t> addr, bool half) -> void {
 }
 
 auto SMP::waitIdle(maybe<uint16_t> addr, bool half) -> void {
-  static const uint cycleWaitStates[4] = {2, 4, 10, 20};
-  static const uint timerWaitStates[4] = {2, 4,  8, 16};
+  static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
+  static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
 
-  uint waitStates = io.externalWaitStates;
+  unsigned waitStates = io.externalWaitStates;
   if(!addr) waitStates = io.internalWaitStates;  //idle cycles
   else if((*addr & 0xfff0) == 0x00f0) waitStates = io.internalWaitStates;  //IO registers
   else if(*addr >= 0xffc0 && io.iplromEnable) waitStates = io.internalWaitStates;  //IPLROM
@@ -264,7 +264,7 @@ auto SMP::waitIdle(maybe<uint16_t> addr, bool half) -> void {
   stepTimers(timerWaitStates[waitStates] >> half);
 }
 
-auto SMP::step(uint clocks) -> void {
+auto SMP::step(unsigned clocks) -> void {
   clock += clocks * (uint64_t)cpu.frequency;
   dsp.clock -= clocks;
   synchronizeDSP();
@@ -272,18 +272,18 @@ auto SMP::step(uint clocks) -> void {
   if(clock > 768 * 24 * (int64_t)24'000'000) synchronizeCPU();
 }
 
-auto SMP::stepIdle(uint clocks) -> void {
+auto SMP::stepIdle(unsigned clocks) -> void {
   clock += clocks * (uint64_t)cpu.frequency;
   dsp.clock -= clocks;
 }
 
-auto SMP::stepTimers(uint clocks) -> void {
+auto SMP::stepTimers(unsigned clocks) -> void {
   timer0.step(clocks);
   timer1.step(clocks);
   timer2.step(clocks);
 }
 
-template<uint Frequency> auto SMP::Timer<Frequency>::step(uint clocks) -> void {
+template<unsigned Frequency> auto SMP::Timer<Frequency>::step(unsigned clocks) -> void {
   //stage 0 increment
   stage0 += clocks;
   if(stage0 < Frequency) return;
@@ -294,7 +294,7 @@ template<uint Frequency> auto SMP::Timer<Frequency>::step(uint clocks) -> void {
   synchronizeStage1();
 }
 
-template<uint Frequency> auto SMP::Timer<Frequency>::synchronizeStage1() -> void {
+template<unsigned Frequency> auto SMP::Timer<Frequency>::synchronizeStage1() -> void {
   bool level = stage1;
   if(!smp.io.timersEnable) level = false;
   if(smp.io.timersDisable) level = false;

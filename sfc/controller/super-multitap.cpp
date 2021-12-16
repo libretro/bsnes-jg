@@ -2,7 +2,7 @@
 
 namespace SuperFamicom {
 
-SuperMultitap::SuperMultitap(uint port) : Controller(port) {
+SuperMultitap::SuperMultitap(unsigned port) : Controller(port) {
   latched = 0;
   counter1 = 0;
   counter2 = 0;
@@ -10,7 +10,7 @@ SuperMultitap::SuperMultitap(uint port) : Controller(port) {
 
 auto SuperMultitap::data() -> uint2 {
   if(latched) return 2;  //device detection
-  uint counter, a, b;
+  unsigned counter, a, b;
 
   if(iobit()) {
     counter = counter1;
@@ -55,7 +55,7 @@ auto SuperMultitap::latch(bool data) -> void {
   counter2 = 0;
 
   if(latched == 0) {
-    for(uint id : range(4)) {
+    for(unsigned id : range(4)) {
       auto& gamepad = gamepads[id];
       gamepad.b      = platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + B);
       gamepad.y      = platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + Y);

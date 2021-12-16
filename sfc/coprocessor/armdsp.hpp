@@ -33,13 +33,13 @@ struct ArmDSP : Processor::ARM7TDMI, Thread {
   auto boot() -> void;
   auto main() -> void;
 
-  auto step(uint clocks) -> void override;
+  auto step(unsigned clocks) -> void override;
   auto sleep() -> void override;
-  auto get(uint mode, uint32_t addr) -> uint32_t override;
-  auto set(uint mode, uint32_t addr, uint32_t word) -> void override;
+  auto get(unsigned mode, uint32_t addr) -> uint32_t override;
+  auto set(unsigned mode, uint32_t addr, uint32_t word) -> void override;
 
-  auto read(uint addr, uint8_t data) -> uint8_t;
-  auto write(uint addr, uint8_t data) -> void;
+  auto read(unsigned addr, uint8_t data) -> uint8_t;
+  auto write(unsigned addr, uint8_t data) -> void;
 
   auto power() -> void;
   auto reset() -> void;  //soft reset
@@ -47,7 +47,7 @@ struct ArmDSP : Processor::ARM7TDMI, Thread {
   auto firmware() const -> nall::vector<uint8_t>;
   auto serialize(serializer&) -> void;
 
-  uint Frequency;
+  unsigned Frequency;
 
   uint8_t programROM[128 * 1024];
   uint8_t dataROM[32 * 1024];

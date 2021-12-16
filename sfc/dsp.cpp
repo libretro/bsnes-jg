@@ -45,7 +45,7 @@ auto DSP::main() -> void {
   int count = spc_dsp.sample_count();
   if(count > 0) {
     if(!system.runAhead)
-    for(uint n = 0; n < count; n += 2) {
+    for(unsigned n = 0; n < count; n += 2) {
       float left  = samplebuffer[n + 0] / 32768.0f;
       float right = samplebuffer[n + 1] / 32768.0f;
       stream->sample(left, right);
@@ -94,7 +94,7 @@ auto DSP::power(bool reset) -> void {
     //Magical Drop (Japan) does not initialize the DSP registers at startup:
     //tokoton mode will hang forever in some instances even on real hardware.
     if(cartridge.headerTitle() == "MAGICAL DROP") {
-      for(uint address : range(0x80)) spc_dsp.write(address, 0xff);
+      for(unsigned address : range(0x80)) spc_dsp.write(address, 0xff);
     }
   }
 }

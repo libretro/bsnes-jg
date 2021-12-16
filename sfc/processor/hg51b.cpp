@@ -745,7 +745,7 @@ HG51B::HG51B() {
   #undef bind
   #undef pattern
 
-  for(uint opcode : range(65536)) {
+  for(unsigned opcode : range(65536)) {
     if(!instructionTable[opcode]) throw;
   }
 }
@@ -1163,7 +1163,7 @@ auto HG51B::halt() -> void {
   io.halt = 1;
 }
 
-auto HG51B::wait(uint24 address) -> uint {
+auto HG51B::wait(uint24 address) -> unsigned {
   if(isROM(address)) return 1 + io.wait.rom;
   if(isRAM(address)) return 1 + io.wait.ram;
   return 1;
@@ -1178,7 +1178,7 @@ auto HG51B::main() -> void {
   return execute();
 }
 
-auto HG51B::step(uint clocks) -> void {
+auto HG51B::step(unsigned clocks) -> void {
   if(io.bus.enable) {
     if(io.bus.pending > clocks) {
       io.bus.pending -= clocks;
@@ -1230,7 +1230,7 @@ auto HG51B::cache() -> bool {
   if(io.cache.lock[io.cache.page]) return io.cache.enable = 0, false;
 
   io.cache.address[io.cache.page] = address;
-  for(uint offset : range(256)) {
+  for(unsigned offset : range(256)) {
     step(wait(address));
     programRAM[io.cache.page][offset]  = read(address++) << 0;
     programRAM[io.cache.page][offset] |= read(address++) << 8;
@@ -1239,7 +1239,7 @@ auto HG51B::cache() -> bool {
 }
 
 auto HG51B::dma() -> void {
-  for(uint offset : range(io.dma.length)) {
+  for(unsigned offset : range(io.dma.length)) {
     uint24 source = io.dma.source + offset;
     uint24 target = io.dma.target + offset;
 

@@ -220,7 +220,7 @@ auto DSP2::power() -> void {
   status.op0dinlen       = 0;
 }
 
-auto DSP2::read(uint addr, uint8_t data) -> uint8_t {
+auto DSP2::read(unsigned addr, uint8_t data) -> uint8_t {
   if(addr & 1) return 0x00;
 
   uint8_t r = 0xff;
@@ -234,7 +234,7 @@ auto DSP2::read(uint addr, uint8_t data) -> uint8_t {
   return r;
 }
 
-auto DSP2::write(uint addr, uint8_t data) -> void {
+auto DSP2::write(unsigned addr, uint8_t data) -> void {
   if(addr & 1) return;
 
   if(status.waiting_for_command) {

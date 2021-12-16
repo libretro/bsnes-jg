@@ -81,7 +81,7 @@ auto DSP1::power() -> void {
   dsp1emu.reset();
 }
 
-auto DSP1::read(uint addr, uint8_t data) -> uint8_t {
+auto DSP1::read(unsigned addr, uint8_t data) -> uint8_t {
   if(addr & 1) {
     return dsp1emu.getSr();
   } else {
@@ -89,7 +89,7 @@ auto DSP1::read(uint addr, uint8_t data) -> uint8_t {
   }
 }
 
-auto DSP1::write(uint addr, uint8_t data) -> void {
+auto DSP1::write(unsigned addr, uint8_t data) -> void {
   if(addr & 1) {
   } else {
     return dsp1emu.setDr(data);

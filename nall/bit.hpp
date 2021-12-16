@@ -2,22 +2,22 @@
 
 namespace nall {
 
-template<uint bits> inline auto uclamp(const uintmax x) -> uintmax {
+template<unsigned bits> inline auto uclamp(const uintmax x) -> uintmax {
   enum : uintmax { b = 1ull << (bits - 1), y = b * 2 - 1 };
   return y + ((x - y) & -(x < y));  //min(x, y);
 }
 
-template<uint bits> inline auto uclip(const uintmax x) -> uintmax {
+template<unsigned bits> inline auto uclip(const uintmax x) -> uintmax {
   enum : uintmax { b = 1ull << (bits - 1), m = b * 2 - 1 };
   return (x & m);
 }
 
-template<uint bits> inline auto sclamp(const intmax x) -> intmax {
+template<unsigned bits> inline auto sclamp(const intmax x) -> intmax {
   enum : intmax { b = 1ull << (bits - 1), m = b - 1 };
   return (x > m) ? m : (x < -b) ? -b : x;
 }
 
-template<uint bits> inline auto sclip(const intmax x) -> intmax {
+template<unsigned bits> inline auto sclip(const intmax x) -> intmax {
   enum : uintmax { b = 1ull << (bits - 1), m = b * 2 - 1 };
   return ((x & m) ^ b) - b;
 }
@@ -57,16 +57,16 @@ namespace bit {
   }
 
   //count number of bits set in a byte
-  constexpr inline auto count(uintmax x) -> uint {
-    uint count = 0;
+  constexpr inline auto count(uintmax x) -> unsigned {
+    unsigned count = 0;
     while(x) x &= x - 1, count++;  //clear the least significant bit
     return count;
   }
 
   //return index of the first bit set (or zero of no bits are set)
   //first(0b1000) == 3
-  constexpr inline auto first(uintmax x) -> uint {
-    uint first = 0;
+  constexpr inline auto first(uintmax x) -> unsigned {
+    unsigned first = 0;
     while(x) { if(x & 1) break; x >>= 1; first++; }
     return first;
   }

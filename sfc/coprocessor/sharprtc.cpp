@@ -70,7 +70,7 @@ auto SharpRTC::save(uint8_t* data) -> void {
   }
 }
 
-const uint SharpRTC::daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+const unsigned SharpRTC::daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 auto SharpRTC::tickSecond() -> void {
   if(++second < 60) return;
@@ -91,7 +91,7 @@ auto SharpRTC::tickHour() -> void {
 }
 
 auto SharpRTC::tickDay() -> void {
-  uint days = daysInMonth[(month - 1) % 12];
+  unsigned days = daysInMonth[(month - 1) % 12];
 
   //add one day in February for leap years
   if(month == 2) {
@@ -119,9 +119,9 @@ auto SharpRTC::tickYear() -> void {
 //returns day of week for specified date
 //eg 0 = Sunday, 1 = Monday, ... 6 = Saturday
 //usage: calculate_weekday(2008, 1, 1) returns weekday of January 1st, 2008
-auto SharpRTC::calculateWeekday(uint year, uint month, uint day) -> uint {
-  uint y = 1000, m = 1;  //SharpRTC epoch is 1000-01-01
-  uint sum = 0;          //number of days passed since epoch
+auto SharpRTC::calculateWeekday(unsigned year, unsigned month, unsigned day) -> unsigned {
+  unsigned y = 1000, m = 1;  //SharpRTC epoch is 1000-01-01
+  unsigned sum = 0;          //number of days passed since epoch
 
   year = max(1000, year);
   month = max(1, min(12, month));
@@ -138,7 +138,7 @@ auto SharpRTC::calculateWeekday(uint year, uint month, uint day) -> uint {
   }
 
   while(m < month) {
-    uint days = daysInMonth[(m - 1) % 12];
+    unsigned days = daysInMonth[(m - 1) % 12];
     bool leapyearmonth = false;
     if(days == 28) {
       if(y % 4 == 0) {
@@ -157,7 +157,7 @@ auto SharpRTC::calculateWeekday(uint year, uint month, uint day) -> uint {
 auto SharpRTC::serialize(serializer& s) -> void {
   Thread::serialize(s);
 
-  s.integer((uint&)state);
+  s.integer((unsigned&)state);
   s.integer(index);
 
   s.integer(second);
@@ -189,7 +189,7 @@ auto SharpRTC::main() -> void {
   synchronizeCPU();
 }
 
-auto SharpRTC::step(uint clocks) -> void {
+auto SharpRTC::step(unsigned clocks) -> void {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
@@ -223,7 +223,7 @@ auto SharpRTC::synchronize(uint64_t timestamp) -> void {
   weekday = timeinfo->tm_wday;
 }
 
-auto SharpRTC::read(uint addr, uint8_t data) -> uint8_t {
+auto SharpRTC::read(unsigned addr, uint8_t data) -> uint8_t {
   addr &= 1;
 
   if(addr == 0) {
@@ -243,7 +243,7 @@ auto SharpRTC::read(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto SharpRTC::write(uint addr, uint8_t data) -> void {
+auto SharpRTC::write(unsigned addr, uint8_t data) -> void {
   addr &= 1, data &= 15;
 
   if(addr == 1) {

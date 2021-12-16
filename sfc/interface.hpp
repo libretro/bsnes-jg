@@ -1,7 +1,7 @@
 namespace SuperFamicom {
 
 struct ID {
-  enum : uint {
+  enum : unsigned {
     System,
     SuperFamicom,
     GameBoy,
@@ -10,13 +10,13 @@ struct ID {
     SufamiTurboB,
   };
 
-  struct Port { enum : uint {
+  struct Port { enum : unsigned {
     Controller1,
     Controller2,
     Expansion,
   };};
 
-  struct Device { enum : uint {
+  struct Device { enum : unsigned {
     None,
     Gamepad,
     Mouse,
@@ -46,11 +46,11 @@ struct Interface : Emulator::Interface {
   auto unload() -> void override;
 
   auto ports() -> vector<Port> override;
-  auto devices(uint port) -> vector<Device> override;
-  auto inputs(uint device) -> vector<Input> override;
+  auto devices(unsigned port) -> vector<Device> override;
+  auto inputs(unsigned device) -> vector<Input> override;
 
-  auto connected(uint port) -> uint override;
-  auto connect(uint port, uint device) -> void override;
+  auto connected(unsigned port) -> unsigned override;
+  auto connect(unsigned port, unsigned device) -> void override;
   auto power() -> void override;
   auto reset() -> void override;
   auto run() -> void override;
@@ -69,8 +69,8 @@ struct Interface : Emulator::Interface {
   auto configure(string configuration) -> bool override;
   auto configure(string name, string value) -> bool override;
 
-  auto frameSkip() -> uint override;
-  auto setFrameSkip(uint frameSkip) -> void override;
+  auto frameSkip() -> unsigned override;
+  auto setFrameSkip(unsigned frameSkip) -> void override;
 
   auto runAhead() -> bool override;
   auto setRunAhead(bool runAhead) -> void override;
@@ -84,16 +84,16 @@ struct Configuration {
 
   struct System {
     struct CPU {
-      uint version = 2;
+      unsigned version = 2;
     } cpu;
     struct PPU1 {
-      uint version = 1;
+      unsigned version = 1;
       struct VRAM {
-        uint size = 0x10000;
+        unsigned size = 0x10000;
       } vram;
     } ppu1;
     struct PPU2 {
-      uint version = 3;
+      unsigned version = 3;
     } ppu2;
     struct Serialization {
       string method = "Fast";
@@ -109,7 +109,7 @@ struct Configuration {
     bool hotfixes = true;
     string entropy = "Low";
     struct CPU {
-      uint overclock = 100;
+      unsigned overclock = 100;
       bool fastMath = false;
     } cpu;
     struct PPU {
@@ -117,9 +117,9 @@ struct Configuration {
       bool deinterlace = true;
       bool noSpriteLimit = false;
       bool noVRAMBlocking = false;
-      uint renderCycle = 512;
+      unsigned renderCycle = 512;
       struct Mode7 {
-        uint scale = 1;
+        unsigned scale = 1;
         bool perspective = true;
         bool supersample = false;
         bool mosaic = true;
@@ -135,10 +135,10 @@ struct Configuration {
       bool preferHLE = false;
     } coprocessor;
     struct SA1 {
-      uint overclock = 100;
+      unsigned overclock = 100;
     } sa1;
     struct SuperFX {
-      uint overclock = 100;
+      unsigned overclock = 100;
     } superfx;
   } hacks;
 
@@ -149,9 +149,9 @@ private:
 extern Configuration configuration;
 
 struct Settings {
-  uint controllerPort1 = ID::Device::Gamepad;
-  uint controllerPort2 = ID::Device::Gamepad;
-  uint expansionPort = ID::Device::None;
+  unsigned controllerPort1 = ID::Device::Gamepad;
+  unsigned controllerPort2 = ID::Device::Gamepad;
+  unsigned expansionPort = ID::Device::None;
   bool random = true;
 };
 

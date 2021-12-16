@@ -3,7 +3,7 @@
 namespace nall {
 
 struct Boolean {
-  static inline constexpr auto bits() -> uint { return 1; }
+  static inline constexpr auto bits() -> unsigned { return 1; }
   using btype = bool;
 
   inline Boolean() : data(false) {}

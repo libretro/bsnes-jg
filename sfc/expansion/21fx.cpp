@@ -40,7 +40,7 @@ S21FX::~S21FX() {
   //the downside is that if 00:fffc-fffd were anything but ROM; it will now only act as ROM
   //given that this is the only device that hooks the reset vector like this,
   //it's not worth the added complexity to support some form of reversible bus mapping hooks
-  uint vector = resetVector;
+  unsigned vector = resetVector;
   bus.map([vector](uint24 addr, uint8_t) -> uint8_t {
     return vector >> addr * 8;
   }, [](uint24, uint8_t) -> void {
@@ -55,7 +55,7 @@ auto S21FX::Enter() -> void {
   while(true) scheduler.synchronize(), expansionPort.device->main();
 }
 
-auto S21FX::step(uint clocks) -> void {
+auto S21FX::step(unsigned clocks) -> void {
   Thread::step(clocks);
   synchronize(cpu);
 }
@@ -73,7 +73,7 @@ auto S21FX::main() -> void {
   while(true) step(10'000'000);
 }
 
-auto S21FX::read(uint addr, uint8_t data) -> uint8_t {
+auto S21FX::read(unsigned addr, uint8_t data) -> uint8_t {
   addr &= 0x40ffff;
 
   if(addr == 0xfffc) return booted ? resetVector.byte(0) : (uint8_t)0x84;
@@ -96,7 +96,7 @@ auto S21FX::read(uint addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto S21FX::write(uint addr, uint8_t data) -> void {
+auto S21FX::write(unsigned addr, uint8_t data) -> void {
   addr &= 0x40ffff;
 
   if(addr == 0x21ff) {
@@ -111,7 +111,7 @@ auto S21FX::quit() -> bool {
   return false;
 }
 
-auto S21FX::usleep(uint microseconds) -> void {
+auto S21FX::usleep(unsigned microseconds) -> void {
   step(10 * microseconds);
 }
 
