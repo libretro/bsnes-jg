@@ -6,7 +6,7 @@ namespace SuperFamicom {
 #define  int16  int16_t
 #define  int32  int32_t
 #define  int64  int64_t
-#define  uint8  uint8_t
+#define  uint8_t  uint8_t
 #define uint16 uint16_t
 #define uint32 uint32_t
 #define uint64 uint64_t
@@ -81,7 +81,7 @@ auto DSP1::power() -> void {
   dsp1emu.reset();
 }
 
-auto DSP1::read(uint addr, uint8 data) -> uint8 {
+auto DSP1::read(uint addr, uint8_t data) -> uint8_t {
   if(addr & 1) {
     return dsp1emu.getSr();
   } else {
@@ -89,7 +89,7 @@ auto DSP1::read(uint addr, uint8 data) -> uint8 {
   }
 }
 
-auto DSP1::write(uint addr, uint8 data) -> void {
+auto DSP1::write(uint addr, uint8_t data) -> void {
   if(addr & 1) {
   } else {
     return dsp1emu.setDr(data);

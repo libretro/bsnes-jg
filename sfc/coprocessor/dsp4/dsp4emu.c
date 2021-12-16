@@ -1924,7 +1924,7 @@ void DSP4_OP11(int16 A, int16 B, int16 C, int16 D, int16 *M)
 /////////////////////////////////////////////////////////////
 //Processing Code
 /////////////////////////////////////////////////////////////
-uint8 dsp4_byte;
+uint8_t dsp4_byte;
 uint16 dsp4_address;
 
 void InitDSP4()
@@ -2136,7 +2136,7 @@ void DSP4GetByte()
 {
   if (DSP4.out_count)
   {
-    dsp4_byte = (uint8) DSP4.output[DSP4.out_index&0x1FF];
+    dsp4_byte = (uint8_t) DSP4.output[DSP4.out_index&0x1FF];
     DSP4.out_index++;
     if (DSP4.out_count == DSP4.out_index)
       DSP4.out_count = 0;

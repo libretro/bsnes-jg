@@ -65,30 +65,30 @@ auto CPU::Channel::validA(uint24 address) -> bool {
   return true;
 }
 
-auto CPU::Channel::readA(uint24 address) -> uint8 {
+auto CPU::Channel::readA(uint24 address) -> uint8_t {
   step<4,1>();
-  cpu.r.mdr = validA(address) ? bus.read(address, cpu.r.mdr) : (uint8)0x00;
-  step<4,1>();
-  return cpu.r.mdr;
-}
-
-auto CPU::Channel::readB(uint8 address, bool valid) -> uint8 {
-  step<4,1>();
-  cpu.r.mdr = valid ? bus.read(0x2100 | address, cpu.r.mdr) : (uint8)0x00;
+  cpu.r.mdr = validA(address) ? bus.read(address, cpu.r.mdr) : (uint8_t)0x00;
   step<4,1>();
   return cpu.r.mdr;
 }
 
-auto CPU::Channel::writeA(uint24 address, uint8 data) -> void {
+auto CPU::Channel::readB(uint8_t address, bool valid) -> uint8_t {
+  step<4,1>();
+  cpu.r.mdr = valid ? bus.read(0x2100 | address, cpu.r.mdr) : (uint8_t)0x00;
+  step<4,1>();
+  return cpu.r.mdr;
+}
+
+auto CPU::Channel::writeA(uint24 address, uint8_t data) -> void {
   if(validA(address)) bus.write(address, data);
 }
 
-auto CPU::Channel::writeB(uint8 address, uint8 data, bool valid) -> void {
+auto CPU::Channel::writeB(uint8_t address, uint8_t data, bool valid) -> void {
   if(valid) bus.write(0x2100 | address, data);
 }
 
 auto CPU::Channel::transfer(uint24 addressA, uint2 index) -> void {
-  uint8 addressB = targetAddress;
+  uint8_t addressB = targetAddress;
   switch(transferMode) {
   case 1: case 5: addressB += index.bit(0); break;
   case 3: case 7: addressB += index.bit(1); break;
@@ -200,7 +200,7 @@ auto CPU::idle() -> void {
   aluEdge();
 }
 
-auto CPU::read(uint address) -> uint8 {
+auto CPU::read(uint address) -> uint8_t {
   if(address & 0x408000) {
     if(address & 0x800000 && io.fastROM) {
       status.clockCount = 6;
@@ -239,7 +239,7 @@ auto CPU::read(uint address) -> uint8 {
   return data;
 }
 
-auto CPU::write(uint address, uint8 data) -> void {
+auto CPU::write(uint address, uint8_t data) -> void {
   aluEdge();
 
   if(address & 0x408000) {
@@ -275,20 +275,20 @@ auto CPU::write(uint address, uint8 data) -> void {
   bus.write(address, r.mdr = data);
 }
 
-auto CPU::readDisassembler(uint address) -> uint8 {
+auto CPU::readDisassembler(uint address) -> uint8_t {
   return bus.read(address, r.mdr);
 }
 
-auto CPU::readRAM(uint addr, uint8 data) -> uint8 {
+auto CPU::readRAM(uint addr, uint8_t data) -> uint8_t {
   return wram[addr];
 }
 
-auto CPU::readAPU(uint addr, uint8 data) -> uint8 {
+auto CPU::readAPU(uint addr, uint8_t data) -> uint8_t {
   synchronizeSMP();
   return smp.portRead(addr & 3);
 }
 
-auto CPU::readCPU(uint addr, uint8 data) -> uint8 {
+auto CPU::readCPU(uint addr, uint8_t data) -> uint8_t {
   switch(addr & 0xffff) {
   case 0x2180:  //WMDATA
     return bus.read(0x7e0000 | io.wramAddress++, data);
@@ -346,7 +346,7 @@ auto CPU::readCPU(uint addr, uint8 data) -> uint8 {
   return data;
 }
 
-auto CPU::readDMA(uint addr, uint8 data) -> uint8 {
+auto CPU::readDMA(uint addr, uint8_t data) -> uint8_t {
   auto& channel = this->channels[addr >> 4 & 7];
 
   switch(addr & 0xff8f) {
@@ -379,16 +379,16 @@ auto CPU::readDMA(uint addr, uint8 data) -> uint8 {
   return data;
 }
 
-auto CPU::writeRAM(uint addr, uint8 data) -> void {
+auto CPU::writeRAM(uint addr, uint8_t data) -> void {
   wram[addr] = data;
 }
 
-auto CPU::writeAPU(uint addr, uint8 data) -> void {
+auto CPU::writeAPU(uint addr, uint8_t data) -> void {
   synchronizeSMP();
   return smp.portWrite(addr & 3, data);
 }
 
-auto CPU::writeCPU(uint addr, uint8 data) -> void {
+auto CPU::writeCPU(uint addr, uint8_t data) -> void {
   switch(addr & 0xffff) {
 
   case 0x2180:  //WMDATA
@@ -513,7 +513,7 @@ auto CPU::writeCPU(uint addr, uint8 data) -> void {
   }
 }
 
-auto CPU::writeDMA(uint addr, uint8 data) -> void {
+auto CPU::writeDMA(uint addr, uint8_t data) -> void {
   auto& channel = this->channels[addr >> 4 & 7];
 
   switch(addr & 0xff8f) {
@@ -601,7 +601,7 @@ auto CPU::step() -> void {
 
   for(auto coprocessor : coprocessors) {
     if(coprocessor == &icd || coprocessor == &msu1) continue;
-    coprocessor->clock -= Clocks * (uint64)coprocessor->frequency;
+    coprocessor->clock -= Clocks * (uint64_t)coprocessor->frequency;
   }
 
   if(overclocking.target) {
@@ -622,11 +622,11 @@ auto CPU::step() -> void {
   if constexpr(Clocks >= 10) stepOnce();
   if constexpr(Clocks >= 12) stepOnce();
 
-  smp.clock -= Clocks * (uint64)smp.frequency;
+  smp.clock -= Clocks * (uint64_t)smp.frequency;
   ppu.clock -= Clocks;
   for(auto coprocessor : coprocessors) {
     if(coprocessor != &icd && coprocessor != &msu1) continue;
-    coprocessor->clock -= Clocks * (uint64)coprocessor->frequency;
+    coprocessor->clock -= Clocks * (uint64_t)coprocessor->frequency;
   }
 
   if(!status.dramRefresh && hcounter() >= status.dramRefreshPosition) {
@@ -857,7 +857,7 @@ auto CPU::irqPoll() -> void {
   )) status.irqLine = status.irqHold = 1;  //hold /IRQ for four cycles
 }
 
-auto CPU::nmitimenUpdate(uint8 data) -> void {
+auto CPU::nmitimenUpdate(uint8_t data) -> void {
   io.hirqEnable = data & 0x10;
   io.virqEnable = data & 0x20;
   io.irqEnable = io.hirqEnable || io.virqEnable;
@@ -1083,8 +1083,8 @@ auto CPU::power(bool reset) -> void {
   PPUcounter::reset();
   PPUcounter::scanline = {&CPU::scanline, this};
 
-  function<uint8 (uint, uint8)> reader;
-  function<void  (uint, uint8)> writer;
+  function<uint8_t (uint, uint8_t)> reader;
+  function<void  (uint, uint8_t)> writer;
 
   reader = {&CPU::readRAM, this};
   writer = {&CPU::writeRAM, this};

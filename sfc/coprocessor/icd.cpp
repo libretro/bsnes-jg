@@ -16,7 +16,7 @@ auto ICD::ppuVreset() -> void {
 }
 
 auto ICD::ppuWrite(uint2 color) -> void {
-  auto x = (uint8)hcounter++;
+  auto x = (uint8_t)hcounter++;
   auto y = (uint3)vcounter;
   if(x >= 160) return;  //unverified behavior
 
@@ -43,7 +43,7 @@ auto ICD::joypWrite(bool p14, bool p15) -> void {
     }
   }
 
-  uint8 joypad;
+  uint8_t joypad;
   if(joypID == 0) joypad = r6004;
   if(joypID == 1) joypad = r6005;
   if(joypID == 2) joypad = r6006;
@@ -110,7 +110,7 @@ auto ICD::joypWrite(bool p14, bool p15) -> void {
   packetLock = 1;
 }
 
-auto ICD::readIO(uint addr, uint8 data) -> uint8 {
+auto ICD::readIO(uint addr, uint8_t data) -> uint8_t {
   addr &= 0x40ffff;
 
   //LY counter
@@ -149,7 +149,7 @@ auto ICD::readIO(uint addr, uint8 data) -> uint8 {
   return 0x00;
 }
 
-auto ICD::writeIO(uint addr, uint8 data) -> void {
+auto ICD::writeIO(uint addr, uint8_t data) -> void {
   addr &= 0xffff;
 
   //VRAM port

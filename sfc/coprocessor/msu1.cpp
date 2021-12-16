@@ -56,8 +56,8 @@ auto MSU1::main() -> void {
         }
       } else {
         io.audioPlayOffset += 4;
-        left  = (double)(int16)audioFile->readl(2) / 32768.0 * (double)io.audioVolume / 255.0;
-        right = (double)(int16)audioFile->readl(2) / 32768.0 * (double)io.audioVolume / 255.0;
+        left  = (double)(int16_t)audioFile->readl(2) / 32768.0 * (double)io.audioVolume / 255.0;
+        right = (double)(int16_t)audioFile->readl(2) / 32768.0 * (double)io.audioVolume / 255.0;
         if(dsp.mute()) left = 0, right = 0;
       }
     } else {
@@ -118,7 +118,7 @@ auto MSU1::audioOpen() -> void {
   string name = {"msu1/track-", io.audioTrack, ".pcm"};
   if(audioFile = platform->open(ID::SuperFamicom, name, File::Read)) {
     if(audioFile->size() >= 8) {
-      uint32 header = audioFile->readm(4);
+      uint32_t header = audioFile->readm(4);
       if(header == 0x4d535531) {  //"MSU1"
         io.audioLoopOffset = 8 + audioFile->readl(4) * 4;
         if(io.audioLoopOffset > audioFile->size()) io.audioLoopOffset = 8;
@@ -132,7 +132,7 @@ auto MSU1::audioOpen() -> void {
   io.audioError = true;
 }
 
-auto MSU1::readIO(uint addr, uint8) -> uint8 {
+auto MSU1::readIO(uint addr, uint8_t) -> uint8_t {
   cpu.synchronizeCoprocessors();
 
   switch(0x2000 | addr & 7) {
@@ -162,7 +162,7 @@ auto MSU1::readIO(uint addr, uint8) -> uint8 {
   return 0; // unreachable
 }
 
-auto MSU1::writeIO(uint addr, uint8 data) -> void {
+auto MSU1::writeIO(uint addr, uint8_t data) -> void {
   cpu.synchronizeCoprocessors();
 
   switch(0x2000 | addr & 7) {

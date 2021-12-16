@@ -144,8 +144,8 @@ auto Cartridge::loadMap(Markup::Node map, T& memory) -> uint {
 
 auto Cartridge::loadMap(
   Markup::Node map,
-  const function<uint8 (uint, uint8)>& reader,
-  const function<void  (uint, uint8)>& writer
+  const function<uint8_t (uint, uint8_t)>& reader,
+  const function<void  (uint, uint8_t)>& writer
 ) -> uint {
   auto addr = map["address"].text();
   auto size = map["size"].natural();
@@ -638,7 +638,7 @@ auto Cartridge::loadEpsonRTC(Markup::Node node) -> void {
   if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Epson)"]) {
     if(auto file = game.memory(memory)) {
       if(auto fp = platform->open(ID::SuperFamicom, file->name(), File::Read)) {
-        uint8 data[16] = {0};
+        uint8_t data[16] = {0};
         for(auto& byte : data) byte = fp->read();
         epsonrtc.load(data);
       }
@@ -659,7 +659,7 @@ auto Cartridge::loadSharpRTC(Markup::Node node) -> void {
   if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Sharp)"]) {
     if(auto file = game.memory(memory)) {
       if(auto fp = platform->open(ID::SuperFamicom, file->name(), File::Read)) {
-        uint8 data[16] = {0};
+        uint8_t data[16] = {0};
         for(auto& byte : data) byte = fp->read();
         sharprtc.load(data);
       }
@@ -886,7 +886,7 @@ auto Cartridge::saveEpsonRTC(Markup::Node node) -> void {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
         if(auto fp = platform->open(ID::SuperFamicom, file->name(), File::Write)) {
-          uint8 data[16] = {0};
+          uint8_t data[16] = {0};
           epsonrtc.save(data);
           fp->write(data, 16);
         }
@@ -901,7 +901,7 @@ auto Cartridge::saveSharpRTC(Markup::Node node) -> void {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
         if(auto fp = platform->open(ID::SuperFamicom, file->name(), File::Write)) {
-          uint8 data[16] = {0};
+          uint8_t data[16] = {0};
           sharprtc.save(data);
           fp->write(data, 16);
         }
@@ -1022,7 +1022,7 @@ auto Cartridge::load() -> bool {
     sha.input(spc7110.drom.data(), spc7110.drom.size());
     sha.input(sdd1.rom.data(), sdd1.rom.size());
     //hash all firmware that exists
-    vector<uint8> buffer;
+    vector<uint8_t> buffer;
     buffer = armdsp.firmware();
     sha.input(buffer.data(), buffer.size());
     buffer = hitachidsp.firmware();

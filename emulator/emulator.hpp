@@ -70,9 +70,9 @@ struct Platform {
   virtual auto path(uint id) -> string { return ""; }
   virtual auto open(uint id, string name, vfs::file::mode mode, bool required = false) -> shared_pointer<vfs::file> { return {}; }
   virtual auto load(uint id, string name, string type, vector<string> options = {}) -> Load { return {}; }
-  virtual auto videoFrame(const uint16* data, uint pitch, uint width, uint height, uint scale) -> void {}
+  virtual auto videoFrame(const uint16_t *data, uint pitch, uint width, uint height, uint scale) -> void {}
   virtual auto audioFrame(const double* samples, uint channels) -> void {}
-  virtual auto inputPoll(uint port, uint device, uint input) -> int16 { return 0; }
+  virtual auto inputPoll(uint port, uint device, uint input) -> int16_t { return 0; }
   virtual auto inputRumble(uint port, uint device, uint input, bool enable) -> void {}
   virtual auto dipSettings(Markup::Node node) -> uint { return 0; }
   virtual auto notify(string text) -> void {}
@@ -132,7 +132,7 @@ struct Interface {
   virtual auto information() -> Information { return {}; }
 
   virtual auto display() -> Display { return {}; }
-  virtual auto color(uint32 color) -> uint64 { return 0; }
+  virtual auto color(uint32_t color) -> uint64_t { return 0; }
 
   //game interface
   virtual auto loaded() -> bool { return false; }
@@ -156,14 +156,14 @@ struct Interface {
 
   //time functions
   virtual auto rtc() -> bool { return false; }
-  virtual auto synchronize(uint64 timestamp = 0) -> void {}
+  virtual auto synchronize(uint64_t timestamp = 0) -> void {}
 
   //state functions
   virtual auto serialize(bool synchronize = true) -> serializer { return {}; }
   virtual auto unserialize(serializer&) -> bool { return false; }
 
   //cheat functions
-  virtual auto read(uint24 address) -> uint8 { return 0; }
+  virtual auto read(uint24 address) -> uint8_t { return 0; }
   virtual auto cheats(const vector<string>& = {}) -> void {}
 
   //configuration

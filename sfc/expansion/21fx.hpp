@@ -6,20 +6,20 @@ struct S21FX : Expansion {
   auto step(uint clocks) -> void;
   auto main() -> void;
 
-  auto read(uint addr, uint8 data) -> uint8;
-  auto write(uint addr, uint8 data) -> void;
+  auto read(uint addr, uint8_t data) -> uint8_t;
+  auto write(uint addr, uint8_t data) -> void;
 
 private:
   auto quit() -> bool;
   auto usleep(uint) -> void;
   auto readable() -> bool;
   auto writable() -> bool;
-  auto read() -> uint8;
-  auto write(uint8) -> void;
+  auto read() -> uint8_t;
+  auto write(uint8_t) -> void;
 
   bool booted = false;
   uint16 resetVector;
-  uint8 ram[122];
+  uint8_t ram[122];
 
   nall::library link;
   function<void (
@@ -27,11 +27,11 @@ private:
     function<void (uint)>,  //usleep
     function<bool ()>,      //readable
     function<bool ()>,      //writable
-    function<uint8 ()>,     //read
-    function<void (uint8)>  //write
+    function<uint8_t ()>,     //read
+    function<void (uint8_t)>  //write
   )> linkInit;
   function<void (vector<string>)> linkMain;
 
-  vector<uint8> snesBuffer;  //SNES -> Link
-  vector<uint8> linkBuffer;  //Link -> SNES
+  vector<uint8_t> snesBuffer;  //SNES -> Link
+  vector<uint8_t> linkBuffer;  //Link -> SNES
 };

@@ -101,14 +101,14 @@ auto Interface::display() -> Display {
   return display;
 }
 
-auto Interface::color(uint32 color) -> uint64 {
+auto Interface::color(uint32_t color) -> uint64_t {
   uint r = color >>  0 & 31;
   uint g = color >>  5 & 31;
   uint b = color >> 10 & 31;
   uint l = color >> 15 & 15;
 
-  auto normalize = [](uint64 color, unsigned sourceDepth, unsigned targetDepth) {
-    if(sourceDepth == 0 || targetDepth == 0) return (uint64)0;
+  auto normalize = [](uint64_t color, unsigned sourceDepth, unsigned targetDepth) {
+    if(sourceDepth == 0 || targetDepth == 0) return (uint64_t)0;
     while(sourceDepth < targetDepth) {
       color = (color << sourceDepth) | color;
       sourceDepth += sourceDepth;
@@ -120,12 +120,12 @@ auto Interface::color(uint32 color) -> uint64 {
   //luma=0 is not 100% black; but it's much darker than normal linear scaling
   //exact effect seems to be analog; requires > 24-bit color depth to represent accurately
   double L = (1.0 + l) / 16.0 * (l ? 1.0 : 0.25);
-  uint64 R = L * normalize(r, 5, 16);
-  uint64 G = L * normalize(g, 5, 16);
-  uint64 B = L * normalize(b, 5, 16);
+  uint64_t R = L * normalize(r, 5, 16);
+  uint64_t G = L * normalize(g, 5, 16);
+  uint64_t B = L * normalize(b, 5, 16);
 
   if(SuperFamicom::configuration.video.colorEmulation) {
-    static const uint8 gammaRamp[32] = {
+    static const uint8_t gammaRamp[32] = {
       0x00, 0x01, 0x03, 0x06, 0x0a, 0x0f, 0x15, 0x1c,
       0x24, 0x2d, 0x37, 0x42, 0x4e, 0x5b, 0x69, 0x78,
       0x88, 0x90, 0x98, 0xa0, 0xa8, 0xb0, 0xb8, 0xc0,
@@ -318,7 +318,7 @@ auto Interface::rtc() -> bool {
   return false;
 }
 
-auto Interface::synchronize(uint64 timestamp) -> void {
+auto Interface::synchronize(uint64_t timestamp) -> void {
   // The line below was commented because in bsnes, there always seems to be
   // a timestamp. This allows nall/chrono.hpp to be removed.
   //if(!timestamp) timestamp = chrono::timestamp();
@@ -335,7 +335,7 @@ auto Interface::unserialize(serializer& s) -> bool {
   return system.unserialize(s);
 }
 
-auto Interface::read(uint24 address) -> uint8 {
+auto Interface::read(uint24 address) -> uint8_t {
   return cpu.readDisassembler(address);
 }
 

@@ -34,7 +34,7 @@ struct Interface : Emulator::Interface {
   auto information() -> Information;
 
   auto display() -> Display override;
-  auto color(uint32 color) -> uint64 override;
+  auto color(uint32_t color) -> uint64_t override;
 
   auto loaded() -> bool override;
   auto hashes() -> vector<string> override;
@@ -56,12 +56,12 @@ struct Interface : Emulator::Interface {
   auto run() -> void override;
 
   auto rtc() -> bool override;
-  auto synchronize(uint64 timestamp) -> void override;
+  auto synchronize(uint64_t timestamp) -> void override;
 
   auto serialize(bool synchronize = true) -> serializer override;
   auto unserialize(serializer&) -> bool override;
 
-  auto read(uint24 address) -> uint8 override;
+  auto read(uint24 address) -> uint8_t override;
   auto cheats(const vector<string>&) -> void override;
 
   auto configuration() -> string override;

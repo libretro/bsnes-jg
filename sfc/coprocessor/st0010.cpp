@@ -2,7 +2,7 @@
 
 namespace SuperFamicom {
 
-const int16 ST0010::sin_table[256] = {
+const int16_t ST0010::sin_table[256] = {
    0x0000,  0x0324,  0x0648,  0x096a,  0x0c8c,  0x0fab,  0x12c8,  0x15e2,
    0x18f9,  0x1c0b,  0x1f1a,  0x2223,  0x2528,  0x2826,  0x2b1f,  0x2e11,
    0x30fb,  0x33df,  0x36ba,  0x398c,  0x3c56,  0x3f17,  0x41ce,  0x447a,
@@ -37,7 +37,7 @@ const int16 ST0010::sin_table[256] = {
   -0x18f8, -0x15e2, -0x12c8, -0x0fab, -0x0c8b, -0x096a, -0x0647, -0x0324
 };
 
-const int16 ST0010::mode7_scale[176] = {
+const int16_t ST0010::mode7_scale[176] = {
   0x0380,  0x0325,  0x02da,  0x029c,  0x0268,  0x023b,  0x0215,  0x01f3,
   0x01d5,  0x01bb,  0x01a3,  0x018e,  0x017b,  0x016a,  0x015a,  0x014b,
   0x013e,  0x0132,  0x0126,  0x011c,  0x0112,  0x0109,  0x0100,  0x00f8,
@@ -62,7 +62,7 @@ const int16 ST0010::mode7_scale[176] = {
   0x002d,  0x002c,  0x002c,  0x002c,  0x002c,  0x002b,  0x002b,  0x002b
 };
 
-const uint8 ST0010::arctan[32][32] = {
+const uint8_t ST0010::arctan[32][32] = {
   { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80 },
   { 0x80, 0xa0, 0xad, 0xb3, 0xb6, 0xb8, 0xb9, 0xba, 0xbb, 0xbb, 0xbc, 0xbc, 0xbd, 0xbd, 0xbd, 0xbd,
@@ -129,40 +129,40 @@ const uint8 ST0010::arctan[32][32] = {
     0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9c, 0x9d, 0x9e, 0x9f, 0x9f, 0xa0 }
 };
 
-int16 ST0010::sin(int16 theta) {
+int16_t ST0010::sin(int16_t theta) {
   return sin_table[(theta >> 8) & 0xff];
 }
 
-int16 ST0010::cos(int16 theta) {
+int16_t ST0010::cos(int16_t theta) {
   return sin_table[((theta + 0x4000) >> 8) & 0xff];
 }
 
-uint8 ST0010::readb(uint16 addr) {
+uint8_t ST0010::readb(uint16_t addr) {
   return ram[addr & 0xfff];
 }
 
-uint16 ST0010::readw(uint16 addr) {
+uint16_t ST0010::readw(uint16_t addr) {
   return (readb(addr + 0) <<  0) |
          (readb(addr + 1) <<  8);
 }
 
-uint32 ST0010::readd(uint16 addr) {
+uint32_t ST0010::readd(uint16_t addr) {
   return (readb(addr + 0) <<  0) |
          (readb(addr + 1) <<  8) |
          (readb(addr + 2) << 16) |
          (readb(addr + 3) << 24);
 }
 
-void ST0010::writeb(uint16 addr, uint8 data) {
+void ST0010::writeb(uint16_t addr, uint8_t data) {
   ram[addr & 0xfff] = data;
 }
 
-void ST0010::writew(uint16 addr, uint16 data) {
+void ST0010::writew(uint16_t addr, uint16_t data) {
   writeb(addr + 0, data >> 0);
   writeb(addr + 1, data >> 8);
 }
 
-void ST0010::writed(uint16 addr, uint32 data) {
+void ST0010::writed(uint16_t addr, uint32_t data) {
   writeb(addr + 0, data >>  0);
   writeb(addr + 1, data >>  8);
   writeb(addr + 2, data >> 16);
@@ -172,7 +172,7 @@ void ST0010::writed(uint16 addr, uint32 data) {
 //ST-0010 emulation code - Copyright (C) 2003 The Dumper, Matthew Kendora, Overload, Feather
 //bsnes port - Copyright (C) 2007 byuu
 
-void ST0010::op_01(int16 x0, int16 y0, int16 &x1, int16 &y1, int16 &quadrant, int16 &theta) {
+void ST0010::op_01(int16_t x0, int16_t y0, int16_t &x1, int16_t &y1, int16_t &quadrant, int16_t &theta) {
   if((x0 < 0) && (y0 < 0)) {
     x1 = -x0;
     y1 = -y0;
@@ -204,9 +204,9 @@ void ST0010::op_01(int16 x0, int16 y0, int16 &x1, int16 &y1, int16 &quadrant, in
 //
 
 void ST0010::op_01() {
-  int16 x0 = readw(0x0000);
-  int16 y0 = readw(0x0002);
-  int16 x1, y1, quadrant, theta;
+  int16_t x0 = readw(0x0000);
+  int16_t y0 = readw(0x0002);
+  int16_t x1, y1, quadrant, theta;
 
   op_01(x0, y0, x1, y1, quadrant, theta);
 
@@ -218,12 +218,12 @@ void ST0010::op_01() {
 }
 
 void ST0010::op_02() {
-  int16 positions = readw(0x0024);
-  uint16 *places  = (uint16*)(ram + 0x0040);
-  uint16 *drivers = (uint16*)(ram + 0x0080);
+  int16_t positions = readw(0x0024);
+  uint16_t *places  = (uint16_t*)(ram + 0x0040);
+  uint16_t *drivers = (uint16_t*)(ram + 0x0080);
 
   bool sorted;
-  uint16 temp;
+  uint16_t temp;
   if(positions > 1) {
     do {
       sorted = true;
@@ -246,10 +246,10 @@ void ST0010::op_02() {
 }
 
 void ST0010::op_03() {
-  int16 x0 = readw(0x0000);
-  int16 y0 = readw(0x0002);
-  int16 multiplier = readw(0x0004);
-  int32 x1, y1;
+  int16_t x0 = readw(0x0000);
+  int16_t y0 = readw(0x0002);
+  int16_t multiplier = readw(0x0004);
+  int32_t x1, y1;
 
   x1 = x0 * multiplier << 1;
   y1 = y0 * multiplier << 1;
@@ -259,42 +259,42 @@ void ST0010::op_03() {
 }
 
 void ST0010::op_04() {
-  int16 x = readw(0x0000);
-  int16 y = readw(0x0002);
-  int16 square;
+  int16_t x = readw(0x0000);
+  int16_t y = readw(0x0002);
+  int16_t square;
   //calculate the vector length of (x,y)
-  square = (int16)sqrt((double)(y * y + x * x));
+  square = (int16_t)sqrt((double)(y * y + x * x));
 
   writew(0x0010, square);
 }
 
 void ST0010::op_05() {
-  int32 dx, dy;
-  int16 a1, b1, c1;
-  uint16 o1;
+  int32_t dx, dy;
+  int16_t a1, b1, c1;
+  uint16_t o1;
   bool wrap = false;
 
   //target (x,y) coordinates
-  int16 ypos_max = readw(0x00c0);
-  int16 xpos_max = readw(0x00c2);
+  int16_t ypos_max = readw(0x00c0);
+  int16_t xpos_max = readw(0x00c2);
 
   //current coordinates and direction
-  int32 ypos = readd(0x00c4);
-  int32 xpos = readd(0x00c8);
-  uint16 rot = readw(0x00cc);
+  int32_t ypos = readd(0x00c4);
+  int32_t xpos = readd(0x00c8);
+  uint16_t rot = readw(0x00cc);
 
   //physics
-  uint16 speed = readw(0x00d4);
-  uint16 accel = readw(0x00d6);
-  uint16 speed_max = readw(0x00d8);
+  uint16_t speed = readw(0x00d4);
+  uint16_t accel = readw(0x00d6);
+  uint16_t speed_max = readw(0x00d8);
 
   //special condition acknowledgement
-  int16 system = readw(0x00da);
-  int16 flags = readw(0x00dc);
+  int16_t system = readw(0x00da);
+  int16_t flags = readw(0x00dc);
 
   //new target coordinates
-  int16 ypos_new = readw(0x00de);
-  int16 xpos_new = readw(0x00e0);
+  int16_t ypos_new = readw(0x00de);
+  int16_t xpos_new = readw(0x00e0);
 
   //mask upper bit
   xpos_new &= 0x7fff;
@@ -308,7 +308,7 @@ void ST0010::op_05() {
   writew(0x00da, 0x0000);
 
   //grab the target angle
-  op_01(dy, dx, a1, b1, c1, (int16&)o1);
+  op_01(dy, dx, a1, b1, c1, (int16_t&)o1);
 
   //check for wrapping
   if(abs(o1 - rot) > 0x8000) {
@@ -317,7 +317,7 @@ void ST0010::op_05() {
     wrap = true;
   }
 
-  uint16 old_speed = speed;
+  uint16_t old_speed = speed;
 
   //special case
   if(abs(o1 - rot) == 0x8000) {
@@ -326,7 +326,7 @@ void ST0010::op_05() {
 
   //slow down for sharp curves
   else if(abs(o1 - rot) >= 0x1000) {
-  uint32 slow = abs(o1 - rot);
+  uint32_t slow = abs(o1 - rot);
     slow >>= 4;  //scaling
     speed -= slow;
   }
@@ -387,9 +387,9 @@ void ST0010::op_05() {
 }
 
 void ST0010::op_06() {
-  int16 multiplicand = readw(0x0000);
-  int16 multiplier = readw(0x0002);
-  int32 product;
+  int16_t multiplicand = readw(0x0000);
+  int16_t multiplier = readw(0x0002);
+  int32_t product;
 
   product = multiplicand * multiplier << 1;
 
@@ -397,9 +397,9 @@ void ST0010::op_06() {
 }
 
 void ST0010::op_07() {
-  int16 theta = readw(0x0000);
+  int16_t theta = readw(0x0000);
 
-  int16 data;
+  int16_t data;
   for(int i = 0, offset = 0; i < 176; i++) {
     data = mode7_scale[i] * cos(theta) >> 15;
     writew(0x00f0 + offset, data);
@@ -415,10 +415,10 @@ void ST0010::op_07() {
 }
 
 void ST0010::op_08() {
-  int16 x0 = readw(0x0000);
-  int16 y0 = readw(0x0002);
-  int16 theta = readw(0x0004);
-  int16 x1, y1;
+  int16_t x0 = readw(0x0000);
+  int16_t y0 = readw(0x0002);
+  int16_t theta = readw(0x0004);
+  int16_t x1, y1;
 
   x1 = (y0 * sin(theta) >> 15) + (x0 * cos(theta) >> 15);
   y1 = (y0 * cos(theta) >> 15) - (x0 * sin(theta) >> 15);
@@ -437,11 +437,11 @@ auto ST0010::power() -> void {
   memset(ram, 0x00, sizeof ram);
 }
 
-auto ST0010::read(uint addr, uint8 data) -> uint8 {
+auto ST0010::read(uint addr, uint8_t data) -> uint8_t {
   return readb(addr);
 }
 
-auto ST0010::write(uint addr, uint8 data) -> void {
+auto ST0010::write(uint addr, uint8_t data) -> void {
   writeb(addr, data);
 
   if((addr & 0xfff) == 0x0021 && (data & 0x80)) {

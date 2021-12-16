@@ -8,18 +8,18 @@ namespace DSP4i {
   #define  int16  int16_t
   #define  int32  int32_t
   #define  int64  int64_t
-  #define  uint8  uint8_t
+  #define  uint8_t  uint8_t
   #define uint16 uint16_t
   #define uint32 uint32_t
   #define uint64 uint64_t
   #define DSP4_CPP
-  inline uint16 READ_WORD(uint8 *addr) {
+  inline uint16 READ_WORD(uint8_t *addr) {
     return (addr[0]) + (addr[1] << 8);
   }
-  inline uint32 READ_DWORD(uint8 *addr) {
+  inline uint32 READ_DWORD(uint8_t *addr) {
     return (addr[0]) + (addr[1] << 8) + (addr[2] << 16) + (addr[3] << 24);
   }
-  inline void WRITE_WORD(uint8 *addr, uint16 data) {
+  inline void WRITE_WORD(uint8_t *addr, uint16 data) {
     addr[0] = data;
     addr[1] = data >> 8;
   }
@@ -114,7 +114,7 @@ auto DSP4::power() -> void {
   DSP4i::InitDSP4();
 }
 
-auto DSP4::read(uint addr, uint8 data) -> uint8 {
+auto DSP4::read(uint addr, uint8_t data) -> uint8_t {
   if(addr & 1) return 0x80;
 
   DSP4i::dsp4_address = addr;
@@ -122,7 +122,7 @@ auto DSP4::read(uint addr, uint8 data) -> uint8 {
   return DSP4i::dsp4_byte;
 }
 
-auto DSP4::write(uint addr, uint8 data) -> void {
+auto DSP4::write(uint addr, uint8_t data) -> void {
   if(addr & 1) return;
 
   DSP4i::dsp4_address = addr;

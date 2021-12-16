@@ -28,9 +28,9 @@ class Dsp1
       //   1: External Data Register Transfer.
 
       Dsp1();
-      uint8 getSr();            // return the status register's high byte
-      uint8 getDr();
-      void setDr(uint8 iDr);
+      uint8_t getSr();            // return the status register's high byte
+      uint8_t getDr();
+      void setDr(uint8_t iDr);
       void reset();
 
       void serialize(serializer&);
@@ -71,17 +71,17 @@ class Dsp1
 
       } shared;
 
-      uint8 mSr;            // status register
+      uint8_t mSr;            // status register
       int mSrLowByteAccess;
       uint16 mDr;           // "internal" representation of the data register
       unsigned mFsmMajorState;     // current major state of the FSM
-      uint8 mCommand;                  // current command processed by the FSM
-      uint8 mDataCounter;                 // #uint16 read/writes counter used by the FSM
+      uint8_t mCommand;                  // current command processed by the FSM
+      uint8_t mDataCounter;                 // #uint16 read/writes counter used by the FSM
       int16 mReadBuffer[MAX_READS];
       int16 mWriteBuffer[MAX_WRITES];
       bool mFreeze;                   // need explanation?  ;)
 
-      void fsmStep(bool read, uint8 &data);            // FSM logic
+      void fsmStep(bool read, uint8_t &data);            // FSM logic
 
       // commands
       void memoryTest(int16 *input, int16 *output);

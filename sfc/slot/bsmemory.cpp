@@ -193,7 +193,7 @@ auto BSMemory::power() -> void {
   queue.flush();
 }
 
-auto BSMemory::data() -> uint8* {
+auto BSMemory::data() -> uint8_t* {
   return memory.data();
 }
 
@@ -201,7 +201,7 @@ auto BSMemory::size() const -> uint {
   return memory.size();
 }
 
-auto BSMemory::read(uint address, uint8 data) -> uint8 {
+auto BSMemory::read(uint address, uint8_t data) -> uint8_t {
   if(!size()) return data;
   if(ROM) return memory.read(bus.mirror(address, size()));
 
@@ -221,22 +221,22 @@ auto BSMemory::read(uint address, uint8 data) -> uint8 {
   }
 
   if(mode == Mode::ExtendedStatus) {
-    if((uint16)address == 0x0002) return block(address >> block.bitCount()).status();
-    if((uint16)address == 0x0004) return global.status();
+    if((uint16_t)address == 0x0002) return block(address >> block.bitCount()).status();
+    if((uint16_t)address == 0x0004) return global.status();
     return 0x00;  //reserved: always zero
   }
 
   return block(address >> block.bitCount()).read(address);  //Mode::Flash
 }
 
-auto BSMemory::write(uint address, uint8 data) -> void {
+auto BSMemory::write(uint address, uint8_t data) -> void {
   if(!size() || ROM) return;
   queue.push(address, data);
 
   //write page to flash
   if(queue.data(0) == 0x0c) {
   if(queue.size() < 3) return;
-    uint16 count;  //1 - 65536
+    uint16_t count;  //1 - 65536
     count  = queue.data(!(queue.address(1) & 1) ? 1 : 2) << 0;
     count |= queue.data(!(queue.address(1) & 1) ? 2 : 1) << 8;
     uint address = queue.address(2);
@@ -384,12 +384,12 @@ auto BSMemory::write(uint address, uint8 data) -> void {
     page.write(0x06, 0x06);  //unknown constant
     page.write(0x07, 0x00);  //unknown constant
     for(uint6 id : range(block.count())) {
-      uint8 address;
+      uint8_t address;
       address += (id >> 0 & 3) * 0x08;  //verified for LH28F800SUT-ZI
       address += (id >> 2 & 3) * 0x40;  //verified for LH28F800SUT-ZI
       address += (id >> 4 & 1) * 0x20;  //guessed for LH28F016SU
       address += (id >> 5 & 1) * 0x04;  //guessed for LH28F032SU; will overwrite unknown constants
-      uint32 erased = 1 << 31 | block(id).erased;  //unknown if d31 is set when erased == 0
+      uint32_t erased = 1 << 31 | block(id).erased;  //unknown if d31 is set when erased == 0
       for(uint2 byte : range(4)) {
         page.write(address + byte, erased >> byte * 8);  //little endian
       }
@@ -419,7 +419,7 @@ auto BSMemory::write(uint address, uint8 data) -> void {
   //sequential load to page buffer
   if(queue.data(0) == 0xe0) {
   if(queue.size() < 4) return;  //command length = 3 + count
-    uint16 count;  //1 - 65536
+    uint16_t count;  //1 - 65536
     count  = queue.data(1) << 0;  //endian order not affected by queue.address(1).bit(0)
     count |= queue.data(2) << 8;
     page.write(queue.address(3), queue.data(3));
@@ -443,7 +443,7 @@ auto BSMemory::write(uint address, uint8 data) -> void {
   //write word
   if(queue.data(0) == 0xfb) {
   if(queue.size() < 3) return;
-    uint16 value;
+    uint16_t value;
     value  = queue.data(!(queue.address(1) & 1) ? 1 : 2) << 0;
     value |= queue.data(!(queue.address(1) & 1) ? 2 : 1) << 8;
     //writes are always word-aligned: a0 toggles, rather than increments
@@ -477,11 +477,11 @@ auto BSMemory::Page::swap() -> void {
   self->global.status.page ^= 1;
 }
 
-auto BSMemory::Page::read(uint8 address) -> uint8 {
+auto BSMemory::Page::read(uint8_t address) -> uint8_t {
   return buffer[self->global.status.page][address];
 }
 
-auto BSMemory::Page::write(uint8 address, uint8 data) -> void {
+auto BSMemory::Page::write(uint8_t address, uint8_t data) -> void {
   buffer[self->global.status.page][address] = data;
 }
 
@@ -493,12 +493,12 @@ auto BSMemory::BlockInformation::count() const -> uint { return self->size() >> 
 
 //
 
-auto BSMemory::Block::read(uint address) -> uint8 {
+auto BSMemory::Block::read(uint address) -> uint8_t {
   address &= byteCount() - 1;
   return self->memory.read(id << bitCount() | address);
 }
 
-auto BSMemory::Block::write(uint address, uint8 data) -> void {
+auto BSMemory::Block::write(uint address, uint8_t data) -> void {
   if(!self->writable() && status.locked) {
     status.failed = 1;
     return self->failed();
@@ -562,7 +562,7 @@ auto BSMemory::Blocks::operator()(uint6 id) -> Block& {
 
 //
 
-auto BSMemory::Block::Status::operator()() -> uint8 {
+auto BSMemory::Block::Status::operator()() -> uint8_t {
   return (  //d0-d1 are reserved; always return zero
     vppLow    << 2
   | queueFull << 3
@@ -575,7 +575,7 @@ auto BSMemory::Block::Status::operator()() -> uint8 {
 
 //
 
-auto BSMemory::Compatible::Status::operator()() -> uint8 {
+auto BSMemory::Compatible::Status::operator()() -> uint8_t {
   return (  //d0-d2 are reserved; always return zero
     vppLow         << 3
   | writeFailed    << 4
@@ -587,7 +587,7 @@ auto BSMemory::Compatible::Status::operator()() -> uint8 {
 
 //
 
-auto BSMemory::Global::Status::operator()() -> uint8 {
+auto BSMemory::Global::Status::operator()() -> uint8_t {
   return (
     page          << 0
   | pageReady     << 1
@@ -616,7 +616,7 @@ auto BSMemory::Queue::pop() -> void {
   if(history[0].valid) { history[0] = {}; return; }
 }
 
-auto BSMemory::Queue::push(uint24 address, uint8 data) -> void {
+auto BSMemory::Queue::push(uint24 address, uint8_t data) -> void {
   if(!history[0].valid) { history[0] = {true, address, data}; return; }
   if(!history[1].valid) { history[1] = {true, address, data}; return; }
   if(!history[2].valid) { history[2] = {true, address, data}; return; }
@@ -636,7 +636,7 @@ auto BSMemory::Queue::address(uint index) -> uint24 {
   return history[index].address;
 }
 
-auto BSMemory::Queue::data(uint index) -> uint8 {
+auto BSMemory::Queue::data(uint index) -> uint8_t {
   if(index > 3 || !history[index].valid) return 0;
   return history[index].data;
 }

@@ -62,7 +62,7 @@ auto MCC::commit() -> void {
   bsmemory.writable(r.externallyWritable);
 }
 
-auto MCC::read(uint address, uint8 data) -> uint8 {
+auto MCC::read(uint address, uint8_t data) -> uint8_t {
   if((address & 0xf0f000) == 0x005000) {  //$00-0f:5000-5fff
     switch(address >> 16 & 15) {
     case  0: return irq.flag << 7;
@@ -87,7 +87,7 @@ auto MCC::read(uint address, uint8 data) -> uint8 {
   return data;
 }
 
-auto MCC::write(uint address, uint8 data) -> void {
+auto MCC::write(uint address, uint8_t data) -> void {
   if((address & 0xf0f000) == 0x005000) {  //$00-0f:5000-5fff
     switch(address >> 16 & 15) {
     case  1: irq.enable = data >> 7; break;
@@ -108,15 +108,15 @@ auto MCC::write(uint address, uint8 data) -> void {
   }
 }
 
-auto MCC::mcuRead(uint address, uint8 data) -> uint8 {
+auto MCC::mcuRead(uint address, uint8_t data) -> uint8_t {
   return mcuAccess(0, address, data);
 }
 
-auto MCC::mcuWrite(uint address, uint8 data) -> void {
+auto MCC::mcuWrite(uint address, uint8_t data) -> void {
   return mcuAccess(1, address, data), void();
 }
 
-auto MCC::mcuAccess(bool mode, uint address, uint8 data) -> uint8 {
+auto MCC::mcuAccess(bool mode, uint address, uint8_t data) -> uint8_t {
   //[[ROM]]
 
   if(r.romEnableLo) {
@@ -257,27 +257,27 @@ auto MCC::mcuAccess(bool mode, uint address, uint8 data) -> uint8 {
 }
 
 //size: 0x100000
-auto MCC::romAccess(bool mode, uint address, uint8 data) -> uint8 {
+auto MCC::romAccess(bool mode, uint address, uint8_t data) -> uint8_t {
   address = bus.mirror(address, rom.size());
   if(mode == 0) return rom.read(address);
   return data;
 }
 
 //size: 0x80000
-auto MCC::psramAccess(bool mode, uint address, uint8 data) -> uint8 {
+auto MCC::psramAccess(bool mode, uint address, uint8_t data) -> uint8_t {
   address = bus.mirror(address, psram.size());
   if(mode == 0) return psram.read(address);
   return psram.write(address, data), data;
 }
 
 //size: 0x100000 (?)
-auto MCC::exAccess(bool mode, uint address, uint8 data) -> uint8 {
+auto MCC::exAccess(bool mode, uint address, uint8_t data) -> uint8_t {
   //not physically present on BSC-1A5B9P-01
   return data;
 }
 
 //size: 0x100000, 0x200000, 0x400000
-auto MCC::bsAccess(bool mode, uint address, uint8 data) -> uint8 {
+auto MCC::bsAccess(bool mode, uint address, uint8_t data) -> uint8_t {
   address = bus.mirror(address, bsmemory.size());
   if(mode == 0) return bsmemory.read(address, data);
   if(!r.internallyWritable) return data;

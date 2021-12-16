@@ -20,16 +20,16 @@ auto Bus::reset() -> void {
   if(lookup) delete[] lookup;
   if(target) delete[] target;
 
-  lookup = new uint8 [16 * 1024 * 1024]();
-  target = new uint32[16 * 1024 * 1024]();
+  lookup = new uint8_t [16 * 1024 * 1024]();
+  target = new uint32_t[16 * 1024 * 1024]();
 
-  reader[0] = [](uint, uint8 data) -> uint8 { return data; };
-  writer[0] = [](uint, uint8) -> void {};
+  reader[0] = [](uint, uint8_t data) -> uint8_t { return data; };
+  writer[0] = [](uint, uint8_t) -> void {};
 }
 
 auto Bus::map(
-  const function<uint8 (uint, uint8)>& read,
-  const function<void  (uint, uint8)>& write,
+  const function<uint8_t (uint, uint8_t)>& read,
+  const function<void  (uint, uint8_t)>& write,
   const string& addr, uint size, uint base, uint mask
 ) -> uint {
   uint id = 1;

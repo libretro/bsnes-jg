@@ -4,14 +4,14 @@ namespace Processor {
 
 struct GSU {
   struct Register {
-    uint16 data = 0;
+    uint16_t data = 0;
     bool modified = false;
 
     inline operator uint() const {
       return data;
     }
 
-    inline auto assign(uint value) -> uint16 {
+    inline auto assign(uint value) -> uint16_t {
       modified = true;
       return data = value;
     }
@@ -117,30 +117,30 @@ struct GSU {
   };
 
   struct Registers {
-    uint8 pipeline;
-    uint16 ramaddr;
+    uint8_t pipeline;
+    uint16_t ramaddr;
 
-    Register r[16];   //general purpose registers
-    SFR sfr;          //status flag register
-    uint8 pbr;        //program bank register
-    uint8 rombr;      //game pack ROM bank register
-    bool rambr;       //game pack RAM bank register
-    uint16 cbr;       //cache base register
-    uint8 scbr;       //screen base register
-    SCMR scmr;        //screen mode register
-    uint8 colr;       //color register
-    POR por;          //plot option register
-    bool bramr;       //back-up RAM register
-    uint8 vcr;        //version code register
-    CFGR cfgr;        //config register
-    bool clsr;        //clock select register
+    Register r[16];     //general purpose registers
+    SFR sfr;            //status flag register
+    uint8_t pbr;        //program bank register
+    uint8_t rombr;      //game pack ROM bank register
+    bool rambr;         //game pack RAM bank register
+    uint16_t cbr;       //cache base register
+    uint8_t scbr;       //screen base register
+    SCMR scmr;          //screen mode register
+    uint8_t colr;       //color register
+    POR por;            //plot option register
+    bool bramr;         //back-up RAM register
+    uint8_t vcr;        //version code register
+    CFGR cfgr;          //config register
+    bool clsr;          //clock select register
 
-    uint romcl;       //clock ticks until romdr is valid
-    uint8 romdr;      //ROM buffer data register
+    uint romcl;         //clock ticks until romdr is valid
+    uint8_t romdr;      //ROM buffer data register
 
-    uint ramcl;       //clock ticks until ramdr is valid
-    uint16 ramar;     //RAM buffer address register
-    uint8 ramdr;      //RAM buffer data register
+    uint ramcl;         //clock ticks until ramdr is valid
+    uint16_t ramar;     //RAM buffer address register
+    uint8_t ramdr;      //RAM buffer data register
 
     uint sreg;
     uint dreg;
@@ -158,33 +158,33 @@ struct GSU {
   } regs;
 
   struct Cache {
-    uint8 buffer[512];
+    uint8_t buffer[512];
     bool valid[32];
   } cache;
 
   struct PixelCache {
-    uint16 offset;
-    uint8 bitpend;
-    uint8 data[8];
+    uint16_t offset;
+    uint8_t bitpend;
+    uint8_t data[8];
   } pixelcache[2];
 
   virtual auto step(uint clocks) -> void = 0;
 
   virtual auto stop() -> void = 0;
-  virtual auto color(uint8 source) -> uint8 = 0;
-  virtual auto plot(uint8 x, uint8 y) -> void = 0;
-  virtual auto rpix(uint8 x, uint8 y) -> uint8 = 0;
+  virtual auto color(uint8_t source) -> uint8_t = 0;
+  virtual auto plot(uint8_t x, uint8_t y) -> void = 0;
+  virtual auto rpix(uint8_t x, uint8_t y) -> uint8_t = 0;
 
-  virtual auto pipe() -> uint8 = 0;
+  virtual auto pipe() -> uint8_t = 0;
   virtual auto syncROMBuffer() -> void = 0;
-  virtual auto readROMBuffer() -> uint8 = 0;
+  virtual auto readROMBuffer() -> uint8_t = 0;
   virtual auto syncRAMBuffer() -> void = 0;
-  virtual auto readRAMBuffer(uint16 addr) -> uint8 = 0;
-  virtual auto writeRAMBuffer(uint16 addr, uint8 data) -> void = 0;
+  virtual auto readRAMBuffer(uint16_t addr) -> uint8_t = 0;
+  virtual auto writeRAMBuffer(uint16_t addr, uint8_t data) -> void = 0;
   virtual auto flushCache() -> void = 0;
 
-  virtual auto read(uint addr, uint8 data = 0x00) -> uint8 = 0;
-  virtual auto write(uint addr, uint8 data) -> void = 0;
+  virtual auto read(uint addr, uint8_t data = 0x00) -> uint8_t = 0;
+  virtual auto write(uint addr, uint8_t data) -> void = 0;
 
   //gsu.cpp
   auto power() -> void;
@@ -232,7 +232,7 @@ struct GSU {
   auto instructionWITH(uint n) -> void;
 
   //switch.cpp
-  auto instruction(uint8 opcode) -> void;
+  auto instruction(uint8_t opcode) -> void;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;

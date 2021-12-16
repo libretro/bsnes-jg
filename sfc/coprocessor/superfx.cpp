@@ -4,7 +4,7 @@ namespace SuperFamicom {
 
 //ROM / RAM access from the S-CPU
 
-auto SuperFX::CPUROM::data() -> uint8* {
+auto SuperFX::CPUROM::data() -> uint8_t* {
   return superfx.rom.data();
 }
 
@@ -12,9 +12,9 @@ auto SuperFX::CPUROM::size() const -> uint {
   return superfx.rom.size();
 }
 
-auto SuperFX::CPUROM::read(uint addr, uint8 data) -> uint8 {
+auto SuperFX::CPUROM::read(uint addr, uint8_t data) -> uint8_t {
   if(superfx.regs.sfr.g && superfx.regs.scmr.ron) {
-    static const uint8 vector[16] = {
+    static const uint8_t vector[16] = {
       0x00, 0x01, 0x00, 0x01, 0x04, 0x01, 0x00, 0x01,
       0x00, 0x01, 0x08, 0x01, 0x00, 0x01, 0x0c, 0x01,
     };
@@ -23,11 +23,11 @@ auto SuperFX::CPUROM::read(uint addr, uint8 data) -> uint8 {
   return superfx.rom.read(addr, data);
 }
 
-auto SuperFX::CPUROM::write(uint addr, uint8 data) -> void {
+auto SuperFX::CPUROM::write(uint addr, uint8_t data) -> void {
   superfx.rom.write(addr, data);
 }
 
-auto SuperFX::CPURAM::data() -> uint8* {
+auto SuperFX::CPURAM::data() -> uint8_t* {
   return superfx.ram.data();
 }
 
@@ -35,12 +35,12 @@ auto SuperFX::CPURAM::size() const -> uint {
   return superfx.ram.size();
 }
 
-auto SuperFX::CPURAM::read(uint addr, uint8 data) -> uint8 {
+auto SuperFX::CPURAM::read(uint addr, uint8_t data) -> uint8_t {
   if(superfx.regs.sfr.g && superfx.regs.scmr.ran) return data;
   return superfx.ram.read(addr, data);
 }
 
-auto SuperFX::CPURAM::write(uint addr, uint8 data) -> void {
+auto SuperFX::CPURAM::write(uint addr, uint8_t data) -> void {
   superfx.ram.write(addr, data);
 }
 
@@ -48,13 +48,13 @@ auto SuperFX::stop() -> void {
   cpu.irq(1);
 }
 
-auto SuperFX::color(uint8 source) -> uint8 {
+auto SuperFX::color(uint8_t source) -> uint8_t {
   if(regs.por.highnibble) return (regs.colr & 0xf0) | (source >> 4);
   if(regs.por.freezehigh) return (regs.colr & 0xf0) | (source & 0x0f);
   return source;
 }
 
-auto SuperFX::plot(uint8 x, uint8 y) -> void {
+auto SuperFX::plot(uint8_t x, uint8_t y) -> void {
   if(!regs.por.transparent) {
     if(regs.scmr.md == 3) {
       if(regs.por.freezehigh) {
@@ -67,13 +67,13 @@ auto SuperFX::plot(uint8 x, uint8 y) -> void {
     }
   }
 
-  uint8 color = regs.colr;
+  uint8_t color = regs.colr;
   if(regs.por.dither && regs.scmr.md != 3) {
     if((x ^ y) & 1) color >>= 4;
     color &= 0x0f;
   }
 
-  uint16 offset = (y << 5) + (x >> 3);
+  uint16_t offset = (y << 5) + (x >> 3);
   if(offset != pixelcache[0].offset) {
     flushPixelCache(pixelcache[1]);
     pixelcache[1] = pixelcache[0];
@@ -91,7 +91,7 @@ auto SuperFX::plot(uint8 x, uint8 y) -> void {
   }
 }
 
-auto SuperFX::rpix(uint8 x, uint8 y) -> uint8 {
+auto SuperFX::rpix(uint8_t x, uint8_t y) -> uint8_t {
   flushPixelCache(pixelcache[1]);
   flushPixelCache(pixelcache[0]);
 
@@ -104,7 +104,7 @@ auto SuperFX::rpix(uint8 x, uint8 y) -> uint8 {
   }
   uint bpp = 2 << (regs.scmr.md - (regs.scmr.md >> 1));  // = [regs.scmr.md]{ 2, 4, 4, 8 };
   uint addr = 0x700000 + (cn * (bpp << 3)) + (regs.scbr << 10) + ((y & 0x07) * 2);
-  uint8 data = 0x00;
+  uint8_t data = 0x00;
   x = (x & 7) ^ 7;
 
   for(uint n : range(bpp)) {
@@ -119,8 +119,8 @@ auto SuperFX::rpix(uint8 x, uint8 y) -> uint8 {
 auto SuperFX::flushPixelCache(PixelCache& cache) -> void {
   if(cache.bitpend == 0x00) return;
 
-  uint8 x = cache.offset << 3;
-  uint8 y = cache.offset >> 5;
+  uint8_t x = cache.offset << 3;
+  uint8_t y = cache.offset >> 5;
 
   uint cn;  //character number
   switch(regs.por.obj ? 3 : regs.scmr.ht) {
@@ -134,7 +134,7 @@ auto SuperFX::flushPixelCache(PixelCache& cache) -> void {
 
   for(uint n : range(bpp)) {
     uint byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
-    uint8 data = 0x00;
+    uint8_t data = 0x00;
     for(uint x : range(8)) data |= ((cache.data[x] >> n) & 1) << x;
     if(cache.bitpend != 0xff) {
       step(regs.clsr ? 5 : 6);
@@ -148,7 +148,7 @@ auto SuperFX::flushPixelCache(PixelCache& cache) -> void {
   cache.bitpend = 0x00;
 }
 
-auto SuperFX::read(uint addr, uint8 data) -> uint8 {
+auto SuperFX::read(uint addr, uint8_t data) -> uint8_t {
   if((addr & 0xc00000) == 0x000000) {  //$00-3f:0000-7fff,:8000-ffff
     while(!regs.scmr.ron) {
       step(6);
@@ -179,7 +179,7 @@ auto SuperFX::read(uint addr, uint8 data) -> uint8 {
   return data;
 }
 
-auto SuperFX::write(uint addr, uint8 data) -> void {
+auto SuperFX::write(uint addr, uint8_t data) -> void {
   if((addr & 0xe00000) == 0x600000) {  //$60-7f:0000-ffff
     while(!regs.scmr.ran) {
       step(6);
@@ -190,8 +190,8 @@ auto SuperFX::write(uint addr, uint8 data) -> void {
   }
 }
 
-auto SuperFX::readOpcode(uint16 addr) -> uint8 {
-  uint16 offset = addr - regs.cbr;
+auto SuperFX::readOpcode(uint16_t addr) -> uint8_t {
+  uint16_t offset = addr - regs.cbr;
   if(offset < 512) {
     if(cache.valid[offset >> 4] == false) {
       uint dp = offset & 0xfff0;
@@ -220,15 +220,15 @@ auto SuperFX::readOpcode(uint16 addr) -> uint8 {
   }
 }
 
-auto SuperFX::peekpipe() -> uint8 {
-  uint8 result = regs.pipeline;
+auto SuperFX::peekpipe() -> uint8_t {
+  uint8_t result = regs.pipeline;
   regs.pipeline = readOpcode(regs.r[15]);
   regs.r[15].modified = false;
   return result;
 }
 
-auto SuperFX::pipe() -> uint8 {
-  uint8 result = regs.pipeline;
+auto SuperFX::pipe() -> uint8_t {
+  uint8_t result = regs.pipeline;
   regs.pipeline = readOpcode(++regs.r[15]);
   regs.r[15].modified = false;
   return result;
@@ -238,18 +238,18 @@ auto SuperFX::flushCache() -> void {
   for(uint n : range(32)) cache.valid[n] = false;
 }
 
-auto SuperFX::readCache(uint16 addr) -> uint8 {
+auto SuperFX::readCache(uint16_t addr) -> uint8_t {
   addr = (addr + regs.cbr) & 511;
   return cache.buffer[addr];
 }
 
-auto SuperFX::writeCache(uint16 addr, uint8 data) -> void {
+auto SuperFX::writeCache(uint16_t addr, uint8_t data) -> void {
   addr = (addr + regs.cbr) & 511;
   cache.buffer[addr] = data;
   if((addr & 15) == 15) cache.valid[addr >> 4] = true;
 }
 
-auto SuperFX::readIO(uint addr, uint8) -> uint8 {
+auto SuperFX::readIO(uint addr, uint8_t) -> uint8_t {
   cpu.synchronizeCoprocessors();
   addr = 0x3000 | addr & 0x3ff;
 
@@ -267,7 +267,7 @@ auto SuperFX::readIO(uint addr, uint8) -> uint8 {
   }
 
   case 0x3031: {
-    uint8 r = regs.sfr >> 8;
+    uint8_t r = regs.sfr >> 8;
     regs.sfr.irq = 0;
     cpu.irq(0);
     return r;
@@ -301,7 +301,7 @@ auto SuperFX::readIO(uint addr, uint8) -> uint8 {
   return 0x00;
 }
 
-auto SuperFX::writeIO(uint addr, uint8 data) -> void {
+auto SuperFX::writeIO(uint addr, uint8_t data) -> void {
   cpu.synchronizeCoprocessors();
   addr = 0x3000 | addr & 0x3ff;
 
@@ -387,7 +387,7 @@ auto SuperFX::syncROMBuffer() -> void {
   if(regs.romcl) step(regs.romcl);
 }
 
-auto SuperFX::readROMBuffer() -> uint8 {
+auto SuperFX::readROMBuffer() -> uint8_t {
   syncROMBuffer();
   return regs.romdr;
 }
@@ -401,12 +401,12 @@ auto SuperFX::syncRAMBuffer() -> void {
   if(regs.ramcl) step(regs.ramcl);
 }
 
-auto SuperFX::readRAMBuffer(uint16 addr) -> uint8 {
+auto SuperFX::readRAMBuffer(uint16_t addr) -> uint8_t {
   syncRAMBuffer();
   return read(0x700000 + (regs.rambr << 16) + addr);
 }
 
-auto SuperFX::writeRAMBuffer(uint16 addr, uint8 data) -> void {
+auto SuperFX::writeRAMBuffer(uint16_t addr, uint8_t data) -> void {
   syncRAMBuffer();
   regs.ramcl = regs.clsr ? 5 : 6;
   regs.ramar = addr;

@@ -39,31 +39,31 @@ auto SharpRTC::rtcWrite(uint4 addr, uint4 data) -> void {
   }
 }
 
-auto SharpRTC::load(const uint8* data) -> void {
+auto SharpRTC::load(const uint8_t* data) -> void {
   for(auto byte : range(8)) {
     rtcWrite(byte * 2 + 0, data[byte] >> 0);
     rtcWrite(byte * 2 + 1, data[byte] >> 4);
   }
 
-  uint64 timestamp = 0;
+  uint64_t timestamp = 0;
   for(auto byte : range(8)) {
     timestamp |= data[8 + byte] << (byte * 8);
   }
 
-  uint64 diff = (uint64)time(0) - timestamp;
+  uint64_t diff = (uint64_t)time(0) - timestamp;
   while(diff >= 60 * 60 * 24) { tickDay(); diff -= 60 * 60 * 24; }
   while(diff >= 60 * 60) { tickHour(); diff -= 60 * 60; }
   while(diff >= 60) { tickMinute(); diff -= 60; }
   while(diff--) tickSecond();
 }
 
-auto SharpRTC::save(uint8* data) -> void {
+auto SharpRTC::save(uint8_t* data) -> void {
   for(auto byte : range(8)) {
     data[byte]  = rtcRead(byte * 2 + 0) << 0;
     data[byte] |= rtcRead(byte * 2 + 1) << 4;
   }
 
-  uint64 timestamp = (uint64)time(nullptr);
+  uint64_t timestamp = (uint64_t)time(nullptr);
   for(auto byte : range(8)) {
     data[8 + byte] = timestamp;
     timestamp >>= 8;
@@ -210,7 +210,7 @@ auto SharpRTC::power() -> void {
   index = -1;
 }
 
-auto SharpRTC::synchronize(uint64 timestamp) -> void {
+auto SharpRTC::synchronize(uint64_t timestamp) -> void {
   time_t systime = timestamp;
   tm* timeinfo = localtime(&systime);
 
@@ -223,7 +223,7 @@ auto SharpRTC::synchronize(uint64 timestamp) -> void {
   weekday = timeinfo->tm_wday;
 }
 
-auto SharpRTC::read(uint addr, uint8 data) -> uint8 {
+auto SharpRTC::read(uint addr, uint8_t data) -> uint8_t {
   addr &= 1;
 
   if(addr == 0) {
@@ -243,7 +243,7 @@ auto SharpRTC::read(uint addr, uint8 data) -> uint8 {
   return data;
 }
 
-auto SharpRTC::write(uint addr, uint8 data) -> void {
+auto SharpRTC::write(uint addr, uint8_t data) -> void {
   addr &= 1, data &= 15;
 
   if(addr == 1) {

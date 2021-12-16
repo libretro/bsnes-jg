@@ -9,10 +9,10 @@ auto ArmDSP::sleep() -> void {
   step(1);
 }
 
-auto ArmDSP::get(uint mode, uint32 addr) -> uint32 {
+auto ArmDSP::get(uint mode, uint32_t addr) -> uint32_t {
   step(1);
 
-  static auto memory = [&](const uint8* memory, uint mode, uint32 addr) -> uint32 {
+  static auto memory = [&](const uint8_t* memory, uint mode, uint32_t addr) -> uint32_t {
     if(mode & Word) {
       memory += addr & ~3;
       return memory[0] << 0 | memory[1] << 8 | memory[2] << 16 | memory[3] << 24;
@@ -50,10 +50,10 @@ auto ArmDSP::get(uint mode, uint32 addr) -> uint32 {
   return 0;
 }
 
-auto ArmDSP::set(uint mode, uint32 addr, uint32 word) -> void {
+auto ArmDSP::set(uint mode, uint32_t addr, uint32_t word) -> void {
   step(1);
 
-  static auto memory = [](uint8* memory, uint mode, uint32 addr, uint32 word) {
+  static auto memory = [](uint8_t *memory, uint mode, uint32_t addr, uint32_t word) {
     if(mode & Word) {
       memory += addr & ~3;
       *memory++ = word >>  0;
@@ -94,8 +94,8 @@ auto ArmDSP::set(uint mode, uint32 addr, uint32 word) -> void {
   if(addr == 0x4000'002c) bridge.timer = bridge.timerlatch;
 }
 
-auto ArmDSP::firmware() const -> nall::vector<uint8> {
-  nall::vector<uint8> buffer;
+auto ArmDSP::firmware() const -> nall::vector<uint8_t> {
+  nall::vector<uint8_t> buffer;
   if(!cartridge.has.ARMDSP) return buffer;
   buffer.reserve(128 * 1024 + 32 * 1024);
   for(auto n : range(128 * 1024)) buffer.append(programROM[n]);
@@ -163,10 +163,10 @@ auto ArmDSP::step(uint clocks) -> void {
 //3800-3807 mirrored throughout
 //a0 ignored
 
-auto ArmDSP::read(uint addr, uint8) -> uint8 {
+auto ArmDSP::read(uint addr, uint8_t) -> uint8_t {
   cpu.synchronizeCoprocessors();
 
-  uint8 data = 0x00;
+  uint8_t data = 0x00;
   addr &= 0xff06;
 
   if(addr == 0x3800) {
@@ -187,7 +187,7 @@ auto ArmDSP::read(uint addr, uint8) -> uint8 {
   return data;
 }
 
-auto ArmDSP::write(uint addr, uint8 data) -> void {
+auto ArmDSP::write(uint addr, uint8_t data) -> void {
   cpu.synchronizeCoprocessors();
 
   addr &= 0xff06;
@@ -205,7 +205,7 @@ auto ArmDSP::write(uint addr, uint8 data) -> void {
 }
 
 auto ArmDSP::power() -> void {
-  random.array((uint8*)programRAM, sizeof(programRAM));
+  random.array((uint8_t*)programRAM, sizeof(programRAM));
   bridge.reset = false;
   reset();
 }

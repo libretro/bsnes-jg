@@ -15,28 +15,28 @@ struct uPD96050 {
   auto execJP(uint24 opcode) -> void;
   auto execLD(uint24 opcode) -> void;
 
-  auto readSR() -> uint8;
-  auto writeSR(uint8 data) -> void;
+  auto readSR() -> uint8_t;
+  auto writeSR(uint8_t data) -> void;
 
-  auto readDR() -> uint8;
-  auto writeDR(uint8 data) -> void;
+  auto readDR() -> uint8_t;
+  auto writeDR(uint8_t data) -> void;
 
-  auto readDP(uint12 addr) -> uint8;
-  auto writeDP(uint12 addr, uint8 data) -> void;
+  auto readDP(uint12 addr) -> uint8_t;
+  auto writeDP(uint12 addr, uint8_t data) -> void;
 
   auto disassemble(uint14 ip) -> string;
 
   enum class Revision : uint { uPD7725, uPD96050 } revision;
   uint24 programROM[16384];
-  uint16 dataROM[2048];
-  uint16 dataRAM[2048];
+  uint16_t dataROM[2048];
+  uint16_t dataRAM[2048];
 
   struct Flag {
     inline operator uint() const {
       return ov0 << 0 | ov1 << 1 | z << 2 | c << 3 | s0 << 4 | s1 << 5;
     }
 
-    inline auto operator=(uint16 data) -> Flag& {
+    inline auto operator=(uint16_t data) -> Flag& {
       ov0 = data >> 0 & 1;
       ov1 = data >> 1 & 1;
       z   = data >> 2 & 1;
@@ -63,7 +63,7 @@ struct uPD96050 {
            | dma << 11 | _drs << 12 | usf0 << 13 | usf1 << 14 | rqm << 15;
     }
 
-    inline auto operator=(uint16 data) -> Status& {
+    inline auto operator=(uint16_t data) -> Status& {
       p0   = data >>  0 & 1;
       p1   = data >>  1 & 1;
       ei   = data >>  7 & 1;
@@ -100,23 +100,23 @@ struct uPD96050 {
   struct Registers {
     auto serialize(serializer&) -> void;
 
-    uint16 stack[16];    //LIFO
-    VariadicNatural pc;  //program counter
-    VariadicNatural rp;  //ROM pointer
-    VariadicNatural dp;  //data pointer
-    uint4 sp;            //stack pointer
-    uint16 si;           //serial input
-    uint16 so;           //serial output
-    int16 k;
-    int16 l;
-    int16 m;
-    int16 n;
-    int16 a;             //accumulator
-    int16 b;             //accumulator
-    uint16 tr;           //temporary register
-    uint16 trb;          //temporary register
-    uint16 dr;           //data register
-    Status sr;           //status register
+    uint16_t stack[16];    //LIFO
+    VariadicNatural pc;    //program counter
+    VariadicNatural rp;    //ROM pointer
+    VariadicNatural dp;    //data pointer
+    uint4 sp;              //stack pointer
+    uint16_t si;           //serial input
+    uint16_t so;           //serial output
+    int16_t k;
+    int16_t l;
+    int16_t m;
+    int16_t n;
+    int16_t a;             //accumulator
+    int16_t b;             //accumulator
+    uint16_t tr;           //temporary register
+    uint16_t trb;          //temporary register
+    uint16_t dr;           //data register
+    Status sr;             //status register
   } regs;
 
   struct Flags {

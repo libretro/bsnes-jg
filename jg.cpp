@@ -127,7 +127,7 @@ struct Program : Emulator::Platform {
         bool required) override;
     Emulator::Platform::Load load(uint id, string name, string type,
         vector<string> options = {}) override;
-    void videoFrame(const uint16* data, uint pitch, uint width, uint height,
+    void videoFrame(const uint16_t *data, uint pitch, uint width, uint height,
         uint scale) override;
     void audioFrame(const double* samples, uint channels) override;
     int16_t inputPoll(uint port, uint device, uint input) override;
@@ -339,7 +339,7 @@ Emulator::Platform::Load Program::load(uint id, string name, string type,
     return { id, options(0) };
 }
 
-void Program::videoFrame(const uint16* data, uint pitch, uint width,
+void Program::videoFrame(const uint16_t *data, uint pitch, uint width,
     uint height, uint scale) {
     
     //print("p: ", pitch, " w: ", width, " h: ", height, "\n");
@@ -361,7 +361,7 @@ void Program::audioFrame(const double* samples, uint channels) {
 
 static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
 
-int16 pollInputDevices(uint port, uint device, uint input) {
+int16_t pollInputDevices(uint port, uint device, uint input) {
     //print("port: ", port, " device: ", device, " input: ", input, "\n");
     if (device == SuperFamicom::ID::Device::SuperScope) {
         switch (input) {

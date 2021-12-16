@@ -16,7 +16,7 @@ Dsp1::Dsp1()
 
 //////////////////////////////////////////////////////////////////
 
-uint8 Dsp1::getSr()
+uint8_t Dsp1::getSr()
 {
    mSrLowByteAccess = ~mSrLowByteAccess;
    if (mSrLowByteAccess)
@@ -27,9 +27,9 @@ uint8 Dsp1::getSr()
 
 //////////////////////////////////////////////////////////////////
 
-uint8 Dsp1::getDr()
+uint8_t Dsp1::getDr()
 {
-   uint8 oDr;
+   uint8_t oDr;
 
    fsmStep(true, oDr);
    return oDr;
@@ -37,7 +37,7 @@ uint8 Dsp1::getDr()
 
 //////////////////////////////////////////////////////////////////
 
-void Dsp1::setDr(uint8 iDr)
+void Dsp1::setDr(uint8_t iDr)
 {
    fsmStep(false, iDr);
 }
@@ -61,7 +61,7 @@ void Dsp1::reset()
 // is responsible for maintaining the binding between the
 // "external" and "internal" representations of the DR (data register).
 
-void Dsp1::fsmStep(bool read, uint8 &data)
+void Dsp1::fsmStep(bool read, uint8_t &data)
 {
    if (0 == (mSr&RQM)) return;
    // Now RQM would be cleared; however, as this code is not to be used in
@@ -72,9 +72,9 @@ void Dsp1::fsmStep(bool read, uint8 &data)
    if (read)
    {
       if (mSr&DRS)
-         data = static_cast<uint8>(mDr>>8);
+         data = static_cast<uint8_t>(mDr>>8);
       else
-         data = static_cast<uint8>(mDr);
+         data = static_cast<uint8_t>(mDr);
    }
    else
    {
@@ -94,7 +94,7 @@ void Dsp1::fsmStep(bool read, uint8 &data)
    switch (mFsmMajorState)
    {
       case WAIT_COMMAND:
-         mCommand = static_cast<uint8>(mDr);
+         mCommand = static_cast<uint8_t>(mDr);
          if (!(mCommand & 0xc0))   // valid command?
          {
             switch(mCommand)

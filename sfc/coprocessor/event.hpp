@@ -22,11 +22,11 @@ struct Event : Thread {
   auto unload() -> void;
   auto power() -> void;
 
-  auto mcuRead(uint addr, uint8) -> uint8;
-  auto mcuWrite(uint addr, uint8) -> void;
+  auto mcuRead(uint addr, uint8_t) -> uint8_t;
+  auto mcuWrite(uint addr, uint8_t) -> void;
 
-  auto read(uint addr, uint8 data) -> uint8;
-  auto write(uint addr, uint8 data) -> void;
+  auto read(uint addr, uint8_t data) -> uint8_t;
+  auto write(uint addr, uint8_t data) -> void;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
@@ -38,8 +38,8 @@ public:
   uint timer;
 
 private:
-  uint8 status;
-  uint8 select;
+  uint8_t status;
+  uint8_t select;
 
   bool timerActive;
   bool scoreActive;

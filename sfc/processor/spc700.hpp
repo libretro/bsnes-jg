@@ -4,61 +4,61 @@ namespace Processor {
 
 struct SPC700 {
   virtual auto idle() -> void = 0;
-  virtual auto read(uint16 address) -> uint8 = 0;
-  virtual auto write(uint16 address, uint8 data) -> void = 0;
+  virtual auto read(uint16_t address) -> uint8_t = 0;
+  virtual auto write(uint16_t address, uint8_t data) -> void = 0;
   virtual auto synchronizing() const -> bool = 0;
 
-  virtual auto readDisassembler(uint16 address) -> uint8 { return 0; }
+  virtual auto readDisassembler(uint16_t address) -> uint8_t { return 0; }
 
   //spc700.cpp
   auto power() -> void;
 
   //memory.cpp
-  inline auto fetch() -> uint8;
-  inline auto load(uint8 address) -> uint8;
-  inline auto store(uint8 address, uint8 data) -> void;
-  inline auto pull() -> uint8;
-  inline auto push(uint8 data) -> void;
+  inline auto fetch() -> uint8_t;
+  inline auto load(uint8_t address) -> uint8_t;
+  inline auto store(uint8_t address, uint8_t data) -> void;
+  inline auto pull() -> uint8_t;
+  inline auto push(uint8_t data) -> void;
 
   //instruction.cpp
   auto instruction() -> void;
 
   //algorithms.cpp
-  auto algorithmADC(uint8, uint8) -> uint8;
-  auto algorithmAND(uint8, uint8) -> uint8;
-  auto algorithmASL(uint8) -> uint8;
-  auto algorithmCMP(uint8, uint8) -> uint8;
-  auto algorithmDEC(uint8) -> uint8;
-  auto algorithmEOR(uint8, uint8) -> uint8;
-  auto algorithmINC(uint8) -> uint8;
-  auto algorithmLD (uint8, uint8) -> uint8;
-  auto algorithmLSR(uint8) -> uint8;
-  auto algorithmOR (uint8, uint8) -> uint8;
-  auto algorithmROL(uint8) -> uint8;
-  auto algorithmROR(uint8) -> uint8;
-  auto algorithmSBC(uint8, uint8) -> uint8;
-  auto algorithmADW(uint16, uint16) -> uint16;
-  auto algorithmCPW(uint16, uint16) -> uint16;
-  auto algorithmLDW(uint16, uint16) -> uint16;
-  auto algorithmSBW(uint16, uint16) -> uint16;
+  auto algorithmADC(uint8_t, uint8_t) -> uint8_t;
+  auto algorithmAND(uint8_t, uint8_t) -> uint8_t;
+  auto algorithmASL(uint8_t) -> uint8_t;
+  auto algorithmCMP(uint8_t, uint8_t) -> uint8_t;
+  auto algorithmDEC(uint8_t) -> uint8_t;
+  auto algorithmEOR(uint8_t, uint8_t) -> uint8_t;
+  auto algorithmINC(uint8_t) -> uint8_t;
+  auto algorithmLD (uint8_t, uint8_t) -> uint8_t;
+  auto algorithmLSR(uint8_t) -> uint8_t;
+  auto algorithmOR (uint8_t, uint8_t) -> uint8_t;
+  auto algorithmROL(uint8_t) -> uint8_t;
+  auto algorithmROR(uint8_t) -> uint8_t;
+  auto algorithmSBC(uint8_t, uint8_t) -> uint8_t;
+  auto algorithmADW(uint16_t, uint16_t) -> uint16_t;
+  auto algorithmCPW(uint16_t, uint16_t) -> uint16_t;
+  auto algorithmLDW(uint16_t, uint16_t) -> uint16_t;
+  auto algorithmSBW(uint16_t, uint16_t) -> uint16_t;
 
   //instructions.cpp
-  using fps = auto (SPC700::*)(uint8) -> uint8;
-  using fpb = auto (SPC700::*)(uint8, uint8) -> uint8;
-  using fpw = auto (SPC700::*)(uint16, uint16) -> uint16;
+  using fps = auto (SPC700::*)(uint8_t) -> uint8_t;
+  using fpb = auto (SPC700::*)(uint8_t, uint8_t) -> uint8_t;
+  using fpw = auto (SPC700::*)(uint16_t, uint16_t) -> uint16_t;
 
   auto instructionAbsoluteBitModify(uint3) -> void;
   auto instructionAbsoluteBitSet(uint3, bool) -> void;
-  auto instructionAbsoluteRead(fpb, uint8&) -> void;
+  auto instructionAbsoluteRead(fpb, uint8_t&) -> void;
   auto instructionAbsoluteModify(fps) -> void;
-  auto instructionAbsoluteWrite(uint8&) -> void;
-  auto instructionAbsoluteIndexedRead(fpb, uint8&) -> void;
-  auto instructionAbsoluteIndexedWrite(uint8&) -> void;
+  auto instructionAbsoluteWrite(uint8_t&) -> void;
+  auto instructionAbsoluteIndexedRead(fpb, uint8_t&) -> void;
+  auto instructionAbsoluteIndexedWrite(uint8_t&) -> void;
   auto instructionBranch(bool) -> void;
   auto instructionBranchBit(uint3, bool) -> void;
   auto instructionBranchNotDirect() -> void;
   auto instructionBranchNotDirectDecrement() -> void;
-  auto instructionBranchNotDirectIndexed(uint8&) -> void;
+  auto instructionBranchNotDirectIndexed(uint8_t&) -> void;
   auto instructionBranchNotYDecrement() -> void;
   auto instructionBreak() -> void;
   auto instructionCallAbsolute() -> void;
@@ -67,9 +67,9 @@ struct SPC700 {
   auto instructionComplementCarry() -> void;
   auto instructionDecimalAdjustAdd() -> void;
   auto instructionDecimalAdjustSub() -> void;
-  auto instructionDirectRead(fpb, uint8&) -> void;
+  auto instructionDirectRead(fpb, uint8_t&) -> void;
   auto instructionDirectModify(fps) -> void;
-  auto instructionDirectWrite(uint8&) -> void;
+  auto instructionDirectWrite(uint8_t&) -> void;
   auto instructionDirectDirectCompare(fpb) -> void;
   auto instructionDirectDirectModify(fpb) -> void;
   auto instructionDirectDirectWrite() -> void;
@@ -80,22 +80,22 @@ struct SPC700 {
   auto instructionDirectReadWord(fpw) -> void;
   auto instructionDirectModifyWord(int) -> void;
   auto instructionDirectWriteWord() -> void;
-  auto instructionDirectIndexedRead(fpb, uint8&, uint8&) -> void;
-  auto instructionDirectIndexedModify(fps, uint8&) -> void;
-  auto instructionDirectIndexedWrite(uint8&, uint8&) -> void;
+  auto instructionDirectIndexedRead(fpb, uint8_t&, uint8_t&) -> void;
+  auto instructionDirectIndexedModify(fps, uint8_t&) -> void;
+  auto instructionDirectIndexedWrite(uint8_t&, uint8_t&) -> void;
   auto instructionDivide() -> void;
   auto instructionExchangeNibble() -> void;
   auto instructionFlagSet(bool&, bool) -> void;
-  auto instructionImmediateRead(fpb, uint8&) -> void;
-  auto instructionImpliedModify(fps, uint8&) -> void;
-  auto instructionIndexedIndirectRead(fpb, uint8&) -> void;
-  auto instructionIndexedIndirectWrite(uint8&, uint8&) -> void;
-  auto instructionIndirectIndexedRead(fpb, uint8&) -> void;
-  auto instructionIndirectIndexedWrite(uint8&, uint8&) -> void;
+  auto instructionImmediateRead(fpb, uint8_t&) -> void;
+  auto instructionImpliedModify(fps, uint8_t&) -> void;
+  auto instructionIndexedIndirectRead(fpb, uint8_t&) -> void;
+  auto instructionIndexedIndirectWrite(uint8_t&, uint8_t&) -> void;
+  auto instructionIndirectIndexedRead(fpb, uint8_t&) -> void;
+  auto instructionIndirectIndexedWrite(uint8_t&, uint8_t&) -> void;
   auto instructionIndirectXRead(fpb) -> void;
-  auto instructionIndirectXWrite(uint8&) -> void;
-  auto instructionIndirectXIncrementRead(uint8&) -> void;
-  auto instructionIndirectXIncrementWrite(uint8&) -> void;
+  auto instructionIndirectXWrite(uint8_t&) -> void;
+  auto instructionIndirectXIncrementRead(uint8_t&) -> void;
+  auto instructionIndirectXIncrementWrite(uint8_t&) -> void;
   auto instructionIndirectXCompareIndirectY(fpb) -> void;
   auto instructionIndirectXWriteIndirectY(fpb) -> void;
   auto instructionJumpAbsolute() -> void;
@@ -103,21 +103,21 @@ struct SPC700 {
   auto instructionMultiply() -> void;
   auto instructionNoOperation() -> void;
   auto instructionOverflowClear() -> void;
-  auto instructionPull(uint8&) -> void;
+  auto instructionPull(uint8_t&) -> void;
   auto instructionPullP() -> void;
-  auto instructionPush(uint8) -> void;
+  auto instructionPush(uint8_t) -> void;
   auto instructionReturnInterrupt() -> void;
   auto instructionReturnSubroutine() -> void;
   auto instructionStop() -> void;
   auto instructionTestSetBitsAbsolute(bool) -> void;
-  auto instructionTransfer(uint8&, uint8&) -> void;
+  auto instructionTransfer(uint8_t&, uint8_t&) -> void;
   auto instructionWait() -> void;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
 
   //disassembler.cpp
-  auto disassemble(uint16 address, bool p) -> string;
+  auto disassemble(uint16_t address, bool p) -> string;
 
   struct Flags {
     bool c = 0;  //carry
@@ -133,7 +133,7 @@ struct SPC700 {
       return c << 0 | z << 1 | i << 2 | h << 3 | b << 4 | p << 5 | v << 6 | n << 7;
     }
 
-    inline auto& operator=(uint8 data) {
+    inline auto& operator=(uint8_t data) {
       c = data & 0x01;
       z = data & 0x02;
       i = data & 0x04;
@@ -149,11 +149,11 @@ struct SPC700 {
   struct Registers {
     union Pair {
       Pair() : w(0) {}
-      uint16 w;
-      struct Byte { uint8 order_lsb2(l, h); } byte;
+      uint16_t w;
+      struct Byte { uint8_t order_lsb2(l, h); } byte;
     } pc, ya;
-    uint8 x = 0;
-    uint8 s = 0;
+    uint8_t x = 0;
+    uint8_t s = 0;
     Flags p;
 
     bool wait = 0;

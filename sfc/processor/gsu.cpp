@@ -7,7 +7,7 @@
 
 namespace Processor {
 
-auto GSU::instruction(uint8 opcode) -> void {
+auto GSU::instruction(uint8_t opcode) -> void {
   #define op(id, name, ...) \
     case id: return instruction##name(__VA_ARGS__); \
 
@@ -158,7 +158,7 @@ auto GSU::instructionROL() -> void {
 //$0e bvc e
 //$0f bvs e
 auto GSU::instructionBranch(bool take) -> void {
-  auto displacement = (int8)pipe();
+  auto displacement = (int8_t)pipe();
   if(take) regs.r[15] += displacement;
 }
 
@@ -277,7 +277,7 @@ auto GSU::instructionADD_ADC(uint n) -> void {
   regs.sfr.ov = ~(regs.sr() ^ n) & (n ^ r) & 0x8000;
   regs.sfr.s  = (r & 0x8000);
   regs.sfr.cy = (r >= 0x10000);
-  regs.sfr.z  = ((uint16)r == 0);
+  regs.sfr.z  = ((uint16_t)r == 0);
   regs.dr() = r;
   regs.reset();
 }
@@ -292,7 +292,7 @@ auto GSU::instructionSUB_SBC_CMP(uint n) -> void {
   regs.sfr.ov = (regs.sr() ^ n) & (regs.sr() ^ r) & 0x8000;
   regs.sfr.s  = (r & 0x8000);
   regs.sfr.cy = (r >= 0);
-  regs.sfr.z  = ((uint16)r == 0);
+  regs.sfr.z  = ((uint16_t)r == 0);
   if(!regs.sfr.alt2 || !regs.sfr.alt1) regs.dr() = r;
   regs.reset();
 }
@@ -325,7 +325,7 @@ auto GSU::instructionAND_BIC(uint n) -> void {
 //$80-8f(alt3) umult #N
 auto GSU::instructionMULT_UMULT(uint n) -> void {
   if(!regs.sfr.alt2) n = regs.r[n];
-  regs.dr() = (!regs.sfr.alt1 ? uint16((int8)regs.sr() * (int8)n) : uint16((uint8)regs.sr() * (uint8)n));
+  regs.dr() = (!regs.sfr.alt1 ? uint16_t((int8_t)regs.sr() * (int8_t)n) : uint16_t((uint8_t)regs.sr() * (uint8_t)n));
   regs.sfr.s = (regs.dr() & 0x8000);
   regs.sfr.z = (regs.dr() == 0);
   regs.reset();
@@ -347,7 +347,7 @@ auto GSU::instructionLINK(uint n) -> void {
 
 //$95 sex
 auto GSU::instructionSEX() -> void {
-  regs.dr() = (int8)regs.sr();
+  regs.dr() = (int8_t)regs.sr();
   regs.sfr.s = (regs.dr() & 0x8000);
   regs.sfr.z = (regs.dr() == 0);
   regs.reset();
@@ -357,7 +357,7 @@ auto GSU::instructionSEX() -> void {
 //$96(alt1) div2
 auto GSU::instructionASR_DIV2() -> void {
   regs.sfr.cy = (regs.sr() & 1);
-  regs.dr() = ((int16)regs.sr() >> 1) + (regs.sfr.alt1 ? ((regs.sr() + 1) >> 16) : 0);
+  regs.dr() = ((int16_t)regs.sr() >> 1) + (regs.sfr.alt1 ? ((regs.sr() + 1) >> 16) : 0);
   regs.sfr.s = (regs.dr() & 0x8000);
   regs.sfr.z = (regs.dr() == 0);
   regs.reset();
@@ -398,7 +398,7 @@ auto GSU::instructionLOB() -> void {
 //$9f(alt0) fmult
 //$9f(alt1) lmult
 auto GSU::instructionFMULT_LMULT() -> void {
-  uint32 result = (int16)regs.sr() * (int16)regs.r[6];
+  uint32_t result = (int16_t)regs.sr() * (int16_t)regs.r[6];
   if(regs.sfr.alt1) regs.r[4] = result;
   regs.dr() = result >> 16;
   regs.sfr.s  = (regs.dr() & 0x8000);
@@ -414,14 +414,14 @@ auto GSU::instructionFMULT_LMULT() -> void {
 auto GSU::instructionIBT_LMS_SMS(uint n) -> void {
   if(regs.sfr.alt1) {
     regs.ramaddr = pipe() << 1;
-    uint8 lo  = readRAMBuffer(regs.ramaddr ^ 0) << 0;
+    uint8_t lo  = readRAMBuffer(regs.ramaddr ^ 0) << 0;
     regs.r[n] = readRAMBuffer(regs.ramaddr ^ 1) << 8 | lo;
   } else if(regs.sfr.alt2) {
     regs.ramaddr = pipe() << 1;
     writeRAMBuffer(regs.ramaddr ^ 0, regs.r[n] >> 0);
     writeRAMBuffer(regs.ramaddr ^ 1, regs.r[n] >> 8);
   } else {
-    regs.r[n] = (int8)pipe();
+    regs.r[n] = (int8_t)pipe();
   }
   regs.reset();
 }
@@ -499,9 +499,9 @@ auto GSU::instructionDEC(uint n) -> void {
 auto GSU::instructionGETB() -> void {
   switch(regs.sfr.alt2 << 1 | regs.sfr.alt1 << 0) {
   case 0: regs.dr() = readROMBuffer(); break;
-  case 1: regs.dr() = readROMBuffer() << 8 | (uint8)regs.sr(); break;
+  case 1: regs.dr() = readROMBuffer() << 8 | (uint8_t)regs.sr(); break;
   case 2: regs.dr() = (regs.sr() & 0xff00) | readROMBuffer(); break;
-  case 3: regs.dr() = (int8)readROMBuffer(); break;
+  case 3: regs.dr() = (int8_t)readROMBuffer(); break;
   }
   regs.reset();
 }
@@ -513,7 +513,7 @@ auto GSU::instructionIWT_LM_SM(uint n) -> void {
   if(regs.sfr.alt1) {
     regs.ramaddr  = pipe() << 0;
     regs.ramaddr |= pipe() << 8;
-    uint8 lo  = readRAMBuffer(regs.ramaddr ^ 0) << 0;
+    uint8_t lo  = readRAMBuffer(regs.ramaddr ^ 0) << 0;
     regs.r[n] = readRAMBuffer(regs.ramaddr ^ 1) << 8 | lo;
   } else if(regs.sfr.alt2) {
     regs.ramaddr  = pipe() << 0;
@@ -521,7 +521,7 @@ auto GSU::instructionIWT_LM_SM(uint n) -> void {
     writeRAMBuffer(regs.ramaddr ^ 0, regs.r[n] >> 0);
     writeRAMBuffer(regs.ramaddr ^ 1, regs.r[n] >> 8);
   } else {
-    uint8 lo  = pipe();
+    uint8_t lo  = pipe();
     regs.r[n] = pipe() << 8 | lo;
   }
   regs.reset();

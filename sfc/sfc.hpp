@@ -239,11 +239,11 @@ namespace SuperFamicom {
     return addr;
   }
 
-  auto Bus::read(uint addr, uint8 data) -> uint8 {
+  auto Bus::read(uint addr, uint8_t data) -> uint8_t {
     return reader[lookup[addr]](target[addr], data);
   }
 
-  auto Bus::write(uint addr, uint8 data) -> void {
+  auto Bus::write(uint addr, uint8_t data) -> void {
     return writer[lookup[addr]](target[addr], data);
   }
 

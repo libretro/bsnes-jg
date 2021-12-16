@@ -33,10 +33,10 @@ struct BSMemory : Thread, Memory {
   auto unload() -> void;
   auto power() -> void;
 
-  auto data() -> uint8* override;
+  auto data() -> uint8_t *override;
   auto size() const -> uint override;
-  auto read(uint address, uint8 data) -> uint8 override;
-  auto write(uint address, uint8 data) -> void override;
+  auto read(uint address, uint8_t data) -> uint8_t override;
+  auto write(uint address, uint8_t data) -> void override;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;
@@ -49,19 +49,19 @@ private:
   } pin;
 
   struct Chip {
-    uint16 vendor;
-    uint16 device;
-    uint48 serial;
+    uint16_t vendor;
+    uint16_t device;
+    nall::Natural<48> serial;
   } chip;
 
   struct Page {
     BSMemory* self = nullptr;
 
     auto swap() -> void;
-    auto read(uint8 address) -> uint8;
-    auto write(uint8 address, uint8 data) -> void;
+    auto read(uint8_t address) -> uint8_t;
+    auto write(uint8_t address, uint8_t data) -> void;
 
-    uint8 buffer[2][256];
+    uint8_t buffer[2][256];
   } page;
 
   struct BlockInformation {
@@ -73,19 +73,19 @@ private:
   };
 
   struct Block : BlockInformation {
-    auto read(uint address) -> uint8;
-    auto write(uint address, uint8 data) -> void;
+    auto read(uint address) -> uint8_t;
+    auto write(uint address, uint8_t data) -> void;
     auto erase() -> void;
     auto lock() -> void;
     auto update() -> void;
 
     uint4  id;
-    uint32 erased;
+    uint32_t erased;
     uint1  locked;
     uint1  erasing;
 
     struct Status {
-      auto operator()() -> uint8;
+      auto operator()() -> uint8_t;
 
       uint1 vppLow;
       uint1 queueFull;
@@ -102,7 +102,7 @@ private:
 
   struct Compatible {
     struct Status {
-      auto operator()() -> uint8;
+      auto operator()() -> uint8_t;
 
       uint1 vppLow;
       uint1 writeFailed;
@@ -114,7 +114,7 @@ private:
 
   struct Global {
     struct Status {
-      auto operator()() -> uint8;
+      auto operator()() -> uint8_t;
 
       uint1 page;
       uint1 pageReady = 1;
@@ -147,10 +147,10 @@ private:
   struct Queue {
     auto flush() -> void;
     auto pop() -> void;
-    auto push(uint24 address, uint8 data) -> void;
+    auto push(uint24 address, uint8_t data) -> void;
     auto size() -> uint;
     auto address(uint index) -> uint24;
-    auto data(uint index) -> uint8;
+    auto data(uint index) -> uint8_t;
 
     //serialization.cpp
     auto serialize(serializer&) -> void;
@@ -158,7 +158,7 @@ private:
     struct History {
       uint1  valid;
       uint24 address;
-      uint8  data;
+      uint8_t  data;
     } history[4];
   } queue;
 

@@ -12,7 +12,7 @@ auto uPD96050::exec() -> void {
   case 3: execLD(opcode); break;
   }
 
-  int32 result = (int32)regs.k * regs.l;  //sign + 30-bit result
+  int32_t result = (int32_t)regs.k * regs.l;  //sign + 30-bit result
   regs.m = result >> 15;  //store sign + top 15-bits
   regs.n = result <<  1;  //store low 15-bits + zero
 }
@@ -27,7 +27,7 @@ auto uPD96050::execOP(uint24 opcode) -> void {
   uint4 src     = opcode >>  4;  //move source
   uint4 dst     = opcode >>  0;  //move destination
 
-  uint16 idb;
+  uint16_t idb;
   switch(src) {
   case  0: idb = regs.trb; break;
   case  1: idb = regs.a; break;
@@ -48,7 +48,7 @@ auto uPD96050::execOP(uint24 opcode) -> void {
   }
 
   if(alu) {
-    uint16 p, q, r;
+    uint16_t p, q, r;
     Flag flag;
     Boolean c;
 
@@ -226,7 +226,7 @@ auto uPD96050::execJP(uint24 opcode) -> void {
 }
 
 auto uPD96050::execLD(uint24 opcode) -> void {
-  uint16 id = opcode >> 6;  //immediate data
+  uint16_t id = opcode >> 6;  //immediate data
   uint4 dst = opcode >> 0;  //destination
 
   switch(dst) {
@@ -249,14 +249,14 @@ auto uPD96050::execLD(uint24 opcode) -> void {
   }
 }
 
-auto uPD96050::readSR() -> uint8 {
+auto uPD96050::readSR() -> uint8_t {
   return regs.sr >> 8;
 }
 
-auto uPD96050::writeSR(uint8 data) -> void {
+auto uPD96050::writeSR(uint8_t data) -> void {
 }
 
-auto uPD96050::readDR() -> uint8 {
+auto uPD96050::readDR() -> uint8_t {
   if(regs.sr.drc == 0) {
     //16-bit
     if(regs.sr.drs == 0) {
@@ -274,7 +274,7 @@ auto uPD96050::readDR() -> uint8 {
   }
 }
 
-auto uPD96050::writeDR(uint8 data) -> void {
+auto uPD96050::writeDR(uint8_t data) -> void {
   if(regs.sr.drc == 0) {
     //16-bit
     if(regs.sr.drs == 0) {
@@ -292,7 +292,7 @@ auto uPD96050::writeDR(uint8 data) -> void {
   }
 }
 
-auto uPD96050::readDP(uint12 addr) -> uint8 {
+auto uPD96050::readDP(uint12 addr) -> uint8_t {
   bool hi = addr & 1;
   addr = (addr >> 1) & 2047;
 
@@ -303,7 +303,7 @@ auto uPD96050::readDP(uint12 addr) -> uint8 {
   }
 }
 
-auto uPD96050::writeDP(uint12 addr, uint8 data) -> void {
+auto uPD96050::writeDP(uint12 addr, uint8_t data) -> void {
   bool hi = addr & 1;
   addr = (addr >> 1) & 2047;
 
@@ -427,7 +427,7 @@ auto uPD96050::disassemble(uint14 ip) -> string {
   if(type == 2) {  //JP
     uint9 brch = opcode >> 13;
     uint11 na  = opcode >>  2;
-    uint8 bank = opcode >>  0;
+    uint8_t bank = opcode >>  0;
 
     uint14 jp = (regs.pc & 0x2000) | (bank << 11) | (na << 0);
 
@@ -479,7 +479,7 @@ auto uPD96050::disassemble(uint14 ip) -> string {
 
   if(type == 3) {  //LD
     output.append("ld      ");
-    uint16 id = opcode >> 6;
+    uint16_t id = opcode >> 6;
     uint4 dst = opcode >> 0;
 
     output.append("$", hex(id, 4L), ",");

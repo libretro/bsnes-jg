@@ -1,6 +1,6 @@
 struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline auto interruptPending() const -> bool override { return status.interruptPending; }
-  inline auto pio() const -> uint8 { return io.pio; }
+  inline auto pio() const -> uint8_t { return io.pio; }
   inline auto refresh() const -> bool { return status.dramRefresh == 1; }
   inline auto synchronizing() const -> bool override { return scheduler.synchronizing(); }
 
@@ -25,19 +25,19 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
 
   //memory.cpp
   auto idle() -> void override;
-  auto read(uint addr) -> uint8 override;
-  auto write(uint addr, uint8 data) -> void override;
-  auto readDisassembler(uint addr) -> uint8 override;
+  auto read(uint addr) -> uint8_t override;
+  auto write(uint addr, uint8_t data) -> void override;
+  auto readDisassembler(uint addr) -> uint8_t override;
 
   //io.cpp
-  auto readRAM(uint address, uint8 data) -> uint8;
-  auto readAPU(uint address, uint8 data) -> uint8;
-  auto readCPU(uint address, uint8 data) -> uint8;
-  auto readDMA(uint address, uint8 data) -> uint8;
-  auto writeRAM(uint address, uint8 data) -> void;
-  auto writeAPU(uint address, uint8 data) -> void;
-  auto writeCPU(uint address, uint8 data) -> void;
-  auto writeDMA(uint address, uint8 data) -> void;
+  auto readRAM(uint address, uint8_t data) -> uint8_t;
+  auto readAPU(uint address, uint8_t data) -> uint8_t;
+  auto readCPU(uint address, uint8_t data) -> uint8_t;
+  auto readDMA(uint address, uint8_t data) -> uint8_t;
+  auto writeRAM(uint address, uint8_t data) -> void;
+  auto writeAPU(uint address, uint8_t data) -> void;
+  auto writeCPU(uint address, uint8_t data) -> void;
+  auto writeDMA(uint address, uint8_t data) -> void;
 
   //timing.cpp
   inline auto dmaCounter() const -> uint;
@@ -54,7 +54,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   //irq.cpp
   alwaysinline auto nmiPoll() -> void;
   alwaysinline auto irqPoll() -> void;
-  auto nmitimenUpdate(uint8 data) -> void;
+  auto nmitimenUpdate(uint8_t data) -> void;
   auto rdnmi() -> bool;
   auto timeup() -> bool;
 
@@ -68,7 +68,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   //serialization.cpp
   auto serialize(serializer&) -> void;
 
-  uint8 wram[128 * 1024];
+  uint8_t wram[128 * 1024];
   vector<Thread*> coprocessors;
 
   struct Overclocking {
@@ -133,15 +133,15 @@ private:
     Boolean autoJoypadPoll = 0;
 
     //$4201
-    uint8 pio = 0xff;
+    uint8_t pio = 0xff;
 
     //$4202-$4203
-    uint8 wrmpya = 0xff;
-    uint8 wrmpyb = 0xff;
+    uint8_t wrmpya = 0xff;
+    uint8_t wrmpyb = 0xff;
 
     //$4204-$4206
-    uint16 wrdiva = 0xffff;
-    uint8 wrdivb = 0xff;
+    uint16_t wrdiva = 0xffff;
+    uint8_t wrdivb = 0xff;
 
     //$4207-$420a
     uint12 htime = 0x1ff + 1 << 2;
@@ -151,14 +151,14 @@ private:
     uint1 fastROM = 0;
 
     //$4214-$4217
-    uint16 rddiv = 0;
-    uint16 rdmpy = 0;
+    uint16_t rddiv = 0;
+    uint16_t rdmpy = 0;
 
     //$4218-$421f
-    uint16 joy1 = 0;
-    uint16 joy2 = 0;
-    uint16 joy3 = 0;
-    uint16 joy4 = 0;
+    uint16_t joy1 = 0;
+    uint16_t joy2 = 0;
+    uint16_t joy3 = 0;
+    uint16_t joy4 = 0;
   } io;
 
   struct ALU {
@@ -173,10 +173,10 @@ private:
     inline auto edge() -> void;
 
     inline auto validA(uint24 address) -> bool;
-    inline auto readA(uint24 address) -> uint8;
-    inline auto readB(uint8 address, bool valid) -> uint8;
-    inline auto writeA(uint24 address, uint8 data) -> void;
-    inline auto writeB(uint8 address, uint8 data, bool valid) -> void;
+    inline auto readA(uint24 address) -> uint8_t;
+    inline auto readB(uint8_t address, bool valid) -> uint8_t;
+    inline auto writeA(uint24 address, uint8_t data) -> void;
+    inline auto writeB(uint8_t address, uint8_t data, bool valid) -> void;
     inline auto transfer(uint24 address, uint2 index) -> void;
 
     inline auto dmaRun() -> void;
@@ -203,31 +203,31 @@ private:
     uint1 direction = 1;
 
     //$43x1
-    uint8 targetAddress = 0xff;
+    uint8_t targetAddress = 0xff;
 
     //$43x2-$43x3
-    uint16 sourceAddress = 0xffff;
+    uint16_t sourceAddress = 0xffff;
 
     //$43x4
-    uint8 sourceBank = 0xff;
+    uint8_t sourceBank = 0xff;
 
     //$43x5-$43x6
     union {
-      uint16 transferSize;
-      uint16 indirectAddress;
+      uint16_t transferSize;
+      uint16_t indirectAddress;
     };
 
     //$43x7
-    uint8 indirectBank = 0xff;
+    uint8_t indirectBank = 0xff;
 
     //$43x8-$43x9
-    uint16 hdmaAddress = 0xffff;
+    uint16_t hdmaAddress = 0xffff;
 
     //$43xa
-    uint8 lineCounter = 0xff;
+    uint8_t lineCounter = 0xff;
 
     //$43xb/$43xf
-    uint8 unknown = 0xff;
+    uint8_t unknown = 0xff;
 
     //internal state
     uint1 hdmaCompleted = 0;

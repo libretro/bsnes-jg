@@ -54,11 +54,11 @@ auto DSP::main() -> void {
   }
 }
 
-auto DSP::read(uint8 address) -> uint8 {
+auto DSP::read(uint8_t address) -> uint8_t {
   return spc_dsp.read(address);
 }
 
-auto DSP::write(uint8 address, uint8 data) -> void {
+auto DSP::write(uint8_t address, uint8_t data) -> void {
   if(configuration.hacks.dsp.echoShadow) {
     if(address == 0x6c && (data & 0x20)) {
       memset(echoram, 0x00, 65536);

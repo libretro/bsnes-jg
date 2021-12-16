@@ -67,20 +67,20 @@ auto ARM7TDMI::idle() -> void {
   sleep();
 }
 
-auto ARM7TDMI::read(uint mode, uint32 address) -> uint32 {
+auto ARM7TDMI::read(uint mode, uint32_t address) -> uint32_t {
   return get(mode, address);
 }
 
-auto ARM7TDMI::load(uint mode, uint32 address) -> uint32 {
+auto ARM7TDMI::load(uint mode, uint32_t address) -> uint32_t {
   pipeline.nonsequential = true;
   auto word = get(Load | mode, address);
   if(mode & Half) {
     address &= 1;
-    word = mode & Signed ? (uint32)(int16)word : (uint32)(uint16)word;
+    word = mode & Signed ? (uint32_t)(int16_t)word : (uint32_t)(uint16_t)word;
   }
   if(mode & Byte) {
     address &= 0;
-    word = mode & Signed ? (uint32)(int8)word : (uint32)(uint8)word;
+    word = mode & Signed ? (uint32_t)(int8_t)word : (uint32_t)(uint8_t)word;
   }
   if(mode & Signed) {
     word = ASR(word, (address & 3) << 3);
@@ -91,22 +91,22 @@ auto ARM7TDMI::load(uint mode, uint32 address) -> uint32 {
   return word;
 }
 
-auto ARM7TDMI::write(uint mode, uint32 address, uint32 word) -> void {
+auto ARM7TDMI::write(uint mode, uint32_t address, uint32_t word) -> void {
   pipeline.nonsequential = true;
   return set(mode, address, word);
 }
 
-auto ARM7TDMI::store(uint mode, uint32 address, uint32 word) -> void {
+auto ARM7TDMI::store(uint mode, uint32_t address, uint32_t word) -> void {
   pipeline.nonsequential = true;
   if(mode & Half) { word &= 0xffff; word |= word << 16; }
   if(mode & Byte) { word &= 0xff; word |= word << 8; word |= word << 16; }
   return set(Store | mode, address, word);
 }
 
-auto ARM7TDMI::ADD(uint32 source, uint32 modify, bool carry) -> uint32 {
-  uint32 result = source + modify + carry;
+auto ARM7TDMI::ADD(uint32_t source, uint32_t modify, bool carry) -> uint32_t {
+  uint32_t result = source + modify + carry;
   if(cpsr().t || (opcode & 1 << 20)) {
-    uint32 overflow = ~(source ^ modify) & (source ^ result);
+    uint32_t overflow = ~(source ^ modify) & (source ^ result);
     cpsr().v = 1 << 31 & (overflow);
     cpsr().c = 1 << 31 & (overflow ^ source ^ modify ^ result);
     cpsr().z = result == 0;
@@ -115,15 +115,15 @@ auto ARM7TDMI::ADD(uint32 source, uint32 modify, bool carry) -> uint32 {
   return result;
 }
 
-auto ARM7TDMI::ASR(uint32 source, uint8 shift) -> uint32 {
+auto ARM7TDMI::ASR(uint32_t source, uint8_t shift) -> uint32_t {
   carry = cpsr().c;
   if(shift == 0) return source;
   carry = shift > 32 ? source & 1 << 31 : source & 1 << shift - 1;
-  source = shift > 31 ? (int32)source >> 31 : (int32)source >> shift;
+  source = shift > 31 ? (int32_t)source >> 31 : (int32_t)source >> shift;
   return source;
 }
 
-auto ARM7TDMI::BIT(uint32 result) -> uint32 {
+auto ARM7TDMI::BIT(uint32_t result) -> uint32_t {
   if(cpsr().t || (opcode & 1 << 20)) {
     cpsr().c = carry;
     cpsr().z = result == 0;
@@ -132,7 +132,7 @@ auto ARM7TDMI::BIT(uint32 result) -> uint32 {
   return result;
 }
 
-auto ARM7TDMI::LSL(uint32 source, uint8 shift) -> uint32 {
+auto ARM7TDMI::LSL(uint32_t source, uint8_t shift) -> uint32_t {
   carry = cpsr().c;
   if(shift == 0) return source;
   carry = shift > 32 ? 0 : source & 1 << 32 - shift;
@@ -140,7 +140,7 @@ auto ARM7TDMI::LSL(uint32 source, uint8 shift) -> uint32 {
   return source;
 }
 
-auto ARM7TDMI::LSR(uint32 source, uint8 shift) -> uint32 {
+auto ARM7TDMI::LSR(uint32_t source, uint8_t shift) -> uint32_t {
   carry = cpsr().c;
   if(shift == 0) return source;
   carry = shift > 32 ? 0 : source & 1 << shift - 1;
@@ -148,7 +148,7 @@ auto ARM7TDMI::LSR(uint32 source, uint8 shift) -> uint32 {
   return source;
 }
 
-auto ARM7TDMI::MUL(uint32 product, uint32 multiplicand, uint32 multiplier) -> uint32 {
+auto ARM7TDMI::MUL(uint32_t product, uint32_t multiplicand, uint32_t multiplier) -> uint32_t {
   idle();
   if(multiplier >>  8 && multiplier >>  8 != 0xffffff) idle();
   if(multiplier >> 16 && multiplier >> 16 !=   0xffff) idle();
@@ -161,7 +161,7 @@ auto ARM7TDMI::MUL(uint32 product, uint32 multiplicand, uint32 multiplier) -> ui
   return product;
 }
 
-auto ARM7TDMI::ROR(uint32 source, uint8 shift) -> uint32 {
+auto ARM7TDMI::ROR(uint32_t source, uint8_t shift) -> uint32_t {
   carry = cpsr().c;
   if(shift == 0) return source;
   if(shift &= 31) source = source << 32 - shift | source >> shift;
@@ -169,12 +169,12 @@ auto ARM7TDMI::ROR(uint32 source, uint8 shift) -> uint32 {
   return source;
 }
 
-auto ARM7TDMI::RRX(uint32 source) -> uint32 {
+auto ARM7TDMI::RRX(uint32_t source) -> uint32_t {
   carry = source & 1;
   return cpsr().c << 31 | source >> 1;
 }
 
-auto ARM7TDMI::SUB(uint32 source, uint32 modify, bool carry) -> uint32 {
+auto ARM7TDMI::SUB(uint32_t source, uint32_t modify, bool carry) -> uint32_t {
   return ADD(source, ~modify, carry);
 }
 
@@ -244,11 +244,11 @@ auto ARM7TDMI::instruction() -> void {
     uint12 index = (opcode & 0x0ff00000) >> 16 | (opcode & 0x000000f0) >> 4;
     armInstruction[index](opcode);
   } else {
-    thumbInstruction[(uint16)opcode]();
+    thumbInstruction[(uint16_t)opcode]();
   }
 }
 
-auto ARM7TDMI::exception(uint mode, uint32 address) -> void {
+auto ARM7TDMI::exception(uint mode, uint32_t address) -> void {
   auto psr = cpsr();
   cpsr().m = mode;
   spsr() = psr;
@@ -263,8 +263,8 @@ auto ARM7TDMI::armInitialize() -> void {
   #define bind(id, name, ...) { \
     uint index = (id & 0x0ff00000) >> 16 | (id & 0x000000f0) >> 4; \
     assert(!armInstruction[index]); \
-    armInstruction[index] = [&](uint32 opcode) { return armInstruction##name(arguments); }; \
-    armDisassemble[index] = [&](uint32 opcode) { return armDisassemble##name(arguments); }; \
+    armInstruction[index] = [&](uint32_t opcode) { return armInstruction##name(arguments); }; \
+    armDisassemble[index] = [&](uint32_t opcode) { return armDisassemble##name(arguments); }; \
   }
 
   #define pattern(s) \
@@ -595,7 +595,7 @@ auto ARM7TDMI::thumbInitialize() -> void {
     bind(opcode, ALUExtended, d, m, mode);
   }
 
-  for(uint8 immediate : range(256))
+  for(uint8_t immediate : range(256))
   for(uint3 d : range(8))
   for(uint1 mode : range(2)) {
     auto opcode = pattern("1010 ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
@@ -645,21 +645,21 @@ auto ARM7TDMI::thumbInitialize() -> void {
     bind(opcode, BranchNear, displacement);
   }
 
-  for(uint8 displacement : range(256))
+  for(uint8_t displacement : range(256))
   for(uint4 condition : range(16)) {
     if(condition == 15) continue;  //BNV
     auto opcode = pattern("1101 ???? ???? ????") | displacement << 0 | condition << 8;
     bind(opcode, BranchTest, displacement, condition);
   }
 
-  for(uint8 immediate : range(256))
+  for(uint8_t immediate : range(256))
   for(uint3 d : range(8))
   for(uint2 mode : range(4)) {
     auto opcode = pattern("001? ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
     bind(opcode, Immediate, immediate, d, mode);
   }
 
-  for(uint8 displacement : range(256))
+  for(uint8_t displacement : range(256))
   for(uint3 d : range(8)) {
     auto opcode = pattern("0100 1??? ???? ????") | displacement << 0 | d << 8;
     bind(opcode, LoadLiteral, displacement, d);
@@ -681,7 +681,7 @@ auto ARM7TDMI::thumbInitialize() -> void {
     bind(opcode, MoveHalfImmediate, d, n, immediate, mode);
   }
 
-  for(uint8 list : range(256))
+  for(uint8_t list : range(256))
   for(uint3 n : range(8))
   for(uint1 mode : range(2)) {
     auto opcode = pattern("1100 ???? ???? ????") | list << 0 | n << 8 | mode << 11;
@@ -696,7 +696,7 @@ auto ARM7TDMI::thumbInitialize() -> void {
     bind(opcode, MoveRegisterOffset, d, n, m, mode);
   }
 
-  for(uint8 immediate : range(256))
+  for(uint8_t immediate : range(256))
   for(uint3 d : range(8))
   for(uint1 mode : range(2)) {
     auto opcode = pattern("1001 ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
@@ -720,19 +720,19 @@ auto ARM7TDMI::thumbInitialize() -> void {
     bind(opcode, ShiftImmediate, d, m, immediate, mode);
   }
 
-  for(uint8 immediate : range(256)) {
+  for(uint8_t immediate : range(256)) {
     auto opcode = pattern("1101 1111 ???? ????") | immediate << 0;
     bind(opcode, SoftwareInterrupt, immediate);
   }
 
-  for(uint8 list : range(256))
+  for(uint8_t list : range(256))
   for(uint1 lrpc : range(2))
   for(uint1 mode : range(2)) {
     auto opcode = pattern("1011 ?10? ???? ????") | list << 0 | lrpc << 8 | mode << 11;
     bind(opcode, StackMultiple, list, lrpc, mode);
   }
 
-  for(uint16 id : range(65536)) {
+  for(uint16_t id : range(65536)) {
     if(thumbInstruction[id]) continue;
     auto opcode = pattern("???? ???? ???? ????") | id << 0;
     bind(opcode, Undefined);
@@ -745,8 +745,8 @@ auto ARM7TDMI::thumbInitialize() -> void {
   #undef pattern
 }
 
-auto ARM7TDMI::armALU(uint4 mode, uint4 d, uint4 n, uint32 rm) -> void {
-  uint32 rn = r(n);
+auto ARM7TDMI::armALU(uint4 mode, uint4 d, uint4 n, uint32_t rm) -> void {
+  uint32_t rn = r(n);
 
   switch(mode) {
   case  0: r(d) = BIT(rn & rm); break;  //AND
@@ -772,7 +772,7 @@ auto ARM7TDMI::armALU(uint4 mode, uint4 d, uint4 n, uint32 rm) -> void {
   }
 }
 
-auto ARM7TDMI::armMoveToStatus(uint4 field, uint1 mode, uint32 data) -> void {
+auto ARM7TDMI::armMoveToStatus(uint4 field, uint1 mode, uint32_t data) -> void {
   if(mode && (cpsr().m == PSR::USR || cpsr().m == PSR::SYS)) return;
   PSR& psr = mode ? spsr() : cpsr();
 
@@ -794,8 +794,6 @@ auto ARM7TDMI::armMoveToStatus(uint4 field, uint1 mode, uint32 data) -> void {
   }
 }
 
-//
-
 auto ARM7TDMI::armInstructionBranch
 (int24 displacement, uint1 link) -> void {
   if(link) r(14) = r(15) - 4;
@@ -804,14 +802,14 @@ auto ARM7TDMI::armInstructionBranch
 
 auto ARM7TDMI::armInstructionBranchExchangeRegister
 (uint4 m) -> void {
-  uint32 address = r(m);
+  uint32_t address = r(m);
   cpsr().t = address & 1;
   r(15) = address;
 }
 
 auto ARM7TDMI::armInstructionDataImmediate
-(uint8 immediate, uint4 shift, uint4 d, uint4 n, uint1 save, uint4 mode) -> void {
-  uint32 data = immediate;
+(uint8_t immediate, uint4 shift, uint4 d, uint4 n, uint1 save, uint4 mode) -> void {
+  uint32_t data = immediate;
   carry = cpsr().c;
   if(shift) data = ROR(data, shift << 1);
   armALU(mode, d, n, data);
@@ -819,7 +817,7 @@ auto ARM7TDMI::armInstructionDataImmediate
 
 auto ARM7TDMI::armInstructionDataImmediateShift
 (uint4 m, uint2 type, uint5 shift, uint4 d, uint4 n, uint1 save, uint4 mode) -> void {
-  uint32 rm = r(m);
+  uint32_t rm = r(m);
   carry = cpsr().c;
 
   switch(type) {
@@ -834,14 +832,14 @@ auto ARM7TDMI::armInstructionDataImmediateShift
 
 auto ARM7TDMI::armInstructionDataRegisterShift
 (uint4 m, uint2 type, uint4 s, uint4 d, uint4 n, uint1 save, uint4 mode) -> void {
-  uint8 rs = r(s) + (s == 15 ? 4 : 0);
-  uint32 rm = r(m) + (m == 15 ? 4 : 0);
+  uint8_t rs = r(s) + (s == 15 ? 4 : 0);
+  uint32_t rm = r(m) + (m == 15 ? 4 : 0);
   carry = cpsr().c;
 
   switch(type) {
-  case 0: rm = LSL(rm, rs < 33 ? rs : (uint8)33); break;
-  case 1: rm = LSR(rm, rs < 33 ? rs : (uint8)33); break;
-  case 2: rm = ASR(rm, rs < 32 ? rs : (uint8)32); break;
+  case 0: rm = LSL(rm, rs < 33 ? rs : (uint8_t)33); break;
+  case 1: rm = LSR(rm, rs < 33 ? rs : (uint8_t)33); break;
+  case 2: rm = ASR(rm, rs < 32 ? rs : (uint8_t)32); break;
   case 3: if(rs) rm = ROR(rm, rs & 31 ? uint(rs & 31) : 32); break;
   }
 
@@ -849,9 +847,9 @@ auto ARM7TDMI::armInstructionDataRegisterShift
 }
 
 auto ARM7TDMI::armInstructionLoadImmediate
-(uint8 immediate, uint1 half, uint4 d, uint4 n, uint1 writeback, uint1 up, uint1 pre) -> void {
-  uint32 rn = r(n);
-  uint32 rd = r(d);
+(uint8_t immediate, uint1 half, uint4 d, uint4 n, uint1 writeback, uint1 up, uint1 pre) -> void {
+  uint32_t rn = r(n);
+  uint32_t rd = r(d);
 
   if(pre == 1) rn = up ? rn + immediate : rn - immediate;
   rd = load((half ? Half : Byte) | Nonsequential | Signed, rn);
@@ -863,9 +861,9 @@ auto ARM7TDMI::armInstructionLoadImmediate
 
 auto ARM7TDMI::armInstructionLoadRegister
 (uint4 m, uint1 half, uint4 d, uint4 n, uint1 writeback, uint1 up, uint1 pre) -> void {
-  uint32 rn = r(n);
-  uint32 rm = r(m);
-  uint32 rd = r(d);
+  uint32_t rn = r(n);
+  uint32_t rm = r(m);
+  uint32_t rd = r(d);
 
   if(pre == 1) rn = up ? rn + rm : rn - rm;
   rd = load((half ? Half : Byte) | Nonsequential | Signed, rn);
@@ -877,15 +875,15 @@ auto ARM7TDMI::armInstructionLoadRegister
 
 auto ARM7TDMI::armInstructionMemorySwap
 (uint4 m, uint4 d, uint4 n, uint1 byte) -> void {
-  uint32 word = load((byte ? Byte : Word) | Nonsequential, r(n));
+  uint32_t word = load((byte ? Byte : Word) | Nonsequential, r(n));
   store((byte ? Byte : Word) | Nonsequential, r(n), r(m));
   r(d) = word;
 }
 
 auto ARM7TDMI::armInstructionMoveHalfImmediate
-(uint8 immediate, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 up, uint1 pre) -> void {
-  uint32 rn = r(n);
-  uint32 rd = r(d);
+(uint8_t immediate, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 up, uint1 pre) -> void {
+  uint32_t rn = r(n);
+  uint32_t rd = r(d);
 
   if(pre == 1) rn = up ? rn + immediate : rn - immediate;
   if(mode == 1) rd = load(Half | Nonsequential, rn);
@@ -898,9 +896,9 @@ auto ARM7TDMI::armInstructionMoveHalfImmediate
 
 auto ARM7TDMI::armInstructionMoveHalfRegister
 (uint4 m, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 up, uint1 pre) -> void {
-  uint32 rn = r(n);
-  uint32 rm = r(m);
-  uint32 rd = r(d);
+  uint32_t rn = r(n);
+  uint32_t rm = r(m);
+  uint32_t rd = r(d);
 
   if(pre == 1) rn = up ? rn + rm : rn - rm;
   if(mode == 1) rd = load(Half | Nonsequential, rn);
@@ -913,8 +911,8 @@ auto ARM7TDMI::armInstructionMoveHalfRegister
 
 auto ARM7TDMI::armInstructionMoveImmediateOffset
 (uint12 immediate, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 byte, uint1 up, uint1 pre) -> void {
-  uint32 rn = r(n);
-  uint32 rd = r(d);
+  uint32_t rn = r(n);
+  uint32_t rd = r(d);
 
   if(pre == 1) rn = up ? rn + immediate : rn - immediate;
   if(mode == 1) rd = load((byte ? Byte : Word) | Nonsequential, rn);
@@ -926,8 +924,8 @@ auto ARM7TDMI::armInstructionMoveImmediateOffset
 }
 
 auto ARM7TDMI::armInstructionMoveMultiple
-(uint16 list, uint4 n, uint1 mode, uint1 writeback, uint1 type, uint1 up, uint1 pre) -> void {
-  uint32 rn = r(n);
+(uint16_t list, uint4 n, uint1 mode, uint1 writeback, uint1 type, uint1 up, uint1 pre) -> void {
+  uint32_t rn = r(n);
   if(pre == 0 && up == 1) rn = rn + 0;  //IA
   if(pre == 1 && up == 1) rn = rn + 4;  //IB
   if(pre == 1 && up == 0) rn = rn - bit::count(list) * 4 + 0;  //DB
@@ -972,9 +970,9 @@ auto ARM7TDMI::armInstructionMoveMultiple
 
 auto ARM7TDMI::armInstructionMoveRegisterOffset
 (uint4 m, uint2 type, uint5 shift, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 byte, uint1 up, uint1 pre) -> void {
-  uint32 rm = r(m);
-  uint32 rd = r(d);
-  uint32 rn = r(n);
+  uint32_t rm = r(m);
+  uint32_t rd = r(d);
+  uint32_t rn = r(n);
   carry = cpsr().c;
 
   switch(type) {
@@ -1000,8 +998,8 @@ auto ARM7TDMI::armInstructionMoveToRegisterFromStatus
 }
 
 auto ARM7TDMI::armInstructionMoveToStatusFromImmediate
-(uint8 immediate, uint4 rotate, uint4 field, uint1 mode) -> void {
-  uint32 data = immediate;
+(uint8_t immediate, uint4 rotate, uint4 field, uint1 mode) -> void {
+  uint32_t data = immediate;
   if(rotate) data = ROR(data, rotate << 1);
   armMoveToStatus(field, mode, data);
 }
@@ -1019,8 +1017,8 @@ auto ARM7TDMI::armInstructionMultiply
 
 auto ARM7TDMI::armInstructionMultiplyLong
 (uint4 m, uint4 s, uint4 l, uint4 h, uint1 save, uint1 accumulate, uint1 sign) -> void {
-  uint64 rm = r(m);
-  uint64 rs = r(s);
+  uint64_t rm = r(m);
+  uint64_t rs = r(s);
 
   idle();
   idle();
@@ -1030,16 +1028,16 @@ auto ARM7TDMI::armInstructionMultiplyLong
     if(rs >>  8 && rs >>  8 != 0xffffff) idle();
     if(rs >> 16 && rs >> 16 !=   0xffff) idle();
     if(rs >> 24 && rs >> 24 !=     0xff) idle();
-    rm = (int32)rm;
-    rs = (int32)rs;
+    rm = (int32_t)rm;
+    rs = (int32_t)rs;
   } else {
     if(rs >>  8) idle();
     if(rs >> 16) idle();
     if(rs >> 24) idle();
   }
 
-  uint64 rd = rm * rs;
-  if(accumulate) rd += (uint64)r(h) << 32 | (uint64)r(l) << 0;
+  uint64_t rd = rm * rs;
+  if(accumulate) rd += (uint64_t)r(h) << 32 | (uint64_t)r(l) << 0;
 
   r(h) = rd >> 32;
   r(l) = rd >>  0;
@@ -1092,7 +1090,7 @@ auto ARM7TDMI::thumbInstructionALUExtended
 }
 
 auto ARM7TDMI::thumbInstructionAddRegister
-(uint8 immediate, uint3 d, uint1 mode) -> void {
+(uint8_t immediate, uint3 d, uint1 mode) -> void {
   switch(mode) {
   case 0: r(d) = (r(15) & ~3) + immediate * 4; break;  //ADD pc
   case 1: r(d) = r(13) + immediate * 4; break;  //ADD sp
@@ -1125,7 +1123,7 @@ auto ARM7TDMI::thumbInstructionAdjustStack
 
 auto ARM7TDMI::thumbInstructionBranchExchange
 (uint4 m) -> void {
-  uint32 address = r(m);
+  uint32_t address = r(m);
   cpsr().t = address & 1;
   r(15) = address;
 }
@@ -1147,13 +1145,13 @@ auto ARM7TDMI::thumbInstructionBranchNear
 }
 
 auto ARM7TDMI::thumbInstructionBranchTest
-(int8 displacement, uint4 condition) -> void {
+(int8_t displacement, uint4 condition) -> void {
   if(!TST(condition)) return;
   r(15) = r(15) + displacement * 2;
 }
 
 auto ARM7TDMI::thumbInstructionImmediate
-(uint8 immediate, uint3 d, uint2 mode) -> void {
+(uint8_t immediate, uint3 d, uint2 mode) -> void {
   switch(mode) {
   case 0: r(d) = BIT(immediate); break;  //MOV
   case 1:        SUB(r(d), immediate, 1); break;  //CMP
@@ -1163,8 +1161,8 @@ auto ARM7TDMI::thumbInstructionImmediate
 }
 
 auto ARM7TDMI::thumbInstructionLoadLiteral
-(uint8 displacement, uint3 d) -> void {
-  uint32 address = (r(15) & ~3) + (displacement << 2);
+(uint8_t displacement, uint3 d) -> void {
+  uint32_t address = (r(15) & ~3) + (displacement << 2);
   r(d) = load(Word | Nonsequential, address);
 }
 
@@ -1185,8 +1183,8 @@ auto ARM7TDMI::thumbInstructionMoveHalfImmediate
 }
 
 auto ARM7TDMI::thumbInstructionMoveMultiple
-(uint8 list, uint3 n, uint1 mode) -> void {
-  uint32 rn = r(n);
+(uint8_t list, uint3 n, uint1 mode) -> void {
+  uint32_t rn = r(n);
 
   for(uint m : range(8)) {
     if(!(list & 1 << m)) continue;
@@ -1216,7 +1214,7 @@ auto ARM7TDMI::thumbInstructionMoveRegisterOffset
 }
 
 auto ARM7TDMI::thumbInstructionMoveStack
-(uint8 immediate, uint3 d, uint1 mode) -> void {
+(uint8_t immediate, uint3 d, uint1 mode) -> void {
   switch(mode) {
   case 0: store(Word | Nonsequential, r(13) + immediate * 4, r(d)); break;  //STR
   case 1: r(d) = load(Word | Nonsequential, r(13) + immediate * 4); break;  //LDR
@@ -1241,13 +1239,13 @@ auto ARM7TDMI::thumbInstructionShiftImmediate
 }
 
 auto ARM7TDMI::thumbInstructionSoftwareInterrupt
-(uint8 immediate) -> void {
+(uint8_t immediate) -> void {
   exception(PSR::SVC, 0x08);
 }
 
 auto ARM7TDMI::thumbInstructionStackMultiple
-(uint8 list, uint1 lrpc, uint1 mode) -> void {
-  uint32 sp;
+(uint8_t list, uint1 lrpc, uint1 mode) -> void {
+  uint32_t sp;
   switch(mode) {
   case 0: sp = r(13) - (bit::count(list) + lrpc) * 4; break;  //PUSH
   case 1: sp = r(13);  //POP
@@ -1371,18 +1369,18 @@ static const string _conditions[] = {
 #define _comp(mode) (mode >=  8 && mode <= 11)
 #define _math(mode) (mode <=  7 || mode == 12 || mode == 14)
 
-auto ARM7TDMI::disassemble(maybe<uint32> pc, maybe<Boolean> thumb) -> string {
+auto ARM7TDMI::disassemble(maybe<uint32_t> pc, maybe<Boolean> thumb) -> string {
   if(!pc) pc = pipeline.execute.address;
   if(!thumb) thumb = cpsr().t;
 
   _pc = pc();
   if(!thumb()) {
-    uint32 opcode = read(Word | Nonsequential, _pc & ~3);
+    uint32_t opcode = read(Word | Nonsequential, _pc & ~3);
     uint12 index = (opcode & 0x0ff00000) >> 16 | (opcode & 0x000000f0) >> 4;
     _c = _conditions[opcode >> 28];
     return {hex(_pc, 8L), "  ", armDisassemble[index](opcode)};
   } else {
-    uint16 opcode = read(Half | Nonsequential, _pc & ~1);
+    uint16_t opcode = read(Half | Nonsequential, _pc & ~1);
     return {hex(_pc, 8L), "  ", thumbDisassemble[opcode]()};
   }
 }
@@ -1429,12 +1427,12 @@ auto ARM7TDMI::armDisassembleBranchExchangeRegister
 }
 
 auto ARM7TDMI::armDisassembleDataImmediate
-(uint8 immediate, uint4 shift, uint4 d, uint4 n, uint1 save, uint4 mode) -> string {
+(uint8_t immediate, uint4 shift, uint4 d, uint4 n, uint1 save, uint4 mode) -> string {
   static const string opcode[] = {
     "and", "eor", "sub", "rsb", "add", "adc", "sbc", "rsc",
     "tst", "teq", "cmp", "cmn", "orr", "mov", "bic", "mvn",
   };
-  uint32 data = immediate >> (shift << 1) | immediate << 32 - (shift << 1);
+  uint32_t data = immediate >> (shift << 1) | immediate << 32 - (shift << 1);
   return {opcode[mode], _c,
     _move(mode) ? string{_s, " ", _r[d]} : string{},
     _comp(mode) ? string{" ", _r[n]} : string{},
@@ -1479,7 +1477,7 @@ auto ARM7TDMI::armDisassembleDataRegisterShift
 }
 
 auto ARM7TDMI::armDisassembleLoadImmediate
-(uint8 immediate, uint1 half, uint4 d, uint4 n, uint1 writeback, uint1 up, uint1 pre) -> string {
+(uint8_t immediate, uint1 half, uint4 d, uint4 n, uint1 writeback, uint1 up, uint1 pre) -> string {
   string data;
   if(n == 15) data = {" =0x", hex(read((half ? Half : Byte) | Nonsequential,
     _pc + 8 + (up ? +immediate : -immediate)), half ? 4L : 2L)};
@@ -1508,7 +1506,7 @@ auto ARM7TDMI::armDisassembleMemorySwap
 }
 
 auto ARM7TDMI::armDisassembleMoveHalfImmediate
-(uint8 immediate, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 up, uint1 pre) -> string {
+(uint8_t immediate, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 up, uint1 pre) -> string {
   string data;
   if(n == 15) data = {" =0x", hex(read(Half | Nonsequential, _pc + (up ? +immediate : -immediate)), 4L)};
 
@@ -1543,7 +1541,7 @@ auto ARM7TDMI::armDisassembleMoveImmediateOffset
 }
 
 auto ARM7TDMI::armDisassembleMoveMultiple
-(uint16 list, uint4 n, uint1 mode, uint1 writeback, uint1 type, uint1 up, uint1 pre) -> string {
+(uint16_t list, uint4 n, uint1 mode, uint1 writeback, uint1 type, uint1 up, uint1 pre) -> string {
   string registers;
   for(auto index : range(16)) {
     if((list & 1 << index)) registers.append(_r[index], ",");
@@ -1578,8 +1576,8 @@ auto ARM7TDMI::armDisassembleMoveToRegisterFromStatus
 }
 
 auto ARM7TDMI::armDisassembleMoveToStatusFromImmediate
-(uint8 immediate, uint4 rotate, uint4 field, uint1 mode) -> string {
-  uint32 data = immediate >> (rotate << 1) | immediate << 32 - (rotate << 1);
+(uint8_t immediate, uint4 rotate, uint4 field, uint1 mode) -> string {
+  uint32_t data = immediate >> (rotate << 1) | immediate << 32 - (rotate << 1);
   return {"msr", _c, " ", mode ? "spsr:" : "cpsr:",
     field.bit(0) ? "c" : "",
     field.bit(1) ? "x" : "",
@@ -1642,7 +1640,7 @@ auto ARM7TDMI::thumbDisassembleALUExtended
 }
 
 auto ARM7TDMI::thumbDisassembleAddRegister
-(uint8 immediate, uint3 d, uint1 mode) -> string {
+(uint8_t immediate, uint3 d, uint1 mode) -> string {
   return {"add ", _r[d], ",", mode ? "sp" : "pc", ",#0x", hex(immediate, 2L)};
 }
 
@@ -1670,7 +1668,7 @@ auto ARM7TDMI::thumbDisassembleBranchFarPrefix
 (int11 displacementHi) -> string {
   uint11 displacementLo = read(Half | Nonsequential, (_pc & ~1) + 2);
   int22 displacement = displacementHi << 11 | displacementLo << 0;
-  uint32 address = _pc + 4 + displacement * 2;
+  uint32_t address = _pc + 4 + displacement * 2;
   return {"bl 0x", hex(address, 8L)};
 }
 
@@ -1681,26 +1679,26 @@ auto ARM7TDMI::thumbDisassembleBranchFarSuffix
 
 auto ARM7TDMI::thumbDisassembleBranchNear
 (int11 displacement) -> string {
-  uint32 address = _pc + 4 + displacement * 2;
+  uint32_t address = _pc + 4 + displacement * 2;
   return {"b 0x", hex(address, 8L)};
 }
 
 auto ARM7TDMI::thumbDisassembleBranchTest
-(int8 displacement, uint4 condition) -> string {
-  uint32 address = _pc + 4 + displacement * 2;
+(int8_t displacement, uint4 condition) -> string {
+  uint32_t address = _pc + 4 + displacement * 2;
   return {"b", _conditions[condition], " 0x", hex(address, 8L)};
 }
 
 auto ARM7TDMI::thumbDisassembleImmediate
-(uint8 immediate, uint3 d, uint2 mode) -> string {
+(uint8_t immediate, uint3 d, uint2 mode) -> string {
   static const string opcode[] = {"mov", "cmp", "add", "sub"};
   return {opcode[mode], " ", _r[d], ",#0x", hex(immediate, 2L)};
 }
 
 auto ARM7TDMI::thumbDisassembleLoadLiteral
-(uint8 displacement, uint3 d) -> string {
-  uint32 address = ((_pc + 4) & ~3) + (displacement << 2);
-  uint32 data = read(Word | Nonsequential, address);
+(uint8_t displacement, uint3 d) -> string {
+  uint32_t address = ((_pc + 4) & ~3) + (displacement << 2);
+  uint32_t data = read(Word | Nonsequential, address);
   return {"ldr ", _r[d], ",[pc,#0x", hex(address, 8L), "] =0x", hex(data, 8L)};
 }
 
@@ -1715,7 +1713,7 @@ auto ARM7TDMI::thumbDisassembleMoveHalfImmediate
 }
 
 auto ARM7TDMI::thumbDisassembleMoveMultiple
-(uint8 list, uint3 n, uint1 mode) -> string {
+(uint8_t list, uint3 n, uint1 mode) -> string {
   string registers;
   for(uint m : range(8)) {
     if((list & 1 << m)) registers.append(_r[m], ",");
@@ -1731,7 +1729,7 @@ auto ARM7TDMI::thumbDisassembleMoveRegisterOffset
 }
 
 auto ARM7TDMI::thumbDisassembleMoveStack
-(uint8 immediate, uint3 d, uint1 mode) -> string {
+(uint8_t immediate, uint3 d, uint1 mode) -> string {
   return {mode ? "ldr" : "str", " ", _r[d], ",[sp,#0x", hex(immediate * 4, 3L), "]"};
 }
 
@@ -1747,12 +1745,12 @@ auto ARM7TDMI::thumbDisassembleShiftImmediate
 }
 
 auto ARM7TDMI::thumbDisassembleSoftwareInterrupt
-(uint8 immediate) -> string {
+(uint8_t immediate) -> string {
   return {"swi #0x", hex(immediate, 2L)};
 }
 
 auto ARM7TDMI::thumbDisassembleStackMultiple
-(uint8 list, uint1 lrpc, uint1 mode) -> string {
+(uint8_t list, uint1 lrpc, uint1 mode) -> string {
   string registers;
   for(uint m : range(8)) {
     if((list & 1 << m)) registers.append(_r[m], ",");

@@ -4,13 +4,13 @@ namespace SuperFamicom {
 
 SMP smp;
 
-auto SMP::readRAM(uint16 address) -> uint8 {
+auto SMP::readRAM(uint16_t address) -> uint8_t {
   if(address >= 0xffc0 && io.iplromEnable) return iplrom[address & 0x3f];
   if(io.ramDisable) return 0x5a;  //0xff on mini-SNES
   return dsp.apuram[address];
 }
 
-auto SMP::writeRAM(uint16 address, uint8 data) -> void {
+auto SMP::writeRAM(uint16_t address, uint8_t data) -> void {
   //writes to $ffc0-$ffff always go to apuram, even if the iplrom is enabled
   if(io.ramWritable && !io.ramDisable) dsp.apuram[address] = data;
 }
@@ -19,35 +19,35 @@ auto SMP::idle() -> void {
   waitIdle();
 }
 
-auto SMP::read(uint16 address) -> uint8 {
+auto SMP::read(uint16_t address) -> uint8_t {
   //Kishin Douji Zenki - Tenchi Meidou requires bus hold delays on CPU I/O reads.
   //smp_mem_access_times requires no bus hold delays on APU RAM reads.
   if((address & 0xfffc) == 0x00f4) {
     wait(address, 1);
-    uint8 data = readRAM(address);
+    uint8_t data = readRAM(address);
     if((address & 0xfff0) == 0x00f0) data = readIO(address);
     wait(address, 1);
     return data;
   } else {
     wait(address, 0);
-    uint8 data = readRAM(address);
+    uint8_t data = readRAM(address);
     if((address & 0xfff0) == 0x00f0) data = readIO(address);
     return data;
   }
 }
 
-auto SMP::write(uint16 address, uint8 data) -> void {
+auto SMP::write(uint16_t address, uint8_t data) -> void {
   wait(address);
   writeRAM(address, data);  //even IO writes affect underlying RAM
   if((address & 0xfff0) == 0x00f0) writeIO(address, data);
 }
 
-auto SMP::readDisassembler(uint16 address) -> uint8 {
+auto SMP::readDisassembler(uint16_t address) -> uint8_t {
   if((address & 0xfff0) == 0x00f0) return 0x00;
   return readRAM(address);
 }
 
-auto SMP::portRead(uint2 port) const -> uint8 {
+auto SMP::portRead(uint2 port) const -> uint8_t {
   if(port == 0) return io.cpu0;
   if(port == 1) return io.cpu1;
   if(port == 2) return io.cpu2;
@@ -55,15 +55,15 @@ auto SMP::portRead(uint2 port) const -> uint8 {
   return 0; // unreachable
 }
 
-auto SMP::portWrite(uint2 port, uint8 data) -> void {
+auto SMP::portWrite(uint2 port, uint8_t data) -> void {
   if(port == 0) io.apu0 = data;
   if(port == 1) io.apu1 = data;
   if(port == 2) io.apu2 = data;
   if(port == 3) io.apu3 = data;
 }
 
-auto SMP::readIO(uint16 address) -> uint8 {
-  uint8 data;
+auto SMP::readIO(uint16_t address) -> uint8_t {
+  uint8_t data;
 
   switch(address) {
   case 0xf0:  //TEST (write-only register)
@@ -125,7 +125,7 @@ auto SMP::readIO(uint16 address) -> uint8 {
   return data;  //unreachable
 }
 
-auto SMP::writeIO(uint16 address, uint8 data) -> void {
+auto SMP::writeIO(uint16_t address, uint8_t data) -> void {
   switch(address) {
   case 0xf0:  //TEST
     if(r.p.p) break;  //writes only valid when P flag is clear
@@ -238,7 +238,7 @@ auto SMP::writeIO(uint16 address, uint8 data) -> void {
 //sometimes the SMP will run far slower than expected
 //other times (and more likely), the SMP will deadlock until the system is reset
 //the timers are not affected by this and advance by their expected values
-auto SMP::wait(maybe<uint16> addr, bool half) -> void {
+auto SMP::wait(maybe<uint16_t> addr, bool half) -> void {
   static const uint cycleWaitStates[4] = {2, 4, 10, 20};
   static const uint timerWaitStates[4] = {2, 4,  8, 16};
 
@@ -251,7 +251,7 @@ auto SMP::wait(maybe<uint16> addr, bool half) -> void {
   stepTimers(timerWaitStates[waitStates] >> half);
 }
 
-auto SMP::waitIdle(maybe<uint16> addr, bool half) -> void {
+auto SMP::waitIdle(maybe<uint16_t> addr, bool half) -> void {
   static const uint cycleWaitStates[4] = {2, 4, 10, 20};
   static const uint timerWaitStates[4] = {2, 4,  8, 16};
 

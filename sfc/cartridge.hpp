@@ -74,7 +74,7 @@ private:
 
   auto loadMemory(Memory&, Markup::Node, bool required) -> void;
   template<typename T> auto loadMap(Markup::Node, T&) -> uint;
-  auto loadMap(Markup::Node, const function<uint8 (uint, uint8)>&, const function<void (uint, uint8)>&) -> uint;
+  auto loadMap(Markup::Node, const function<uint8_t (uint, uint8_t)>&, const function<void (uint, uint8_t)>&) -> uint;
 
   auto loadROM(Markup::Node) -> void;
   auto loadRAM(Markup::Node) -> void;

@@ -41,9 +41,9 @@ S21FX::~S21FX() {
   //given that this is the only device that hooks the reset vector like this,
   //it's not worth the added complexity to support some form of reversible bus mapping hooks
   uint vector = resetVector;
-  bus.map([vector](uint24 addr, uint8) -> uint8 {
+  bus.map([vector](uint24 addr, uint8_t) -> uint8_t {
     return vector >> addr * 8;
-  }, [](uint24, uint8) -> void {
+  }, [](uint24, uint8_t) -> void {
   }, "00:fffc-fffd", 2);
 
   if(link.open()) link.close();
@@ -73,11 +73,11 @@ auto S21FX::main() -> void {
   while(true) step(10'000'000);
 }
 
-auto S21FX::read(uint addr, uint8 data) -> uint8 {
+auto S21FX::read(uint addr, uint8_t data) -> uint8_t {
   addr &= 0x40ffff;
 
-  if(addr == 0xfffc) return booted ? resetVector.byte(0) : (uint8)0x84;
-  if(addr == 0xfffd) return booted ? resetVector.byte(1) : (booted = true, (uint8)0x21);
+  if(addr == 0xfffc) return booted ? resetVector.byte(0) : (uint8_t)0x84;
+  if(addr == 0xfffd) return booted ? resetVector.byte(1) : (booted = true, (uint8_t)0x21);
 
   if(addr >= 0x2184 && addr <= 0x21fd) return ram[addr - 0x2184];
 
@@ -96,7 +96,7 @@ auto S21FX::read(uint addr, uint8 data) -> uint8 {
   return data;
 }
 
-auto S21FX::write(uint addr, uint8 data) -> void {
+auto S21FX::write(uint addr, uint8_t data) -> void {
   addr &= 0x40ffff;
 
   if(addr == 0x21ff) {
@@ -126,7 +126,7 @@ auto S21FX::writable() -> bool {
 }
 
 //SNES -> Link
-auto S21FX::read() -> uint8 {
+auto S21FX::read() -> uint8_t {
   step(1);
   if(snesBuffer.size() > 0) {
     return snesBuffer.takeLeft();
@@ -135,7 +135,7 @@ auto S21FX::read() -> uint8 {
 }
 
 //Link -> SNES
-auto S21FX::write(uint8 data) -> void {
+auto S21FX::write(uint8_t data) -> void {
   step(1);
   if(linkBuffer.size() < 1024) {
     linkBuffer.append(data);

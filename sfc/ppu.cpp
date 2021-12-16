@@ -11,7 +11,7 @@ auto PPU::main() -> void {
       for(uint y = 1; y <= 240; y++) {
         if(y >= 8 && y <= 231) continue;
         auto output = ppu.output + y * 1024;
-        memory::fill<uint16>(output, 1024);
+        memory::fill<uint16_t>(output, 1024);
       }
     }
     display.interlace = io.interlace;
@@ -213,8 +213,8 @@ auto PPU::latchCounters() -> void {
   latch.counters = 1;
 }
 
-auto PPU::addressVRAM() const -> uint16 {
-  uint16 address = io.vramAddress;
+auto PPU::addressVRAM() const -> uint16_t {
+  uint16_t address = io.vramAddress;
   switch(io.vramMapping) {
   case 0: return address;
   case 1: return address & 0xff00 | address << 3 & 0x00f8 | address >> 5 & 7;
@@ -224,30 +224,30 @@ auto PPU::addressVRAM() const -> uint16 {
   return 0; // unreachable
 }
 
-auto PPU::readVRAM() -> uint16 {
+auto PPU::readVRAM() -> uint16_t {
   if(!io.displayDisable && vcounter() < vdisp()) return 0x0000;
   auto address = addressVRAM();
   return vram[address];
 }
 
-auto PPU::writeVRAM(bool byte, uint8 data) -> void {
+auto PPU::writeVRAM(bool byte, uint8_t data) -> void {
   if(!io.displayDisable && vcounter() < vdisp()) return;
   auto address = addressVRAM();
   if(byte == 0) vram[address] = vram[address] & 0xff00 | data << 0;
   if(byte == 1) vram[address] = vram[address] & 0x00ff | data << 8;
 }
 
-auto PPU::readOAM(uint10 addr) -> uint8 {
+auto PPU::readOAM(uint10 addr) -> uint8_t {
   if(!io.displayDisable && vcounter() < vdisp()) addr = latch.oamAddress;
   return obj.oam.read(addr);
 }
 
-auto PPU::writeOAM(uint10 addr, uint8 data) -> void {
+auto PPU::writeOAM(uint10 addr, uint8_t data) -> void {
   if(!io.displayDisable && vcounter() < vdisp()) addr = latch.oamAddress;
   obj.oam.write(addr, data);
 }
 
-auto PPU::readCGRAM(bool byte, uint8 addr) -> uint8 {
+auto PPU::readCGRAM(bool byte, uint8_t addr) -> uint8_t {
   if(!io.displayDisable
   && vcounter() > 0 && vcounter() < vdisp()
   && hcounter() >= 88 && hcounter() < 1096
@@ -255,7 +255,7 @@ auto PPU::readCGRAM(bool byte, uint8 addr) -> uint8 {
   return screen.cgram[addr].byte(byte);
 }
 
-auto PPU::writeCGRAM(uint8 addr, uint15 data) -> void {
+auto PPU::writeCGRAM(uint8_t addr, uint15 data) -> void {
   if(!io.displayDisable
   && vcounter() > 0 && vcounter() < vdisp()
   && hcounter() >= 88 && hcounter() < 1096
@@ -263,7 +263,7 @@ auto PPU::writeCGRAM(uint8 addr, uint15 data) -> void {
   screen.cgram[addr] = data;
 }
 
-auto PPU::readIO(uint addr, uint8 data) -> uint8 {
+auto PPU::readIO(uint addr, uint8_t data) -> uint8_t {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {
@@ -278,19 +278,19 @@ auto PPU::readIO(uint addr, uint8 data) -> uint8 {
 
   //MPYL
   case 0x2134: {
-    uint24 result = (int16)io.m7a * (int8)(io.m7b >> 8);
+    uint24 result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
     return ppu1.mdr = result.byte(0);
   }
 
   //MPYM
   case 0x2135: {
-    uint24 result = (int16)io.m7a * (int8)(io.m7b >> 8);
+    uint24 result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
     return ppu1.mdr = result.byte(1);
   }
 
   //MPYH
   case 0x2136: {
-    uint24 result = (int16)io.m7a * (int8)(io.m7b >> 8);
+    uint24 result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
     return ppu1.mdr = result.byte(2);
   }
 
@@ -391,7 +391,7 @@ auto PPU::readIO(uint addr, uint8 data) -> uint8 {
   return data;
 }
 
-auto PPU::writeIO(uint addr, uint8 data) -> void {
+auto PPU::writeIO(uint addr, uint8_t data) -> void {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {
@@ -981,10 +981,10 @@ auto PPU::Background::clip(int n) -> int {
 }
 
 auto PPU::Background::runMode7() -> void {
-  int a = (int16)ppu.io.m7a;
-  int b = (int16)ppu.io.m7b;
-  int c = (int16)ppu.io.m7c;
-  int d = (int16)ppu.io.m7d;
+  int a = (int16_t)ppu.io.m7a;
+  int b = (int16_t)ppu.io.m7b;
+  int c = (int16_t)ppu.io.m7c;
+  int d = (int16_t)ppu.io.m7d;
 
   int hcenter = (nall::Integer<13>)ppu.io.m7x;
   int vcenter = (nall::Integer<13>)ppu.io.m7y;
@@ -1010,16 +1010,16 @@ auto PPU::Background::runMode7() -> void {
 
   int pixelX = originX + a * x >> 8;
   int pixelY = originY + c * x >> 8;
-  uint16 paletteAddress = (uint3)pixelY << 3 | (uint3)pixelX;
+  uint16_t paletteAddress = (uint3)pixelY << 3 | (uint3)pixelX;
 
   uint7 tileX = pixelX >> 3;
   uint7 tileY = pixelY >> 3;
-  uint16 tileAddress = tileY << 7 | tileX;
+  uint16_t tileAddress = tileY << 7 | tileX;
 
   bool outOfBounds = (pixelX | pixelY) & ~1023;
 
-  uint8 tile = ppu.io.repeatMode7 == 3 && outOfBounds ? 0 : ppu.vram[tileAddress] >> 0;
-  uint8 palette = ppu.io.repeatMode7 == 2 && outOfBounds ? 0 : ppu.vram[tile << 6 | paletteAddress] >> 8;
+  uint8_t tile = ppu.io.repeatMode7 == 3 && outOfBounds ? 0 : ppu.vram[tileAddress] >> 0;
+  uint8_t palette = ppu.io.repeatMode7 == 2 && outOfBounds ? 0 : ppu.vram[tile << 6 | paletteAddress] >> 8;
 
   uint priority;
   if(id == ID::BG1) {
@@ -1130,12 +1130,12 @@ auto PPU::Background::fetchNameTable() -> void {
   uint hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
   uint vscreen = io.screenSize.bit(1) ? 32 << 5 + io.screenSize.bit(0) : 0;
 
-  uint16 offset = (uint5)htile << 0 | (uint5)vtile << 5;
+  uint16_t offset = (uint5)htile << 0 | (uint5)vtile << 5;
   if(htile & 0x20) offset += hscreen;
   if(vtile & 0x20) offset += vscreen;
 
-  uint16 address = io.screenAddress + offset;
-  uint16 attributes = ppu.vram[address];
+  uint16_t address = io.screenAddress + offset;
+  uint16_t attributes = ppu.vram[address];
 
   auto& tile = tiles[nameTableIndex];
   tile.character = attributes & 0x03ff;
@@ -1149,7 +1149,7 @@ auto PPU::Background::fetchNameTable() -> void {
 
   uint characterMask = ppu.vram.mask >> 3 + io.mode;
   uint characterIndex = io.tiledataAddress >> 3 + io.mode;
-  uint16 origin = tile.character + characterIndex & characterMask;
+  uint16_t origin = tile.character + characterIndex & characterMask;
 
   if(tile.vmirror) voffset ^= 7;
   tile.address = (origin << 3 + io.mode) + (voffset & 7);
@@ -1184,11 +1184,11 @@ auto PPU::Background::fetchOffset(uint y) -> void {
   uint hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
   uint vscreen = io.screenSize.bit(1) ? 32 << 5 + io.screenSize.bit(0) : 0;
 
-  uint16 offset = (uint5)htile << 0 | (uint5)vtile << 5;
+  uint16_t offset = (uint5)htile << 0 | (uint5)vtile << 5;
   if(htile & 0x20) offset += hscreen;
   if(vtile & 0x20) offset += vscreen;
 
-  uint16 address = io.screenAddress + offset;
+  uint16_t address = io.screenAddress + offset;
   if(y == 0) opt.hoffset = ppu.vram[address];
   if(y == 8) opt.voffset = ppu.vram[address];
 }
@@ -1199,7 +1199,7 @@ auto PPU::Background::fetchCharacter(uint index, bool half) -> void {
   uint characterIndex = (ppu.hcounter() >> 5 << hires()) + half;
 
   auto& tile = tiles[characterIndex];
-  uint16 data = ppu.vram[tile.address + (index << 3)];
+  uint16_t data = ppu.vram[tile.address + (index << 3)];
 
   //reverse bits so that the lowest bit is the left-most pixel
   if(!tile.hmirror) {
@@ -1210,8 +1210,8 @@ auto PPU::Background::fetchCharacter(uint index, bool half) -> void {
 
   //interleave two bitplanes for faster planar decoding later
   tile.data[index] = (
-    ((uint8(data >> 0) * 0x0101010101010101ull & 0x8040201008040201ull) * 0x0102040810204081ull >> 49) & 0x5555
-  | ((uint8(data >> 8) * 0x0101010101010101ull & 0x8040201008040201ull) * 0x0102040810204081ull >> 48) & 0xaaaa
+    ((uint8_t(data >> 0) * 0x0101010101010101ull & 0x8040201008040201ull) * 0x0102040810204081ull >> 49) & 0x5555
+  | ((uint8_t(data >> 8) * 0x0101010101010101ull & 0x8040201008040201ull) * 0x0102040810204081ull >> 48) & 0xaaaa
   );
 }
 
@@ -1227,7 +1227,7 @@ auto PPU::Background::run(bool screen) -> void {
   if(io.mode == Mode::Mode7) return runMode7();
 
   auto& tile = tiles[renderingIndex];
-  uint8 color = 0;
+  uint8_t color = 0;
   if(io.mode >= Mode::BPP2) color |= (tile.data[0] & 3) << 0; tile.data[0] >>= 2;
   if(io.mode >= Mode::BPP4) color |= (tile.data[1] & 3) << 2; tile.data[1] >>= 2;
   if(io.mode >= Mode::BPP8) color |= (tile.data[2] & 3) << 4; tile.data[2] >>= 2;
@@ -1275,7 +1275,7 @@ auto PPU::Background::power() -> void {
   mosaic.enable = random();
 }
 
-auto PPU::OAM::read(uint10 address) -> uint8 {
+auto PPU::OAM::read(uint10 address) -> uint8_t {
   if(!(address & 0x200)) {
     uint n = address >> 2;  //object#
     address &= 3;
@@ -1304,7 +1304,7 @@ auto PPU::OAM::read(uint10 address) -> uint8 {
   }
 }
 
-auto PPU::OAM::write(uint10 address, uint8 data) -> void {
+auto PPU::OAM::write(uint10 address, uint8_t data) -> void {
   if(!(address & 0x200)) {
     uint n = address >> 2;  //object#
     address &= 3;
@@ -1479,10 +1479,10 @@ auto PPU::Object::fetch() -> void {
     x &= 511;
     y &= 255;
 
-    uint16 tiledataAddress = io.tiledataAddress;
+    uint16_t tiledataAddress = io.tiledataAddress;
     if(sprite.nameselect) tiledataAddress += 1 + io.nameselect << 12;
-    uint16 chrx =  (sprite.character & 15);
-    uint16 chry = ((sprite.character >> 4) + (y >> 3) & 15) << 4;
+    uint16_t chrx =  (sprite.character & 15);
+    uint16_t chry = ((sprite.character >> 4) + (y >> 3) & 15) << 4;
 
     for(uint tx : range(tileWidth)) {
       uint sx = x + (tx << 3) & 511;
@@ -1498,7 +1498,7 @@ auto PPU::Object::fetch() -> void {
 
       uint mx = !sprite.hflip ? tx : tileWidth - 1 - tx;
       uint pos = tiledataAddress + ((chry + (chrx + mx & 15)) << 4);
-      uint16 address = (pos & 0xfff0) + (y & 7);
+      uint16_t address = (pos & 0xfff0) + (y & 7);
 
       if(!ppu.io.displayDisable)
       oamTile[n].data  = ppu.vram[address + 0] <<  0;
@@ -1710,7 +1710,7 @@ auto PPU::Screen::run() -> void {
   *lineA++ = *lineB++ = ppu.lightTable[ppu.io.displayBrightness][aboveColor];
 }
 
-auto PPU::Screen::below(bool hires) -> uint16 {
+auto PPU::Screen::below(bool hires) -> uint16_t {
   if(ppu.io.displayDisable || (!ppu.io.overscan && ppu.vcounter() >= 225)) return 0;
 
   uint priority = 0;
@@ -1749,7 +1749,7 @@ auto PPU::Screen::below(bool hires) -> uint16 {
   );
 }
 
-auto PPU::Screen::above() -> uint16 {
+auto PPU::Screen::above() -> uint16_t {
   if(ppu.io.displayDisable || (!ppu.io.overscan && ppu.vcounter() >= 225)) return 0;
 
   uint priority = 0;
@@ -1825,12 +1825,12 @@ auto PPU::Screen::blend(uint x, uint y) const -> uint15 {
   }
 }
 
-auto PPU::Screen::paletteColor(uint8 palette) const -> uint15 {
+auto PPU::Screen::paletteColor(uint8_t palette) const -> uint15 {
   ppu.latch.cgramAddress = palette;
   return cgram[palette];
 }
 
-auto PPU::Screen::directColor(uint8 palette, uint3 paletteGroup) const -> uint15 {
+auto PPU::Screen::directColor(uint8_t palette, uint3 paletteGroup) const -> uint15 {
   //palette = -------- BBGGGRRR
   //group   = -------- -----bgr
   //output  = 0BBb00GG Gg0RRRr0
@@ -1844,7 +1844,7 @@ auto PPU::Screen::fixedColor() const -> uint15 {
 }
 
 auto PPU::Screen::power() -> void {
-  random.array((uint8*)cgram, sizeof(cgram));
+  random.array((uint8_t*)cgram, sizeof(cgram));
   for(auto& word : cgram) word &= 0x7fff;
 
   io.blendMode = random();
@@ -2207,7 +2207,7 @@ auto PPU::Enter() -> void {
 auto PPU::load() -> bool {
   ppu1.version = max(1, min(1, configuration.system.ppu1.version));
   ppu2.version = max(1, min(3, configuration.system.ppu2.version));
-  vram.mask = configuration.system.ppu1.vram.size / sizeof(uint16) - 1;
+  vram.mask = configuration.system.ppu1.vram.size / sizeof(uint16_t) - 1;
   if(vram.mask != 0xffff) vram.mask = 0x7fff;
   return true;
 }
@@ -2215,13 +2215,13 @@ auto PPU::load() -> bool {
 auto PPU::power(bool reset) -> void {
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
-  memory::fill<uint16>(output, 512 * 480);
+  memory::fill<uint16_t>(output, 512 * 480);
 
-  function<uint8 (uint, uint8)> reader{&PPU::readIO, this};
-  function<void  (uint, uint8)> writer{&PPU::writeIO, this};
+  function<uint8_t (uint, uint8_t)> reader{&PPU::readIO, this};
+  function<void  (uint, uint8_t)> writer{&PPU::writeIO, this};
   bus.map(reader, writer, "00-3f,80-bf:2100-213f");
 
-  if(!reset) random.array((uint8*)vram.data, sizeof(vram.data));
+  if(!reset) random.array((uint8_t*)vram.data, sizeof(vram.data));
 
   ppu1.mdr = random.bias(0xff);
   ppu2.mdr = random.bias(0xff);
@@ -2336,8 +2336,8 @@ auto PPU::refresh() -> void {
       }
     }
   }
-  if(auto device = controllerPort2.device) device->draw(output, pitch * sizeof(uint16), width, height);
-  platform->videoFrame(output, pitch * sizeof(uint16), width, height, /* scale = */ 1);
+  if(auto device = controllerPort2.device) device->draw(output, pitch * sizeof(uint16_t), width, height);
+  platform->videoFrame(output, pitch * sizeof(uint16_t), width, height, /* scale = */ 1);
 }
 
 }

@@ -1,8 +1,8 @@
 struct DSP1 {
   auto power() -> void;
 
-  auto read(uint addr, uint8 data) -> uint8;
-  auto write(uint addr, uint8 data) -> void;
+  auto read(uint addr, uint8_t data) -> uint8_t;
+  auto write(uint addr, uint8_t data) -> void;
 
   auto serialize(serializer&) -> void;
 };

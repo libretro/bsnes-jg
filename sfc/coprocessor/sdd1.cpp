@@ -19,9 +19,9 @@ auto SDD1::Decompressor::IM::init(uint offset_) -> void {
   bitCount = 4;
 }
 
-auto SDD1::Decompressor::IM::getCodeWord(uint8 codeLength) -> uint8 {
-  uint8 codeWord;
-  uint8 compCount;
+auto SDD1::Decompressor::IM::getCodeWord(uint8_t codeLength) -> uint8_t {
+  uint8_t codeWord;
+  uint8_t compCount;
 
   codeWord = sdd1.mmcRead(offset) << bitCount;
   bitCount++;
@@ -41,7 +41,7 @@ auto SDD1::Decompressor::IM::getCodeWord(uint8 codeLength) -> uint8 {
 
 //golomb-code decoder
 
-const uint8 SDD1::Decompressor::GCD::runCount[] = {
+const uint8_t SDD1::Decompressor::GCD::runCount[] = {
   0x00, 0x00, 0x01, 0x00, 0x03, 0x01, 0x02, 0x00,
   0x07, 0x03, 0x05, 0x01, 0x06, 0x02, 0x04, 0x00,
   0x0f, 0x07, 0x0b, 0x03, 0x0d, 0x05, 0x09, 0x01,
@@ -76,8 +76,8 @@ const uint8 SDD1::Decompressor::GCD::runCount[] = {
   0x70, 0x30, 0x50, 0x10, 0x60, 0x20, 0x40, 0x00,
 };
 
-auto SDD1::Decompressor::GCD::getRunCount(uint8 codeNumber, uint8& mpsCount, bool& lpsIndex) -> void {
-  uint8 codeWord = self.im.getCodeWord(codeNumber);
+auto SDD1::Decompressor::GCD::getRunCount(uint8_t codeNumber, uint8_t &mpsCount, bool &lpsIndex) -> void {
+  uint8_t codeWord = self.im.getCodeWord(codeNumber);
 
   if(codeWord & 0x80) {
     lpsIndex = 1;
@@ -94,10 +94,10 @@ auto SDD1::Decompressor::BG::init() -> void {
   lpsIndex = 0;
 }
 
-auto SDD1::Decompressor::BG::getBit(bool& endOfRun) -> uint8 {
+auto SDD1::Decompressor::BG::getBit(bool& endOfRun) -> uint8_t {
   if(!(mpsCount || lpsIndex)) self.gcd.getRunCount(codeNumber, mpsCount, lpsIndex);
 
-  uint8 bit;
+  uint8_t bit;
   if(mpsCount) {
     bit = 0;
     mpsCount--;
@@ -155,13 +155,13 @@ auto SDD1::Decompressor::PEM::init() -> void {
   }
 }
 
-auto SDD1::Decompressor::PEM::getBit(uint8 context) -> uint8 {
+auto SDD1::Decompressor::PEM::getBit(uint8_t context) -> uint8_t {
   ContextInfo& info = contextInfo[context];
-  uint8 currentStatus = info.status;
-  uint8 currentMps = info.mps;
+  uint8_t currentStatus = info.status;
+  uint8_t currentMps = info.mps;
   const State& s = SDD1::Decompressor::PEM::evolutionTable[currentStatus];
 
-  uint8 bit;
+  uint8_t bit;
   bool endOfRun;
   switch(s.codeNumber) {
   case 0: bit = self.bg0.getBit(endOfRun); break;
@@ -200,7 +200,7 @@ auto SDD1::Decompressor::CM::init(uint offset) -> void {
   }
 }
 
-auto SDD1::Decompressor::CM::getBit() -> uint8 {
+auto SDD1::Decompressor::CM::getBit() -> uint8_t {
   switch(bitplanesInfo) {
   case 0x00:
     currentBitplane ^= 0x01;
@@ -218,8 +218,8 @@ auto SDD1::Decompressor::CM::getBit() -> uint8 {
     break;
   }
 
-  uint16& contextBits = previousBitplaneBits[currentBitplane];
-  uint8 currentContext = (currentBitplane & 0x01) << 4;
+  uint16_t &contextBits = previousBitplaneBits[currentBitplane];
+  uint8_t currentContext = (currentBitplane & 0x01) << 4;
   switch(contextBitsInfo) {
   case 0x00: currentContext |= ((contextBits & 0x01c0) >> 5) | (contextBits & 0x0001); break;
   case 0x10: currentContext |= ((contextBits & 0x0180) >> 5) | (contextBits & 0x0001); break;
@@ -227,7 +227,7 @@ auto SDD1::Decompressor::CM::getBit() -> uint8 {
   case 0x30: currentContext |= ((contextBits & 0x0180) >> 5) | (contextBits & 0x0003); break;
   }
 
-  uint8 bit = self.pem.getBit(currentContext);
+  uint8_t bit = self.pem.getBit(currentContext);
   contextBits <<= 1;
   contextBits |= bit;
   bitNumber++;
@@ -241,7 +241,7 @@ auto SDD1::Decompressor::OL::init(uint offset) -> void {
   r0 = 0x01;
 }
 
-auto SDD1::Decompressor::OL::decompress() -> uint8 {
+auto SDD1::Decompressor::OL::decompress() -> uint8_t {
   switch(bitplanesInfo) {
   case 0x00: case 0x40: case 0x80:
     if(r0 == 0) {
@@ -287,7 +287,7 @@ auto SDD1::Decompressor::init(uint offset) -> void {
   ol.init(offset);
 }
 
-auto SDD1::Decompressor::read() -> uint8 {
+auto SDD1::Decompressor::read() -> uint8_t {
   return ol.decompress();
 }
 
@@ -382,7 +382,7 @@ auto SDD1::power() -> void {
   dmaReady = false;
 }
 
-auto SDD1::ioRead(uint addr, uint8 data) -> uint8 {
+auto SDD1::ioRead(uint addr, uint8_t data) -> uint8_t {
   addr = 0x4800 | addr & 0xf;
 
   switch(addr) {
@@ -398,7 +398,7 @@ auto SDD1::ioRead(uint addr, uint8 data) -> uint8 {
   return rom.read(addr);
 }
 
-auto SDD1::ioWrite(uint addr, uint8 data) -> void {
+auto SDD1::ioWrite(uint addr, uint8_t data) -> void {
   addr = 0x4800 | addr & 0xf;
 
   switch(addr) {
@@ -411,11 +411,11 @@ auto SDD1::ioWrite(uint addr, uint8 data) -> void {
   }
 }
 
-auto SDD1::dmaRead(uint addr, uint8 data) -> uint8 {
+auto SDD1::dmaRead(uint addr, uint8_t data) -> uint8_t {
   return cpu.readDMA(addr, data);
 }
 
-auto SDD1::dmaWrite(uint addr, uint8 data) -> void {
+auto SDD1::dmaWrite(uint addr, uint8_t data) -> void {
   uint channel = addr >> 4 & 7;
   switch(addr & 15) {
   case 2: dma[channel].addr = dma[channel].addr & 0xffff00 | data <<  0; break;
@@ -427,7 +427,7 @@ auto SDD1::dmaWrite(uint addr, uint8 data) -> void {
   return cpu.writeDMA(addr, data);
 }
 
-auto SDD1::mmcRead(uint addr) -> uint8 {
+auto SDD1::mmcRead(uint addr) -> uint8_t {
   switch(addr >> 20 & 3) {
   case 0: return rom.read((r4804 & 0xf) << 20 | addr & 0xfffff);  //c0-cf:0000-ffff
   case 1: return rom.read((r4805 & 0xf) << 20 | addr & 0xfffff);  //d0-df:0000-ffff
@@ -439,7 +439,7 @@ auto SDD1::mmcRead(uint addr) -> uint8 {
 
 //map address=00-3f,80-bf:8000-ffff
 //map address=c0-ff:0000-ffff
-auto SDD1::mcuRead(uint addr, uint8 data) -> uint8 {
+auto SDD1::mcuRead(uint addr, uint8_t data) -> uint8_t {
   //map address=00-3f,80-bf:8000-ffff
   if(!(addr & 1 << 22)) {
     if(!(addr & 1 << 23) && (addr & 1 << 21) && (r4805 & 0x80)) addr &= ~(1 << 21);  //20-3f:8000-ffff
@@ -478,7 +478,7 @@ auto SDD1::mcuRead(uint addr, uint8 data) -> uint8 {
   return mmcRead(addr);
 }
 
-auto SDD1::mcuWrite(uint addr, uint8 data) -> void {
+auto SDD1::mcuWrite(uint addr, uint8_t data) -> void {
 }
 
 }

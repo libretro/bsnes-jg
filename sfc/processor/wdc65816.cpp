@@ -54,75 +54,75 @@ auto WDC65816::idle2() -> void {
   if(D.l) idle();
 }
 
-auto WDC65816::idle4(uint16 x, uint16 y) -> void {
+auto WDC65816::idle4(uint16_t x, uint16_t y) -> void {
   if(!XF || x >> 8 != y >> 8) idle();
 }
 
-auto WDC65816::idle6(uint16 address) -> void {
+auto WDC65816::idle6(uint16_t address) -> void {
   if(EF && PC.h != address >> 8) idle();
 }
 
-auto WDC65816::fetch() -> uint8 {
+auto WDC65816::fetch() -> uint8_t {
   return read(PC.b << 16 | PC.w++);
 }
 
-auto WDC65816::pull() -> uint8 {
+auto WDC65816::pull() -> uint8_t {
   EF ? (void)S.l++ : (void)S.w++;
   return read(S.w);
 }
 
-auto WDC65816::push(uint8 data) -> void {
+auto WDC65816::push(uint8_t data) -> void {
   write(S.w, data);
   EF ? (void)S.l-- : (void)S.w--;
 }
 
-auto WDC65816::pullN() -> uint8 {
+auto WDC65816::pullN() -> uint8_t {
   return read(++S.w);
 }
 
-auto WDC65816::pushN(uint8 data) -> void {
+auto WDC65816::pushN(uint8_t data) -> void {
   write(S.w--, data);
 }
 
-auto WDC65816::readDirect(uint address) -> uint8 {
+auto WDC65816::readDirect(uint address) -> uint8_t {
   if(EF && !D.l) return read(D.w | address & 0xff);
   return read(D.w + address & 0xffff);
 }
 
-auto WDC65816::writeDirect(uint address, uint8 data) -> void {
+auto WDC65816::writeDirect(uint address, uint8_t data) -> void {
   if(EF && !D.l) return write(D.w | address & 0xff, data);
   write(D.w + address & 0xffff, data);
 }
 
-auto WDC65816::readDirectN(uint address) -> uint8 {
+auto WDC65816::readDirectN(uint address) -> uint8_t {
   return read(D.w + address & 0xffff);
 }
 
-auto WDC65816::readBank(uint address) -> uint8 {
+auto WDC65816::readBank(uint address) -> uint8_t {
   return read((B << 16) + address & 0xffffff);
 }
 
-auto WDC65816::writeBank(uint address, uint8 data) -> void {
+auto WDC65816::writeBank(uint address, uint8_t data) -> void {
   write((B << 16) + address & 0xffffff, data);
 }
 
-auto WDC65816::readLong(uint address) -> uint8 {
+auto WDC65816::readLong(uint address) -> uint8_t {
   return read(address & 0xffffff);
 }
 
-auto WDC65816::writeLong(uint address, uint8 data) -> void {
+auto WDC65816::writeLong(uint address, uint8_t data) -> void {
   write(address & 0xffffff, data);
 }
 
-auto WDC65816::readStack(uint address) -> uint8 {
+auto WDC65816::readStack(uint address) -> uint8_t {
   return read(S.w + address & 0xffff);
 }
 
-auto WDC65816::writeStack(uint address, uint8 data) -> void {
+auto WDC65816::writeStack(uint address, uint8_t data) -> void {
   write(S.w + address & 0xffff, data);
 }
 
-auto WDC65816::algorithmADC8(uint8 data) -> uint8 {
+auto WDC65816::algorithmADC8(uint8_t data) -> uint8_t {
   int result;
 
   if(!DF) {
@@ -137,13 +137,13 @@ auto WDC65816::algorithmADC8(uint8 data) -> uint8 {
   VF = ~(A.l ^ data) & (A.l ^ result) & 0x80;
   if(DF && result > 0x9f) result += 0x60;
   CF = result > 0xff;
-  ZF = (uint8)result == 0;
+  ZF = (uint8_t)result == 0;
   NF = result & 0x80;
 
   return A.l = result;
 }
 
-auto WDC65816::algorithmADC16(uint16 data) -> uint16 {
+auto WDC65816::algorithmADC16(uint16_t data) -> uint16_t {
   int result;
 
   if(!DF) {
@@ -164,27 +164,27 @@ auto WDC65816::algorithmADC16(uint16 data) -> uint16 {
   VF = ~(A.w ^ data) & (A.w ^ result) & 0x8000;
   if(DF && result > 0x9fff) result += 0x6000;
   CF = result > 0xffff;
-  ZF = (uint16)result == 0;
+  ZF = (uint16_t)result == 0;
   NF = result & 0x8000;
 
   return A.w = result;
 }
 
-auto WDC65816::algorithmAND8(uint8 data) -> uint8 {
+auto WDC65816::algorithmAND8(uint8_t data) -> uint8_t {
   A.l &= data;
   ZF = A.l == 0;
   NF = A.l & 0x80;
   return A.l;
 }
 
-auto WDC65816::algorithmAND16(uint16 data) -> uint16 {
+auto WDC65816::algorithmAND16(uint16_t data) -> uint16_t {
   A.w &= data;
   ZF = A.w == 0;
   NF = A.w & 0x8000;
   return A.w;
 }
 
-auto WDC65816::algorithmASL8(uint8 data) -> uint8 {
+auto WDC65816::algorithmASL8(uint8_t data) -> uint8_t {
   CF = data & 0x80;
   data <<= 1;
   ZF = data == 0;
@@ -192,7 +192,7 @@ auto WDC65816::algorithmASL8(uint8 data) -> uint8 {
   return data;
 }
 
-auto WDC65816::algorithmASL16(uint16 data) -> uint16 {
+auto WDC65816::algorithmASL16(uint16_t data) -> uint16_t {
   CF = data & 0x8000;
   data <<= 1;
   ZF = data == 0;
@@ -200,153 +200,153 @@ auto WDC65816::algorithmASL16(uint16 data) -> uint16 {
   return data;
 }
 
-auto WDC65816::algorithmBIT8(uint8 data) -> uint8 {
+auto WDC65816::algorithmBIT8(uint8_t data) -> uint8_t {
   ZF = (data & A.l) == 0;
   VF = data & 0x40;
   NF = data & 0x80;
   return data;
 }
 
-auto WDC65816::algorithmBIT16(uint16 data) -> uint16 {
+auto WDC65816::algorithmBIT16(uint16_t data) -> uint16_t {
   ZF = (data & A.w) == 0;
   VF = data & 0x4000;
   NF = data & 0x8000;
   return data;
 }
 
-auto WDC65816::algorithmCMP8(uint8 data) -> uint8 {
+auto WDC65816::algorithmCMP8(uint8_t data) -> uint8_t {
   int result = A.l - data;
   CF = result >= 0;
-  ZF = (uint8)result == 0;
+  ZF = (uint8_t)result == 0;
   NF = result & 0x80;
   return result;
 }
 
-auto WDC65816::algorithmCMP16(uint16 data) -> uint16 {
+auto WDC65816::algorithmCMP16(uint16_t data) -> uint16_t {
   int result = A.w - data;
   CF = result >= 0;
-  ZF = (uint16)result == 0;
+  ZF = (uint16_t)result == 0;
   NF = result & 0x8000;
   return result;
 }
 
-auto WDC65816::algorithmCPX8(uint8 data) -> uint8 {
+auto WDC65816::algorithmCPX8(uint8_t data) -> uint8_t {
   int result = X.l - data;
   CF = result >= 0;
-  ZF = (uint8)result == 0;
+  ZF = (uint8_t)result == 0;
   NF = result & 0x80;
   return result;
 }
 
-auto WDC65816::algorithmCPX16(uint16 data) -> uint16 {
+auto WDC65816::algorithmCPX16(uint16_t data) -> uint16_t {
   int result = X.w - data;
   CF = result >= 0;
-  ZF = (uint16)result == 0;
+  ZF = (uint16_t)result == 0;
   NF = result & 0x8000;
   return result;
 }
 
-auto WDC65816::algorithmCPY8(uint8 data) -> uint8 {
+auto WDC65816::algorithmCPY8(uint8_t data) -> uint8_t {
   int result = Y.l - data;
   CF = result >= 0;
-  ZF = (uint8)result == 0;
+  ZF = (uint8_t)result == 0;
   NF = result & 0x80;
   return result;
 }
 
-auto WDC65816::algorithmCPY16(uint16 data) -> uint16 {
+auto WDC65816::algorithmCPY16(uint16_t data) -> uint16_t {
   int result = Y.w - data;
   CF = result >= 0;
-  ZF = (uint16)result == 0;
+  ZF = (uint16_t)result == 0;
   NF = result & 0x8000;
   return result;
 }
 
-auto WDC65816::algorithmDEC8(uint8 data) -> uint8 {
+auto WDC65816::algorithmDEC8(uint8_t data) -> uint8_t {
   data--;
   ZF = data == 0;
   NF = data & 0x80;
   return data;
 }
 
-auto WDC65816::algorithmDEC16(uint16 data) -> uint16 {
+auto WDC65816::algorithmDEC16(uint16_t data) -> uint16_t {
   data--;
   ZF = data == 0;
   NF = data & 0x8000;
   return data;
 }
 
-auto WDC65816::algorithmEOR8(uint8 data) -> uint8 {
+auto WDC65816::algorithmEOR8(uint8_t data) -> uint8_t {
   A.l ^= data;
   ZF = A.l == 0;
   NF = A.l & 0x80;
   return A.l;
 }
 
-auto WDC65816::algorithmEOR16(uint16 data) -> uint16 {
+auto WDC65816::algorithmEOR16(uint16_t data) -> uint16_t {
   A.w ^= data;
   ZF = A.w == 0;
   NF = A.w & 0x8000;
   return A.w;
 }
 
-auto WDC65816::algorithmINC8(uint8 data) -> uint8 {
+auto WDC65816::algorithmINC8(uint8_t data) -> uint8_t {
   data++;
   ZF = data == 0;
   NF = data & 0x80;
   return data;
 }
 
-auto WDC65816::algorithmINC16(uint16 data) -> uint16 {
+auto WDC65816::algorithmINC16(uint16_t data) -> uint16_t {
   data++;
   ZF = data == 0;
   NF = data & 0x8000;
   return data;
 }
 
-auto WDC65816::algorithmLDA8(uint8 data) -> uint8 {
+auto WDC65816::algorithmLDA8(uint8_t data) -> uint8_t {
   A.l = data;
   ZF = A.l == 0;
   NF = A.l & 0x80;
   return data;
 }
 
-auto WDC65816::algorithmLDA16(uint16 data) -> uint16 {
+auto WDC65816::algorithmLDA16(uint16_t data) -> uint16_t {
   A.w = data;
   ZF = A.w == 0;
   NF = A.w & 0x8000;
   return data;
 }
 
-auto WDC65816::algorithmLDX8(uint8 data) -> uint8 {
+auto WDC65816::algorithmLDX8(uint8_t data) -> uint8_t {
   X.l = data;
   ZF = X.l == 0;
   NF = X.l & 0x80;
   return data;
 }
 
-auto WDC65816::algorithmLDX16(uint16 data) -> uint16 {
+auto WDC65816::algorithmLDX16(uint16_t data) -> uint16_t {
   X.w = data;
   ZF = X.w == 0;
   NF = X.w & 0x8000;
   return data;
 }
 
-auto WDC65816::algorithmLDY8(uint8 data) -> uint8 {
+auto WDC65816::algorithmLDY8(uint8_t data) -> uint8_t {
   Y.l = data;
   ZF = Y.l == 0;
   NF = Y.l & 0x80;
   return data;
 }
 
-auto WDC65816::algorithmLDY16(uint16 data) -> uint16 {
+auto WDC65816::algorithmLDY16(uint16_t data) -> uint16_t {
   Y.w = data;
   ZF = Y.w == 0;
   NF = Y.w & 0x8000;
   return data;
 }
 
-auto WDC65816::algorithmLSR8(uint8 data) -> uint8 {
+auto WDC65816::algorithmLSR8(uint8_t data) -> uint8_t {
   CF = data & 1;
   data >>= 1;
   ZF = data == 0;
@@ -354,7 +354,7 @@ auto WDC65816::algorithmLSR8(uint8 data) -> uint8 {
   return data;
 }
 
-auto WDC65816::algorithmLSR16(uint16 data) -> uint16 {
+auto WDC65816::algorithmLSR16(uint16_t data) -> uint16_t {
   CF = data & 1;
   data >>= 1;
   ZF = data == 0;
@@ -362,21 +362,21 @@ auto WDC65816::algorithmLSR16(uint16 data) -> uint16 {
   return data;
 }
 
-auto WDC65816::algorithmORA8(uint8 data) -> uint8 {
+auto WDC65816::algorithmORA8(uint8_t data) -> uint8_t {
   A.l |= data;
   ZF = A.l == 0;
   NF = A.l & 0x80;
   return A.l;
 }
 
-auto WDC65816::algorithmORA16(uint16 data) -> uint16 {
+auto WDC65816::algorithmORA16(uint16_t data) -> uint16_t {
   A.w |= data;
   ZF = A.w == 0;
   NF = A.w & 0x8000;
   return A.w;
 }
 
-auto WDC65816::algorithmROL8(uint8 data) -> uint8 {
+auto WDC65816::algorithmROL8(uint8_t data) -> uint8_t {
   bool carry = CF;
   CF = data & 0x80;
   data = data << 1 | carry;
@@ -385,7 +385,7 @@ auto WDC65816::algorithmROL8(uint8 data) -> uint8 {
   return data;
 }
 
-auto WDC65816::algorithmROL16(uint16 data) -> uint16 {
+auto WDC65816::algorithmROL16(uint16_t data) -> uint16_t {
   bool carry = CF;
   CF = data & 0x8000;
   data = data << 1 | carry;
@@ -394,7 +394,7 @@ auto WDC65816::algorithmROL16(uint16 data) -> uint16 {
   return data;
 }
 
-auto WDC65816::algorithmROR8(uint8 data) -> uint8 {
+auto WDC65816::algorithmROR8(uint8_t data) -> uint8_t {
   bool carry = CF;
   CF = data & 1;
   data = carry << 7 | data >> 1;
@@ -403,7 +403,7 @@ auto WDC65816::algorithmROR8(uint8 data) -> uint8 {
   return data;
 }
 
-auto WDC65816::algorithmROR16(uint16 data) -> uint16 {
+auto WDC65816::algorithmROR16(uint16_t data) -> uint16_t {
   bool carry = CF;
   CF = data & 1;
   data = carry << 15 | data >> 1;
@@ -412,7 +412,7 @@ auto WDC65816::algorithmROR16(uint16 data) -> uint16 {
   return data;
 }
 
-auto WDC65816::algorithmSBC8(uint8 data) -> uint8 {
+auto WDC65816::algorithmSBC8(uint8_t data) -> uint8_t {
   int result;
   data = ~data;
 
@@ -428,13 +428,13 @@ auto WDC65816::algorithmSBC8(uint8 data) -> uint8 {
   VF = ~(A.l ^ data) & (A.l ^ result) & 0x80;
   if(DF && result <= 0xff) result -= 0x60;
   CF = result > 0xff;
-  ZF = (uint8)result == 0;
+  ZF = (uint8_t)result == 0;
   NF = result & 0x80;
 
   return A.l = result;
 }
 
-auto WDC65816::algorithmSBC16(uint16 data) -> uint16 {
+auto WDC65816::algorithmSBC16(uint16_t data) -> uint16_t {
   int result;
   data = ~data;
 
@@ -456,31 +456,31 @@ auto WDC65816::algorithmSBC16(uint16 data) -> uint16 {
   VF = ~(A.w ^ data) & (A.w ^ result) & 0x8000;
   if(DF && result <= 0xffff) result -= 0x6000;
   CF = result > 0xffff;
-  ZF = (uint16)result == 0;
+  ZF = (uint16_t)result == 0;
   NF = result & 0x8000;
 
   return A.w = result;
 }
 
-auto WDC65816::algorithmTRB8(uint8 data) -> uint8 {
+auto WDC65816::algorithmTRB8(uint8_t data) -> uint8_t {
   ZF = (data & A.l) == 0;
   data &= ~A.l;
   return data;
 }
 
-auto WDC65816::algorithmTRB16(uint16 data) -> uint16 {
+auto WDC65816::algorithmTRB16(uint16_t data) -> uint16_t {
   ZF = (data & A.w) == 0;
   data &= ~A.w;
   return data;
 }
 
-auto WDC65816::algorithmTSB8(uint8 data) -> uint8 {
+auto WDC65816::algorithmTSB8(uint8_t data) -> uint8_t {
   ZF = (data & A.l) == 0;
   data |= A.l;
   return data;
 }
 
-auto WDC65816::algorithmTSB16(uint16 data) -> uint16 {
+auto WDC65816::algorithmTSB16(uint16_t data) -> uint16_t {
   ZF = (data & A.w) == 0;
   data |= A.w;
   return data;
@@ -972,7 +972,7 @@ auto WDC65816::instructionBranch(bool take) -> void {
 L   fetch();
   } else {
     U.l = fetch();
-    V.w = PC.d + (int8)U.l;
+    V.w = PC.d + (int8_t)U.l;
     idle6(V.w);
 L   idle();
     PC.w = V.w;
@@ -983,7 +983,7 @@ L   idle();
 auto WDC65816::instructionBranchLong() -> void {
   U.l = fetch();
   U.h = fetch();
-  V.w = PC.d + (int16)U.w;
+  V.w = PC.d + (int16_t)U.w;
 L idle();
   PC.w = V.w;
   idleBranch();
@@ -1007,8 +1007,8 @@ L V.b = fetch();
 auto WDC65816::instructionJumpIndirect() -> void {
   V.l = fetch();
   V.h = fetch();
-  W.l = read(uint16(V.w + 0));
-L W.h = read(uint16(V.w + 1));
+  W.l = read(uint16_t(V.w + 0));
+L W.h = read(uint16_t(V.w + 1));
   PC.w = W.w;
   idleJump();
 }
@@ -1017,8 +1017,8 @@ auto WDC65816::instructionJumpIndexedIndirect() -> void {
   V.l = fetch();
   V.h = fetch();
   idle();
-  W.l = read(PC.b << 16 | uint16(V.w + X.w + 0));
-L W.h = read(PC.b << 16 | uint16(V.w + X.w + 1));
+  W.l = read(PC.b << 16 | uint16_t(V.w + X.w + 0));
+L W.h = read(PC.b << 16 | uint16_t(V.w + X.w + 1));
   PC.w = W.w;
   idleJump();
 }
@@ -1026,9 +1026,9 @@ L W.h = read(PC.b << 16 | uint16(V.w + X.w + 1));
 auto WDC65816::instructionJumpIndirectLong() -> void {
   U.l = fetch();
   U.h = fetch();
-  V.l = read(uint16(U.w + 0));
-  V.h = read(uint16(U.w + 1));
-L V.b = read(uint16(U.w + 2));
+  V.l = read(uint16_t(U.w + 0));
+  V.h = read(uint16_t(U.w + 1));
+L V.b = read(uint16_t(U.w + 2));
   PC.d = V.d;
   idleJump();
 }
@@ -1064,8 +1064,8 @@ auto WDC65816::instructionCallIndexedIndirect() -> void {
   pushN(PC.l);
   V.h = fetch();
   idle();
-  W.l = read(PC.b << 16 | uint16(V.w + X.w + 0));
-L W.h = read(PC.b << 16 | uint16(V.w + X.w + 1));
+  W.l = read(PC.b << 16 | uint16_t(V.w + X.w + 0));
+L W.h = read(PC.b << 16 | uint16_t(V.w + X.w + 1));
   PC.w = W.w;
 E S.h = 0x01;
   idleJump();
@@ -1352,7 +1352,7 @@ auto WDC65816::instructionPushEffectiveRelativeAddress() -> void {
   V.l = fetch();
   V.h = fetch();
   idle();
-  W.w = PC.d + (int16)V.w;
+  W.w = PC.d + (int16_t)V.w;
   pushN(W.h);
 L pushN(W.l);
 E S.h = 0x01;
@@ -1491,18 +1491,18 @@ auto WDC65816::disassemble(uint24 address, bool e, bool m, bool x) -> string {
   string operand;
   maybe<uint24> effective;
 
-  auto read = [&](uint24 address) -> uint8 {
+  auto read = [&](uint24 address) -> uint8_t {
     //$00-3f,80-bf:2000-5fff: do not attempt to read I/O registers from the disassembler:
     //this is because such reads are much more likely to have side effects to emulation.
     if((address & 0x40ffff) >= 0x2000 && (address & 0x40ffff) <= 0x5fff) return 0x00;
     return readDisassembler(address);
   };
 
-  auto readByte = [&](uint24 address) -> uint8 {
+  auto readByte = [&](uint24 address) -> uint8_t {
     return read(address);
   };
-  auto readWord = [&](uint24 address) -> uint16 {
-    uint16 data = readByte(address + 0) << 0;
+  auto readWord = [&](uint24 address) -> uint16_t {
+    uint16_t data = readByte(address + 0) << 0;
     return data | readByte(address + 1) << 8;
   };
   auto readLong = [&](uint24 address) -> uint24 {
@@ -1515,8 +1515,8 @@ auto WDC65816::disassemble(uint24 address, bool e, bool m, bool x) -> string {
   auto operand1 = read(address); address.bit(0,15)++;
   auto operand2 = read(address); address.bit(0,15)++;
 
-   uint8 operandByte = operand0 << 0;
-  uint16 operandWord = operand0 << 0 | operand1 << 8;
+  uint8_t operandByte = operand0 << 0;
+  uint16_t operandWord = operand0 << 0 | operand1 << 8;
   uint24 operandLong = operand0 << 0 | operand1 << 8 | operand2 << 16;
 
   auto absolute = [&]() -> string {
@@ -1550,17 +1550,17 @@ auto WDC65816::disassemble(uint24 address, bool e, bool m, bool x) -> string {
   };
 
   auto direct = [&]() -> string {
-    effective = uint16(r.d.w + operandByte);
+    effective = uint16_t(r.d.w + operandByte);
     return {"$", hex(operandByte, 2L)};
   };
 
   auto directX = [&]() -> string {
-    effective = uint16(r.d.w + operandByte + r.x.w);
+    effective = uint16_t(r.d.w + operandByte + r.x.w);
     return {"$", hex(operandByte, 2L), ",x"};
   };
 
   auto directY = [&]() -> string {
-    effective = uint16(r.d.w + operandByte + r.y.w);
+    effective = uint16_t(r.d.w + operandByte + r.y.w);
     return {"$", hex(operandByte, 2L), ",y"};
   };
 
@@ -1581,13 +1581,13 @@ auto WDC65816::disassemble(uint24 address, bool e, bool m, bool x) -> string {
   };
 
   auto indexedIndirectX = [&]() -> string {
-    effective = uint16(r.d.w + operandByte + r.x.w);
+    effective = uint16_t(r.d.w + operandByte + r.x.w);
     effective = r.b << 16 | readWord(*effective);
     return {"($", hex(operandByte, 2L), ",x)"};
   };
 
   auto indirect = [&]() -> string {
-    effective = uint16(r.d.w + operandByte);
+    effective = uint16_t(r.d.w + operandByte);
     effective = (r.b << 16) + readWord(*effective);
     return {"($", hex(operandByte, 2L), ")"};
   };
@@ -1600,19 +1600,19 @@ auto WDC65816::disassemble(uint24 address, bool e, bool m, bool x) -> string {
 
   auto indirectX = [&]() -> string {
     effective = operandWord;
-    effective = pc & 0xff0000 | uint16(*effective + r.x.w);
+    effective = pc & 0xff0000 | uint16_t(*effective + r.x.w);
     effective = pc & 0xff0000 | readWord(*effective);
     return {"($", hex(operandWord, 4L), ",x)"};
   };
 
   auto indirectIndexedY = [&]() -> string {
-    effective = uint16(r.d.w + operandByte);
+    effective = uint16_t(r.d.w + operandByte);
     effective = (r.b << 16) + readWord(*effective) + r.y.w;
     return {"($", hex(operandByte, 2L), "),y"};
   };
 
   auto indirectLong = [&]() -> string {
-    effective = uint16(r.d.w + operandByte);
+    effective = uint16_t(r.d.w + operandByte);
     effective = readLong(*effective);
     return {"[$", hex(operandByte, 2L), "]"};
   };
@@ -1623,7 +1623,7 @@ auto WDC65816::disassemble(uint24 address, bool e, bool m, bool x) -> string {
   };
 
   auto indirectLongY = [&]() -> string {
-    effective = uint16(r.d.w + operandByte);
+    effective = uint16_t(r.d.w + operandByte);
     effective = readLong(*effective) + r.y.w;
     return {"[$", hex(operandByte, 2L), "],y"};
   };
@@ -1633,22 +1633,22 @@ auto WDC65816::disassemble(uint24 address, bool e, bool m, bool x) -> string {
   };
 
   auto relative = [&]() -> string {
-    effective = pc & 0xff0000 | uint16(pc + 2 + (int8)operandByte);
+    effective = pc & 0xff0000 | uint16_t(pc + 2 + (int8_t)operandByte);
     return {"$", hex(*effective, 4L)};
   };
 
   auto relativeWord = [&]() -> string {
-    effective = pc & 0xff0000 | uint16(pc + 3 + (int16)operandWord);
+    effective = pc & 0xff0000 | uint16_t(pc + 3 + (int16_t)operandWord);
     return {"$", hex(*effective, 4L)};
   };
 
   auto stack = [&]() -> string {
-    effective = uint16(r.s.w + operandByte);
+    effective = uint16_t(r.s.w + operandByte);
     return {"$", hex(operandByte, 2L), ",s"};
   };
 
   auto stackIndirect = [&]() -> string {
-    effective = uint16(operandByte + r.s.w);
+    effective = uint16_t(operandByte + r.s.w);
     effective = (r.b << 16) + readWord(*effective) + r.y.w;
     return {"($", hex(operandByte, 2L), ",s),y"};
   };

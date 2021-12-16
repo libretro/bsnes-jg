@@ -5,14 +5,14 @@ namespace SuperFamicom {
 
 Cx4 cx4;
 
-const uint8 Cx4::immediate_data[48] = {
+const uint8_t Cx4::immediate_data[48] = {
   0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff, 0x00, 0x00, 0x00, 0xff,
   0xff, 0xff, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x80, 0xff, 0xff, 0x7f,
   0x00, 0x80, 0x00, 0xff, 0x7f, 0x00, 0xff, 0x7f, 0xff, 0x7f, 0xff, 0xff,
   0x00, 0x00, 0x01, 0xff, 0xff, 0xfe, 0x00, 0x01, 0x00, 0xff, 0xfe, 0x00
 };
 
-const uint16 Cx4::wave_data[40] = {
+const uint16_t Cx4::wave_data[40] = {
   0x0000, 0x0002, 0x0004, 0x0006, 0x0008, 0x000a, 0x000c, 0x000e,
   0x0200, 0x0202, 0x0204, 0x0206, 0x0208, 0x020a, 0x020c, 0x020e,
   0x0400, 0x0402, 0x0404, 0x0406, 0x0408, 0x040a, 0x040c, 0x040e,
@@ -20,7 +20,7 @@ const uint16 Cx4::wave_data[40] = {
   0x0800, 0x0802, 0x0804, 0x0806, 0x0808, 0x080a, 0x080c, 0x080e
 };
 
-const uint32 Cx4::sin_table[256] = {
+const uint32_t Cx4::sin_table[256] = {
   0x000000, 0x000324, 0x000648, 0x00096c, 0x000c8f, 0x000fb2, 0x0012d5, 0x0015f6,
   0x001917, 0x001c37, 0x001f56, 0x002273, 0x002590, 0x0028aa, 0x002bc4, 0x002edb,
   0x0031f1, 0x003505, 0x003817, 0x003b26, 0x003e33, 0x00413e, 0x004447, 0x00474d,
@@ -55,7 +55,7 @@ const uint32 Cx4::sin_table[256] = {
   0xff013b, 0xff00f1, 0xff00b1, 0xff007b, 0xff004e, 0xff002c, 0xff0013, 0xff0004
 };
 
-const int16 Cx4::SinTable[512] = {
+const int16_t Cx4::SinTable[512] = {
        0,    402,    804,   1206,   1607,   2009,   2410,   2811,
     3211,   3611,   4011,   4409,   4808,   5205,   5602,   5997,
     6392,   6786,   7179,   7571,   7961,   8351,   8739,   9126,
@@ -122,7 +122,7 @@ const int16 Cx4::SinTable[512] = {
    -3211,  -2811,  -2410,  -2009,  -1607,  -1206,   -804,   -402
 };
 
-const int16 Cx4::CosTable[512] = {
+const int16_t Cx4::CosTable[512] = {
    32767,  32765,  32758,  32745,  32728,  32706,  32679,  32647,
    32610,  32568,  32521,  32469,  32413,  32351,  32285,  32214,
    32138,  32057,  31971,  31881,  31785,  31685,  31581,  31471,
@@ -189,7 +189,7 @@ const int16 Cx4::CosTable[512] = {
    32610,  32647,  32679,  32706,  32728,  32745,  32758,  32765
 };
 
-#define Tan(a) (CosTable[a] ? ((((int32)SinTable[a]) << 16) / CosTable[a]) : 0x80000000)
+#define Tan(a) (CosTable[a] ? ((((int32_t)SinTable[a]) << 16) / CosTable[a]) : 0x80000000)
 #define sar(b, n) ((b) >> (n))
 #ifdef PI
 #undef PI
@@ -219,8 +219,8 @@ void Cx4::C4TransfWireFrame() {
   c4y    = c4x2 * ::sin(tanval) + c4y2 * ::cos(tanval);
 
   //Scale
-  C4WFXVal = (int16)(c4x * C4WFScale / (0x90 * (c4z + 0x95)) * 0x95);
-  C4WFYVal = (int16)(c4y * C4WFScale / (0x90 * (c4z + 0x95)) * 0x95);
+  C4WFXVal = (int16_t)(c4x * C4WFScale / (0x90 * (c4z + 0x95)) * 0x95);
+  C4WFYVal = (int16_t)(c4y * C4WFScale / (0x90 * (c4z + 0x95)) * 0x95);
 }
 
 void Cx4::C4CalcWireFrame() {
@@ -262,20 +262,20 @@ void Cx4::C4TransfWireFrame2() {
   c4y    = c4x2 * ::sin(tanval) + c4y2 * ::cos(tanval);
 
   //Scale
-  C4WFXVal = (int16)(c4x * C4WFScale / 0x100);
-  C4WFYVal = (int16)(c4y * C4WFScale / 0x100);
+  C4WFXVal = (int16_t)(c4x * C4WFScale / 0x100);
+  C4WFYVal = (int16_t)(c4y * C4WFScale / 0x100);
 }
 
 void Cx4::C4DrawWireFrame() {
-  uint32 line = readl(0x1f80);
-  uint32 point1, point2;
-  int16 X1, Y1, Z1;
-  int16 X2, Y2, Z2;
-  uint8 Color;
+  uint32_t line = readl(0x1f80);
+  uint32_t point1, point2;
+  int16_t X1, Y1, Z1;
+  int16_t X2, Y2, Z2;
+  uint8_t Color;
 
-  for(int32 i = ram[0x0295]; i > 0; i--, line += 5) {
+  for(int32_t i = ram[0x0295]; i > 0; i--, line += 5) {
     if(bus.read(line) == 0xff && bus.read(line + 1) == 0xff) {
-      int32 tmp = line - 5;
+      int32_t tmp = line - 5;
       while(bus.read(tmp + 2) == 0xff && bus.read(tmp + 3) == 0xff && (tmp + 2) >= 0) { tmp -= 5; }
       point1 = (read(0x1f82) << 16) | (bus.read(tmp + 2) << 8) | bus.read(tmp + 3);
     } else {
@@ -294,10 +294,10 @@ void Cx4::C4DrawWireFrame() {
   }
 }
 
-void Cx4::C4DrawLine(int32 X1, int32 Y1, int16 Z1, int32 X2, int32 Y2, int16 Z2, uint8 Color) {
+void Cx4::C4DrawLine(int32_t X1, int32_t Y1, int16_t Z1, int32_t X2, int32_t Y2, int16_t Z2, uint8_t Color) {
   //Transform coordinates
-  C4WFXVal  = (int16)X1;
-  C4WFYVal  = (int16)Y1;
+  C4WFXVal  = (int16_t)X1;
+  C4WFYVal  = (int16_t)Y1;
   C4WFZVal  = Z1;
   C4WFScale = read(0x1f90);
   C4WFX2Val = read(0x1f86);
@@ -307,27 +307,27 @@ void Cx4::C4DrawLine(int32 X1, int32 Y1, int16 Z1, int32 X2, int32 Y2, int16 Z2,
   X1 = (C4WFXVal + 48) << 8;
   Y1 = (C4WFYVal + 48) << 8;
 
-  C4WFXVal = (int16)X2;
-  C4WFYVal = (int16)Y2;
+  C4WFXVal = (int16_t)X2;
+  C4WFYVal = (int16_t)Y2;
   C4WFZVal = Z2;
   C4TransfWireFrame2();
   X2 = (C4WFXVal + 48) << 8;
   Y2 = (C4WFYVal + 48) << 8;
 
   //Get line info
-  C4WFXVal  = (int16)(X1 >> 8);
-  C4WFYVal  = (int16)(Y1 >> 8);
-  C4WFX2Val = (int16)(X2 >> 8);
-  C4WFY2Val = (int16)(Y2 >> 8);
+  C4WFXVal  = (int16_t)(X1 >> 8);
+  C4WFYVal  = (int16_t)(Y1 >> 8);
+  C4WFX2Val = (int16_t)(X2 >> 8);
+  C4WFY2Val = (int16_t)(Y2 >> 8);
   C4CalcWireFrame();
-  X2 = (int16)C4WFXVal;
-  Y2 = (int16)C4WFYVal;
+  X2 = (int16_t)C4WFXVal;
+  Y2 = (int16_t)C4WFYVal;
 
   //Render line
-  for(int32 i = C4WFDist ? C4WFDist : (int16)1; i > 0; i--) {
+  for(int32_t i = C4WFDist ? C4WFDist : (int16_t)1; i > 0; i--) {
     if(X1 > 0xff && Y1 > 0xff && X1 < 0x6000 && Y1 < 0x6000) {
-      uint16 addr = (((Y1 >> 8) >> 3) << 8) - (((Y1 >> 8) >> 3) << 6) + (((X1 >> 8) >> 3) << 4) + ((Y1 >> 8) & 7) * 2;
-      uint8 bit = 0x80 >> ((X1 >> 8) & 7);
+      uint16_t addr = (((Y1 >> 8) >> 3) << 8) - (((Y1 >> 8) >> 3) << 6) + (((X1 >> 8) >> 3) << 4) + ((Y1 >> 8) & 7) * 2;
+      uint8_t bit = 0x80 >> ((X1 >> 8) & 7);
       ram[addr + 0x300] &= ~bit;
       ram[addr + 0x301] &= ~bit;
       if(Color & 1) ram[addr + 0x300] |= bit;
@@ -339,73 +339,73 @@ void Cx4::C4DrawLine(int32 X1, int32 Y1, int16 Z1, int32 X2, int32 Y2, int16 Z2,
 }
 
 void Cx4::C4DoScaleRotate(int row_padding) {
-  int16 A, B, C, D;
+  int16_t A, B, C, D;
 
   //Calculate matrix
-  int32 XScale = readw(0x1f8f);
-  int32 YScale = readw(0x1f92);
+  int32_t XScale = readw(0x1f8f);
+  int32_t YScale = readw(0x1f92);
 
   if(XScale & 0x8000)XScale = 0x7fff;
   if(YScale & 0x8000)YScale = 0x7fff;
 
   if(readw(0x1f80) == 0) {  //no rotation
-    A = (int16)XScale;
+    A = (int16_t)XScale;
     B = 0;
     C = 0;
-    D = (int16)YScale;
+    D = (int16_t)YScale;
   } else if(readw(0x1f80) == 128) {  //90 degree rotation
     A = 0;
-    B = (int16)(-YScale);
-    C = (int16)XScale;
+    B = (int16_t)(-YScale);
+    C = (int16_t)XScale;
     D = 0;
   } else if(readw(0x1f80) == 256) {  //180 degree rotation
-    A = (int16)(-XScale);
+    A = (int16_t)(-XScale);
     B = 0;
     C = 0;
-    D = (int16)(-YScale);
+    D = (int16_t)(-YScale);
   } else if(readw(0x1f80) == 384) {  //270 degree rotation
     A = 0;
-    B = (int16)YScale;
-    C = (int16)(-XScale);
+    B = (int16_t)YScale;
+    C = (int16_t)(-XScale);
     D = 0;
   } else {
-    A = (int16)  sar(CosTable[readw(0x1f80) & 0x1ff] * XScale, 15);
-    B = (int16)(-sar(SinTable[readw(0x1f80) & 0x1ff] * YScale, 15));
-    C = (int16)  sar(SinTable[readw(0x1f80) & 0x1ff] * XScale, 15);
-    D = (int16)  sar(CosTable[readw(0x1f80) & 0x1ff] * YScale, 15);
+    A = (int16_t)  sar(CosTable[readw(0x1f80) & 0x1ff] * XScale, 15);
+    B = (int16_t)(-sar(SinTable[readw(0x1f80) & 0x1ff] * YScale, 15));
+    C = (int16_t)  sar(SinTable[readw(0x1f80) & 0x1ff] * XScale, 15);
+    D = (int16_t)  sar(CosTable[readw(0x1f80) & 0x1ff] * YScale, 15);
   }
 
   //Calculate Pixel Resolution
-  uint8 w = read(0x1f89) & ~7;
-  uint8 h = read(0x1f8c) & ~7;
+  uint8_t w = read(0x1f89) & ~7;
+  uint8_t h = read(0x1f8c) & ~7;
 
   //Clear the output RAM
   memset(ram, 0, (w + row_padding / 4) * h / 2);
 
-  int32 Cx = (int16)readw(0x1f83);
-  int32 Cy = (int16)readw(0x1f86);
+  int32_t Cx = (int16_t)readw(0x1f83);
+  int32_t Cy = (int16_t)readw(0x1f86);
 
   //Calculate start position (i.e. (Ox, Oy) = (0, 0))
   //The low 12 bits are fractional, so (Cx<<12) gives us the Cx we want in
   //the function. We do Cx*A etc normally because the matrix parameters
   //already have the fractional parts.
-  int32 LineX = (Cx << 12) - Cx * A - Cx * B;
-  int32 LineY = (Cy << 12) - Cy * C - Cy * D;
+  int32_t LineX = (Cx << 12) - Cx * A - Cx * B;
+  int32_t LineY = (Cy << 12) - Cy * C - Cy * D;
 
   //Start loop
-  uint32 X, Y;
-  uint8 byte;
-  int32 outidx = 0;
-  uint8 bit    = 0x80;
+  uint32_t X, Y;
+  uint8_t byte;
+  int32_t outidx = 0;
+  uint8_t bit    = 0x80;
 
-  for(int32 y = 0; y < h; y++) {
+  for(int32_t y = 0; y < h; y++) {
     X = LineX;
     Y = LineY;
-    for(int32 x = 0; x < w; x++) {
+    for(int32_t x = 0; x < w; x++) {
       if((X >> 12) >= w || (Y >> 12) >= h) {
         byte = 0;
       } else {
-        uint32 addr = (Y >> 12) * w + (X >> 12);
+        uint32_t addr = (Y >> 12) * w + (X >> 12);
         byte = read(0x600 + (addr >> 1));
         if(addr & 1) { byte >>= 4; }
       }
@@ -438,17 +438,17 @@ void Cx4::C4DoScaleRotate(int row_padding) {
 
 //Build OAM
 void Cx4::op00_00() {
-  uint32 oamptr = ram[0x626] << 2;
-  for(int32 i = 0x1fd; i > oamptr && i >= 0; i -= 4) {
+  uint32_t oamptr = ram[0x626] << 2;
+  for(int32_t i = 0x1fd; i > oamptr && i >= 0; i -= 4) {
     //clear oam-to-be
     if(i >= 0) ram[i] = 0xe0;
   }
 
-  uint16 globalx, globaly;
-  uint32 oamptr2;
-  int16  sprx, spry;
-  uint8  sprname, sprattr;
-  uint8  sprcount;
+  uint16_t globalx, globaly;
+  uint32_t oamptr2;
+  int16_t  sprx, spry;
+  uint8_t  sprname, sprattr;
+  uint8_t  sprcount;
 
   globalx = readw(0x621);
   globaly = readw(0x623);
@@ -457,8 +457,8 @@ void Cx4::op00_00() {
   if(!ram[0x620]) return;
 
   sprcount = 128 - ram[0x626];
-  uint8 offset = (ram[0x626] & 3) * 2;
-  uint32 srcptr = 0x220;
+  uint8_t offset = (ram[0x626] & 3) * 2;
+  uint32_t srcptr = 0x220;
 
   for(int i = ram[0x620]; i > 0 && sprcount > 0; i--, srcptr += 16) {
     sprx = readw(srcptr)     - globalx;
@@ -466,24 +466,24 @@ void Cx4::op00_00() {
     sprname = ram[srcptr + 5];
     sprattr = ram[srcptr + 4] | ram[srcptr + 6];
 
-    uint32 spraddr = readl(srcptr + 7);
+    uint32_t spraddr = readl(srcptr + 7);
     if(bus.read(spraddr)) {
-      int16 x, y;
+      int16_t x, y;
       for(int sprcnt = bus.read(spraddr++); sprcnt > 0 && sprcount > 0; sprcnt--, spraddr += 4) {
-        x = (int8)bus.read(spraddr + 1);
+        x = (int8_t)bus.read(spraddr + 1);
         if(sprattr & 0x40) {
           x = -x - ((bus.read(spraddr) & 0x20) ? 16 : 8);
         }
         x += sprx;
         if(x >= -16 && x <= 272) {
-          y = (int8)bus.read(spraddr + 2);
+          y = (int8_t)bus.read(spraddr + 2);
           if(sprattr & 0x80) {
             y = -y - ((bus.read(spraddr) & 0x20) ? 16 : 8);
           }
           y += spry;
           if(y >= -16 && y <= 224) {
-            ram[oamptr    ] = (uint8)x;
-            ram[oamptr + 1] = (uint8)y;
+            ram[oamptr    ] = (uint8_t)x;
+            ram[oamptr + 1] = (uint8_t)y;
             ram[oamptr + 2] = sprname + bus.read(spraddr + 3);
             ram[oamptr + 3] = sprattr ^ (bus.read(spraddr) & 0xc0);
             ram[oamptr2] &= ~(3 << offset);
@@ -497,8 +497,8 @@ void Cx4::op00_00() {
         }
       }
     } else if(sprcount > 0) {
-      ram[oamptr    ] = (uint8)sprx;
-      ram[oamptr + 1] = (uint8)spry;
+      ram[oamptr    ] = (uint8_t)sprx;
+      ram[oamptr + 1] = (uint8_t)spry;
       ram[oamptr + 2] = sprname;
       ram[oamptr + 3] = sprattr;
       ram[oamptr2] &= ~(3 << offset);
@@ -525,8 +525,8 @@ void Cx4::op00_05() {
   C4WFScale = read(0x1f8c);
 
 //Transform Vertices
-uint32 ptr = 0;
-  for(int32 i = readw(0x1f80); i > 0; i--, ptr += 0x10) {
+uint32_t ptr = 0;
+  for(int32_t i = readw(0x1f80); i > 0; i--, ptr += 0x10) {
     C4WFXVal = readw(ptr + 1);
     C4WFYVal = readw(ptr + 5);
     C4WFZVal = readw(ptr + 9);
@@ -545,15 +545,15 @@ uint32 ptr = 0;
   writew(0x605 + 8, 0x40);
 
   ptr = 0xb02;
-  uint32 ptr2 = 0;
+  uint32_t ptr2 = 0;
 
-  for(int32 i = readw(0xb00); i > 0; i--, ptr += 2, ptr2 += 8) {
+  for(int32_t i = readw(0xb00); i > 0; i--, ptr += 2, ptr2 += 8) {
     C4WFXVal  = readw((read(ptr + 0) << 4) + 1);
     C4WFYVal  = readw((read(ptr + 0) << 4) + 5);
     C4WFX2Val = readw((read(ptr + 1) << 4) + 1);
     C4WFY2Val = readw((read(ptr + 1) << 4) + 5);
     C4CalcWireFrame();
-    writew(ptr2 + 0x600, C4WFDist ? C4WFDist : (int16)1);
+    writew(ptr2 + 0x600, C4WFDist ? C4WFDist : (int16_t)1);
     writew(ptr2 + 0x602, C4WFXVal);
     writew(ptr2 + 0x605, C4WFYVal);
   }
@@ -571,21 +571,21 @@ void Cx4::op00_08() {
 
 //Disintegrate
 void Cx4::op00_0b() {
-  uint8  width, height;
-  uint32 startx, starty;
-  uint32 srcptr;
-  uint32 x, y;
-  int32  scalex, scaley;
-  int32  cx, cy;
-  int32  i, j;
+  uint8_t  width, height;
+  uint32_t startx, starty;
+  uint32_t srcptr;
+  uint32_t x, y;
+  int32_t  scalex, scaley;
+  int32_t cx, cy;
+  int32_t  i, j;
 
   width  = read(0x1f89);
   height = read(0x1f8c);
   cx     = readw(0x1f80);
   cy     = readw(0x1f83);
 
-  scalex = (int16)readw(0x1f86);
-  scaley = (int16)readw(0x1f8f);
+  scalex = (int16_t)readw(0x1f86);
+  scaley = (int16_t)readw(0x1f8f);
   startx = -cx * scalex + (cx << 8);
   starty = -cy * scaley + (cy << 8);
   srcptr = 0x600;
@@ -597,9 +597,9 @@ void Cx4::op00_0b() {
   for(y = starty, i = 0;i < height; i++, y += scaley) {
     for(x = startx, j = 0;j < width; j++, x += scalex) {
       if((x >> 8) < width && (y >> 8) < height && (y >> 8) * width + (x >> 8) < 0x2000) {
-        uint8 pixel = (j & 1) ? (uint8)(ram[srcptr] >> 4) : (ram[srcptr]);
-        int32 index = (y >> 11) * width * 4 + (x >> 11) * 32 + ((y >> 8) & 7) * 2;
-        uint8 mask = 0x80 >> ((x >> 8) & 7);
+        uint8_t pixel = (j & 1) ? (uint8_t)(ram[srcptr] >> 4) : (ram[srcptr]);
+        int32_t index = (y >> 11) * width * 4 + (x >> 11) * 32 + ((y >> 8) & 7) * 2;
+        uint8_t mask = 0x80 >> ((x >> 8) & 7);
 
         if(pixel & 1) ram[index     ] |= mask;
         if(pixel & 2) ram[index +  1] |= mask;
@@ -613,16 +613,16 @@ void Cx4::op00_0b() {
 
 //Bitplane Wave
 void Cx4::op00_0c() {
-  uint32 destptr = 0;
-  uint32 waveptr = read(0x1f83);
-  uint16 mask1   = 0xc0c0;
-  uint16 mask2   = 0x3f3f;
+  uint32_t destptr = 0;
+  uint32_t waveptr = read(0x1f83);
+  uint16_t mask1   = 0xc0c0;
+  uint16_t mask2   = 0x3f3f;
 
   for(int j = 0; j < 0x10; j++) {
     do {
-      int16 height = -((int8)read(waveptr + 0xb00)) - 16;
+      int16_t height = -((int8_t)read(waveptr + 0xb00)) - 16;
       for(int i = 0; i < 40; i++) {
-        uint16 temp = readw(destptr + wave_data[i]) & mask2;
+        uint16_t temp = readw(destptr + wave_data[i]) & mask2;
         if(height >= 0) {
           if(height < 8) {
             temp |= mask1 & readw(0xa00 + height * 2);
@@ -640,9 +640,9 @@ void Cx4::op00_0c() {
     destptr += 16;
 
     do {
-      int16 height = -((int8)read(waveptr + 0xb00)) - 16;
+      int16_t height = -((int8_t)read(waveptr + 0xb00)) - 16;
       for(int i = 0; i < 40; i++) {
-        uint16 temp = readw(destptr + wave_data[i]) & mask2;
+        uint16_t temp = readw(destptr + wave_data[i]) & mask2;
         if(height >= 0) {
           if(height < 8) {
             temp |= mask1 & readw(0xa10 + height * 2);
@@ -682,7 +682,7 @@ void Cx4::op01() {
 
 //Propulsion
 void Cx4::op05() {
-  int32 temp = 0x10000;
+  int32_t temp = 0x10000;
   if(readw(0x1f83)) {
     temp = sar((temp / readw(0x1f83)) * readw(0x1f81), 8);
   }
@@ -696,8 +696,8 @@ void Cx4::op0d() {
   C41FDistVal = readw(0x1f86);
   double tanval = sqrt(((double)C41FYVal) * ((double)C41FYVal) + ((double)C41FXVal) * ((double)C41FXVal));
   tanval = (double)C41FDistVal / tanval;
-  C41FYVal = (int16)(((double)C41FYVal * tanval) * 0.99);
-  C41FXVal = (int16)(((double)C41FXVal * tanval) * 0.98);
+  C41FYVal = (int16_t)(((double)C41FYVal * tanval) * 0.99);
+  C41FXVal = (int16_t)(((double)C41FXVal * tanval) * 0.98);
   writew(0x1f89, C41FXVal);
   writew(0x1f8c, C41FYVal);
 }
@@ -754,7 +754,7 @@ void Cx4::op13() {
 void Cx4::op15() {
   C41FXVal = readw(0x1f80);
   C41FYVal = readw(0x1f83);
-  C41FDist = (int16)sqrt((double)C41FXVal * (double)C41FXVal + (double)C41FYVal * (double)C41FYVal);
+  C41FDist = (int16_t)sqrt((double)C41FXVal * (double)C41FXVal + (double)C41FYVal * (double)C41FYVal);
   writew(0x1f80, C41FDist);
 }
 
@@ -778,17 +778,17 @@ void Cx4::op1f() {
 
 //Trapezoid
 void Cx4::op22() {
-  int16 angle1 = readw(0x1f8c) & 0x1ff;
-  int16 angle2 = readw(0x1f8f) & 0x1ff;
-  int32 tan1 = Tan(angle1);
-  int32 tan2 = Tan(angle2);
-  int16 y = readw(0x1f83) - readw(0x1f89);
-  int16 left, right;
+  int16_t angle1 = readw(0x1f8c) & 0x1ff;
+  int16_t angle2 = readw(0x1f8f) & 0x1ff;
+  int32_t tan1 = Tan(angle1);
+  int32_t tan2 = Tan(angle2);
+  int16_t y = readw(0x1f83) - readw(0x1f89);
+  int16_t left, right;
 
-  for(int32 j = 0; j < 225; j++, y++) {
+  for(int32_t j = 0; j < 225; j++, y++) {
     if(y >= 0) {
-      left  = sar((int32)tan1 * y, 16) - readw(0x1f80) + readw(0x1f86);
-      right = sar((int32)tan2 * y, 16) - readw(0x1f80) + readw(0x1f86) + readw(0x1f93);
+      left  = sar((int32_t)tan1 * y, 16) - readw(0x1f80) + readw(0x1f86);
+      right = sar((int32_t)tan2 * y, 16) - readw(0x1f80) + readw(0x1f86) + readw(0x1f93);
 
       if(left < 0 && right < 0) {
         left  = 1;
@@ -811,8 +811,8 @@ void Cx4::op22() {
       left  = 1;
       right = 0;
     }
-    ram[j + 0x800] = (uint8)left;
-    ram[j + 0x900] = (uint8)right;
+    ram[j + 0x800] = (uint8_t)left;
+    ram[j + 0x900] = (uint8_t)right;
   }
 }
 
@@ -842,7 +842,7 @@ void Cx4::op2d() {
 //Sum
 void Cx4::op40() {
   r0 = 0;
-  for(uint32 i=0;i<0x800;i++) {
+  for(uint32_t i=0;i<0x800;i++) {
     r0 += ram[i];
   }
   str(0, r0);
@@ -927,23 +927,23 @@ auto Cx4::power() -> void {
   memset(reg, 0, 0x0100);
 }
 
-uint32 Cx4::ldr(uint8 r) {
-  uint16 addr = 0x0080 + (r * 3);
+uint32_t Cx4::ldr(uint8_t r) {
+  uint16_t addr = 0x0080 + (r * 3);
   return (reg[addr + 0] <<  0)
        | (reg[addr + 1] <<  8)
        | (reg[addr + 2] << 16);
 }
 
-void Cx4::str(uint8 r, uint32 data) {
-  uint16 addr = 0x0080 + (r * 3);
+void Cx4::str(uint8_t r, uint32_t data) {
+  uint16_t addr = 0x0080 + (r * 3);
   reg[addr + 0] = (data >>  0);
   reg[addr + 1] = (data >>  8);
   reg[addr + 2] = (data >> 16);
 }
 
-void Cx4::mul(uint32 x, uint32 y, uint32 &rl, uint32 &rh) {
-  int64 rx = x & 0xffffff;
-  int64 ry = y & 0xffffff;
+void Cx4::mul(uint32_t x, uint32_t y, uint32_t &rl, uint32_t &rh) {
+  int64_t rx = x & 0xffffff;
+  int64_t ry = y & 0xffffff;
   if(rx & 0x800000)rx |= ~0x7fffff;
   if(ry & 0x800000)ry |= ~0x7fffff;
 
@@ -953,7 +953,7 @@ void Cx4::mul(uint32 x, uint32 y, uint32 &rl, uint32 &rh) {
   rh = (rx >> 24) & 0xffffff;
 }
 
-uint32 Cx4::sin(uint32 rx) {
+uint32_t Cx4::sin(uint32_t rx) {
   r0 = rx & 0x1ff;
   if(r0 & 0x100)r0 ^= 0x1ff;
   if(r0 & 0x080)r0 ^= 0x0ff;
@@ -964,13 +964,13 @@ uint32 Cx4::sin(uint32 rx) {
   }
 }
 
-uint32 Cx4::cos(uint32 rx) {
+uint32_t Cx4::cos(uint32_t rx) {
   return sin(rx + 0x080);
 }
 
-void Cx4::immediate_reg(uint32 start) {
+void Cx4::immediate_reg(uint32_t start) {
   r0 = ldr(0);
-  for(uint32 i = start; i < 48; i++) {
+  for(uint32_t i = start; i < 48; i++) {
     if((r0 & 0x0fff) < 0x0c00) {
       ram[r0 & 0x0fff] = immediate_data[i];
     }
@@ -980,19 +980,19 @@ void Cx4::immediate_reg(uint32 start) {
 }
 
 void Cx4::transfer_data() {
-  uint32 src;
-  uint16 dest, count;
+  uint32_t src;
+  uint16_t dest, count;
 
   src   = (reg[0x40]) | (reg[0x41] << 8) | (reg[0x42] << 16);
   count = (reg[0x43]) | (reg[0x44] << 8);
   dest  = (reg[0x45]) | (reg[0x46] << 8);
 
-  for(uint32 i=0;i<count;i++) {
+  for(uint32_t i=0;i<count;i++) {
     write(dest++, bus.read(src++));
   }
 }
 
-void Cx4::write(uint addr, uint8 data) {
+void Cx4::write(uint addr, uint8_t data) {
   addr &= 0x1fff;
 
   if(addr < 0x0c00) {
@@ -1059,22 +1059,22 @@ void Cx4::write(uint addr, uint8 data) {
   }
 }
 
-void Cx4::writeb(uint16 addr, uint8 data) {
+void Cx4::writeb(uint16_t addr, uint8_t data) {
   write(addr,     data);
 }
 
-void Cx4::writew(uint16 addr, uint16 data) {
+void Cx4::writew(uint16_t addr, uint16_t data) {
   write(addr + 0, data >> 0);
   write(addr + 1, data >> 8);
 }
 
-void Cx4::writel(uint16 addr, uint32 data) {
+void Cx4::writel(uint16_t addr, uint32_t data) {
   write(addr + 0, data >>  0);
   write(addr + 1, data >>  8);
   write(addr + 2, data >> 16);
 }
 
-uint8 Cx4::read(uint addr, uint8 data) {
+uint8_t Cx4::read(uint addr, uint8_t data) {
   addr &= 0x1fff;
 
   if(addr < 0x0c00) {
@@ -1088,15 +1088,15 @@ uint8 Cx4::read(uint addr, uint8 data) {
   return cpu.r.mdr;
 }
 
-uint8 Cx4::readb(uint16 addr) {
+uint8_t Cx4::readb(uint16_t addr) {
   return read(addr);
 }
 
-uint16 Cx4::readw(uint16 addr) {
+uint16_t Cx4::readw(uint16_t addr) {
   return read(addr) | (read(addr + 1) << 8);
 }
 
-uint32 Cx4::readl(uint16 addr) {
+uint32_t Cx4::readl(uint16_t addr) {
   return read(addr) | (read(addr + 1) << 8) + (read(addr + 2) << 16);
 }
 

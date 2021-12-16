@@ -11,8 +11,8 @@ struct MSU1 : Thread {
   auto dataOpen() -> void;
   auto audioOpen() -> void;
 
-  auto readIO(uint addr, uint8 data) -> uint8;
-  auto writeIO(uint addr, uint8 data) -> void;
+  auto readIO(uint addr, uint8_t data) -> uint8_t;
+  auto writeIO(uint addr, uint8_t data) -> void;
 
   auto serialize(serializer&) -> void;
 
@@ -30,17 +30,17 @@ private:
   };
 
   struct IO {
-    uint32 dataSeekOffset;
-    uint32 dataReadOffset;
+    uint32_t dataSeekOffset;
+    uint32_t dataReadOffset;
 
-    uint32 audioPlayOffset;
-    uint32 audioLoopOffset;
+    uint32_t audioPlayOffset;
+    uint32_t audioLoopOffset;
 
-    uint16 audioTrack;
-    uint8 audioVolume;
+    uint16_t audioTrack;
+    uint8_t audioVolume;
 
-    uint32 audioResumeTrack;
-    uint32 audioResumeOffset;
+    uint32_t audioResumeTrack;
+    uint32_t audioResumeOffset;
 
     Boolean audioError;
     Boolean audioPlay;

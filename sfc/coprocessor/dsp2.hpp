@@ -1,8 +1,8 @@
 struct DSP2 {
   auto power() -> void;
 
-  auto read(uint addr, uint8 data) -> uint8;
-  auto write(uint addr, uint8 data) -> void;
+  auto read(uint addr, uint8_t data) -> uint8_t;
+  auto write(uint addr, uint8_t data) -> void;
 
   auto serialize(serializer&) -> void;
 
@@ -15,13 +15,13 @@ struct DSP2 {
     uint8_t  parameters[512];
     uint8_t  output[512];
 
-    uint8  op05transparent;
+    uint8_t  op05transparent;
     bool   op05haslen;
     int    op05len;
     bool   op06haslen;
     int    op06len;
-    uint16 op09word1;
-    uint16 op09word2;
+    uint16_t op09word1;
+    uint16_t op09word2;
     bool   op0dhaslen;
     int    op0doutlen;
     int    op0dinlen;

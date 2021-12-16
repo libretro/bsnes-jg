@@ -10,27 +10,27 @@ struct WDC65816 {
   virtual auto idle() -> void = 0;
   virtual auto idleBranch() -> void {}
   virtual auto idleJump() -> void {}
-  virtual auto read(uint addr) -> uint8 = 0;
-  virtual auto write(uint addr, uint8 data) -> void = 0;
+  virtual auto read(uint addr) -> uint8_t = 0;
+  virtual auto write(uint addr, uint8_t data) -> void = 0;
   virtual auto lastCycle() -> void = 0;
   virtual auto interruptPending() const -> bool = 0;
   virtual auto interrupt() -> void;
   virtual auto synchronizing() const -> bool = 0;
 
-  virtual auto readDisassembler(uint addr) -> uint8 { return 0; }
+  virtual auto readDisassembler(uint addr) -> uint8_t { return 0; }
 
   inline auto irq() const -> bool { return r.irq; }
   inline auto irq(bool line) -> void { r.irq = line; }
 
-  using r8 = uint8;
+  using r8 = uint8_t;
 
   union r16 {
     inline r16() : w(0) {}
     inline r16(uint data) : w(data) {}
     inline auto& operator=(uint data) { w = data; return *this; }
 
-    uint16 w;
-    struct { uint8 order_lsb2(l, h); };
+    uint16_t w;
+    struct { uint8_t order_lsb2(l, h); };
   };
 
   union r24 {
@@ -39,8 +39,8 @@ struct WDC65816 {
     inline auto& operator=(uint data) { d = data; return *this; }
 
     uint24 d;
-    struct { uint16 order_lsb2(w, x); };
-    struct {  uint8 order_lsb4(l, h, b, y); };
+    struct { uint16_t order_lsb2(w, x); };
+    struct {  uint8_t order_lsb4(l, h, b, y); };
   };
 
   //wdc65816.cpp
@@ -49,67 +49,67 @@ struct WDC65816 {
   //memory.cpp
   alwaysinline auto idleIRQ() -> void;
   alwaysinline auto idle2() -> void;
-  alwaysinline auto idle4(uint16 x, uint16 y) -> void;
-  alwaysinline auto idle6(uint16 address) -> void;
-  alwaysinline auto fetch() -> uint8;
-  alwaysinline auto pull() -> uint8;
-               auto push(uint8 data) -> void;
-  alwaysinline auto pullN() -> uint8;
-  alwaysinline auto pushN(uint8 data) -> void;
-  alwaysinline auto readDirect(uint address) -> uint8;
-  alwaysinline auto writeDirect(uint address, uint8 data) -> void;
-  alwaysinline auto readDirectN(uint address) -> uint8;
-  alwaysinline auto readBank(uint address) -> uint8;
-  alwaysinline auto writeBank(uint address, uint8 data) -> void;
-  alwaysinline auto readLong(uint address) -> uint8;
-  alwaysinline auto writeLong(uint address, uint8 data) -> void;
-  alwaysinline auto readStack(uint address) -> uint8;
-  alwaysinline auto writeStack(uint address, uint8 data) -> void;
+  alwaysinline auto idle4(uint16_t x, uint16_t y) -> void;
+  alwaysinline auto idle6(uint16_t address) -> void;
+  alwaysinline auto fetch() -> uint8_t;
+  alwaysinline auto pull() -> uint8_t;
+               auto push(uint8_t data) -> void;
+  alwaysinline auto pullN() -> uint8_t;
+  alwaysinline auto pushN(uint8_t data) -> void;
+  alwaysinline auto readDirect(uint address) -> uint8_t;
+  alwaysinline auto writeDirect(uint address, uint8_t data) -> void;
+  alwaysinline auto readDirectN(uint address) -> uint8_t;
+  alwaysinline auto readBank(uint address) -> uint8_t;
+  alwaysinline auto writeBank(uint address, uint8_t data) -> void;
+  alwaysinline auto readLong(uint address) -> uint8_t;
+  alwaysinline auto writeLong(uint address, uint8_t data) -> void;
+  alwaysinline auto readStack(uint address) -> uint8_t;
+  alwaysinline auto writeStack(uint address, uint8_t data) -> void;
 
   //algorithms.cpp
-  using  alu8 = auto (WDC65816::*)( uint8) ->  uint8;
-  using alu16 = auto (WDC65816::*)(uint16) -> uint16;
+  using  alu8 = auto (WDC65816::*)( uint8_t) ->  uint8_t;
+  using alu16 = auto (WDC65816::*)(uint16_t) -> uint16_t;
 
-  auto algorithmADC8(uint8) -> uint8;
-  auto algorithmADC16(uint16) -> uint16;
-  auto algorithmAND8(uint8) -> uint8;
-  auto algorithmAND16(uint16) -> uint16;
-  auto algorithmASL8(uint8) -> uint8;
-  auto algorithmASL16(uint16) -> uint16;
-  auto algorithmBIT8(uint8) -> uint8;
-  auto algorithmBIT16(uint16) -> uint16;
-  auto algorithmCMP8(uint8) -> uint8;
-  auto algorithmCMP16(uint16) -> uint16;
-  auto algorithmCPX8(uint8) -> uint8;
-  auto algorithmCPX16(uint16) -> uint16;
-  auto algorithmCPY8(uint8) -> uint8;
-  auto algorithmCPY16(uint16) -> uint16;
-  auto algorithmDEC8(uint8) -> uint8;
-  auto algorithmDEC16(uint16) -> uint16;
-  auto algorithmEOR8(uint8) -> uint8;
-  auto algorithmEOR16(uint16) -> uint16;
-  auto algorithmINC8(uint8) -> uint8;
-  auto algorithmINC16(uint16) -> uint16;
-  auto algorithmLDA8(uint8) -> uint8;
-  auto algorithmLDA16(uint16) -> uint16;
-  auto algorithmLDX8(uint8) -> uint8;
-  auto algorithmLDX16(uint16) -> uint16;
-  auto algorithmLDY8(uint8) -> uint8;
-  auto algorithmLDY16(uint16) -> uint16;
-  auto algorithmLSR8(uint8) -> uint8;
-  auto algorithmLSR16(uint16) -> uint16;
-  auto algorithmORA8(uint8) -> uint8;
-  auto algorithmORA16(uint16) -> uint16;
-  auto algorithmROL8(uint8) -> uint8;
-  auto algorithmROL16(uint16) -> uint16;
-  auto algorithmROR8(uint8) -> uint8;
-  auto algorithmROR16(uint16) -> uint16;
-  auto algorithmSBC8(uint8) -> uint8;
-  auto algorithmSBC16(uint16) -> uint16;
-  auto algorithmTRB8(uint8) -> uint8;
-  auto algorithmTRB16(uint16) -> uint16;
-  auto algorithmTSB8(uint8) -> uint8;
-  auto algorithmTSB16(uint16) -> uint16;
+  auto algorithmADC8(uint8_t) -> uint8_t;
+  auto algorithmADC16(uint16_t) -> uint16_t;
+  auto algorithmAND8(uint8_t) -> uint8_t;
+  auto algorithmAND16(uint16_t) -> uint16_t;
+  auto algorithmASL8(uint8_t) -> uint8_t;
+  auto algorithmASL16(uint16_t) -> uint16_t;
+  auto algorithmBIT8(uint8_t) -> uint8_t;
+  auto algorithmBIT16(uint16_t) -> uint16_t;
+  auto algorithmCMP8(uint8_t) -> uint8_t;
+  auto algorithmCMP16(uint16_t) -> uint16_t;
+  auto algorithmCPX8(uint8_t) -> uint8_t;
+  auto algorithmCPX16(uint16_t) -> uint16_t;
+  auto algorithmCPY8(uint8_t) -> uint8_t;
+  auto algorithmCPY16(uint16_t) -> uint16_t;
+  auto algorithmDEC8(uint8_t) -> uint8_t;
+  auto algorithmDEC16(uint16_t) -> uint16_t;
+  auto algorithmEOR8(uint8_t) -> uint8_t;
+  auto algorithmEOR16(uint16_t) -> uint16_t;
+  auto algorithmINC8(uint8_t) -> uint8_t;
+  auto algorithmINC16(uint16_t) -> uint16_t;
+  auto algorithmLDA8(uint8_t) -> uint8_t;
+  auto algorithmLDA16(uint16_t) -> uint16_t;
+  auto algorithmLDX8(uint8_t) -> uint8_t;
+  auto algorithmLDX16(uint16_t) -> uint16_t;
+  auto algorithmLDY8(uint8_t) -> uint8_t;
+  auto algorithmLDY16(uint16_t) -> uint16_t;
+  auto algorithmLSR8(uint8_t) -> uint8_t;
+  auto algorithmLSR16(uint16_t) -> uint16_t;
+  auto algorithmORA8(uint8_t) -> uint8_t;
+  auto algorithmORA16(uint16_t) -> uint16_t;
+  auto algorithmROL8(uint8_t) -> uint8_t;
+  auto algorithmROL16(uint16_t) -> uint16_t;
+  auto algorithmROR8(uint8_t) -> uint8_t;
+  auto algorithmROR16(uint16_t) -> uint16_t;
+  auto algorithmSBC8(uint8_t) -> uint8_t;
+  auto algorithmSBC16(uint16_t) -> uint16_t;
+  auto algorithmTRB8(uint8_t) -> uint8_t;
+  auto algorithmTRB16(uint16_t) -> uint16_t;
+  auto algorithmTSB8(uint8_t) -> uint8_t;
+  auto algorithmTSB16(uint16_t) -> uint16_t;
 
   //instructions-read.cpp
   auto instructionImmediateRead8(alu8) -> void;
@@ -275,7 +275,7 @@ struct WDC65816 {
     bool wai = 0;  //raised during wai, cleared after interrupt triggered
     bool stp = 0;  //raised during stp, never cleared
 
-    uint16 vector;  //interrupt vector address
+    uint16_t vector;  //interrupt vector address
     uint24 mar;     //memory address register
      r8 mdr;      //memory data register
 

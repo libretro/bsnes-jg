@@ -10,17 +10,17 @@ struct MCC {
   auto power() -> void;
   auto commit() -> void;
 
-  auto read(uint address, uint8 data) -> uint8;
-  auto write(uint address, uint8 data) -> void;
+  auto read(uint address, uint8_t data) -> uint8_t;
+  auto write(uint address, uint8_t data) -> void;
 
-  auto mcuRead(uint address, uint8 data) -> uint8;
-  auto mcuWrite(uint address, uint8 data) -> void;
+  auto mcuRead(uint address, uint8_t data) -> uint8_t;
+  auto mcuWrite(uint address, uint8_t data) -> void;
 
-  auto mcuAccess(bool mode, uint address, uint8 data) -> uint8;
-  auto romAccess(bool mode, uint address, uint8 data) -> uint8;
-  auto psramAccess(bool mode, uint address, uint8 data) -> uint8;
-  auto exAccess(bool mode, uint address, uint8 data) -> uint8;
-  auto bsAccess(bool mode, uint address, uint8 data) -> uint8;
+  auto mcuAccess(bool mode, uint address, uint8_t data) -> uint8_t;
+  auto romAccess(bool mode, uint address, uint8_t data) -> uint8_t;
+  auto psramAccess(bool mode, uint address, uint8_t data) -> uint8_t;
+  auto exAccess(bool mode, uint address, uint8_t data) -> uint8_t;
+  auto bsAccess(bool mode, uint address, uint8_t data) -> uint8_t;
 
   //serialization.cpp
   auto serialize(serializer&) -> void;

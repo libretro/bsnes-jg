@@ -10,7 +10,7 @@ auto HitachiDSP::isRAM(uint address) -> bool {
   return (bool)addressRAM(address);
 }
 
-auto HitachiDSP::read(uint address) -> uint8 {
+auto HitachiDSP::read(uint address) -> uint8_t {
   if(auto linear = addressROM (address)) return readROM (*linear);
   if(auto linear = addressRAM (address)) return readRAM (*linear);
   if(auto linear = addressDRAM(address)) return readDRAM(*linear);
@@ -18,7 +18,7 @@ auto HitachiDSP::read(uint address) -> uint8 {
   return 0x00;
 }
 
-auto HitachiDSP::write(uint address, uint8 data) -> void {
+auto HitachiDSP::write(uint address, uint8_t data) -> void {
   if(auto linear = addressROM (address)) return writeROM (*linear, data);
   if(auto linear = addressRAM (address)) return writeRAM (*linear, data);
   if(auto linear = addressDRAM(address)) return writeDRAM(*linear, data);
@@ -41,7 +41,7 @@ auto HitachiDSP::addressROM(uint address) const -> maybe<uint> {
   return {};
 }
 
-auto HitachiDSP::readROM(uint address, uint8 data) -> uint8 {
+auto HitachiDSP::readROM(uint address, uint8_t data) -> uint8_t {
   if(hitachidsp.active() || !busy()) {
     address = bus.mirror(address, rom.size());
   //if(Roms == 2 && mmio.r1f52 == 1 && address >= (bit::round(rom.size()) >> 1)) return 0x00;
@@ -53,7 +53,7 @@ auto HitachiDSP::readROM(uint address, uint8 data) -> uint8 {
   return data;
 }
 
-auto HitachiDSP::writeROM(uint address, uint8 data) -> void {
+auto HitachiDSP::writeROM(uint address, uint8_t data) -> void {
 }
 
 auto HitachiDSP::addressRAM(uint address) const -> maybe<uint> {
@@ -73,12 +73,12 @@ auto HitachiDSP::addressRAM(uint address) const -> maybe<uint> {
   return {};
 }
 
-auto HitachiDSP::readRAM(uint address, uint8 data) -> uint8 {
+auto HitachiDSP::readRAM(uint address, uint8_t data) -> uint8_t {
   if(ram.size() == 0) return 0x00;  //not open bus
   return ram.read(bus.mirror(address, ram.size()), data);
 }
 
-auto HitachiDSP::writeRAM(uint address, uint8 data) -> void {
+auto HitachiDSP::writeRAM(uint address, uint8_t data) -> void {
   if(ram.size() == 0) return;
   return ram.write(bus.mirror(address, ram.size()), data);
 }
@@ -98,13 +98,13 @@ auto HitachiDSP::addressDRAM(uint address) const -> maybe<uint> {
   return {};
 }
 
-auto HitachiDSP::readDRAM(uint address, uint8 data) -> uint8 {
+auto HitachiDSP::readDRAM(uint address, uint8_t data) -> uint8_t {
   address &= 0xfff;
   if(address >= 0xc00) return data;
   return dataRAM[address];
 }
 
-auto HitachiDSP::writeDRAM(uint address, uint8 data) -> void {
+auto HitachiDSP::writeDRAM(uint address, uint8_t data) -> void {
   address &= 0xfff;
   if(address >= 0xc00) return;
   dataRAM[address] = data;
@@ -125,7 +125,7 @@ auto HitachiDSP::addressIO(uint address) const -> maybe<uint> {
   return {};
 }
 
-auto HitachiDSP::readIO(uint address, uint8 data) -> uint8 {
+auto HitachiDSP::readIO(uint address, uint8_t data) -> uint8_t {
   address = 0x7c00 | (address & 0x03ff);
 
   //IO
@@ -172,7 +172,7 @@ auto HitachiDSP::readIO(uint address, uint8 data) -> uint8 {
   return 0x00;
 }
 
-auto HitachiDSP::writeIO(uint address, uint8 data) -> void {
+auto HitachiDSP::writeIO(uint address, uint8_t data) -> void {
   address = 0x7c00 | (address & 0x03ff);
 
   //IO
@@ -268,8 +268,8 @@ auto HitachiDSP::writeIO(uint address, uint8 data) -> void {
   }
 }
 
-auto HitachiDSP::firmware() const -> vector<uint8> {
-  vector<uint8> buffer;
+auto HitachiDSP::firmware() const -> vector<uint8_t> {
+  vector<uint8_t> buffer;
   if(!cartridge.has.HitachiDSP) return buffer;
   buffer.reserve(1024 * 3);
   for(auto n : range(1024)) {

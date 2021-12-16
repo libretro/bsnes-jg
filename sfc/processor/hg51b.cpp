@@ -134,7 +134,7 @@ HG51B::HG51B() {
   }
 
   //JMP imm
-  for(uint8 data : range(256))
+  for(uint8_t data : range(256))
   for(uint1 null : range(  2))
   for(uint1 far  : range(  2)) {
     auto opcode = pattern("0000 10f. dddd dddd");
@@ -142,7 +142,7 @@ HG51B::HG51B() {
   }
 
   //JMP EQ,imm
-  for(uint8 data : range(256))
+  for(uint8_t data : range(256))
   for(uint1 null : range(  2))
   for(uint1 far  : range(  2)) {
     auto opcode = pattern("0000 11f. dddd dddd");
@@ -150,7 +150,7 @@ HG51B::HG51B() {
   }
 
   //JMP GE,imm
-  for(uint8 data : range(256))
+  for(uint8_t data : range(256))
   for(uint1 null : range(  2))
   for(uint1 far  : range(  2)) {
     auto opcode = pattern("0001 00f. dddd dddd");
@@ -158,7 +158,7 @@ HG51B::HG51B() {
   }
 
   //JMP MI,imm
-  for(uint8 data : range(256))
+  for(uint8_t data : range(256))
   for(uint1 null : range(  2))
   for(uint1 far  : range(  2)) {
     auto opcode = pattern("0001 01f. dddd dddd");
@@ -166,7 +166,7 @@ HG51B::HG51B() {
   }
 
   //JMP VS,imm
-  for(uint8 data : range(256))
+  for(uint8_t data : range(256))
   for(uint1 null : range(  2))
   for(uint1 far  : range(  2)) {
     auto opcode = pattern("0001 10f. dddd dddd");
@@ -214,7 +214,7 @@ HG51B::HG51B() {
   }
 
   //JSR
-  for(uint8 data : range(256))
+  for(uint8_t data : range(256))
   for(uint1 null : range(  2))
   for(uint1 far  : range(  2)) {
     auto opcode = pattern("0010 10f. dddd dddd");
@@ -222,7 +222,7 @@ HG51B::HG51B() {
   }
 
   //JSR EQ,imm
-  for(uint8 data : range(256))
+  for(uint8_t data : range(256))
   for(uint1 null : range(  2))
   for(uint1 far  : range(  2)) {
     auto opcode = pattern("0010 11f. dddd dddd");
@@ -230,7 +230,7 @@ HG51B::HG51B() {
   }
 
   //JSR GE,imm
-  for(uint8 data : range(256))
+  for(uint8_t data : range(256))
   for(uint1 null : range(  2))
   for(uint1 far  : range(  2)) {
     auto opcode = pattern("0011 00f. dddd dddd");
@@ -238,7 +238,7 @@ HG51B::HG51B() {
   }
 
   //JSR MI,imm
-  for(uint8 data : range(256))
+  for(uint8_t data : range(256))
   for(uint1 null : range(  2))
   for(uint1 far  : range(  2)) {
     auto opcode = pattern("0011 01f. dddd dddd");
@@ -246,7 +246,7 @@ HG51B::HG51B() {
   }
 
   //JSR VS,imm
-  for(uint8 data : range(256))
+  for(uint8_t data : range(256))
   for(uint1 null : range(  2))
   for(uint1 far  : range(  2)) {
     auto opcode = pattern("0011 10f. dddd dddd");
@@ -280,7 +280,7 @@ HG51B::HG51B() {
   }
 
   //CMPR A<<s,imm
-  for(uint8 imm   : range(256))
+  for(uint8_t imm   : range(256))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("0100 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, CMPR, imm, shifts[shift]);
@@ -295,32 +295,32 @@ HG51B::HG51B() {
   }
 
   //CMP A<<s,imm
-  for(uint8 imm   : range(256))
+  for(uint8_t imm   : range(256))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("0101 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, CMP, imm, shifts[shift]);
   }
 
   //???
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("0101 1000 .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //SXB A
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("0101 1001 .... ....");
     bind(opcode | null << 0, SXB);
   }
 
   //SXW A
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("0101 1010 .... ....");
     bind(opcode | null << 0, SXW);
   }
 
   //???
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("0101 1011 .... ....");
     bind(opcode | null << 0, NOP);
   }
@@ -360,73 +360,73 @@ HG51B::HG51B() {
   }
 
   //LD A,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("0110 0100 iiii iiii");
     bind(opcode | imm << 0, LD, r.a, imm);
   }
 
   //LD MDR,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("0110 0101 iiii iiii");
     bind(opcode | imm << 0, LD, r.mdr, imm);
   }
 
   //LD MAR,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("0110 0110 iiii iiii");
     bind(opcode | imm << 0, LD, r.mar, imm);
   }
 
   //LD P,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("0110 0111 iiii iiii");
     bind(opcode | imm << 0, LD, r.p, imm);
   }
 
   //RDRAM 0,A
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("0110 1000 .... ....");
     bind(opcode | null << 0, RDRAM, 0, r.a);
   }
 
   //RDRAM 1,A
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("0110 1001 .... ....");
     bind(opcode | null << 0, RDRAM, 1, r.a);
   }
 
   //RDRAM 2,A
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("0110 1010 .... ....");
     bind(opcode | null << 0, RDRAM, 2, r.a);
   }
 
   //???
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("0110 1011 .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //RDRAM 0,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("0110 1100 iiii iiii");
     bind(opcode | imm << 0, RDRAM, 0, imm);
   }
 
   //RDRAM 1,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("0110 1101 iiii iiii");
     bind(opcode | imm << 0, RDRAM, 1, imm);
   }
 
   //RDRAM 2,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("0110 1110 iiii iiii");
     bind(opcode | imm << 0, RDRAM, 2, imm);
   }
 
   //???
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("0110 1111 .... ....");
     bind(opcode | null << 0, NOP);
   }
@@ -450,7 +450,7 @@ HG51B::HG51B() {
   }
 
   //LD PL,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("0111 1100 iiii iiii");
     bind(opcode | imm << 0, LDL, r.p, imm);
   }
@@ -477,7 +477,7 @@ HG51B::HG51B() {
   }
 
   //ADD A<<s,imm
-  for(uint8 imm   : range(256))
+  for(uint8_t imm   : range(256))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1000 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, ADD, imm, shifts[shift]);
@@ -492,7 +492,7 @@ HG51B::HG51B() {
   }
 
   //SUBR A<<s,imm
-  for(uint8 imm   : range(256))
+  for(uint8_t imm   : range(256))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1000 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, SUBR, imm, shifts[shift]);
@@ -507,7 +507,7 @@ HG51B::HG51B() {
   }
 
   //SUB A<<s,imm
-  for(uint8 imm   : range(256))
+  for(uint8_t imm   : range(256))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1001 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, SUB, imm, shifts[shift]);
@@ -521,7 +521,7 @@ HG51B::HG51B() {
   }
 
   //MUL imm
-  for(uint8 imm  : range(256))
+  for(uint8_t imm  : range(256))
   for(uint2 null : range(  4)) {
     auto opcode = pattern("1001 11.. iiii iiii");
     bind(opcode | imm << 0 | null << 8, MUL, imm);
@@ -536,7 +536,7 @@ HG51B::HG51B() {
   }
 
   //XNOR A<<s,imm
-  for(uint8 imm   : range(256))
+  for(uint8_t imm   : range(256))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1010 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, XNOR, imm, shifts[shift]);
@@ -551,7 +551,7 @@ HG51B::HG51B() {
   }
 
   //XOR A<<s,imm
-  for(uint8 imm   : range(256))
+  for(uint8_t imm   : range(256))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1010 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, XOR, imm, shifts[shift]);
@@ -566,7 +566,7 @@ HG51B::HG51B() {
   }
 
   //AND A<<s,imm
-  for(uint8 imm   : range(256))
+  for(uint8_t imm   : range(256))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1011 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, AND, imm, shifts[shift]);
@@ -581,7 +581,7 @@ HG51B::HG51B() {
   }
 
   //OR A<<s,imm
-  for(uint8 imm   : range(256))
+  for(uint8_t imm   : range(256))
   for(uint2 shift : range(  4)) {
     auto opcode = pattern("1011 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, OR, imm, shifts[shift]);
@@ -670,49 +670,49 @@ HG51B::HG51B() {
   }
 
   //WRRAM 0,A
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("1110 1000 .... ....");
     bind(opcode | null << 0, WRRAM, 0, r.a);
   }
 
   //WRRAM 1,A
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("1110 1001 .... ....");
     bind(opcode | null << 0, WRRAM, 1, r.a);
   }
 
   //WRRAM 2,A
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("1110 1010 .... ....");
     bind(opcode | null << 0, WRRAM, 2, r.a);
   }
 
   //???
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("1110 1011 .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //WRRAM 0,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("1110 1100 iiii iiii");
     bind(opcode | imm << 0, WRRAM, 0, imm);
   }
 
   //WRRAM 1,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("1110 1101 iiii iiii");
     bind(opcode | imm << 0, WRRAM, 1, imm);
   }
 
   //WRRAM 2,imm
-  for(uint8 imm : range(256)) {
+  for(uint8_t imm : range(256)) {
     auto opcode = pattern("1110 1110 iiii iiii");
     bind(opcode | imm << 0, WRRAM, 2, imm);
   }
 
   //???
-  for(uint8 null : range(256)) {
+  for(uint8_t null : range(256)) {
     auto opcode = pattern("1110 1111 .... ....");
     bind(opcode | null << 0, NOP);
   }
@@ -800,8 +800,8 @@ auto HG51B::algorithmASR(uint24 a, uint5 s) -> uint24 {
   return a;
 }
 
-auto HG51B::algorithmMUL(int24 x, int24 y) -> uint48 {
-  return (int48)x * (int48)y;
+auto HG51B::algorithmMUL(int24 x, int24 y) -> nall::Natural<48> {
+  return (nall::Integer<48>)x * (nall::Integer<48>)y;
 }
 
 auto HG51B::algorithmOR(uint24 x, uint24 y) -> uint24 {
@@ -868,7 +868,7 @@ auto HG51B::instructionADD(uint7 reg, uint5 shift) -> void {
   r.a = algorithmADD(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionADD(uint8 imm, uint5 shift) -> void {
+auto HG51B::instructionADD(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmADD(r.a << shift, imm);
 }
 
@@ -876,7 +876,7 @@ auto HG51B::instructionAND(uint7 reg, uint5 shift) -> void {
   r.a = algorithmAND(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionAND(uint8 imm, uint5 shift) -> void {
+auto HG51B::instructionAND(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmAND(r.a << shift, imm);
 }
 
@@ -899,7 +899,7 @@ auto HG51B::instructionCMP(uint7 reg, uint5 shift) -> void {
   algorithmSUB(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionCMP(uint8 imm, uint5 shift) -> void {
+auto HG51B::instructionCMP(uint8_t imm, uint5 shift) -> void {
   algorithmSUB(r.a << shift, imm);
 }
 
@@ -907,7 +907,7 @@ auto HG51B::instructionCMPR(uint7 reg, uint5 shift) -> void {
   algorithmSUB(readRegister(reg), r.a << shift);
 }
 
-auto HG51B::instructionCMPR(uint8 imm, uint5 shift) -> void {
+auto HG51B::instructionCMPR(uint8_t imm, uint5 shift) -> void {
   algorithmSUB(imm, r.a << shift);
 }
 
@@ -919,14 +919,14 @@ auto HG51B::instructionINC(uint24& reg) -> void {
   reg++;
 }
 
-auto HG51B::instructionJMP(uint8 data, uint1 far, const uint1& take) -> void {
+auto HG51B::instructionJMP(uint8_t data, uint1 far, const uint1& take) -> void {
   if(!take) return;
   if(far) r.pb = r.p;
   r.pc = data;
   step(2);
 }
 
-auto HG51B::instructionJSR(uint8 data, uint1 far, const uint1& take) -> void {
+auto HG51B::instructionJSR(uint8_t data, uint1 far, const uint1& take) -> void {
   if(!take) return;
   push();
   if(far) r.pb = r.p;
@@ -942,15 +942,15 @@ auto HG51B::instructionLD(uint15& out, uint4 reg) -> void {
   out = r.gpr[reg];
 }
 
-auto HG51B::instructionLD(uint24& out, uint8 imm) -> void {
+auto HG51B::instructionLD(uint24& out, uint8_t imm) -> void {
   out = imm;
 }
 
-auto HG51B::instructionLD(uint15& out, uint8 imm) -> void {
+auto HG51B::instructionLD(uint15& out, uint8_t imm) -> void {
   out = imm;
 }
 
-auto HG51B::instructionLDL(uint15& out, uint8 imm) -> void {
+auto HG51B::instructionLDL(uint15& out, uint8_t imm) -> void {
   out = out & 0x7f00 | imm << 0;
 }
 
@@ -962,7 +962,7 @@ auto HG51B::instructionMUL(uint7 reg) -> void {
   r.mul = algorithmMUL(r.a, readRegister(reg));
 }
 
-auto HG51B::instructionMUL(uint8 imm) -> void {
+auto HG51B::instructionMUL(uint8_t imm) -> void {
   r.mul = algorithmMUL(r.a, imm);
 }
 
@@ -973,7 +973,7 @@ auto HG51B::instructionOR(uint7 reg, uint5 shift) -> void {
   r.a = algorithmOR(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionOR(uint8 imm, uint5 shift) -> void {
+auto HG51B::instructionOR(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmOR(r.a << shift, imm);
 }
 
@@ -983,7 +983,7 @@ auto HG51B::instructionRDRAM(uint2 byte, uint24& a) -> void {
   r.ram.byte(byte) = dataRAM[address];
 }
 
-auto HG51B::instructionRDRAM(uint2 byte, uint8 imm) -> void {
+auto HG51B::instructionRDRAM(uint2 byte, uint8_t imm) -> void {
   uint12 address = r.dpr + imm;
   if(address >= 0xc00) address -= 0x400;
   r.ram.byte(byte) = dataRAM[address];
@@ -1040,7 +1040,7 @@ auto HG51B::instructionSUB(uint7 reg, uint5 shift) -> void {
   r.a = algorithmSUB(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionSUB(uint8 imm, uint5 shift) -> void {
+auto HG51B::instructionSUB(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmSUB(r.a << shift, imm);
 }
 
@@ -1048,7 +1048,7 @@ auto HG51B::instructionSUBR(uint7 reg, uint5 shift) -> void {
   r.a = algorithmSUB(readRegister(reg), r.a << shift);
 }
 
-auto HG51B::instructionSUBR(uint8 imm, uint5 shift) -> void {
+auto HG51B::instructionSUBR(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmSUB(imm, r.a << shift);
 }
 
@@ -1057,11 +1057,11 @@ auto HG51B::instructionSWAP(uint24& a, uint4 reg) -> void {
 }
 
 auto HG51B::instructionSXB() -> void {
-  r.a = algorithmSX((int8)r.a);
+  r.a = algorithmSX((int8_t)r.a);
 }
 
 auto HG51B::instructionSXW() -> void {
-  r.a = algorithmSX((int16)r.a);
+  r.a = algorithmSX((int16_t)r.a);
 }
 
 auto HG51B::instructionWAIT() -> void {
@@ -1075,7 +1075,7 @@ auto HG51B::instructionWRRAM(uint2 byte, uint24& a) -> void {
   dataRAM[address] = r.ram.byte(byte);
 }
 
-auto HG51B::instructionWRRAM(uint2 byte, uint8 imm) -> void {
+auto HG51B::instructionWRRAM(uint2 byte, uint8_t imm) -> void {
   uint12 address = r.dpr + imm;
   if(address >= 0xc00) address -= 0x400;
   dataRAM[address] = r.ram.byte(byte);
@@ -1085,7 +1085,7 @@ auto HG51B::instructionXNOR(uint7 reg, uint5 shift) -> void {
   r.a = algorithmXNOR(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionXNOR(uint8 imm, uint5 shift) -> void {
+auto HG51B::instructionXNOR(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmXNOR(r.a << shift, imm);
 }
 
@@ -1093,7 +1093,7 @@ auto HG51B::instructionXOR(uint7 reg, uint5 shift) -> void {
   r.a = algorithmXOR(r.a << shift, readRegister(reg));
 }
 
-auto HG51B::instructionXOR(uint8 imm, uint5 shift) -> void {
+auto HG51B::instructionXOR(uint8_t imm, uint5 shift) -> void {
   r.a = algorithmXOR(r.a << shift, imm);
 }
 

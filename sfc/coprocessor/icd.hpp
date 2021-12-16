@@ -23,8 +23,8 @@ struct ICD : Emulator::Platform, Thread {
   auto joypWrite(bool p14, bool p15) -> void;
 
   //io.cpp
-  auto readIO(uint addr, uint8 data) -> uint8;
-  auto writeIO(uint addr, uint8 data) -> void;
+  auto readIO(uint addr, uint8_t data) -> uint8_t;
+  auto writeIO(uint addr, uint8_t data) -> void;
 
   //boot-roms.cpp
   static const uint8_t SGB1BootROM[256];
@@ -38,8 +38,8 @@ struct ICD : Emulator::Platform, Thread {
 
 private:
   struct Packet {
-    auto operator[](uint4 address) -> uint8& { return data[address]; }
-    uint8 data[16];
+    auto operator[](uint4 address) -> uint8_t& { return data[address]; }
+    uint8_t data[16];
   };
   Packet packet[64];
   uint7 packetSize;
@@ -51,24 +51,24 @@ private:
   uint1 packetLock;
   Packet joypPacket;
   uint4 packetOffset;
-  uint8 bitData;
+  uint8_t bitData;
   uint3 bitOffset;
 
-  uint8 output[4 * 512];
+  uint8_t output[4 * 512];
   uint2 readBank;
   uint9 readAddress;
   uint2 writeBank;
 
-  uint8 r6003;      //control port
-  uint8 r6004;      //joypad 1
-  uint8 r6005;      //joypad 2
-  uint8 r6006;      //joypad 3
-  uint8 r6007;      //joypad 4
-  uint8 r7000[16];  //JOYP packet data
-  uint8 mltReq;     //number of active joypads
+  uint8_t r6003;      //control port
+  uint8_t r6004;      //joypad 1
+  uint8_t r6005;      //joypad 2
+  uint8_t r6006;      //joypad 3
+  uint8_t r6007;      //joypad 4
+  uint8_t r7000[16];  //JOYP packet data
+  uint8_t mltReq;     //number of active joypads
 
-  uint8 hcounter;
-  uint8 vcounter;
+  uint8_t hcounter;
+  uint8_t vcounter;
 
   struct Information {
     uint pathID = 0;

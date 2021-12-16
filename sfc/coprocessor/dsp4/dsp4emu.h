@@ -18,8 +18,8 @@ struct DSP4_t
   uint32 in_index;
   uint32 out_count;
   uint32 out_index;
-  uint8 parameters[512];
-  uint8 output[512];
+  uint8_t parameters[512];
+  uint8_t output[512];
 };
 
 extern struct DSP4_t DSP4;

@@ -64,7 +64,7 @@ void DSP2::op03() {
 
 //replace bitmap using transparent color
 void DSP2::op05() {
-uint8 color;
+uint8_t color;
 // Overlay bitmap with transparency.
 // Input:
 //
@@ -124,7 +124,7 @@ void DSP2::op09() {
   status.op09word1 = status.parameters[0] | (status.parameters[1] << 8);
   status.op09word2 = status.parameters[2] | (status.parameters[3] << 8);
 
-uint32 r;
+  uint32_t r;
   r = status.op09word1 * status.op09word2;
   status.output[0] = r;
   status.output[1] = r >> 8;
@@ -148,10 +148,10 @@ void DSP2::op0d() {
 // So far I haven't seen Dungeon Master use it.
 // If it does we can adjust the parameters and code to work with it
 
-uint32 multiplier; // Any size int >= 32-bits
-uint32 pixloc;     // match size of multiplier
-int    i, j;
-uint8  pixelarray[512];
+  uint32_t multiplier; // Any size int >= 32-bits
+  uint32_t pixloc;     // match size of multiplier
+  int      i, j;
+  uint8_t  pixelarray[512];
   if(status.op0dinlen <= status.op0doutlen) {
     multiplier = 0x10000; // In our self defined fixed point 0x10000 == 1
   } else {
@@ -220,10 +220,10 @@ auto DSP2::power() -> void {
   status.op0dinlen       = 0;
 }
 
-auto DSP2::read(uint addr, uint8 data) -> uint8 {
+auto DSP2::read(uint addr, uint8_t data) -> uint8_t {
   if(addr & 1) return 0x00;
 
-  uint8 r = 0xff;
+  uint8_t r = 0xff;
   if(status.out_count) {
     r = status.output[status.out_index++];
     status.out_index &= 511;
@@ -234,7 +234,7 @@ auto DSP2::read(uint addr, uint8 data) -> uint8 {
   return r;
 }
 
-auto DSP2::write(uint addr, uint8 data) -> void {
+auto DSP2::write(uint addr, uint8_t data) -> void {
   if(addr & 1) return;
 
   if(status.waiting_for_command) {
