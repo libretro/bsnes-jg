@@ -168,7 +168,7 @@ auto uPD96050::execJP(nall::Natural<24> opcode) -> void {
   uint11 na  = opcode >>  2;  //next address
   uint2 bank = opcode >>  0;  //bank address
 
-  uint14 jp = regs.pc & 0x2000 | bank << 11 | na << 0;
+  nall::Natural<14> jp = regs.pc & 0x2000 | bank << 11 | na << 0;
 
   switch(brch) {
   case 0x000: regs.pc = regs.so; return;  //JMPSO
@@ -314,7 +314,7 @@ auto uPD96050::writeDP(uint12 addr, uint8_t data) -> void {
   }
 }
 
-auto uPD96050::disassemble(uint14 ip) -> string {
+auto uPD96050::disassemble(nall::Natural<14> ip) -> string {
   string output = {hex(ip, 4L), "  "};
   nall::Natural<24> opcode = programROM[ip];
   uint2 type = opcode >> 22;
@@ -429,7 +429,7 @@ auto uPD96050::disassemble(uint14 ip) -> string {
     uint11 na  = opcode >>  2;
     uint8_t bank = opcode >>  0;
 
-    uint14 jp = (regs.pc & 0x2000) | (bank << 11) | (na << 0);
+    nall::Natural<14> jp = (regs.pc & 0x2000) | (bank << 11) | (na << 0);
 
     switch(brch) {
     case 0x000: output.append("jmpso   "); jp = 0; break;
