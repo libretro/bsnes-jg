@@ -241,7 +241,7 @@ auto ARM7TDMI::instruction() -> void {
   opcode = pipeline.execute.instruction;
   if(!pipeline.execute.thumb) {
     if(!TST(opcode >> 28)) return;
-    uint12 index = (opcode & 0x0ff00000) >> 16 | (opcode & 0x000000f0) >> 4;
+    nall::Natural<12> index = (opcode & 0x0ff00000) >> 16 | (opcode & 0x000000f0) >> 4;
     armInstruction[index](opcode);
   } else {
     thumbInstruction[(uint16_t)opcode]();
@@ -559,7 +559,7 @@ auto ARM7TDMI::armInitialize() -> void {
   #undef arguments
 
   #define arguments
-  for(uint12 id : range(4096)) {
+  for(nall::Natural<12> id : range(4096)) {
     if(armInstruction[id]) continue;
     auto opcode = pattern(".... ???? ???? ---- ---- ---- ???? ----") | bits(id,0,3) << 4 | bits(id,4,11) << 20;
     bind(opcode, Undefined);
@@ -910,7 +910,7 @@ auto ARM7TDMI::armInstructionMoveHalfRegister
 }
 
 auto ARM7TDMI::armInstructionMoveImmediateOffset
-(uint12 immediate, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 byte, uint1 up, uint1 pre) -> void {
+(nall::Natural<12> immediate, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 byte, uint1 up, uint1 pre) -> void {
   uint32_t rn = r(n);
   uint32_t rd = r(d);
 
@@ -1376,7 +1376,7 @@ auto ARM7TDMI::disassemble(maybe<uint32_t> pc, maybe<Boolean> thumb) -> string {
   _pc = pc();
   if(!thumb()) {
     uint32_t opcode = read(Word | Nonsequential, _pc & ~3);
-    uint12 index = (opcode & 0x0ff00000) >> 16 | (opcode & 0x000000f0) >> 4;
+    nall::Natural<12> index = (opcode & 0x0ff00000) >> 16 | (opcode & 0x000000f0) >> 4;
     _c = _conditions[opcode >> 28];
     return {hex(_pc, 8L), "  ", armDisassemble[index](opcode)};
   } else {
@@ -1529,7 +1529,7 @@ auto ARM7TDMI::armDisassembleMoveHalfRegister
 }
 
 auto ARM7TDMI::armDisassembleMoveImmediateOffset
-(uint12 immediate, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 byte, uint1 up, uint1 pre) -> string {
+(nall::Natural<12> immediate, uint4 d, uint4 n, uint1 mode, uint1 writeback, uint1 byte, uint1 up, uint1 pre) -> string {
   string data;
   if(n == 15) data = {" =0x", hex(read((byte ? Byte : Word) | Nonsequential,
     _pc + 8 + (up ? +immediate : -immediate)), byte ? 2L : 4L)};

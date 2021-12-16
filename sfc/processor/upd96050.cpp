@@ -292,7 +292,7 @@ auto uPD96050::writeDR(uint8_t data) -> void {
   }
 }
 
-auto uPD96050::readDP(uint12 addr) -> uint8_t {
+auto uPD96050::readDP(nall::Natural<12> addr) -> uint8_t {
   bool hi = addr & 1;
   addr = (addr >> 1) & 2047;
 
@@ -303,7 +303,7 @@ auto uPD96050::readDP(uint12 addr) -> uint8_t {
   }
 }
 
-auto uPD96050::writeDP(uint12 addr, uint8_t data) -> void {
+auto uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) -> void {
   bool hi = addr & 1;
   addr = (addr >> 1) & 2047;
 

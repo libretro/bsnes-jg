@@ -75,7 +75,7 @@ struct ARM7TDMI {
   auto armInstructionMemorySwap(uint4, uint4, uint4, uint1) -> void;
   auto armInstructionMoveHalfImmediate(uint8_t, uint4, uint4, uint1, uint1, uint1, uint1) -> void;
   auto armInstructionMoveHalfRegister(uint4, uint4, uint4, uint1, uint1, uint1, uint1) -> void;
-  auto armInstructionMoveImmediateOffset(uint12, uint4, uint4, uint1, uint1, uint1, uint1, uint1) -> void;
+  auto armInstructionMoveImmediateOffset(nall::Natural<12>, uint4, uint4, uint1, uint1, uint1, uint1, uint1) -> void;
   auto armInstructionMoveMultiple(uint16_t, uint4, uint1, uint1, uint1, uint1, uint1) -> void;
   auto armInstructionMoveRegisterOffset(uint4, uint2, uint5, uint4, uint4, uint1, uint1, uint1, uint1, uint1) -> void;
   auto armInstructionMoveToRegisterFromStatus(uint4, uint1) -> void;
@@ -240,7 +240,7 @@ struct ARM7TDMI {
   auto armDisassembleMemorySwap(uint4, uint4, uint4, uint1) -> string;
   auto armDisassembleMoveHalfImmediate(uint8_t, uint4, uint4, uint1, uint1, uint1, uint1) -> string;
   auto armDisassembleMoveHalfRegister(uint4, uint4, uint4, uint1, uint1, uint1, uint1) -> string;
-  auto armDisassembleMoveImmediateOffset(uint12, uint4, uint4, uint1, uint1, uint1, uint1, uint1) -> string;
+  auto armDisassembleMoveImmediateOffset(nall::Natural<12>, uint4, uint4, uint1, uint1, uint1, uint1, uint1) -> string;
   auto armDisassembleMoveMultiple(uint16_t, uint4, uint1, uint1, uint1, uint1, uint1) -> string;
   auto armDisassembleMoveRegisterOffset(uint4, uint2, uint5, uint4, uint4, uint1, uint1, uint1, uint1, uint1) -> string;
   auto armDisassembleMoveToRegisterFromStatus(uint4, uint1) -> string;

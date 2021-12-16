@@ -21,8 +21,8 @@ struct uPD96050 {
   auto readDR() -> uint8_t;
   auto writeDR(uint8_t data) -> void;
 
-  auto readDP(uint12 addr) -> uint8_t;
-  auto writeDP(uint12 addr, uint8_t data) -> void;
+  auto readDP(nall::Natural<12> addr) -> uint8_t;
+  auto writeDP(nall::Natural<12> addr, uint8_t data) -> void;
 
   auto disassemble(nall::Natural<14> ip) -> string;
 

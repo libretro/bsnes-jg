@@ -113,7 +113,7 @@ auto SharpRTC::tickMonth() -> void {
 
 auto SharpRTC::tickYear() -> void {
   year++;
-  year = (uint12)year;
+  year = (nall::Natural<12>)year;
 }
 
 //returns day of week for specified date

@@ -978,13 +978,13 @@ auto HG51B::instructionOR(uint8_t imm, uint5 shift) -> void {
 }
 
 auto HG51B::instructionRDRAM(uint2 byte, nall::Natural<24>& a) -> void {
-  uint12 address = a;
+  nall::Natural<12> address = a;
   if(address >= 0xc00) address -= 0x400;
   r.ram.byte(byte) = dataRAM[address];
 }
 
 auto HG51B::instructionRDRAM(uint2 byte, uint8_t imm) -> void {
-  uint12 address = r.dpr + imm;
+  nall::Natural<12> address = r.dpr + imm;
   if(address >= 0xc00) address -= 0x400;
   r.ram.byte(byte) = dataRAM[address];
 }
@@ -1070,13 +1070,13 @@ auto HG51B::instructionWAIT() -> void {
 }
 
 auto HG51B::instructionWRRAM(uint2 byte, nall::Natural<24>& a) -> void {
-  uint12 address = a;
+  nall::Natural<12> address = a;
   if(address >= 0xc00) address -= 0x400;
   dataRAM[address] = r.ram.byte(byte);
 }
 
 auto HG51B::instructionWRRAM(uint2 byte, uint8_t imm) -> void {
-  uint12 address = r.dpr + imm;
+  nall::Natural<12> address = r.dpr + imm;
   if(address >= 0xc00) address -= 0x400;
   dataRAM[address] = r.ram.byte(byte);
 }
