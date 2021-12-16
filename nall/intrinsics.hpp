@@ -23,8 +23,14 @@ namespace nall {
   #pragma GCC diagnostic ignored "-Wpragmas"
   #pragma GCC diagnostic ignored "-Wswitch-bool"
   #pragma GCC diagnostic ignored "-Wtrigraphs"
-#elif defined(_MSC_VER)
-  #pragma warning(disable:4996)  //libc "deprecation" warnings
 #endif
 
 }
+
+#if defined(__clang__) || defined(__GNUC__)
+  #define noinline   __attribute__((noinline))
+  #define alwaysinline  inline __attribute__((always_inline))
+#else
+  #define noinline
+  #define alwaysinline  inline
+#endif

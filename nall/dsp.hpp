@@ -2,6 +2,11 @@
 
 #include <math.h>
 
+namespace Math {
+  static const long double e  = 2.71828182845904523536;
+  static const long double Pi = 3.14159265358979323846;
+}
+
 namespace nall::DSP {
 
 }

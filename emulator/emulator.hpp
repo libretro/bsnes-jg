@@ -7,7 +7,6 @@ using std::any;
 
 #include <nall/stdint.hpp>
 #include <nall/intrinsics.hpp>
-#include <nall/platform.hpp>
 #include <nall/atoi.hpp>
 #include <nall/bit.hpp>
 #include <nall/endian.hpp>
