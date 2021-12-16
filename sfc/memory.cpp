@@ -34,7 +34,7 @@ auto Bus::map(
 ) -> uint {
   uint id = 1;
   while(counter[id]) {
-    if(++id >= 256) return print("SFC error: bus map exhausted\n"), 0;
+    if(++id >= 256) return printf("SFC error: bus map exhausted\n"), 0;
   }
 
   reader[id] = read;

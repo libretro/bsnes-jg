@@ -68,18 +68,6 @@ auto string_format::append() -> string_format& {
   return *this;
 }
 
-template<typename... P> auto print(P&&... p) -> void {
-  string s{std::forward<P>(p)...};
-  fwrite(s.data(), 1, s.size(), stdout);
-  fflush(stdout);
-}
-
-template<typename... P> auto print(FILE* fp, P&&... p) -> void {
-  string s{std::forward<P>(p)...};
-  fwrite(s.data(), 1, s.size(), fp);
-  if(fp == stdout || fp == stderr) fflush(fp);
-}
-
 template<typename T> auto pad(const T& value, long precision, char padchar) -> string {
   string buffer{value};
   if(precision) buffer.size(precision, padchar);
