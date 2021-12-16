@@ -12,34 +12,34 @@ auto GSU::instruction(uint8_t opcode) -> void {
     case id: return instruction##name(__VA_ARGS__); \
 
   #define op4(id, name) \
-    case id+ 0: return instruction##name((uint4)opcode); \
-    case id+ 1: return instruction##name((uint4)opcode); \
-    case id+ 2: return instruction##name((uint4)opcode); \
-    case id+ 3: return instruction##name((uint4)opcode); \
+    case id+ 0: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+ 1: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+ 2: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+ 3: return instruction##name((nall::Natural< 4>)opcode); \
 
   #define op6(id, name) \
     op4(id, name) \
-    case id+ 4: return instruction##name((uint4)opcode); \
-    case id+ 5: return instruction##name((uint4)opcode); \
+    case id+ 4: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+ 5: return instruction##name((nall::Natural< 4>)opcode); \
 
   #define op12(id, name) \
     op6(id, name) \
-    case id+ 6: return instruction##name((uint4)opcode); \
-    case id+ 7: return instruction##name((uint4)opcode); \
-    case id+ 8: return instruction##name((uint4)opcode); \
-    case id+ 9: return instruction##name((uint4)opcode); \
-    case id+10: return instruction##name((uint4)opcode); \
-    case id+11: return instruction##name((uint4)opcode); \
+    case id+ 6: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+ 7: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+ 8: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+ 9: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+10: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+11: return instruction##name((nall::Natural< 4>)opcode); \
 
   #define op15(id, name) \
     op12(id, name) \
-    case id+12: return instruction##name((uint4)opcode); \
-    case id+13: return instruction##name((uint4)opcode); \
-    case id+14: return instruction##name((uint4)opcode); \
+    case id+12: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+13: return instruction##name((nall::Natural< 4>)opcode); \
+    case id+14: return instruction##name((nall::Natural< 4>)opcode); \
 
   #define op16(id, name) \
     op15(id, name) \
-    case id+15: return instruction##name((uint4)opcode); \
+    case id+15: return instruction##name((nall::Natural< 4>)opcode); \
 
   switch(opcode) {
   op  (0x00, STOP)

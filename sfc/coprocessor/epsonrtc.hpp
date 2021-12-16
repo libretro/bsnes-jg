@@ -20,34 +20,34 @@ struct EpsonRTC : Thread {
 
   uint2 chipselect;
   enum class State : unsigned { Mode, Seek, Read, Write } state;
-  uint4 mdr;
-  uint4 offset;
+  nall::Natural< 4> mdr;
+  nall::Natural< 4> offset;
   unsigned wait;
   uint1 ready;
   uint1 holdtick;
 
-  uint4 secondlo;
+  nall::Natural< 4> secondlo;
   uint3 secondhi;
   uint1 batteryfailure;
 
-  uint4 minutelo;
+  nall::Natural< 4> minutelo;
   uint3 minutehi;
   uint1 resync;
 
-  uint4 hourlo;
+  nall::Natural< 4> hourlo;
   uint2 hourhi;
   uint1 meridian;
 
-  uint4 daylo;
+  nall::Natural< 4> daylo;
   uint2 dayhi;
   uint1 dayram;
 
-  uint4 monthlo;
+  nall::Natural< 4> monthlo;
   uint1 monthhi;
   uint2 monthram;
 
-  uint4 yearlo;
-  uint4 yearhi;
+  nall::Natural< 4> yearlo;
+  nall::Natural< 4> yearhi;
 
   uint3 weekday;
 
@@ -67,8 +67,8 @@ struct EpsonRTC : Thread {
 
   //memory.cpp
   auto rtcReset() -> void;
-  auto rtcRead(uint4 addr) -> uint4;
-  auto rtcWrite(uint4 addr, uint4 data) -> void;
+  auto rtcRead(nall::Natural< 4> addr) -> nall::Natural< 4>;
+  auto rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) -> void;
 
   auto load(const uint8_t* data) -> void;
   auto save(uint8_t* data) -> void;

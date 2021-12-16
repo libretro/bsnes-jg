@@ -2,7 +2,7 @@
 
 namespace SuperFamicom {
 
-auto SharpRTC::rtcRead(uint4 addr) -> uint4 {
+auto SharpRTC::rtcRead(nall::Natural< 4> addr) -> nall::Natural< 4> {
   switch(addr) {
   case  0: return second % 10;
   case  1: return second / 10;
@@ -21,7 +21,7 @@ auto SharpRTC::rtcRead(uint4 addr) -> uint4 {
   }
 }
 
-auto SharpRTC::rtcWrite(uint4 addr, uint4 data) -> void {
+auto SharpRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) -> void {
   switch(addr) {
   case  0: second = second / 10 * 10 + data; break;
   case  1: second = data * 10 + second % 10; break;

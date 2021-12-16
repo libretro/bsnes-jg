@@ -79,7 +79,7 @@ private:
     auto lock() -> void;
     auto update() -> void;
 
-    uint4  id;
+    nall::Natural< 4>  id;
     uint32_t erased;
     uint1  locked;
     uint1  erasing;

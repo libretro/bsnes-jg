@@ -25,8 +25,8 @@ struct SharpRTC : Thread {
   unsigned weekday;
 
   //memory.cpp
-  auto rtcRead(uint4 addr) -> uint4;
-  auto rtcWrite(uint4 addr, uint4 data) -> void;
+  auto rtcRead(nall::Natural< 4> addr) -> nall::Natural< 4>;
+  auto rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) -> void;
 
   auto load(const uint8_t* data) -> void;
   auto save(uint8_t* data) -> void;

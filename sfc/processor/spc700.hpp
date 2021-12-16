@@ -63,7 +63,7 @@ struct SPC700 {
   auto instructionBreak() -> void;
   auto instructionCallAbsolute() -> void;
   auto instructionCallPage() -> void;
-  auto instructionCallTable(uint4) -> void;
+  auto instructionCallTable(nall::Natural< 4>) -> void;
   auto instructionComplementCarry() -> void;
   auto instructionDecimalAdjustAdd() -> void;
   auto instructionDecimalAdjustSub() -> void;

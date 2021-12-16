@@ -353,7 +353,7 @@ auto SPC700::instructionCallPage() -> void {
   PC = 0xff00 | address;
 }
 
-auto SPC700::instructionCallTable(uint4 vector) -> void {
+auto SPC700::instructionCallTable(nall::Natural< 4> vector) -> void {
   read(PC);
   idle();
   push(PC >> 8);

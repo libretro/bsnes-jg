@@ -353,8 +353,8 @@ HG51B::HG51B() {
   }
 
   //LD P,reg
-  for(uint4 reg  : range(16))
-  for(uint4 null : range(16)) {
+  for(nall::Natural< 4> reg  : range(16))
+  for(nall::Natural< 4> null : range(16)) {
     auto opcode = pattern("0110 0011 .... rrrr");
     bind(opcode | reg << 0 | null << 4, LD, r.p, reg);
   }
@@ -718,7 +718,7 @@ HG51B::HG51B() {
   }
 
   //SWAP A,Rn
-  for(uint4 reg  : range(16))
+  for(nall::Natural< 4> reg  : range(16))
   for(nall::Natural< 6> null : range(64)) {
     auto opcode = pattern("1111 00.. .... rrrr");
     bind(opcode | reg << 0 | null << 4, SWAP, r.a, reg);
@@ -938,7 +938,7 @@ auto HG51B::instructionLD(nall::Natural<24>& out, nall::Natural< 7> reg) -> void
   out = readRegister(reg);
 }
 
-auto HG51B::instructionLD(nall::Natural<15>& out, uint4 reg) -> void {
+auto HG51B::instructionLD(nall::Natural<15>& out, nall::Natural< 4> reg) -> void {
   out = r.gpr[reg];
 }
 
@@ -1052,7 +1052,7 @@ auto HG51B::instructionSUBR(uint8_t imm, nall::Natural< 5> shift) -> void {
   r.a = algorithmSUB(imm, r.a << shift);
 }
 
-auto HG51B::instructionSWAP(nall::Natural<24>& a, uint4 reg) -> void {
+auto HG51B::instructionSWAP(nall::Natural<24>& a, nall::Natural< 4> reg) -> void {
   std::swap(a, r.gpr[reg]);
 }
 

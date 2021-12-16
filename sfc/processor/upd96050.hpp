@@ -104,7 +104,7 @@ struct uPD96050 {
     VariadicNatural pc;    //program counter
     VariadicNatural rp;    //ROM pointer
     VariadicNatural dp;    //data pointer
-    uint4 sp;              //stack pointer
+    nall::Natural< 4> sp;              //stack pointer
     uint16_t si;           //serial input
     uint16_t so;           //serial output
     int16_t k;

@@ -19,13 +19,13 @@ auto uPD96050::exec() -> void {
 
 auto uPD96050::execOP(nall::Natural<24> opcode) -> void {
   uint2 pselect = opcode >> 20;  //P select
-  uint4 alu     = opcode >> 16;  //ALU operation mode
+  nall::Natural< 4> alu     = opcode >> 16;  //ALU operation mode
   uint1 asl     = opcode >> 15;  //accumulator select
   uint2 dpl     = opcode >> 13;  //DP low modify
-  uint4 dphm    = opcode >>  9;  //DP high XOR modify
+  nall::Natural< 4> dphm    = opcode >>  9;  //DP high XOR modify
   uint1 rpdcr   = opcode >>  8;  //RP decrement
-  uint4 src     = opcode >>  4;  //move source
-  uint4 dst     = opcode >>  0;  //move destination
+  nall::Natural< 4> src     = opcode >>  4;  //move source
+  nall::Natural< 4> dst     = opcode >>  0;  //move destination
 
   uint16_t idb;
   switch(src) {
@@ -227,7 +227,7 @@ auto uPD96050::execJP(nall::Natural<24> opcode) -> void {
 
 auto uPD96050::execLD(nall::Natural<24> opcode) -> void {
   uint16_t id = opcode >> 6;  //immediate data
-  uint4 dst = opcode >> 0;  //destination
+  nall::Natural< 4> dst = opcode >> 0;  //destination
 
   switch(dst) {
   case  0: break;
@@ -321,13 +321,13 @@ auto uPD96050::disassemble(nall::Natural<14> ip) -> string {
 
   if(type == 0 || type == 1) {  //OP,RT
     uint2 pselect = opcode >> 20;
-    uint4 alu     = opcode >> 16;
+    nall::Natural< 4> alu     = opcode >> 16;
     uint1 asl     = opcode >> 15;
     uint2 dpl     = opcode >> 13;
-    uint4 dphm    = opcode >>  9;
+    nall::Natural< 4> dphm    = opcode >>  9;
     uint1 rpdcr   = opcode >>  8;
-    uint4 src     = opcode >>  4;
-    uint4 dst     = opcode >>  0;
+    nall::Natural< 4> src     = opcode >>  4;
+    nall::Natural< 4> dst     = opcode >>  0;
 
     switch(alu) {
     case  0: output.append("nop     "); break;
@@ -480,7 +480,7 @@ auto uPD96050::disassemble(nall::Natural<14> ip) -> string {
   if(type == 3) {  //LD
     output.append("ld      ");
     uint16_t id = opcode >> 6;
-    uint4 dst = opcode >> 0;
+    nall::Natural< 4> dst = opcode >> 0;
 
     output.append("$", hex(id, 4L), ",");
 

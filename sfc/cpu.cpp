@@ -309,7 +309,7 @@ auto CPU::readCPU(unsigned addr, uint8_t data) -> uint8_t {
   case 0x4210:  //RDNMI
     data &= 0x70;
     data |= rdnmi() << 7;
-    data |= (uint4)version;
+    data |= (nall::Natural< 4>)version;
     return data;
 
   case 0x4211:  //TIMEUP

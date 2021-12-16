@@ -38,7 +38,7 @@ struct ICD : Emulator::Platform, Thread {
 
 private:
   struct Packet {
-    auto operator[](uint4 address) -> uint8_t& { return data[address]; }
+    auto operator[](nall::Natural< 4> address) -> uint8_t& { return data[address]; }
     uint8_t data[16];
   };
   Packet packet[64];
@@ -50,7 +50,7 @@ private:
   uint1 strobeLock;
   uint1 packetLock;
   Packet joypPacket;
-  uint4 packetOffset;
+  nall::Natural< 4> packetOffset;
   uint8_t bitData;
   uint3 bitOffset;
 

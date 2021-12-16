@@ -61,7 +61,7 @@ struct HG51B {
   auto instructionJMP(uint8_t data, uint1 far, const uint1& take) -> void;
   auto instructionJSR(uint8_t data, uint1 far, const uint1& take) -> void;
   auto instructionLD(nall::Natural<24>& out, nall::Natural< 7> reg) -> void;
-  auto instructionLD(nall::Natural<15>& out, uint4 reg) -> void;
+  auto instructionLD(nall::Natural<15>& out, nall::Natural< 4> reg) -> void;
   auto instructionLD(nall::Natural<24>& out, uint8_t imm) -> void;
   auto instructionLD(nall::Natural<15>& out, uint8_t imm) -> void;
   auto instructionLDL(nall::Natural<15>& out, uint8_t imm) -> void;
@@ -88,7 +88,7 @@ struct HG51B {
   auto instructionSUB(uint8_t imm, nall::Natural< 5> shift) -> void;
   auto instructionSUBR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
   auto instructionSUBR(uint8_t imm, nall::Natural< 5> shift) -> void;
-  auto instructionSWAP(nall::Natural<24>& a, uint4 reg) -> void;
+  auto instructionSWAP(nall::Natural<24>& a, nall::Natural< 4> reg) -> void;
   auto instructionSXB() -> void;
   auto instructionSXW() -> void;
   auto instructionWAIT() -> void;
@@ -170,7 +170,7 @@ protected:
       uint1  enable;
       uint1  reading;
       uint1  writing;
-      uint4  pending;
+      nall::Natural< 4>  pending;
       nall::Natural<24> address;
     } bus;
   } io;
