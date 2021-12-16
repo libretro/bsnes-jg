@@ -21,6 +21,5 @@ using uint15 = nall::Natural<15>;
 using uint17 = nall::Natural<17>;
 using uint20 = nall::Natural<20>;
 using uint21 = nall::Natural<21>;
-using uint22 = nall::Natural<22>;
 using uint23 = nall::Natural<23>;
 using uint24 = nall::Natural<24>;
