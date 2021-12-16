@@ -145,7 +145,7 @@ private:
 
     //$4207-$420a
     nall::Natural<12> htime = 0x1ff + 1 << 2;
-    uint9  vtime = 0x1ff;
+    nall::Natural< 9>  vtime = 0x1ff;
 
     //$420d
     uint1 fastROM = 0;

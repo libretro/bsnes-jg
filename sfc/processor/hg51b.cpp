@@ -463,7 +463,7 @@ HG51B::HG51B() {
   }
 
   //???
-  for(uint9 null : range(512)) {
+  for(nall::Natural< 9> null : range(512)) {
     auto opcode = pattern("0111 111. .... ....");
     bind(opcode | null << 0, NOP);
   }
@@ -658,7 +658,7 @@ HG51B::HG51B() {
   }
 
   //???
-  for(uint9 null : range(512)) {
+  for(nall::Natural< 9> null : range(512)) {
     auto opcode = pattern("1110 001. .... ....");
     bind(opcode | null << 0, NOP);
   }

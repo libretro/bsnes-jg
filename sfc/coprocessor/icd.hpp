@@ -56,7 +56,7 @@ private:
 
   uint8_t output[4 * 512];
   uint2 readBank;
-  uint9 readAddress;
+  nall::Natural< 9> readAddress;
   uint2 writeBank;
 
   uint8_t r6003;      //control port
