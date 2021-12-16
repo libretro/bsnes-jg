@@ -993,23 +993,13 @@ void jg_exec_frame() {
 
 int jg_game_load() {
     emulator->configure("Audio/Frequency", SAMPLERATE);
-    
     emulator->configure("Video/BlurEmulation", false);
     
     emulator->configure("Hacks/Entropy", "Low");
-    
     emulator->configure("Hacks/CPU/Overclock", 100);
     emulator->configure("Hacks/CPU/FastMath", false);
     emulator->configure("Hacks/SA1/Overclock", 100);
     emulator->configure("Hacks/SuperFX/Overclock", 100);
-    
-    emulator->configure("Hacks/PPU/Deinterlace", false);
-    emulator->configure("Hacks/PPU/NoSpriteLimit", false);
-    emulator->configure("Hacks/PPU/NoVRAMBlocking", false);
-    emulator->configure("Hacks/PPU/Mode7/Perspective", false);
-    emulator->configure("Hacks/PPU/Mode7/Supersample", false);
-    emulator->configure("Hacks/PPU/Mode7/Mosaic", false);
-    
     emulator->configure("Hacks/Coprocessor/DelayedSync", false); // default true
     emulator->configure("Hacks/Coprocessor/PreferHLE", true);
     

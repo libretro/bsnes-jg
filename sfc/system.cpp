@@ -18,6 +18,7 @@ auto System::serialize(bool synchronize) -> serializer {
   unsigned serializeSize = information.serializeSize[synchronize];
   char version[16] = {};
   char description[512] = {};
+  bool placeholder = false;
   memory::copy(&version, (const char*)Emulator::SerializerVersion, Emulator::SerializerVersion.size());
 
   serializer s(serializeSize);
@@ -26,7 +27,7 @@ auto System::serialize(bool synchronize) -> serializer {
   s.array(version);
   s.array(description);
   s.boolean(synchronize);
-  s.boolean(hacks.fastPPU);
+  s.boolean(placeholder);
   serializeAll(s, synchronize);
   return s;
 }
@@ -37,19 +38,18 @@ auto System::unserialize(serializer& s) -> bool {
   char version[16] = {};
   char description[512] = {};
   bool synchronize = false;
-  bool fastPPU = false;
+  bool placeholder = false;
 
   s.integer(signature);
   s.integer(serializeSize);
   s.array(version);
   s.array(description);
   s.boolean(synchronize);
-  s.boolean(fastPPU);
+  s.boolean(placeholder);
 
   if(signature != 0x31545342) return false;
   if(serializeSize != information.serializeSize[synchronize]) return false;
   if(string{version} != Emulator::SerializerVersion) return false;
-  if(fastPPU != hacks.fastPPU) return false;
 
   if(synchronize) power(/* reset = */ false);
   serializeAll(s, synchronize);
@@ -293,8 +293,6 @@ auto System::unload() -> void {
 }
 
 auto System::power(bool reset) -> void {
-  hacks.fastPPU = configuration.hacks.ppu.fast;
-
   Emulator::audio.reset(interface);
 
   random.entropy(Random::Entropy::Low);  //fallback case
