@@ -14,7 +14,6 @@ struct file {
   virtual auto seek(intmax offset, index = index::absolute) -> void = 0;
   virtual auto read() -> uint8_t = 0;
   virtual auto write(uint8_t data) -> void = 0;
-  virtual auto flush() -> void {}
 
   auto end() const -> bool {
     return offset() >= size();
@@ -53,10 +52,6 @@ struct file {
     for(auto n : range(bytes)) write(data), data >>= 8;
   }
 
-  auto writem(uintmax data, uint bytes) -> void {
-    for(auto n : reverse(range(bytes))) write(data >> n * 8);
-  }
-
   auto writes(const string& s) -> void {
     write(s.data<uint8_t>(), s.size());
   }
@@ -91,10 +86,6 @@ struct file : vfs::file {
 
   auto write(uint8_t data_) -> void override {
     _fp.write(data_);
-  }
-
-  auto flush() -> void override {
-    _fp.flush();
   }
 
 private:

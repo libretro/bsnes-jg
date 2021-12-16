@@ -20,28 +20,7 @@ struct file_buffer {
   file_buffer() = default;
   file_buffer(const string& filename, uint mode) { open(filename, mode); }
 
-  file_buffer(file_buffer&& source) { operator=(std::move(source)); }
-
   ~file_buffer() { close(); }
-
-  auto operator=(file_buffer&& source) -> file_buffer& {
-    buffer = source.buffer;
-    bufferOffset = source.bufferOffset;
-    bufferDirty = source.bufferDirty;
-    fileHandle = source.fileHandle;
-    fileOffset = source.fileOffset;
-    fileSize = source.fileSize;
-    fileMode = source.fileMode;
-
-    source.bufferOffset = -1;
-    source.bufferDirty = false;
-    source.fileHandle = nullptr;
-    source.fileOffset = 0;
-    source.fileSize = 0;
-    source.fileMode = mode::read;
-
-    return *this;
-  }
 
   explicit operator bool() const {
     return (bool)fileHandle;
@@ -55,30 +34,6 @@ struct file_buffer {
     return buffer[fileOffset++ & buffer.size() - 1];
   }
 
-  template<typename T = uint64_t> auto readl(uint length = 1) -> T {
-    T data = 0;
-    for(uint n : range(length)) {
-      data |= (T)read() << n * 8;
-    }
-    return data;
-  }
-
-  template<typename T = uint64_t> auto readm(uint length = 1) -> T {
-    T data = 0;
-    while(length--) {
-      data <<= 8;
-      data |= read();
-    }
-    return data;
-  }
-
-  auto reads(uint length) -> string {
-    string result;
-    result.resize(length);
-    for(auto& byte : result) byte = read();
-    return result;
-  }
-
   auto read(array_span<uint8_t> memory) -> void {
     for(auto& byte : memory) byte = read();
   }
@@ -90,37 +45,6 @@ struct file_buffer {
     buffer[fileOffset++ & buffer.size() - 1] = data;
     bufferDirty = true;
     if(fileOffset > fileSize) fileSize = fileOffset;
-  }
-
-  template<typename T = uint64_t> auto writel(T data, uint length = 1) -> void {
-    while(length--) {
-      write(uint8_t(data));
-      data >>= 8;
-    }
-  }
-
-  template<typename T = uint64_t> auto writem(T data, uint length = 1) -> void {
-    for(uint n : reverse(range(length))) {
-      write(uint8_t(data >> n * 8));
-    }
-  }
-
-  auto writes(const string& s) -> void {
-    for(auto& byte : s) write(byte);
-  }
-
-  auto write(array_view<uint8_t> memory) -> void {
-    for(auto& byte : memory) write(byte);
-  }
-
-  template<typename... P> auto print(P&&... p) -> void {
-    string s{std::forward<P>(p)...};
-    for(auto& byte : s) write(byte);
-  }
-
-  auto flush() -> void {
-    bufferFlush();
-    fflush(fileHandle);
   }
 
   auto seek(int64_t offset, uint index_ = index::absolute) -> void {
@@ -154,20 +78,6 @@ struct file_buffer {
   auto size() const -> uint64_t {
     if(!fileHandle) return 0;
     return fileSize;
-  }
-
-  auto truncate(uint64_t size) -> bool {
-    if(!fileHandle) return false;
-    #if defined(_WIN32)
-    return _chsize(fileno(fileHandle), size) == 0;
-    #else
-    return ftruncate(fileno(fileHandle), size) == 0;
-    #endif
-  }
-
-  auto end() const -> bool {
-    if(!fileHandle) return true;
-    return fileOffset >= fileSize;
   }
 
   auto open(const string& filename, uint mode_) -> bool {
