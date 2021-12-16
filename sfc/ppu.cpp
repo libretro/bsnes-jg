@@ -1419,7 +1419,7 @@ auto PPU::Object::run() -> void {
     const auto& tile = oamTile[n];
     if(!tile.valid) break;
 
-    int px = x - (int9)tile.x;
+    int px = x - (nall::Integer< 9>)tile.x;
     if(px & ~7) continue;
 
     unsigned color = 0, shift = tile.hflip ? px : 7 - px;

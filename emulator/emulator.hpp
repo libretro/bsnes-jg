@@ -33,7 +33,6 @@ using std::any;
 #include <nall/vfs.hpp>
 using namespace nall;
 
-#include "types.hpp"
 #include "memory.hpp"
 #include "audio.hpp"
 
