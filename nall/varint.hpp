@@ -2,48 +2,6 @@
 
 namespace nall {
 
-struct varint {
-  virtual auto read() -> uint8_t = 0;
-  virtual auto write(uint8_t) -> void = 0;
-
-  auto readvu() -> uintmax {
-    uintmax data = 0, shift = 1;
-    while(true) {
-      uint8_t x = read();
-      data += (x & 0x7f) * shift;
-      if(x & 0x80) break;
-      shift <<= 7;
-      data += shift;
-    }
-    return data;
-  }
-
-  auto readvs() -> intmax {
-    uintmax data = readvu();
-    bool negate = data & 1;
-    data >>= 1;
-    if(negate) data = ~data;
-    return data;
-  }
-
-  auto writevu(uintmax data) -> void {
-    while(true) {
-      uint8_t x = data & 0x7f;
-      data >>= 7;
-      if(data == 0) return write(0x80 | x);
-      write(x);
-      data--;
-    }
-  }
-
-  auto writevs(intmax data) -> void {
-    bool negate = data < 0;
-    if(negate) data = ~data;
-    data = (data << 1) | negate;
-    writevu(data);
-  }
-};
-
 struct VariadicNatural {
   inline VariadicNatural() : mask(~0ull) { assign(0); }
   template<typename T> inline VariadicNatural(const T& value) : mask(~0ull) { assign(value); }

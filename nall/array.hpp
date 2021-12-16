@@ -128,8 +128,6 @@ template<typename T> struct array_span : array_view<T> {
 
   //array_span<uint8_t> specializations
   template<typename U> auto writel(U value, uint size) -> void;
-  template<typename U> auto writevn(U value, uint size) -> void;
-  template<typename U> auto writevi(U value, uint size) -> void;
 };
 
 template<> inline auto array_span<uint8_t>::write(uint8_t value) -> void {
@@ -140,23 +138,6 @@ template<> inline auto array_span<uint8_t>::write(uint8_t value) -> void {
 
 template<> template<typename U> inline auto array_span<uint8_t>::writel(U value, uint size) -> void {
   for(uint byte : range(size)) write(value >> byte * 8);
-}
-
-template<> template<typename U> inline auto array_span<uint8_t>::writevn(U value, uint size) -> void {
-  while(true) {
-    auto byte = value & 0x7f;
-    value >>= 7;
-    if(value == 0) return write(0x80 | byte);
-    write(byte);
-    value--;
-  }
-}
-
-template<> template<typename U> inline auto array_span<uint8_t>::writevi(U value, uint size) -> void {
-  bool negate = value < 0;
-  if(negate) value = ~value;
-  value = value << 1 | negate;
-  writevn(value);
 }
 
 template<typename T> struct array;
