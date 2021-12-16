@@ -49,8 +49,6 @@ protected:
 template<typename T> struct stringify;
 
 //format.hpp
-template<typename... P> inline auto print(P&&...) -> void;
-template<typename... P> inline auto print(FILE*, P&&...) -> void;
 template<typename T> inline auto pad(const T& value, long precision = 0, char padchar = ' ') -> string;
 inline auto hex(uintmax value, long precision = 0, char padchar = '0') -> string;
 inline auto octal(uintmax value, long precision = 0, char padchar = '0') -> string;

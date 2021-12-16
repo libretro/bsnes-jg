@@ -322,7 +322,7 @@ auto Interface::synchronize(uint64 timestamp) -> void {
   // The line below was commented because in bsnes, there always seems to be
   // a timestamp. This allows nall/chrono.hpp to be removed.
   //if(!timestamp) timestamp = chrono::timestamp();
-  if (!timestamp) print("No timestamp in Interface::synchronize!!!\n");
+  if (!timestamp) printf("No timestamp in Interface::synchronize!!!\n");
   if(cartridge.has.EpsonRTC) epsonrtc.synchronize(timestamp);
   if(cartridge.has.SharpRTC) sharprtc.synchronize(timestamp);
 }
