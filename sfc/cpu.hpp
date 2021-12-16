@@ -123,7 +123,7 @@ private:
 
   struct IO {
     //$2181-$2183
-    uint17 wramAddress = 0;
+    nall::Natural<17> wramAddress = 0;
 
     //$4200
     Boolean hirqEnable = 0;
