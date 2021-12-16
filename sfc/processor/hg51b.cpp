@@ -794,13 +794,13 @@ auto HG51B::algorithmAND(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natu
 
 auto HG51B::algorithmASR(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24> {
   if(s > 24) s = 0;
-  a = (int24)a >> s;
+  a = (nall::Integer<24>)a >> s;
   r.n = a & 0x800000;
   r.z = a == 0;
   return a;
 }
 
-auto HG51B::algorithmMUL(int24 x, int24 y) -> nall::Natural<48> {
+auto HG51B::algorithmMUL(nall::Integer<24> x, nall::Integer<24> y) -> nall::Natural<48> {
   return (nall::Integer<48>)x * (nall::Integer<48>)y;
 }
 

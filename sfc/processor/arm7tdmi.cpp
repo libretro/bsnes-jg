@@ -795,7 +795,7 @@ auto ARM7TDMI::armMoveToStatus(nall::Natural< 4> field, nall::Natural< 1> mode, 
 }
 
 auto ARM7TDMI::armInstructionBranch
-(int24 displacement, nall::Natural< 1> link) -> void {
+(nall::Integer<24> displacement, nall::Natural< 1> link) -> void {
   if(link) r(14) = r(15) - 4;
   r(15) = r(15) + displacement * 4;
 }
@@ -1417,7 +1417,7 @@ auto ARM7TDMI::disassembleRegisters() -> string {
 //
 
 auto ARM7TDMI::armDisassembleBranch
-(int24 displacement, nall::Natural< 1> link) -> string {
+(nall::Integer<24> displacement, nall::Natural< 1> link) -> string {
   return {"b", link ? "l" : "", _c, " 0x", hex(_pc + 8 + displacement * 4, 8L)};
 }
 

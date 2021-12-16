@@ -65,7 +65,7 @@ struct ARM7TDMI {
   auto armALU(nall::Natural< 4> mode, nall::Natural< 4> target, nall::Natural< 4> source, uint32_t data) -> void;
   auto armMoveToStatus(nall::Natural< 4> field, nall::Natural< 1> source, uint32_t data) -> void;
 
-  auto armInstructionBranch(int24, nall::Natural< 1>) -> void;
+  auto armInstructionBranch(nall::Integer<24>, nall::Natural< 1>) -> void;
   auto armInstructionBranchExchangeRegister(nall::Natural< 4>) -> void;
   auto armInstructionDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> void;
   auto armInstructionDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> void;
@@ -230,7 +230,7 @@ struct ARM7TDMI {
   function<auto () -> void> thumbInstruction[65536];
 
   //disassembler.cpp
-  auto armDisassembleBranch(int24, nall::Natural< 1>) -> string;
+  auto armDisassembleBranch(nall::Integer<24>, nall::Natural< 1>) -> string;
   auto armDisassembleBranchExchangeRegister(nall::Natural< 4>) -> string;
   auto armDisassembleDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> string;
   auto armDisassembleDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> string;

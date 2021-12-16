@@ -35,7 +35,7 @@ struct HG51B {
   auto algorithmADD(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
   auto algorithmAND(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
   auto algorithmASR(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24>;
-  auto algorithmMUL(int24 x, int24 y) -> nall::Natural<48>;
+  auto algorithmMUL(nall::Integer<24> x, nall::Integer<24> y) -> nall::Natural<48>;
   auto algorithmOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
   auto algorithmROR(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24>;
   auto algorithmSHL(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24>;
