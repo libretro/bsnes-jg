@@ -12,8 +12,3 @@ namespace nall {
 #include <nall/primitives/boolean.hpp>
 #include <nall/primitives/natural.hpp>
 #include <nall/primitives/integer.hpp>
-
-namespace nall {
-  template<uint Bits> auto Natural<Bits>::integer() const -> Integer<Bits> { return Integer<Bits>(*this); }
-  template<uint Bits> auto Integer<Bits>::natural() const -> Natural<Bits> { return Natural<Bits>(*this); }
-}

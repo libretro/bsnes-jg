@@ -986,10 +986,10 @@ auto PPU::Background::runMode7() -> void {
   int c = (int16)ppu.io.m7c;
   int d = (int16)ppu.io.m7d;
 
-  int hcenter = (int13)ppu.io.m7x;
-  int vcenter = (int13)ppu.io.m7y;
-  int hoffset = (int13)ppu.io.hoffsetMode7;
-  int voffset = (int13)ppu.io.voffsetMode7;
+  int hcenter = (nall::Integer<13>)ppu.io.m7x;
+  int vcenter = (nall::Integer<13>)ppu.io.m7y;
+  int hoffset = (nall::Integer<13>)ppu.io.hoffsetMode7;
+  int voffset = (nall::Integer<13>)ppu.io.voffsetMode7;
 
   uint x = mosaic.hoffset;
   uint y = ppu.vcounter();

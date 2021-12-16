@@ -3,7 +3,6 @@
 using  int8 = int8_t;
 using  int9 = nall::Integer< 9>;
 using int11 = nall::Integer<11>;
-using int13 = nall::Integer<13>;
 using int16 = int16_t;
 using int22 = nall::Integer<22>;
 using int24 = nall::Integer<24>;
