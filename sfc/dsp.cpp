@@ -34,13 +34,8 @@ auto DSP::serialize(serializer& s) -> void {
 }
 
 auto DSP::main() -> void {
-  if(!configuration.hacks.dsp.fast) {
-    spc_dsp.run(1);
-    clock += 2;
-  } else {
-    spc_dsp.run(32);
-    clock += 2 * 32;
-  }
+  spc_dsp.run(1);
+  clock += 2;
 
   int count = spc_dsp.sample_count();
   if(count > 0) {
@@ -59,12 +54,6 @@ auto DSP::read(uint8_t address) -> uint8_t {
 }
 
 auto DSP::write(uint8_t address, uint8_t data) -> void {
-  if(configuration.hacks.dsp.echoShadow) {
-    if(address == 0x6c && (data & 0x20)) {
-      memset(echoram, 0x00, 65536);
-    }
-  }
-
   spc_dsp.write(address, data);
 }
 
@@ -77,12 +66,7 @@ auto DSP::power(bool reset) -> void {
   stream = Emulator::audio.createStream(2, system.apuFrequency() / 768.0);
 
   if(!reset) {
-    if(!configuration.hacks.dsp.echoShadow) {
-      spc_dsp.init(apuram, apuram);
-    } else {
-      memset(echoram, 0x00, 65536);
-      spc_dsp.init(apuram, echoram);
-    }
+    spc_dsp.init(apuram, apuram);
     spc_dsp.reset();
     spc_dsp.set_output(samplebuffer, 8192);
   } else {

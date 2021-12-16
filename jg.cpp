@@ -1010,8 +1010,6 @@ int jg_game_load() {
     emulator->configure("Hacks/PPU/Mode7/Supersample", false);
     emulator->configure("Hacks/PPU/Mode7/Mosaic", false);
     
-    emulator->configure("Hacks/DSP/Fast", false); // default true
-    emulator->configure("Hacks/DSP/EchoShadow", false);
     emulator->configure("Hacks/Coprocessor/DelayedSync", false); // default true
     emulator->configure("Hacks/Coprocessor/PreferHLE", true);
     
