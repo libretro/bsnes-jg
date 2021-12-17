@@ -31,8 +31,8 @@
 #include <jg/jg_snes.h>
 
 #include "emulator/emulator.hpp"
-#include "sfc/heuristics.hpp"
-#include "sfc/interface.hpp"
+#include "src/heuristics.hpp"
+#include "src/interface.hpp"
 
 #include "gamedb.hpp"
 

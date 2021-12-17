@@ -68,68 +68,68 @@ CSRCS := $(OBJDIR)/deps/gb/apu.c \
 
 CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 	$(OBJDIR)/emulator/emulator.cpp \
-	$(OBJDIR)/sfc/cartridge.cpp \
-	$(OBJDIR)/sfc/controller/controller.cpp \
-	$(OBJDIR)/sfc/controller/gamepad.cpp \
-	$(OBJDIR)/sfc/controller/justifier.cpp \
-	$(OBJDIR)/sfc/controller/mouse.cpp \
-	$(OBJDIR)/sfc/controller/super-multitap.cpp \
-	$(OBJDIR)/sfc/controller/super-scope.cpp \
-	$(OBJDIR)/sfc/coprocessor/armdsp.cpp \
-	$(OBJDIR)/sfc/coprocessor/cx4.cpp \
-	$(OBJDIR)/sfc/coprocessor/dip.cpp \
-	$(OBJDIR)/sfc/coprocessor/dsp1.cpp \
-	$(OBJDIR)/sfc/coprocessor/dsp2.cpp \
-	$(OBJDIR)/sfc/coprocessor/dsp4.cpp \
-	$(OBJDIR)/sfc/coprocessor/epsonrtc.cpp \
-	$(OBJDIR)/sfc/coprocessor/event.cpp \
-	$(OBJDIR)/sfc/coprocessor/hitachidsp.cpp \
-	$(OBJDIR)/sfc/coprocessor/icd.cpp \
-	$(OBJDIR)/sfc/coprocessor/mcc.cpp \
-	$(OBJDIR)/sfc/coprocessor/msu1.cpp \
-	$(OBJDIR)/sfc/coprocessor/necdsp.cpp \
-	$(OBJDIR)/sfc/coprocessor/obc1.cpp \
-	$(OBJDIR)/sfc/coprocessor/sa1.cpp \
-	$(OBJDIR)/sfc/coprocessor/sdd1.cpp \
-	$(OBJDIR)/sfc/coprocessor/sharprtc.cpp \
-	$(OBJDIR)/sfc/coprocessor/spc7110.cpp \
-	$(OBJDIR)/sfc/coprocessor/st0010.cpp \
-	$(OBJDIR)/sfc/coprocessor/superfx.cpp \
-	$(OBJDIR)/sfc/cpu.cpp \
-	$(OBJDIR)/sfc/dsp.cpp \
-	$(OBJDIR)/sfc/dsp/SPC_DSP.cpp \
-	$(OBJDIR)/sfc/expansion/expansion.cpp \
-	$(OBJDIR)/sfc/expansion/satellaview.cpp \
-	$(OBJDIR)/sfc/heuristics.cpp \
-	$(OBJDIR)/sfc/interface.cpp \
-	$(OBJDIR)/sfc/memory.cpp \
-	$(OBJDIR)/sfc/ppu.cpp \
-	$(OBJDIR)/sfc/processor/arm7tdmi.cpp \
-	$(OBJDIR)/sfc/processor/gsu.cpp \
-	$(OBJDIR)/sfc/processor/hg51b.cpp \
-	$(OBJDIR)/sfc/processor/spc700.cpp \
-	$(OBJDIR)/sfc/processor/upd96050.cpp \
-	$(OBJDIR)/sfc/processor/wdc65816.cpp \
-	$(OBJDIR)/sfc/slot/bsmemory.cpp \
-	$(OBJDIR)/sfc/slot/sufamiturbo.cpp \
-	$(OBJDIR)/sfc/smp.cpp \
-	$(OBJDIR)/sfc/system.cpp \
+	$(OBJDIR)/src/cartridge.cpp \
+	$(OBJDIR)/src/controller/controller.cpp \
+	$(OBJDIR)/src/controller/gamepad.cpp \
+	$(OBJDIR)/src/controller/justifier.cpp \
+	$(OBJDIR)/src/controller/mouse.cpp \
+	$(OBJDIR)/src/controller/super-multitap.cpp \
+	$(OBJDIR)/src/controller/super-scope.cpp \
+	$(OBJDIR)/src/coprocessor/armdsp.cpp \
+	$(OBJDIR)/src/coprocessor/cx4.cpp \
+	$(OBJDIR)/src/coprocessor/dip.cpp \
+	$(OBJDIR)/src/coprocessor/dsp1.cpp \
+	$(OBJDIR)/src/coprocessor/dsp2.cpp \
+	$(OBJDIR)/src/coprocessor/dsp4.cpp \
+	$(OBJDIR)/src/coprocessor/epsonrtc.cpp \
+	$(OBJDIR)/src/coprocessor/event.cpp \
+	$(OBJDIR)/src/coprocessor/hitachidsp.cpp \
+	$(OBJDIR)/src/coprocessor/icd.cpp \
+	$(OBJDIR)/src/coprocessor/mcc.cpp \
+	$(OBJDIR)/src/coprocessor/msu1.cpp \
+	$(OBJDIR)/src/coprocessor/necdsp.cpp \
+	$(OBJDIR)/src/coprocessor/obc1.cpp \
+	$(OBJDIR)/src/coprocessor/sa1.cpp \
+	$(OBJDIR)/src/coprocessor/sdd1.cpp \
+	$(OBJDIR)/src/coprocessor/sharprtc.cpp \
+	$(OBJDIR)/src/coprocessor/spc7110.cpp \
+	$(OBJDIR)/src/coprocessor/st0010.cpp \
+	$(OBJDIR)/src/coprocessor/superfx.cpp \
+	$(OBJDIR)/src/cpu.cpp \
+	$(OBJDIR)/src/dsp.cpp \
+	$(OBJDIR)/src/dsp/SPC_DSP.cpp \
+	$(OBJDIR)/src/expansion/expansion.cpp \
+	$(OBJDIR)/src/expansion/satellaview.cpp \
+	$(OBJDIR)/src/heuristics.cpp \
+	$(OBJDIR)/src/interface.cpp \
+	$(OBJDIR)/src/memory.cpp \
+	$(OBJDIR)/src/ppu.cpp \
+	$(OBJDIR)/src/processor/arm7tdmi.cpp \
+	$(OBJDIR)/src/processor/gsu.cpp \
+	$(OBJDIR)/src/processor/hg51b.cpp \
+	$(OBJDIR)/src/processor/spc700.cpp \
+	$(OBJDIR)/src/processor/upd96050.cpp \
+	$(OBJDIR)/src/processor/wdc65816.cpp \
+	$(OBJDIR)/src/slot/bsmemory.cpp \
+	$(OBJDIR)/src/slot/sufamiturbo.cpp \
+	$(OBJDIR)/src/smp.cpp \
+	$(OBJDIR)/src/system.cpp \
 	$(OBJDIR)/jg.cpp
 
 # TODO: Do we need this?
 # https://github.com/defparam/21FX
-#	$(OBJDIR)/sfc/expansion/21fx.cpp \
+#	$(OBJDIR)/src/expansion/21fx.cpp \
 
 # Object dirs
 MKDIRS := $(OBJDIR)/deps/gb \
 	$(OBJDIR)/deps/libco \
 	$(OBJDIR)/emulator \
-	$(OBJDIR)/sfc/controller \
-	$(OBJDIR)/sfc/dsp \
-	$(OBJDIR)/sfc/expansion \
-	$(OBJDIR)/sfc/coprocessor \
-	$(OBJDIR)/sfc/processor \
-	$(OBJDIR)/sfc/slot
+	$(OBJDIR)/src/controller \
+	$(OBJDIR)/src/dsp \
+	$(OBJDIR)/src/expansion \
+	$(OBJDIR)/src/coprocessor \
+	$(OBJDIR)/src/processor \
+	$(OBJDIR)/src/slot
 
 # List of object files
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
