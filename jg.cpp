@@ -594,7 +594,7 @@ vector<uint8_t> Program::loadFile(void *data, size_t size) {
 }
 
 bool Program::loadSuperFamicom(std::string location) {
-    string manifest;
+    std::string manifest;
     vector<uint8_t> rom;
     
     rom = addon ? loadFile(addoninfo.data, addoninfo.size) :
@@ -612,6 +612,7 @@ bool Program::loadSuperFamicom(std::string location) {
     
     auto heuristics = Heuristics::SuperFamicom(rom, location.c_str());
     auto sha256 = Hash::SHA256(rom).digest();
+    heuristics.manifest();
     
     superFamicom.title = heuristics.title();
     superFamicom.region = heuristics.videoRegion();
@@ -623,12 +624,12 @@ bool Program::loadSuperFamicom(std::string location) {
             manifest = BML::serialize(game);
             //the internal ROM header title is not present in the database, but
             //is needed for internal core overrides
-            manifest.append("  title: ", superFamicom.title.c_str(), "\n");
+            manifest += "  title: " + superFamicom.title + "\n";
             superFamicom.verified = true;
         }
     }
     
-    superFamicom.manifest = manifest ? manifest : heuristics.manifest();
+    superFamicom.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     
     hackPatchMemory(rom);
     superFamicom.document = BML::unserialize(superFamicom.manifest.c_str());

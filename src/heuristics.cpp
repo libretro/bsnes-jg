@@ -1,4 +1,6 @@
 #include <iostream>
+#include <sstream>
+#include <vector>
 
 #include <nall/intrinsics.hpp>
 #include <nall/atoi.hpp>
@@ -417,86 +419,96 @@ SuperFamicom::operator bool() const {
   return headerAddress;
 }
 
-string SuperFamicom::manifest() const {
+std::string SuperFamicom::manifest() const {
   if(!operator bool()) return {};
 
   std::string gamename(location);
   gamename = gamename.substr(0, gamename.find_last_of("."));
   gamename = gamename.substr(gamename.find_last_of("/\\") + 1);
 
-  string output;
-  output.append("game\n");
-  output.append("  sha256:   ", Hash::SHA256(data).digest(), "\n");
-  output.append("  label:    ", gamename.c_str(), "\n");
-  output.append("  name:     ", gamename.c_str(), "\n");
-  output.append("  title:    ", title().c_str(), "\n");
-  output.append("  region:   ", region().c_str(), "\n");
-  output.append("  revision: ", revision().c_str(), "\n");
-  output.append("  board:    ", board(), "\n");
+  std::string output;
+  output += "game\n";
+  output += "  sha256:   " + std::string(Hash::SHA256(data).digest()) + "\n";
+  output += "  label:    " + gamename + "\n";
+  output += "  name:     " + gamename + "\n";
+  output += "  title:    " + title() + "\n";
+  output += "  region:   " + region() + "\n";
+  output += "  revision: " + revision() + "\n";
+  output += "  board:    " + board() + "\n";
 
-  auto board = this->board().trimRight("#A", 1L).split("-");
+  std::string board = this->board();
+  board.erase(board.find_last_not_of("#A") + 1);
+
+  std::istringstream boardstream(board);
+  std::vector<std::string> btokens;
+  std::string token;
+
+  while (std::getline(boardstream, token, '-')) {
+    btokens.push_back(token);
+  }
 
   if(auto size = romSize()) {
-    if(board(0) == "SPC7110" && size > 0x100000) {
-      output.append(Memory{}.type("ROM").size(0x100000).content("Program").text());
-      output.append(Memory{}.type("ROM").size(size - 0x100000).content("Data").text());
-    } else if(board(0) == "EXSPC7110" && size == 0x700000) {
+    if(btokens[0] == "SPC7110" && size > 0x100000) {
+      output += std::string(Memory{}.type("ROM").size(0x100000).content("Program").text());
+      output += std::string(Memory{}.type("ROM").size(size - 0x100000).content("Data").text());
+    } else if(btokens[0] == "EXSPC7110" && size == 0x700000) {
       //Tengai Maykou Zero (fan translation)
-      output.append(Memory{}.type("ROM").size(0x100000).content("Program").text());
-      output.append(Memory{}.type("ROM").size(0x500000).content("Data").text());
-      output.append(Memory{}.type("ROM").size(0x100000).content("Expansion").text());
+      output += std::string(Memory{}.type("ROM").size(0x100000).content("Program").text());
+      output += std::string(Memory{}.type("ROM").size(0x500000).content("Data").text());
+      output += std::string(Memory{}.type("ROM").size(0x100000).content("Expansion").text());
     } else {
-      output.append(Memory{}.type("ROM").size(size).content("Program").text());
+      output += std::string(Memory{}.type("ROM").size(size).content("Program").text());
     }
   }
 
   if(auto size = ramSize()) {
-    output.append(Memory{}.type("RAM").size(size).content("Save").text());
+    output += std::string(Memory{}.type("RAM").size(size).content("Save").text());
   }
 
   if(auto size = expansionRamSize()) {
-    output.append(Memory{}.type("RAM").size(size).content("Save").text());
+    output += std::string(Memory{}.type("RAM").size(size).content("Save").text());
   }
 
   if(0) {
-  } else if(board(0) == "ARM") {
-    output.append(Memory{}.type("ROM").size(0x20000).content("Program").manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).text());
-    output.append(Memory{}.type("ROM").size( 0x8000).content("Data"   ).manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).text());
-    output.append(Memory{}.type("RAM").size( 0x4000).content("Data"   ).manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).isVolatile().text());
-    output.append(Oscillator{}.frequency(21'440'000).text());
-  } else if(board(0) == "BS" && board(1) == "MCC") {
-    output.append(Memory{}.type("RAM").size(0x80000).content("Download").text());
-  } else if(board(0) == "EXNEC") {
-    output.append(Memory{}.type("ROM").size(0xc000).content("Program").manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text());
-    output.append(Memory{}.type("ROM").size(0x1000).content("Data"   ).manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text());
-    output.append(Memory{}.type("RAM").size(0x1000).content("Data"   ).manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text());
-    output.append(Oscillator{}.frequency(firmwareEXNEC() == "ST010" ? 11'000'000 : 15'000'000).text());
-  } else if(board(0) == "GB") {
-    output.append(Memory{}.type("ROM").size(0x100).content("Boot").manufacturer("Nintendo").architecture("LR35902").identifier(firmwareGB()).text());
+  } else if(btokens[0] == "ARM") {
+    output += std::string(Memory{}.type("ROM").size(0x20000).content("Program").manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).text());
+    output += std::string(Memory{}.type("ROM").size( 0x8000).content("Data"   ).manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).text());
+    output += std::string(Memory{}.type("RAM").size( 0x4000).content("Data"   ).manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).isVolatile().text());
+    output += std::string(Oscillator{}.frequency(21'440'000).text());
+  } else if(btokens[0] == "BS" && btokens[1] == "MCC") {
+    output += std::string(Memory{}.type("RAM").size(0x80000).content("Download").text());
+  } else if(btokens[0] == "EXNEC") {
+    output += std::string(Memory{}.type("ROM").size(0xc000).content("Program").manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text());
+    output += std::string(Memory{}.type("ROM").size(0x1000).content("Data"   ).manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text());
+    output += std::string(Memory{}.type("RAM").size(0x1000).content("Data"   ).manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text());
+    output += std::string(Oscillator{}.frequency(firmwareEXNEC() == "ST010" ? 11'000'000 : 15'000'000).text());
+  } else if(btokens[0] == "GB") {
+    output += std::string(Memory{}.type("ROM").size(0x100).content("Boot").manufacturer("Nintendo").architecture("LR35902").identifier(firmwareGB()).text());
   if(firmwareGB() == "SGB2")
-    output.append(Oscillator{}.frequency(20'971'520).text());
-  } else if(board(0) == "GSU") {
+    output += std::string(Oscillator{}.frequency(20'971'520).text());
+  } else if(btokens[0] == "GSU") {
   //todo: MARIO CHIP 1 uses CPU oscillator
-    output.append(Oscillator{}.frequency(21'440'000).text());
-  } else if(board(0) == "HITACHI") {
-    output.append(Memory{}.type("ROM").size(0xc00).content("Data").manufacturer("Hitachi").architecture("HG51BS169").identifier(firmwareHITACHI()).text());
-    output.append(Memory{}.type("RAM").size(0xc00).content("Data").manufacturer("Hitachi").architecture("HG51BS169").identifier(firmwareHITACHI()).isVolatile().text());
-    output.append(Oscillator{}.frequency(20'000'000).text());
-  } else if(board(0) == "NEC") {
-    output.append(Memory{}.type("ROM").size(0x1800).content("Program").manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).text());
-    output.append(Memory{}.type("ROM").size( 0x800).content("Data"   ).manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).text());
-    output.append(Memory{}.type("RAM").size( 0x200).content("Data"   ).manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).isVolatile().text());
-    output.append(Oscillator{}.frequency(7'600'000).text());
-  } else if(board(0) == "SA1" || board(1) == "SA1") {  //SA1-* or BS-SA1-*
-    output.append(Memory{}.type("RAM").size(0x800).content("Internal").isVolatile().text());
+    output += std::string(Oscillator{}.frequency(21'440'000).text());
+  } else if(btokens[0] == "HITACHI") {
+    output += std::string(Memory{}.type("ROM").size(0xc00).content("Data").manufacturer("Hitachi").architecture("HG51BS169").identifier(firmwareHITACHI()).text());
+    output += std::string(Memory{}.type("RAM").size(0xc00).content("Data").manufacturer("Hitachi").architecture("HG51BS169").identifier(firmwareHITACHI()).isVolatile().text());
+    output += std::string(Oscillator{}.frequency(20'000'000).text());
+  } else if(btokens[0] == "NEC") {
+    output += std::string(Memory{}.type("ROM").size(0x1800).content("Program").manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).text());
+    output += std::string(Memory{}.type("ROM").size( 0x800).content("Data"   ).manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).text());
+    output += std::string(Memory{}.type("RAM").size( 0x200).content("Data"   ).manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).isVolatile().text());
+    output += std::string(Oscillator{}.frequency(7'600'000).text());
+  } else if(btokens[0] == "SA1" || btokens[1] == "SA1") {  //SA1-* or BS-SA1-*
+    output += std::string(Memory{}.type("RAM").size(0x800).content("Internal").isVolatile().text());
   }
 
-  if(board.right() == "EPSONRTC") {
-    output.append(Memory{}.type("RTC").size(0x10).content("Time").manufacturer("Epson").text());
-  } else if(board.right() == "SHARPRTC") {
-    output.append(Memory{}.type("RTC").size(0x10).content("Time").manufacturer("Sharp").text());
+  if(btokens.back() == "EPSONRTC") {
+    output += std::string(Memory{}.type("RTC").size(0x10).content("Time").manufacturer("Epson").text());
+  } else if(btokens.back() == "SHARPRTC") {
+    output += std::string(Memory{}.type("RTC").size(0x10).content("Time").manufacturer("Sharp").text());
   }
-std::cout << std::string(output) << std::endl;
+
+  std::cout << output << std::endl;
   return output;
 }
 
@@ -603,15 +615,15 @@ std::string SuperFamicom::revision() const {
 }
 
 //format: [slot]-[coprocessor]-[mapper]-[ram]-[rtc]
-string SuperFamicom::board() const {
-  string board;
+std::string SuperFamicom::board() const {
+  std::string board;
 
   auto mapMode          = data[headerAddress + 0x25];
   auto cartridgeTypeLo  = data[headerAddress + 0x26] & 15;
   auto cartridgeTypeHi  = data[headerAddress + 0x26] >> 4;
   auto cartridgeSubType = data[headerAddress + 0x0f];
 
-  string mode;
+  std::string mode;
   if(mapMode == 0x20 || mapMode == 0x30) mode = "LOROM-";
   if(mapMode == 0x21 || mapMode == 0x31) mode = "HIROM-";
   if(mapMode == 0x22 || mapMode == 0x32) mode = "SDD1-";
@@ -621,7 +633,7 @@ string SuperFamicom::board() const {
 
   //many games will store an extra title character, overwriting the map mode
   //further, ExLoROM mode is unofficial, and lacks a mapping mode value
-  if(!mode) {
+  if(mode.empty()) {
     if(headerAddress ==   0x7fb0) mode = "LOROM-";
     if(headerAddress ==   0xffb0) mode = "HIROM-";
     if(headerAddress == 0x407fb0) mode = "EXLOROM-";
@@ -640,42 +652,42 @@ string SuperFamicom::board() const {
   
   if(serial() == "A9PJ") {
   //Sufami Turbo (JPN)
-    board.append("ST-", mode);
+    board += "ST-" + mode;
   } else if(serial() == "ZBSJ") {
   //BS-X: Sore wa Namae o Nusumareta Machi no Monogatari (JPN)
-    board.append("BS-MCC-");
+    board += "BS-MCC-";
   } else if(serial() == "042J") {
   //Super Game Boy 2
-    board.append("GB-", mode);
+    board += "GB-", mode;
   } else if(cserial[0] == 'Z' && cserial[3] == 'J') {
-    board.append("BS-", mode);
+    board += "BS-", mode;
   } else if(cartridgeTypeLo >= 0x3) {
-    if(cartridgeTypeHi == 0x0) board.append("NEC-", mode);
-    if(cartridgeTypeHi == 0x1) board.append("GSU-");
-    if(cartridgeTypeHi == 0x2) board.append("OBC1-", mode);
-    if(cartridgeTypeHi == 0x3) board.append("SA1-");
-    if(cartridgeTypeHi == 0x4) board.append("SDD1-");
-    if(cartridgeTypeHi == 0x5) board.append(mode), sharpRTC = true;
-    if(cartridgeTypeHi == 0xe && cartridgeTypeLo == 0x3) board.append("GB-", mode);
-    if(cartridgeTypeHi == 0xf && cartridgeTypeLo == 0x5 && cartridgeSubType == 0x00) board.append("SPC7110-");
-    if(cartridgeTypeHi == 0xf && cartridgeTypeLo == 0x9 && cartridgeSubType == 0x00) board.append("SPC7110-"), epsonRTC = true;
-    if(cartridgeTypeHi == 0xf                           && cartridgeSubType == 0x01) board.append("EXNEC-", mode);
-    if(cartridgeTypeHi == 0xf                           && cartridgeSubType == 0x02) board.append("ARM-", mode);
-    if(cartridgeTypeHi == 0xf                           && cartridgeSubType == 0x10) board.append("HITACHI-", mode);
+    if(cartridgeTypeHi == 0x0) board += "NEC-" + mode;
+    if(cartridgeTypeHi == 0x1) board += "GSU-";
+    if(cartridgeTypeHi == 0x2) board += "OBC1-" + mode;
+    if(cartridgeTypeHi == 0x3) board += "SA1-";
+    if(cartridgeTypeHi == 0x4) board += "SDD1-";
+    if(cartridgeTypeHi == 0x5) board += mode, sharpRTC = true;
+    if(cartridgeTypeHi == 0xe && cartridgeTypeLo == 0x3) board += "GB-" + mode;
+    if(cartridgeTypeHi == 0xf && cartridgeTypeLo == 0x5 && cartridgeSubType == 0x00) board += "SPC7110-";
+    if(cartridgeTypeHi == 0xf && cartridgeTypeLo == 0x9 && cartridgeSubType == 0x00) board += "SPC7110-", epsonRTC = true;
+    if(cartridgeTypeHi == 0xf                           && cartridgeSubType == 0x01) board += "EXNEC-" + mode;
+    if(cartridgeTypeHi == 0xf                           && cartridgeSubType == 0x02) board += "ARM-" + mode;
+    if(cartridgeTypeHi == 0xf                           && cartridgeSubType == 0x10) board += "HITACHI-" + mode;
   }
-  if(!board) board.append(mode);
+  if(board.empty()) board += mode;
 
-  if(ramSize() || expansionRamSize()) board.append("RAM-");
-  if(epsonRTC) board.append("EPSONRTC-");
-  if(sharpRTC) board.append("SHARPRTC-");
+  if(ramSize() || expansionRamSize()) board += "RAM-";
+  if(epsonRTC) board += "EPSONRTC-";
+  if(sharpRTC) board += "SHARPRTC-";
 
-  board.trimRight("-", 1L);
-
-  if(board.beginsWith(    "LOROM-RAM") && romSize() <= 0x200000) board.append("#A");
-  if(board.beginsWith("NEC-LOROM-RAM") && romSize() <= 0x100000) board.append("#A");
+  board.erase(board.find_last_not_of('-') + 1);
+  
+  if((board.rfind(    "LOROM-RAM") == 0) && romSize() <= 0x200000) board += "#A";
+  if((board.rfind("NEC-LOROM-RAM") == 0) && romSize() <= 0x200000) board += "#A";
 
   //Tengai Makyou Zero (fan translation)
-  if(board.beginsWith("SPC7110-") && data.size() == 0x700000) board.prepend("EX");
+  if((board.rfind("SPC7110-") == 0) && data.size() == 0x700000) board = "EX" + board;
 
   return board;
 }
@@ -805,19 +817,19 @@ unsigned SuperFamicom::romSize() const {
 }
 
 unsigned SuperFamicom::programRomSize() const {
-  if(board().beginsWith("SPC7110-")) return 0x100000;
-  if(board().beginsWith("EXSPC7110-")) return 0x100000;
+  if(board().rfind("SPC7110-") == 0) return 0x100000;
+  if(board().rfind("EXSPC7110-") == 0) return 0x100000;
   return romSize();
 }
 
 unsigned SuperFamicom::dataRomSize() const {
-  if(board().beginsWith("SPC7110-")) return romSize() - 0x100000;
-  if(board().beginsWith("EXSPC7110-")) return 0x500000;
+  if(board().rfind("SPC7110-") == 0) return romSize() - 0x100000;
+  if(board().rfind("EXSPC7110-") == 0) return 0x500000;
   return 0;
 }
 
 unsigned SuperFamicom::expansionRomSize() const {
-  if(board().beginsWith("EXSPC7110-")) return 0x100000;
+  if(board().rfind("EXSPC7110-") == 0) return 0x100000;
   return 0;
 }
 
