@@ -88,7 +88,8 @@ static jg_inputstate_t *input_device[NUMINPUTS];
 
 // Emulator settings
 static jg_setting_t settings_bsnes[] = { // name, default, min, max
-    { "aspect_ratio", "", 0, 0, 1 }, // 0 = 8:7, 1 = Auto Region
+    // 0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL
+    { "aspect_ratio", "", 0, 0, 3 },
 };
 
 enum {
@@ -1127,9 +1128,25 @@ int jg_game_load() {
     }
     
     // Set the aspect ratio
-    if (settings_bsnes[ASPECT].value)
-        vidinfo.aspect = program->superFamicom.region == "PAL" ?
-            ASPECT_PAL : ASPECT_NTSC;
+    switch (settings_bsnes[ASPECT].value) {
+        default: case 0: { // Auto Region
+            vidinfo.aspect = program->superFamicom.region == "PAL" ?
+                ASPECT_PAL : ASPECT_NTSC;
+            break;
+        }
+        case 1: { // 8:7
+            vidinfo.aspect = 8.0/7.0;
+            break;
+        }
+        case 2: { // NTSC
+            vidinfo.aspect = ASPECT_NTSC;
+            break;
+        }
+        case 3: { // PAL
+            vidinfo.aspect = ASPECT_PAL;
+            break;
+        }
+    }
     
     // Audio and timing adjustments
     if (program->superFamicom.region == "PAL") {

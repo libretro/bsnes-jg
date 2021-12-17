@@ -53,7 +53,7 @@ also be loaded in this manner when loading two Sufami Turbo cartridges.
 Settings
 --------
 aspect_ratio = 0
-0 = 8:7, 1 = Auto Region
+0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL
 
 Copyright
 ---------
