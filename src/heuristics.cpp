@@ -429,9 +429,9 @@ string SuperFamicom::manifest() const {
   output.append("  sha256:   ", Hash::SHA256(data).digest(), "\n");
   output.append("  label:    ", gamename.c_str(), "\n");
   output.append("  name:     ", gamename.c_str(), "\n");
-  output.append("  title:    ", title(), "\n");
-  output.append("  region:   ", region(), "\n");
-  output.append("  revision: ", revision(), "\n");
+  output.append("  title:    ", title().c_str(), "\n");
+  output.append("  region:   ", region().c_str(), "\n");
+  output.append("  revision: ", revision().c_str(), "\n");
   output.append("  board:    ", board(), "\n");
 
   auto board = this->board().trimRight("#A", 1L).split("-");
@@ -496,17 +496,18 @@ string SuperFamicom::manifest() const {
   } else if(board.right() == "SHARPRTC") {
     output.append(Memory{}.type("RTC").size(0x10).content("Time").manufacturer("Sharp").text());
   }
-
+std::cout << std::string(output) << std::endl;
   return output;
 }
 
-string SuperFamicom::region() const {
+std::string SuperFamicom::region() const {
   //Unlicensed software (homebrew, ROM hacks, etc) often change the standard region code,
   //and then neglect to change the extended header region code. Thanks to that, we can't
   //decode and display the full game serial + region code.
   return videoRegion();
 
-  string region;
+  // This is commented because it is never actually called
+  /*string region;
 
   char A = data[headerAddress + 0x02];  //game type
   char B = data[headerAddress + 0x03];  //game code
@@ -551,10 +552,10 @@ string SuperFamicom::region() const {
     if(E == 0x12) region = {"SCN"};
   }
 
-  return region ? region : "NTSC";
+  return region ? region : "NTSC";*/
 }
 
-string SuperFamicom::videoRegion() const {
+std::string SuperFamicom::videoRegion() const {
   auto region = data[headerAddress + 0x29];
   if(region == 0x00) return "NTSC";  //JPN
   if(region == 0x01) return "NTSC";  //USA
@@ -565,40 +566,40 @@ string SuperFamicom::videoRegion() const {
   return "PAL";
 }
 
-string SuperFamicom::revision() const {
-  string revision;
+std::string SuperFamicom::revision() const {
+  std::string revision;
 
   char A = data[headerAddress + 0x02];  //game type
   char B = data[headerAddress + 0x03];  //game code
   char C = data[headerAddress + 0x04];  //game code
   char D = data[headerAddress + 0x05];  //region code (new; sometimes ambiguous)
   auto E = data[headerAddress + 0x29];  //region code (old)
-  unsigned F = data[headerAddress + 0x2b];  //revision code
+  char F = data[headerAddress + 0x2b] + '0';  //revision code
 
   auto valid = [](char n) { return (n >= '0' && n <= '9') || (n >= 'A' && n <= 'Z'); };
   if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) & valid(C) & valid(D)) {
-    string code{A, B, C, D};
-    if(D == 'B') revision = {"SNS-",  code, "-", F};
-    if(D == 'C') revision = {"SNSN-", code, "-", F};
-    if(D == 'D') revision = {"SNSP-", code, "-", F};
-    if(D == 'E') revision = {"SNS-",  code, "-", F};
-    if(D == 'F') revision = {"SNSP-", code, "-", F};
-    if(D == 'H') revision = {"SNSP-", code, "-", F};
-    if(D == 'I') revision = {"SNSP-", code, "-", F};
-    if(D == 'J') revision = {"SHVC-", code, "-", F};
-    if(D == 'K') revision = {"SNSN-", code, "-", F};
-    if(D == 'N') revision = {"SNS-",  code, "-", F};
-    if(D == 'P') revision = {"SNSP-", code, "-", F};
-    if(D == 'S') revision = {"SNSP-", code, "-", F};
-    if(D == 'U') revision = {"SNSP-", code, "-", F};
-    if(D == 'X') revision = {"SNSP-", code, "-", F};
+    std::string code; code = A; code += B; code += C; code += D;
+    if(D == 'B') revision = "SNS-"  + code + "-" + F;
+    if(D == 'C') revision = "SNSN-" + code + "-" + F;
+    if(D == 'D') revision = "SNSP-" + code + "-" + F;
+    if(D == 'E') revision = "SNS-"  + code + "-" + F;
+    if(D == 'F') revision = "SNSP-" + code + "-" + F;
+    if(D == 'H') revision = "SNSP-" + code + "-" + F;
+    if(D == 'I') revision = "SNSP-" + code + "-" + F;
+    if(D == 'J') revision = "SHVC-" + code + "-" + F;
+    if(D == 'K') revision = "SNSN-" + code + "-" + F;
+    if(D == 'N') revision = "SNS-"  + code + "-" + F;
+    if(D == 'P') revision = "SNSP-" + code + "-" + F;
+    if(D == 'S') revision = "SNSP-" + code + "-" + F;
+    if(D == 'U') revision = "SNSP-" + code + "-" + F;
+    if(D == 'X') revision = "SNSP-" + code + "-" + F;
   }
 
-  if(!revision) {
-    revision = {"1.", F};
+  if (revision.empty()) {
+    std::string code; code = F;
+    revision = "1." + code;
   }
-
-  return revision ? revision : string{"1.", F};
+  return revision;
 }
 
 //format: [slot]-[coprocessor]-[mapper]-[ram]-[rtc]
@@ -635,7 +636,9 @@ string SuperFamicom::board() const {
   bool epsonRTC = false;
   bool sharpRTC = false;
 
-         if(serial() == "A9PJ") {
+  const char *cserial = serial().c_str();
+  
+  if(serial() == "A9PJ") {
   //Sufami Turbo (JPN)
     board.append("ST-", mode);
   } else if(serial() == "ZBSJ") {
@@ -644,7 +647,7 @@ string SuperFamicom::board() const {
   } else if(serial() == "042J") {
   //Super Game Boy 2
     board.append("GB-", mode);
-  } else if(serial().match("Z??J")) {
+  } else if(cserial[0] == 'Z' && cserial[3] == 'J') {
     board.append("BS-", mode);
   } else if(cartridgeTypeLo >= 0x3) {
     if(cartridgeTypeHi == 0x0) board.append("NEC-", mode);
@@ -677,8 +680,8 @@ string SuperFamicom::board() const {
   return board;
 }
 
-string SuperFamicom::title() const {
-  string label;
+std::string SuperFamicom::title() const {
+  std::string label;
 
   for(unsigned n = 0; n < 0x15; n++) {
     auto x = data[headerAddress + 0x10 + n];
@@ -688,86 +691,86 @@ string SuperFamicom::title() const {
     if(x == 0x00 || x == 0xff);
 
     //ASCII
-    else if(x >= 0x20 && x <= 0x7e) label.append((char)x);
+    else if(x >= 0x20 && x <= 0x7e) label += (char)x;
 
     //Shift-JIS (half-width katakana)
-    else if(x == 0xa1) label.append("。");
-    else if(x == 0xa2) label.append("「");
-    else if(x == 0xa3) label.append("」");
-    else if(x == 0xa4) label.append("、");
-    else if(x == 0xa5) label.append("・");
-    else if(x == 0xa6) label.append("ヲ");
-    else if(x == 0xa7) label.append("ァ");
-    else if(x == 0xa8) label.append("ィ");
-    else if(x == 0xa9) label.append("ゥ");
-    else if(x == 0xaa) label.append("ェ");
-    else if(x == 0xab) label.append("ォ");
-    else if(x == 0xac) label.append("ャ");
-    else if(x == 0xad) label.append("ュ");
-    else if(x == 0xae) label.append("ョ");
-    else if(x == 0xaf) label.append("ッ");
-    else if(x == 0xb0) label.append("ー");
+    else if(x == 0xa1) label += "。";
+    else if(x == 0xa2) label += "「";
+    else if(x == 0xa3) label += "」";
+    else if(x == 0xa4) label += "、";
+    else if(x == 0xa5) label += "・";
+    else if(x == 0xa6) label += "ヲ";
+    else if(x == 0xa7) label += "ァ";
+    else if(x == 0xa8) label += "ィ";
+    else if(x == 0xa9) label += "ゥ";
+    else if(x == 0xaa) label += "ェ";
+    else if(x == 0xab) label += "ォ";
+    else if(x == 0xac) label += "ャ";
+    else if(x == 0xad) label += "ュ";
+    else if(x == 0xae) label += "ョ";
+    else if(x == 0xaf) label += "ッ";
+    else if(x == 0xb0) label += "ー";
 
-    else if(x == 0xb1) label.append(                 "ア");
-    else if(x == 0xb2) label.append(                 "イ");
-    else if(x == 0xb3) label.append(y == 0xde ? "ヴ" : "ウ");
-    else if(x == 0xb4) label.append(                 "エ");
-    else if(x == 0xb5) label.append(                 "オ");
+    else if(x == 0xb1) label +=                  "ア";
+    else if(x == 0xb2) label +=                  "イ";
+    else if(x == 0xb3) label += y == 0xde ? "ヴ" : "ウ";
+    else if(x == 0xb4) label +=                  "エ";
+    else if(x == 0xb5) label +=                  "オ";
 
-    else if(x == 0xb6) label.append(y == 0xde ? "ガ" : "カ");
-    else if(x == 0xb7) label.append(y == 0xde ? "ギ" : "キ");
-    else if(x == 0xb8) label.append(y == 0xde ? "グ" : "ク");
-    else if(x == 0xb9) label.append(y == 0xde ? "ゲ" : "ケ");
-    else if(x == 0xba) label.append(y == 0xde ? "ゴ" : "コ");
+    else if(x == 0xb6) label += y == 0xde ? "ガ" : "カ";
+    else if(x == 0xb7) label += y == 0xde ? "ギ" : "キ";
+    else if(x == 0xb8) label += y == 0xde ? "グ" : "ク";
+    else if(x == 0xb9) label += y == 0xde ? "ゲ" : "ケ";
+    else if(x == 0xba) label += y == 0xde ? "ゴ" : "コ";
 
-    else if(x == 0xbb) label.append(y == 0xde ? "ザ" : "サ");
-    else if(x == 0xbc) label.append(y == 0xde ? "ジ" : "シ");
-    else if(x == 0xbd) label.append(y == 0xde ? "ズ" : "ス");
-    else if(x == 0xbe) label.append(y == 0xde ? "ゼ" : "セ");
-    else if(x == 0xbf) label.append(y == 0xde ? "ゾ" : "ソ");
+    else if(x == 0xbb) label += y == 0xde ? "ザ" : "サ";
+    else if(x == 0xbc) label += y == 0xde ? "ジ" : "シ";
+    else if(x == 0xbd) label += y == 0xde ? "ズ" : "ス";
+    else if(x == 0xbe) label += y == 0xde ? "ゼ" : "セ";
+    else if(x == 0xbf) label += y == 0xde ? "ゾ" : "ソ";
 
-    else if(x == 0xc0) label.append(y == 0xde ? "ダ" : "タ");
-    else if(x == 0xc1) label.append(y == 0xde ? "ヂ" : "チ");
-    else if(x == 0xc2) label.append(y == 0xde ? "ヅ" : "ツ");
-    else if(x == 0xc3) label.append(y == 0xde ? "デ" : "テ");
-    else if(x == 0xc4) label.append(y == 0xde ? "ド" : "ト");
+    else if(x == 0xc0) label += y == 0xde ? "ダ" : "タ";
+    else if(x == 0xc1) label += y == 0xde ? "ヂ" : "チ";
+    else if(x == 0xc2) label += y == 0xde ? "ヅ" : "ツ";
+    else if(x == 0xc3) label += y == 0xde ? "デ" : "テ";
+    else if(x == 0xc4) label += y == 0xde ? "ド" : "ト";
 
-    else if(x == 0xc5) label.append("ナ");
-    else if(x == 0xc6) label.append("ニ");
-    else if(x == 0xc7) label.append("ヌ");
-    else if(x == 0xc8) label.append("ネ");
-    else if(x == 0xc9) label.append("ノ");
+    else if(x == 0xc5) label += "ナ";
+    else if(x == 0xc6) label += "ニ";
+    else if(x == 0xc7) label += "ヌ";
+    else if(x == 0xc8) label += "ネ";
+    else if(x == 0xc9) label += "ノ";
 
-    else if(x == 0xca) label.append(y == 0xdf ? "パ" : y == 0xde ? "バ" : "ハ");
-    else if(x == 0xcb) label.append(y == 0xdf ? "ピ" : y == 0xde ? "ビ" : "ヒ");
-    else if(x == 0xcc) label.append(y == 0xdf ? "プ" : y == 0xde ? "ブ" : "フ");
-    else if(x == 0xcd) label.append(y == 0xdf ? "ペ" : y == 0xde ? "ベ" : "ヘ");
-    else if(x == 0xce) label.append(y == 0xdf ? "ポ" : y == 0xde ? "ボ" : "ホ");
+    else if(x == 0xca) label += y == 0xdf ? "パ" : y == 0xde ? "バ" : "ハ";
+    else if(x == 0xcb) label += y == 0xdf ? "ピ" : y == 0xde ? "ビ" : "ヒ";
+    else if(x == 0xcc) label += y == 0xdf ? "プ" : y == 0xde ? "ブ" : "フ";
+    else if(x == 0xcd) label += y == 0xdf ? "ペ" : y == 0xde ? "ベ" : "ヘ";
+    else if(x == 0xce) label += y == 0xdf ? "ポ" : y == 0xde ? "ボ" : "ホ";
 
-    else if(x == 0xcf) label.append("マ");
-    else if(x == 0xd0) label.append("ミ");
-    else if(x == 0xd1) label.append("ム");
-    else if(x == 0xd2) label.append("メ");
-    else if(x == 0xd3) label.append("モ");
+    else if(x == 0xcf) label += "マ";
+    else if(x == 0xd0) label += "ミ";
+    else if(x == 0xd1) label += "ム";
+    else if(x == 0xd2) label += "メ";
+    else if(x == 0xd3) label += "モ";
 
-    else if(x == 0xd4) label.append("ヤ");
-    else if(x == 0xd5) label.append("ユ");
-    else if(x == 0xd6) label.append("ヨ");
+    else if(x == 0xd4) label += "ヤ";
+    else if(x == 0xd5) label += "ユ";
+    else if(x == 0xd6) label += "ヨ";
 
-    else if(x == 0xd7) label.append("ラ");
-    else if(x == 0xd8) label.append("リ");
-    else if(x == 0xd9) label.append("ル");
-    else if(x == 0xda) label.append("レ");
-    else if(x == 0xdb) label.append("ロ");
+    else if(x == 0xd7) label += "ラ";
+    else if(x == 0xd8) label += "リ";
+    else if(x == 0xd9) label += "ル";
+    else if(x == 0xda) label += "レ";
+    else if(x == 0xdb) label += "ロ";
 
-    else if(x == 0xdc) label.append("ワ");
-    else if(x == 0xdd) label.append("ン");
+    else if(x == 0xdc) label += "ワ";
+    else if(x == 0xdd) label += "ン";
 
-    else if(x == 0xde) label.append("\xef\xbe\x9e");  //dakuten
-    else if(x == 0xdf) label.append("\xef\xbe\x9f");  //handakuten
+    else if(x == 0xde) label += "\xef\xbe\x9e";  //dakuten
+    else if(x == 0xdf) label += "\xef\xbe\x9f";  //handakuten
 
     //unknown
-    else label.append("?");
+    else label += "?";
 
     //(han)dakuten skip
     if(y == 0xde && x == 0xb3) n++;
@@ -775,11 +778,14 @@ string SuperFamicom::title() const {
     if(y == 0xde && x >= 0xca && x <= 0xce) n++;
     if(y == 0xdf && x >= 0xca && y <= 0xce) n++;
   }
-
-  return label.strip();
+  
+  const char *badchars = " \t\n\r";
+  label.erase(0, label.find_first_not_of(badchars));
+  label.erase(label.find_last_not_of(badchars) + 1);
+  return label;
 }
 
-string SuperFamicom::serial() const {
+std::string SuperFamicom::serial() const {
   char A = data[headerAddress + 0x02];  //game type
   char B = data[headerAddress + 0x03];  //game code
   char C = data[headerAddress + 0x04];  //game code
@@ -787,7 +793,8 @@ string SuperFamicom::serial() const {
 
   auto valid = [](char n) { return (n >= '0' && n <= '9') || (n >= 'A' && n <= 'Z'); };
   if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) & valid(C) & valid(D)) {
-    return {A, B, C, D};
+    char ret[4] = { A, B, C, D };
+    return std::string(ret);
   }
 
   return "";

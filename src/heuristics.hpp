@@ -73,12 +73,12 @@ struct SuperFamicom {
   explicit operator bool() const;
 
   string manifest() const;
-  string region() const;
-  string videoRegion() const;
-  string revision() const;
+  std::string region() const;
+  std::string videoRegion() const;
+  std::string revision() const;
   string board() const;
-  string title() const;
-  string serial() const;
+  std::string title() const;
+  std::string serial() const;
   unsigned romSize() const;
   unsigned programRomSize() const;
   unsigned dataRomSize() const;
