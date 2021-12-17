@@ -1,10 +1,10 @@
-static string db_justifier_games[] = {
+static std::string db_justifier_games[] = {
     "42f3084ce3f529b46090b9e1d781717d", // Lethal Enforcers (Europe)
     "3a33512ae5b1f2047bcd77e1d3e1ce4a", // Lethal Enforcers (Japan)
     "928a0d7feeb4edee8d53203a575968e6", // Lethal Enforcers (USA)
 };
 
-static string db_mouse_games[] = {
+static std::string db_mouse_games[] = {
     "76392b4b33146fe4fac5b26358a9b9f4", // ACME Animation Factory (Europe)
     "4623fc6ecf936f67c21e2d4bcadabf80", // ACME Animation Factory (USA)
     "37c38e3fc469d69e8432e69982537de3", // Advanced Dungeons & Dragons - Eye of the Beholder (USA)
@@ -74,7 +74,7 @@ static string db_mouse_games[] = {
 };
 
 struct mtentry_t {
-    string md5; int players;
+    std::string md5; int players;
 };
 
 // This list may not be complete or accurate -- 5 players assumed if unknown
@@ -350,7 +350,7 @@ static mtentry_t db_multitap_games[] = {
 };
 
 struct ssentry_t {
-    string md5; int x; int y;
+    std::string md5; int x; int y;
 };
 
 static ssentry_t db_superscope_games[] = {

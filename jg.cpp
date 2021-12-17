@@ -159,7 +159,7 @@ struct Program : Emulator::Platform {
 
 public: 
     struct Game {
-        string option;
+        std::string option;
         std::string location;
         string manifest;
         Markup::Node document;
@@ -168,8 +168,8 @@ public:
     };
     
     struct SuperFamicom : Game {
-        string title;
-        string region;
+        std::string title;
+        std::string region;
         vector<uint8_t> program;
         vector<uint8_t> data;
         vector<uint8_t> expansion;
@@ -213,8 +213,8 @@ shared_pointer<vfs::file> Program::open(unsigned id, std::string name,
         result = vfs::memory::file::open(iplrom, sizeof(iplrom));
     }
     if (name == "boards.bml" && mode == vfs::file::mode::read) {
-        string boardspath = {pathinfo.core, "/boards.bml"};
-        return vfs::fs::file::open(boardspath, mode);
+        std::string boardspath = std::string(pathinfo.core) + "/boards.bml";
+        return vfs::fs::file::open(boardspath.c_str(), mode);
     }
     
     if (id == 1) { // Super Famicom
@@ -312,7 +312,7 @@ Emulator::Platform::Load Program::load(unsigned id, std::string name,
     
     if (id == 1) {
         if (loadSuperFamicom(superFamicom.location)) {
-            return {id, superFamicom.region};
+            return {id, superFamicom.region.c_str()};
         }
     }
     else if (id == 2) {
@@ -490,13 +490,15 @@ shared_pointer<vfs::file> Program::openRomSuperFamicom(std::string name,
     }*/
     
     if (name == "save.ram") {
-        string save_path = { pathinfo.save, "/", gameinfo.name, ".srm" };
-        return vfs::fs::file::open(save_path, mode);
+        std::string save_path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".srm";
+        return vfs::fs::file::open(save_path.c_str(), mode);
     }
     
     if (name == "download.ram") {
-        string ram_path = { pathinfo.save, "/", gameinfo.name, ".psr" };
-        return vfs::fs::file::open(ram_path, mode);
+        std::string ram_path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".psr";
+        return vfs::fs::file::open(ram_path.c_str(), mode);
     }
     
     return {};
@@ -511,13 +513,15 @@ shared_pointer<vfs::file> Program::openRomGameBoy(std::string name,
     }
 
     if (name == "save.ram") {
-        string save_path = { pathinfo.save, "/", gameinfo.name, ".srm" };
-        return vfs::fs::file::open(save_path, mode);
+        std::string save_path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".srm";
+        return vfs::fs::file::open(save_path.c_str(), mode);
     }
     
     if (name == "time.rtc") {
-        string save_path = { pathinfo.save, "/", gameinfo.name, ".rtc" };
-        return vfs::fs::file::open(save_path, mode);
+        std::string save_path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".rtc";
+        return vfs::fs::file::open(save_path.c_str(), mode);
     }
 
     return {};
@@ -548,13 +552,15 @@ shared_pointer<vfs::file> Program::openRomSufamiTurboA(std::string name,
     }
     
     if (name == "save.ram") {
-        string save_path;
+        std::string save_path;
         if (sufamiinfo.size)
-            save_path = { pathinfo.save, "/", sufamiinfo.name, ".srm" };
+            save_path = std::string(pathinfo.save) + "/" +
+                std::string(sufamiinfo.name) + ".srm";
         else
-            save_path = { pathinfo.save, "/", gameinfo.name, ".srm" };
+            save_path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".srm";
         
-        return vfs::fs::file::open(save_path, mode);
+        return vfs::fs::file::open(save_path.c_str(), mode);
     }
     
     return {};
@@ -568,8 +574,9 @@ shared_pointer<vfs::file> Program::openRomSufamiTurboB(std::string name,
     }
     
     if (name == "save.ram") {
-        string save_path = { pathinfo.save, "/", gameinfo.name, ".srm" };
-        return vfs::fs::file::open(save_path, mode);
+        std::string save_path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".srm";
+        return vfs::fs::file::open(save_path.c_str(), mode);
     }
     
     return {};
@@ -608,14 +615,14 @@ bool Program::loadSuperFamicom(std::string location) {
     superFamicom.title = heuristics.title();
     superFamicom.region = heuristics.videoRegion();
     
-    string dbpath = {pathinfo.core, "/Super Famicom.bml"};
+    std::string dbpath = std::string(pathinfo.core) + "/Super Famicom.bml";
     
-    if (auto document = BML::unserialize(string::read(dbpath))) {
+    if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256, ")"}]) {
             manifest = BML::serialize(game);
             //the internal ROM header title is not present in the database, but
             //is needed for internal core overrides
-            manifest.append("  title: ", superFamicom.title, "\n");
+            manifest.append("  title: ", superFamicom.title.c_str(), "\n");
             superFamicom.verified = true;
         }
     }
@@ -676,9 +683,9 @@ bool Program::loadBSMemory(std::string location) {
     auto heuristics = Heuristics::BSMemory(rom, location.c_str());
     auto sha256 = Hash::SHA256(rom).digest();
     
-    string dbpath = {pathinfo.core, "/BS Memory.bml"};
+    std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
     
-    if (auto document = BML::unserialize(string::read(dbpath))) {
+    if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256, ")"}]) {
             manifest = BML::serialize(game);
             bsMemory.verified = true;
@@ -707,9 +714,9 @@ bool Program::loadSufamiTurboA(std::string location) {
     auto heuristics = Heuristics::SufamiTurbo(rom, location.c_str());
     auto sha256 = Hash::SHA256(rom).digest();
     
-    string dbpath = {pathinfo.core, "/Sufami Turbo.bml"};
+    std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
     
-    if (auto document = BML::unserialize(string::read(dbpath))) {
+    if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256, ")"}]) {
             manifest = BML::serialize(game);
             sufamiTurboA.verified = true;
@@ -737,9 +744,9 @@ bool Program::loadSufamiTurboB(std::string location) {
     auto heuristics = Heuristics::SufamiTurbo(rom, location.c_str());
     auto sha256 = Hash::SHA256(rom).digest();
     
-    string dbpath = {pathinfo.core, "/Sufami Turbo.bml"};
+    std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
     
-    if (auto document = BML::unserialize(string::read(dbpath))) {
+    if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256, ")"}]) {
             manifest = BML::serialize(game);
             sufamiTurboB.verified = true;
@@ -1014,8 +1021,8 @@ int jg_game_load() {
             return 0;
         }
         
-        program->superFamicom.location = string(addoninfo.path);
-        program->gameBoy.location = string(gameinfo.path);
+        program->superFamicom.location = std::string(addoninfo.path);
+        program->gameBoy.location = std::string(gameinfo.path);
         addon = true;
     }
     else if (string(gameinfo.path).endsWith(".bs")) {
@@ -1025,8 +1032,8 @@ int jg_game_load() {
             return 0;
         }
         
-        program->superFamicom.location = string(addoninfo.path);
-        program->bsMemory.location = string(gameinfo.path);
+        program->superFamicom.location = std::string(addoninfo.path);
+        program->bsMemory.location = std::string(gameinfo.path);
         addon = true;
     }
     else if (string(gameinfo.path).endsWith(".st")) {
@@ -1037,19 +1044,19 @@ int jg_game_load() {
             return 0;
         }
         
-        program->superFamicom.location = string(addoninfo.path);
+        program->superFamicom.location = std::string(addoninfo.path);
         
         if (sufamiinfo.size) {
-            program->sufamiTurboA.location = string(sufamiinfo.path);
-            program->sufamiTurboB.location = string(gameinfo.path);
+            program->sufamiTurboA.location = std::string(sufamiinfo.path);
+            program->sufamiTurboB.location = std::string(gameinfo.path);
         }
         else {
-            program->sufamiTurboA.location = string(gameinfo.path);
+            program->sufamiTurboA.location = std::string(gameinfo.path);
         }
         addon = true;
     }
     else {
-        program->superFamicom.location = string(gameinfo.path);
+        program->superFamicom.location = std::string(gameinfo.path);
     }
     
     program->load();
@@ -1057,7 +1064,7 @@ int jg_game_load() {
     // Set up inputs
     int multitap = 0;
     for (int i = 0; i < sizeof(db_multitap_games) / sizeof(mtentry_t); ++i) {
-        if ((string)gameinfo.md5 == db_multitap_games[i].md5) {
+        if ((std::string)gameinfo.md5 == db_multitap_games[i].md5) {
             multitap = db_multitap_games[i].players;
             break;
         }
@@ -1065,7 +1072,7 @@ int jg_game_load() {
     
     bool mouse = false;
     for (int i = 0; i < sizeof(db_mouse_games) / sizeof(string); ++i) {
-        if ((string)gameinfo.md5 == db_mouse_games[i]) {
+        if ((std::string)gameinfo.md5 == db_mouse_games[i]) {
             mouse = true;
             break;
         }
@@ -1073,7 +1080,7 @@ int jg_game_load() {
     
     bool superscope = false;
     for (int i = 0; i < sizeof(db_superscope_games) / sizeof(ssentry_t); ++i) {
-        if ((string)gameinfo.md5 == db_superscope_games[i].md5) {
+        if ((std::string)gameinfo.md5 == db_superscope_games[i].md5) {
             superscope = true;
             ss_offset_x = db_superscope_games[i].x;
             ss_offset_y = db_superscope_games[i].y;
@@ -1083,7 +1090,7 @@ int jg_game_load() {
     
     bool justifier = false;
     for (int i = 0; i < sizeof(db_justifier_games) / sizeof(string); ++i) {
-        if ((string)gameinfo.md5 == db_justifier_games[i]) {
+        if ((std::string)gameinfo.md5 == db_justifier_games[i]) {
             justifier = true;
             break;
         }
