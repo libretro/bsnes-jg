@@ -50,11 +50,6 @@ private:
   uint64_t _offset;
 };
 
-//std::rbegin(), std::rend() is missing from GCC 4.9; which I still target
-
-template<typename T, uint64_t Size> auto rbegin(T (&array)[Size]) { return reverse_iterator<T>{array, Size - 1}; }
-template<typename T, uint64_t Size> auto rend(T (&array)[Size]) { return reverse_iterator<T>{array, (uint64_t)-1}; }
-
 template<typename T> auto rbegin(T& self) { return self.rbegin(); }
 template<typename T> auto rend(T& self) { return self.rend(); }
 
@@ -67,10 +62,6 @@ template<typename T> struct reverse_wrapper {
 
   T _self;
 };
-
-template<typename T> auto reverse(T& object) -> reverse_wrapper<T&> {
-  return {object};
-}
 
 template<typename T> auto reverse(T&& object) -> reverse_wrapper<T> {
   return {object};
@@ -116,10 +107,6 @@ inline auto range(int64_t size) {
 
 inline auto range(int64_t offset, int64_t size) {
   return range_t{offset, size, 1};
-}
-
-inline auto range(int64_t offset, int64_t size, int64_t step) {
-  return range_t{offset, size, step};
 }
 
 }
