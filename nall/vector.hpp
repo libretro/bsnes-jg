@@ -110,13 +110,11 @@ protected:
 
 }
 
-#define vector vector_base
 #include <nall/vector/core.hpp>
 #include <nall/vector/assign.hpp>
 #include <nall/vector/memory.hpp>
 #include <nall/vector/access.hpp>
 #include <nall/vector/modify.hpp>
-#undef vector
 
 namespace nall {
   template<typename T> struct vector : vector_base<T> {

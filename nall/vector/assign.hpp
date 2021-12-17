@@ -2,7 +2,7 @@
 
 namespace nall {
 
-template<typename T> auto vector<T>::operator=(const vector<T>& source) -> vector<T>& {
+template<typename T> auto vector_base<T>::operator=(const vector_base<T>& source) -> vector_base<T>& {
   if(this == &source) return *this;
   _pool = memory::allocate<T>(source._size);
   _size = source._size;
@@ -12,7 +12,7 @@ template<typename T> auto vector<T>::operator=(const vector<T>& source) -> vecto
   return *this;
 }
 
-template<typename T> auto vector<T>::operator=(vector<T>&& source) -> vector<T>& {
+template<typename T> auto vector_base<T>::operator=(vector_base<T>&& source) -> vector_base<T>& {
   if(this == &source) return *this;
   _pool = source._pool;
   _size = source._size;
