@@ -1,4 +1,3 @@
-#include <nall/stdint.hpp>
 #include <nall/intrinsics.hpp>
 #include <nall/atoi.hpp>
 #include <nall/bit.hpp>
