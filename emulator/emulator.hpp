@@ -20,7 +20,6 @@ using std::any;
 #include <nall/varint.hpp>
 #include <nall/vector.hpp>
 #include <nall/string.hpp>
-#include <nall/inode.hpp>
 #include <nall/queue.hpp>
 #include <nall/arithmetic.hpp>
 #include <nall/dsp.hpp>
