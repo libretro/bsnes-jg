@@ -123,15 +123,16 @@ struct Program : Emulator::Platform {
     Program();
     ~Program();
     
-    shared_pointer<vfs::file> open(unsigned id, std::string name, vfs::file::mode mode,
-        bool required) override;
-    Emulator::Platform::Load load(unsigned id, string name, string type,
-        vector<string> options = {}) override;
-    void videoFrame(const uint16_t *data, unsigned pitch, unsigned width, unsigned height,
-        unsigned scale) override;
+    shared_pointer<vfs::file> open(unsigned id, std::string name,
+        vfs::file::mode mode, bool required) override;
+    Emulator::Platform::Load load(unsigned id, std::string name,
+        std::string type, vector<std::string> options = {}) override;
+    void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
+        unsigned height, unsigned scale) override;
     void audioFrame(const double* samples, unsigned channels) override;
     int16_t inputPoll(unsigned port, unsigned device, unsigned input) override;
-    void inputRumble(unsigned port, unsigned device, unsigned input, bool enable) override;
+    void inputRumble(unsigned port, unsigned device, unsigned input,
+        bool enable) override;
     
     void load();
     vector<uint8_t> loadFile(void *data, size_t size);
@@ -308,8 +309,8 @@ void Program::load() {
     emulator->load();
 }
 
-Emulator::Platform::Load Program::load(unsigned id, string name, string type,
-    vector<string> options) {
+Emulator::Platform::Load Program::load(unsigned id, std::string name,
+    std::string type, vector<std::string> options) {
     
     if (id == 1) {
         if (loadSuperFamicom(superFamicom.location)) {
@@ -336,7 +337,7 @@ Emulator::Platform::Load Program::load(unsigned id, string name, string type,
             return { id, "" };
         }
     }
-    return { id, options(0) };
+    return { id, "" };
 }
 
 void Program::videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
@@ -452,7 +453,8 @@ int16_t Program::inputPoll(unsigned port, unsigned device, unsigned input) {
     return pollInputDevices(port, device, input);
 }
 
-void Program::inputRumble(unsigned port, unsigned device, unsigned input, bool enable) {
+void Program::inputRumble(unsigned port, unsigned device, unsigned input,
+    bool enable) {
 }
 
 shared_pointer<vfs::file> Program::openRomSuperFamicom(std::string name,
