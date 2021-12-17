@@ -39,10 +39,7 @@ protected:
 template<typename T> struct stringify;
 
 //format.hpp
-template<typename T> inline auto pad(const T& value, long precision = 0, char padchar = ' ') -> string;
 inline auto hex(uintmax value, long precision = 0, char padchar = '0') -> string;
-inline auto octal(uintmax value, long precision = 0, char padchar = '0') -> string;
-inline auto binary(uintmax value, long precision = 0, char padchar = '0') -> string;
 
 //match.hpp
 inline auto tokenize(const char* s, const char* p) -> bool;
@@ -52,7 +49,6 @@ inline auto tokenize(vector<string>& list, const char* s, const char* p) -> bool
 inline auto slice(string_view self, int offset = 0, int length = -1) -> string;
 template<typename T> inline auto fromInteger(char* result, T value) -> char*;
 template<typename T> inline auto fromNatural(char* result, T value) -> char*;
-template<typename T> inline auto fromReal(char* str, T value) -> unsigned;
 
 struct string {
 
@@ -128,7 +124,6 @@ public:
   auto end() const -> const char* { return &data()[size()]; }
 
   //atoi.hpp
-  inline auto boolean() const -> bool;
   inline auto integer() const -> intmax;
   inline auto natural() const -> uintmax;
   inline auto hex() const -> uintmax;
@@ -136,63 +131,27 @@ public:
 
   //core.hpp
   inline auto operator[](unsigned) const -> const char&;
-  inline auto operator()(unsigned, char = 0) const -> char;
-  template<typename... P> inline auto assign(P&&...) -> string&;
   template<typename T, typename... P> inline auto prepend(const T&, P&&...) -> string&;
-  template<typename... P> inline auto prepend(const nall::string_format&, P&&...) -> string&;
   template<typename T> inline auto _prepend(const stringify<T>&) -> string&;
   template<typename T, typename... P> inline auto append(const T&, P&&...) -> string&;
-  template<typename... P> inline auto append(const nall::string_format&, P&&...) -> string&;
   template<typename T> inline auto _append(const stringify<T>&) -> string&;
   inline auto length() const -> unsigned;
 
   //find.hpp
-  inline auto contains(string_view characters) const -> maybe<unsigned>;
-
   template<bool, bool> inline auto _find(int, string_view) const -> maybe<unsigned>;
 
   inline auto find(string_view source) const -> maybe<unsigned>;
-  inline auto ifind(string_view source) const -> maybe<unsigned>;
-  inline auto qfind(string_view source) const -> maybe<unsigned>;
-  inline auto iqfind(string_view source) const -> maybe<unsigned>;
-
-  inline auto findFrom(int offset, string_view source) const -> maybe<unsigned>;
-  inline auto ifindFrom(int offset, string_view source) const -> maybe<unsigned>;
-
-  inline auto findNext(int offset, string_view source) const -> maybe<unsigned>;
-  inline auto ifindNext(int offset, string_view source) const -> maybe<unsigned>;
-
-  inline auto findPrevious(int offset, string_view source) const -> maybe<unsigned>;
-  inline auto ifindPrevious(int offset, string_view source) const -> maybe<unsigned>;
-
-  //format.hpp
-  inline auto format(const nall::string_format& params) -> string&;
 
   //compare.hpp
   template<bool> inline static auto _compare(const char*, unsigned, const char*, unsigned) -> int;
 
-  inline static auto compare(string_view, string_view) -> int;
-  inline static auto icompare(string_view, string_view) -> int;
-
   inline auto compare(string_view source) const -> int;
-  inline auto icompare(string_view source) const -> int;
-
   inline auto equals(string_view source) const -> bool;
-  inline auto iequals(string_view source) const -> bool;
-
   inline auto beginsWith(string_view source) const -> bool;
-  inline auto ibeginsWith(string_view source) const -> bool;
-
   inline auto endsWith(string_view source) const -> bool;
-  inline auto iendsWith(string_view source) const -> bool;
 
   //convert.hpp
   inline auto downcase() -> string&;
-  inline auto upcase() -> string&;
-
-  inline auto qdowncase() -> string&;
-  inline auto qupcase() -> string&;
-
   inline auto transform(string_view from, string_view to) -> string&;
 
   //match.hpp
@@ -202,9 +161,6 @@ public:
   //replace.hpp
   template<bool, bool> inline auto _replace(string_view, string_view, long) -> string&;
   inline auto replace(string_view from, string_view to, long limit = LONG_MAX) -> string&;
-  inline auto ireplace(string_view from, string_view to, long limit = LONG_MAX) -> string&;
-  inline auto qreplace(string_view from, string_view to, long limit = LONG_MAX) -> string&;
-  inline auto iqreplace(string_view from, string_view to, long limit = LONG_MAX) -> string&;
 
   //split.hpp
   inline auto split(string_view key, long limit = LONG_MAX) const -> vector<string>;
@@ -252,13 +208,7 @@ template<> struct vector<string> : vector_base<string> {
   //vector.hpp
   template<typename... P> inline auto append(const string&, P&&...) -> vector<string>&;
   inline auto append() -> vector<string>&;
-
-  inline auto isort() -> vector<string>&;
-  inline auto find(string_view source) const -> maybe<unsigned>;
-  inline auto ifind(string_view source) const -> maybe<unsigned>;
-  inline auto match(string_view pattern) const -> vector<string>;
   inline auto merge(string_view separator) const -> string;
-  inline auto strip() -> vector<string>&;
 
   //split.hpp
   template<bool, bool> inline auto _split(string_view, string_view, long) -> vector<string>&;
