@@ -44,7 +44,7 @@ auto HitachiDSP::addressROM(unsigned address) const -> maybe<unsigned> {
 auto HitachiDSP::readROM(unsigned address, uint8_t data) -> uint8_t {
   if(hitachidsp.active() || !busy()) {
     address = bus.mirror(address, rom.size());
-  //if(Roms == 2 && mmio.r1f52 == 1 && address >= (bit::round(rom.size()) >> 1)) return 0x00;
+  //if(Roms == 2 && mmio.r1f52 == 1 && address >= (nall::round(rom.size()) >> 1)) return 0x00;
     return rom.read(address, data);
   }
   //DSP has the bus acquired: CPU reads from 00:ffc0-ffff return IO registers (including reset vector overrides)

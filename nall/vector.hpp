@@ -161,7 +161,7 @@ template<typename T> auto vector_base<T>::reset() -> void {
 template<typename T> auto vector_base<T>::reserveLeft(uint64_t capacity) -> bool {
   if(_size + _left >= capacity) return false;
 
-  uint64_t left = bit::round(capacity);
+  uint64_t left = nall::round(capacity);
   auto pool = memory::allocate<T>(left + _right) + (left - _size);
   for(uint64_t n : range(_size)) new(pool + n) T(std::move(_pool[n]));
   memory::free(_pool - _left);
@@ -175,7 +175,7 @@ template<typename T> auto vector_base<T>::reserveLeft(uint64_t capacity) -> bool
 template<typename T> auto vector_base<T>::reserveRight(uint64_t capacity) -> bool {
   if(_size + _right >= capacity) return false;
 
-  uint64_t right = bit::round(capacity);
+  uint64_t right = nall::round(capacity);
   auto pool = memory::allocate<T>(_left + right) + _left;
   for(uint64_t n : range(_size)) new(pool + n) T(std::move(_pool[n]));
   memory::free(_pool - _left);

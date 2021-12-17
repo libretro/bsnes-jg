@@ -268,7 +268,7 @@ auto ARM7TDMI::armInitialize() -> void {
   }
 
   #define pattern(s) \
-    std::integral_constant<uint32_t, bit::test(s)>::value
+    std::integral_constant<uint32_t, nall::test(s)>::value
 
   #define bit1(value, index) (value >> index & 1)
   #define bits(value, lo, hi) (value >> lo & (1ull << (hi - lo + 1)) - 1)
@@ -578,7 +578,7 @@ auto ARM7TDMI::thumbInitialize() -> void {
   }
 
   #define pattern(s) \
-    std::integral_constant<uint16_t, bit::test(s)>::value
+    std::integral_constant<uint16_t, nall::test(s)>::value
 
   for(nall::Natural< 3> d : range(8))
   for(nall::Natural< 3> m : range(8))
@@ -928,12 +928,12 @@ auto ARM7TDMI::armInstructionMoveMultiple
   uint32_t rn = r(n);
   if(pre == 0 && up == 1) rn = rn + 0;  //IA
   if(pre == 1 && up == 1) rn = rn + 4;  //IB
-  if(pre == 1 && up == 0) rn = rn - bit::count(list) * 4 + 0;  //DB
-  if(pre == 0 && up == 0) rn = rn - bit::count(list) * 4 + 4;  //DA
+  if(pre == 1 && up == 0) rn = rn - nall::count(list) * 4 + 0;  //DB
+  if(pre == 0 && up == 0) rn = rn - nall::count(list) * 4 + 4;  //DA
 
   if(writeback && mode == 1) {
-    if(up == 1) r(n) = r(n) + bit::count(list) * 4;  //IA,IB
-    if(up == 0) r(n) = r(n) - bit::count(list) * 4;  //DA,DB
+    if(up == 1) r(n) = r(n) + nall::count(list) * 4;  //IA,IB
+    if(up == 0) r(n) = r(n) - nall::count(list) * 4;  //DA,DB
   }
 
   auto cpsrMode = cpsr().m;
@@ -963,8 +963,8 @@ auto ARM7TDMI::armInstructionMoveMultiple
   }
 
   if(writeback && mode == 0) {
-    if(up == 1) r(n) = r(n) + bit::count(list) * 4;  //IA,IB
-    if(up == 0) r(n) = r(n) - bit::count(list) * 4;  //DA,DB
+    if(up == 1) r(n) = r(n) + nall::count(list) * 4;  //IA,IB
+    if(up == 0) r(n) = r(n) - nall::count(list) * 4;  //DA,DB
   }
 }
 
@@ -1247,7 +1247,7 @@ auto ARM7TDMI::thumbInstructionStackMultiple
 (uint8_t list, nall::Natural< 1> lrpc, nall::Natural< 1> mode) -> void {
   uint32_t sp;
   switch(mode) {
-  case 0: sp = r(13) - (bit::count(list) + lrpc) * 4; break;  //PUSH
+  case 0: sp = r(13) - (nall::count(list) + lrpc) * 4; break;  //PUSH
   case 1: sp = r(13);  //POP
   }
 
@@ -1272,10 +1272,10 @@ auto ARM7TDMI::thumbInstructionStackMultiple
 
   if(mode == 1) {
     idle();
-    r(13) = r(13) + (bit::count(list) + lrpc) * 4;  //POP
+    r(13) = r(13) + (nall::count(list) + lrpc) * 4;  //POP
   } else {
     pipeline.nonsequential = true;
-    r(13) = r(13) - (bit::count(list) + lrpc) * 4;  //PUSH
+    r(13) = r(13) - (nall::count(list) + lrpc) * 4;  //PUSH
   }
 }
 

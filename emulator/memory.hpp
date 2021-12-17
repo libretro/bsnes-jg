@@ -42,7 +42,7 @@ struct Readable {
     if(!size) return reset();
     delete[] self.data;
     self.size = size;
-    self.mask = bit::round(self.size) - 1;
+    self.mask = nall::round(self.size) - 1;
     self.data = new T[self.mask + 1];
     memory::fill<T>(self.data, self.mask + 1, fill);
   }
@@ -98,7 +98,7 @@ struct Writable {
     if(!size) return reset();
     delete[] self.data;
     self.size = size;
-    self.mask = bit::round(self.size) - 1;
+    self.mask = nall::round(self.size) - 1;
     self.data = new T[self.mask + 1];
     memory::fill<T>(self.data, self.mask + 1, fill);
   }

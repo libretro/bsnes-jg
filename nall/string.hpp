@@ -391,7 +391,7 @@ auto string::reset() -> string& {
 
 auto string::reserve(unsigned capacity) -> string& {
   if(capacity <= _capacity) return *this;
-  capacity = bit::round(capacity + 1) - 1;
+  capacity = nall::round(capacity + 1) - 1;
   if(_capacity < SSO) {
     _capacity = capacity;
     _allocate();

@@ -117,7 +117,7 @@ HG51B::HG51B() {
   }
 
   #define pattern(s) \
-    std::integral_constant<uint16_t, bit::test(s)>::value
+    std::integral_constant<uint16_t, nall::test(s)>::value
 
   static const nall::Natural< 5> shifts[] = {0, 1, 8, 16};
 
