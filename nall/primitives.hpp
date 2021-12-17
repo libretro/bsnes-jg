@@ -1,14 +1,209 @@
 #pragma once
 
 namespace nall {
-  struct Boolean;
-  template<unsigned Precision = 64> struct Natural;
-  template<unsigned Precision = 64> struct Integer;
-  template<unsigned Precision = 64> struct Real;
-}
 
-#include <nall/primitives/bit-field.hpp>
-#include <nall/primitives/bit-range.hpp>
-#include <nall/primitives/boolean.hpp>
-#include <nall/primitives/natural.hpp>
-#include <nall/primitives/integer.hpp>
+struct Boolean;
+template<unsigned Precision = 64> struct Natural;
+template<unsigned Precision = 64> struct Integer;
+template<unsigned Precision = 64> struct Real;
+
+template<int...> struct BitField;
+
+/* static BitField */
+
+template<int Precision, int Index> struct BitField<Precision, Index> {
+  enum : unsigned { bits = Precision };
+  using type =
+    std::conditional_t<bits <=  8,  uint8_t,
+    std::conditional_t<bits <= 16, uint16_t,
+    std::conditional_t<bits <= 32, uint32_t,
+    std::conditional_t<bits <= 64, uint64_t,
+    void>>>>;
+  enum : unsigned { shift = Index < 0 ? Precision + Index : Index };
+  enum : type { mask = 1ull << shift };
+
+  BitField(const BitField&) = delete;
+
+  template<typename T> inline BitField(T* source) : target((type&)*source) {
+    static_assert(sizeof(T) == sizeof(type));
+  }
+
+  inline operator bool() const {
+    return target & mask;
+  }
+
+  inline auto& operator=(bool source) {
+    target = target & ~mask | source << shift;
+    return *this;
+  }
+
+private:
+  type& target;
+};
+
+template<int...> struct BitRange;
+
+/* static BitRange */
+
+template<int Precision, int Lo, int Hi> struct BitRange<Precision, Lo, Hi> {
+  enum : unsigned { bits = Precision };
+  using type =
+    std::conditional_t<bits <=  8,  uint8_t,
+    std::conditional_t<bits <= 16, uint16_t,
+    std::conditional_t<bits <= 32, uint32_t,
+    std::conditional_t<bits <= 64, uint64_t,
+    void>>>>;
+  enum : unsigned { lo = Lo < 0 ? Precision + Lo : Lo };
+  enum : unsigned { hi = Hi < 0 ? Precision + Hi : Hi };
+  enum : type { mask = ~0ull >> 64 - (hi - lo + 1) << lo };
+  enum : unsigned { shift = lo };
+
+  BitRange(const BitRange& source) = delete;
+
+  inline auto& operator=(const BitRange& source) {
+    target = target & ~mask | ((source.target & source.mask) >> source.shift) << shift & mask;
+    return *this;
+  }
+
+  template<typename T> inline BitRange(T* source) : target((type&)*source) {
+    static_assert(sizeof(T) == sizeof(type));
+  }
+
+private:
+  type& target;
+};
+
+/* dynamic BitRange */
+
+template<int Precision> struct BitRange<Precision> {
+  enum : unsigned { bits = Precision };
+  using type =
+    std::conditional_t<bits <=  8,  uint8_t,
+    std::conditional_t<bits <= 16, uint16_t,
+    std::conditional_t<bits <= 32, uint32_t,
+    std::conditional_t<bits <= 64, uint64_t,
+    void>>>>;
+
+  BitRange(const BitRange& source) = delete;
+
+  template<typename T> inline BitRange(T* source, int index) : target((type&)*source) {
+    static_assert(sizeof(T) == sizeof(type));
+    if(index < 0) index = Precision + index;
+    mask = 1ull << index;
+    shift = index;
+  }
+
+  template<typename T> inline BitRange(T* source, int lo, int hi) : target((type&)*source) {
+    static_assert(sizeof(T) == sizeof(type));
+    if(lo < 0) lo = Precision + lo;
+    if(hi < 0) hi = Precision + hi;
+    if(lo > hi) std::swap(lo, hi);
+    mask = ~0ull >> 64 - (hi - lo + 1) << lo;
+    shift = lo;
+  }
+
+  inline operator type() const {
+    return (target & mask) >> shift;
+  }
+
+  inline auto operator++(int) {
+    auto value = (target & mask) >> shift;
+    target = target & ~mask | target + (1 << shift) & mask;
+    return value;
+  }
+
+  template<typename T> inline auto& operator=(const T& source) {
+    type value = source;
+    target = target & ~mask | value << shift & mask;
+    return *this;
+  }
+
+private:
+  type& target;
+  type mask;
+  unsigned shift;
+};
+
+struct Boolean {
+  inline Boolean() : data(false) {}
+  template<typename T> inline Boolean(const T& value) : data(value) {}
+
+  inline operator bool() const { return data; }
+
+  inline auto lower() { return data == 1 ? data = 0, true : false; }
+
+  inline auto flip(bool value) { return data != value ? (data = value, true) : false; }
+  inline auto raise(bool value) { return !data && value ? (data = value, true) : (data = value, false); }
+  inline auto lower(bool value) { return data && !value ? (data = value, true) : (data = value, false); }
+
+private:
+  bool data;
+};
+
+template<unsigned Precision> struct Natural {
+  static inline constexpr auto bits() -> unsigned { return Precision; }
+  using utype =
+    std::conditional_t<bits() <=  8,  uint8_t,
+    std::conditional_t<bits() <= 16, uint16_t,
+    std::conditional_t<bits() <= 32, uint32_t,
+    std::conditional_t<bits() <= 64, uint64_t,
+    void>>>>;
+  static inline constexpr auto mask() -> utype { return ~0ull >> 64 - Precision; }
+
+  inline Natural() : data(0) {}
+  template<typename T> inline Natural(const T& value) { data = cast(value); }
+
+  inline operator utype() const { return data; }
+
+  inline auto operator++(int) { auto value = *this; data = cast(data + 1); return value; }
+  inline auto operator--(int) { auto value = *this; data = cast(data - 1); return value; }
+
+  inline auto& operator++() { data = cast(data + 1); return *this; }
+  inline auto& operator--() { data = cast(data - 1); return *this; }
+
+  template<typename T> inline auto& operator /=(const T& value) { data = cast(data  / value); return *this; }
+  template<typename T> inline auto& operator +=(const T& value) { data = cast(data  + value); return *this; }
+  template<typename T> inline auto& operator -=(const T& value) { data = cast(data  - value); return *this; }
+  template<typename T> inline auto& operator>>=(const T& value) { data = cast(data >> value); return *this; }
+  template<typename T> inline auto& operator &=(const T& value) { data = cast(data  & value); return *this; }
+  template<typename T> inline auto& operator ^=(const T& value) { data = cast(data  ^ value); return *this; }
+  template<typename T> inline auto& operator |=(const T& value) { data = cast(data  | value); return *this; }
+
+  inline auto bit(int index) -> BitRange<Precision> { return {&data, index}; }
+  inline auto bit(int lo, int hi) -> BitRange<Precision> { return {&data, lo, hi}; }
+
+  inline auto byte(int index) -> BitRange<Precision> { return {&data, index * 8 + 0, index * 8 + 7}; }
+  inline auto serialize(serializer& s) { s(data); }
+
+private:
+  inline auto cast(utype value) const -> utype {
+    return value & mask();
+  }
+
+  utype data;
+};
+
+template<unsigned Precision> struct Integer {
+  static inline constexpr auto bits() -> unsigned { return Precision; }
+  using stype =
+    std::conditional_t<bits() <=  8,  int8_t,
+    std::conditional_t<bits() <= 16, int16_t,
+    std::conditional_t<bits() <= 32, int32_t,
+    std::conditional_t<bits() <= 64, int64_t,
+    void>>>>;
+  static inline constexpr auto mask() -> typename Natural<Precision>::utype { return ~0ull >> 64 - Precision; }
+  static inline constexpr auto sign() -> typename Natural<Precision>::utype { return 1ull << Precision - 1; }
+
+  template<typename T> inline Integer(const T& value) { data = cast(value); }
+
+  inline operator stype() const { return data; }
+
+private:
+  inline auto cast(stype value) const -> stype {
+    return (value & mask() ^ sign()) - sign();
+  }
+
+  stype data;
+};
+
+}
