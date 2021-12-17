@@ -14,7 +14,17 @@ struct file_buffer {
   struct mode { enum : unsigned { read, write, modify, append }; };
   struct index { enum : unsigned { absolute, relative }; };
 
+  file_buffer(const file_buffer&) = delete;
+  auto operator=(const file_buffer&) -> file_buffer& = delete;
+
   file_buffer() = default;
+  file_buffer(const string& filename, unsigned mode) { open(filename, mode); }
+
+  ~file_buffer() { close(); }
+
+  explicit operator bool() const {
+    return (bool)fileHandle;
+  }
 
   auto read() -> uint8_t {
     if(!fileHandle) return 0;              //file not open
@@ -22,6 +32,10 @@ struct file_buffer {
     if(fileOffset >= fileSize) return 0;   //cannot read past end of file
     bufferSynchronize();
     return buffer[fileOffset++ & buffer.size() - 1];
+  }
+
+  auto read(array_span<uint8_t> memory) -> void {
+    for(auto& byte : memory) byte = read();
   }
 
   auto write(uint8_t data) -> void {
