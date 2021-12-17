@@ -346,18 +346,856 @@ protected:
 
 }
 
-#include <nall/string/adaptive.hpp>
-#include <nall/string/atoi.hpp>
-#include <nall/string/cast.hpp>
-#include <nall/string/compare.hpp>
-#include <nall/string/convert.hpp>
-#include <nall/string/core.hpp>
-#include <nall/string/find.hpp>
-#include <nall/string/format.hpp>
-#include <nall/string/match.hpp>
-#include <nall/string/replace.hpp>
-#include <nall/string/split.hpp>
-#include <nall/string/trim.hpp>
-#include <nall/string/utility.hpp>
-#include <nall/string/vector.hpp>
-#include <nall/string/view.hpp>
+namespace nall {
+
+/*****
+  adaptive allocator
+  sizeof(string) == SSO + 8
+
+  aggressively tries to avoid heap allocations
+  small strings are stored on the stack
+  large strings are shared via copy-on-write
+
+  SSO alone is very slow on large strings due to copying
+  SSO alone is very slightly faster than this allocator on small strings
+
+  COW alone is very slow on small strings due to heap allocations
+  COW alone is very slightly faster than this allocator on large strings
+
+  adaptive is thus very fast for all string sizes
+*****/
+
+string::string() : _data(nullptr), _capacity(SSO - 1), _size(0) {
+}
+
+template<typename T>
+auto string::get() -> T* {
+  if(_capacity < SSO) return (T*)_text;
+  if(*_refs > 1) _copy();
+  return (T*)_data;
+}
+
+template<typename T>
+auto string::data() const -> const T* {
+  if(_capacity < SSO) return (const T*)_text;
+  return (const T*)_data;
+}
+
+auto string::reset() -> string& {
+  if(_capacity >= SSO && !--*_refs) memory::free(_data);
+  _data = nullptr;
+  _capacity = SSO - 1;
+  _size = 0;
+  return *this;
+}
+
+auto string::reserve(unsigned capacity) -> string& {
+  if(capacity <= _capacity) return *this;
+  capacity = bit::round(capacity + 1) - 1;
+  if(_capacity < SSO) {
+    _capacity = capacity;
+    _allocate();
+  } else if(*_refs > 1) {
+    _capacity = capacity;
+    _copy();
+  } else {
+    _capacity = capacity;
+    _resize();
+  }
+  return *this;
+}
+
+auto string::resize(unsigned size) -> string& {
+  reserve(size);
+  get()[_size = size] = 0;
+  return *this;
+}
+
+auto string::operator=(const string& source) -> string& {
+  if(&source == this) return *this;
+  reset();
+  if(source._capacity >= SSO) {
+    _data = source._data;
+    _refs = source._refs;
+    _capacity = source._capacity;
+    _size = source._size;
+    ++*_refs;
+  } else {
+    memory::copy(_text, source._text, SSO);
+    _capacity = source._capacity;
+    _size = source._size;
+  }
+  return *this;
+}
+
+auto string::operator=(string&& source) -> string& {
+  if(&source == this) return *this;
+  reset();
+  memory::copy(this, &source, sizeof(string));
+  source._data = nullptr;
+  source._capacity = SSO - 1;
+  source._size = 0;
+  return *this;
+}
+
+//SSO -> COW
+auto string::_allocate() -> void {
+  char _temp[SSO];
+  memory::copy(_temp, _text, SSO);
+  _data = memory::allocate<char>(_capacity + 1 + sizeof(unsigned));
+  memory::copy(_data, _temp, SSO);
+  _refs = (unsigned*)(_data + _capacity + 1);  //always aligned by 32 via reserve()
+  *_refs = 1;
+}
+
+//COW -> Unique
+auto string::_copy() -> void {
+  auto _temp = memory::allocate<char>(_capacity + 1 + sizeof(unsigned));
+  memory::copy(_temp, _data, _size = std::min(_capacity, _size));
+  _temp[_size] = 0;
+  --*_refs;
+  _data = _temp;
+  _refs = (unsigned*)(_data + _capacity + 1);
+  *_refs = 1;
+}
+
+//COW -> Resize
+auto string::_resize() -> void {
+  _data = memory::resize<char>(_data, _capacity + 1 + sizeof(unsigned));
+  _refs = (unsigned*)(_data + _capacity + 1);
+  *_refs = 1;
+}
+
+auto string::integer() const -> intmax {
+  return toInteger(data());
+}
+
+auto string::natural() const -> uintmax {
+  return toNatural(data());
+}
+
+auto string::hex() const -> uintmax {
+  return toHex(data());
+}
+
+auto string::real() const -> double {
+  return toReal(data());
+}
+
+//convert any (supported) type to a const char* without constructing a new nall::string
+//this is used inside string{...} to build nall::string values
+
+//booleans
+
+template<> struct stringify<bool> {
+  stringify(bool value) : _value(value) {}
+  auto data() const -> const char* { return _value ? "true" : "false"; }
+  auto size() const -> unsigned { return _value ? 4 : 5; }
+  bool _value;
+};
+
+//characters
+
+template<> struct stringify<char> {
+  stringify(char source) { _data[0] = source; _data[1] = 0; }
+  auto data() const -> const char* { return _data; }
+  auto size() const -> unsigned { return 1; }
+  char _data[2];
+};
+
+//signed integers
+
+template<> struct stringify<signed int> {
+  stringify(signed int source) { fromInteger(_data, source); }
+  auto data() const -> const char* { return _data; }
+  auto size() const -> unsigned { return strlen(_data); }
+  char _data[2 + sizeof(signed int) * 3];
+};
+
+//unsigned integers
+
+template<> struct stringify<unsigned short> {
+  stringify(unsigned short source) { fromNatural(_data, source); }
+  auto data() const -> const char* { return _data; }
+  auto size() const -> unsigned { return strlen(_data); }
+  char _data[1 + sizeof(unsigned short) * 3];
+};
+
+template<> struct stringify<unsigned int> {
+  stringify(unsigned int source) { fromNatural(_data, source); }
+  auto data() const -> const char* { return _data; }
+  auto size() const -> unsigned { return strlen(_data); }
+  char _data[1 + sizeof(unsigned int) * 3];
+};
+
+#if defined(__SIZEOF_INT128__)
+template<> struct stringify<uint128_t> {
+  stringify(uint128_t source) { fromNatural(_data, source); }
+  auto data() const -> const char* { return _data; }
+  auto size() const -> unsigned { return strlen(_data); }
+  char _data[1 + sizeof(uint128_t) * 3];
+};
+#endif
+
+template<unsigned Bits> struct stringify<Natural<Bits>> {
+  stringify(Natural<Bits> source) { fromNatural(_data, source); }
+  auto data() const -> const char* { return _data; }
+  auto size() const -> unsigned { return strlen(_data); }
+  char _data[1 + sizeof(uint64_t) * 3];
+};
+
+//char arrays
+
+template<> struct stringify<char*> {
+  stringify(char* source) : _data(source ? source : "") {}
+  auto data() const -> const char* { return _data; }
+  auto size() const -> unsigned { return strlen(_data); }
+  const char* _data;
+};
+
+template<> struct stringify<const char*> {
+  stringify(const char* source) : _data(source ? source : "") {}
+  auto data() const -> const char* { return _data; }
+  auto size() const -> unsigned { return strlen(_data); }
+  const char* _data;
+};
+
+//strings
+
+template<> struct stringify<string> {
+  stringify(const string& source) : _text(source) {}
+  auto data() const -> const char* { return _text.data(); }
+  auto size() const -> unsigned { return _text.size(); }
+  const string& _text;
+};
+
+template<> struct stringify<string_view> {
+  stringify(const string_view& source) : _view(source) {}
+  auto data() const -> const char* { return _view.data(); }
+  auto size() const -> unsigned { return _view.size(); }
+  const string_view& _view;
+};
+
+//pointers
+
+template<typename T> auto make_string(T value) -> stringify<T> {
+  return stringify<T>(std::forward<T>(value));
+}
+
+template<bool Insensitive>
+auto string::_compare(const char* target, unsigned capacity, const char* source, unsigned size) -> int {
+  if(Insensitive) return memory::icompare(target, capacity, source, size);
+  return memory::compare(target, capacity, source, size);
+}
+
+auto string::compare(string_view source) const -> int {
+  return memory::compare(data(), size() + 1, source.data(), source.size() + 1);
+}
+
+auto string::equals(string_view source) const -> bool {
+  if(size() != source.size()) return false;
+  return memory::compare(data(), source.data(), source.size()) == 0;
+}
+
+auto string::beginsWith(string_view source) const -> bool {
+  if(source.size() > size()) return false;
+  return memory::compare(data(), source.data(), source.size()) == 0;
+}
+
+auto string::endsWith(string_view source) const -> bool {
+  if(source.size() > size()) return false;
+  return memory::compare(data() + size() - source.size(), source.data(), source.size()) == 0;
+}
+
+auto string::downcase() -> string& {
+  char* p = get();
+  for(unsigned n = 0; n < size(); n++) {
+    if(p[n] >= 'A' && p[n] <= 'Z') p[n] += 0x20;
+  }
+  return *this;
+}
+
+auto string::transform(string_view from, string_view to) -> string& {
+  if(from.size() != to.size() || from.size() == 0) return *this;  //patterns must be the same length
+  char* p = get();
+  for(unsigned n = 0; n < size(); n++) {
+    for(unsigned s = 0; s < from.size(); s++) {
+      if(p[n] == from[s]) {
+        p[n] = to[s];
+        break;
+      }
+    }
+  }
+  return *this;
+}
+
+//only allocators may access _data or modify _size and _capacity
+//all other functions must use data(), size(), capacity()
+
+auto string::operator[](unsigned position) const -> const char& {
+  #ifdef DEBUG
+  struct out_of_bounds {};
+  if(position >= size() + 1) throw out_of_bounds{};
+  #endif
+  return data()[position];
+}
+
+template<typename T, typename... P> auto string::prepend(const T& value, P&&... p) -> string& {
+  if constexpr(sizeof...(p)) prepend(std::forward<P>(p)...);
+  return _prepend(make_string(value));
+}
+
+template<typename T> auto string::_prepend(const stringify<T>& source) -> string& {
+  resize(source.size() + size());
+  memory::move(get() + source.size(), get(), size() - source.size());
+  memory::copy(get(), source.data(), source.size());
+  return *this;
+}
+
+template<typename T, typename... P> auto string::append(const T& value, P&&... p) -> string& {
+  _append(make_string(value));
+  if constexpr(sizeof...(p) > 0) append(std::forward<P>(p)...);
+  return *this;
+}
+
+template<typename T> auto string::_append(const stringify<T>& source) -> string& {
+  resize(size() + source.size());
+  memory::copy(get() + size() - source.size(), source.data(), source.size());
+  return *this;
+}
+
+auto string::length() const -> unsigned {
+  return strlen(data());
+}
+
+template<bool Insensitive, bool Quoted> auto string::_find(int offset, string_view source) const -> maybe<unsigned> {
+  if(source.size() == 0) return nothing;
+  auto p = data();
+  for(unsigned n = offset, quoted = 0; n < size();) {
+    if(Quoted) { if(p[n] == '\"') { quoted ^= 1; n++; continue; } if(quoted) { n++; continue; } }
+    if(_compare<Insensitive>(p + n, size() - n, source.data(), source.size())) { n++; continue; }
+    return n - offset;
+  }
+  return nothing;
+}
+
+auto string::find(string_view source) const -> maybe<unsigned> { return _find<0, 0>(0, source); }
+
+auto hex(uintmax value, long precision, char padchar) -> string {
+  string buffer;
+  buffer.resize(sizeof(uintmax) * 2);
+  char* p = buffer.get();
+
+  unsigned size = 0;
+  do {
+    unsigned n = value & 15;
+    p[size++] = n < 10 ? '0' + n : 'a' + n - 10;
+    value >>= 4;
+  } while(value);
+  buffer.resize(size);
+  buffer.reverse();
+  if(precision) buffer.size(precision, padchar);
+  return buffer;
+}
+
+auto string::match(string_view source) const -> bool {
+  const char* s = data();
+  const char* p = source.data();
+
+  const char* cp = nullptr;
+  const char* mp = nullptr;
+  while(*s && *p != '*') {
+    if(*p != '?' && *s != *p) return false;
+    p++, s++;
+  }
+  while(*s) {
+    if(*p == '*') {
+      if(!*++p) return true;
+      mp = p, cp = s + 1;
+    } else if(*p == '?' || *p == *s) {
+      p++, s++;
+    } else {
+      p = mp, s = cp++;
+    }
+  }
+  while(*p == '*') p++;
+  return !*p;
+}
+
+auto string::imatch(string_view source) const -> bool {
+  static auto chrlower = [](char c) -> char {
+    return (c >= 'A' && c <= 'Z') ? c + ('a' - 'A') : c;
+  };
+
+  const char* s = data();
+  const char* p = source.data();
+
+  const char* cp = nullptr;
+  const char* mp = nullptr;
+  while(*s && *p != '*') {
+    if(*p != '?' && chrlower(*s) != chrlower(*p)) return false;
+    p++, s++;
+  }
+  while(*s) {
+    if(*p == '*') {
+      if(!*++p) return true;
+      mp = p, cp = s + 1;
+    } else if(*p == '?' || chrlower(*p) == chrlower(*s)) {
+      p++, s++;
+    } else {
+      p = mp, s = cp++;
+    }
+  }
+  while(*p == '*') p++;
+  return !*p;
+}
+
+auto tokenize(const char* s, const char* p) -> bool {
+  while(*s) {
+    if(*p == '*') {
+      while(*s) if(tokenize(s++, p + 1)) return true;
+      return !*++p;
+    }
+    if(*s++ != *p++) return false;
+  }
+  while(*p == '*') p++;
+  return !*p;
+}
+
+auto tokenize(vector<string>& list, const char* s, const char* p) -> bool {
+  while(*s) {
+    if(*p == '*') {
+      const char* b = s;
+      while(*s) {
+        if(tokenize(list, s++, p + 1)) {
+          list.prepend(slice(b, 0, --s - b));
+          return true;
+        }
+      }
+      list.prepend(b);
+      return !*++p;
+    }
+    if(*s++ != *p++) return false;
+  }
+  while(*p == '*') { list.prepend(s); p++; }
+  return !*p;
+}
+
+template<bool Insensitive, bool Quoted>
+auto string::_replace(string_view from, string_view to, long limit) -> string& {
+  if(limit <= 0 || from.size() == 0) return *this;
+
+  int size = this->size();
+  int matches = 0;
+  int quoted = 0;
+
+  //count matches first, so that we only need to reallocate memory once
+  //(recording matches would also require memory allocation, so this is not done)
+  { const char* p = data();
+    for(int n = 0; n <= size - (int)from.size();) {
+      if(Quoted) { if(p[n] == '\"') { quoted ^= 1; n++; continue; } if(quoted) { n++; continue; } }
+      if(_compare<Insensitive>(p + n, size - n, from.data(), from.size())) { n++; continue; }
+
+      if(++matches >= limit) break;
+      n += from.size();
+    }
+  }
+  if(matches == 0) return *this;
+
+  //in-place overwrite
+  if(to.size() == from.size()) {
+    char* p = get();
+
+    for(int n = 0, remaining = matches, quoted = 0; n <= size - (int)from.size();) {
+      if(Quoted) { if(p[n] == '\"') { quoted ^= 1; n++; continue; } if(quoted) { n++; continue; } }
+      if(_compare<Insensitive>(p + n, size - n, from.data(), from.size())) { n++; continue; }
+
+      memory::copy(p + n, to.data(), to.size());
+
+      if(!--remaining) break;
+      n += from.size();
+    }
+  }
+
+  //left-to-right shrink
+  else if(to.size() < from.size()) {
+    char* p = get();
+    int offset = 0;
+    int base = 0;
+
+    for(int n = 0, remaining = matches, quoted = 0; n <= size - (int)from.size();) {
+      if(Quoted) { if(p[n] == '\"') { quoted ^= 1; n++; continue; } if(quoted) { n++; continue; } }
+      if(_compare<Insensitive>(p + n, size - n, from.data(), from.size())) { n++; continue; }
+
+      if(offset) memory::move(p + offset, p + base, n - base);
+      memory::copy(p + offset + (n - base), to.data(), to.size());
+      offset += (n - base) + to.size();
+
+      n += from.size();
+      base = n;
+      if(!--remaining) break;
+    }
+
+    memory::move(p + offset, p + base, size - base);
+    resize(size - matches * (from.size() - to.size()));
+  }
+
+  //right-to-left expand
+  else if(to.size() > from.size()) {
+    resize(size + matches * (to.size() - from.size()));
+    char* p = get();
+
+    int offset = this->size();
+    int base = size;
+
+    for(int n = size, remaining = matches; n >= (int)from.size();) {  //quoted reused from parent scope since we are iterating backward
+      if(Quoted) { if(p[n] == '\"') { quoted ^= 1; n--; continue; } if(quoted) { n--; continue; } }
+      if(_compare<Insensitive>(p + n - from.size(), size - n + from.size(), from.data(), from.size())) { n--; continue; }
+
+      memory::move(p + offset - (base - n), p + base - (base - n), base - n);
+      memory::copy(p + offset - (base - n) - to.size(), to.data(), to.size());
+      offset -= (base - n) + to.size();
+
+      if(!--remaining) break;
+      n -= from.size();
+      base = n;
+    }
+  }
+
+  return *this;
+}
+
+auto string::replace(string_view from, string_view to, long limit) -> string& { return _replace<0, 0>(from, to, limit); }
+
+template<bool Insensitive, bool Quoted>
+auto vector<string>::_split(string_view source, string_view find, long limit) -> vector<string>& {
+  reset();
+  if(limit <= 0 || find.size() == 0) return *this;
+
+  const char* p = source.data();
+  int size = source.size();
+  int base = 0;
+  int matches = 0;
+
+  for(int n = 0, quoted = 0; n <= size - (int)find.size();) {
+    if(Quoted) { if(p[n] == '\"') { quoted ^= 1; n++; continue; } if(quoted) { n++; continue; } }
+    if(string::_compare<Insensitive>(p + n, size - n, find.data(), find.size())) { n++; continue; }
+    if(matches >= limit) break;
+
+    string& s = operator()(matches);
+    s.resize(n - base);
+    memory::copy(s.get(), p + base, n - base);
+
+    n += find.size();
+    base = n;
+    matches++;
+  }
+
+  string& s = operator()(matches);
+  s.resize(size - base);
+  memory::copy(s.get(), p + base, size - base);
+
+  return *this;
+}
+
+auto string::split(string_view on, long limit) const -> vector<string> { return vector<string>()._split<0, 0>(*this, on, limit); }
+auto string::isplit(string_view on, long limit) const -> vector<string> { return vector<string>()._split<1, 0>(*this, on, limit); }
+auto string::qsplit(string_view on, long limit) const -> vector<string> { return vector<string>()._split<0, 1>(*this, on, limit); }
+auto string::iqsplit(string_view on, long limit) const -> vector<string> { return vector<string>()._split<1, 1>(*this, on, limit); }
+
+auto string::trimLeft(string_view lhs, long limit) -> string& {
+  if(lhs.size() == 0) return *this;
+  long matches = 0;
+  while(matches < limit) {
+    int offset = lhs.size() * matches;
+    int length = (int)size() - offset;
+    if(length < (int)lhs.size()) break;
+    if(memory::compare(data() + offset, lhs.data(), lhs.size()) != 0) break;
+    matches++;
+  }
+  if(matches) remove(0, lhs.size() * matches);
+  return *this;
+}
+
+auto string::trimRight(string_view rhs, long limit) -> string& {
+  if(rhs.size() == 0) return *this;
+  long matches = 0;
+  while(matches < limit) {
+    int offset = (int)size() - rhs.size() * (matches + 1);
+    int length = (int)size() - offset;
+    if(offset < 0 || length < (int)rhs.size()) break;
+    if(memory::compare(data() + offset, rhs.data(), rhs.size()) != 0) break;
+    matches++;
+  }
+  if(matches) resize(size() - rhs.size() * matches);
+  return *this;
+}
+
+auto string::itrimLeft(string_view lhs, long limit) -> string& {
+  if(lhs.size() == 0) return *this;
+  long matches = 0;
+  while(matches < limit) {
+    int offset = lhs.size() * matches;
+    int length = (int)size() - offset;
+    if(length < (int)lhs.size()) break;
+    if(memory::icompare(data() + offset, lhs.data(), lhs.size()) != 0) break;
+    matches++;
+  }
+  if(matches) remove(0, lhs.size() * matches);
+  return *this;
+}
+
+auto string::itrimRight(string_view rhs, long limit) -> string& {
+  if(rhs.size() == 0) return *this;
+  long matches = 0;
+  while(matches < limit) {
+    int offset = (int)size() - rhs.size() * (matches + 1);
+    int length = (int)size() - offset;
+    if(offset < 0 || length < (int)rhs.size()) break;
+    if(memory::icompare(data() + offset, rhs.data(), rhs.size()) != 0) break;
+    matches++;
+  }
+  if(matches) resize(size() - rhs.size() * matches);
+  return *this;
+}
+
+auto string::strip() -> string& {
+  stripRight();
+  stripLeft();
+  return *this;
+}
+
+auto string::stripLeft() -> string& {
+  unsigned length = 0;
+  while(length < size()) {
+    char input = operator[](length);
+    if(input != ' ' && input != '\t' && input != '\r' && input != '\n') break;
+    length++;
+  }
+  if(length) remove(0, length);
+  return *this;
+}
+
+auto string::stripRight() -> string& {
+  unsigned length = 0;
+  while(length < size()) {
+    bool matched = false;
+    char input = operator[](size() - length - 1);
+    if(input != ' ' && input != '\t' && input != '\r' && input != '\n') break;
+    length++;
+  }
+  if(length) resize(size() - length);
+  return *this;
+}
+
+auto string::read(string_view filename) -> string {
+  FILE* fp = fopen(filename, "rb");
+
+  string result;
+  if(!fp) return result;
+
+  fseek(fp, 0, SEEK_END);
+  int filesize = ftell(fp);
+  if(filesize < 0) return fclose(fp), result;
+
+  rewind(fp);
+  result.resize(filesize);
+  (void)fread(result.get(), 1, filesize, fp);
+  return fclose(fp), result;
+}
+
+auto string::fill(char fill) -> string& {
+  memory::fill(get(), size(), fill);
+  return *this;
+}
+
+auto string::remove(unsigned offset, unsigned length) -> string& {
+  char* p = get();
+  length = std::min(length, size());
+  memory::move(p + offset, p + offset + length, size() - length);
+  return resize(size() - length);
+}
+
+auto string::reverse() -> string& {
+  char* p = get();
+  unsigned length = size();
+  unsigned pivot = length >> 1;
+  for(int x = 0, y = length - 1; x < pivot && y >= 0; x++, y--) std::swap(p[x], p[y]);
+  return *this;
+}
+
+//+length => insert/delete from start (right justify)
+//-length => insert/delete from end (left justify)
+auto string::size(int length, char fill) -> string& {
+  unsigned size = this->size();
+  if(size == length) return *this;
+
+  bool right = length >= 0;
+  length = abs(length);
+
+  if(size < length) {  //expand
+    resize(length);
+    char* p = get();
+    unsigned displacement = length - size;
+    if(right) memory::move(p + displacement, p, size);
+    else p += size;
+    while(displacement--) *p++ = fill;
+  } else {  //shrink
+    char* p = get();
+    unsigned displacement = size - length;
+    if(right) memory::move(p, p + displacement, length);
+    resize(length);
+  }
+
+  return *this;
+}
+
+auto slice(string_view self, int offset, int length) -> string {
+  string result;
+  if(offset < 0) offset = self.size() - abs(offset);
+  if(offset >= 0 && offset < self.size()) {
+    if(length < 0) length = self.size() - offset;
+    if(length >= 0) {
+      result.resize(length);
+      memory::copy(result.get(), self.data() + offset, length);
+    }
+  }
+  return result;
+}
+
+auto string::slice(int offset, int length) const -> string {
+  return nall::slice(*this, offset, length);
+}
+
+template<typename T> auto fromInteger(char* result, T value) -> char* {
+  bool negative = value < 0;
+  if(!negative) value = -value;  //negate positive integers to support eg INT_MIN
+
+  char buffer[1 + sizeof(T) * 3];
+  unsigned size = 0;
+
+  do {
+    int n = value % 10;  //-0 to -9
+    buffer[size++] = '0' - n;  //'0' to '9'
+    value /= 10;
+  } while(value);
+  if(negative) buffer[size++] = '-';
+
+  for(int x = size - 1, y = 0; x >= 0 && y < size; x--, y++) result[x] = buffer[y];
+  result[size] = 0;
+  return result;
+}
+
+template<typename T> auto fromNatural(char* result, T value) -> char* {
+  char buffer[1 + sizeof(T) * 3];
+  unsigned size = 0;
+
+  do {
+    unsigned n = value % 10;
+    buffer[size++] = '0' + n;
+    value /= 10;
+  } while(value);
+
+  for(int x = size - 1, y = 0; x >= 0 && y < size; x--, y++) result[x] = buffer[y];
+  result[size] = 0;
+  return result;
+}
+
+//using sprintf is certainly not the most ideal method to convert
+//a double to a string ... but attempting to parse a double by
+//hand, digit-by-digit, results in subtle rounding errors.
+template<typename T> auto fromReal(char* result, T value) -> unsigned {
+  char buffer[256];
+  #ifdef _WIN32
+  //Windows C-runtime does not support long double via sprintf()
+  sprintf(buffer, "%f", (double)value);
+  #else
+  sprintf(buffer, "%Lf", (long double)value);
+  #endif
+
+  //remove excess 0's in fraction (2.500000 -> 2.5)
+  for(char* p = buffer; *p; p++) {
+    if(*p == '.') {
+      char* p = buffer + strlen(buffer) - 1;
+      while(*p == '0') {
+        if(*(p - 1) != '.') *p = 0;  //... but not for eg 1.0 -> 1.
+        p--;
+      }
+      break;
+    }
+  }
+
+  unsigned length = strlen(buffer);
+  if(result) strcpy(result, buffer);
+  return length + 1;
+}
+
+template<typename... P> auto vector<string>::append(const string& data, P&&... p) -> vector<string>& {
+  vector_base::append(data);
+  append(std::forward<P>(p)...);
+  return *this;
+}
+
+auto vector<string>::append() -> vector<string>& {
+  return *this;
+}
+
+auto vector<string>::merge(string_view separator) const -> string {
+  string output;
+  for(unsigned n = 0; n < size(); n++) {
+    output.append(operator[](n));
+    if(n < size() - 1) output.append(separator.data());
+  }
+  return output;
+}
+
+string_view::string_view() {
+  _string = nullptr;
+  _data = "";
+  _size = 0;
+}
+
+string_view::string_view(const string_view& source) {
+  if(this == &source) return;
+  _string = nullptr;
+  _data = source._data;
+  _size = source._size;
+}
+
+string_view::string_view(const char* data) {
+  _string = nullptr;
+  _data = data;
+  _size = -1;  //defer length calculation, as it is often unnecessary
+}
+
+string_view::string_view(const string& source) {
+  _string = nullptr;
+  _data = source.data();
+  _size = source.size();
+}
+
+template<typename... P>
+string_view::string_view(P&&... p) {
+  _string = new string{std::forward<P>(p)...};
+  _data = _string->data();
+  _size = _string->size();
+}
+
+string_view::~string_view() {
+  if(_string) delete _string;
+}
+
+string_view::operator const char*() const {
+  return _data;
+}
+
+auto string_view::data() const -> const char* {
+  return _data;
+}
+
+auto string_view::size() const -> unsigned {
+  if(_size < 0) _size = strlen(_data);
+  return _size;
+}
+
+}
