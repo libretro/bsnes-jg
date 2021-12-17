@@ -17,27 +17,6 @@ template<typename T> auto vector<T>::reset() -> void {
   _right = 0;
 }
 
-//acquire ownership of allocated memory
-
-template<typename T> auto vector<T>::acquire(T* data, uint64_t size, uint64_t capacity) -> void {
-  reset();
-  _pool = data;
-  _size = size;
-  _left = 0;
-  _right = capacity ? capacity : size;
-}
-
-//release ownership of allocated memory
-
-template<typename T> auto vector<T>::release() -> T* {
-  auto pool = _pool;
-  _pool = nullptr;
-  _size = 0;
-  _left = 0;
-  _right = 0;
-  return pool;
-}
-
 //reserve allocates memory for objects, but does not initialize them
 //when the vector desired size is known, this can be used to avoid growing the capacity dynamically
 //reserve will not actually shrink the capacity, only expand it
@@ -69,41 +48,6 @@ template<typename T> auto vector<T>::reserveRight(uint64_t capacity) -> bool {
   _right = right - _size;
 
   return true;
-}
-
-//reallocation is meant for POD types, to avoid the overhead of initialization
-//do not use with non-POD types, or they will not be properly constructed or destructed
-
-template<typename T> auto vector<T>::reallocateLeft(uint64_t size) -> bool {
-  if(size < _size) {  //shrink
-    _pool += _size - size;
-    _left += _size - size;
-    _size = size;
-    return true;
-  }
-  if(size > _size) {  //grow
-    reserveLeft(size);
-    _pool -= size - _size;
-    _left -= size - _size;
-    _size = size;
-    return true;
-  }
-  return false;
-}
-
-template<typename T> auto vector<T>::reallocateRight(uint64_t size) -> bool {
-  if(size < _size) {  //shrink
-    _right += _size - size;
-    _size = size;
-    return true;
-  }
-  if(size > _size) {  //grow
-    reserveRight(size);
-    _right -= size - _size;
-    _size = size;
-    return true;
-  }
-  return false;
 }
 
 //resize is meant for non-POD types, and will properly construct objects
