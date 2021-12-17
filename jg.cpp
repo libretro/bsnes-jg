@@ -162,7 +162,7 @@ public:
     struct Game {
         std::string option;
         std::string location;
-        string manifest;
+        std::string manifest;
         Markup::Node document;
         Boolean patched;
         Boolean verified;
@@ -220,9 +220,9 @@ shared_pointer<vfs::file> Program::open(unsigned id, std::string name,
     
     if (id == 1) { // Super Famicom
         if (name == "manifest.bml" && mode == vfs::file::mode::read) {
-            result = vfs::memory::file::open(
-                superFamicom.manifest.data<uint8_t>(),
-                superFamicom.manifest.size());
+            std::vector<uint8_t> manifest(superFamicom.manifest.begin(),
+                superFamicom.manifest.end());
+            result = vfs::memory::file::open(manifest.data(), manifest.size());
         }
         else if (name == "program.rom" && mode == vfs::file::mode::read) {
             result = vfs::memory::file::open(superFamicom.program.data(),
@@ -242,8 +242,9 @@ shared_pointer<vfs::file> Program::open(unsigned id, std::string name,
     }
     else if (id == 2) { // Game Boy
         if (name == "manifest.bml" && mode == vfs::file::mode::read) {
-            result = vfs::memory::file::open(gameBoy.manifest.data<uint8_t>(),
-                gameBoy.manifest.size());
+            std::vector<uint8_t> manifest(gameBoy.manifest.begin(),
+                gameBoy.manifest.end());
+            result = vfs::memory::file::open(manifest.data(), manifest.size());
         }
         else if (name == "program.rom" && mode == vfs::file::mode::read) {
             result = vfs::memory::file::open(gameBoy.program.data(),
@@ -255,8 +256,9 @@ shared_pointer<vfs::file> Program::open(unsigned id, std::string name,
     }
     else if (id == 3) { // BS Memory
         if (name == "manifest.bml" && mode == vfs::file::mode::read) {
-            result = vfs::memory::file::open(bsMemory.manifest.data<uint8_t>(),
-                bsMemory.manifest.size());
+            std::vector<uint8_t> manifest(bsMemory.manifest.begin(),
+                bsMemory.manifest.end());
+            result = vfs::memory::file::open(manifest.data(), manifest.size());
         }
         else if (name == "program.rom" && mode == vfs::file::mode::read) {
             result = vfs::memory::file::open(bsMemory.program.data(),
@@ -273,9 +275,9 @@ shared_pointer<vfs::file> Program::open(unsigned id, std::string name,
     }
     else if (id == 4) { // Sufami Turbo - Slot A
         if (name == "manifest.bml" && mode == vfs::file::mode::read) {
-            result =
-                vfs::memory::file::open(sufamiTurboA.manifest.data<uint8_t>(),
-                sufamiTurboA.manifest.size());
+            std::vector<uint8_t> manifest(sufamiTurboA.manifest.begin(),
+                sufamiTurboA.manifest.end());
+            result = vfs::memory::file::open(manifest.data(), manifest.size());
         }
         else if (name == "program.rom" && mode == vfs::file::mode::read) {
             result = vfs::memory::file::open(sufamiTurboA.program.data(),
@@ -287,9 +289,9 @@ shared_pointer<vfs::file> Program::open(unsigned id, std::string name,
     }
     else if (id == 5) { // Sufami Turbo - Slot B
         if (name == "manifest.bml" && mode == vfs::file::mode::read) {
-            result =
-                vfs::memory::file::open(sufamiTurboB.manifest.data<uint8_t>(),
-                sufamiTurboB.manifest.size());
+            std::vector<uint8_t> manifest(sufamiTurboB.manifest.begin(),
+                sufamiTurboB.manifest.end());
+            result = vfs::memory::file::open(manifest.data(), manifest.size());
         }
         else if (name == "program.rom" && mode == vfs::file::mode::read) {
             result = vfs::memory::file::open(sufamiTurboB.program.data(),
@@ -629,7 +631,7 @@ bool Program::loadSuperFamicom(std::string location) {
     superFamicom.manifest = manifest ? manifest : heuristics.manifest();
     
     hackPatchMemory(rom);
-    superFamicom.document = BML::unserialize(superFamicom.manifest);
+    superFamicom.document = BML::unserialize(superFamicom.manifest.c_str());
     superFamicom.location = location;
     
     unsigned offset = 0;
@@ -665,7 +667,7 @@ bool Program::loadGameBoy(std::string location) {
     auto heuristics = Heuristics::GameBoy(rom, location.c_str());
     
     gameBoy.manifest = heuristics.manifest();
-    gameBoy.document = BML::unserialize(gameBoy.manifest);
+    gameBoy.document = BML::unserialize(gameBoy.manifest.c_str());
     gameBoy.location = location;
     gameBoy.program = rom;
     
@@ -692,7 +694,7 @@ bool Program::loadBSMemory(std::string location) {
     }
     
     bsMemory.manifest = manifest ? manifest : heuristics.manifest();
-    bsMemory.document = BML::unserialize(bsMemory.manifest);
+    bsMemory.document = BML::unserialize(bsMemory.manifest.c_str());
     bsMemory.location = location;
     
     bsMemory.program = rom;
@@ -723,7 +725,7 @@ bool Program::loadSufamiTurboA(std::string location) {
     }
     
     sufamiTurboA.manifest = manifest ? manifest : heuristics.manifest();
-    sufamiTurboA.document = BML::unserialize(sufamiTurboA.manifest);
+    sufamiTurboA.document = BML::unserialize(sufamiTurboA.manifest.c_str());
     sufamiTurboA.location = string(gameinfo.path);//location;
     
     sufamiTurboA.program = rom;
@@ -753,7 +755,7 @@ bool Program::loadSufamiTurboB(std::string location) {
     }
     
     sufamiTurboB.manifest = manifest ? manifest : heuristics.manifest();
-    sufamiTurboB.document = BML::unserialize(sufamiTurboB.manifest);
+    sufamiTurboB.document = BML::unserialize(sufamiTurboB.manifest.c_str());
     sufamiTurboB.location = location;
     
     sufamiTurboB.program = rom;
