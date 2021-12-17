@@ -18,23 +18,9 @@ auto string::read(string_view filename) -> string {
   return fclose(fp), result;
 }
 
-auto string::repeat(string_view pattern, unsigned times) -> string {
-  string result;
-  while(times--) result.append(pattern.data());
-  return result;
-}
-
 auto string::fill(char fill) -> string& {
   memory::fill(get(), size(), fill);
   return *this;
-}
-
-auto string::hash() const -> unsigned {
-  const char* p = data();
-  unsigned length = size();
-  unsigned result = 5381;
-  while(length--) result = (result << 5) + result + *p++;
-  return result;
 }
 
 auto string::remove(unsigned offset, unsigned length) -> string& {

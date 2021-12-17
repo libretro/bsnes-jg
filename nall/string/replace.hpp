@@ -87,8 +87,5 @@ auto string::_replace(string_view from, string_view to, long limit) -> string& {
 }
 
 auto string::replace(string_view from, string_view to, long limit) -> string& { return _replace<0, 0>(from, to, limit); }
-auto string::ireplace(string_view from, string_view to, long limit) -> string& { return _replace<1, 0>(from, to, limit); }
-auto string::qreplace(string_view from, string_view to, long limit) -> string& { return _replace<0, 1>(from, to, limit); }
-auto string::iqreplace(string_view from, string_view to, long limit) -> string& { return _replace<1, 1>(from, to, limit); }
 
 };

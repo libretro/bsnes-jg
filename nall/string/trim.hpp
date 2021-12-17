@@ -2,12 +2,6 @@
 
 namespace nall {
 
-auto string::trim(string_view lhs, string_view rhs, long limit) -> string& {
-  trimRight(rhs, limit);
-  trimLeft(lhs, limit);
-  return *this;
-}
-
 auto string::trimLeft(string_view lhs, long limit) -> string& {
   if(lhs.size() == 0) return *this;
   long matches = 0;
@@ -33,12 +27,6 @@ auto string::trimRight(string_view rhs, long limit) -> string& {
     matches++;
   }
   if(matches) resize(size() - rhs.size() * matches);
-  return *this;
-}
-
-auto string::itrim(string_view lhs, string_view rhs, long limit) -> string& {
-  itrimRight(rhs, limit);
-  itrimLeft(lhs, limit);
   return *this;
 }
 

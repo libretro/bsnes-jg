@@ -35,14 +35,6 @@ protected:
   mutable int _size;
 };
 
-//adaptive (SSO + COW) is by far the best choice, the others exist solely to:
-//1) demonstrate the performance benefit of combining SSO + COW
-//2) rule out allocator bugs by trying different allocators when needed
-#define NALL_STRING_ALLOCATOR_ADAPTIVE
-//#define NALL_STRING_ALLOCATOR_COPY_ON_WRITE
-//#define NALL_STRING_ALLOCATOR_SMALL_STRING_OPTIMIZATION
-//#define NALL_STRING_ALLOCATOR_VECTOR
-
 //cast.hpp
 template<typename T> struct stringify;
 
@@ -56,9 +48,6 @@ inline auto binary(uintmax value, long precision = 0, char padchar = '0') -> str
 inline auto tokenize(const char* s, const char* p) -> bool;
 inline auto tokenize(vector<string>& list, const char* s, const char* p) -> bool;
 
-//utf8.hpp
-inline auto characters(string_view self, int offset = 0, int length = -1) -> unsigned;
-
 //utility.hpp
 inline auto slice(string_view self, int offset = 0, int length = -1) -> string;
 template<typename T> inline auto fromInteger(char* result, T value) -> char*;
@@ -68,7 +57,10 @@ template<typename T> inline auto fromReal(char* str, T value) -> unsigned;
 struct string {
 
 protected:
-  #if defined(NALL_STRING_ALLOCATOR_ADAPTIVE)
+  //adaptive (SSO + COW) is by far the best choice, the others exist solely to:
+  //1) demonstrate the performance benefit of combining SSO + COW
+  //2) rule out allocator bugs by trying different allocators when needed
+
   enum : unsigned { SSO = 24 };
   union {
     struct {  //copy-on-write
@@ -82,26 +74,6 @@ protected:
   inline auto _allocate() -> void;
   inline auto _copy() -> void;
   inline auto _resize() -> void;
-  #endif
-
-  #if defined(NALL_STRING_ALLOCATOR_COPY_ON_WRITE)
-  char* _data;
-  mutable unsigned* _refs;
-  inline auto _allocate() -> char*;
-  inline auto _copy() -> char*;
-  #endif
-
-  #if defined(NALL_STRING_ALLOCATOR_SMALL_STRING_OPTIMIZATION)
-  enum : unsigned { SSO = 24 };
-  union {
-    char* _data;
-    char _text[SSO];
-  };
-  #endif
-
-  #if defined(NALL_STRING_ALLOCATOR_VECTOR)
-  char* _data;
-  #endif
 
   unsigned _capacity;
   unsigned _size;
@@ -386,7 +358,6 @@ protected:
 #include <nall/string/replace.hpp>
 #include <nall/string/split.hpp>
 #include <nall/string/trim.hpp>
-#include <nall/string/utf8.hpp>
 #include <nall/string/utility.hpp>
 #include <nall/string/vector.hpp>
 #include <nall/string/view.hpp>

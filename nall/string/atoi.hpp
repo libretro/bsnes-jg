@@ -2,10 +2,6 @@
 
 namespace nall {
 
-auto string::boolean() const -> bool {
-  return equals("true");
-}
-
 auto string::integer() const -> intmax {
   return toInteger(data());
 }
