@@ -3,11 +3,7 @@
 namespace nall {
 
 auto string::read(string_view filename) -> string {
-  #if !defined(_WIN32)
   FILE* fp = fopen(filename, "rb");
-  #else
-  FILE* fp = _wfopen(utf16_t(filename), L"rb");
-  #endif
 
   string result;
   if(!fp) return result;

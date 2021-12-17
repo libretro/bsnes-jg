@@ -84,17 +84,10 @@ struct file_buffer {
     close();
 
     switch(fileMode = mode_) {
-    #if defined(_WIN32)
-    case mode::read:   fileHandle = _wfopen(utf16_t(filename), L"rb" ); break;
-    case mode::write:  fileHandle = _wfopen(utf16_t(filename), L"wb+"); break;
-    case mode::modify: fileHandle = _wfopen(utf16_t(filename), L"rb+"); break;
-    case mode::append: fileHandle = _wfopen(utf16_t(filename), L"wb+"); break;
-    #else
     case mode::read:   fileHandle = fopen(filename, "rb" ); break;
     case mode::write:  fileHandle = fopen(filename, "wb+"); break;  //need read permission for buffering
     case mode::modify: fileHandle = fopen(filename, "rb+"); break;
     case mode::append: fileHandle = fopen(filename, "wb+"); break;
-    #endif
     }
     if(!fileHandle) return false;
 
