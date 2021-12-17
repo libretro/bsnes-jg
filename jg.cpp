@@ -480,14 +480,12 @@ shared_pointer<vfs::file> Program::openRomSuperFamicom(std::string name,
             mode);
     }
     
-    // Use a regex here - FIXME later
-    /*if (name.match("msu1/track*.pcm")) {
-        name.trimLeft("msu1/track", 1L);
-        std::string location(superFamicom.location);
-        return vfs::fs::file::open(
-            {location.substr(0, location.find_last_of(".")).c_str(), name},
-            mode);
-    }*/
+    if (name.find("msu1/track") != std::string::npos) {
+        std::string location = superFamicom.location;
+        location = location.substr(0, location.find_last_of(".")) +
+            name.substr(name.find_first_of("track") + 5);
+        return vfs::fs::file::open(location.c_str(), mode);
+    }
     
     if (name == "save.ram") {
         std::string save_path = std::string(pathinfo.save) + "/" +

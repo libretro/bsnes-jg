@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <nall/intrinsics.hpp>
 #include <nall/atoi.hpp>
 #include <nall/bit.hpp>
@@ -62,8 +64,7 @@ string BSMemory::manifest() const {
 
   std::string gamename(location);
   gamename = gamename.substr(0, gamename.find_last_of("."));
-  gamename = gamename.substr(gamename.find_last_of("\\") + 1);
-  gamename = gamename.substr(gamename.find_last_of("/") + 1);
+  gamename = gamename.substr(gamename.find_last_of("/\\") + 1);
   
   string output;
   output.append("game\n");
@@ -332,8 +333,7 @@ string GameBoy::manifest() const {
 
   std::string gamename(location);
   gamename = gamename.substr(0, gamename.find_last_of("."));
-  gamename = gamename.substr(gamename.find_last_of("\\") + 1);
-  gamename = gamename.substr(gamename.find_last_of("/") + 1);
+  gamename = gamename.substr(gamename.find_last_of("/\\") + 1);
 
   string output;
   output.append("game\n");
@@ -377,8 +377,7 @@ string SufamiTurbo::manifest() const {
 
   std::string gamename(location);
   gamename = gamename.substr(0, gamename.find_last_of("."));
-  gamename = gamename.substr(gamename.find_last_of("\\") + 1);
-  gamename = gamename.substr(gamename.find_last_of("/") + 1);
+  gamename = gamename.substr(gamename.find_last_of("/\\") + 1);
   
   string output;
   output.append("game\n");
@@ -423,8 +422,7 @@ string SuperFamicom::manifest() const {
 
   std::string gamename(location);
   gamename = gamename.substr(0, gamename.find_last_of("."));
-  gamename = gamename.substr(gamename.find_last_of("\\") + 1);
-  gamename = gamename.substr(gamename.find_last_of("/") + 1);
+  gamename = gamename.substr(gamename.find_last_of("/\\") + 1);
 
   string output;
   output.append("game\n");
