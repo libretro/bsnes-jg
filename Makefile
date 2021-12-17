@@ -16,7 +16,7 @@ CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
 
 INCLUDES := -I$(SOURCEDIR)/. -I$(SOURCEDIR)/deps $(CFLAGS_JG)
 INCLUDES_GB := -I$(SOURCEDIR)/sameboy
-WARNINGS :=
+WARNINGS := -Wreturn-type -Wno-unused-result
 WARNINGS_CO := -Wall
 WARNINGS_GB := -Wno-multichar
 LIBS := -lm -lstdc++
