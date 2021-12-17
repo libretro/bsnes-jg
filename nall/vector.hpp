@@ -13,8 +13,6 @@ struct vector_base {
 
   explicit operator bool() const;
   operator array_span<T>();
-  operator array_view<T>() const;
-  template<typename Cast = T> auto capacity() const -> uint64_t;
   template<typename Cast = T> auto size() const -> uint64_t;
   template<typename Cast = T> auto data() -> Cast*;
   template<typename Cast = T> auto data() const -> const Cast*;
@@ -23,20 +21,13 @@ struct vector_base {
   auto operator=(const vector_base& source) -> vector_base&;
   auto operator=(vector_base&& source) -> vector_base&;
 
-  //compare.hpp
-  auto operator==(const vector_base& source) const -> bool;
-  auto operator!=(const vector_base& source) const -> bool;
-
   //memory.hpp
   auto reset() -> void;
-  auto acquire(T* data, uint64_t size, uint64_t capacity = 0) -> void;
-  auto release() -> T*;
 
   auto reserveLeft(uint64_t capacity) -> bool;
   auto reserveRight(uint64_t capacity) -> bool;
   auto reserve(uint64_t capacity) -> bool { return reserveRight(capacity); }
 
-  auto reallocateLeft(uint64_t size) -> bool;
   auto reallocateRight(uint64_t size) -> bool;
   auto reallocate(uint64_t size) -> bool { return reallocateRight(size); }
 
@@ -51,41 +42,22 @@ struct vector_base {
   alwaysinline auto operator()(uint64_t offset) -> T&;
   alwaysinline auto operator()(uint64_t offset, const T& value) const -> const T&;
 
-  alwaysinline auto left() -> T&;
-  alwaysinline auto first() -> T& { return left(); }
-  alwaysinline auto left() const -> const T&;
-  alwaysinline auto first() const -> const T& { return left(); }
-
   alwaysinline auto right() -> T&;
-  alwaysinline auto last() -> T& { return right(); }
-  alwaysinline auto right() const -> const T&;
-  alwaysinline auto last() const -> const T& { return right(); }
 
   //modify.hpp
   auto prepend(const T& value) -> void;
-  auto prepend(T&& value) -> void;
-  auto prepend(const vector_base& values) -> void;
-  auto prepend(vector_base&& values) -> void;
 
   auto append(const T& value) -> void;
   auto append(T&& value) -> void;
-  auto append(const vector_base& values) -> void;
   auto append(vector_base&& values) -> void;
 
   auto insert(uint64_t offset, const T& value) -> void;
 
   auto removeLeft(uint64_t length = 1) -> void;
-  auto removeFirst(uint64_t length = 1) -> void { return removeLeft(length); }
-  auto removeRight(uint64_t length = 1) -> void;
-  auto removeLast(uint64_t length = 1) -> void { return removeRight(length); }
   auto remove(uint64_t offset, uint64_t length = 1) -> void;
-  auto removeByIndex(uint64_t offset) -> bool;
-  auto removeByValue(const T& value) -> bool;
 
   auto takeLeft() -> T;
-  auto takeFirst() -> T { return std::move(takeLeft()); }
   auto takeRight() -> T;
-  auto takeLast() -> T { return std::move(takeRight()); }
   auto take(uint64_t offset) -> T;
 
   //iterator.hpp
@@ -94,12 +66,6 @@ struct vector_base {
 
   auto begin() const -> iterator_const<T> { return {data(), 0}; }
   auto end() const -> iterator_const<T> { return {data(), size()}; }
-
-  auto rbegin() -> reverse_iterator<T> { return {data(), size() - 1}; }
-  auto rend() -> reverse_iterator<T> { return {data(), (uint64_t)-1}; }
-
-  auto rbegin() const -> reverse_iterator_const<T> { return {data(), size() - 1}; }
-  auto rend() const -> reverse_iterator_const<T> { return {data(), (uint64_t)-1}; }
 
 protected:
   T* _pool = nullptr;   //pointer to first initialized element in pool
