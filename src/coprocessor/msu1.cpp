@@ -107,7 +107,7 @@ auto MSU1::power() -> void {
 
 auto MSU1::dataOpen() -> void {
   dataFile.reset();
-  string name = {"msu1/data.rom"};
+  std::string name = "msu1/data.rom";
   if(dataFile = platform->open(ID::SuperFamicom, name, File::Read)) {
     dataFile->seek(io.dataReadOffset);
   }
@@ -116,7 +116,7 @@ auto MSU1::dataOpen() -> void {
 auto MSU1::audioOpen() -> void {
   audioFile.reset();
   string name = {"msu1/track-", io.audioTrack, ".pcm"};
-  if(audioFile = platform->open(ID::SuperFamicom, name, File::Read)) {
+  if(audioFile = platform->open(ID::SuperFamicom, std::string(name), File::Read)) {
     if(audioFile->size() >= 8) {
       uint32_t header = audioFile->readm(4);
       if(header == 0x4d535531) {  //"MSU1"
