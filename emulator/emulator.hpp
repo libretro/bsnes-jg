@@ -14,7 +14,7 @@ using std::any;
 #include <nall/array.hpp>
 #include <nall/maybe.hpp>
 #include <nall/memory.hpp>
-#include <nall/serializer.hpp>
+#include "../src/serializer.hpp"
 #include <nall/primitives.hpp>
 #include <nall/shared-pointer.hpp>
 #include <nall/varint.hpp>

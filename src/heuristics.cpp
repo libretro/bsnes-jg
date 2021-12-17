@@ -5,7 +5,7 @@
 #include <nall/array.hpp>
 #include <nall/maybe.hpp>
 #include <nall/memory.hpp>
-#include <nall/serializer.hpp>
+#include "serializer.hpp"
 #include <nall/primitives.hpp>
 #include <nall/vector.hpp>
 #include <nall/string.hpp>
