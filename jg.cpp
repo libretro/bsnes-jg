@@ -136,11 +136,11 @@ struct Program : Emulator::Platform {
     
     void load();
     vector<uint8_t> loadFile(void *data, size_t size);
-    bool loadSuperFamicom(string location);
-    bool loadGameBoy(string location);
-    bool loadBSMemory(string location);
-    bool loadSufamiTurboA(string location);
-    bool loadSufamiTurboB(string location);
+    bool loadSuperFamicom(std::string location);
+    bool loadGameBoy(std::string location);
+    bool loadBSMemory(std::string location);
+    bool loadSufamiTurboA(std::string location);
+    bool loadSufamiTurboB(std::string location);
     
     void save();
     
@@ -159,10 +159,8 @@ struct Program : Emulator::Platform {
 
 public: 
     struct Game {
-        explicit operator bool() const { return (bool)location; }
-        
         string option;
-        string location;
+        std::string location;
         string manifest;
         Markup::Node document;
         Boolean patched;
@@ -587,7 +585,7 @@ vector<uint8_t> Program::loadFile(void *data, size_t size) {
     return ret;
 }
 
-bool Program::loadSuperFamicom(string location) {
+bool Program::loadSuperFamicom(std::string location) {
     string manifest;
     vector<uint8_t> rom;
     
@@ -604,7 +602,7 @@ bool Program::loadSuperFamicom(string location) {
         rom.resize(rom.size() - 512);
     }
     
-    auto heuristics = Heuristics::SuperFamicom(rom, location);
+    auto heuristics = Heuristics::SuperFamicom(rom, location.c_str());
     auto sha256 = Hash::SHA256(rom).digest();
     
     superFamicom.title = heuristics.title();
@@ -652,13 +650,13 @@ bool Program::loadSuperFamicom(string location) {
     return true;
 }
 
-bool Program::loadGameBoy(string location) {
+bool Program::loadGameBoy(std::string location) {
     vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
     
     if (rom.size() < 0x4000) return false;
     
-    auto heuristics = Heuristics::GameBoy(rom, location);
+    auto heuristics = Heuristics::GameBoy(rom, location.c_str());
     
     gameBoy.manifest = heuristics.manifest();
     gameBoy.document = BML::unserialize(gameBoy.manifest);
@@ -668,14 +666,14 @@ bool Program::loadGameBoy(string location) {
     return true;
 }
 
-bool Program::loadBSMemory(string location) {
+bool Program::loadBSMemory(std::string location) {
     string manifest;
     vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
     
     if (rom.size() < 0x8000) return false;
     
-    auto heuristics = Heuristics::BSMemory(rom, location);
+    auto heuristics = Heuristics::BSMemory(rom, location.c_str());
     auto sha256 = Hash::SHA256(rom).digest();
     
     string dbpath = {pathinfo.core, "/BS Memory.bml"};
@@ -695,7 +693,7 @@ bool Program::loadBSMemory(string location) {
     return true;
 }
 
-bool Program::loadSufamiTurboA(string location) {
+bool Program::loadSufamiTurboA(std::string location) {
     string manifest;
     vector<uint8_t> rom;
     
@@ -706,7 +704,7 @@ bool Program::loadSufamiTurboA(string location) {
     
     if (rom.size() < 0x20000) return false;
     
-    auto heuristics = Heuristics::SufamiTurbo(rom, location);
+    auto heuristics = Heuristics::SufamiTurbo(rom, location.c_str());
     auto sha256 = Hash::SHA256(rom).digest();
     
     string dbpath = {pathinfo.core, "/Sufami Turbo.bml"};
@@ -726,7 +724,7 @@ bool Program::loadSufamiTurboA(string location) {
     return true;
 }
 
-bool Program::loadSufamiTurboB(string location) {
+bool Program::loadSufamiTurboB(std::string location) {
     if (!sufamiinfo.size)
         return false;
     
@@ -736,7 +734,7 @@ bool Program::loadSufamiTurboB(string location) {
     
     if (rom.size() < 0x20000) return false;
     
-    auto heuristics = Heuristics::SufamiTurbo(rom, location);
+    auto heuristics = Heuristics::SufamiTurbo(rom, location.c_str());
     auto sha256 = Hash::SHA256(rom).digest();
     
     string dbpath = {pathinfo.core, "/Sufami Turbo.bml"};

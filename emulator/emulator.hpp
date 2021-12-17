@@ -63,7 +63,7 @@ struct Platform {
     string option;
   };
 
-  virtual auto path(unsigned id) -> string { return ""; }
+  virtual auto path(unsigned id) -> std::string { return ""; }
   virtual auto open(unsigned id, std::string name, vfs::file::mode mode, bool required = false) -> shared_pointer<vfs::file> { return {}; }
   virtual auto load(unsigned id, std::string name, std::string type, vector<std::string> options = {}) -> Load { return {}; }
   virtual auto videoFrame(const uint16_t *data, unsigned pitch, unsigned width, unsigned height, unsigned scale) -> void {}
