@@ -115,6 +115,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 	$(OBJDIR)/src/processor/spc700.cpp \
 	$(OBJDIR)/src/processor/upd96050.cpp \
 	$(OBJDIR)/src/processor/wdc65816.cpp \
+	$(OBJDIR)/src/sha256.cpp \
 	$(OBJDIR)/src/slot/bsmemory.cpp \
 	$(OBJDIR)/src/slot/sufamiturbo.cpp \
 	$(OBJDIR)/src/smp.cpp \
