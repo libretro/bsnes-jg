@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "../sfc.hpp"
 
 namespace SuperFamicom {
@@ -115,8 +117,9 @@ auto MSU1::dataOpen() -> void {
 
 auto MSU1::audioOpen() -> void {
   audioFile.reset();
-  string name = {"msu1/track-", io.audioTrack, ".pcm"};
-  if(audioFile = platform->open(ID::SuperFamicom, std::string(name), File::Read)) {
+  std::stringstream name;
+  name << "msu1/track-" << io.audioTrack << ".pcm";
+  if(audioFile = platform->open(ID::SuperFamicom, name.str(), File::Read)) {
     if(audioFile->size() >= 8) {
       uint32_t header = audioFile->readm(4);
       if(header == 0x4d535531) {  //"MSU1"
