@@ -11,10 +11,9 @@
 //- only plain-old-data can be stored. complex classes must provide serialize(serializer&);
 //- floating-point usage is not portable across different implementations
 
-#include <nall/iterator.hpp>
-using namespace nall;
-
 #include <string.h>
+
+using namespace nall;
 
 struct serializer;
 
