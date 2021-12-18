@@ -808,8 +808,8 @@ std::string SuperFamicom::serial() const {
 
   auto valid = [](char n) { return (n >= '0' && n <= '9') || (n >= 'A' && n <= 'Z'); };
   if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) & valid(C) & valid(D)) {
-    char ret[4] = { A, B, C, D };
-    return std::string(ret);
+    std::string ret; ret = A; ret += B; ret += C; ret+= D;
+    return ret;
   }
 
   return "";
