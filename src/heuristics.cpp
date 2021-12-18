@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -21,39 +22,39 @@ using namespace nall;
 
 namespace Heuristics {
 
-string Memory::text() const {
-  string output;
-  output.append("    memory\n");
-  output.append("      type: ", _type, "\n");
-  output.append("      size: 0x", hex(_size), "\n");
-  output.append("      content: ", _content, "\n");
-if(_manufacturer)
-  output.append("      manufacturer: ", _manufacturer, "\n");
-if(_architecture)
-  output.append("      architecture: ", _architecture, "\n");
-if(_identifier)
-  output.append("      identifier: ", _identifier, "\n");
+std::string Memory::text() const {
+  std::stringstream output;
+  output << "    memory\n";
+  output << "      type: " << _type << "\n";
+  output << "      size: 0x" << std::hex << _size << "\n";
+  output << "      content: " << _content << "\n";
+if(!_manufacturer.empty())
+  output << "      manufacturer: " << _manufacturer << "\n";
+if(!_architecture.empty())
+  output << "      architecture: " << _architecture << "\n";
+if(!_identifier.empty())
+  output << "      identifier: " << _identifier << "\n";
 if(_volatile)
-  output.append("      volatile\n");
-  return output;
+  output << "      volatile\n";
+  return output.str();
 }
 
-string Oscillator::text() const {
-  string output;
-  output.append("    oscillator\n");
-  output.append("      frequency: ", _frequency, "\n");
-  return output;
+std::string Oscillator::text() const {
+  std::stringstream output;
+  output << "    oscillator\n";
+  output << "      frequency: " << _frequency << "\n";
+  return output.str();
 }
 
-string Slot::text() const {
-  string output;
-  output.append("    slot\n");
-  output.append("      type: ", _type, "\n");
+std::string Slot::text() const {
+  std::string output;
+  output += "    slot\n";
+  output += "      type: " + _type + "\n";
   return output;
 }
 
 //
-BSMemory::BSMemory(vector<uint8_t>& data, string location) : data(data), location(location) {
+BSMemory::BSMemory(vector<uint8_t>& data, std::string location) : data(data), location(location) {
 }
 
 BSMemory::operator bool() const {
@@ -73,11 +74,11 @@ std::string BSMemory::manifest() const {
   output += "  label:  " + gamename + "\n";
   output += "  name:   " + gamename + "\n";
   output += "  board\n";
-  output += std::string(Memory{}.type("Flash").size(data.size()).content("Program").text());
+  output += Memory{}.type("Flash").size(data.size()).content("Program").text();
   return output;
 }
 
-GameBoy::GameBoy(vector<uint8_t>& data, string location) : data(data), location(location) {
+GameBoy::GameBoy(vector<uint8_t>& data, std::string location) : data(data), location(location) {
   headerAddress = data.size() < 0x8000 ? data.size() : data.size() - 0x8000;
   if(read(0x0104) == 0xce && read(0x0105) == 0xed && read(0x0106) == 0x66 && read(0x0107) == 0x66
   && read(0x0108) == 0xcc && read(0x0109) == 0x0d && read(0x0147) >= 0x0b && read(0x0147) <= 0x0d
@@ -349,17 +350,17 @@ std::string GameBoy::manifest() const {
 if(!serial.empty())
   output += "  serial: " + serial + "\n";
   output += "  board:  " + mapper + "\n";
-  output += std::string(Memory{}.type("ROM").size(data.size()).content("Program").text());
+  output += Memory{}.type("ROM").size(data.size()).content("Program").text();
 if(ram && ramSize && battery)
-  output += std::string(Memory{}.type("RAM").size(ramSize).content("Save").text());
+  output += Memory{}.type("RAM").size(ramSize).content("Save").text();
 if(ram && ramSize && !battery)
-  output += std::string(Memory{}.type("RAM").size(ramSize).content("Save").isVolatile().text());
+  output += Memory{}.type("RAM").size(ramSize).content("Save").isVolatile().text();
 if(eeprom && eepromSize)
-  output += std::string(Memory{}.type("EEPROM").size(eepromSize).content("Save").text());
+  output += Memory{}.type("EEPROM").size(eepromSize).content("Save").text();
 if(flash && flashSize)
-  output += std::string(Memory{}.type("Flash").size(flashSize).content("Download").text());
+  output += Memory{}.type("Flash").size(flashSize).content("Download").text();
 if(rtc && rtcSize)
-  output += std::string(Memory{}.type("RTC").size(rtcSize).content("Time").text());
+  output += Memory{}.type("RTC").size(rtcSize).content("Time").text();
 if(accelerometer)
   output += "    accelerometer\n";
 if(rumble)
@@ -367,7 +368,7 @@ if(rumble)
   return output;
 }
 
-SufamiTurbo::SufamiTurbo(vector<uint8_t>& data, string location) : data(data), location(location) {
+SufamiTurbo::SufamiTurbo(vector<uint8_t>& data, std::string location) : data(data), location(location) {
 }
 
 SufamiTurbo::operator bool() const {
@@ -390,15 +391,15 @@ std::string SufamiTurbo::manifest() const {
   output += "  label:  " + gamename + "\n";
   output += "  name:   " + gamename + "\n";
   output += "  board\n";
-  output += std::string(Memory{}.type("ROM").size(data.size()).content("Program").text());
+  output += Memory{}.type("ROM").size(data.size()).content("Program").text();
 
   if(ramSize)
-    output += std::string(Memory{}.type("RAM").size(ramSize).content("Save").text());
+    output += Memory{}.type("RAM").size(ramSize).content("Save").text();
 
   return output;
 }
 
-SuperFamicom::SuperFamicom(vector<uint8_t>& data, string location) : data(data), location(location) {
+SuperFamicom::SuperFamicom(vector<uint8_t>& data, std::string location) : data(data), location(location) {
   if((size() & 0x7fff) == 512) {
     //remove header if present
     memory::move(&data[0], &data[512], size() - 512);
@@ -457,63 +458,63 @@ std::string SuperFamicom::manifest() const {
 
   if(auto size = romSize()) {
     if(btokens[0] == "SPC7110" && size > 0x100000) {
-      output += std::string(Memory{}.type("ROM").size(0x100000).content("Program").text());
-      output += std::string(Memory{}.type("ROM").size(size - 0x100000).content("Data").text());
+      output += Memory{}.type("ROM").size(0x100000).content("Program").text();
+      output += Memory{}.type("ROM").size(size - 0x100000).content("Data").text();
     } else if(btokens[0] == "EXSPC7110" && size == 0x700000) {
       //Tengai Maykou Zero (fan translation)
-      output += std::string(Memory{}.type("ROM").size(0x100000).content("Program").text());
-      output += std::string(Memory{}.type("ROM").size(0x500000).content("Data").text());
-      output += std::string(Memory{}.type("ROM").size(0x100000).content("Expansion").text());
+      output += Memory{}.type("ROM").size(0x100000).content("Program").text();
+      output += Memory{}.type("ROM").size(0x500000).content("Data").text();
+      output += Memory{}.type("ROM").size(0x100000).content("Expansion").text();
     } else {
-      output += std::string(Memory{}.type("ROM").size(size).content("Program").text());
+      output += Memory{}.type("ROM").size(size).content("Program").text();
     }
   }
 
   if(auto size = ramSize()) {
-    output += std::string(Memory{}.type("RAM").size(size).content("Save").text());
+    output += Memory{}.type("RAM").size(size).content("Save").text();
   }
 
   if(auto size = expansionRamSize()) {
-    output += std::string(Memory{}.type("RAM").size(size).content("Save").text());
+    output += Memory{}.type("RAM").size(size).content("Save").text();
   }
 
   if(0) {
   } else if(btokens[0] == "ARM") {
-    output += std::string(Memory{}.type("ROM").size(0x20000).content("Program").manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).text());
-    output += std::string(Memory{}.type("ROM").size( 0x8000).content("Data"   ).manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).text());
-    output += std::string(Memory{}.type("RAM").size( 0x4000).content("Data"   ).manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).isVolatile().text());
-    output += std::string(Oscillator{}.frequency(21'440'000).text());
+    output += Memory{}.type("ROM").size(0x20000).content("Program").manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).text();
+    output += Memory{}.type("ROM").size( 0x8000).content("Data"   ).manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).text();
+    output += Memory{}.type("RAM").size( 0x4000).content("Data"   ).manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).isVolatile().text();
+    output += Oscillator{}.frequency(21'440'000).text();
   } else if(btokens[0] == "BS" && btokens[1] == "MCC") {
-    output += std::string(Memory{}.type("RAM").size(0x80000).content("Download").text());
+    output += Memory{}.type("RAM").size(0x80000).content("Download").text();
   } else if(btokens[0] == "EXNEC") {
-    output += std::string(Memory{}.type("ROM").size(0xc000).content("Program").manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text());
-    output += std::string(Memory{}.type("ROM").size(0x1000).content("Data"   ).manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text());
-    output += std::string(Memory{}.type("RAM").size(0x1000).content("Data"   ).manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text());
-    output += std::string(Oscillator{}.frequency(firmwareEXNEC() == "ST010" ? 11'000'000 : 15'000'000).text());
+    output += Memory{}.type("ROM").size(0xc000).content("Program").manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text();
+    output += Memory{}.type("ROM").size(0x1000).content("Data"   ).manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text();
+    output += Memory{}.type("RAM").size(0x1000).content("Data"   ).manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text();
+    output += Oscillator{}.frequency(firmwareEXNEC() == "ST010" ? 11'000'000 : 15'000'000).text();
   } else if(btokens[0] == "GB") {
-    output += std::string(Memory{}.type("ROM").size(0x100).content("Boot").manufacturer("Nintendo").architecture("LR35902").identifier(firmwareGB()).text());
+    output += Memory{}.type("ROM").size(0x100).content("Boot").manufacturer("Nintendo").architecture("LR35902").identifier(firmwareGB()).text();
   if(firmwareGB() == "SGB2")
-    output += std::string(Oscillator{}.frequency(20'971'520).text());
+    output += Oscillator{}.frequency(20'971'520).text();
   } else if(btokens[0] == "GSU") {
   //todo: MARIO CHIP 1 uses CPU oscillator
-    output += std::string(Oscillator{}.frequency(21'440'000).text());
+    output += Oscillator{}.frequency(21'440'000).text();
   } else if(btokens[0] == "HITACHI") {
-    output += std::string(Memory{}.type("ROM").size(0xc00).content("Data").manufacturer("Hitachi").architecture("HG51BS169").identifier(firmwareHITACHI()).text());
-    output += std::string(Memory{}.type("RAM").size(0xc00).content("Data").manufacturer("Hitachi").architecture("HG51BS169").identifier(firmwareHITACHI()).isVolatile().text());
-    output += std::string(Oscillator{}.frequency(20'000'000).text());
+    output += Memory{}.type("ROM").size(0xc00).content("Data").manufacturer("Hitachi").architecture("HG51BS169").identifier(firmwareHITACHI()).text();
+    output += Memory{}.type("RAM").size(0xc00).content("Data").manufacturer("Hitachi").architecture("HG51BS169").identifier(firmwareHITACHI()).isVolatile().text();
+    output += Oscillator{}.frequency(20'000'000).text();
   } else if(btokens[0] == "NEC") {
-    output += std::string(Memory{}.type("ROM").size(0x1800).content("Program").manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).text());
-    output += std::string(Memory{}.type("ROM").size( 0x800).content("Data"   ).manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).text());
-    output += std::string(Memory{}.type("RAM").size( 0x200).content("Data"   ).manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).isVolatile().text());
-    output += std::string(Oscillator{}.frequency(7'600'000).text());
+    output += Memory{}.type("ROM").size(0x1800).content("Program").manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).text();
+    output += Memory{}.type("ROM").size( 0x800).content("Data"   ).manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).text();
+    output += Memory{}.type("RAM").size( 0x200).content("Data"   ).manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).isVolatile().text();
+    output += Oscillator{}.frequency(7'600'000).text();
   } else if(btokens[0] == "SA1" || btokens[1] == "SA1") {  //SA1-* or BS-SA1-*
-    output += std::string(Memory{}.type("RAM").size(0x800).content("Internal").isVolatile().text());
+    output += Memory{}.type("RAM").size(0x800).content("Internal").isVolatile().text();
   }
 
   if(btokens.back() == "EPSONRTC") {
-    output += std::string(Memory{}.type("RTC").size(0x10).content("Time").manufacturer("Epson").text());
+    output += Memory{}.type("RTC").size(0x10).content("Time").manufacturer("Epson").text();
   } else if(btokens.back() == "SHARPRTC") {
-    output += std::string(Memory{}.type("RTC").size(0x10).content("Time").manufacturer("Sharp").text());
+    output += Memory{}.type("RTC").size(0x10).content("Time").manufacturer("Sharp").text();
   }
 
   std::cout << output << std::endl;
@@ -961,28 +962,28 @@ unsigned SuperFamicom::scoreHeader(unsigned address) {
   return std::max(0, score);
 }
 
-auto SuperFamicom::firmwareARM() const -> string {
+std::string SuperFamicom::firmwareARM() const {
   return "ST018";
 }
 
-auto SuperFamicom::firmwareEXNEC() const -> string {
+std::string SuperFamicom::firmwareEXNEC() const {
   if(title() == "EXHAUST HEAT2") return "ST010";
   if(title() == "F1 ROC II") return "ST010";
   if(title() == "2DAN MORITA SHOUGI") return "ST011";
   return "ST010";
 }
 
-auto SuperFamicom::firmwareGB() const -> string {
+std::string SuperFamicom::firmwareGB() const {
   if(title() == "Super GAMEBOY") return "SGB1";
   if(title() == "Super GAMEBOY2") return "SGB2";
   return "SGB1";
 }
 
-auto SuperFamicom::firmwareHITACHI() const -> string {
+std::string SuperFamicom::firmwareHITACHI() const {
   return "Cx4";
 }
 
-auto SuperFamicom::firmwareNEC() const -> string {
+std::string SuperFamicom::firmwareNEC() const {
   if(title() == "PILOTWINGS") return "DSP1";
   if(title() == "DUNGEON MASTER") return "DSP2";
   if(title() == "SDガンダムGX") return "DSP3";

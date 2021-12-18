@@ -1,75 +1,75 @@
 namespace Heuristics {
 
 struct Memory {
-  auto& type(string type) { _type = type; return *this; }
-  auto& size(Natural<> size) { _size = size; return *this; }
-  auto& content(string content) { _content = content; return *this; }
-  auto& manufacturer(string manufacturer) { _manufacturer = manufacturer; return *this; }
-  auto& architecture(string architecture) { _architecture = architecture; return *this; }
-  auto& identifier(string identifier) { _identifier = identifier; return *this; }
+  auto& type(std::string type) { _type = type; return *this; }
+  auto& size(size_t size) { _size = size; return *this; }
+  auto& content(std::string content) { _content = content; return *this; }
+  auto& manufacturer(std::string manufacturer) { _manufacturer = manufacturer; return *this; }
+  auto& architecture(std::string architecture) { _architecture = architecture; return *this; }
+  auto& identifier(std::string identifier) { _identifier = identifier; return *this; }
   auto& isVolatile() { _volatile = true; return *this; }
-  string text() const;
+  std::string text() const;
 
-  string _type;
-  Boolean _battery;
-  Natural<> _size;
-  string _content;
-  string _manufacturer;
-  string _architecture;
-  string _identifier;
-  Boolean _volatile;
+  std::string _type;
+  bool _battery;
+  size_t _size;
+  std::string _content;
+  std::string _manufacturer;
+  std::string _architecture;
+  std::string _identifier;
+  bool _volatile;
 };
 
 struct Oscillator {
-  auto& frequency(Natural<> frequency) { _frequency = frequency; return *this; }
-  string text() const;
+  auto& frequency(unsigned frequency) { _frequency = frequency; return *this; }
+  std::string text() const;
 
-  Natural<> _frequency;
+  unsigned _frequency;
 };
 
 struct Slot {
-  auto& type(string type) { _type = type; return *this; }
-  string text() const;
+  auto& type(std::string type) { _type = type; return *this; }
+  std::string text() const;
 
-  string _type;
+  std::string _type;
 };
 
 struct BSMemory {
-  BSMemory(vector<uint8_t>& data, string location);
+  BSMemory(vector<uint8_t>& data, std::string location);
   explicit operator bool() const;
   std::string manifest() const;
 
 private:
   vector<uint8_t>& data;
-  string location;
+  std::string location;
 };
 
 struct GameBoy {
-  GameBoy(vector<uint8_t>& data, string location);
+  GameBoy(vector<uint8_t>& data, std::string location);
   explicit operator bool() const;
   std::string manifest() const;
 
 private:
   vector<uint8_t>& data;
-  string location;
+  std::string location;
   unsigned headerAddress = 0;
   
   uint8_t read(unsigned offset) const { return data[headerAddress + offset]; }
 };
 
 struct SufamiTurbo {
-  SufamiTurbo(vector<uint8_t>& data, string location);
+  SufamiTurbo(vector<uint8_t>& data, std::string location);
   explicit operator bool() const;
 
   std::string manifest() const;
 
 private:
   vector<uint8_t>& data;
-  string location;
+  std::string location;
 };
 
 struct SuperFamicom {
-  SuperFamicom(vector<uint8_t>& data, string location);
+  SuperFamicom(vector<uint8_t>& data, std::string location);
   explicit operator bool() const;
 
   std::string manifest() const;
@@ -91,14 +91,14 @@ struct SuperFamicom {
 private:
   unsigned size() const { return data.size(); }
   unsigned scoreHeader(unsigned address);
-  string firmwareARM() const;
-  string firmwareEXNEC() const;
-  string firmwareGB() const;
-  string firmwareHITACHI() const;
-  string firmwareNEC() const;
+  std::string firmwareARM() const;
+  std::string firmwareEXNEC() const;
+  std::string firmwareGB() const;
+  std::string firmwareHITACHI() const;
+  std::string firmwareNEC() const;
 
   vector<uint8_t>& data;
-  string location;
+  std::string location;
   unsigned headerAddress = 0;
 };
 }

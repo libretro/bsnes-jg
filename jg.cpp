@@ -610,7 +610,7 @@ bool Program::loadSuperFamicom(std::string location) {
         rom.resize(rom.size() - 512);
     }
     
-    auto heuristics = Heuristics::SuperFamicom(rom, location.c_str());
+    auto heuristics = Heuristics::SuperFamicom(rom, location);
     auto sha256 = Hash::SHA256(rom).digest();
     heuristics.manifest();
     
@@ -665,7 +665,7 @@ bool Program::loadGameBoy(std::string location) {
     
     if (rom.size() < 0x4000) return false;
     
-    auto heuristics = Heuristics::GameBoy(rom, location.c_str());
+    auto heuristics = Heuristics::GameBoy(rom, location);
     
     gameBoy.manifest = heuristics.manifest();
     gameBoy.document = BML::unserialize(gameBoy.manifest.c_str());
@@ -682,7 +682,7 @@ bool Program::loadBSMemory(std::string location) {
     
     if (rom.size() < 0x8000) return false;
     
-    auto heuristics = Heuristics::BSMemory(rom, location.c_str());
+    auto heuristics = Heuristics::BSMemory(rom, location);
     auto sha256 = Hash::SHA256(rom).digest();
     
     std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
@@ -713,7 +713,7 @@ bool Program::loadSufamiTurboA(std::string location) {
     
     if (rom.size() < 0x20000) return false;
     
-    auto heuristics = Heuristics::SufamiTurbo(rom, location.c_str());
+    auto heuristics = Heuristics::SufamiTurbo(rom, location);
     auto sha256 = Hash::SHA256(rom).digest();
     
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
@@ -743,7 +743,7 @@ bool Program::loadSufamiTurboB(std::string location) {
     
     if (rom.size() < 0x20000) return false;
     
-    auto heuristics = Heuristics::SufamiTurbo(rom, location.c_str());
+    auto heuristics = Heuristics::SufamiTurbo(rom, location);
     auto sha256 = Hash::SHA256(rom).digest();
     
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
