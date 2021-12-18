@@ -2,7 +2,7 @@
 #include <sstream>
 #include <vector>
 
-#include <nall/intrinsics.hpp>
+#include <nall/arithmetic.hpp>
 #include <nall/atoi.hpp>
 #include <nall/bit.hpp>
 #include <nall/iterator.hpp>
@@ -13,7 +13,6 @@
 #include <nall/primitives.hpp>
 #include <nall/vector.hpp>
 #include <nall/string.hpp>
-#include <nall/arithmetic.hpp>
 #include <nall/hash.hpp>
 
 using namespace nall;

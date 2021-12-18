@@ -6,7 +6,7 @@
 #include <string>
 using std::any;
 
-#include <nall/intrinsics.hpp>
+#include <nall/arithmetic.hpp>
 #include <nall/atoi.hpp>
 #include <nall/bit.hpp>
 #include <nall/endian.hpp>
@@ -22,7 +22,6 @@ using std::any;
 #include <nall/vector.hpp>
 #include <nall/string.hpp>
 #include <nall/queue.hpp>
-#include <nall/arithmetic.hpp>
 #include <nall/dsp.hpp>
 #include <nall/hash.hpp>
 #include <nall/markup.hpp>
