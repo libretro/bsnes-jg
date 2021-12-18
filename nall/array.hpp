@@ -21,10 +21,6 @@ template<typename T> struct array_view {
   inline explicit operator bool() const { return _data && _size > 0; }
 
   inline operator const T*() const {
-    #ifdef DEBUG
-    struct out_of_bounds {};
-    if(_size < 0) throw out_of_bounds{};
-    #endif
     return _data;
   }
 
@@ -38,10 +34,6 @@ template<typename T> struct array_view {
   inline auto operator+=(int distance) -> array_view& { _data += distance; _size -= distance; return *this; }
 
   inline auto operator[](unsigned index) const -> const T& {
-    #ifdef DEBUG
-    struct out_of_bounds {};
-    if(index >= _size) throw out_of_bounds{};
-    #endif
     return _data[index];
   }
 
@@ -67,10 +59,6 @@ template<typename T> struct array_view {
   }
 
   auto view(unsigned offset, unsigned length) const -> array_view {
-    #ifdef DEBUG
-    struct out_of_bounds {};
-    if(offset + length >= _size) throw out_of_bounds{};
-    #endif
     return {_data + offset, length};
   }
 
@@ -114,10 +102,6 @@ template<typename T> struct array_span : array_view<T> {
   }
 
   auto span(unsigned offset, unsigned length) const -> array_span {
-    #ifdef DEBUG
-    struct out_of_bounds {};
-    if(offset + length >= array_view<T>::_size) throw out_of_bounds{};
-    #endif
     return {array_view<T>::_data + offset, length};
   }
 
@@ -157,18 +141,10 @@ template<typename T, unsigned Size> struct array<T[Size]> {
   }
 
   inline auto operator[](unsigned index) -> T& {
-    #ifdef DEBUG
-    struct out_of_bounds {};
-    if(index >= Size) throw out_of_bounds{};
-    #endif
     return values[index];
   }
 
   inline auto operator[](unsigned index) const -> const T& {
-    #ifdef DEBUG
-    struct out_of_bounds {};
-    if(index >= Size) throw out_of_bounds{};
-    #endif
     return values[index];
   }
 
@@ -199,18 +175,12 @@ private:
 template<typename T, T... p> auto from_array(unsigned index) -> T {
   static const array<T[sizeof...(p)]> table{p...};
   struct out_of_bounds {};
-  #if defined(DEBUG)
-  if(index >= sizeof...(p)) throw out_of_bounds{};
-  #endif
   return table[index];
 }
 
 template<int64_t... p> auto from_array(unsigned index) -> int64_t {
   static const array<int64_t[sizeof...(p)]> table{p...};
   struct out_of_bounds {};
-  #if defined(DEBUG)
-  if(index >= sizeof...(p)) throw out_of_bounds{};
-  #endif
   return table[index];
 }
 

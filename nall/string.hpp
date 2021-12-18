@@ -549,10 +549,6 @@ auto string::transform(string_view from, string_view to) -> string& {
 //all other functions must use data(), size(), capacity()
 
 auto string::operator[](unsigned position) const -> const char& {
-  #ifdef DEBUG
-  struct out_of_bounds {};
-  if(position >= size() + 1) throw out_of_bounds{};
-  #endif
   return data()[position];
 }
 
