@@ -61,20 +61,20 @@ BSMemory::operator bool() const {
   return data.size() >= 0x8000;
 }
 
-string BSMemory::manifest() const {
+std::string BSMemory::manifest() const {
   if(!operator bool()) return {};
 
   std::string gamename(location);
   gamename = gamename.substr(0, gamename.find_last_of("."));
   gamename = gamename.substr(gamename.find_last_of("/\\") + 1);
   
-  string output;
-  output.append("game\n");
-  output.append("  sha256: ", Hash::SHA256(data).digest(), "\n");
-  output.append("  label:  ", gamename.c_str(), "\n");
-  output.append("  name:   ", gamename.c_str(), "\n");
-  output.append("  board\n");
-  output.append(Memory{}.type("Flash").size(data.size()).content("Program").text());
+  std::string output;
+  output += "game\n";
+  output += "  sha256: " + std::string(Hash::SHA256(data).digest()) + "\n";
+  output += "  label:  " + gamename + "\n";
+  output += "  name:   " + gamename + "\n";
+  output += "  board\n";
+  output += std::string(Memory{}.type("Flash").size(data.size()).content("Program").text());
   return output;
 }
 

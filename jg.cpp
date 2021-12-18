@@ -676,7 +676,7 @@ bool Program::loadGameBoy(std::string location) {
 }
 
 bool Program::loadBSMemory(std::string location) {
-    string manifest;
+    std::string manifest;
     vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
     
@@ -694,7 +694,7 @@ bool Program::loadBSMemory(std::string location) {
         }
     }
     
-    bsMemory.manifest = manifest ? manifest : heuristics.manifest();
+    bsMemory.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     bsMemory.document = BML::unserialize(bsMemory.manifest.c_str());
     bsMemory.location = location;
     

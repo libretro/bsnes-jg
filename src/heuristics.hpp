@@ -37,7 +37,7 @@ struct Slot {
 struct BSMemory {
   BSMemory(vector<uint8_t>& data, string location);
   explicit operator bool() const;
-  string manifest() const;
+  std::string manifest() const;
 
 private:
   vector<uint8_t>& data;
