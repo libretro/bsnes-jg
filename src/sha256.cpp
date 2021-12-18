@@ -100,7 +100,7 @@ std::string sha256_digest(const uint8_t *data, size_t len) {
     digest << std::hex;
 
     for (int i = 0; i < 32; ++i)
-        digest << (int)out[i];
+        digest << std::setw(2) << std::setfill('0') << (int)out[i];
 
     return digest.str();
 }
