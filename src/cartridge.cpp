@@ -1,4 +1,7 @@
+#include <vector>
+
 #include "sfc.hpp"
+#include "sha256.hpp"
 
 namespace SuperFamicom {
 
@@ -998,39 +1001,54 @@ auto Cartridge::load() -> bool {
 
   //BS Memory
   else if(cartridge.has.MCC && cartridge.has.BSMemorySlot) {
-    information.sha256 = Hash::SHA256({bsmemory.memory.data(), bsmemory.memory.size()}).digest();
+    information.sha256 = sha256_digest(bsmemory.data(), bsmemory.size()).c_str();
   }
 
   //Sufami Turbo
   else if(cartridge.has.SufamiTurboSlotA || cartridge.has.SufamiTurboSlotB) {
-    Hash::SHA256 sha;
-    if(cartridge.has.SufamiTurboSlotA) sha.input(sufamiturboA.rom.data(), sufamiturboA.rom.size());
-    if(cartridge.has.SufamiTurboSlotB) sha.input(sufamiturboB.rom.data(), sufamiturboB.rom.size());
-    information.sha256 = sha.digest();
+    std::vector<uint8_t> carts;
+
+    // Ugly, but works during the nall removal, needs to change when nall is gone
+    if(cartridge.has.SufamiTurboSlotA) {
+        for (int i = 0; i < sufamiturboA.rom.size(); ++i)
+            carts.push_back(sufamiturboA.rom[i]);
+    }
+    if(cartridge.has.SufamiTurboSlotB) {
+        for (int i = 0; i < sufamiturboB.rom.size(); ++i)
+            carts.push_back(sufamiturboB.rom[i]);
+    }
+
+    information.sha256 = sha256_digest(carts.data(), carts.size()).c_str();
   }
 
   //Super Famicom
   else {
-    Hash::SHA256 sha;
-    //hash each ROM image that exists; any with size() == 0 is ignored by sha256_chunk()
-    sha.input(rom.data(), rom.size());
-    sha.input(mcc.rom.data(), mcc.rom.size());
-    sha.input(sa1.rom.data(), sa1.rom.size());
-    sha.input(superfx.rom.data(), superfx.rom.size());
-    sha.input(hitachidsp.rom.data(), hitachidsp.rom.size());
-    sha.input(spc7110.prom.data(), spc7110.prom.size());
-    sha.input(spc7110.drom.data(), spc7110.drom.size());
-    sha.input(sdd1.rom.data(), sdd1.rom.size());
+    // Again ugly, but can/should be rewritten cleanly when nall is gone
+    std::vector<uint8_t> buf;
+
+    //hash each ROM image that exists; any with size() == 0 is ignored
+    for (int i = 0; i < rom.size(); ++i) buf.push_back(rom[i]);
+    for (int i = 0; i < mcc.rom.size(); ++i) buf.push_back(mcc.rom[i]);
+    for (int i = 0; i < sa1.rom.size(); ++i) buf.push_back(sa1.rom[i]);
+    for (int i = 0; i < superfx.rom.size(); ++i) buf.push_back(superfx.rom[i]);
+    for (int i = 0; i < hitachidsp.rom.size(); ++i) buf.push_back(hitachidsp.rom[i]);
+    for (int i = 0; i < spc7110.prom.size(); ++i) buf.push_back(spc7110.prom[i]);
+    for (int i = 0; i < spc7110.drom.size(); ++i) buf.push_back(spc7110.drom[i]);
+    for (int i = 0; i < sdd1.rom.size(); ++i) buf.push_back(sdd1.rom[i]);
+
     //hash all firmware that exists
-    vector<uint8_t> buffer;
-    buffer = armdsp.firmware();
-    sha.input(buffer.data(), buffer.size());
-    buffer = hitachidsp.firmware();
-    sha.input(buffer.data(), buffer.size());
-    buffer = necdsp.firmware();
-    sha.input(buffer.data(), buffer.size());
+    vector<uint8_t> firm;
+    firm = armdsp.firmware();
+    for (int i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+
+    firm = hitachidsp.firmware();
+    for (int i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+
+    firm = necdsp.firmware();
+    for (int i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+
     //finalize hash
-    information.sha256 = sha.digest();
+    information.sha256 = sha256_digest(buf.data(), buf.size()).c_str();
   }
 
   return true;
