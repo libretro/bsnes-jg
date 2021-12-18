@@ -33,6 +33,7 @@
 #include "emulator/emulator.hpp"
 #include "src/heuristics.hpp"
 #include "src/interface.hpp"
+#include "src/sha256.hpp"
 
 #include "gamedb.hpp"
 
@@ -611,7 +612,7 @@ bool Program::loadSuperFamicom(std::string location) {
     }
     
     auto heuristics = Heuristics::SuperFamicom(rom, location);
-    auto sha256 = Hash::SHA256(rom).digest();
+    auto sha256 = sha256_digest(rom.data(), rom.size());
     
     superFamicom.title = heuristics.title();
     superFamicom.region = heuristics.videoRegion();
@@ -619,7 +620,7 @@ bool Program::loadSuperFamicom(std::string location) {
     std::string dbpath = std::string(pathinfo.core) + "/Super Famicom.bml";
     
     if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
-        if (auto game = document[{"game(sha256=", sha256, ")"}]) {
+        if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = BML::serialize(game);
             //the internal ROM header title is not present in the database, but
             //is needed for internal core overrides
@@ -682,12 +683,12 @@ bool Program::loadBSMemory(std::string location) {
     if (rom.size() < 0x8000) return false;
     
     auto heuristics = Heuristics::BSMemory(rom, location);
-    auto sha256 = Hash::SHA256(rom).digest();
+    auto sha256 = sha256_digest(rom.data(), rom.size());
     
     std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
     
     if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
-        if (auto game = document[{"game(sha256=", sha256, ")"}]) {
+        if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = BML::serialize(game);
             bsMemory.verified = true;
         }
@@ -713,12 +714,12 @@ bool Program::loadSufamiTurboA(std::string location) {
     if (rom.size() < 0x20000) return false;
     
     auto heuristics = Heuristics::SufamiTurbo(rom, location);
-    auto sha256 = Hash::SHA256(rom).digest();
+    auto sha256 = sha256_digest(rom.data(), rom.size());
     
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
     
     if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
-        if (auto game = document[{"game(sha256=", sha256, ")"}]) {
+        if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = BML::serialize(game);
             sufamiTurboA.verified = true;
         }
@@ -743,12 +744,12 @@ bool Program::loadSufamiTurboB(std::string location) {
     if (rom.size() < 0x20000) return false;
     
     auto heuristics = Heuristics::SufamiTurbo(rom, location);
-    auto sha256 = Hash::SHA256(rom).digest();
+    auto sha256 = sha256_digest(rom.data(), rom.size());
     
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
     
     if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
-        if (auto game = document[{"game(sha256=", sha256, ")"}]) {
+        if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = BML::serialize(game);
             sufamiTurboB.verified = true;
         }
