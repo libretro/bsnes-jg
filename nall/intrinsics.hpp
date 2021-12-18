@@ -14,17 +14,6 @@
 
 /* Compiler detection */
 
-namespace nall {
-
-#if defined(__clang__)
-  #pragma clang diagnostic ignored "-Winconsistent-missing-override"
-  #pragma clang diagnostic ignored "-Wparentheses"
-  #pragma clang diagnostic ignored "-Wshift-count-overflow"
-  #pragma clang diagnostic ignored "-Wswitch"
-#endif
-
-}
-
 #if defined(__clang__) || defined(__GNUC__)
   #define noinline   __attribute__((noinline))
   #define alwaysinline  inline __attribute__((always_inline))

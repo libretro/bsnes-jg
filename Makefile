@@ -45,6 +45,11 @@ ifeq ($(UNAME), Linux)
 	LIBS += -Wl,--no-undefined
 endif
 
+ifeq ($(shell $(CXX) -v 2>&1 | grep -c "clang"),1)
+	WARNINGS += -Wno-inconsistent-missing-override -Wno-parentheses \
+		-Wno-shift-count-overflow -Wno-switch
+endif
+
 OBJDIR := objs
 
 CSRCS := $(OBJDIR)/deps/gb/apu.c \
