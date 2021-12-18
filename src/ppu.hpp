@@ -1,7 +1,7 @@
 struct PPU : Thread, PPUcounter {
-  alwaysinline auto interlace() const -> bool { return display.interlace; }
-  alwaysinline auto overscan() const -> bool { return display.overscan; }
-  alwaysinline auto vdisp() const -> unsigned { return display.vdisp; }
+  inline auto interlace() const -> bool { return display.interlace; }
+  inline auto overscan() const -> bool { return display.overscan; }
+  inline auto vdisp() const -> unsigned { return display.vdisp; }
 
   PPU();
   ~PPU();
@@ -12,12 +12,12 @@ struct PPU : Thread, PPUcounter {
   auto power(bool reset) -> void;
 
   auto main() -> void;
-  noinline auto cycleObjectEvaluate() -> void;
-  template<unsigned Cycle> noinline auto cycleBackgroundFetch() -> void;
-  noinline auto cycleBackgroundBegin() -> void;
-  noinline auto cycleBackgroundBelow() -> void;
-  noinline auto cycleBackgroundAbove() -> void;
-  noinline auto cycleRenderPixel() -> void;
+  auto cycleObjectEvaluate() -> void;
+  template<unsigned Cycle> auto cycleBackgroundFetch() -> void;
+  auto cycleBackgroundBegin() -> void;
+  auto cycleBackgroundBelow() -> void;
+  auto cycleBackgroundAbove() -> void;
+  auto cycleRenderPixel() -> void;
   template<unsigned> auto cycle() -> void;
 
   auto latchCounters(unsigned hcounter, unsigned vcounter) -> void;
@@ -26,16 +26,16 @@ struct PPU : Thread, PPUcounter {
   auto serialize(serializer&) -> void;
 
 private:
-  alwaysinline auto step() -> void;
-  alwaysinline auto step(unsigned clocks) -> void;
+  inline auto step() -> void;
+  inline auto step(unsigned clocks) -> void;
 
-  alwaysinline auto addressVRAM() const -> uint16_t;
-  alwaysinline auto readVRAM() -> uint16_t;
-  alwaysinline auto writeVRAM(bool byte, uint8_t data) -> void;
-  alwaysinline auto readOAM(nall::Natural<10> address) -> uint8_t;
-  alwaysinline auto writeOAM(nall::Natural<10> address, uint8_t data) -> void;
-  alwaysinline auto readCGRAM(bool byte, uint8_t address) -> uint8_t;
-  alwaysinline auto writeCGRAM(uint8_t address, nall::Natural<15> data) -> void;
+  inline auto addressVRAM() const -> uint16_t;
+  inline auto readVRAM() -> uint16_t;
+  inline auto writeVRAM(bool byte, uint8_t data) -> void;
+  inline auto readOAM(nall::Natural<10> address) -> uint8_t;
+  inline auto writeOAM(nall::Natural<10> address, uint8_t data) -> void;
+  inline auto readCGRAM(bool byte, uint8_t address) -> uint8_t;
+  inline auto writeCGRAM(uint8_t address, nall::Natural<15> data) -> void;
   auto readIO(unsigned address, uint8_t data) -> uint8_t;
   auto writeIO(unsigned address, uint8_t data) -> void;
   auto updateVideoMode() -> void;
@@ -149,8 +149,8 @@ private:
 
 struct Mosaic {
   //mosaic.cpp
-  alwaysinline auto enable() const -> bool;
-  alwaysinline auto voffset() const -> unsigned;
+  inline auto enable() const -> bool;
+  inline auto voffset() const -> unsigned;
   auto scanline() -> void;
   auto power() -> void;
 
@@ -164,7 +164,7 @@ struct Mosaic {
 struct Background {
   Background(unsigned id) : id(id) {}
 
-  alwaysinline auto hires() const -> bool;
+  inline auto hires() const -> bool;
 
   //background.cpp
   auto frame() -> void;
@@ -177,7 +177,7 @@ struct Background {
   auto power() -> void;
 
   //mode7.cpp
-  alwaysinline auto clip(int n) -> int;
+  inline auto clip(int n) -> int;
   auto runMode7() -> void;
 
   auto serialize(serializer&) -> void;
@@ -252,8 +252,8 @@ struct OAM {
   auto write(nall::Natural<10> address, uint8_t data) -> void;
 
   struct Object {
-    alwaysinline auto width() const -> unsigned;
-    alwaysinline auto height() const -> unsigned;
+    inline auto width() const -> unsigned;
+    inline auto height() const -> unsigned;
 
     nall::Natural< 9> x;
     uint8_t y;
@@ -268,8 +268,8 @@ struct OAM {
 };
 
 struct Object {
-  alwaysinline auto addressReset() -> void;
-  alwaysinline auto setFirstSprite() -> void;
+  inline auto addressReset() -> void;
+  inline auto setFirstSprite() -> void;
   auto frame() -> void;
   auto scanline() -> void;
   auto evaluate(nall::Natural< 7> index) -> void;
@@ -396,9 +396,9 @@ struct Screen {
   auto above() -> uint16_t;
 
   auto blend(unsigned x, unsigned y) const -> nall::Natural<15>;
-  alwaysinline auto paletteColor(uint8_t palette) const -> nall::Natural<15>;
-  alwaysinline auto directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const -> nall::Natural<15>;
-  alwaysinline auto fixedColor() const -> nall::Natural<15>;
+  inline auto paletteColor(uint8_t palette) const -> nall::Natural<15>;
+  inline auto directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const -> nall::Natural<15>;
+  inline auto fixedColor() const -> nall::Natural<15>;
 
   auto serialize(serializer&) -> void;
 

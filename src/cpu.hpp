@@ -43,24 +43,24 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline auto dmaCounter() const -> unsigned;
   inline auto joypadCounter() const -> unsigned;
 
-  alwaysinline auto stepOnce() -> void;
-  alwaysinline auto step(unsigned clocks) -> void;
+  inline auto stepOnce() -> void;
+  inline auto step(unsigned clocks) -> void;
   template<unsigned Clocks, bool Synchronize> auto step() -> void;
   auto scanline() -> void;
 
-  alwaysinline auto aluEdge() -> void;
-  alwaysinline auto dmaEdge() -> void;
+  inline auto aluEdge() -> void;
+  inline auto dmaEdge() -> void;
 
   //irq.cpp
-  alwaysinline auto nmiPoll() -> void;
-  alwaysinline auto irqPoll() -> void;
+  inline auto nmiPoll() -> void;
+  inline auto irqPoll() -> void;
   auto nmitimenUpdate(uint8_t data) -> void;
   auto rdnmi() -> bool;
   auto timeup() -> bool;
 
-  alwaysinline auto nmiTest() -> bool;
-  alwaysinline auto irqTest() -> bool;
-  alwaysinline auto lastCycle() -> void;
+  inline auto nmiTest() -> bool;
+  inline auto irqTest() -> bool;
+  inline auto lastCycle() -> void;
 
   //joypad.cpp
   auto joypadEdge() -> void;

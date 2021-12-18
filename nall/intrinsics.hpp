@@ -11,13 +11,3 @@
   using intmax = intmax_t;
   using uintmax = uintmax_t;
 #endif
-
-/* Compiler detection */
-
-#if defined(__clang__) || defined(__GNUC__)
-  #define noinline   __attribute__((noinline))
-  #define alwaysinline  inline __attribute__((always_inline))
-#else
-  #define noinline
-  #define alwaysinline  inline
-#endif

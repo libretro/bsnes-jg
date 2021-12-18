@@ -47,24 +47,24 @@ struct WDC65816 {
   auto power() -> void;
 
   //memory.cpp
-  alwaysinline auto idleIRQ() -> void;
-  alwaysinline auto idle2() -> void;
-  alwaysinline auto idle4(uint16_t x, uint16_t y) -> void;
-  alwaysinline auto idle6(uint16_t address) -> void;
-  alwaysinline auto fetch() -> uint8_t;
-  alwaysinline auto pull() -> uint8_t;
+  inline auto idleIRQ() -> void;
+  inline auto idle2() -> void;
+  inline auto idle4(uint16_t x, uint16_t y) -> void;
+  inline auto idle6(uint16_t address) -> void;
+  inline auto fetch() -> uint8_t;
+  inline auto pull() -> uint8_t;
                auto push(uint8_t data) -> void;
-  alwaysinline auto pullN() -> uint8_t;
-  alwaysinline auto pushN(uint8_t data) -> void;
-  alwaysinline auto readDirect(unsigned address) -> uint8_t;
-  alwaysinline auto writeDirect(unsigned address, uint8_t data) -> void;
-  alwaysinline auto readDirectN(unsigned address) -> uint8_t;
-  alwaysinline auto readBank(unsigned address) -> uint8_t;
-  alwaysinline auto writeBank(unsigned address, uint8_t data) -> void;
-  alwaysinline auto readLong(unsigned address) -> uint8_t;
-  alwaysinline auto writeLong(unsigned address, uint8_t data) -> void;
-  alwaysinline auto readStack(unsigned address) -> uint8_t;
-  alwaysinline auto writeStack(unsigned address, uint8_t data) -> void;
+  inline auto pullN() -> uint8_t;
+  inline auto pushN(uint8_t data) -> void;
+  inline auto readDirect(unsigned address) -> uint8_t;
+  inline auto writeDirect(unsigned address, uint8_t data) -> void;
+  inline auto readDirectN(unsigned address) -> uint8_t;
+  inline auto readBank(unsigned address) -> uint8_t;
+  inline auto writeBank(unsigned address, uint8_t data) -> void;
+  inline auto readLong(unsigned address) -> uint8_t;
+  inline auto writeLong(unsigned address, uint8_t data) -> void;
+  inline auto readStack(unsigned address) -> uint8_t;
+  inline auto writeStack(unsigned address, uint8_t data) -> void;
 
   //algorithms.cpp
   using  alu8 = auto (WDC65816::*)( uint8_t) ->  uint8_t;

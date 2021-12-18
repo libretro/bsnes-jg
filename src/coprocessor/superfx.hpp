@@ -39,8 +39,8 @@ struct SuperFX : Processor::GSU, Thread {
   auto write(unsigned addr, uint8_t data) -> void override;
 
   auto readOpcode(uint16_t addr) -> uint8_t;
-  alwaysinline auto peekpipe() -> uint8_t;
-  alwaysinline auto pipe() -> uint8_t override;
+  inline auto peekpipe() -> uint8_t;
+  inline auto pipe() -> uint8_t override;
 
   auto flushCache() -> void override;
   auto readCache(uint16_t addr) -> uint8_t;

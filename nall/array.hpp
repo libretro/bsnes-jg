@@ -156,7 +156,7 @@ template<typename T, unsigned Size> struct array<T[Size]> {
     return {data(), size()};
   }
 
-  alwaysinline auto operator[](unsigned index) -> T& {
+  inline auto operator[](unsigned index) -> T& {
     #ifdef DEBUG
     struct out_of_bounds {};
     if(index >= Size) throw out_of_bounds{};
@@ -164,7 +164,7 @@ template<typename T, unsigned Size> struct array<T[Size]> {
     return values[index];
   }
 
-  alwaysinline auto operator[](unsigned index) const -> const T& {
+  inline auto operator[](unsigned index) const -> const T& {
     #ifdef DEBUG
     struct out_of_bounds {};
     if(index >= Size) throw out_of_bounds{};
@@ -172,7 +172,7 @@ template<typename T, unsigned Size> struct array<T[Size]> {
     return values[index];
   }
 
-  alwaysinline auto operator()(unsigned index, const T& fallback = {}) const -> const T& {
+  inline auto operator()(unsigned index, const T& fallback = {}) const -> const T& {
     if(index >= Size) return fallback;
     return values[index];
   }

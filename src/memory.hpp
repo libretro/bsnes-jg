@@ -162,13 +162,13 @@ private:
 };
 
 struct Bus {
-  alwaysinline static auto mirror(unsigned address, unsigned size) -> unsigned;
-  alwaysinline static auto reduce(unsigned address, unsigned mask) -> unsigned;
+  inline static auto mirror(unsigned address, unsigned size) -> unsigned;
+  inline static auto reduce(unsigned address, unsigned mask) -> unsigned;
 
   ~Bus();
 
-  alwaysinline auto read(unsigned address, uint8_t data = 0) -> uint8_t;
-  alwaysinline auto write(unsigned address, uint8_t data) -> void;
+  inline auto read(unsigned address, uint8_t data = 0) -> uint8_t;
+  inline auto write(unsigned address, uint8_t data) -> void;
 
   auto reset() -> void;
   auto map(

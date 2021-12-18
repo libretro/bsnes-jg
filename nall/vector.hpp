@@ -36,13 +36,13 @@ struct vector_base {
   auto resize(uint64_t size, const T& value = T()) -> bool { return resizeRight(size, value); }
 
   //access.hpp
-  alwaysinline auto operator[](uint64_t offset) -> T&;
-  alwaysinline auto operator[](uint64_t offset) const -> const T&;
+  inline auto operator[](uint64_t offset) -> T&;
+  inline auto operator[](uint64_t offset) const -> const T&;
 
-  alwaysinline auto operator()(uint64_t offset) -> T&;
-  alwaysinline auto operator()(uint64_t offset, const T& value) const -> const T&;
+  inline auto operator()(uint64_t offset) -> T&;
+  inline auto operator()(uint64_t offset, const T& value) const -> const T&;
 
-  alwaysinline auto right() -> T&;
+  inline auto right() -> T&;
 
   //modify.hpp
   auto prepend(const T& value) -> void;

@@ -144,20 +144,20 @@ namespace SuperFamicom {
   //V=128.
 
   struct PPUcounter {
-    alwaysinline auto tick() -> void;
-    alwaysinline auto tick(unsigned clocks) -> void; private:
-    alwaysinline auto tickScanline() -> void; public:
+    inline auto tick() -> void;
+    inline auto tick(unsigned clocks) -> void; private:
+    inline auto tickScanline() -> void; public:
 
-    alwaysinline auto interlace() const -> bool;
-    alwaysinline auto field() const -> bool;
-    alwaysinline auto vcounter() const -> unsigned;
-    alwaysinline auto hcounter() const -> unsigned;
-    alwaysinline auto hdot() const -> unsigned; private:
-    alwaysinline auto vperiod() const -> unsigned; public:
-    alwaysinline auto hperiod() const -> unsigned;
+    inline auto interlace() const -> bool;
+    inline auto field() const -> bool;
+    inline auto vcounter() const -> unsigned;
+    inline auto hcounter() const -> unsigned;
+    inline auto hdot() const -> unsigned; private:
+    inline auto vperiod() const -> unsigned; public:
+    inline auto hperiod() const -> unsigned;
 
-    alwaysinline auto vcounter(unsigned offset) const -> unsigned;
-    alwaysinline auto hcounter(unsigned offset) const -> unsigned;
+    inline auto vcounter(unsigned offset) const -> unsigned;
+    inline auto hcounter(unsigned offset) const -> unsigned;
 
     inline auto reset() -> void;
     auto serialize(serializer&) -> void;
