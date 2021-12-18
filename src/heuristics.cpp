@@ -446,6 +446,9 @@ std::string SuperFamicom::manifest() const {
   while (std::getline(boardstream, token, '-')) {
     btokens.push_back(token);
   }
+  if (btokens.size() < 2) {
+    btokens.push_back("");
+  }
 
   if(auto size = romSize()) {
     if(btokens[0] == "SPC7110" && size > 0x100000) {
