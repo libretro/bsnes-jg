@@ -703,7 +703,7 @@ bool Program::loadBSMemory(std::string location) {
 }
 
 bool Program::loadSufamiTurboA(std::string location) {
-    string manifest;
+    std::string manifest;
     vector<uint8_t> rom;
     
     if (sufamiinfo.size)
@@ -725,7 +725,7 @@ bool Program::loadSufamiTurboA(std::string location) {
         }
     }
     
-    sufamiTurboA.manifest = manifest ? manifest : heuristics.manifest();
+    sufamiTurboA.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     sufamiTurboA.document = BML::unserialize(sufamiTurboA.manifest.c_str());
     sufamiTurboA.location = string(gameinfo.path);//location;
     
@@ -737,7 +737,7 @@ bool Program::loadSufamiTurboB(std::string location) {
     if (!sufamiinfo.size)
         return false;
     
-    string manifest;
+    std::string manifest;
     vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
     
@@ -755,7 +755,7 @@ bool Program::loadSufamiTurboB(std::string location) {
         }
     }
     
-    sufamiTurboB.manifest = manifest ? manifest : heuristics.manifest();
+    sufamiTurboB.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     sufamiTurboB.document = BML::unserialize(sufamiTurboB.manifest.c_str());
     sufamiTurboB.location = location;
     

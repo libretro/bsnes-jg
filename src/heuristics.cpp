@@ -371,7 +371,7 @@ SufamiTurbo::operator bool() const {
   return data.size() >= 0x20000;
 }
 
-string SufamiTurbo::manifest() const {
+std::string SufamiTurbo::manifest() const {
   if(!operator bool()) return {};
 
   unsigned romSize = data[0x36] * 0x20000;  //128KB
@@ -381,15 +381,17 @@ string SufamiTurbo::manifest() const {
   gamename = gamename.substr(0, gamename.find_last_of("."));
   gamename = gamename.substr(gamename.find_last_of("/\\") + 1);
   
-  string output;
-  output.append("game\n");
-  output.append("  sha256: ", Hash::SHA256(data).digest(), "\n");
-  output.append("  label:  ", gamename.c_str(), "\n");
-  output.append("  name:   ", gamename.c_str(), "\n");
-  output.append("  board\n");
-  output.append(Memory{}.type("ROM").size(data.size()).content("Program").text());
-if(ramSize)
-  output.append(Memory{}.type("RAM").size(ramSize).content("Save").text());
+  std::string output;
+  output += "game\n";
+  output += "  sha256: " + std::string(Hash::SHA256(data).digest()) + "\n";
+  output += "  label:  " + gamename + "\n";
+  output += "  name:   " + gamename + "\n";
+  output += "  board\n";
+  output += std::string(Memory{}.type("ROM").size(data.size()).content("Program").text());
+
+  if(ramSize)
+    output += std::string(Memory{}.type("RAM").size(ramSize).content("Save").text());
+
   return output;
 }
 
@@ -651,7 +653,8 @@ std::string SuperFamicom::board() const {
   bool epsonRTC = false;
   bool sharpRTC = false;
 
-  const char *cserial = serial().c_str();
+  std::string cser = serial();
+  const char *cserial = cser.c_str();
   
   if(serial() == "A9PJ") {
   //Sufami Turbo (JPN)
@@ -661,9 +664,9 @@ std::string SuperFamicom::board() const {
     board += "BS-MCC-";
   } else if(serial() == "042J") {
   //Super Game Boy 2
-    board += "GB-", mode;
+    board += "GB-" + mode;
   } else if(cserial[0] == 'Z' && cserial[3] == 'J') {
-    board += "BS-", mode;
+    board += "BS-" + mode;
   } else if(cartridgeTypeLo >= 0x3) {
     if(cartridgeTypeHi == 0x0) board += "NEC-" + mode;
     if(cartridgeTypeHi == 0x1) board += "GSU-";
@@ -808,7 +811,7 @@ std::string SuperFamicom::serial() const {
 
   auto valid = [](char n) { return (n >= '0' && n <= '9') || (n >= 'A' && n <= 'Z'); };
   if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) & valid(C) & valid(D)) {
-    std::string ret; ret = A; ret += B; ret += C; ret+= D;
+    std::string ret; ret = A; ret += B; ret += C; ret += D;
     return ret;
   }
 
