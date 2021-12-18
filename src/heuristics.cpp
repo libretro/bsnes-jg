@@ -3,19 +3,16 @@
 #include <sstream>
 #include <vector>
 
-#include "sha256.hpp"
-
-#include <nall/arithmetic.hpp>
-#include <nall/bit.hpp>
 #include <nall/iterator.hpp>
-#include <nall/array.hpp>
 #include <nall/memory.hpp>
-#include "serializer.hpp"
+#include <nall/arithmetic.hpp>
+#include <nall/array.hpp>
+#include <nall/bit.hpp>
 #include <nall/vector.hpp>
 
-using namespace nall;
-
+#include "serializer.hpp"
 #include "heuristics.hpp"
+#include "sha256.hpp"
 
 namespace Heuristics {
 
@@ -50,7 +47,6 @@ std::string Slot::text() const {
   return output;
 }
 
-//
 BSMemory::BSMemory(vector<uint8_t>& data, std::string location) : data(data), location(location) {
 }
 
