@@ -41,10 +41,6 @@ template<typename T> struct stringify;
 //format.hpp
 inline auto hex(uintmax value, long precision = 0, char padchar = '0') -> string;
 
-//match.hpp
-inline auto tokenize(const char* s, const char* p) -> bool;
-inline auto tokenize(vector<string>& list, const char* s, const char* p) -> bool;
-
 //utility.hpp
 inline auto slice(string_view self, int offset = 0, int length = -1) -> string;
 template<typename T> inline auto fromInteger(char* result, T value) -> char*;
@@ -131,8 +127,6 @@ public:
 
   //core.hpp
   inline auto operator[](unsigned) const -> const char&;
-  template<typename T, typename... P> inline auto prepend(const T&, P&&...) -> string&;
-  template<typename T> inline auto _prepend(const stringify<T>&) -> string&;
   template<typename T, typename... P> inline auto append(const T&, P&&...) -> string&;
   template<typename T> inline auto _append(const stringify<T>&) -> string&;
   inline auto length() const -> unsigned;
@@ -146,7 +140,6 @@ public:
   template<bool> inline static auto _compare(const char*, unsigned, const char*, unsigned) -> int;
 
   inline auto compare(string_view source) const -> int;
-  inline auto equals(string_view source) const -> bool;
   inline auto beginsWith(string_view source) const -> bool;
   inline auto endsWith(string_view source) const -> bool;
 
@@ -156,7 +149,6 @@ public:
 
   //match.hpp
   inline auto match(string_view source) const -> bool;
-  inline auto imatch(string_view source) const -> bool;
 
   //replace.hpp
   template<bool, bool> inline auto _replace(string_view, string_view, long) -> string&;
@@ -164,9 +156,6 @@ public:
 
   //split.hpp
   inline auto split(string_view key, long limit = LONG_MAX) const -> vector<string>;
-  inline auto isplit(string_view key, long limit = LONG_MAX) const -> vector<string>;
-  inline auto qsplit(string_view key, long limit = LONG_MAX) const -> vector<string>;
-  inline auto iqsplit(string_view key, long limit = LONG_MAX) const -> vector<string>;
 
   //trim.hpp
   inline auto trim(string_view lhs, string_view rhs, long limit = LONG_MAX) -> string&;
@@ -174,8 +163,6 @@ public:
   inline auto trimRight(string_view rhs, long limit = LONG_MAX) -> string&;
 
   inline auto itrim(string_view lhs, string_view rhs, long limit = LONG_MAX) -> string&;
-  inline auto itrimLeft(string_view lhs, long limit = LONG_MAX) -> string&;
-  inline auto itrimRight(string_view rhs, long limit = LONG_MAX) -> string&;
 
   inline auto strip() -> string&;
   inline auto stripLeft() -> string&;
@@ -464,28 +451,12 @@ template<> struct stringify<signed int> {
 
 //unsigned integers
 
-template<> struct stringify<unsigned short> {
-  stringify(unsigned short source) { fromNatural(_data, source); }
-  auto data() const -> const char* { return _data; }
-  auto size() const -> unsigned { return strlen(_data); }
-  char _data[1 + sizeof(unsigned short) * 3];
-};
-
 template<> struct stringify<unsigned int> {
   stringify(unsigned int source) { fromNatural(_data, source); }
   auto data() const -> const char* { return _data; }
   auto size() const -> unsigned { return strlen(_data); }
   char _data[1 + sizeof(unsigned int) * 3];
 };
-
-#if defined(__SIZEOF_INT128__)
-template<> struct stringify<uint128_t> {
-  stringify(uint128_t source) { fromNatural(_data, source); }
-  auto data() const -> const char* { return _data; }
-  auto size() const -> unsigned { return strlen(_data); }
-  char _data[1 + sizeof(uint128_t) * 3];
-};
-#endif
 
 template<unsigned Bits> struct stringify<Natural<Bits>> {
   stringify(Natural<Bits> source) { fromNatural(_data, source); }
@@ -542,11 +513,6 @@ auto string::compare(string_view source) const -> int {
   return memory::compare(data(), size() + 1, source.data(), source.size() + 1);
 }
 
-auto string::equals(string_view source) const -> bool {
-  if(size() != source.size()) return false;
-  return memory::compare(data(), source.data(), source.size()) == 0;
-}
-
 auto string::beginsWith(string_view source) const -> bool {
   if(source.size() > size()) return false;
   return memory::compare(data(), source.data(), source.size()) == 0;
@@ -588,18 +554,6 @@ auto string::operator[](unsigned position) const -> const char& {
   if(position >= size() + 1) throw out_of_bounds{};
   #endif
   return data()[position];
-}
-
-template<typename T, typename... P> auto string::prepend(const T& value, P&&... p) -> string& {
-  if constexpr(sizeof...(p)) prepend(std::forward<P>(p)...);
-  return _prepend(make_string(value));
-}
-
-template<typename T> auto string::_prepend(const stringify<T>& source) -> string& {
-  resize(source.size() + size());
-  memory::move(get() + source.size(), get(), size() - source.size());
-  memory::copy(get(), source.data(), source.size());
-  return *this;
 }
 
 template<typename T, typename... P> auto string::append(const T& value, P&&... p) -> string& {
@@ -669,65 +623,6 @@ auto string::match(string_view source) const -> bool {
     }
   }
   while(*p == '*') p++;
-  return !*p;
-}
-
-auto string::imatch(string_view source) const -> bool {
-  static auto chrlower = [](char c) -> char {
-    return (c >= 'A' && c <= 'Z') ? c + ('a' - 'A') : c;
-  };
-
-  const char* s = data();
-  const char* p = source.data();
-
-  const char* cp = nullptr;
-  const char* mp = nullptr;
-  while(*s && *p != '*') {
-    if(*p != '?' && chrlower(*s) != chrlower(*p)) return false;
-    p++, s++;
-  }
-  while(*s) {
-    if(*p == '*') {
-      if(!*++p) return true;
-      mp = p, cp = s + 1;
-    } else if(*p == '?' || chrlower(*p) == chrlower(*s)) {
-      p++, s++;
-    } else {
-      p = mp, s = cp++;
-    }
-  }
-  while(*p == '*') p++;
-  return !*p;
-}
-
-auto tokenize(const char* s, const char* p) -> bool {
-  while(*s) {
-    if(*p == '*') {
-      while(*s) if(tokenize(s++, p + 1)) return true;
-      return !*++p;
-    }
-    if(*s++ != *p++) return false;
-  }
-  while(*p == '*') p++;
-  return !*p;
-}
-
-auto tokenize(vector<string>& list, const char* s, const char* p) -> bool {
-  while(*s) {
-    if(*p == '*') {
-      const char* b = s;
-      while(*s) {
-        if(tokenize(list, s++, p + 1)) {
-          list.prepend(slice(b, 0, --s - b));
-          return true;
-        }
-      }
-      list.prepend(b);
-      return !*++p;
-    }
-    if(*s++ != *p++) return false;
-  }
-  while(*p == '*') { list.prepend(s); p++; }
   return !*p;
 }
 
@@ -849,9 +744,6 @@ auto vector<string>::_split(string_view source, string_view find, long limit) ->
 }
 
 auto string::split(string_view on, long limit) const -> vector<string> { return vector<string>()._split<0, 0>(*this, on, limit); }
-auto string::isplit(string_view on, long limit) const -> vector<string> { return vector<string>()._split<1, 0>(*this, on, limit); }
-auto string::qsplit(string_view on, long limit) const -> vector<string> { return vector<string>()._split<0, 1>(*this, on, limit); }
-auto string::iqsplit(string_view on, long limit) const -> vector<string> { return vector<string>()._split<1, 1>(*this, on, limit); }
 
 auto string::trimLeft(string_view lhs, long limit) -> string& {
   if(lhs.size() == 0) return *this;
@@ -875,34 +767,6 @@ auto string::trimRight(string_view rhs, long limit) -> string& {
     int length = (int)size() - offset;
     if(offset < 0 || length < (int)rhs.size()) break;
     if(memory::compare(data() + offset, rhs.data(), rhs.size()) != 0) break;
-    matches++;
-  }
-  if(matches) resize(size() - rhs.size() * matches);
-  return *this;
-}
-
-auto string::itrimLeft(string_view lhs, long limit) -> string& {
-  if(lhs.size() == 0) return *this;
-  long matches = 0;
-  while(matches < limit) {
-    int offset = lhs.size() * matches;
-    int length = (int)size() - offset;
-    if(length < (int)lhs.size()) break;
-    if(memory::icompare(data() + offset, lhs.data(), lhs.size()) != 0) break;
-    matches++;
-  }
-  if(matches) remove(0, lhs.size() * matches);
-  return *this;
-}
-
-auto string::itrimRight(string_view rhs, long limit) -> string& {
-  if(rhs.size() == 0) return *this;
-  long matches = 0;
-  while(matches < limit) {
-    int offset = (int)size() - rhs.size() * (matches + 1);
-    int length = (int)size() - offset;
-    if(offset < 0 || length < (int)rhs.size()) break;
-    if(memory::icompare(data() + offset, rhs.data(), rhs.size()) != 0) break;
     matches++;
   }
   if(matches) resize(size() - rhs.size() * matches);
@@ -1049,35 +913,6 @@ template<typename T> auto fromNatural(char* result, T value) -> char* {
   for(int x = size - 1, y = 0; x >= 0 && y < size; x--, y++) result[x] = buffer[y];
   result[size] = 0;
   return result;
-}
-
-//using sprintf is certainly not the most ideal method to convert
-//a double to a string ... but attempting to parse a double by
-//hand, digit-by-digit, results in subtle rounding errors.
-template<typename T> auto fromReal(char* result, T value) -> unsigned {
-  char buffer[256];
-  #ifdef _WIN32
-  //Windows C-runtime does not support long double via sprintf()
-  sprintf(buffer, "%f", (double)value);
-  #else
-  sprintf(buffer, "%Lf", (long double)value);
-  #endif
-
-  //remove excess 0's in fraction (2.500000 -> 2.5)
-  for(char* p = buffer; *p; p++) {
-    if(*p == '.') {
-      char* p = buffer + strlen(buffer) - 1;
-      while(*p == '0') {
-        if(*(p - 1) != '.') *p = 0;  //... but not for eg 1.0 -> 1.
-        p--;
-      }
-      break;
-    }
-  }
-
-  unsigned length = strlen(buffer);
-  if(result) strcpy(result, buffer);
-  return length + 1;
 }
 
 template<typename... P> auto vector<string>::append(const string& data, P&&... p) -> vector<string>& {

@@ -26,7 +26,6 @@ using std::any;
 #include <nall/markup.hpp>
 #include <nall/file-buffer.hpp>
 #include <nall/vfs.hpp>
-using namespace nall;
 
 #include "memory.hpp"
 #include "audio.hpp"
