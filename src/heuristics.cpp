@@ -3,6 +3,8 @@
 #include <sstream>
 #include <vector>
 
+#include "sha256.hpp"
+
 #include <nall/arithmetic.hpp>
 #include <nall/atoi.hpp>
 #include <nall/bit.hpp>
@@ -70,7 +72,7 @@ std::string BSMemory::manifest() const {
   
   std::string output;
   output += "game\n";
-  output += "  sha256: " + std::string(Hash::SHA256(data).digest()) + "\n";
+  output += "  sha256: " + sha256_digest(data.data(), data.size()) + "\n";
   output += "  label:  " + gamename + "\n";
   output += "  name:   " + gamename + "\n";
   output += "  board\n";
@@ -343,7 +345,7 @@ std::string GameBoy::manifest() const {
 
   std::string output;
   output += "game\n";
-  output += "  sha256: " + std::string(Hash::SHA256(data).digest()) + "\n";
+  output += "  sha256: " + sha256_digest(data.data(), data.size()) + "\n";
   output += "  label:  " + gamename + "\n";
   output += "  name:   " + gamename + "\n";
   output += "  title:  " + title + "\n";
@@ -387,7 +389,7 @@ std::string SufamiTurbo::manifest() const {
   
   std::string output;
   output += "game\n";
-  output += "  sha256: " + std::string(Hash::SHA256(data).digest()) + "\n";
+  output += "  sha256: " + sha256_digest(data.data(), data.size()) + "\n";
   output += "  label:  " + gamename + "\n";
   output += "  name:   " + gamename + "\n";
   output += "  board\n";
@@ -434,7 +436,7 @@ std::string SuperFamicom::manifest() const {
 
   std::string output;
   output += "game\n";
-  output += "  sha256:   " + std::string(Hash::SHA256(data).digest()) + "\n";
+  output += "  sha256:   " + sha256_digest(data.data(), data.size()) + "\n";
   output += "  label:    " + gamename + "\n";
   output += "  name:     " + gamename + "\n";
   output += "  title:    " + title() + "\n";
