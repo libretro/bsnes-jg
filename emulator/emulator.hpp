@@ -23,7 +23,6 @@ using std::any;
 #include <nall/string.hpp>
 #include <nall/queue.hpp>
 #include <nall/dsp.hpp>
-#include <nall/hash.hpp>
 #include <nall/markup.hpp>
 #include <nall/file-buffer.hpp>
 #include <nall/vfs.hpp>
