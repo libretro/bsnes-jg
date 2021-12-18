@@ -1,5 +1,7 @@
 #pragma once
 
+#include "endian.hpp"
+
 namespace Processor {
 
 struct SPC700 {
