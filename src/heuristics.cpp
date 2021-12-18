@@ -92,7 +92,7 @@ GameBoy::operator bool() const {
   return data.size() >= 0x4000;
 }
 
-string GameBoy::manifest() const {
+std::string GameBoy::manifest() const {
   if(!operator bool()) return {};
 
   bool black = (read(0x0143) & 0xc0) == 0x80;  //cartridge works in DMG+CGB mode
@@ -112,7 +112,7 @@ string GameBoy::manifest() const {
   unsigned flashSize = 0;
   unsigned rtcSize = 0;
 
-  string mapper = "MBC0";
+  std::string mapper = "MBC0";
 
   switch(read(0x0147)) {
 
@@ -274,14 +274,15 @@ string GameBoy::manifest() const {
   //Game Boy: title = $0134-0143
   //Game Boy Color (early games): title = $0134-0142; model = $0143
   //Game Boy Color (later games): title = $0134-013e; serial = $013f-0142; model = $0143
-  string title;
+  std::string title;
   for(unsigned n : range(black || clear ? 15 : 16)) {
     char byte = read(0x0134 + n);
     if(byte < 0x20 || byte > 0x7e) byte = ' ';
-    title.append(byte);
+    title += byte;
   }
 
-  string serial = title.slice(-4);
+  std::string serial = title.substr(0, title.size() - 4);
+
   if(!black && !clear) serial = "";
   for(auto& byte : serial) {
     if(byte >= 'A' && byte <= 'Z') continue;
@@ -289,8 +290,11 @@ string GameBoy::manifest() const {
     serial = "";
     break;
   }
-  title.trimRight(serial, 1L);  //remove the serial from the title, if it exists
-  title.strip();  //remove any excess whitespace from the title
+  //remove the serial from the title, if it exists
+  title = title.substr(0, title.find_last_of(serial) - 4);
+
+  //remove any excess whitespace from the title
+  title.erase(title.find_last_not_of(' ') + 1);
 
   switch(read(0x0148)) { default:
   case 0x00: romSize =   2 * 16 * 1024; break;
@@ -337,30 +341,30 @@ string GameBoy::manifest() const {
   gamename = gamename.substr(0, gamename.find_last_of("."));
   gamename = gamename.substr(gamename.find_last_of("/\\") + 1);
 
-  string output;
-  output.append("game\n");
-  output.append("  sha256: ", Hash::SHA256(data).digest(), "\n");
-  output.append("  label:  ", gamename.c_str(), "\n");
-  output.append("  name:   ", gamename.c_str(), "\n");
-  output.append("  title:  ", title, "\n");
-if(serial)
-  output.append("  serial: ", serial, "\n");
-  output.append("  board:  ", mapper, "\n");
-  output.append(Memory{}.type("ROM").size(data.size()).content("Program").text());
+  std::string output;
+  output += "game\n";
+  output += "  sha256: " + std::string(Hash::SHA256(data).digest()) + "\n";
+  output += "  label:  " + gamename + "\n";
+  output += "  name:   " + gamename + "\n";
+  output += "  title:  " + title + "\n";
+if(!serial.empty())
+  output += "  serial: " + serial + "\n";
+  output += "  board:  " + mapper + "\n";
+  output += std::string(Memory{}.type("ROM").size(data.size()).content("Program").text());
 if(ram && ramSize && battery)
-  output.append(Memory{}.type("RAM").size(ramSize).content("Save").text());
+  output += std::string(Memory{}.type("RAM").size(ramSize).content("Save").text());
 if(ram && ramSize && !battery)
-  output.append(Memory{}.type("RAM").size(ramSize).content("Save").isVolatile().text());
+  output += std::string(Memory{}.type("RAM").size(ramSize).content("Save").isVolatile().text());
 if(eeprom && eepromSize)
-  output.append(Memory{}.type("EEPROM").size(eepromSize).content("Save").text());
+  output += std::string(Memory{}.type("EEPROM").size(eepromSize).content("Save").text());
 if(flash && flashSize)
-  output.append(Memory{}.type("Flash").size(flashSize).content("Download").text());
+  output += std::string(Memory{}.type("Flash").size(flashSize).content("Download").text());
 if(rtc && rtcSize)
-  output.append(Memory{}.type("RTC").size(rtcSize).content("Time").text());
+  output += std::string(Memory{}.type("RTC").size(rtcSize).content("Time").text());
 if(accelerometer)
-  output.append("    accelerometer\n");
+  output += "    accelerometer\n";
 if(rumble)
-  output.append("    rumble\n");
+  output += "    rumble\n";
   return output;
 }
 
