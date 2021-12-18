@@ -363,7 +363,7 @@ void Program::audioFrame(const double* samples, unsigned channels) {
 
 static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
 
-int16_t pollInputDevices(unsigned port, unsigned device, unsigned input) {
+static int16_t pollInputDevices(unsigned port, unsigned device, unsigned input) {
     //print("port: ", port, " device: ", device, " input: ", input, "\n");
     if (device == SuperFamicom::ID::Device::SuperScope) {
         switch (input) {
@@ -780,7 +780,7 @@ void Program::hackPatchMemory(vector<uint8_t>& data) {
     }
 }
 
-bool decodeSNES(string& code) {
+static bool decodeSNES(string& code) {
     //Game Genie
     if (code.size() == 9 && code[4u] == '-') {
         //strip '-'
@@ -863,7 +863,7 @@ bool decodeSNES(string& code) {
     return false;
 }
 
-bool decodeGB(string& code) {
+static bool decodeGB(string& code) {
     auto nibble = [&](const string& s, unsigned index) -> unsigned {
         if (index >= s.size()) return 0;
         if (s[index] >= '0' && s[index] <= '9') return s[index] - '0';
