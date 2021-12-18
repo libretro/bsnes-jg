@@ -612,7 +612,6 @@ bool Program::loadSuperFamicom(std::string location) {
     
     auto heuristics = Heuristics::SuperFamicom(rom, location);
     auto sha256 = Hash::SHA256(rom).digest();
-    heuristics.manifest();
     
     superFamicom.title = heuristics.title();
     superFamicom.region = heuristics.videoRegion();

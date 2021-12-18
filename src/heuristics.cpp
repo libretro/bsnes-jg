@@ -6,17 +6,12 @@
 #include "sha256.hpp"
 
 #include <nall/arithmetic.hpp>
-#include <nall/atoi.hpp>
 #include <nall/bit.hpp>
 #include <nall/iterator.hpp>
 #include <nall/array.hpp>
-#include <nall/maybe.hpp>
 #include <nall/memory.hpp>
 #include "serializer.hpp"
-#include <nall/primitives.hpp>
 #include <nall/vector.hpp>
-#include <nall/string.hpp>
-#include <nall/hash.hpp>
 
 using namespace nall;
 
@@ -519,7 +514,6 @@ std::string SuperFamicom::manifest() const {
     output += Memory{}.type("RTC").size(0x10).content("Time").manufacturer("Sharp").text();
   }
 
-  std::cout << output << std::endl;
   return output;
 }
 
