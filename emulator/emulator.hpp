@@ -6,7 +6,6 @@
 #include <string>
 using std::any;
 
-#include <nall/arithmetic.hpp>
 #include <nall/bit.hpp>
 #include <nall/endian.hpp>
 #include <nall/function.hpp>

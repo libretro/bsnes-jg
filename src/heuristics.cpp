@@ -5,7 +5,6 @@
 
 #include <nall/iterator.hpp>
 #include <nall/memory.hpp>
-#include <nall/arithmetic.hpp>
 #include <nall/array.hpp>
 #include <nall/bit.hpp>
 #include <nall/vector.hpp>
