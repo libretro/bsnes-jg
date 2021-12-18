@@ -1,4 +1,5 @@
 #include "../sfc.hpp"
+#include "../sha256.hpp"
 
 namespace SuperFamicom {
 
@@ -364,7 +365,7 @@ auto ICD::load() -> bool {
   if(auto fp = platform->open(pathID(), "program.rom", File::Read, File::Required)) {
     auto size = fp->size();
     auto data = (uint8_t*)malloc(size);
-    cartridge.information.sha256 = Hash::SHA256({data, (uint64_t)size}).digest();
+    cartridge.information.sha256 = sha256_digest(data, size).c_str();
     fp->read(data, size);
     GB_load_rom_from_buffer(&sameboy, data, size);
     free(data);
