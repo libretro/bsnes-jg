@@ -128,7 +128,7 @@ struct Program : Emulator::Platform {
     shared_pointer<vfs::file> open(unsigned id, std::string name,
         vfs::file::mode mode, bool required) override;
     Emulator::Platform::Load load(unsigned id, std::string name,
-        std::string type, vector<std::string> options = {}) override;
+        std::string type, std::vector<std::string> options = {}) override;
     void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
         unsigned height, unsigned scale) override;
     void audioFrame(const double* samples, unsigned channels) override;
@@ -173,9 +173,9 @@ public:
         std::string title;
         std::string region;
         std::vector<uint8_t> program;
-        vector<uint8_t> data;
-        vector<uint8_t> expansion;
-        vector<uint8_t> firmware;
+        std::vector<uint8_t> data;
+        std::vector<uint8_t> expansion;
+        std::vector<uint8_t> firmware;
     } superFamicom;
     
     struct GameBoy : Game {
@@ -312,7 +312,7 @@ void Program::load() {
 }
 
 Emulator::Platform::Load Program::load(unsigned id, std::string name,
-    std::string type, vector<std::string> options) {
+    std::string type, std::vector<std::string> options) {
     
     if (id == 1) {
         if (loadSuperFamicom(superFamicom.location)) {
