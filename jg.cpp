@@ -133,8 +133,6 @@ struct Program : Emulator::Platform {
         unsigned height, unsigned scale) override;
     void audioFrame(const double* samples, unsigned channels) override;
     int16_t inputPoll(unsigned port, unsigned device, unsigned input) override;
-    void inputRumble(unsigned port, unsigned device, unsigned input,
-        bool enable) override;
     
     void load();
     std::vector<uint8_t> loadFile(void *data, size_t size);
@@ -453,10 +451,6 @@ static int16_t pollInputDevices(unsigned port, unsigned device, unsigned input) 
 
 int16_t Program::inputPoll(unsigned port, unsigned device, unsigned input) {
     return pollInputDevices(port, device, input);
-}
-
-void Program::inputRumble(unsigned port, unsigned device, unsigned input,
-    bool enable) {
 }
 
 shared_pointer<vfs::file> Program::openRomSuperFamicom(std::string name,

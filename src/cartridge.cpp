@@ -264,7 +264,10 @@ auto Cartridge::loadSufamiTurboB(Markup::Node node) -> void {
 //dip
 auto Cartridge::loadDIP(Markup::Node node) -> void {
   has.DIP = true;
-  dip.value = platform->dipSettings(node);
+  // Multi-game carts (Campus Challenge '92, PowerFest '94) were no longer
+  // supported after higan v106, and in bsnes standalone this always returns 0.
+  //dip.value = platform->dipSettings(node);
+  dip.value = 0;
 
   for(auto map : node.find("map")) {
     loadMap(map, {&DIP::read, &dip}, {&DIP::write, &dip});

@@ -56,15 +56,11 @@ struct Platform {
     string option;
   };
 
-  virtual auto path(unsigned id) -> std::string { return ""; }
   virtual auto open(unsigned id, std::string name, vfs::file::mode mode, bool required = false) -> shared_pointer<vfs::file> { return {}; }
   virtual auto load(unsigned id, std::string name, std::string type, std::vector<std::string> options = {}) -> Load { return {}; }
   virtual auto videoFrame(const uint16_t *data, unsigned pitch, unsigned width, unsigned height, unsigned scale) -> void {}
   virtual auto audioFrame(const double* samples, unsigned channels) -> void {}
   virtual auto inputPoll(unsigned port, unsigned device, unsigned input) -> int16_t { return 0; }
-  virtual auto inputRumble(unsigned port, unsigned device, unsigned input, bool enable) -> void {}
-  virtual auto dipSettings(Markup::Node node) -> unsigned { return 0; }
-  virtual auto notify(string text) -> void {}
 };
 
 extern Platform* platform;

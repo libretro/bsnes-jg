@@ -114,24 +114,6 @@ struct Configuration {
       unsigned overclock = 100;
       bool fastMath = false;
     } cpu;
-    struct PPU {
-      bool fast = true;
-      bool deinterlace = true;
-      bool noSpriteLimit = false;
-      bool noVRAMBlocking = false;
-      unsigned renderCycle = 512;
-      struct Mode7 {
-        unsigned scale = 1;
-        bool perspective = true;
-        bool supersample = false;
-        bool mosaic = true;
-      } mode7;
-    } ppu;
-    struct DSP {
-      bool fast = true;
-      bool cubic = false;
-      bool echoShadow = false;
-    } dsp;
     struct Coprocessor {
       bool delayedSync = true;
       bool preferHLE = false;
