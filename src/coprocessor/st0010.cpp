@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "../sfc.hpp"
 
 namespace SuperFamicom {
