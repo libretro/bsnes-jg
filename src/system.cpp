@@ -19,7 +19,7 @@ auto System::serialize(bool synchronize) -> serializer {
   char version[16] = {};
   char description[512] = {};
   bool placeholder = false;
-  memory::copy(&version, (const char*)Emulator::SerializerVersion, Emulator::SerializerVersion.size());
+  memory::copy(&version, (const char*)Emulator::SerializerVersion.c_str(), Emulator::SerializerVersion.size());
 
   serializer s(serializeSize);
   s.integer(signature);
@@ -49,7 +49,7 @@ auto System::unserialize(serializer& s) -> bool {
 
   if(signature != 0x31545342) return false;
   if(serializeSize != information.serializeSize[synchronize]) return false;
-  if(string{version} != Emulator::SerializerVersion) return false;
+  if(std::string{version} != Emulator::SerializerVersion) return false;
 
   if(synchronize) power(/* reset = */ false);
   serializeAll(s, synchronize);

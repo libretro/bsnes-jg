@@ -220,7 +220,8 @@ auto Interface::inputs(unsigned device) -> vector<Input> {
     {Type::Button, "Right" }
   };
 
-  if(device == ID::Device::SuperMultitap) {
+  // Not strictly needed, used for GUI interfaces, fix after nall removal
+  /*if(device == ID::Device::SuperMultitap) {
     vector<Input> inputs;
     for(unsigned p = 2; p <= 5; p++) inputs.append({
       {Type::Hat,     {"Port ", p, " - ", "Up"    }},
@@ -237,7 +238,7 @@ auto Interface::inputs(unsigned device) -> vector<Input> {
       {Type::Control, {"Port ", p, " - ", "Start" }}
     });
     return inputs;
-  }
+  }*/
 
   if(device == ID::Device::SuperScope) return {
     {Type::Axis,    "X-axis" },

@@ -29,7 +29,7 @@ using std::any;
 
 namespace Emulator {
   //incremented only when serialization format changes
-  static const string SerializerVersion = "115";
+  static const std::string SerializerVersion = "115";
 
   namespace Constants {
     namespace Colorburst {
@@ -72,9 +72,9 @@ extern Platform* platform;
 
 struct Interface {
   struct Information {
-    string manufacturer;
-    string name;
-    string extension;
+    std::string manufacturer;
+    std::string name;
+    std::string extension;
     bool resettable = false;
   };
 
@@ -96,12 +96,12 @@ struct Interface {
 
   struct Port {
     unsigned id;
-    string name;
+    std::string name;
   };
 
   struct Device {
     unsigned id;
-    string name;
+    std::string name;
   };
 
   struct Input {
@@ -115,7 +115,7 @@ struct Interface {
     };};
 
     unsigned type;
-    string name;
+    std::string name;
   };
 
   //information
@@ -178,7 +178,7 @@ struct Game {
   struct Memory;
   struct Oscillator;
 
-  inline auto load(string) -> void;
+  inline auto load(std::string) -> void;
   inline auto memory(Markup::Node) -> maybe<Memory>;
   inline auto oscillator(Natural<> = 0) -> maybe<Oscillator>;
 
@@ -208,7 +208,7 @@ struct Game {
   Markup::Node document;
   string sha256;
   string label;
-  string name;
+  std::string name;
   string title;
   string region;
   string revision;
@@ -217,8 +217,8 @@ struct Game {
   vector<Oscillator> oscillatorList;
 };
 
-auto Game::load(string text) -> void {
-  document = BML::unserialize(text);
+auto Game::load(std::string text) -> void {
+  document = BML::unserialize(text.c_str());
 
   sha256 = document["game/sha256"].text();
   label = document["game/label"].text();

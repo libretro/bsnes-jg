@@ -360,7 +360,7 @@ auto ICD::load() -> bool {
   } else return unload(), false;
   if(auto fp = platform->open(pathID(), "manifest.bml", File::Read, File::Required)) {
     auto manifest = fp->reads();
-    cartridge.slotGameBoy.load(manifest);
+    cartridge.slotGameBoy.load(std::string(manifest));
   } else return unload(), false;
   if(auto fp = platform->open(pathID(), "program.rom", File::Read, File::Required)) {
     auto size = fp->size();

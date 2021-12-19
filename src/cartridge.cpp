@@ -989,7 +989,7 @@ auto Cartridge::load() -> bool {
   } else return false;
 
   if(auto fp = platform->open(ID::SuperFamicom, "manifest.bml", File::Read, File::Required)) {
-    game.load(fp->reads());
+    game.load(std::string(fp->reads()));
   } else return false;
 
   loadCartridge(game.document);
@@ -1056,7 +1056,7 @@ auto Cartridge::load() -> bool {
 
 auto Cartridge::loadBSMemory() -> bool {
   if(auto fp = platform->open(bsmemory.pathID, "manifest.bml", File::Read, File::Required)) {
-    slotBSMemory.load(fp->reads());
+    slotBSMemory.load(std::string(fp->reads()));
   } else return false;
   loadCartridgeBSMemory(slotBSMemory.document);
   return true;
@@ -1064,7 +1064,7 @@ auto Cartridge::loadBSMemory() -> bool {
 
 auto Cartridge::loadSufamiTurboA() -> bool {
   if(auto fp = platform->open(sufamiturboA.pathID, "manifest.bml", File::Read, File::Required)) {
-    slotSufamiTurboA.load(fp->reads());
+    slotSufamiTurboA.load(std::string(fp->reads()));
   } else return false;
   loadCartridgeSufamiTurboA(slotSufamiTurboA.document);
   return true;
@@ -1072,7 +1072,7 @@ auto Cartridge::loadSufamiTurboA() -> bool {
 
 auto Cartridge::loadSufamiTurboB() -> bool {
   if(auto fp = platform->open(sufamiturboB.pathID, "manifest.bml", File::Read, File::Required)) {
-    slotSufamiTurboB.load(fp->reads());
+    slotSufamiTurboB.load(std::string(fp->reads()));
   } else return false;
   loadCartridgeSufamiTurboB(slotSufamiTurboB.document);
   return true;
