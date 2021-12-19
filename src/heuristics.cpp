@@ -3,13 +3,6 @@
 #include <sstream>
 #include <vector>
 
-#include <nall/iterator.hpp>
-#include <nall/memory.hpp>
-#include <nall/array.hpp>
-#include <nall/bit.hpp>
-#include <nall/vector.hpp>
-
-#include "serializer.hpp"
 #include "heuristics.hpp"
 #include "sha256.hpp"
 
@@ -267,7 +260,7 @@ std::string GameBoy::manifest() const {
   //Game Boy Color (early games): title = $0134-0142; model = $0143
   //Game Boy Color (later games): title = $0134-013e; serial = $013f-0142; model = $0143
   std::string title;
-  for(unsigned n : range(black || clear ? 15 : 16)) {
+  for(unsigned n = 0; n < (black || clear ? 15 : 16); ++n) {
     char byte = read(0x0134 + n);
     if(byte < 0x20 || byte > 0x7e) byte = ' ';
     title += byte;
@@ -394,8 +387,9 @@ std::string SufamiTurbo::manifest() const {
 SuperFamicom::SuperFamicom(std::vector<uint8_t>& data, std::string location) : data(data), location(location) {
   if((size() & 0x7fff) == 512) {
     //remove header if present
-    memory::move(&data[0], &data[512], size() - 512);
-    data.resize(size() - 512);
+    //memory::move(&data[0], &data[512], size() - 512);
+    //data.resize(size() - 512);
+    data.erase(data.begin(), data.begin() + 512);
   }
 
   if(size() < 0x8000) return;  //ignore images too small to be valid
