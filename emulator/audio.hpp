@@ -4,26 +4,16 @@ namespace Emulator {
 
 struct Interface;
 struct Audio;
-struct Filter;
 struct Stream;
 
 struct Audio {
   ~Audio();
-  auto reset(Interface* interface) -> void;
-
-  inline auto channels() const -> unsigned { return _channels; }
-  inline auto frequency() const -> double { return _frequency; }
-  inline auto volume() const -> double { return _volume; }
-  inline auto balance() const -> double { return _balance; }
-
-  auto setFrequency(double frequency) -> void;
-  auto setVolume(double volume) -> void;
-  auto setBalance(double balance) -> void;
-
-  auto createStream(unsigned channels, double frequency) -> shared_pointer<Stream>;
+  void reset(Interface* interface);
+  void setFrequency(double frequency);
+  shared_pointer<Stream> createStream(unsigned channels, double frequency);
 
 private:
-  auto process() -> void;
+  void process();
 
   Interface* _interface = nullptr;
   std::vector<shared_pointer<Stream>> _streams;
@@ -31,48 +21,23 @@ private:
   unsigned _channels = 0;
   double _frequency = 48000.0;
 
-  double _volume = 1.0;
-  double _balance = 0.0;
-
   friend class Stream;
 };
 
-struct Filter {
-  enum class Mode : unsigned { DCRemoval, OnePole, Biquad } mode;
-  enum class Type : unsigned { None, LowPass, HighPass } type;
-  enum class Order : unsigned { None, First, Second } order;
-
-  DSP::IIR::DCRemoval dcRemoval;
-  DSP::IIR::OnePole onePole;
-  DSP::IIR::Biquad biquad;
-};
-
 struct Stream {
-  auto reset(unsigned channels, double inputFrequency, double outputFrequency) -> void;
-  auto reset() -> void;
+  void reset(unsigned channels, double inputFrequency, double outputFrequency);
+  void setFrequency(double inputFrequency, maybe<double> outputFrequency = nothing);
+  unsigned pending() const;
+  unsigned read(double samples[]);
+  void write(const double samples[]);
 
-  auto frequency() const -> double;
-  auto setFrequency(double inputFrequency, maybe<double> outputFrequency = nothing) -> void;
-
-  auto addDCRemovalFilter() -> void;
-  auto addLowPassFilter(double cutoffFrequency, Filter::Order order, unsigned passes = 1) -> void;
-  auto addHighPassFilter(double cutoffFrequency, Filter::Order order, unsigned passes = 1) -> void;
-
-  auto pending() const -> unsigned;
-  auto read(double samples[]) -> unsigned;
-  auto write(const double samples[]) -> void;
-
-  template<typename... P> auto sample(P&&... p) -> void {
+  template<typename... P> void sample(P&&... p) {
     double samples[sizeof...(P)] = {std::forward<P>(p)...};
     write(samples);
   }
 
-  auto serialize(serializer&) -> void;
-
 private:
   struct Channel {
-    std::vector<Filter> filters;
-    std::vector<DSP::IIR::Biquad> nyquist;
     DSP::Resampler::Cubic resampler;
   };
   std::vector<Channel> channels;

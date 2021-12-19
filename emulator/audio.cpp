@@ -1,131 +1,41 @@
+#include <iostream>
 #include "emulator.hpp"
 
 namespace Emulator {
 
-auto Stream::reset(unsigned channelCount, double inputFrequency, double outputFrequency) -> void {
+void Stream::reset(unsigned channelCount, double inputFrequency, double outputFrequency) {
   channels.clear();
   channels.resize(channelCount);
-
-  for(auto& channel : channels) {
-    channel.filters.clear();
-  }
-
   setFrequency(inputFrequency, outputFrequency);
 }
 
-auto Stream::reset() -> void {
-  for(auto& channel : channels) {
-    channel.resampler.reset(this->inputFrequency, this->outputFrequency);
-  }
-}
-
-auto Stream::frequency() const -> double {
-  return inputFrequency;
-}
-
-auto Stream::setFrequency(double inputFrequency, maybe<double> outputFrequency) -> void {
+void Stream::setFrequency(double inputFrequency, maybe<double> outputFrequency) {
   this->inputFrequency = inputFrequency;
   if(outputFrequency) this->outputFrequency = outputFrequency();
-
   for(auto& channel : channels) {
-    channel.nyquist.clear();
     channel.resampler.reset(this->inputFrequency, this->outputFrequency);
   }
-
-  if(this->inputFrequency >= this->outputFrequency * 2) {
-    //add a low-pass filter to prevent aliasing during resampling
-    double cutoffFrequency = std::min(25000.0, this->outputFrequency / 2.0 - 2000.0);
-    for(auto& channel : channels) {
-      unsigned passes = 3;
-      for(unsigned pass : range(passes)) {
-        DSP::IIR::Biquad filter;
-        double q = DSP::IIR::Biquad::butterworth(passes * 2, pass);
-        filter.reset(DSP::IIR::Biquad::Type::LowPass, cutoffFrequency, this->inputFrequency, q);
-        channel.nyquist.push_back(filter);
-      }
-    }
-  }
 }
 
-auto Stream::addDCRemovalFilter() -> void {
-  return;  //todo: test to ensure this is desirable before enabling
-  for(auto& channel : channels) {
-    Filter filter{Filter::Mode::DCRemoval, Filter::Type::None, Filter::Order::None};
-    channel.filters.push_back(filter);
-  }
-}
-
-auto Stream::addLowPassFilter(double cutoffFrequency, Filter::Order order, unsigned passes) -> void {
-  for(auto& channel : channels) {
-    for(unsigned pass : range(passes)) {
-      if(order == Filter::Order::First) {
-        Filter filter{Filter::Mode::OnePole, Filter::Type::LowPass, Filter::Order::First};
-        filter.onePole.reset(DSP::IIR::OnePole::Type::LowPass, cutoffFrequency, inputFrequency);
-        channel.filters.push_back(filter);
-      }
-      if(order == Filter::Order::Second) {
-        Filter filter{Filter::Mode::Biquad, Filter::Type::LowPass, Filter::Order::Second};
-        double q = DSP::IIR::Biquad::butterworth(passes * 2, pass);
-        filter.biquad.reset(DSP::IIR::Biquad::Type::LowPass, cutoffFrequency, inputFrequency, q);
-        channel.filters.push_back(filter);
-      }
-    }
-  }
-}
-
-auto Stream::addHighPassFilter(double cutoffFrequency, Filter::Order order, unsigned passes) -> void {
-  for(auto& channel : channels) {
-    for(unsigned pass : range(passes)) {
-      if(order == Filter::Order::First) {
-        Filter filter{Filter::Mode::OnePole, Filter::Type::HighPass, Filter::Order::First};
-        filter.onePole.reset(DSP::IIR::OnePole::Type::HighPass, cutoffFrequency, inputFrequency);
-        channel.filters.push_back(filter);
-      }
-      if(order == Filter::Order::Second) {
-        Filter filter{Filter::Mode::Biquad, Filter::Type::HighPass, Filter::Order::Second};
-        double q = DSP::IIR::Biquad::butterworth(passes * 2, pass);
-        filter.biquad.reset(DSP::IIR::Biquad::Type::HighPass, cutoffFrequency, inputFrequency, q);
-        channel.filters.push_back(filter);
-      }
-    }
-  }
-}
-
-auto Stream::pending() const -> unsigned {
+unsigned Stream::pending() const {
   if(channels.empty()) return 0;
   return channels[0].resampler.pending();
 }
 
-auto Stream::read(double samples[]) -> unsigned {
-  for(unsigned c : range(channels.size())) samples[c] = channels[c].resampler.read();
+unsigned Stream::read(double samples[]) {
+  for(unsigned c = 0; c < channels.size(); ++c) {
+    samples[c] = channels[c].resampler.read();
+  }
   return channels.size();
 }
 
-auto Stream::write(const double samples[]) -> void {
-  for(auto c : range(channels.size())) {
+void Stream::write(const double samples[]) {
+  for(unsigned c = 0; c < channels.size(); ++c) {
     double sample = samples[c] + 1e-25;  //constant offset used to suppress denormals
-    for(auto& filter : channels[c].filters) {
-      switch(filter.mode) {
-      case Filter::Mode::DCRemoval: sample = filter.dcRemoval.process(sample); break;
-      case Filter::Mode::OnePole: sample = filter.onePole.process(sample); break;
-      case Filter::Mode::Biquad: sample = filter.biquad.process(sample); break;
-      }
-    }
-    for(auto& filter : channels[c].nyquist) {
-      sample = filter.process(sample);
-    }
     channels[c].resampler.write(sample);
   }
 
   audio.process();
-}
-
-auto Stream::serialize(serializer& s) -> void {
-  for(auto& channel : channels) {
-    channel.resampler.serialize(s);
-  }
-  s.real(inputFrequency);
-  s.real(outputFrequency);
 }
 
 Audio audio;
@@ -134,28 +44,13 @@ Audio::~Audio() {
   reset(nullptr);
 }
 
-auto Audio::reset(Interface* interface) -> void {
+void Audio::reset(Interface* interface) {
   _interface = interface;
   _streams.clear();
   _channels = 0;
 }
 
-auto Audio::setFrequency(double frequency) -> void {
-  _frequency = frequency;
-  for(auto& stream : _streams) {
-    stream->setFrequency(stream->inputFrequency, frequency);
-  }
-}
-
-auto Audio::setVolume(double volume) -> void {
-  _volume = volume;
-}
-
-auto Audio::setBalance(double balance) -> void {
-  _balance = balance;
-}
-
-auto Audio::createStream(unsigned channels, double frequency) -> shared_pointer<Stream> {
+shared_pointer<Stream> Audio::createStream(unsigned channels, double frequency) {
   _channels = std::max(_channels, channels);
   shared_pointer<Stream> stream = new Stream;
   stream->reset(channels, frequency, _frequency);
@@ -163,7 +58,7 @@ auto Audio::createStream(unsigned channels, double frequency) -> shared_pointer<
   return stream;
 }
 
-auto Audio::process() -> void {
+void Audio::process() {
   while(!_streams.empty()) {
     for(auto& stream : _streams) {
       if(!stream->pending()) return;
@@ -183,12 +78,7 @@ auto Audio::process() -> void {
     }
 
     for(auto c : range(_channels)) {
-      samples[c] = std::max(-1.0, std::min(+1.0, samples[c] * _volume));
-    }
-
-    if(_channels == 2) {
-      if(_balance < 0.0) samples[1] *= 1.0 + _balance;
-      if(_balance > 0.0) samples[0] *= 1.0 - _balance;
+      samples[c] = std::max(-1.0, std::min(+1.0, samples[c]));
     }
 
     platform->audioFrame(samples, _channels);
