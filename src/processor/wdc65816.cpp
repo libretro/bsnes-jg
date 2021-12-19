@@ -1478,7 +1478,8 @@ auto WDC65816::serialize(serializer& s) -> void {
   s.integer(r.w.d);
 }
 
-auto WDC65816::disassemble() -> string {
+// Fix this when nall is gone
+/*auto WDC65816::disassemble() -> string {
   return disassemble(r.pc.d, r.e, r.p.m, r.p.x);
 }
 
@@ -1951,6 +1952,6 @@ auto WDC65816::disassemble(nall::Natural<24> address, bool e, bool m, bool x) ->
   }
 
   return s;
-}
+}*/
 
 }
