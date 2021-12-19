@@ -1049,7 +1049,7 @@ auto SPC700::serialize(serializer& s) -> void {
   s.integer(r.stop);
 }
 
-auto SPC700::disassemble(uint16_t addr, bool p) -> string {
+/*auto SPC700::disassemble(uint16_t addr, bool p) -> string {
   auto read = [&](uint16_t addr) -> uint8_t {
     return readDisassembler(addr);
   };
@@ -1353,7 +1353,7 @@ auto SPC700::disassemble(uint16_t addr, bool p) -> string {
   );
 
   return output;
-}
+}*/
 
 auto SPC700::power() -> void {
   PC = 0x0000;
