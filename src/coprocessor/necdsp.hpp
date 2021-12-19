@@ -12,7 +12,7 @@ struct NECDSP : Processor::uPD96050, Thread {
 
   auto power() -> void;
 
-  auto firmware() const -> vector<uint8_t>;
+  auto firmware() const -> std::vector<uint8_t>;
   auto serialize(serializer&) -> void;
 
   unsigned Frequency = 0;

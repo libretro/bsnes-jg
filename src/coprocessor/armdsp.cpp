@@ -94,12 +94,12 @@ auto ArmDSP::set(unsigned mode, uint32_t addr, uint32_t word) -> void {
   if(addr == 0x4000'002c) bridge.timer = bridge.timerlatch;
 }
 
-auto ArmDSP::firmware() const -> nall::vector<uint8_t> {
-  nall::vector<uint8_t> buffer;
+auto ArmDSP::firmware() const -> std::vector<uint8_t> {
+  std::vector<uint8_t> buffer;
   if(!cartridge.has.ARMDSP) return buffer;
   buffer.reserve(128 * 1024 + 32 * 1024);
-  for(auto n : range(128 * 1024)) buffer.append(programROM[n]);
-  for(auto n : range( 32 * 1024)) buffer.append(dataROM[n]);
+  for(auto n : range(128 * 1024)) buffer.push_back(programROM[n]);
+  for(auto n : range( 32 * 1024)) buffer.push_back(dataROM[n]);
   return buffer;
 }
 

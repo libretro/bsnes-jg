@@ -1037,7 +1037,7 @@ auto Cartridge::load() -> bool {
     for (int i = 0; i < sdd1.rom.size(); ++i) buf.push_back(sdd1.rom[i]);
 
     //hash all firmware that exists
-    vector<uint8_t> firm;
+    std::vector<uint8_t> firm;
     firm = armdsp.firmware();
     for (int i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
 

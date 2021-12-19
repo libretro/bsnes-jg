@@ -38,7 +38,7 @@ struct HitachiDSP : Processor::HG51B, Thread {
   auto readIO(unsigned address, uint8_t data = 0) -> uint8_t;
   auto writeIO(unsigned address, uint8_t data) -> void;
 
-  auto firmware() const -> vector<uint8_t>;
+  auto firmware() const -> std::vector<uint8_t>;
   auto serialize(serializer&) -> void;
 
   unsigned Frequency;

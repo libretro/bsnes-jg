@@ -44,7 +44,7 @@ struct ArmDSP : Processor::ARM7TDMI, Thread {
   auto power() -> void;
   auto reset() -> void;  //soft reset
 
-  auto firmware() const -> nall::vector<uint8_t>;
+  auto firmware() const -> std::vector<uint8_t>;
   auto serialize(serializer&) -> void;
 
   unsigned Frequency;
