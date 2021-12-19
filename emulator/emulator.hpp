@@ -2,10 +2,8 @@
 
 #include <libco/libco.h>
 
-#include <any>
 #include <string>
 #include <vector>
-using std::any;
 
 #include <nall/bit.hpp>
 #include <nall/function.hpp>
@@ -162,11 +160,6 @@ struct Interface {
   virtual auto configuration(string name) -> string { return {}; }
   virtual auto configure(string configuration = "") -> bool { return false; }
   virtual auto configure(string name, string value) -> bool { return false; }
-
-  //settings
-  virtual auto cap(const string& name) -> bool { return false; }
-  virtual auto get(const string& name) -> any { return {}; }
-  virtual auto set(const string& name, const any& value) -> bool { return false; }
 
   virtual auto frameSkip() -> unsigned { return 0; }
   virtual auto setFrameSkip(unsigned frameSkip) -> void {}
