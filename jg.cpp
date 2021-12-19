@@ -97,7 +97,7 @@ enum {
     ASPECT,
 };
 
-static vector<string> cheatList;
+static std::vector<string> cheatList;
 
 static uint16_t audio_buffer_index = 0;
 static uint16_t audio_buffer_max = audinfo.spf;
@@ -1198,7 +1198,7 @@ void jg_media_insert() {
 }
 
 void jg_cheat_clear() {
-    cheatList.reset();
+    cheatList.clear();
     emulator->cheats(cheatList);
 }
 
@@ -1212,7 +1212,7 @@ void jg_cheat_set(const char *code) {
         decoded = decodeSNES(cheat);
 
     if (decoded) {
-        cheatList.append(cheat);
+        cheatList.push_back(cheat);
         emulator->cheats(cheatList);
     }
 }

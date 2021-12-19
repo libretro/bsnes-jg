@@ -24,14 +24,14 @@ struct Cheat {
   }
 
   auto reset() -> void {
-    codes.reset();
+    codes.clear();
   }
 
   auto append(unsigned address, unsigned data, maybe<unsigned> compare = {}) -> void {
-    codes.append({address, data, compare});
+    codes.push_back({address, data, compare});
   }
 
-  auto assign(const vector<string>& list) -> void {
+  auto assign(const std::vector<string>& list) -> void {
     reset();
     for(auto& entry : list) {
       for(auto code : entry.split("+")) {
@@ -51,7 +51,7 @@ struct Cheat {
     return nothing;
   }
 
-  vector<Code> codes;
+  std::vector<Code> codes;
 };
 
 }
