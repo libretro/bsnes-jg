@@ -3,11 +3,11 @@
 namespace Emulator {
 
 auto Stream::reset(unsigned channelCount, double inputFrequency, double outputFrequency) -> void {
-  channels.reset();
+  channels.clear();
   channels.resize(channelCount);
 
   for(auto& channel : channels) {
-    channel.filters.reset();
+    channel.filters.clear();
   }
 
   setFrequency(inputFrequency, outputFrequency);
@@ -28,7 +28,7 @@ auto Stream::setFrequency(double inputFrequency, maybe<double> outputFrequency) 
   if(outputFrequency) this->outputFrequency = outputFrequency();
 
   for(auto& channel : channels) {
-    channel.nyquist.reset();
+    channel.nyquist.clear();
     channel.resampler.reset(this->inputFrequency, this->outputFrequency);
   }
 
@@ -41,7 +41,7 @@ auto Stream::setFrequency(double inputFrequency, maybe<double> outputFrequency) 
         DSP::IIR::Biquad filter;
         double q = DSP::IIR::Biquad::butterworth(passes * 2, pass);
         filter.reset(DSP::IIR::Biquad::Type::LowPass, cutoffFrequency, this->inputFrequency, q);
-        channel.nyquist.append(filter);
+        channel.nyquist.push_back(filter);
       }
     }
   }
@@ -51,7 +51,7 @@ auto Stream::addDCRemovalFilter() -> void {
   return;  //todo: test to ensure this is desirable before enabling
   for(auto& channel : channels) {
     Filter filter{Filter::Mode::DCRemoval, Filter::Type::None, Filter::Order::None};
-    channel.filters.append(filter);
+    channel.filters.push_back(filter);
   }
 }
 
@@ -61,13 +61,13 @@ auto Stream::addLowPassFilter(double cutoffFrequency, Filter::Order order, unsig
       if(order == Filter::Order::First) {
         Filter filter{Filter::Mode::OnePole, Filter::Type::LowPass, Filter::Order::First};
         filter.onePole.reset(DSP::IIR::OnePole::Type::LowPass, cutoffFrequency, inputFrequency);
-        channel.filters.append(filter);
+        channel.filters.push_back(filter);
       }
       if(order == Filter::Order::Second) {
         Filter filter{Filter::Mode::Biquad, Filter::Type::LowPass, Filter::Order::Second};
         double q = DSP::IIR::Biquad::butterworth(passes * 2, pass);
         filter.biquad.reset(DSP::IIR::Biquad::Type::LowPass, cutoffFrequency, inputFrequency, q);
-        channel.filters.append(filter);
+        channel.filters.push_back(filter);
       }
     }
   }
@@ -79,20 +79,20 @@ auto Stream::addHighPassFilter(double cutoffFrequency, Filter::Order order, unsi
       if(order == Filter::Order::First) {
         Filter filter{Filter::Mode::OnePole, Filter::Type::HighPass, Filter::Order::First};
         filter.onePole.reset(DSP::IIR::OnePole::Type::HighPass, cutoffFrequency, inputFrequency);
-        channel.filters.append(filter);
+        channel.filters.push_back(filter);
       }
       if(order == Filter::Order::Second) {
         Filter filter{Filter::Mode::Biquad, Filter::Type::HighPass, Filter::Order::Second};
         double q = DSP::IIR::Biquad::butterworth(passes * 2, pass);
         filter.biquad.reset(DSP::IIR::Biquad::Type::HighPass, cutoffFrequency, inputFrequency, q);
-        channel.filters.append(filter);
+        channel.filters.push_back(filter);
       }
     }
   }
 }
 
 auto Stream::pending() const -> unsigned {
-  if(!channels) return 0;
+  if(channels.empty()) return 0;
   return channels[0].resampler.pending();
 }
 
@@ -136,7 +136,7 @@ Audio::~Audio() {
 
 auto Audio::reset(Interface* interface) -> void {
   _interface = interface;
-  _streams.reset();
+  _streams.clear();
   _channels = 0;
 }
 
@@ -159,12 +159,12 @@ auto Audio::createStream(unsigned channels, double frequency) -> shared_pointer<
   _channels = std::max(_channels, channels);
   shared_pointer<Stream> stream = new Stream;
   stream->reset(channels, frequency, _frequency);
-  _streams.append(stream);
+  _streams.push_back(stream);
   return stream;
 }
 
 auto Audio::process() -> void {
-  while(_streams) {
+  while(!_streams.empty()) {
     for(auto& stream : _streams) {
       if(!stream->pending()) return;
     }

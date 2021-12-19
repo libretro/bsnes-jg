@@ -26,7 +26,7 @@ private:
   auto process() -> void;
 
   Interface* _interface = nullptr;
-  vector<shared_pointer<Stream>> _streams;
+  std::vector<shared_pointer<Stream>> _streams;
 
   unsigned _channels = 0;
   double _frequency = 48000.0;
@@ -71,11 +71,11 @@ struct Stream {
 
 private:
   struct Channel {
-    vector<Filter> filters;
-    vector<DSP::IIR::Biquad> nyquist;
+    std::vector<Filter> filters;
+    std::vector<DSP::IIR::Biquad> nyquist;
     DSP::Resampler::Cubic resampler;
   };
-  vector<Channel> channels;
+  std::vector<Channel> channels;
   double inputFrequency;
   double outputFrequency;
 
