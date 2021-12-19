@@ -137,7 +137,7 @@ struct Program : Emulator::Platform {
         bool enable) override;
     
     void load();
-    vector<uint8_t> loadFile(void *data, size_t size);
+    std::vector<uint8_t> loadFile(void *data, size_t size);
     bool loadSuperFamicom(std::string location);
     bool loadGameBoy(std::string location);
     bool loadBSMemory(std::string location);
@@ -157,7 +157,7 @@ struct Program : Emulator::Platform {
     shared_pointer<vfs::file>
         openRomSufamiTurboB(std::string name, vfs::file::mode mode);
     
-    void hackPatchMemory(vector<uint8_t>& data);
+    void hackPatchMemory(std::vector<uint8_t>& data);
 
 public: 
     struct Game {
@@ -172,22 +172,22 @@ public:
     struct SuperFamicom : Game {
         std::string title;
         std::string region;
-        vector<uint8_t> program;
+        std::vector<uint8_t> program;
         vector<uint8_t> data;
         vector<uint8_t> expansion;
         vector<uint8_t> firmware;
     } superFamicom;
     
     struct GameBoy : Game {
-        vector<uint8_t> program;
+        std::vector<uint8_t> program;
     } gameBoy;
     
     struct BSMemory : Game {
-        vector<uint8_t> program;
+        std::vector<uint8_t> program;
     } bsMemory;
     
     struct SufamiTurbo : Game {
-        vector<uint8_t> program;
+        std::vector<uint8_t> program;
     } sufamiTurboA, sufamiTurboB;
 };
 
@@ -584,19 +584,19 @@ shared_pointer<vfs::file> Program::openRomSufamiTurboB(std::string name,
     return {};
 }
 
-vector<uint8_t> Program::loadFile(void *data, size_t size) {
+std::vector<uint8_t> Program::loadFile(void *data, size_t size) {
     uint8_t *buf = (uint8_t*)data;
-    vector<uint8_t> ret;
+    std::vector<uint8_t> ret;
     
     for (int i = 0; i < size; ++i)
-        ret.append(buf[i]);
+        ret.push_back(buf[i]);
     
     return ret;
 }
 
 bool Program::loadSuperFamicom(std::string location) {
     std::string manifest;
-    vector<uint8_t> rom;
+    std::vector<uint8_t> rom;
     
     rom = addon ? loadFile(addoninfo.data, addoninfo.size) :
         loadFile(gameinfo.data, gameinfo.size);
@@ -660,7 +660,7 @@ bool Program::loadSuperFamicom(std::string location) {
 }
 
 bool Program::loadGameBoy(std::string location) {
-    vector<uint8_t> rom;
+    std::vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
     
     if (rom.size() < 0x4000) return false;
@@ -677,7 +677,7 @@ bool Program::loadGameBoy(std::string location) {
 
 bool Program::loadBSMemory(std::string location) {
     std::string manifest;
-    vector<uint8_t> rom;
+    std::vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
     
     if (rom.size() < 0x8000) return false;
@@ -704,7 +704,7 @@ bool Program::loadBSMemory(std::string location) {
 
 bool Program::loadSufamiTurboA(std::string location) {
     std::string manifest;
-    vector<uint8_t> rom;
+    std::vector<uint8_t> rom;
     
     if (sufamiinfo.size)
         rom = loadFile(sufamiinfo.data, sufamiinfo.size);
@@ -738,7 +738,7 @@ bool Program::loadSufamiTurboB(std::string location) {
         return false;
     
     std::string manifest;
-    vector<uint8_t> rom;
+    std::vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
     
     if (rom.size() < 0x20000) return false;
@@ -763,7 +763,7 @@ bool Program::loadSufamiTurboB(std::string location) {
     return true;
 }
 
-void Program::hackPatchMemory(vector<uint8_t>& data) {
+void Program::hackPatchMemory(std::vector<uint8_t>& data) {
     auto title = superFamicom.title;
     
     if (title == "Satellaview BS-X" && data.size() >= 0x100000) {
@@ -1206,7 +1206,7 @@ void jg_cheat_set(const char *code) {
     string cheat = string(code).downcase();
     bool decoded = false;
 
-    if (program->gameBoy.program)
+    if (!program->gameBoy.program.empty())
         decoded = decodeGB(cheat);
     else
         decoded = decodeSNES(cheat);

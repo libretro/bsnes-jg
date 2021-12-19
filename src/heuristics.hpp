@@ -35,22 +35,22 @@ struct Slot {
 };
 
 struct BSMemory {
-  BSMemory(vector<uint8_t>& data, std::string location);
+  BSMemory(std::vector<uint8_t>& data, std::string location);
   explicit operator bool() const;
   std::string manifest() const;
 
 private:
-  vector<uint8_t>& data;
+  std::vector<uint8_t>& data;
   std::string location;
 };
 
 struct GameBoy {
-  GameBoy(vector<uint8_t>& data, std::string location);
+  GameBoy(std::vector<uint8_t>& data, std::string location);
   explicit operator bool() const;
   std::string manifest() const;
 
 private:
-  vector<uint8_t>& data;
+  std::vector<uint8_t>& data;
   std::string location;
   unsigned headerAddress = 0;
   
@@ -58,18 +58,18 @@ private:
 };
 
 struct SufamiTurbo {
-  SufamiTurbo(vector<uint8_t>& data, std::string location);
+  SufamiTurbo(std::vector<uint8_t>& data, std::string location);
   explicit operator bool() const;
 
   std::string manifest() const;
 
 private:
-  vector<uint8_t>& data;
+  std::vector<uint8_t>& data;
   std::string location;
 };
 
 struct SuperFamicom {
-  SuperFamicom(vector<uint8_t>& data, std::string location);
+  SuperFamicom(std::vector<uint8_t>& data, std::string location);
   explicit operator bool() const;
 
   std::string manifest() const;
@@ -97,7 +97,7 @@ private:
   std::string firmwareHITACHI() const;
   std::string firmwareNEC() const;
 
-  vector<uint8_t>& data;
+  std::vector<uint8_t>& data;
   std::string location;
   unsigned headerAddress = 0;
 };

@@ -46,7 +46,7 @@ std::string Slot::text() const {
   return output;
 }
 
-BSMemory::BSMemory(vector<uint8_t>& data, std::string location) : data(data), location(location) {
+BSMemory::BSMemory(std::vector<uint8_t>& data, std::string location) : data(data), location(location) {
 }
 
 BSMemory::operator bool() const {
@@ -70,7 +70,7 @@ std::string BSMemory::manifest() const {
   return output;
 }
 
-GameBoy::GameBoy(vector<uint8_t>& data, std::string location) : data(data), location(location) {
+GameBoy::GameBoy(std::vector<uint8_t>& data, std::string location) : data(data), location(location) {
   headerAddress = data.size() < 0x8000 ? data.size() : data.size() - 0x8000;
   if(read(0x0104) == 0xce && read(0x0105) == 0xed && read(0x0106) == 0x66 && read(0x0107) == 0x66
   && read(0x0108) == 0xcc && read(0x0109) == 0x0d && read(0x0147) >= 0x0b && read(0x0147) <= 0x0d
@@ -360,7 +360,7 @@ if(rumble)
   return output;
 }
 
-SufamiTurbo::SufamiTurbo(vector<uint8_t>& data, std::string location) : data(data), location(location) {
+SufamiTurbo::SufamiTurbo(std::vector<uint8_t>& data, std::string location) : data(data), location(location) {
 }
 
 SufamiTurbo::operator bool() const {
@@ -391,7 +391,7 @@ std::string SufamiTurbo::manifest() const {
   return output;
 }
 
-SuperFamicom::SuperFamicom(vector<uint8_t>& data, std::string location) : data(data), location(location) {
+SuperFamicom::SuperFamicom(std::vector<uint8_t>& data, std::string location) : data(data), location(location) {
   if((size() & 0x7fff) == 512) {
     //remove header if present
     memory::move(&data[0], &data[512], size() - 512);
