@@ -4,6 +4,7 @@
 
 #include <any>
 #include <string>
+#include <vector>
 using std::any;
 
 #include <nall/bit.hpp>
@@ -126,18 +127,18 @@ struct Interface {
 
   //game interface
   virtual auto loaded() -> bool { return false; }
-  virtual auto hashes() -> vector<string> { return {}; }
-  virtual auto manifests() -> vector<string> { return {}; }
-  virtual auto titles() -> vector<string> { return {}; }
+  virtual auto hashes() -> std::vector<string> { return {}; }
+  virtual auto manifests() -> std::vector<string> { return {}; }
+  virtual auto titles() -> std::vector<string> { return {}; }
   virtual auto title() -> string { return {}; }
   virtual auto load() -> bool { return false; }
   virtual auto save() -> void {}
   virtual auto unload() -> void {}
 
   //system interface
-  virtual auto ports() -> vector<Port> { return {}; }
-  virtual auto devices(unsigned port) -> vector<Device> { return {}; }
-  virtual auto inputs(unsigned device) -> vector<Input> { return {}; }
+  virtual auto ports() -> std::vector<Port> { return {}; }
+  virtual auto devices(unsigned port) -> std::vector<Device> { return {}; }
+  virtual auto inputs(unsigned device) -> std::vector<Input> { return {}; }
   virtual auto connected(unsigned port) -> unsigned { return 0; }
   virtual auto connect(unsigned port, unsigned device) -> void {}
   virtual auto power() -> void {}
@@ -213,8 +214,8 @@ struct Game {
   string region;
   string revision;
   string board;
-  vector<Memory> memoryList;
-  vector<Oscillator> oscillatorList;
+  std::vector<Memory> memoryList;
+  std::vector<Oscillator> oscillatorList;
 };
 
 auto Game::load(std::string text) -> void {
@@ -229,11 +230,11 @@ auto Game::load(std::string text) -> void {
   board = document["game/board"].text();
 
   for(auto node : document.find("game/board/memory")) {
-    memoryList.append(Memory{node});
+    memoryList.push_back(Memory{node});
   }
 
   for(auto node : document.find("game/board/oscillator")) {
-    oscillatorList.append(Oscillator{node});
+    oscillatorList.push_back(Oscillator{node});
   }
 }
 

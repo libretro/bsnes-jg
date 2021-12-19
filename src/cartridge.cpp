@@ -933,33 +933,33 @@ auto Cartridge::serialize(serializer& s) -> void {
 
 Cartridge cartridge;
 
-auto Cartridge::hashes() const -> vector<string> {
-  vector<string> hashes;
-  hashes.append(game.sha256);
-  if(slotGameBoy.sha256) hashes.append(slotGameBoy.sha256);
-  if(slotBSMemory.sha256) hashes.append(slotBSMemory.sha256);
-  if(slotSufamiTurboA.sha256) hashes.append(slotSufamiTurboA.sha256);
-  if(slotSufamiTurboB.sha256) hashes.append(slotSufamiTurboB.sha256);
+auto Cartridge::hashes() const -> std::vector<string> {
+  std::vector<string> hashes;
+  hashes.push_back(game.sha256);
+  if(slotGameBoy.sha256) hashes.push_back(slotGameBoy.sha256);
+  if(slotBSMemory.sha256) hashes.push_back(slotBSMemory.sha256);
+  if(slotSufamiTurboA.sha256) hashes.push_back(slotSufamiTurboA.sha256);
+  if(slotSufamiTurboB.sha256) hashes.push_back(slotSufamiTurboB.sha256);
   return hashes;
 }
 
-auto Cartridge::manifests() const -> vector<string> {
-  vector<string> manifests;
-  manifests.append(string{BML::serialize(game.document), "\n", BML::serialize(board)});
-  if(slotGameBoy.document) manifests.append(BML::serialize(slotGameBoy.document));
-  if(slotBSMemory.document) manifests.append(BML::serialize(slotBSMemory.document));
-  if(slotSufamiTurboA.document) manifests.append(BML::serialize(slotSufamiTurboA.document));
-  if(slotSufamiTurboB.document) manifests.append(BML::serialize(slotSufamiTurboB.document));
+auto Cartridge::manifests() const -> std::vector<string> {
+  std::vector<string> manifests;
+  manifests.push_back(string{BML::serialize(game.document), "\n", BML::serialize(board)});
+  if(slotGameBoy.document) manifests.push_back(BML::serialize(slotGameBoy.document));
+  if(slotBSMemory.document) manifests.push_back(BML::serialize(slotBSMemory.document));
+  if(slotSufamiTurboA.document) manifests.push_back(BML::serialize(slotSufamiTurboA.document));
+  if(slotSufamiTurboB.document) manifests.push_back(BML::serialize(slotSufamiTurboB.document));
   return manifests;
 }
 
-auto Cartridge::titles() const -> vector<string> {
-  vector<string> titles;
-  titles.append(game.label);
-  if(slotGameBoy.label) titles.append(slotGameBoy.label);
-  if(slotBSMemory.label) titles.append(slotBSMemory.label);
-  if(slotSufamiTurboA.label) titles.append(slotSufamiTurboA.label);
-  if(slotSufamiTurboB.label) titles.append(slotSufamiTurboB.label);
+auto Cartridge::titles() const -> std::vector<string> {
+  std::vector<string> titles;
+  titles.push_back(game.label);
+  if(slotGameBoy.label) titles.push_back(slotGameBoy.label);
+  if(slotBSMemory.label) titles.push_back(slotBSMemory.label);
+  if(slotSufamiTurboA.label) titles.push_back(slotSufamiTurboA.label);
+  if(slotSufamiTurboB.label) titles.push_back(slotSufamiTurboB.label);
   return titles;
 }
 

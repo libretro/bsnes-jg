@@ -131,15 +131,15 @@ auto Interface::loaded() -> bool {
   return system.loaded();
 }
 
-auto Interface::hashes() -> vector<string> {
+auto Interface::hashes() -> std::vector<string> {
   return cartridge.hashes();
 }
 
-auto Interface::manifests() -> vector<string> {
+auto Interface::manifests() -> std::vector<string> {
   return cartridge.manifests();
 }
 
-auto Interface::titles() -> vector<string> {
+auto Interface::titles() -> std::vector<string> {
   return cartridge.titles();
 }
 
@@ -160,13 +160,13 @@ auto Interface::unload() -> void {
   system.unload();
 }
 
-auto Interface::ports() -> vector<Port> { return {
+auto Interface::ports() -> std::vector<Port> { return {
   {ID::Port::Controller1, "Controller Port 1"},
   {ID::Port::Controller2, "Controller Port 2"},
   {ID::Port::Expansion,   "Expansion Port"   }};
 }
 
-auto Interface::devices(unsigned port) -> vector<Device> {
+auto Interface::devices(unsigned port) -> std::vector<Device> {
   if(port == ID::Port::Controller1) return {
     {ID::Device::None,    "None"   },
     {ID::Device::Gamepad, "Gamepad"},
@@ -192,7 +192,7 @@ auto Interface::devices(unsigned port) -> vector<Device> {
   return {};
 }
 
-auto Interface::inputs(unsigned device) -> vector<Input> {
+auto Interface::inputs(unsigned device) -> std::vector<Input> {
   using Type = Input::Type;
 
   if(device == ID::Device::None) return {

@@ -1,3 +1,5 @@
+#include <vector>
+
 namespace SuperFamicom {
 
 struct ID {
@@ -37,17 +39,17 @@ struct Interface : Emulator::Interface {
   auto color(uint32_t color) -> uint64_t override;
 
   auto loaded() -> bool override;
-  auto hashes() -> vector<string> override;
-  auto manifests() -> vector<string> override;
-  auto titles() -> vector<string> override;
+  auto hashes() -> std::vector<string> override;
+  auto manifests() -> std::vector<string> override;
+  auto titles() -> std::vector<string> override;
   auto title() -> string override;
   auto load() -> bool override;
   auto save() -> void override;
   auto unload() -> void override;
 
-  auto ports() -> vector<Port> override;
-  auto devices(unsigned port) -> vector<Device> override;
-  auto inputs(unsigned device) -> vector<Input> override;
+  auto ports() -> std::vector<Port> override;
+  auto devices(unsigned port) -> std::vector<Device> override;
+  auto inputs(unsigned device) -> std::vector<Input> override;
 
   auto connected(unsigned port) -> unsigned override;
   auto connect(unsigned port, unsigned device) -> void override;

@@ -3,9 +3,9 @@ struct Cartridge {
   auto region() const -> string { return information.region; }
   auto headerTitle() const -> string { return game.title; }
 
-  auto hashes() const -> vector<string>;
-  auto manifests() const -> vector<string>;
-  auto titles() const -> vector<string>;
+  auto hashes() const -> std::vector<string>;
+  auto manifests() const -> std::vector<string>;
+  auto titles() const -> std::vector<string>;
   auto title() const -> string;
 
   auto load() -> bool;
