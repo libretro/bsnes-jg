@@ -69,7 +69,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   auto serialize(serializer&) -> void;
 
   uint8_t wram[128 * 1024];
-  vector<Thread*> coprocessors;
+  std::vector<Thread*> coprocessors;
 
   struct Overclocking {
     unsigned counter = 0;

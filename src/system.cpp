@@ -329,18 +329,18 @@ auto System::power(bool reset) -> void {
   if(cartridge.has.SufamiTurboSlotA) sufamiturboA.power();
   if(cartridge.has.SufamiTurboSlotB) sufamiturboB.power();
 
-  if(cartridge.has.ICD) cpu.coprocessors.append(&icd);
-  if(cartridge.has.Event) cpu.coprocessors.append(&event);
-  if(cartridge.has.SA1) cpu.coprocessors.append(&sa1);
-  if(cartridge.has.SuperFX) cpu.coprocessors.append(&superfx);
-  if(cartridge.has.ARMDSP) cpu.coprocessors.append(&armdsp);
-  if(cartridge.has.HitachiDSP) cpu.coprocessors.append(&hitachidsp);
-  if(cartridge.has.NECDSP) cpu.coprocessors.append(&necdsp);
-  if(cartridge.has.EpsonRTC) cpu.coprocessors.append(&epsonrtc);
-  if(cartridge.has.SharpRTC) cpu.coprocessors.append(&sharprtc);
-  if(cartridge.has.SPC7110) cpu.coprocessors.append(&spc7110);
-  if(cartridge.has.MSU1) cpu.coprocessors.append(&msu1);
-  if(cartridge.has.BSMemorySlot) cpu.coprocessors.append(&bsmemory);
+  if(cartridge.has.ICD) cpu.coprocessors.push_back(&icd);
+  if(cartridge.has.Event) cpu.coprocessors.push_back(&event);
+  if(cartridge.has.SA1) cpu.coprocessors.push_back(&sa1);
+  if(cartridge.has.SuperFX) cpu.coprocessors.push_back(&superfx);
+  if(cartridge.has.ARMDSP) cpu.coprocessors.push_back(&armdsp);
+  if(cartridge.has.HitachiDSP) cpu.coprocessors.push_back(&hitachidsp);
+  if(cartridge.has.NECDSP) cpu.coprocessors.push_back(&necdsp);
+  if(cartridge.has.EpsonRTC) cpu.coprocessors.push_back(&epsonrtc);
+  if(cartridge.has.SharpRTC) cpu.coprocessors.push_back(&sharprtc);
+  if(cartridge.has.SPC7110) cpu.coprocessors.push_back(&spc7110);
+  if(cartridge.has.MSU1) cpu.coprocessors.push_back(&msu1);
+  if(cartridge.has.BSMemorySlot) cpu.coprocessors.push_back(&bsmemory);
 
   scheduler.active = cpu.thread;
 
