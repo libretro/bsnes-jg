@@ -17,8 +17,6 @@
 #include <nall/varint.hpp>
 #include <nall/vector.hpp>
 #include <nall/string.hpp>
-#include <nall/queue.hpp>
-#include <nall/dsp.hpp>
 #include <nall/markup.hpp>
 #include <nall/file-buffer.hpp>
 #include <nall/vfs.hpp>
