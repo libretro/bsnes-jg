@@ -4,8 +4,12 @@ bsnes-jg (aka BadgerSNES) is an emulator for the Super Nintendo Entertainment
 System/Super Famicom, including support for the Super Game Boy, BS-X
 Satellaview, and Sufami Turbo.
 
-This is a fork of bsnes v115. All UI code and unneeded support code has been
-removed, leaving only the portions required for emulation.
+This is a fork of bsnes v115. Many changes have been made post-fork:
+ - Significantly improved audio quality
+ - Improved performance (less CPU usage)
+ - Removal of hacks
+ - Removal of code not required for emulation
+ - Translation to standard C++ (ongoing)
 
 This repository lives at https://gitlab.com/jgemu/bsnes
 
