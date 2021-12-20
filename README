@@ -18,6 +18,9 @@ Compiling
 Make sure you have The Jolly Good API's header files installed. If you did
 not install them, you will be required to include their path in CXXFLAGS.
 
+Options:
+  USE_VENDORED_SAMPLERATE - Set non-zero to use vendored libsamplerate
+
 Linux:
   make
 
