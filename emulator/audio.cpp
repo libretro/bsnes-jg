@@ -1,54 +1,6 @@
-#include <iostream>
 #include "emulator.hpp"
 
 namespace Emulator {
-
-void Stream::reset(unsigned channelCount, double inputFrequency, double outputFrequency) {
-  channels.clear();
-  channels.resize(channelCount);
-  setFrequency(inputFrequency, outputFrequency);
-}
-
-void Stream::setFrequency(double inputFrequency, maybe<double> outputFrequency) {
-  this->inputFrequency = inputFrequency;
-  if(outputFrequency) this->outputFrequency = outputFrequency();
-  for(auto& channel : channels) {
-    channel.resampler.reset(this->inputFrequency, this->outputFrequency);
-  }
-}
-
-unsigned Stream::pending() const {
-  if(channels.empty()) return 0;
-  return channels[0].resampler.pending();
-}
-
-unsigned Stream::read(double samples[]) {
-  for(unsigned c = 0; c < channels.size(); ++c) {
-    samples[c] = channels[c].resampler.read();
-  }
-  return channels.size();
-}
-
-void Stream::write(const double samples[]) {
-  for(unsigned c = 0; c < channels.size(); ++c) {
-    double sample = samples[c] + 1e-25;  //constant offset used to suppress denormals
-    channels[c].resampler.write(sample);
-  }
-
-  audio.process();
-}
-
-Audio audio;
-
-Audio::~Audio() {
-  reset(nullptr);
-}
-
-void Audio::reset(Interface* interface) {
-  _interface = interface;
-  _streams.clear();
-  _channels = 0;
-}
 
 shared_pointer<Stream> Audio::createStream(unsigned channels, double frequency) {
   _channels = std::max(_channels, channels);
@@ -58,31 +10,80 @@ shared_pointer<Stream> Audio::createStream(unsigned channels, double frequency) 
   return stream;
 }
 
-void Audio::process() {
-  while(!_streams.empty()) {
-    for(auto& stream : _streams) {
-      if(!stream->pending()) return;
-    }
-
-    double samples[_channels];
-    for(auto& sample : samples) sample = 0.0;
-
-    for(auto& stream : _streams) {
-      double buffer[_channels];
-      unsigned length = stream->read(buffer), offset = 0;
-
-      for(auto& sample : samples) {
-        sample += buffer[offset];
-        if(++offset >= length) offset = 0;
-      }
-    }
-
-    for(auto c : range(_channels)) {
-      samples[c] = std::max(-1.0, std::min(+1.0, samples[c]));
-    }
-
-    platform->audioFrame(samples, _channels);
+void Stream::reset(unsigned channelCount, double inputFrequency, double outputFrequency) {
+  if (srcstate == nullptr) {
+    int err;
+    srcstate = src_new(audio._rsqual, channelCount, &err);
+    srcdata = { 0 }; // end_of_input MUST be zero initialized
   }
+
+  src_reset(srcstate);
+  setFrequency(inputFrequency, this->outputFrequency);
+  queue_in.reserve(audio._spf << 1);
+  queue_out.reserve(audio._spf << 1);
+  resamp_out.reserve(audio._spf << 1);
+}
+
+void Stream::setFrequency(double inputFrequency, double outputFrequency) {
+  this->inputFrequency = inputFrequency;
+  if (outputFrequency) {
+    this->outputFrequency = outputFrequency;
+  }
+  srcdata.src_ratio = this->outputFrequency / inputFrequency;
+  spf_in = (unsigned)(inputFrequency / ((this->outputFrequency / audio._spf)));
+  if (spf_in & 1) --spf_in; // 2 channels means samples per frame must be even
+}
+
+void Stream::write(const int16_t samples[]) {
+  queue_in.push_back(samples[0] / 32768.0f);
+  queue_in.push_back(samples[1] / 32768.0f);
+  
+  if (queue_in.size() == spf_in) {
+    srcdata.data_in = queue_in.data();
+    srcdata.data_out = resamp_out.data();
+    srcdata.input_frames = spf_in >> 1;
+    srcdata.output_frames = audio._spf;
+    src_process(srcstate, &srcdata);
+    queue_in.clear();
+
+    for (int i = 0; i < srcdata.output_frames_gen << 1; ++i) {
+      queue_out.push_back(resamp_out[i]);
+    }
+
+    audio.process();
+  }
+}
+
+Audio audio;
+
+Audio::~Audio() {
+  for (auto& stream : _streams) {
+    stream->srcstate = src_delete(stream->srcstate);
+    stream->srcstate = nullptr;
+  }
+  reset(nullptr);
+}
+
+void Audio::reset(Interface* interface) {
+  _interface = interface;
+  _streams.clear();
+  _channels = 0;
+}
+
+void Audio::process() {
+  for (auto& stream : _streams) {
+      if (stream->queue_out.size() < _spf) return;
+  }
+
+  for (auto& stream : _streams) {
+    for (int i = 0; i < _spf; ++i) {
+      buffer[i] += stream->queue_out[i];
+    }
+    stream->queue_out.erase(stream->queue_out.begin(), stream->queue_out.begin() + _spf);
+  }
+
+  platform->audioFrame(_spf);
+  memset(&buffer[0], 0.0, _spf * sizeof(float));
 }
 
 }

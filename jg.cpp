@@ -91,16 +91,16 @@ static jg_inputstate_t *input_device[NUMINPUTS];
 static jg_setting_t settings_bsnes[] = { // name, default, min, max
     // 0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL
     { "aspect_ratio", "", 0, 0, 3 },
+    // 0 = Linear, 1 = ZOH, 2 = Sinc Fastest, 3 = Sinc Medium, 4 = Sinc Best
+    { "rsqual", "", 3, 0, 4 },
 };
 
 enum {
     ASPECT,
+    RSQUAL,
 };
 
 static std::vector<string> cheatList;
-
-static uint16_t audio_buffer_index = 0;
-static uint16_t audio_buffer_max = audinfo.spf;
 
 static int vidmult = 1;
 static int ss_offset_x = 0;
@@ -131,7 +131,7 @@ struct Program : Emulator::Platform {
         std::string type, std::vector<std::string> options = {}) override;
     void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
         unsigned height, unsigned scale) override;
-    void audioFrame(const double* samples, unsigned channels) override;
+    void audioFrame(unsigned numsamps) override;
     int16_t inputPoll(unsigned port, unsigned device, unsigned input) override;
     
     void load();
@@ -354,10 +354,8 @@ void Program::videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
     vidinfo.buf = (void*)data;
 }
 
-void Program::audioFrame(const double* samples, unsigned channels) {
-    float *abuf = (float*)audinfo.buf;
-    abuf[audio_buffer_index++] = (float)samples[0];
-    abuf[audio_buffer_index++] = (float)samples[1];
+void Program::audioFrame(unsigned numsamps) {
+    jg_cb_audio(numsamps);
 }
 
 static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
@@ -991,8 +989,7 @@ void jg_reset(int hard) {
 
 void jg_exec_frame() {
     emulator->run();
-    jg_cb_audio(audio_buffer_index);
-    audio_buffer_index = 0;
+    //Emulator::audio.frame();
 }
 
 int jg_game_load() {
@@ -1145,12 +1142,16 @@ int jg_game_load() {
         }
     }
     
+    Emulator::audio.setQuality(settings_bsnes[RSQUAL].value);
+    
     // Audio and timing adjustments
     if (program->superFamicom.region == "PAL") {
         audinfo.spf = (SAMPLERATE / FRAMERATE_PAL) * CHANNELS;
+        Emulator::audio.setSpf(audinfo.spf);
         jg_cb_frametime(TIMING_PAL);
     }
     else {
+        Emulator::audio.setSpf(audinfo.spf);
         jg_cb_frametime(TIMING_NTSC);
     }
     
@@ -1232,6 +1233,7 @@ void jg_setup_video() {
 }
 
 void jg_setup_audio() {
+    Emulator::audio.setBuffer((float*)audinfo.buf);
 }
 
 void jg_set_inputstate(jg_inputstate_t *ptr, int port) {

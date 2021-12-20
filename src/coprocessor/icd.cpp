@@ -26,8 +26,8 @@ auto ICD::ppuWrite(nall::Natural< 2> color) -> void {
   output[address + 1] = (output[address + 1] << 1) | !!(color & 2);
 }
 
-auto ICD::apuWrite(float left, float right) -> void {
-  double samples[] = {left, right};
+auto ICD::apuWrite(int16_t left, int16_t right) -> void {
+  int16_t samples[] = {left, right};
   if(!system.runAhead) stream->write(samples);
 }
 
@@ -182,7 +182,7 @@ auto ICD::writeIO(unsigned addr, uint8_t data) -> void {
     case 2: this->frequency = frequency / 7; break;  //slow
     case 3: this->frequency = frequency / 9; break;  //very slow
     }
-    stream->setFrequency(this->frequency / 128);
+    stream->setFrequency(this->frequency / 128, 0);
     r6003 = data;
     return;
   }
@@ -288,8 +288,8 @@ namespace SameBoy {
   }
 
   static auto sample(GB_gameboy_t*, GB_sample_t* sample) -> void {
-    float left  = sample->left  / 32768.0f;
-    float right = sample->right / 32768.0f;
+    int16_t left  = sample->left;
+    int16_t right = sample->right;
     icd.apuWrite(left, right);
   }
 
@@ -316,7 +316,7 @@ auto ICD::main() -> void {
     auto clocks = GB_run(&sameboy);
     step(clocks >> 1);
   } else {  //DMG halted
-    apuWrite(0.0, 0.0);
+    apuWrite(0, 0);
     step(128);
   }
   synchronizeCPU();

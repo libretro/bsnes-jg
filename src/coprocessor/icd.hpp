@@ -19,7 +19,7 @@ struct ICD : Emulator::Platform, Thread {
   auto ppuHreset() -> void;
   auto ppuVreset() -> void;
   auto ppuWrite(nall::Natural< 2> color) -> void;
-  auto apuWrite(float left, float right) -> void;
+  auto apuWrite(int16_t left, int16_t right) -> void;
   auto joypWrite(bool p14, bool p15) -> void;
 
   //io.cpp

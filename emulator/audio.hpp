@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <samplerate.h>
+
 namespace Emulator {
 
 struct Interface;
@@ -8,9 +11,12 @@ struct Stream;
 
 struct Audio {
   ~Audio();
-  void reset(Interface* interface);
-  void setFrequency(double frequency);
   shared_pointer<Stream> createStream(unsigned channels, double frequency);
+  void reset(Interface* interface);
+  void setFrequency(double frequency) { _frequency = frequency; }
+  void setBuffer(float *buffer) { this->buffer = buffer; }
+  void setSpf(unsigned spf) { _spf = spf; }
+  void setQuality(unsigned rsqual) { _rsqual = 4 - rsqual; } // Low to High
 
 private:
   void process();
@@ -20,29 +26,33 @@ private:
 
   unsigned _channels = 0;
   double _frequency = 48000.0;
+  unsigned _rsqual = SRC_SINC_MEDIUM_QUALITY;
+  unsigned _spf = 0;
+  float *buffer = nullptr;
 
   friend class Stream;
 };
 
 struct Stream {
   void reset(unsigned channels, double inputFrequency, double outputFrequency);
-  void setFrequency(double inputFrequency, maybe<double> outputFrequency = nothing);
-  unsigned pending() const;
-  unsigned read(double samples[]);
-  void write(const double samples[]);
+  void setFrequency(double inputFrequency, double outputFrequency);
+  void write(const int16_t samples[]);
 
   template<typename... P> void sample(P&&... p) {
-    double samples[sizeof...(P)] = {std::forward<P>(p)...};
+    int16_t samples[sizeof...(P)] = {std::forward<P>(p)...};
     write(samples);
   }
+  
+  SRC_STATE *srcstate = nullptr;
+  SRC_DATA srcdata;
+  std::vector<float> queue_in;
+  std::vector<float> queue_out;
+  std::vector<float> resamp_out;
+  unsigned spf_in = 0;
 
 private:
-  struct Channel {
-    DSP::Resampler::Cubic resampler;
-  };
-  std::vector<Channel> channels;
   double inputFrequency;
-  double outputFrequency;
+  double outputFrequency = 48000.0;
 
   friend class Audio;
 };

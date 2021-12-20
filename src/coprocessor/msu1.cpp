@@ -1,5 +1,5 @@
 #include <sstream>
-
+#include <cstdio>
 #include "../sfc.hpp"
 
 namespace SuperFamicom {
@@ -44,8 +44,8 @@ auto MSU1::Enter() -> void {
 }
 
 auto MSU1::main() -> void {
-  double left  = 0.0;
-  double right = 0.0;
+  int16_t left  = 0;
+  int16_t right = 0;
 
   if(io.audioPlay) {
     if(audioFile) {
@@ -58,8 +58,8 @@ auto MSU1::main() -> void {
         }
       } else {
         io.audioPlayOffset += 4;
-        left  = (double)(int16_t)audioFile->readl(2) / 32768.0 * (double)io.audioVolume / 255.0;
-        right = (double)(int16_t)audioFile->readl(2) / 32768.0 * (double)io.audioVolume / 255.0;
+        left  = (int16_t)(audioFile->readl(2) * (io.audioVolume / 255));
+        right = (int16_t)(audioFile->readl(2) * (io.audioVolume / 255));
         if(dsp.mute()) left = 0, right = 0;
       }
     } else {
@@ -67,7 +67,7 @@ auto MSU1::main() -> void {
     }
   }
 
-  if(!system.runAhead) stream->sample(float(left), float(right));
+  if(!system.runAhead) stream->sample(left, right);
   step(1);
   synchronizeCPU();
 }
