@@ -8,6 +8,7 @@ CXXFLAGS ?= -O2
 FLAGS := -fPIC -std=c++17 -fno-strict-aliasing -fwrapv
 FLAGS_CO := -fPIC -std=c89
 FLAGS_GB := -fPIC -std=c11
+FLAGS_SAMPLERATE := -fPIC -std=c99
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.14.7\"
 
@@ -19,6 +20,7 @@ INCLUDES_GB := -I$(SOURCEDIR)/sameboy
 WARNINGS := -Wreturn-type -Wno-unused-result
 WARNINGS_CO := -Wall -Wextra -Wshadow -Wmissing-prototypes
 WARNINGS_GB := -Wno-multichar
+WARNINGS_SAMPLERATE := -Wall -Wextra -Wshadow -Wmissing-prototypes
 LIBS := -lm -lstdc++
 SHARED := -fPIC
 
@@ -28,6 +30,8 @@ DATAROOTDIR ?= $(PREFIX)/share
 DATADIR ?= $(DATAROOTDIR)
 DOCDIR ?= $(DATAROOTDIR)/doc/$(NAME)
 LIBDIR ?= $(PREFIX)/lib
+
+USE_VENDORED_SAMPLERATE ?= 0
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Darwin)
@@ -126,9 +130,24 @@ CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 # https://github.com/defparam/21FX
 #	$(OBJDIR)/src/expansion/21fx.cpp \
 
+ifneq ($(USE_VENDORED_SAMPLERATE), 0)
+	CFLAGS_SAMPLERATE := -I$(DEPDIR)/deps/libsamplerate
+	CSRCS += $(OBJDIR)/deps/libsamplerate/samplerate.c \
+		$(OBJDIR)/deps/libsamplerate/src_linear.c \
+		$(OBJDIR)/deps/libsamplerate/src_sinc.c \
+		$(OBJDIR)/deps/libsamplerate/src_zoh.c
+else
+	CFLAGS_SAMPLERATE := $(shell $(PKGCONF) --cflags samplerate)
+	LIBS_SAMPLERATE := $(shell $(PKGCONF) --libs samplerate)
+endif
+
+INCLUDES += $(CFLAGS_SAMPLERATE)
+LIBS += $(LIBS_SAMPLERATE)
+
 # Object dirs
 MKDIRS := $(OBJDIR)/deps/gb \
 	$(OBJDIR)/deps/libco \
+	$(OBJDIR)/deps/libsamplerate \
 	$(OBJDIR)/emulator \
 	$(OBJDIR)/src/controller \
 	$(OBJDIR)/src/dsp \
@@ -147,6 +166,12 @@ $(OBJDIR)/deps/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
 	$(info $(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c \
 		$(SUBST $(SOURCEDIR)/,,$<) -o $@)
 	@$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
+
+# libsamplerate rules
+$(OBJDIR)/deps/libsamplerate/%.o: $(SOURCEDIR)/deps/libsamplerate/%.c $(OBJDIR)/.tag
+	$(info $(CC) $(CFLAGS) $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE) -c \
+		$(subst $(SOURCEDIR)/,,$(INCLUDES) -c $<) -o $@)
+	@$(CC) $(CFLAGS) $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE) -c $< -o $@
 
 # Game Boy rules
 $(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag

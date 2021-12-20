@@ -65,6 +65,10 @@ libco
   Copyright (c) 2006-2020 byuu et al (ISC)
   See deps/libco/LICENSE
 
+libsamplerate
+  Copyright (c) 2002-2021, Erik de Castro Lopo (BSD-2-Clause)
+  see deps/libsamplerate/COPYING
+
 SameBoy
   Copyright (c) 2015-2021 Lior Halphon (MIT)
   See deps/gb/LICENSE
