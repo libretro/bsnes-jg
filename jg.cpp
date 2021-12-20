@@ -1056,7 +1056,7 @@ int jg_game_load() {
     
     // Set up inputs
     int multitap = 0;
-    for (int i = 0; i < sizeof(db_multitap_games) / sizeof(mtentry_t); ++i) {
+    for (int i = 0; i < db_multitap_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_multitap_games[i].md5) {
             multitap = db_multitap_games[i].players;
             break;
@@ -1064,7 +1064,7 @@ int jg_game_load() {
     }
     
     bool mouse = false;
-    for (int i = 0; i < sizeof(db_mouse_games) / sizeof(string); ++i) {
+    for (int i = 0; i < db_mouse_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_mouse_games[i]) {
             mouse = true;
             break;
@@ -1072,7 +1072,7 @@ int jg_game_load() {
     }
     
     bool superscope = false;
-    for (int i = 0; i < sizeof(db_superscope_games) / sizeof(ssentry_t); ++i) {
+    for (int i = 0; i < db_superscope_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_superscope_games[i].md5) {
             superscope = true;
             ss_offset_x = db_superscope_games[i].x;
@@ -1082,7 +1082,7 @@ int jg_game_load() {
     }
     
     bool justifier = false;
-    for (int i = 0; i < sizeof(db_justifier_games) / sizeof(string); ++i) {
+    for (int i = 0; i < db_justifier_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_justifier_games[i]) {
             justifier = true;
             break;

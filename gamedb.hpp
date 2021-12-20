@@ -1,10 +1,10 @@
-static std::string db_justifier_games[] = {
+static std::vector<std::string> db_justifier_games {
     "42f3084ce3f529b46090b9e1d781717d", // Lethal Enforcers (Europe)
     "3a33512ae5b1f2047bcd77e1d3e1ce4a", // Lethal Enforcers (Japan)
     "928a0d7feeb4edee8d53203a575968e6", // Lethal Enforcers (USA)
 };
 
-static std::string db_mouse_games[] = {
+static std::vector<std::string> db_mouse_games {
     "76392b4b33146fe4fac5b26358a9b9f4", // ACME Animation Factory (Europe)
     "4623fc6ecf936f67c21e2d4bcadabf80", // ACME Animation Factory (USA)
     "37c38e3fc469d69e8432e69982537de3", // Advanced Dungeons & Dragons - Eye of the Beholder (USA)
@@ -78,7 +78,7 @@ struct mtentry_t {
 };
 
 // This list may not be complete or accurate -- 5 players assumed if unknown
-static mtentry_t db_multitap_games[] = {
+static std::vector<mtentry_t> db_multitap_games = {
     { "6f76a0bc204424863a9ba846f5183996", 5 }, // Bakukyuu Renpatsu!! Super B-Daman (Japan)
     { "0af9942d16a95e484c5b689e80ccb6ae", 5 }, // Bakutou Dochers - Bumps-jima wa Oosawagi (Japan)
     { "7537f4b1bb522c1b65b2a623bbe3982a", 4 }, // Barkley Shut Up and Jam! (Europe)
@@ -353,7 +353,7 @@ struct ssentry_t {
     std::string md5; int x; int y;
 };
 
-static ssentry_t db_superscope_games[] = {
+static std::vector<ssentry_t> db_superscope_games {
     { "391c2d0e4e81ca2139bc86080a2c4d2d", 0, 0 },    // Battle Clash (Europe)
     { "d9b2a11d20a10fe4f82be4a92481d3d3", 0, 0 },    // Battle Clash (USA)
     { "079eade13305bcc130e09597faeff4f0", 1, 19 },   // Bazooka Blitzkrieg (USA)
