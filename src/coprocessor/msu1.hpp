@@ -1,5 +1,5 @@
 struct MSU1 : Thread {
-  shared_pointer<Emulator::Stream> stream;
+  Emulator::Stream *stream;
 
   auto synchronizeCPU() -> void;
   static auto Enter() -> void;

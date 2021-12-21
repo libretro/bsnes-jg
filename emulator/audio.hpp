@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 #include <samplerate.h>
 
@@ -11,7 +12,8 @@ struct Stream;
 
 struct Audio {
   ~Audio();
-  shared_pointer<Stream> createStream(unsigned channels, double frequency);
+  //shared_pointer<Stream> createStream(unsigned channels, double frequency);
+  Stream* createStream(unsigned channels, double frequency);
   void reset(Interface* interface);
   void setFrequency(double frequency) { _frequency = frequency; }
   void setBuffer(float *buffer) { this->buffer = buffer; }

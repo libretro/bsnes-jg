@@ -2,9 +2,9 @@
 
 namespace Emulator {
 
-shared_pointer<Stream> Audio::createStream(unsigned channels, double frequency) {
+Stream* Audio::createStream(unsigned channels, double frequency) {
   _channels = std::max(_channels, channels);
-  shared_pointer<Stream> stream = new Stream;
+  Stream *stream = new Stream;
   stream->reset(channels, frequency, _frequency);
   _streams.push_back(stream);
   return stream;

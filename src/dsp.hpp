@@ -1,7 +1,8 @@
+#include <memory>
 #include "dsp/SPC_DSP.h"
 
 struct DSP {
-  shared_pointer<Emulator::Stream> stream;
+  Emulator::Stream *stream;
   uint8_t apuram[64 * 1024] = {};
 
   auto main() -> void;
@@ -17,7 +18,6 @@ struct DSP {
   int64_t clock = 0;
 
 private:
-  bool fastDSP = false;
   SPC_DSP spc_dsp;
   int16_t samplebuffer[8192];
 
