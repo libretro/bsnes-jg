@@ -125,7 +125,7 @@ struct Program : Emulator::Platform {
     Program();
     ~Program();
     
-    shared_pointer<vfs::file> open(unsigned id, std::string name,
+    vfs::file* open(unsigned id, std::string name,
         vfs::file::mode mode, bool required) override;
     Emulator::Platform::Load load(unsigned id, std::string name,
         std::string type, std::vector<std::string> options = {}) override;
@@ -144,16 +144,11 @@ struct Program : Emulator::Platform {
     
     void save();
     
-    shared_pointer<vfs::file>
-        openRomSuperFamicom(std::string name, vfs::file::mode mode);
-    shared_pointer<vfs::file>
-        openRomGameBoy(std::string name, vfs::file::mode mode);
-    shared_pointer<vfs::file>
-        openRomBSMemory(std::string name, vfs::file::mode mode);
-    shared_pointer<vfs::file>
-        openRomSufamiTurboA(std::string name, vfs::file::mode mode);
-    shared_pointer<vfs::file>
-        openRomSufamiTurboB(std::string name, vfs::file::mode mode);
+    vfs::file* openRomSuperFamicom(std::string name, vfs::file::mode mode);
+    vfs::file* openRomGameBoy(std::string name, vfs::file::mode mode);
+    vfs::file* openRomBSMemory(std::string name, vfs::file::mode mode);
+    vfs::file* openRomSufamiTurboA(std::string name, vfs::file::mode mode);
+    vfs::file* openRomSufamiTurboB(std::string name, vfs::file::mode mode);
     
     void hackPatchMemory(std::vector<uint8_t>& data);
 
@@ -204,10 +199,10 @@ void Program::save() {
     emulator->save();
 }
 
-shared_pointer<vfs::file> Program::open(unsigned id, std::string name,
+vfs::file* Program::open(unsigned id, std::string name,
     vfs::file::mode mode, bool required) {
     
-    shared_pointer<vfs::file> result;
+    vfs::file *result;
     
     if (name == "ipl.rom" && mode == vfs::file::mode::read) {
         result = vfs::memory::file::open(iplrom, sizeof(iplrom));
@@ -451,7 +446,7 @@ int16_t Program::inputPoll(unsigned port, unsigned device, unsigned input) {
     return pollInputDevices(port, device, input);
 }
 
-shared_pointer<vfs::file> Program::openRomSuperFamicom(std::string name,
+vfs::file* Program::openRomSuperFamicom(std::string name,
     vfs::file::mode mode) {
     
     if (name == "program.rom" && mode == vfs::file::mode::read) {
@@ -498,7 +493,7 @@ shared_pointer<vfs::file> Program::openRomSuperFamicom(std::string name,
     return {};
 }
 
-shared_pointer<vfs::file> Program::openRomGameBoy(std::string name,
+vfs::file* Program::openRomGameBoy(std::string name,
     vfs::file::mode mode) {
     
     if (name == "program.rom" && mode == vfs::file::mode::read) {
@@ -521,7 +516,7 @@ shared_pointer<vfs::file> Program::openRomGameBoy(std::string name,
     return {};
 }
 
-shared_pointer<vfs::file> Program::openRomBSMemory(std::string name,
+vfs::file* Program::openRomBSMemory(std::string name,
     vfs::file::mode mode) {
     
     if (name == "program.rom" && mode == vfs::file::mode::read) {
@@ -538,7 +533,7 @@ shared_pointer<vfs::file> Program::openRomBSMemory(std::string name,
     return {};
 }
 
-shared_pointer<vfs::file> Program::openRomSufamiTurboA(std::string name,
+vfs::file* Program::openRomSufamiTurboA(std::string name,
     vfs::file::mode mode) {
     if (name == "program.rom" && mode == vfs::file::mode::read) {
         return vfs::memory::file::open(sufamiTurboA.program.data(),
@@ -560,7 +555,7 @@ shared_pointer<vfs::file> Program::openRomSufamiTurboA(std::string name,
     return {};
 }
 
-shared_pointer<vfs::file> Program::openRomSufamiTurboB(std::string name,
+vfs::file* Program::openRomSufamiTurboB(std::string name,
     vfs::file::mode mode) {
     if (name == "program.rom" && mode == vfs::file::mode::read) {
         return vfs::memory::file::open(sufamiTurboB.program.data(),

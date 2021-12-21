@@ -77,8 +77,8 @@ auto MSU1::step(unsigned clocks) -> void {
 }
 
 auto MSU1::unload() -> void {
-  dataFile.reset();
-  audioFile.reset();
+  delete dataFile; dataFile = nullptr;
+  delete audioFile; audioFile = nullptr;
 }
 
 auto MSU1::power() -> void {
@@ -108,7 +108,7 @@ auto MSU1::power() -> void {
 }
 
 auto MSU1::dataOpen() -> void {
-  dataFile.reset();
+  delete dataFile; dataFile = nullptr;
   std::string name = "msu1/data.rom";
   if(dataFile = platform->open(ID::SuperFamicom, name, File::Read)) {
     dataFile->seek(io.dataReadOffset);
@@ -116,7 +116,7 @@ auto MSU1::dataOpen() -> void {
 }
 
 auto MSU1::audioOpen() -> void {
-  audioFile.reset();
+  delete audioFile; audioFile = nullptr;
   std::stringstream name;
   name << "msu1/track-" << io.audioTrack << ".pcm";
   if(audioFile = platform->open(ID::SuperFamicom, name.str(), File::Read)) {
@@ -130,7 +130,7 @@ auto MSU1::audioOpen() -> void {
         return;
       }
     }
-    audioFile.reset();
+    delete audioFile; audioFile = nullptr;
   }
   io.audioError = true;
 }

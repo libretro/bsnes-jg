@@ -62,8 +62,14 @@ struct file {
 namespace nall::vfs::fs {
 
 struct file : vfs::file {
-  static auto open(string location_, mode mode_) -> shared_pointer<vfs::file> {
+  /*static auto open(string location_, mode mode_) -> shared_pointer<vfs::file> {
     auto instance = shared_pointer<file>{new file};
+    if(!instance->_open(location_, mode_)) return {};
+    return instance;
+  }*/
+
+  static auto open(string location_, mode mode_) -> vfs::file* {
+    auto instance = new file;
     if(!instance->_open(location_, mode_)) return {};
     return instance;
   }
@@ -108,8 +114,14 @@ namespace nall::vfs::memory {
 struct file : vfs::file {
   ~file() { delete[] _data; }
 
-  static auto open(const void* data, uintmax size) -> shared_pointer<vfs::file> {
+  /*static auto open(const void* data, uintmax size) -> shared_pointer<vfs::file> {
     auto instance = shared_pointer<file>{new file};
+    instance->_open((const uint8_t*)data, size);
+    return instance;
+  }*/
+
+  static auto open(const void* data, uintmax size) -> vfs::file* {
+    auto instance = new file;
     instance->_open((const uint8_t*)data, size);
     return instance;
   }

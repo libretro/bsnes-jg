@@ -17,8 +17,8 @@ struct MSU1 : Thread {
   auto serialize(serializer&) -> void;
 
 private:
-  shared_pointer<vfs::file> dataFile;
-  shared_pointer<vfs::file> audioFile;
+  vfs::file *dataFile;
+  vfs::file *audioFile;
 
   enum Flag : unsigned {
     Revision       = 0x02,  //max: 0x07
