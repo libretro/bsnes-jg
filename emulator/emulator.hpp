@@ -21,7 +21,6 @@
 #include <nall/file-buffer.hpp>
 #include <nall/vfs.hpp>
 
-#include "memory.hpp"
 #include "audio.hpp"
 
 namespace Emulator {
