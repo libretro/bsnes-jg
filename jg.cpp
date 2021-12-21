@@ -129,6 +129,8 @@ struct Program : Emulator::Platform {
         vfs::file::mode mode, bool required) override;
     Emulator::Platform::Load load(unsigned id, std::string name,
         std::string type, std::vector<std::string> options = {}) override;
+    void write(unsigned id, std::string name, const uint8_t *data,
+        unsigned size) override;
     void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
         unsigned height, unsigned scale) override;
     void audioFrame(unsigned numsamps) override;
@@ -333,6 +335,70 @@ Emulator::Platform::Load Program::load(unsigned id, std::string name,
         }
     }
     return { id, "" };
+}
+
+void Program::write(unsigned id, std::string name, const uint8_t *data,
+        unsigned size) {
+    
+    std::string path;
+    
+    if (id == 1) { // SFC
+        if (name == "save.ram") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".srm";
+        }
+        else if (name == "download.ram") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".psr";
+        }
+    }
+    else if (id == 2) { // GB
+        if (name == "save.ram") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".srm";
+        }
+        
+        if (name == "time.rtc") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".rtc";
+        }
+    }
+    else if (id == 3) { // BS-X
+        if (name == "program.flash") { //writes are not flushed to disk in bsnes
+            return;
+        }
+    }
+    else if (id == 4) { // Sufami Turbo Slot A
+        if (name == "save.ram") {
+            if (sufamiinfo.size)
+                path = std::string(pathinfo.save) + "/" +
+                    std::string(sufamiinfo.name) + ".srm";
+            else
+                path = std::string(pathinfo.save) + "/" +
+                    std::string(gameinfo.name) + ".srm";
+        }
+    }
+    else if (id == 5) { // Sufami Turbo Slot B
+        if (name == "save.ram") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".srm";
+        }
+    }
+    
+    if (path.empty()) {
+        jg_cb_log(JG_LOG_WRN, "No file routines for: %s\n", name.c_str());
+        return;
+    }
+    
+    std::ofstream stream(path, std::ios::out | std::ios::binary);
+    if (stream.is_open()) {
+        stream.write((const char*)data, size);
+        stream.close();
+        jg_cb_log(JG_LOG_DBG, "File saved %s\n", path.c_str());
+    }
+    else {
+        jg_cb_log(JG_LOG_WRN, "Failed to save file: %s\n", path.c_str());
+    }
 }
 
 void Program::videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
@@ -1156,7 +1222,10 @@ int jg_game_load() {
 }
 
 int jg_game_unload() {
-    program->save();
+    /* Save happens on emulator->unload, program->save() is useful for saving
+       at a time interval to avoid losing SRAM data if something crashes.
+    */
+    //program->save();
     emulator->unload();
     return 1;
 }

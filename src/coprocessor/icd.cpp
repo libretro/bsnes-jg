@@ -384,15 +384,13 @@ auto ICD::save() -> void {
   if(auto size = GB_save_battery_size(&sameboy)) {
     auto data = (uint8_t*)malloc(size);
     GB_save_battery_to_buffer(&sameboy, data, size);
-    if(auto fp = platform->open(pathID(), "save.ram", File::Write)) {
-      fp->write(data, size);
-    }
+    platform->write(pathID(), "save.ram", data, size);
     free(data);
   }
 }
 
 auto ICD::unload() -> void {
-  save();
+  //save(); // redundant
   GB_free(&sameboy);
 }
 

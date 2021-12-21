@@ -756,10 +756,8 @@ auto Cartridge::saveCartridge(Markup::Node node) -> void {
 
 auto Cartridge::saveCartridgeBSMemory(Markup::Node node) -> void {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=Flash,content=Program)"]}) {
-    if(auto fp = platform->open(bsmemory.pathID, std::string(memory.name()), File::Write)) {
-      if (bsmemory.memory.data() != nullptr) {
-        fp->write(bsmemory.memory.data(), memory.size);
-      }
+    if (bsmemory.memory.data() != nullptr) {
+      platform->write(bsmemory.pathID, std::string(memory.name()), bsmemory.memory.data(), memory.size);
     }
   }
 }
@@ -767,9 +765,7 @@ auto Cartridge::saveCartridgeBSMemory(Markup::Node node) -> void {
 auto Cartridge::saveCartridgeSufamiTurboA(Markup::Node node) -> void {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
     if(memory.nonVolatile) {
-      if(auto fp = platform->open(sufamiturboA.pathID, std::string(memory.name()), File::Write)) {
-        fp->write(sufamiturboA.ram.data(), memory.size);
-      }
+      platform->write(sufamiturboA.pathID, std::string(memory.name()), sufamiturboA.ram.data(), memory.size);
     }
   }
 }
@@ -777,9 +773,7 @@ auto Cartridge::saveCartridgeSufamiTurboA(Markup::Node node) -> void {
 auto Cartridge::saveCartridgeSufamiTurboB(Markup::Node node) -> void {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
     if(memory.nonVolatile) {
-      if(auto fp = platform->open(sufamiturboB.pathID, std::string(memory.name()), File::Write)) {
-        fp->write(sufamiturboB.ram.data(), memory.size);
-      }
+      platform->write(sufamiturboB.pathID, std::string(memory.name()), sufamiturboB.ram.data(), memory.size);
     }
   }
 }
@@ -790,9 +784,7 @@ auto Cartridge::saveMemory(Memory& ram, Markup::Node node) -> void {
   if(auto memory = game.memory(node)) {
     if(memory->type == "RAM" && !memory->nonVolatile) return;
     if(memory->type == "RTC" && !memory->nonVolatile) return;
-    if(auto fp = platform->open(pathID(), std::string(memory->name()), File::Write)) {
-      fp->write(ram.data(), ram.size());
-    }
+    platform->write(pathID(), std::string(memory->name()), ram.data(), ram.size());
   }
 }
 
