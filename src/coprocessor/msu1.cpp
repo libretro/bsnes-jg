@@ -83,7 +83,7 @@ auto MSU1::unload() -> void {
 
 auto MSU1::power() -> void {
   create(MSU1::Enter, 44100);
-  stream = Emulator::audio.createStream(2, frequency);
+  stream = Emulator::audio.createStream(frequency);
 
   io.dataSeekOffset = 0;
   io.dataReadOffset = 0;

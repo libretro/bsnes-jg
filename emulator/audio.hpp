@@ -12,8 +12,7 @@ struct Stream;
 
 struct Audio {
   ~Audio();
-  //shared_pointer<Stream> createStream(unsigned channels, double frequency);
-  Stream* createStream(unsigned channels, double frequency);
+  Stream* createStream(double frequency);
   void reset(Interface* interface);
   void setFrequency(double frequency) { _frequency = frequency; }
   void setBuffer(float *buffer) { this->buffer = buffer; }
@@ -26,7 +25,6 @@ private:
   Interface* _interface = nullptr;
   std::vector<shared_pointer<Stream>> _streams;
 
-  unsigned _channels = 0;
   double _frequency = 48000.0;
   unsigned _rsqual = SRC_SINC_MEDIUM_QUALITY;
   unsigned _spf = 0;
@@ -36,7 +34,7 @@ private:
 };
 
 struct Stream {
-  void reset(unsigned channels, double inputFrequency, double outputFrequency);
+  void reset(double inputFrequency, double outputFrequency);
   void setFrequency(double inputFrequency, double outputFrequency);
   void write(const int16_t samples[]);
 

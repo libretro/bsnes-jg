@@ -399,7 +399,7 @@ auto ICD::unload() -> void {
 auto ICD::power(bool reset) -> void {
   auto frequency = clockFrequency() / 5;
   create(ICD::Enter, frequency);
-  if(!reset) stream = Emulator::audio.createStream(2, frequency / 128);
+  if(!reset) stream = Emulator::audio.createStream(frequency / 128);
 
   for(auto& packet : this->packet) packet = {};
   packetSize = 0;

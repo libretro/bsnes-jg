@@ -2,18 +2,17 @@
 
 namespace Emulator {
 
-Stream* Audio::createStream(unsigned channels, double frequency) {
-  _channels = std::max(_channels, channels);
+Stream* Audio::createStream(double frequency) {
   Stream *stream = new Stream;
-  stream->reset(channels, frequency, _frequency);
+  stream->reset(frequency, _frequency);
   _streams.push_back(stream);
   return stream;
 }
 
-void Stream::reset(unsigned channelCount, double inputFrequency, double outputFrequency) {
+void Stream::reset(double inputFrequency, double outputFrequency) {
   if (srcstate == nullptr) {
     int err;
-    srcstate = src_new(audio._rsqual, channelCount, &err);
+    srcstate = src_new(audio._rsqual, 2, &err); // 2 channels
     srcdata = { 0 }; // end_of_input MUST be zero initialized
   }
 
@@ -67,7 +66,6 @@ Audio::~Audio() {
 void Audio::reset(Interface* interface) {
   _interface = interface;
   _streams.clear();
-  _channels = 0;
 }
 
 void Audio::process() {

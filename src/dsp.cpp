@@ -63,7 +63,7 @@ auto DSP::load() -> bool {
 
 auto DSP::power(bool reset) -> void {
   clock = 0;
-  stream = Emulator::audio.createStream(2, system.apuFrequency() / 768.0);
+  stream = Emulator::audio.createStream(system.apuFrequency() / 768.0);
 
   if(!reset) {
     spc_dsp.init(apuram, apuram);
