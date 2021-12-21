@@ -17,8 +17,8 @@ struct MSU1 : Thread {
   auto serialize(serializer&) -> void;
 
 private:
-  vfs::file *dataFile;
-  vfs::file *audioFile;
+  std::ifstream dataFile;
+  std::ifstream audioFile;
 
   enum Flag : unsigned {
     Revision       = 0x02,  //max: 0x07

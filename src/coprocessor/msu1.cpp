@@ -1,3 +1,5 @@
+#include <fstream>
+#include <iostream>
 #include <sstream>
 #include <cstdio>
 #include "../sfc.hpp"
@@ -48,21 +50,26 @@ auto MSU1::main() -> void {
   int16_t right = 0;
 
   if(io.audioPlay) {
-    if(audioFile) {
-      if(audioFile->end()) {
+    if(audioFile.is_open()) {
+      if(audioFile.eof()) {
         if(!io.audioRepeat) {
           io.audioPlay = false;
-          audioFile->seek(io.audioPlayOffset = 8);
-        } else {
-          audioFile->seek(io.audioPlayOffset = io.audioLoopOffset);
+          audioFile.clear();
+          audioFile.seekg(io.audioPlayOffset = 8, std::ios::beg);
         }
-      } else {
+        else {
+          audioFile.clear();
+          audioFile.seekg(io.audioPlayOffset = io.audioLoopOffset, std::ios::beg);
+        }
+      }
+      else {
         io.audioPlayOffset += 4;
-        left  = (int16_t)(audioFile->readl(2) * (io.audioVolume / 255));
-        right = (int16_t)(audioFile->readl(2) * (io.audioVolume / 255));
+        left  = (int16_t)((audioFile.get() | (audioFile.get() << 8)) * (io.audioVolume / 255));
+        right = (int16_t)((audioFile.get() | (audioFile.get() << 8)) * (io.audioVolume / 255));
         if(dsp.mute()) left = 0, right = 0;
       }
-    } else {
+    }
+    else {
       io.audioPlay = false;
     }
   }
@@ -77,8 +84,8 @@ auto MSU1::step(unsigned clocks) -> void {
 }
 
 auto MSU1::unload() -> void {
-  delete dataFile; dataFile = nullptr;
-  delete audioFile; audioFile = nullptr;
+  dataFile.close();
+  audioFile.close();
 }
 
 auto MSU1::power() -> void {
@@ -108,29 +115,33 @@ auto MSU1::power() -> void {
 }
 
 auto MSU1::dataOpen() -> void {
-  delete dataFile; dataFile = nullptr;
-  std::string name = "msu1/data.rom";
-  if(dataFile = platform->open(ID::SuperFamicom, name, File::Read)) {
-    dataFile->seek(io.dataReadOffset);
-  }
+  dataFile.close();
+  dataFile = platform->fopen(ID::SuperFamicom, "msu1/data.rom");
 }
 
 auto MSU1::audioOpen() -> void {
-  delete audioFile; audioFile = nullptr;
+  audioFile.close();
   std::stringstream name;
   name << "msu1/track-" << io.audioTrack << ".pcm";
-  if(audioFile = platform->open(ID::SuperFamicom, name.str(), File::Read)) {
-    if(audioFile->size() >= 8) {
-      uint32_t header = audioFile->readm(4);
+  audioFile = platform->fopen(ID::SuperFamicom, name.str());
+  if(audioFile.is_open()) {
+    audioFile.seekg(0, audioFile.end);
+    unsigned size = audioFile.tellg();
+    audioFile.seekg(0, audioFile.beg);
+    if(size >= 8) {
+      uint32_t header = (audioFile.get() << 24) | (audioFile.get() << 16) |
+            (audioFile.get() << 8) | audioFile.get();
       if(header == 0x4d535531) {  //"MSU1"
-        io.audioLoopOffset = 8 + audioFile->readl(4) * 4;
-        if(io.audioLoopOffset > audioFile->size()) io.audioLoopOffset = 8;
+        uint32_t offset =  audioFile.get() | (audioFile.get() << 8) |
+            (audioFile.get() << 16) | (audioFile.get() << 24);
+        io.audioLoopOffset = 8 + offset * 4;
+        if(io.audioLoopOffset > size) io.audioLoopOffset = 8;
         io.audioError = false;
-        audioFile->seek(io.audioPlayOffset);
+        audioFile.seekg(io.audioPlayOffset, std::ios::beg);
         return;
       }
     }
-    delete audioFile; audioFile = nullptr;
+    audioFile.close();
   }
   io.audioError = true;
 }
@@ -151,9 +162,9 @@ auto MSU1::readIO(unsigned addr, uint8_t) -> uint8_t {
   case 0x2001:
     if(io.dataBusy) return 0x00;
     if(!dataFile) return 0x00;
-    if(dataFile->end()) return 0x00;
+    if(dataFile.eof()) return 0x00;
     io.dataReadOffset++;
-    return dataFile->read();
+    return dataFile.get();
   case 0x2002: return 'S';
   case 0x2003: return '-';
   case 0x2004: return 'M';
@@ -174,7 +185,7 @@ auto MSU1::writeIO(unsigned addr, uint8_t data) -> void {
   case 0x2002: io.dataSeekOffset = io.dataSeekOffset & 0xff00ffff | data << 16; break;
   case 0x2003: io.dataSeekOffset = io.dataSeekOffset & 0x00ffffff | data << 24;
     io.dataReadOffset = io.dataSeekOffset;
-    if(dataFile) dataFile->seek(io.dataReadOffset);
+    if(dataFile.is_open()) dataFile.seekg(io.dataReadOffset, std::ios::beg);
     break;
   case 0x2004: io.audioTrack = io.audioTrack & 0xff00 | data << 0; break;
   case 0x2005: io.audioTrack = io.audioTrack & 0x00ff | data << 8;

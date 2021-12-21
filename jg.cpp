@@ -129,6 +129,7 @@ struct Program : Emulator::Platform {
         vfs::file::mode mode, bool required) override;
     Emulator::Platform::Load load(unsigned id, std::string name,
         std::string type, std::vector<std::string> options = {}) override;
+    std::ifstream fopen(unsigned id, std::string name) override;
     void write(unsigned id, std::string name, const uint8_t *data,
         unsigned size) override;
     void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
@@ -335,6 +336,21 @@ Emulator::Platform::Load Program::load(unsigned id, std::string name,
         }
     }
     return { id, "" };
+}
+
+std::ifstream Program::fopen(unsigned id, std::string name) {
+    std::string location;
+    if (name == "msu1/data.rom") {
+        location = superFamicom.location;
+        location = location.substr(0, location.find_last_of(".")) + ".msu";
+    }
+    else if (name.find("msu1/track") != std::string::npos) {
+        location = superFamicom.location;
+        location = location.substr(0, location.find_last_of(".")) +
+            name.substr(name.find_first_of("track") + 5);
+    }
+    std::ifstream stream(location, std::ios::in | std::ios::binary);
+    return stream;
 }
 
 void Program::write(unsigned id, std::string name, const uint8_t *data,

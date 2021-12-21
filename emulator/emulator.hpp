@@ -2,6 +2,7 @@
 
 #include <libco/libco.h>
 
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -55,6 +56,7 @@ struct Platform {
 
   virtual auto open(unsigned id, std::string name, vfs::file::mode mode, bool required = false) -> vfs::file* { return {}; }
   virtual auto load(unsigned id, std::string name, std::string type, std::vector<std::string> options = {}) -> Load { return {}; }
+  virtual auto fopen(unsigned id, std::string name) -> std::ifstream { return {}; }
   virtual auto write(unsigned id, std::string name, const uint8_t *data, unsigned size) -> void {}
   virtual auto videoFrame(const uint16_t *data, unsigned pitch, unsigned width, unsigned height, unsigned scale) -> void {}
   virtual auto audioFrame(unsigned numsamps) -> void {}
