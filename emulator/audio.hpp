@@ -23,7 +23,7 @@ private:
   void process();
 
   Interface* _interface = nullptr;
-  std::vector<shared_pointer<Stream>> _streams;
+  std::vector<Stream*> _streams;
 
   double _frequency = 48000.0;
   unsigned _rsqual = SRC_SINC_MEDIUM_QUALITY;
