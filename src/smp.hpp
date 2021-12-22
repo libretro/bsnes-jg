@@ -90,8 +90,8 @@ private:
   Timer<128> timer1;
   Timer< 16> timer2;
 
-  inline auto wait(nall::maybe<uint16_t> address = nothing, bool half = false) -> void;
-  inline auto waitIdle(nall::maybe<uint16_t> address = nothing, bool half = false) -> void;
+  inline auto wait(nall::maybe<uint16_t> address = nall::nothing, bool half = false) -> void;
+  inline auto waitIdle(nall::maybe<uint16_t> address = nall::nothing, bool half = false) -> void;
   inline auto step(unsigned clocks) -> void;
   inline auto stepIdle(unsigned clocks) -> void;
   inline auto stepTimers(unsigned clocks) -> void;

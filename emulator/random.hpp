@@ -14,7 +14,7 @@ struct Random {
     seed();
   }
 
-  auto seed(nall::maybe<uint32_t> seed = nothing, nall::maybe<uint32_t> sequence = nothing) -> void {
+  auto seed(nall::maybe<uint32_t> seed = nall::nothing, nall::maybe<uint32_t> sequence = nall::nothing) -> void {
     if(!seed) seed = (uint32_t)clock();
     if(!sequence) sequence = 0;
 

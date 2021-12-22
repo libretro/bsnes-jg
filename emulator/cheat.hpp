@@ -48,7 +48,7 @@ struct Cheat {
         return code.data;
       }
     }
-    return nothing;
+    return nall::nothing;
   }
 
   std::vector<Code> codes;

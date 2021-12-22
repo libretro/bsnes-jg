@@ -230,7 +230,7 @@ auto Game::load(std::string text) -> void {
 }
 
 auto Game::memory(nall::Markup::Node node) -> nall::maybe<Memory> {
-  if(!node) return nothing;
+  if(!node) return nall::nothing;
   for(auto& memory : memoryList) {
     auto type = node["type"].text();
     auto size = node["size"].natural();
@@ -246,12 +246,12 @@ auto Game::memory(nall::Markup::Node node) -> nall::maybe<Memory> {
     if(identifier && identifier != memory.identifier) continue;
     return memory;
   }
-  return nothing;
+  return nall::nothing;
 }
 
 auto Game::oscillator(nall::Natural<> index) -> nall::maybe<Oscillator> {
   if(index < oscillatorList.size()) return oscillatorList[index];
-  return nothing;
+  return nall::nothing;
 }
 
 Game::Memory::Memory(nall::Markup::Node node) {
