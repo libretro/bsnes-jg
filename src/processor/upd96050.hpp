@@ -48,12 +48,12 @@ struct uPD96050 {
 
     auto serialize(serializer&) -> void;
 
-    Boolean ov0;  //overflow 0
-    Boolean ov1;  //overflow 1
-    Boolean z;    //zero
-    Boolean c;    //carry
-    Boolean s0;   //sign 0
-    Boolean s1;   //sign 1
+    nall::Boolean ov0;  //overflow 0
+    nall::Boolean ov1;  //overflow 1
+    nall::Boolean z;    //zero
+    nall::Boolean c;    //carry
+    nall::Boolean s0;   //sign 0
+    nall::Boolean s1;   //sign 1
   };
 
   struct Status {
@@ -80,21 +80,21 @@ struct uPD96050 {
 
     auto serialize(serializer&) -> void;
 
-    Boolean p0;    //output port 0
-    Boolean p1;    //output port 1
-    Boolean ei;    //enable interrupts
-    Boolean sic;   //serial input control  (0 = 16-bit; 1 = 8-bit)
-    Boolean soc;   //serial output control (0 = 16-bit; 1 = 8-bit)
-    Boolean drc;   //data register size    (0 = 16-bit; 1 = 8-bit)
-    Boolean dma;   //data register DMA mode
-    Boolean drs;   //data register status  (1 = active; 0 = stopped)
-    Boolean usf0;  //user flag 0
-    Boolean usf1;  //user flag 1
-    Boolean rqm;   //request for master (=1 on internal access; =0 on external access)
+    nall::Boolean p0;    //output port 0
+    nall::Boolean p1;    //output port 1
+    nall::Boolean ei;    //enable interrupts
+    nall::Boolean sic;   //serial input control  (0 = 16-bit; 1 = 8-bit)
+    nall::Boolean soc;   //serial output control (0 = 16-bit; 1 = 8-bit)
+    nall::Boolean drc;   //data register size    (0 = 16-bit; 1 = 8-bit)
+    nall::Boolean dma;   //data register DMA mode
+    nall::Boolean drs;   //data register status  (1 = active; 0 = stopped)
+    nall::Boolean usf0;  //user flag 0
+    nall::Boolean usf1;  //user flag 1
+    nall::Boolean rqm;   //request for master (=1 on internal access; =0 on external access)
 
     //internal
-    Boolean siack;  //serial input acknowledge
-    Boolean soack;  //serial output acknowledge
+    nall::Boolean siack;  //serial input acknowledge
+    nall::Boolean soack;  //serial output acknowledge
   };
 
   struct Registers {

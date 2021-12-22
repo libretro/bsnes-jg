@@ -78,8 +78,8 @@ private:
     uint8_t stage1 = 0;
     uint8_t stage2 = 0;
     nall::Natural< 4>   stage3 = 0;
-    Boolean line = 0;
-    Boolean enable = 0;
+    nall::Boolean line = 0;
+    nall::Boolean enable = 0;
     uint8_t target = 0;
 
     auto step(unsigned clocks) -> void;

@@ -115,11 +115,11 @@ protected:
     nall::Natural<15> pb;    //program bank
     uint8_t  pc;  //program counter
 
-    Boolean n;  //negative
-    Boolean z;  //zero
-    Boolean c;  //carry
-    Boolean v;  //overflow
-    Boolean i;  //interrupt
+    nall::Boolean n;  //negative
+    nall::Boolean z;  //zero
+    nall::Boolean c;  //carry
+    nall::Boolean v;  //overflow
+    nall::Boolean i;  //interrupt
 
     nall::Natural<24> a;              //accumulator
     nall::Natural<15> p;              //page register

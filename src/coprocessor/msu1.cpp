@@ -207,7 +207,7 @@ void MSU1::writeIO(unsigned addr, uint8_t data) {
     if(io.audioError) break;
     io.audioPlay = bool(data & 1);
     io.audioRepeat = bool(data & 2);
-    Boolean audioResume = bool(data & 4);
+    nall::Boolean audioResume = bool(data & 4);
     if(!io.audioPlay && audioResume) {
       io.audioResumeTrack = io.audioTrack;
       io.audioResumeOffset = io.audioPlayOffset;

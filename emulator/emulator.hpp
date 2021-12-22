@@ -186,7 +186,7 @@ struct Game {
     string manufacturer;
     string architecture;
     string identifier;
-    Boolean nonVolatile;
+    nall::Boolean nonVolatile;
   };
 
   struct Oscillator {

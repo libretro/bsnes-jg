@@ -115,7 +115,7 @@ struct ARM7TDMI {
   auto serialize(serializer&) -> void;
 
   //disassembler.cpp
-  auto disassemble(maybe<uint32_t> pc = nothing, maybe<Boolean> thumb = nothing) -> string;
+  auto disassemble(maybe<uint32_t> pc = nothing, maybe<nall::Boolean> thumb = nothing) -> string;
   auto disassembleRegisters() -> string;
 
   struct GPR {
@@ -163,13 +163,13 @@ struct ARM7TDMI {
     auto serialize(serializer&) -> void;
 
     nall::Natural< 5> m;    //mode
-    Boolean t;  //thumb
-    Boolean f;  //fiq
-    Boolean i;  //irq
-    Boolean v;  //overflow
-    Boolean c;  //carry
-    Boolean z;  //zero
-    Boolean n;  //negative
+    nall::Boolean t;  //thumb
+    nall::Boolean f;  //fiq
+    nall::Boolean i;  //irq
+    nall::Boolean v;  //overflow
+    nall::Boolean c;  //carry
+    nall::Boolean z;  //zero
+    nall::Boolean n;  //negative
   };
 
   struct Processor {
@@ -212,7 +212,7 @@ struct ARM7TDMI {
     struct Instruction {
       uint32_t address;
       uint32_t instruction;
-      Boolean thumb;  //not used by fetch stage
+      nall::Boolean thumb;  //not used by fetch stage
     };
 
     nall::Natural< 1> reload = 1;
@@ -223,8 +223,8 @@ struct ARM7TDMI {
   } pipeline;
 
   uint32_t opcode;
-  Boolean carry;
-  Boolean irq;
+  nall::Boolean carry;
+  nall::Boolean irq;
 
   function<auto (uint32_t opcode) -> void> armInstruction[4096];
   function<auto () -> void> thumbInstruction[65536];

@@ -12,7 +12,7 @@ private:
   bool latched;
   unsigned counter;
 
-  Boolean b, y, select, start;
-  Boolean up, down, left, right;
-  Boolean a, x, l, r;
+  nall::Boolean b, y, select, start;
+  nall::Boolean up, down, left, right;
+  nall::Boolean a, x, l, r;
 };

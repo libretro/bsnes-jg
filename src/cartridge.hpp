@@ -24,32 +24,32 @@ struct Cartridge {
   } information;
 
   struct Has {
-    Boolean ICD;
-    Boolean MCC;
-    Boolean DIP;
-    Boolean Event;
-    Boolean SA1;
-    Boolean SuperFX;
-    Boolean ARMDSP;
-    Boolean HitachiDSP;
-    Boolean NECDSP;
-    Boolean EpsonRTC;
-    Boolean SharpRTC;
-    Boolean SPC7110;
-    Boolean SDD1;
-    Boolean OBC1;
-    Boolean MSU1;
+    nall::Boolean ICD;
+    nall::Boolean MCC;
+    nall::Boolean DIP;
+    nall::Boolean Event;
+    nall::Boolean SA1;
+    nall::Boolean SuperFX;
+    nall::Boolean ARMDSP;
+    nall::Boolean HitachiDSP;
+    nall::Boolean NECDSP;
+    nall::Boolean EpsonRTC;
+    nall::Boolean SharpRTC;
+    nall::Boolean SPC7110;
+    nall::Boolean SDD1;
+    nall::Boolean OBC1;
+    nall::Boolean MSU1;
 
-    Boolean Cx4;
-    Boolean DSP1;
-    Boolean DSP2;
-    Boolean DSP4;
-    Boolean ST0010;
+    nall::Boolean Cx4;
+    nall::Boolean DSP1;
+    nall::Boolean DSP2;
+    nall::Boolean DSP4;
+    nall::Boolean ST0010;
 
-    Boolean GameBoySlot;
-    Boolean BSMemorySlot;
-    Boolean SufamiTurboSlotA;
-    Boolean SufamiTurboSlotB;
+    nall::Boolean GameBoySlot;
+    nall::Boolean BSMemorySlot;
+    nall::Boolean SufamiTurboSlotA;
+    nall::Boolean SufamiTurboSlotB;
   } has;
 
 private:

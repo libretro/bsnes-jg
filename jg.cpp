@@ -161,8 +161,8 @@ public:
         std::string location;
         std::string manifest;
         nall::Markup::Node document;
-        Boolean patched;
-        Boolean verified;
+        nall::Boolean patched;
+        nall::Boolean verified;
     };
     
     struct SuperFamicom : Game {
