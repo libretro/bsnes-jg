@@ -26,8 +26,6 @@ auto Controller::iobit(bool data) -> void {
   }
 }
 
-//
-
 auto ControllerPort::connect(unsigned deviceID) -> void {
   if(!system.loaded()) return;
   delete device;

@@ -203,8 +203,6 @@ void ST0010::op_01(int16_t x0, int16_t y0, int16_t &x1, int16_t &y1, int16_t &qu
   theta = (arctan[y1][x1] << 8) ^ quadrant;
 }
 
-//
-
 void ST0010::op_01() {
   int16_t x0 = readw(0x0000);
   int16_t y0 = readw(0x0002);

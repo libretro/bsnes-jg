@@ -465,15 +465,11 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
   return queue.flush();
 }
 
-//
-
 auto BSMemory::failed() -> void {
   compatible.status.writeFailed = 1;  //datasheet specifies these are for write/erase failures
   compatible.status.eraseFailed = 1;  //yet all errors seem to set both of these bits ...
   global.status.failed = 1;
 }
-
-//
 
 auto BSMemory::Page::swap() -> void {
   self->global.status.page ^= 1;
@@ -487,13 +483,9 @@ auto BSMemory::Page::write(uint8_t address, uint8_t data) -> void {
   buffer[self->global.status.page][address] = data;
 }
 
-//
-
 auto BSMemory::BlockInformation::bitCount() const -> unsigned { return 16; }
 auto BSMemory::BlockInformation::byteCount() const -> unsigned { return 1 << bitCount(); }
 auto BSMemory::BlockInformation::count() const -> unsigned { return self->size() >> bitCount(); }
-
-//
 
 auto BSMemory::Block::read(unsigned address) -> uint8_t {
   address &= byteCount() - 1;
@@ -556,13 +548,9 @@ auto BSMemory::Block::update() -> void {
   status.locked = locked;
 }
 
-//
-
 auto BSMemory::Blocks::operator()(nall::Natural< 6> id) -> Block& {
   return self->blocks[id & count() - 1];
 }
-
-//
 
 auto BSMemory::Block::Status::operator()() -> uint8_t {
   return (  //d0-d1 are reserved; always return zero
@@ -575,8 +563,6 @@ auto BSMemory::Block::Status::operator()() -> uint8_t {
   );
 }
 
-//
-
 auto BSMemory::Compatible::Status::operator()() -> uint8_t {
   return (  //d0-d2 are reserved; always return zero
     vppLow         << 3
@@ -586,8 +572,6 @@ auto BSMemory::Compatible::Status::operator()() -> uint8_t {
   | ready          << 7
   );
 }
-
-//
 
 auto BSMemory::Global::Status::operator()() -> uint8_t {
   return (
@@ -601,8 +585,6 @@ auto BSMemory::Global::Status::operator()() -> uint8_t {
   | ready         << 7
   );
 }
-
-//
 
 auto BSMemory::Queue::flush() -> void {
   history[0] = {};

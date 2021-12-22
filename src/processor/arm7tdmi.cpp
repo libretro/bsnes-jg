@@ -1414,8 +1414,6 @@ auto ARM7TDMI::disassembleRegisters() -> string {
   return output;
 }
 
-//
-
 auto ARM7TDMI::armDisassembleBranch
 (nall::Integer<24> displacement, nall::Natural< 1> link) -> string {
   return {"b", link ? "l" : "", _c, " 0x", hex(_pc + 8 + displacement * 4, 8L)};
@@ -1620,8 +1618,6 @@ auto ARM7TDMI::armDisassembleUndefined
 () -> string {
   return {"undefined"};
 }
-
-//
 
 auto ARM7TDMI::thumbDisassembleALU
 (nall::Natural< 3> d, nall::Natural< 3> m, nall::Natural< 4> mode) -> string {
