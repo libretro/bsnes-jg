@@ -127,7 +127,7 @@ struct Configuration {
   } hacks;
 
 private:
-  void process(Markup::Node document, bool load);
+  void process(nall::Markup::Node document, bool load);
 };
 
 extern Configuration configuration;

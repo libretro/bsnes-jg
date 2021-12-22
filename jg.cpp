@@ -160,7 +160,7 @@ public:
         std::string option;
         std::string location;
         std::string manifest;
-        Markup::Node document;
+        nall::Markup::Node document;
         Boolean patched;
         Boolean verified;
     };

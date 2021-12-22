@@ -6,7 +6,7 @@ Settings settings;
 
 Configuration configuration;
 
-void Configuration::process(Markup::Node document, bool load) {
+void Configuration::process(nall::Markup::Node document, bool load) {
   #define bind(type, path, name) \
     if(load) { \
       if(auto node = document[path]) name = node.type(); \
@@ -36,7 +36,7 @@ void Configuration::process(Markup::Node document, bool load) {
 }
 
 string Configuration::read() {
-  Markup::Node document;
+  nall::Markup::Node document;
   process(document, false);
   return BML::serialize(document, " ");
 }
