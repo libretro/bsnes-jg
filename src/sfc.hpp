@@ -110,12 +110,12 @@ namespace SuperFamicom {
       if(s.mode() == serializer::Load) {
         s.array(stack, Thread::Size);
         s.boolean(active);
-        memory::copy(thread, stack, Thread::Size);
+        nall::memory::copy(thread, stack, Thread::Size);
         if(active) scheduler.active = thread;
       }
 
       if(s.mode() == serializer::Save) {
-        memory::copy(stack, thread, Thread::Size);
+        nall::memory::copy(stack, thread, Thread::Size);
         s.array(stack, Thread::Size);
         s.boolean(active);
       }

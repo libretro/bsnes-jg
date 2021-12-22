@@ -19,7 +19,7 @@ auto System::serialize(bool synchronize) -> serializer {
   char version[16] = {};
   char description[512] = {};
   bool placeholder = false;
-  memory::copy(&version, (const char*)Emulator::SerializerVersion.c_str(), Emulator::SerializerVersion.size());
+  nall::memory::copy(&version, (const char*)Emulator::SerializerVersion.c_str(), Emulator::SerializerVersion.size());
 
   serializer s(serializeSize);
   s.integer(signature);

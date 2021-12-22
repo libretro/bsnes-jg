@@ -662,7 +662,7 @@ bool Program::loadSuperFamicom(std::string location) {
     //superFamicom.patched = applyPatchIPS(rom, location);
     if ((rom.size() & 0x7fff) == 512) {
         //remove copier header
-        memory::move(&rom[0], &rom[512], rom.size() - 512);
+        nall::memory::move(&rom[0], &rom[512], rom.size() - 512);
         rom.resize(rom.size() - 512);
     }
     
@@ -693,22 +693,22 @@ bool Program::loadSuperFamicom(std::string location) {
     unsigned offset = 0;
     if (auto size = heuristics.programRomSize()) {
         superFamicom.program.resize(size);
-        memory::copy(&superFamicom.program[0], &rom[offset], size);
+        nall::memory::copy(&superFamicom.program[0], &rom[offset], size);
         offset += size;
     }
     if (auto size = heuristics.dataRomSize()) {
         superFamicom.data.resize(size);
-        memory::copy(&superFamicom.data[0], &rom[offset], size);
+        nall::memory::copy(&superFamicom.data[0], &rom[offset], size);
         offset += size;
     }
     if (auto size = heuristics.expansionRomSize()) {
         superFamicom.expansion.resize(size);
-        memory::copy(&superFamicom.expansion[0], &rom[offset], size);
+        nall::memory::copy(&superFamicom.expansion[0], &rom[offset], size);
         offset += size;
     }
     if (auto size = heuristics.firmwareRomSize()) {
         superFamicom.firmware.resize(size);
-        memory::copy(&superFamicom.firmware[0], &rom[offset], size);
+        nall::memory::copy(&superFamicom.firmware[0], &rom[offset], size);
         offset += size;
     }
     return true;

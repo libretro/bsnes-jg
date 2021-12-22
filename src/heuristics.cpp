@@ -387,7 +387,7 @@ std::string SufamiTurbo::manifest() const {
 SuperFamicom::SuperFamicom(std::vector<uint8_t>& data, std::string location) : data(data), location(location) {
   if((size() & 0x7fff) == 512) {
     //remove header if present
-    //memory::move(&data[0], &data[512], size() - 512);
+    //nall::memory::move(&data[0], &data[512], size() - 512);
     //data.resize(size() - 512);
     data.erase(data.begin(), data.begin() + 512);
   }

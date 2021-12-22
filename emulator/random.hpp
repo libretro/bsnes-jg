@@ -45,7 +45,7 @@ struct Random {
 
   auto array(uint8_t* data, uint32_t size) -> void {
     if(_entropy == Entropy::None) {
-      memory::fill(data, size);
+      nall::memory::fill(data, size);
       return;
     }
 
