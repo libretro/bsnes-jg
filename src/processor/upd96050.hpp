@@ -101,9 +101,9 @@ struct uPD96050 {
     auto serialize(serializer&) -> void;
 
     uint16_t stack[16];    //LIFO
-    VariadicNatural pc;    //program counter
-    VariadicNatural rp;    //ROM pointer
-    VariadicNatural dp;    //data pointer
+    nall::VariadicNatural pc;    //program counter
+    nall::VariadicNatural rp;    //ROM pointer
+    nall::VariadicNatural dp;    //data pointer
     nall::Natural< 4> sp;              //stack pointer
     uint16_t si;           //serial input
     uint16_t so;           //serial output
