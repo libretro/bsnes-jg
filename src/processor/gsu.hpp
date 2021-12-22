@@ -41,20 +41,20 @@ struct GSU {
   struct SFR {
     uint16_t data = 0;
 
-    BitField<16, 1> z   {&data};  //zero flag
-    BitField<16, 2> cy  {&data};  //carry flag
-    BitField<16, 3> s   {&data};  //sign flag
-    BitField<16, 4> ov  {&data};  //overflow flag
-    BitField<16, 5> g   {&data};  //go flag
-    BitField<16, 6> r   {&data};  //ROM r14 flag
-    BitField<16, 8> alt1{&data};  //alt1 instruction mode
-    BitField<16, 9> alt2{&data};  //alt2 instruction mode
-    BitField<16,10> il  {&data};  //immediate lower 8-bit flag
-    BitField<16,11> ih  {&data};  //immediate upper 8-bit flag
-    BitField<16,12> b   {&data};  //with flag
-    BitField<16,15> irq {&data};  //interrupt flag
+    nall::BitField<16, 1> z   {&data};  //zero flag
+    nall::BitField<16, 2> cy  {&data};  //carry flag
+    nall::BitField<16, 3> s   {&data};  //sign flag
+    nall::BitField<16, 4> ov  {&data};  //overflow flag
+    nall::BitField<16, 5> g   {&data};  //go flag
+    nall::BitField<16, 6> r   {&data};  //ROM r14 flag
+    nall::BitField<16, 8> alt1{&data};  //alt1 instruction mode
+    nall::BitField<16, 9> alt2{&data};  //alt2 instruction mode
+    nall::BitField<16,10> il  {&data};  //immediate lower 8-bit flag
+    nall::BitField<16,11> ih  {&data};  //immediate upper 8-bit flag
+    nall::BitField<16,12> b   {&data};  //with flag
+    nall::BitField<16,15> irq {&data};  //interrupt flag
 
-    BitRange<16,8,9> alt{&data};  //composite instruction mode
+    nall::BitRange<16,8,9> alt{&data};  //composite instruction mode
 
     inline operator unsigned() const { return data & 0x9f7e; }
     inline auto& operator=(const unsigned value) { return data = value, *this; }
