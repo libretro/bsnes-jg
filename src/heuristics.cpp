@@ -523,7 +523,7 @@ std::string SuperFamicom::region() const {
 
   auto valid = [](char n) { return (n >= '0' && n <= '9') || (n >= 'A' && n <= 'Z'); };
   if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) & valid(C) & valid(D)) {
-    string code{A, B, C, D};
+    nall::string code{A, B, C, D};
     if(D == 'B') region = {"SNS-",  code, "-BRA"};
     if(D == 'C') region = {"SNSN-", code, "-ROC"};
     if(D == 'D') region = {"SNSP-", code, "-NOE"};

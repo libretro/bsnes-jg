@@ -35,18 +35,18 @@ void Configuration::process(nall::Markup::Node document, bool load) {
   #undef bind
 }
 
-string Configuration::read() {
+nall::string Configuration::read() {
   nall::Markup::Node document;
   process(document, false);
   return BML::serialize(document, " ");
 }
 
-string Configuration::read(string name) {
+nall::string Configuration::read(nall::string name) {
   auto document = BML::unserialize(read());
   return document[name].text();
 }
 
-bool Configuration::write(string configuration) {
+bool Configuration::write(nall::string configuration) {
   *this = {};
 
   if(auto document = BML::unserialize(configuration)) {
@@ -56,7 +56,7 @@ bool Configuration::write(string configuration) {
   return false;
 }
 
-bool Configuration::write(string name, string value) {
+bool Configuration::write(nall::string name, nall::string value) {
   if(SuperFamicom::system.loaded() && name.beginsWith("System/")) return false;
 
   auto document = BML::unserialize(read());
@@ -131,19 +131,19 @@ bool Interface::loaded() {
   return system.loaded();
 }
 
-std::vector<string> Interface::hashes() {
+std::vector<nall::string> Interface::hashes() {
   return cartridge.hashes();
 }
 
-std::vector<string> Interface::manifests() {
+std::vector<nall::string> Interface::manifests() {
   return cartridge.manifests();
 }
 
-std::vector<string> Interface::titles() {
+std::vector<nall::string> Interface::titles() {
   return cartridge.titles();
 }
 
-string Interface::title() {
+nall::string Interface::title() {
   return cartridge.title();
 }
 
@@ -328,7 +328,7 @@ uint8_t Interface::read(nall::Natural<24> address) {
   return cpu.readDisassembler(address);
 }
 
-void Interface::cheats(const std::vector<string>& list) {
+void Interface::cheats(const std::vector<nall::string>& list) {
   if(cartridge.has.ICD) {
     icd.cheats.assign(list);
     return;
@@ -385,19 +385,19 @@ void Interface::cheats(const std::vector<string>& list) {
   Memory::GlobalWriteEnable = false;
 }
 
-string Interface::configuration() {
+nall::string Interface::configuration() {
   return SuperFamicom::configuration.read();
 }
 
-string Interface::configuration(string name) {
+nall::string Interface::configuration(nall::string name) {
   return SuperFamicom::configuration.read(name);
 }
 
-bool Interface::configure(string configuration) {
+bool Interface::configure(nall::string configuration) {
   return SuperFamicom::configuration.write(configuration);
 }
 
-bool Interface::configure(string name, string value) {
+bool Interface::configure(nall::string name, nall::string value) {
   return SuperFamicom::configuration.write(name, value);
 }
 

@@ -314,8 +314,8 @@ auto uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) -> void {
   }
 }
 
-/*auto uPD96050::disassemble(nall::Natural<14> ip) -> string {
-  string output = {hex(ip, 4L), "  "};
+/*auto uPD96050::disassemble(nall::Natural<14> ip) -> nall::string {
+  nall::string output = {hex(ip, 4L), "  "};
   nall::Natural<24> opcode = programROM[ip];
   nall::Natural< 2> type = opcode >> 22;
 

@@ -174,9 +174,9 @@ struct Bus {
   unsigned map(
     const function<uint8_t (unsigned, uint8_t)>& read,
     const function<void (unsigned, uint8_t)>& write,
-    const string& address, unsigned size = 0, unsigned base = 0, unsigned mask = 0
+    const nall::string& address, unsigned size = 0, unsigned base = 0, unsigned mask = 0
   );
-  void unmap(const string& address);
+  void unmap(const nall::string& address);
 
 private:
   uint8_t *lookup = nullptr;

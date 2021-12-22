@@ -24,7 +24,7 @@ struct uPD96050 {
   auto readDP(nall::Natural<12> addr) -> uint8_t;
   auto writeDP(nall::Natural<12> addr, uint8_t data) -> void;
 
-  //auto disassemble(nall::Natural<14> ip) -> string;
+  //auto disassemble(nall::Natural<14> ip) -> nall::string;
 
   enum class Revision : unsigned { uPD7725, uPD96050 } revision;
   nall::Natural<24> programROM[16384];

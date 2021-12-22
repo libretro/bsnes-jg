@@ -5,8 +5,8 @@
 
 namespace SuperFamicom {
 
-nall::Markup::Node Cartridge::loadBoard(string board) {
-  string output;
+nall::Markup::Node Cartridge::loadBoard(nall::string board) {
+  nall::string output;
 
   if(board.beginsWith("SNSP-")) board.replace("SNSP-", "SHVC-", 1L);
   if(board.beginsWith("MAXI-")) board.replace("MAXI-", "SHVC-", 1L);
@@ -22,7 +22,7 @@ nall::Markup::Node Cartridge::loadBoard(string board) {
       if(!matched && id.match("*(*)*")) {
         auto part = id.transform("()", "||").split("|");
         for(auto& revision : part(1).split(",")) {
-          if(string{part(0), revision, part(2)} == board) matched = true;
+          if(nall::string{part(0), revision, part(2)} == board) matched = true;
         }
       }
       if(matched) return leaf;
@@ -924,8 +924,8 @@ void Cartridge::serialize(serializer& s) {
 
 Cartridge cartridge;
 
-std::vector<string> Cartridge::hashes() const {
-  std::vector<string> hashes;
+std::vector<nall::string> Cartridge::hashes() const {
+  std::vector<nall::string> hashes;
   hashes.push_back(game.sha256);
   if(slotGameBoy.sha256) hashes.push_back(slotGameBoy.sha256);
   if(slotBSMemory.sha256) hashes.push_back(slotBSMemory.sha256);
@@ -934,9 +934,9 @@ std::vector<string> Cartridge::hashes() const {
   return hashes;
 }
 
-std::vector<string> Cartridge::manifests() const {
-  std::vector<string> manifests;
-  manifests.push_back(string{BML::serialize(game.document), "\n", BML::serialize(board)});
+std::vector<nall::string> Cartridge::manifests() const {
+  std::vector<nall::string> manifests;
+  manifests.push_back(nall::string{BML::serialize(game.document), "\n", BML::serialize(board)});
   if(slotGameBoy.document) manifests.push_back(BML::serialize(slotGameBoy.document));
   if(slotBSMemory.document) manifests.push_back(BML::serialize(slotBSMemory.document));
   if(slotSufamiTurboA.document) manifests.push_back(BML::serialize(slotSufamiTurboA.document));
@@ -944,8 +944,8 @@ std::vector<string> Cartridge::manifests() const {
   return manifests;
 }
 
-std::vector<string> Cartridge::titles() const {
-  std::vector<string> titles;
+std::vector<nall::string> Cartridge::titles() const {
+  std::vector<nall::string> titles;
   titles.push_back(game.label);
   if(slotGameBoy.label) titles.push_back(slotGameBoy.label);
   if(slotBSMemory.label) titles.push_back(slotBSMemory.label);
@@ -954,7 +954,7 @@ std::vector<string> Cartridge::titles() const {
   return titles;
 }
 
-string Cartridge::title() const {
+nall::string Cartridge::title() const {
   if(slotGameBoy.label) return slotGameBoy.label;
   if(has.MCC && slotBSMemory.label) return slotBSMemory.label;
   if(slotBSMemory.label) return {game.label, " + ", slotBSMemory.label};

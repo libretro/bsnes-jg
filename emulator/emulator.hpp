@@ -48,12 +48,12 @@ namespace Emulator {
 struct Platform {
   struct Load {
     Load() = default;
-    Load(unsigned pathID, string option = "") : valid(true), pathID(pathID), option(option) {}
+    Load(unsigned pathID, nall::string option = "") : valid(true), pathID(pathID), option(option) {}
     explicit operator bool() const { return valid; }
 
     bool valid = false;
     unsigned pathID = 0;
-    string option;
+    nall::string option;
   };
 
   virtual auto open(unsigned id, std::string name, nall::vfs::file::mode mode, bool required = false) -> nall::vfs::file* { return {}; }
@@ -81,7 +81,7 @@ struct Interface {
       LCD,
     };};
     unsigned id = 0;
-    string name;
+    nall::string name;
     unsigned type = 0;
     unsigned colors = 0;
     unsigned width = 0;
@@ -123,10 +123,10 @@ struct Interface {
 
   //game interface
   virtual auto loaded() -> bool { return false; }
-  virtual auto hashes() -> std::vector<string> { return {}; }
-  virtual auto manifests() -> std::vector<string> { return {}; }
-  virtual auto titles() -> std::vector<string> { return {}; }
-  virtual auto title() -> string { return {}; }
+  virtual auto hashes() -> std::vector<nall::string> { return {}; }
+  virtual auto manifests() -> std::vector<nall::string> { return {}; }
+  virtual auto titles() -> std::vector<nall::string> { return {}; }
+  virtual auto title() -> nall::string { return {}; }
   virtual auto load() -> bool { return false; }
   virtual auto save() -> void {}
   virtual auto unload() -> void {}
@@ -151,13 +151,13 @@ struct Interface {
 
   //cheat functions
   virtual auto read(nall::Natural<24> address) -> uint8_t { return 0; }
-  virtual auto cheats(const std::vector<string>& = {}) -> void {}
+  virtual auto cheats(const std::vector<nall::string>& = {}) -> void {}
 
   //configuration
-  virtual auto configuration() -> string { return {}; }
-  virtual auto configuration(string name) -> string { return {}; }
-  virtual auto configure(string configuration = "") -> bool { return false; }
-  virtual auto configure(string name, string value) -> bool { return false; }
+  virtual auto configuration() -> nall::string { return {}; }
+  virtual auto configuration(nall::string name) -> nall::string { return {}; }
+  virtual auto configure(nall::string configuration = "") -> bool { return false; }
+  virtual auto configure(nall::string name, nall::string value) -> bool { return false; }
 
   virtual auto frameSkip() -> unsigned { return 0; }
   virtual auto setFrameSkip(unsigned frameSkip) -> void {}
@@ -178,14 +178,14 @@ struct Game {
     Memory() = default;
     inline Memory(nall::Markup::Node);
     explicit operator bool() const { return (bool)type; }
-    inline auto name() const -> string;
+    inline auto name() const -> nall::string;
 
-    string type;
+    nall::string type;
     Natural<> size;
-    string content;
-    string manufacturer;
-    string architecture;
-    string identifier;
+    nall::string content;
+    nall::string manufacturer;
+    nall::string architecture;
+    nall::string identifier;
     nall::Boolean nonVolatile;
   };
 
@@ -198,13 +198,13 @@ struct Game {
   };
 
   nall::Markup::Node document;
-  string sha256;
-  string label;
+  nall::string sha256;
+  nall::string label;
   std::string name;
-  string title;
-  string region;
-  string revision;
-  string board;
+  nall::string title;
+  nall::string region;
+  nall::string revision;
+  nall::string board;
   std::vector<Memory> memoryList;
   std::vector<Oscillator> oscillatorList;
 };
@@ -264,9 +264,9 @@ Game::Memory::Memory(nall::Markup::Node node) {
   nonVolatile = !(bool)node["volatile"];
 }
 
-auto Game::Memory::name() const -> string {
-  if(architecture) return string{architecture, ".", content, ".", type}.downcase();
-  return string{content, ".", type}.downcase();
+auto Game::Memory::name() const -> nall::string {
+  if(architecture) return nall::string{architecture, ".", content, ".", type}.downcase();
+  return nall::string{content, ".", type}.downcase();
 }
 
 Game::Oscillator::Oscillator(nall::Markup::Node node) {

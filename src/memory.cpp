@@ -30,7 +30,7 @@ void Bus::reset() {
 unsigned Bus::map(
   const function<uint8_t (unsigned, uint8_t)>& read,
   const function<void  (unsigned, uint8_t)>& write,
-  const string& addr, unsigned size, unsigned base, unsigned mask
+  const nall::string& addr, unsigned size, unsigned base, unsigned mask
 ) {
   unsigned id = 1;
   while(counter[id]) {
@@ -74,7 +74,7 @@ unsigned Bus::map(
   return id;
 }
 
-void Bus::unmap(const string& addr) {
+void Bus::unmap(const nall::string& addr) {
   auto p = addr.split(":", 1L);
   auto banks = p(0).split(",");
   auto addrs = p(1).split(",");

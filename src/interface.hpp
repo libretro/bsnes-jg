@@ -39,10 +39,10 @@ struct Interface : Emulator::Interface {
   uint64_t color(uint32_t color) override;
 
   bool loaded() override;
-  std::vector<string> hashes() override;
-  std::vector<string> manifests() override;
-  std::vector<string> titles() override;
-  string title() override;
+  std::vector<nall::string> hashes() override;
+  std::vector<nall::string> manifests() override;
+  std::vector<nall::string> titles() override;
+  nall::string title() override;
   bool load() override;
   void save() override;
   void unload() override;
@@ -64,12 +64,12 @@ struct Interface : Emulator::Interface {
   bool unserialize(serializer&) override;
 
   uint8_t read(nall::Natural<24> address) override;
-  void cheats(const std::vector<string>&) override;
+  void cheats(const std::vector<nall::string>&) override;
 
-  string configuration() override;
-  string configuration(string name) override;
-  bool configure(string configuration) override;
-  bool configure(string name, string value) override;
+  nall::string configuration() override;
+  nall::string configuration(nall::string name) override;
+  bool configure(nall::string configuration) override;
+  bool configure(nall::string name, nall::string value) override;
 
   unsigned frameSkip() override;
   void setFrameSkip(unsigned frameSkip) override;
@@ -79,10 +79,10 @@ struct Interface : Emulator::Interface {
 };
 
 struct Configuration {
-  string read();
-  string read(string);
-  bool write(string);
-  bool write(string, string);
+  nall::string read();
+  nall::string read(nall::string);
+  bool write(nall::string);
+  bool write(nall::string, nall::string);
 
   struct System {
     struct CPU {
@@ -98,7 +98,7 @@ struct Configuration {
       unsigned version = 3;
     } ppu2;
     struct Serialization {
-      string method = "Fast";
+      nall::string method = "Fast";
     } serialization;
   } system;
 
@@ -109,7 +109,7 @@ struct Configuration {
 
   struct Hacks {
     bool hotfixes = true;
-    string entropy = "Low";
+    nall::string entropy = "Low";
     struct CPU {
       unsigned overclock = 100;
       bool fastMath = false;

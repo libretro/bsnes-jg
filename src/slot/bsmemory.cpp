@@ -164,7 +164,7 @@ auto BSMemory::unload() -> void {
   if(ROM) return memory.reset();
 
   if(auto fp = platform->open(pathID, "metadata.bml", File::Write, File::Optional)) {
-    string manifest;
+    nall::string manifest;
     manifest.append("flash\n");
     manifest.append("  vendor: 0x", hex(chip.vendor,  4L), "\n");
     manifest.append("  device: 0x", hex(chip.device,  4L), "\n");

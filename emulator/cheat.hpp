@@ -31,7 +31,7 @@ struct Cheat {
     codes.push_back({address, data, compare});
   }
 
-  auto assign(const std::vector<string>& list) -> void {
+  auto assign(const std::vector<nall::string>& list) -> void {
     reset();
     for(auto& entry : list) {
       for(auto code : entry.split("+")) {

@@ -100,7 +100,7 @@ enum {
     RSQUAL,
 };
 
-static std::vector<string> cheatList;
+static std::vector<nall::string> cheatList;
 
 static int vidmult = 1;
 static int ss_offset_x = 0;
@@ -674,7 +674,7 @@ bool Program::loadSuperFamicom(std::string location) {
     
     std::string dbpath = std::string(pathinfo.core) + "/Super Famicom.bml";
     
-    if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
+    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = BML::serialize(game);
             //the internal ROM header title is not present in the database, but
@@ -742,7 +742,7 @@ bool Program::loadBSMemory(std::string location) {
     
     std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
     
-    if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
+    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = BML::serialize(game);
             bsMemory.verified = true;
@@ -773,7 +773,7 @@ bool Program::loadSufamiTurboA(std::string location) {
     
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
     
-    if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
+    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = BML::serialize(game);
             sufamiTurboA.verified = true;
@@ -782,7 +782,7 @@ bool Program::loadSufamiTurboA(std::string location) {
     
     sufamiTurboA.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     sufamiTurboA.document = BML::unserialize(sufamiTurboA.manifest.c_str());
-    sufamiTurboA.location = string(gameinfo.path);//location;
+    sufamiTurboA.location = nall::string(gameinfo.path);//location;
     
     sufamiTurboA.program = rom;
     return true;
@@ -803,7 +803,7 @@ bool Program::loadSufamiTurboB(std::string location) {
     
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
     
-    if (auto document = BML::unserialize(string::read(dbpath.c_str()))) {
+    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = BML::serialize(game);
             sufamiTurboB.verified = true;
@@ -835,7 +835,7 @@ void Program::hackPatchMemory(std::vector<uint8_t>& data) {
     }
 }
 
-static bool decodeSNES(string& code) {
+static bool decodeSNES(nall::string& code) {
     //Game Genie
     if (code.size() == 9 && code[4u] == '-') {
         //strip '-'
@@ -889,7 +889,7 @@ static bool decodeSNES(string& code) {
     
     //higan: address=data
     if (code.size() == 9 && code[6u] == '=') {
-        string nibbles = {code.slice(0, 6), code.slice(7, 2)};
+        nall::string nibbles = {code.slice(0, 6), code.slice(7, 2)};
         //validate
         for (unsigned n : nibbles) {
             if (n >= '0' && n <= '9') continue;
@@ -902,7 +902,7 @@ static bool decodeSNES(string& code) {
     
     //higan: address=compare?data
     if (code.size() == 12 && code[6u] == '=' && code[9u] == '?') {
-        string nibbles =
+        nall::string nibbles =
             {code.slice(0, 6), code.slice(7, 2), code.slice(10, 2)};
         //validate
         for (unsigned n : nibbles) {
@@ -918,8 +918,8 @@ static bool decodeSNES(string& code) {
     return false;
 }
 
-static bool decodeGB(string& code) {
-    auto nibble = [&](const string& s, unsigned index) -> unsigned {
+static bool decodeGB(nall::string& code) {
+    auto nibble = [&](const nall::string& s, unsigned index) -> unsigned {
         if (index >= s.size()) return 0;
         if (s[index] >= '0' && s[index] <= '9') return s[index] - '0';
         return s[index] - 'a' + 10;
@@ -985,7 +985,7 @@ static bool decodeGB(string& code) {
     
     //higan: address=data
     if (code.size() == 7 && code[4u] == '=') {
-        string nibbles = {code.slice(0, 4), code.slice(5, 2)};
+        nall::string nibbles = {code.slice(0, 4), code.slice(5, 2)};
         //validate
         for (unsigned n : nibbles) {
             if (n >= '0' && n <= '9') continue;
@@ -998,7 +998,7 @@ static bool decodeGB(string& code) {
     
     //higan: address=compare?data
     if (code.size() == 10 && code[4u] == '=' && code[7u] == '?') {
-        string nibbles = {code.slice(0, 4), code.slice(5, 2), code.slice(8, 2)};
+        nall::string nibbles = {code.slice(0, 4), code.slice(5, 2), code.slice(8, 2)};
         //validate
         for (unsigned n : nibbles) {
             if (n >= '0' && n <= '9') continue;
@@ -1068,8 +1068,8 @@ int jg_game_load() {
     emulator->configure("Hacks/Coprocessor/PreferHLE", true);
     
     // Load the game
-    if (string(gameinfo.path).endsWith(".gb") ||
-        string(gameinfo.path).endsWith(".gbc")) {
+    if (nall::string(gameinfo.path).endsWith(".gb") ||
+        nall::string(gameinfo.path).endsWith(".gbc")) {
         
         if (!addoninfo.size) {
             jg_cb_log(JG_LOG_ERR,
@@ -1081,7 +1081,7 @@ int jg_game_load() {
         program->gameBoy.location = std::string(gameinfo.path);
         addon = true;
     }
-    else if (string(gameinfo.path).endsWith(".bs")) {
+    else if (nall::string(gameinfo.path).endsWith(".bs")) {
         if (!addoninfo.size) {
             jg_cb_log(JG_LOG_ERR,
                 "BS-X BIOS ROM required for BS-X content, exiting...\n");
@@ -1092,7 +1092,7 @@ int jg_game_load() {
         program->bsMemory.location = std::string(gameinfo.path);
         addon = true;
     }
-    else if (string(gameinfo.path).endsWith(".st")) {
+    else if (nall::string(gameinfo.path).endsWith(".st")) {
         if (!addoninfo.size) {
             jg_cb_log(JG_LOG_ERR,
                 "Sufami Turbo ROM required for Sufami Turbo content, "
@@ -1264,7 +1264,7 @@ void jg_cheat_clear() {
 }
 
 void jg_cheat_set(const char *code) {
-    string cheat = string(code).downcase();
+    nall::string cheat = nall::string(code).downcase();
     bool decoded = false;
 
     if (!program->gameBoy.program.empty())

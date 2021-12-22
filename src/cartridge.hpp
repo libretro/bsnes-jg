@@ -1,12 +1,12 @@
 struct Cartridge {
   unsigned pathID() const { return information.pathID; }
-  string region() const { return information.region; }
-  string headerTitle() const { return game.title; }
+  nall::string region() const { return information.region; }
+  nall::string headerTitle() const { return game.title; }
 
-  std::vector<string> hashes() const;
-  std::vector<string> manifests() const;
-  std::vector<string> titles() const;
-  string title() const;
+  std::vector<nall::string> hashes() const;
+  std::vector<nall::string> manifests() const;
+  std::vector<nall::string> titles() const;
+  nall::string title() const;
 
   bool load();
   void save();
@@ -19,8 +19,8 @@ struct Cartridge {
 
   struct Information {
     unsigned pathID = 0;
-    string region;
-    string sha256;
+    nall::string region;
+    nall::string sha256;
   } information;
 
   struct Has {
@@ -66,7 +66,7 @@ private:
   bool loadSufamiTurboB();
 
   //load.cpp
-  nall::Markup::Node loadBoard(string);
+  nall::Markup::Node loadBoard(nall::string);
   void loadCartridge(nall::Markup::Node);
   void loadCartridgeBSMemory(nall::Markup::Node);
   void loadCartridgeSufamiTurboA(nall::Markup::Node);

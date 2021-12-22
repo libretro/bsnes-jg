@@ -1479,18 +1479,18 @@ auto WDC65816::serialize(serializer& s) -> void {
 }
 
 // Fix this when nall is gone
-/*auto WDC65816::disassemble() -> string {
+/*auto WDC65816::disassemble() -> nall::string {
   return disassemble(r.pc.d, r.e, r.p.m, r.p.x);
 }
 
-auto WDC65816::disassemble(nall::Natural<24> address, bool e, bool m, bool x) -> string {
-  string s;
+auto WDC65816::disassemble(nall::Natural<24> address, bool e, bool m, bool x) -> nall::string {
+  nall::string s;
 
   nall::Natural<24> pc = address;
   s = {hex(pc, 6), "  "};
 
-  string name;
-  string operand;
+  nall::string name;
+  nall::string operand;
   maybe<nall::Natural<24>> effective;
 
   auto read = [&](nall::Natural<24> address) -> uint8_t {
@@ -1521,135 +1521,135 @@ auto WDC65816::disassemble(nall::Natural<24> address, bool e, bool m, bool x) ->
   uint16_t operandWord = operand0 << 0 | operand1 << 8;
   nall::Natural<24> operandLong = operand0 << 0 | operand1 << 8 | operand2 << 16;
 
-  auto absolute = [&]() -> string {
+  auto absolute = [&]() -> nall::string {
     effective = r.b << 16 | operandWord;
     return {"$", hex(operandWord, 4L)};
   };
 
-  auto absolutePC = [&]() -> string {
+  auto absolutePC = [&]() -> nall::string {
     effective = pc & 0xff0000 | operandWord;
     return {"$", hex(operandWord, 4L)};
   };
 
-  auto absoluteX = [&]() -> string {
+  auto absoluteX = [&]() -> nall::string {
     effective = (r.b << 16) + operandWord + r.x.w;
     return {"$", hex(operandWord, 4L), ",x"};
   };
 
-  auto absoluteY = [&]() -> string {
+  auto absoluteY = [&]() -> nall::string {
     effective = (r.b << 16) + operandWord + r.y.w;
     return {"$", hex(operandWord, 4L), ",y"};
   };
 
-  auto absoluteLong = [&]() -> string {
+  auto absoluteLong = [&]() -> nall::string {
     effective = operandLong;
     return {"$", hex(operandLong, 6L)};
   };
 
-  auto absoluteLongX = [&]() -> string {
+  auto absoluteLongX = [&]() -> nall::string {
     effective = operandLong + r.x.w;
     return {"$", hex(operandLong, 6L), ",x"};
   };
 
-  auto direct = [&]() -> string {
+  auto direct = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte);
     return {"$", hex(operandByte, 2L)};
   };
 
-  auto directX = [&]() -> string {
+  auto directX = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte + r.x.w);
     return {"$", hex(operandByte, 2L), ",x"};
   };
 
-  auto directY = [&]() -> string {
+  auto directY = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte + r.y.w);
     return {"$", hex(operandByte, 2L), ",y"};
   };
 
-  auto immediate = [&]() -> string {
+  auto immediate = [&]() -> nall::string {
     return {"#$", hex(operandByte, 2L)};
   };
 
-  auto immediateA = [&]() -> string {
+  auto immediateA = [&]() -> nall::string {
     return {"#$", m ? hex(operandByte, 2L) : hex(operandWord, 4L)};
   };
 
-  auto immediateX = [&]() -> string {
+  auto immediateX = [&]() -> nall::string {
     return {"#$", x ? hex(operandByte, 2L) : hex(operandWord, 4L)};
   };
 
-  auto implied = [&]() -> string {
+  auto implied = [&]() -> nall::string {
     return {};
   };
 
-  auto indexedIndirectX = [&]() -> string {
+  auto indexedIndirectX = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte + r.x.w);
     effective = r.b << 16 | readWord(*effective);
     return {"($", hex(operandByte, 2L), ",x)"};
   };
 
-  auto indirect = [&]() -> string {
+  auto indirect = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte);
     effective = (r.b << 16) + readWord(*effective);
     return {"($", hex(operandByte, 2L), ")"};
   };
 
-  auto indirectPC = [&]() -> string {
+  auto indirectPC = [&]() -> nall::string {
     effective = operandWord;
     effective = pc & 0xff0000 | readWord(*effective);
     return {"($", hex(operandWord, 4L), ")"};
   };
 
-  auto indirectX = [&]() -> string {
+  auto indirectX = [&]() -> nall::string {
     effective = operandWord;
     effective = pc & 0xff0000 | uint16_t(*effective + r.x.w);
     effective = pc & 0xff0000 | readWord(*effective);
     return {"($", hex(operandWord, 4L), ",x)"};
   };
 
-  auto indirectIndexedY = [&]() -> string {
+  auto indirectIndexedY = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte);
     effective = (r.b << 16) + readWord(*effective) + r.y.w;
     return {"($", hex(operandByte, 2L), "),y"};
   };
 
-  auto indirectLong = [&]() -> string {
+  auto indirectLong = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte);
     effective = readLong(*effective);
     return {"[$", hex(operandByte, 2L), "]"};
   };
 
-  auto indirectLongPC = [&]() -> string {
+  auto indirectLongPC = [&]() -> nall::string {
     effective = readLong(operandWord);
     return {"[$", hex(operandWord, 4L), "]"};
   };
 
-  auto indirectLongY = [&]() -> string {
+  auto indirectLongY = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte);
     effective = readLong(*effective) + r.y.w;
     return {"[$", hex(operandByte, 2L), "],y"};
   };
 
-  auto move = [&]() -> string {
+  auto move = [&]() -> nall::string {
     return {"$", hex(operand0, 2L), "=$", hex(operand1, 2L)};
   };
 
-  auto relative = [&]() -> string {
+  auto relative = [&]() -> nall::string {
     effective = pc & 0xff0000 | uint16_t(pc + 2 + (int8_t)operandByte);
     return {"$", hex(*effective, 4L)};
   };
 
-  auto relativeWord = [&]() -> string {
+  auto relativeWord = [&]() -> nall::string {
     effective = pc & 0xff0000 | uint16_t(pc + 3 + (int16_t)operandWord);
     return {"$", hex(*effective, 4L)};
   };
 
-  auto stack = [&]() -> string {
+  auto stack = [&]() -> nall::string {
     effective = uint16_t(r.s.w + operandByte);
     return {"$", hex(operandByte, 2L), ",s"};
   };
 
-  auto stackIndirect = [&]() -> string {
+  auto stackIndirect = [&]() -> nall::string {
     effective = uint16_t(operandByte + r.s.w);
     effective = (r.b << 16) + readWord(*effective) + r.y.w;
     return {"($", hex(operandByte, 2L), ",s),y"};

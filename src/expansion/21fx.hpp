@@ -30,7 +30,7 @@ private:
     function<uint8_t ()>,     //read
     function<void (uint8_t)>  //write
   )> linkInit;
-  function<void (vector<string>)> linkMain;
+  function<void (vector<nall::string>)> linkMain;
 
   vector<uint8_t> snesBuffer;  //SNES -> Link
   vector<uint8_t> linkBuffer;  //Link -> SNES

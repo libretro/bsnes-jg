@@ -1049,7 +1049,7 @@ auto SPC700::serialize(serializer& s) -> void {
   s.integer(r.stop);
 }
 
-/*auto SPC700::disassemble(uint16_t addr, bool p) -> string {
+/*auto SPC700::disassemble(uint16_t addr, bool p) -> nall::string {
   auto read = [&](uint16_t addr) -> uint8_t {
     return readDisassembler(addr);
   };
@@ -1065,10 +1065,10 @@ auto SPC700::serialize(serializer& s) -> void {
   auto dp = [&](unsigned n) { return hex((p << 8) + read(addr + 1 + n), 3L); };
   auto ab = [&] {
     unsigned n = (read(addr + 1) << 0) + (read(addr + 2) << 8);
-    return string{hex(n & 0x1fff, 4L), ":", hex(n >> 13, 1L)};
+    return nall::string{hex(n & 0x1fff, 4L), ":", hex(n >> 13, 1L)};
   };
 
-  auto mnemonic = [&]() -> string {
+  auto mnemonic = [&]() -> nall::string {
     switch(read(addr)) {
     case 0x00: return { "nop" };
     case 0x01: return { "jst $ffde" };
@@ -1330,7 +1330,7 @@ auto SPC700::serialize(serializer& s) -> void {
     throw;
   };
 
-  string output = {"..", hex(addr, 4L), " ", mnemonic()};
+  nall::string output = {"..", hex(addr, 4L), " ", mnemonic()};
 
   unsigned length = output.length();
   while(length++ < 30) output.append(" ");
