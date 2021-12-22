@@ -1059,13 +1059,13 @@ auto SPC700::serialize(serializer& s) -> void {
     return pc + offset;
   };
 
-  auto a = [&] { return hex((read(addr + 1) << 0) + (read(addr + 2) << 8), 4L); };
-  auto b = [&](unsigned n) { return hex(read(addr + 1 + n), 2L); };
-  auto rel = [&](unsigned r, unsigned n = 0) { return hex(addr + r + (int8_t)read(addr + 1 + n), 4L); };
-  auto dp = [&](unsigned n) { return hex((p << 8) + read(addr + 1 + n), 3L); };
+  auto a = [&] { return nall::hex((read(addr + 1) << 0) + (read(addr + 2) << 8), 4L); };
+  auto b = [&](unsigned n) { return nall::hex(read(addr + 1 + n), 2L); };
+  auto rel = [&](unsigned r, unsigned n = 0) { return nall::hex(addr + r + (int8_t)read(addr + 1 + n), 4L); };
+  auto dp = [&](unsigned n) { return nall::hex((p << 8) + read(addr + 1 + n), 3L); };
   auto ab = [&] {
     unsigned n = (read(addr + 1) << 0) + (read(addr + 2) << 8);
-    return nall::string{hex(n & 0x1fff, 4L), ":", hex(n >> 13, 1L)};
+    return nall::string{nall::hex(n & 0x1fff, 4L), ":", nall::hex(n >> 13, 1L)};
   };
 
   auto mnemonic = [&]() -> nall::string {
@@ -1330,17 +1330,17 @@ auto SPC700::serialize(serializer& s) -> void {
     throw;
   };
 
-  nall::string output = {"..", hex(addr, 4L), " ", mnemonic()};
+  nall::string output = {"..", nall::hex(addr, 4L), " ", mnemonic()};
 
   unsigned length = output.length();
   while(length++ < 30) output.append(" ");
 
   output.append(
-    "YA:", hex(YA, 4L),
-    " A:", hex(A,  2L),
-    " X:", hex(X,  2L),
-    " Y:", hex(Y,  2L),
-    " S:", hex(S,  2L),
+    "YA:", nall::hex(YA, 4L),
+    " A:", nall::hex(A,  2L),
+    " X:", nall::hex(X,  2L),
+    " Y:", nall::hex(Y,  2L),
+    " S:", nall::hex(S,  2L),
     " ",
     NF ? "N" : "n",
     VF ? "V" : "v",

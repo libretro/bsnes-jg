@@ -1487,7 +1487,7 @@ auto WDC65816::disassemble(nall::Natural<24> address, bool e, bool m, bool x) ->
   nall::string s;
 
   nall::Natural<24> pc = address;
-  s = {hex(pc, 6), "  "};
+  s = {nall::hex(pc, 6), "  "};
 
   nall::string name;
   nall::string operand;
@@ -1523,59 +1523,59 @@ auto WDC65816::disassemble(nall::Natural<24> address, bool e, bool m, bool x) ->
 
   auto absolute = [&]() -> nall::string {
     effective = r.b << 16 | operandWord;
-    return {"$", hex(operandWord, 4L)};
+    return {"$", nall::hex(operandWord, 4L)};
   };
 
   auto absolutePC = [&]() -> nall::string {
     effective = pc & 0xff0000 | operandWord;
-    return {"$", hex(operandWord, 4L)};
+    return {"$", nall::hex(operandWord, 4L)};
   };
 
   auto absoluteX = [&]() -> nall::string {
     effective = (r.b << 16) + operandWord + r.x.w;
-    return {"$", hex(operandWord, 4L), ",x"};
+    return {"$", nall::hex(operandWord, 4L), ",x"};
   };
 
   auto absoluteY = [&]() -> nall::string {
     effective = (r.b << 16) + operandWord + r.y.w;
-    return {"$", hex(operandWord, 4L), ",y"};
+    return {"$", nall::hex(operandWord, 4L), ",y"};
   };
 
   auto absoluteLong = [&]() -> nall::string {
     effective = operandLong;
-    return {"$", hex(operandLong, 6L)};
+    return {"$", nall::hex(operandLong, 6L)};
   };
 
   auto absoluteLongX = [&]() -> nall::string {
     effective = operandLong + r.x.w;
-    return {"$", hex(operandLong, 6L), ",x"};
+    return {"$", nall::hex(operandLong, 6L), ",x"};
   };
 
   auto direct = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte);
-    return {"$", hex(operandByte, 2L)};
+    return {"$", nall::hex(operandByte, 2L)};
   };
 
   auto directX = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte + r.x.w);
-    return {"$", hex(operandByte, 2L), ",x"};
+    return {"$", nall::hex(operandByte, 2L), ",x"};
   };
 
   auto directY = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte + r.y.w);
-    return {"$", hex(operandByte, 2L), ",y"};
+    return {"$", nall::hex(operandByte, 2L), ",y"};
   };
 
   auto immediate = [&]() -> nall::string {
-    return {"#$", hex(operandByte, 2L)};
+    return {"#$", nall::hex(operandByte, 2L)};
   };
 
   auto immediateA = [&]() -> nall::string {
-    return {"#$", m ? hex(operandByte, 2L) : hex(operandWord, 4L)};
+    return {"#$", m ? nall::hex(operandByte, 2L) : nall::hex(operandWord, 4L)};
   };
 
   auto immediateX = [&]() -> nall::string {
-    return {"#$", x ? hex(operandByte, 2L) : hex(operandWord, 4L)};
+    return {"#$", x ? nall::hex(operandByte, 2L) : nall::hex(operandWord, 4L)};
   };
 
   auto implied = [&]() -> nall::string {
@@ -1585,74 +1585,74 @@ auto WDC65816::disassemble(nall::Natural<24> address, bool e, bool m, bool x) ->
   auto indexedIndirectX = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte + r.x.w);
     effective = r.b << 16 | readWord(*effective);
-    return {"($", hex(operandByte, 2L), ",x)"};
+    return {"($", nall::hex(operandByte, 2L), ",x)"};
   };
 
   auto indirect = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte);
     effective = (r.b << 16) + readWord(*effective);
-    return {"($", hex(operandByte, 2L), ")"};
+    return {"($", nall::hex(operandByte, 2L), ")"};
   };
 
   auto indirectPC = [&]() -> nall::string {
     effective = operandWord;
     effective = pc & 0xff0000 | readWord(*effective);
-    return {"($", hex(operandWord, 4L), ")"};
+    return {"($", nall::hex(operandWord, 4L), ")"};
   };
 
   auto indirectX = [&]() -> nall::string {
     effective = operandWord;
     effective = pc & 0xff0000 | uint16_t(*effective + r.x.w);
     effective = pc & 0xff0000 | readWord(*effective);
-    return {"($", hex(operandWord, 4L), ",x)"};
+    return {"($", nall::hex(operandWord, 4L), ",x)"};
   };
 
   auto indirectIndexedY = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte);
     effective = (r.b << 16) + readWord(*effective) + r.y.w;
-    return {"($", hex(operandByte, 2L), "),y"};
+    return {"($", nall::hex(operandByte, 2L), "),y"};
   };
 
   auto indirectLong = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte);
     effective = readLong(*effective);
-    return {"[$", hex(operandByte, 2L), "]"};
+    return {"[$", nall::hex(operandByte, 2L), "]"};
   };
 
   auto indirectLongPC = [&]() -> nall::string {
     effective = readLong(operandWord);
-    return {"[$", hex(operandWord, 4L), "]"};
+    return {"[$", nall::hex(operandWord, 4L), "]"};
   };
 
   auto indirectLongY = [&]() -> nall::string {
     effective = uint16_t(r.d.w + operandByte);
     effective = readLong(*effective) + r.y.w;
-    return {"[$", hex(operandByte, 2L), "],y"};
+    return {"[$", nall::hex(operandByte, 2L), "],y"};
   };
 
   auto move = [&]() -> nall::string {
-    return {"$", hex(operand0, 2L), "=$", hex(operand1, 2L)};
+    return {"$", nall::hex(operand0, 2L), "=$", nall::hex(operand1, 2L)};
   };
 
   auto relative = [&]() -> nall::string {
     effective = pc & 0xff0000 | uint16_t(pc + 2 + (int8_t)operandByte);
-    return {"$", hex(*effective, 4L)};
+    return {"$", nall::hex(*effective, 4L)};
   };
 
   auto relativeWord = [&]() -> nall::string {
     effective = pc & 0xff0000 | uint16_t(pc + 3 + (int16_t)operandWord);
-    return {"$", hex(*effective, 4L)};
+    return {"$", nall::hex(*effective, 4L)};
   };
 
   auto stack = [&]() -> nall::string {
     effective = uint16_t(r.s.w + operandByte);
-    return {"$", hex(operandByte, 2L), ",s"};
+    return {"$", nall::hex(operandByte, 2L), ",s"};
   };
 
   auto stackIndirect = [&]() -> nall::string {
     effective = uint16_t(operandByte + r.s.w);
     effective = (r.b << 16) + readWord(*effective) + r.y.w;
-    return {"($", hex(operandByte, 2L), ",s),y"};
+    return {"($", nall::hex(operandByte, 2L), ",s),y"};
   };
 
   #define op(id, label, function) case id: name = label; operand = function(); break;
@@ -1925,15 +1925,15 @@ auto WDC65816::disassemble(nall::Natural<24> address, bool e, bool m, bool x) ->
 
   s.append(name, " ", operand);
   while(s.size() < 23) s.append(" ");
-  if(effective) s.append("[", hex(*effective, 6L), "]");
+  if(effective) s.append("[", nall::hex(*effective, 6L), "]");
   while(s.size() < 31) s.append(" ");
 
-  s.append(" A:", hex(r.a.w, 4L));
-  s.append(" X:", hex(r.x.w, 4L));
-  s.append(" Y:", hex(r.y.w, 4L));
-  s.append(" S:", hex(r.s.w, 4L));
-  s.append(" D:", hex(r.d.w, 4L));
-  s.append(" B:", hex(r.b  , 2L));
+  s.append(" A:", nall::hex(r.a.w, 4L));
+  s.append(" X:", nall::hex(r.x.w, 4L));
+  s.append(" Y:", nall::hex(r.y.w, 4L));
+  s.append(" S:", nall::hex(r.s.w, 4L));
+  s.append(" D:", nall::hex(r.d.w, 4L));
+  s.append(" B:", nall::hex(r.b  , 2L));
 
   if(e) {
     s.append(' ',

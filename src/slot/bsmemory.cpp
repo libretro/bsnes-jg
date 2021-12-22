@@ -166,9 +166,9 @@ auto BSMemory::unload() -> void {
   if(auto fp = platform->open(pathID, "metadata.bml", File::Write, File::Optional)) {
     nall::string manifest;
     manifest.append("flash\n");
-    manifest.append("  vendor: 0x", hex(chip.vendor,  4L), "\n");
-    manifest.append("  device: 0x", hex(chip.device,  4L), "\n");
-    manifest.append("  serial: 0x", hex(chip.serial, 12L), "\n");
+    manifest.append("  vendor: 0x", nall::hex(chip.vendor,  4L), "\n");
+    manifest.append("  device: 0x", nall::hex(chip.device,  4L), "\n");
+    manifest.append("  serial: 0x", nall::hex(chip.serial, 12L), "\n");
     for(nall::Natural< 6> id : nall::range(block.count())) {
       manifest.append("  block\n");
       manifest.append("    id: ", id, "\n");

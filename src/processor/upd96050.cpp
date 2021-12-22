@@ -315,7 +315,7 @@ auto uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) -> void {
 }
 
 /*auto uPD96050::disassemble(nall::Natural<14> ip) -> nall::string {
-  nall::string output = {hex(ip, 4L), "  "};
+  nall::string output = {nall::hex(ip, 4L), "  "};
   nall::Natural<24> opcode = programROM[ip];
   nall::Natural< 2> type = opcode >> 22;
 
@@ -412,7 +412,7 @@ auto uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) -> void {
     }
 
     if(dphm) {
-      output.append("\n      m", hex(dphm, 1L));
+      output.append("\n      m", nall::hex(dphm, 1L));
     }
 
     if(rpdcr == 1) {
@@ -474,7 +474,7 @@ auto uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) -> void {
     default:    output.append("??????  "); break;
     }
 
-    output.append("$", hex(jp, 4L));
+    output.append("$", nall::hex(jp, 4L));
   }
 
   if(type == 3) {  //LD
@@ -482,7 +482,7 @@ auto uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) -> void {
     uint16_t id = opcode >> 6;
     nall::Natural< 4> dst = opcode >> 0;
 
-    output.append("$", hex(id, 4L), ",");
+    output.append("$", nall::hex(id, 4L), ",");
 
     switch(dst) {
     case  0: output.append("non"); break;

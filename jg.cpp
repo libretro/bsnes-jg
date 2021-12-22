@@ -866,7 +866,7 @@ static bool decodeSNES(nall::string& code) {
         | (!!(r & 0x000200) <<  3) | (!!(r & 0x000100) <<  2)
         | (!!(r & 0x000080) <<  1) | (!!(r & 0x000040) <<  0);
         unsigned data = r >> 24;
-        code = {hex(address, 6L), "=", hex(data, 2L)};
+        code = {nall::hex(address, 6L), "=", nall::hex(data, 2L)};
         return true;
     }
     
@@ -883,7 +883,7 @@ static bool decodeSNES(nall::string& code) {
         uint32_t r = toHex(code);
         unsigned address = r >> 8;
         unsigned data = r & 0xff;
-        code = {hex(address, 6L), "=", hex(data, 2L)};
+        code = {nall::hex(address, 6L), "=", nall::hex(data, 2L)};
         return true;
     }
     
@@ -938,7 +938,7 @@ static bool decodeGB(nall::string& code) {
         unsigned data = nibble(code, 0) << 4 | nibble(code, 1) << 0;
         unsigned address = (nibble(code, 5) ^ 15) << 12 | nibble(code, 2) << 8 |
             nibble(code, 3) << 4 | nibble(code, 4) << 0;
-        code = {hex(address, 4L), "=", hex(data, 2L)};
+        code = {nall::hex(address, 4L), "=", nall::hex(data, 2L)};
         return true;
     }
     
@@ -958,7 +958,7 @@ static bool decodeGB(nall::string& code) {
         uint8_t t = nibble(code, 6) << 4 | nibble(code, 8) << 0;
         t = t >> 2 | t << 6;
         unsigned compare = t ^ 0xba;
-        code = {hex(address, 4L), "=", hex(compare, 2L), "?", hex(data, 2L)};
+        code = {nall::hex(address, 4L), "=", nall::hex(compare, 2L), "?", nall::hex(data, 2L)};
         return true;
     }
     
@@ -979,7 +979,7 @@ static bool decodeGB(nall::string& code) {
         unsigned data = toHex(code.slice(2, 2));
         uint16_t address = toHex(code.slice(4, 4));
         address = address >> 8 | address << 8;
-        code = {hex(address, 4L), "=", hex(data, 2L)};
+        code = {nall::hex(address, 4L), "=", nall::hex(data, 2L)};
         return true;
     }
     
