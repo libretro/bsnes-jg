@@ -1,20 +1,20 @@
 struct MSU1 : Thread {
   Emulator::Stream *stream;
 
-  auto synchronizeCPU() -> void;
-  static auto Enter() -> void;
-  auto main() -> void;
-  auto step(unsigned clocks) -> void;
-  auto unload() -> void;
-  auto power() -> void;
+  void synchronizeCPU();
+  static void Enter();
+  void main();
+  void step(unsigned clocks);
+  void unload();
+  void power();
 
-  auto dataOpen() -> void;
-  auto audioOpen() -> void;
+  void dataOpen();
+  void audioOpen();
 
-  auto readIO(unsigned addr, uint8_t data) -> uint8_t;
-  auto writeIO(unsigned addr, uint8_t data) -> void;
+  uint8_t readIO(unsigned addr, uint8_t data);
+  void writeIO(unsigned addr, uint8_t data);
 
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
 private:
   std::ifstream dataFile;
@@ -42,11 +42,11 @@ private:
     uint32_t audioResumeTrack;
     uint32_t audioResumeOffset;
 
-    Boolean audioError;
-    Boolean audioPlay;
-    Boolean audioRepeat;
-    Boolean audioBusy;
-    Boolean dataBusy;
+    bool audioError;
+    bool audioPlay;
+    bool audioRepeat;
+    bool audioBusy;
+    bool dataBusy;
   } io;
 };
 

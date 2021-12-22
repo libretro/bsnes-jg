@@ -8,7 +8,7 @@ namespace SuperFamicom {
 
 MSU1 msu1;
 
-auto MSU1::serialize(serializer& s) -> void {
+void MSU1::serialize(serializer& s) {
   Thread::serialize(s);
 
   s.integer(io.dataSeekOffset);
@@ -33,19 +33,19 @@ auto MSU1::serialize(serializer& s) -> void {
   audioOpen();
 }
 
-auto MSU1::synchronizeCPU() -> void {
+void MSU1::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
 
-auto MSU1::Enter() -> void {
+void MSU1::Enter() {
   while(true) {
     scheduler.synchronize();
     msu1.main();
   }
 }
 
-auto MSU1::main() -> void {
+void MSU1::main() {
   int16_t left  = 0;
   int16_t right = 0;
 
@@ -79,16 +79,16 @@ auto MSU1::main() -> void {
   synchronizeCPU();
 }
 
-auto MSU1::step(unsigned clocks) -> void {
+void MSU1::step(unsigned clocks) {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
-auto MSU1::unload() -> void {
+void MSU1::unload() {
   dataFile.close();
   audioFile.close();
 }
 
-auto MSU1::power() -> void {
+void MSU1::power() {
   create(MSU1::Enter, 44100);
   stream = Emulator::audio.createStream(frequency);
 
@@ -114,12 +114,12 @@ auto MSU1::power() -> void {
   audioOpen();
 }
 
-auto MSU1::dataOpen() -> void {
+void MSU1::dataOpen() {
   dataFile.close();
   dataFile = platform->fopen(ID::SuperFamicom, "msu1/data.rom");
 }
 
-auto MSU1::audioOpen() -> void {
+void MSU1::audioOpen() {
   audioFile.close();
   std::stringstream name;
   name << "msu1/track-" << io.audioTrack << ".pcm";
@@ -146,7 +146,7 @@ auto MSU1::audioOpen() -> void {
   io.audioError = true;
 }
 
-auto MSU1::readIO(unsigned addr, uint8_t) -> uint8_t {
+uint8_t MSU1::readIO(unsigned addr, uint8_t) {
   cpu.synchronizeCoprocessors();
 
   switch(0x2000 | addr & 7) {
@@ -176,7 +176,7 @@ auto MSU1::readIO(unsigned addr, uint8_t) -> uint8_t {
   return 0; // unreachable
 }
 
-auto MSU1::writeIO(unsigned addr, uint8_t data) -> void {
+void MSU1::writeIO(unsigned addr, uint8_t data) {
   cpu.synchronizeCoprocessors();
 
   switch(0x2000 | addr & 7) {
