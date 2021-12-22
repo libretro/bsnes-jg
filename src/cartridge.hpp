@@ -1,18 +1,18 @@
 struct Cartridge {
-  auto pathID() const -> unsigned { return information.pathID; }
-  auto region() const -> string { return information.region; }
-  auto headerTitle() const -> string { return game.title; }
+  unsigned pathID() const { return information.pathID; }
+  string region() const { return information.region; }
+  string headerTitle() const { return game.title; }
 
-  auto hashes() const -> std::vector<string>;
-  auto manifests() const -> std::vector<string>;
-  auto titles() const -> std::vector<string>;
-  auto title() const -> string;
+  std::vector<string> hashes() const;
+  std::vector<string> manifests() const;
+  std::vector<string> titles() const;
+  string title() const;
 
-  auto load() -> bool;
-  auto save() -> void;
-  auto unload() -> void;
+  bool load();
+  void save();
+  void unload();
 
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   ReadableMemory rom;
   WritableMemory ram;
@@ -61,63 +61,63 @@ private:
   Markup::Node board;
 
   //cartridge.cpp
-  auto loadBSMemory() -> bool;
-  auto loadSufamiTurboA() -> bool;
-  auto loadSufamiTurboB() -> bool;
+  bool loadBSMemory();
+  bool loadSufamiTurboA();
+  bool loadSufamiTurboB();
 
   //load.cpp
-  auto loadBoard(string) -> Markup::Node;
-  auto loadCartridge(Markup::Node) -> void;
-  auto loadCartridgeBSMemory(Markup::Node) -> void;
-  auto loadCartridgeSufamiTurboA(Markup::Node) -> void;
-  auto loadCartridgeSufamiTurboB(Markup::Node) -> void;
+  Markup::Node loadBoard(string);
+  void loadCartridge(Markup::Node);
+  void loadCartridgeBSMemory(Markup::Node);
+  void loadCartridgeSufamiTurboA(Markup::Node);
+  void loadCartridgeSufamiTurboB(Markup::Node);
 
-  auto loadMemory(Memory&, Markup::Node, bool required) -> void;
-  template<typename T> auto loadMap(Markup::Node, T&) -> unsigned;
-  auto loadMap(Markup::Node, const function<uint8_t (unsigned, uint8_t)>&, const function<void (unsigned, uint8_t)>&) -> unsigned;
+  void loadMemory(Memory&, Markup::Node, bool required);
+  template<typename T> unsigned loadMap(Markup::Node, T&);
+  unsigned loadMap(Markup::Node, const function<uint8_t (unsigned, uint8_t)>&, const function<void (unsigned, uint8_t)>&);
 
-  auto loadROM(Markup::Node) -> void;
-  auto loadRAM(Markup::Node) -> void;
-  auto loadICD(Markup::Node) -> void;
-  auto loadMCC(Markup::Node) -> void;
-  auto loadBSMemory(Markup::Node) -> void;
-  auto loadSufamiTurboA(Markup::Node) -> void;
-  auto loadSufamiTurboB(Markup::Node) -> void;
-  auto loadDIP(Markup::Node) -> void;
-  auto loadEvent(Markup::Node) -> void;
-  auto loadSA1(Markup::Node) -> void;
-  auto loadSuperFX(Markup::Node) -> void;
-  auto loadARMDSP(Markup::Node) -> void;
-  auto loadHitachiDSP(Markup::Node, unsigned roms) -> void;
-  auto loaduPD7725(Markup::Node) -> void;
-  auto loaduPD96050(Markup::Node) -> void;
-  auto loadEpsonRTC(Markup::Node) -> void;
-  auto loadSharpRTC(Markup::Node) -> void;
-  auto loadSPC7110(Markup::Node) -> void;
-  auto loadSDD1(Markup::Node) -> void;
-  auto loadOBC1(Markup::Node) -> void;
-  auto loadMSU1() -> void;
+  void loadROM(Markup::Node);
+  void loadRAM(Markup::Node);
+  void loadICD(Markup::Node);
+  void loadMCC(Markup::Node);
+  void loadBSMemory(Markup::Node);
+  void loadSufamiTurboA(Markup::Node);
+  void loadSufamiTurboB(Markup::Node);
+  void loadDIP(Markup::Node);
+  void loadEvent(Markup::Node);
+  void loadSA1(Markup::Node);
+  void loadSuperFX(Markup::Node);
+  void loadARMDSP(Markup::Node);
+  void loadHitachiDSP(Markup::Node, unsigned roms);
+  void loaduPD7725(Markup::Node);
+  void loaduPD96050(Markup::Node);
+  void loadEpsonRTC(Markup::Node);
+  void loadSharpRTC(Markup::Node);
+  void loadSPC7110(Markup::Node);
+  void loadSDD1(Markup::Node);
+  void loadOBC1(Markup::Node);
+  void loadMSU1();
 
   //save.cpp
-  auto saveCartridge(Markup::Node) -> void;
-  auto saveCartridgeBSMemory(Markup::Node) -> void;
-  auto saveCartridgeSufamiTurboA(Markup::Node) -> void;
-  auto saveCartridgeSufamiTurboB(Markup::Node) -> void;
+  void saveCartridge(Markup::Node);
+  void saveCartridgeBSMemory(Markup::Node);
+  void saveCartridgeSufamiTurboA(Markup::Node);
+  void saveCartridgeSufamiTurboB(Markup::Node);
 
-  auto saveMemory(Memory&, Markup::Node) -> void;
+  void saveMemory(Memory&, Markup::Node);
 
-  auto saveRAM(Markup::Node) -> void;
-  auto saveMCC(Markup::Node) -> void;
-  auto saveSA1(Markup::Node) -> void;
-  auto saveSuperFX(Markup::Node) -> void;
-  auto saveARMDSP(Markup::Node) -> void;
-  auto saveHitachiDSP(Markup::Node) -> void;
-  auto saveuPD7725(Markup::Node) -> void;
-  auto saveuPD96050(Markup::Node) -> void;
-  auto saveEpsonRTC(Markup::Node) -> void;
-  auto saveSharpRTC(Markup::Node) -> void;
-  auto saveSPC7110(Markup::Node) -> void;
-  auto saveOBC1(Markup::Node) -> void;
+  void saveRAM(Markup::Node);
+  void saveMCC(Markup::Node);
+  void saveSA1(Markup::Node);
+  void saveSuperFX(Markup::Node);
+  void saveARMDSP(Markup::Node);
+  void saveHitachiDSP(Markup::Node);
+  void saveuPD7725(Markup::Node);
+  void saveuPD96050(Markup::Node);
+  void saveEpsonRTC(Markup::Node);
+  void saveSharpRTC(Markup::Node);
+  void saveSPC7110(Markup::Node);
+  void saveOBC1(Markup::Node);
 
   friend class Interface;
   friend class ICD;

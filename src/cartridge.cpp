@@ -5,7 +5,7 @@
 
 namespace SuperFamicom {
 
-auto Cartridge::loadBoard(string board) -> Markup::Node {
+Markup::Node Cartridge::loadBoard(string board) {
   string output;
 
   if(board.beginsWith("SNSP-")) board.replace("SNSP-", "SHVC-", 1L);
@@ -32,7 +32,7 @@ auto Cartridge::loadBoard(string board) -> Markup::Node {
   return {};
 }
 
-auto Cartridge::loadCartridge(Markup::Node node) -> void {
+void Cartridge::loadCartridge(Markup::Node node) {
   board = node["board"];
   if(!board) board = loadBoard(game.board);
 
@@ -79,7 +79,7 @@ auto Cartridge::loadCartridge(Markup::Node node) -> void {
   if(platform->fopen(ID::SuperFamicom, "msu1/data.rom")) loadMSU1();
 }
 
-auto Cartridge::loadCartridgeBSMemory(Markup::Node node) -> void {
+void Cartridge::loadCartridgeBSMemory(Markup::Node node) {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(content=Program)"]}) {
     bsmemory.ROM = memory.type == "ROM";
     bsmemory.memory.allocate(memory.size);
@@ -89,7 +89,7 @@ auto Cartridge::loadCartridgeBSMemory(Markup::Node node) -> void {
   }
 }
 
-auto Cartridge::loadCartridgeSufamiTurboA(Markup::Node node) -> void {
+void Cartridge::loadCartridgeSufamiTurboA(Markup::Node node) {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=ROM,content=Program)"]}) {
     sufamiturboA.rom.allocate(memory.size);
     if(auto fp = platform->open(sufamiturboA.pathID, std::string(memory.name()), File::Read, File::Required)) {
@@ -105,7 +105,7 @@ auto Cartridge::loadCartridgeSufamiTurboA(Markup::Node node) -> void {
   }
 }
 
-auto Cartridge::loadCartridgeSufamiTurboB(Markup::Node node) -> void {
+void Cartridge::loadCartridgeSufamiTurboB(Markup::Node node) {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=ROM,content=Program)"]}) {
     sufamiturboB.rom.allocate(memory.size);
     if(auto fp = platform->open(sufamiturboB.pathID, std::string(memory.name()), File::Read, File::Required)) {
@@ -121,9 +121,7 @@ auto Cartridge::loadCartridgeSufamiTurboB(Markup::Node node) -> void {
   }
 }
 
-//
-
-auto Cartridge::loadMemory(Memory& ram, Markup::Node node, bool required) -> void {
+void Cartridge::loadMemory(Memory& ram, Markup::Node node, bool required) {
   if(auto memory = game.memory(node)) {
     ram.allocate(memory->size);
     if(memory->type == "RAM" && !memory->nonVolatile) return;
@@ -135,7 +133,7 @@ auto Cartridge::loadMemory(Memory& ram, Markup::Node node, bool required) -> voi
 }
 
 template<typename T>  //T = ReadableMemory, WritableMemory, ProtectableMemory
-auto Cartridge::loadMap(Markup::Node map, T& memory) -> unsigned {
+unsigned Cartridge::loadMap(Markup::Node map, T& memory) {
   auto addr = map["address"].text();
   auto size = map["size"].natural();
   auto base = map["base"].natural();
@@ -145,11 +143,11 @@ auto Cartridge::loadMap(Markup::Node map, T& memory) -> unsigned {
   return bus.map({&T::read, &memory}, {&T::write, &memory}, addr, size, base, mask);
 }
 
-auto Cartridge::loadMap(
+unsigned Cartridge::loadMap(
   Markup::Node map,
   const function<uint8_t (unsigned, uint8_t)>& reader,
   const function<void  (unsigned, uint8_t)>& writer
-) -> unsigned {
+) {
   auto addr = map["address"].text();
   auto size = map["size"].natural();
   auto base = map["base"].natural();
@@ -158,19 +156,19 @@ auto Cartridge::loadMap(
 }
 
 //memory(type=ROM,content=Program)
-auto Cartridge::loadROM(Markup::Node node) -> void {
+void Cartridge::loadROM(Markup::Node node) {
   loadMemory(rom, node, File::Required);
   for(auto leaf : node.find("map")) loadMap(leaf, rom);
 }
 
 //memory(type=RAM,content=Save)
-auto Cartridge::loadRAM(Markup::Node node) -> void {
+void Cartridge::loadRAM(Markup::Node node) {
   loadMemory(ram, node, File::Optional);
   for(auto leaf : node.find("map")) loadMap(leaf, ram);
 }
 
 //processor(identifier=ICD)
-auto Cartridge::loadICD(Markup::Node node) -> void {
+void Cartridge::loadICD(Markup::Node node) {
   has.GameBoySlot = true;
   has.ICD = true;
 
@@ -188,7 +186,7 @@ auto Cartridge::loadICD(Markup::Node node) -> void {
 }
 
 //processor(identifier=MCC)
-auto Cartridge::loadMCC(Markup::Node node) -> void {
+void Cartridge::loadMCC(Markup::Node node) {
   has.MCC = true;
 
   for(auto map : node.find("map")) {
@@ -212,7 +210,7 @@ auto Cartridge::loadMCC(Markup::Node node) -> void {
 }
 
 //slot(type=BSMemory)
-auto Cartridge::loadBSMemory(Markup::Node node) -> void {
+void Cartridge::loadBSMemory(Markup::Node node) {
   has.BSMemorySlot = true;
 
   if(auto loaded = platform->load(ID::BSMemory, "BS Memory", "bs")) {
@@ -226,7 +224,7 @@ auto Cartridge::loadBSMemory(Markup::Node node) -> void {
 }
 
 //slot(type=SufamiTurbo)[0]
-auto Cartridge::loadSufamiTurboA(Markup::Node node) -> void {
+void Cartridge::loadSufamiTurboA(Markup::Node node) {
   has.SufamiTurboSlotA = true;
 
   if(auto loaded = platform->load(ID::SufamiTurboA, "Sufami Turbo", "st")) {
@@ -244,7 +242,7 @@ auto Cartridge::loadSufamiTurboA(Markup::Node node) -> void {
 }
 
 //slot(type=SufamiTurbo)[1]
-auto Cartridge::loadSufamiTurboB(Markup::Node node) -> void {
+void Cartridge::loadSufamiTurboB(Markup::Node node) {
   has.SufamiTurboSlotB = true;
 
   if(auto loaded = platform->load(ID::SufamiTurboB, "Sufami Turbo", "st")) {
@@ -262,7 +260,7 @@ auto Cartridge::loadSufamiTurboB(Markup::Node node) -> void {
 }
 
 //dip
-auto Cartridge::loadDIP(Markup::Node node) -> void {
+void Cartridge::loadDIP(Markup::Node node) {
   has.DIP = true;
   // Multi-game carts (Campus Challenge '92, PowerFest '94) were no longer
   // supported after higan v106, and in bsnes standalone this always returns 0.
@@ -275,7 +273,7 @@ auto Cartridge::loadDIP(Markup::Node node) -> void {
 }
 
 //processor(architecture=uPD78214)
-auto Cartridge::loadEvent(Markup::Node node) -> void {
+void Cartridge::loadEvent(Markup::Node node) {
   has.Event = true;
   event.board = Event::Board::Unknown;
   if(node["identifier"].text() == "Campus Challenge '92") event.board = Event::Board::CampusChallenge92;
@@ -305,7 +303,7 @@ auto Cartridge::loadEvent(Markup::Node node) -> void {
 }
 
 //processor(architecture=W65C816S)
-auto Cartridge::loadSA1(Markup::Node node) -> void {
+void Cartridge::loadSA1(Markup::Node node) {
   has.SA1 = true;
 
   for(auto map : node.find("map")) {
@@ -340,7 +338,7 @@ auto Cartridge::loadSA1(Markup::Node node) -> void {
 }
 
 //processor(architecture=GSU)
-auto Cartridge::loadSuperFX(Markup::Node node) -> void {
+void Cartridge::loadSuperFX(Markup::Node node) {
   has.SuperFX = true;
 
   if(auto oscillator = game.oscillator()) {
@@ -369,7 +367,7 @@ auto Cartridge::loadSuperFX(Markup::Node node) -> void {
 }
 
 //processor(architecture=ARM6)
-auto Cartridge::loadARMDSP(Markup::Node node) -> void {
+void Cartridge::loadARMDSP(Markup::Node node) {
   has.ARMDSP = true;
 
   for(auto& word : armdsp.programROM) word = 0x00;
@@ -412,7 +410,7 @@ auto Cartridge::loadARMDSP(Markup::Node node) -> void {
 }
 
 //processor(architecture=HG51BS169)
-auto Cartridge::loadHitachiDSP(Markup::Node node, unsigned roms) -> void {
+void Cartridge::loadHitachiDSP(Markup::Node node, unsigned roms) {
   for(auto& word : hitachidsp.dataROM) word = 0x000000;
   for(auto& word : hitachidsp.dataRAM) word = 0x00;
 
@@ -484,7 +482,7 @@ auto Cartridge::loadHitachiDSP(Markup::Node node, unsigned roms) -> void {
 }
 
 //processor(architecture=uPD7725)
-auto Cartridge::loaduPD7725(Markup::Node node) -> void {
+void Cartridge::loaduPD7725(Markup::Node node) {
   for(auto& word : necdsp.programROM) word = 0x000000;
   for(auto& word : necdsp.dataROM) word = 0x0000;
   for(auto& word : necdsp.dataRAM) word = 0x0000;
@@ -564,7 +562,7 @@ auto Cartridge::loaduPD7725(Markup::Node node) -> void {
 }
 
 //processor(architecture=uPD96050)
-auto Cartridge::loaduPD96050(Markup::Node node) -> void {
+void Cartridge::loaduPD96050(Markup::Node node) {
   for(auto& word : necdsp.programROM) word = 0x000000;
   for(auto& word : necdsp.dataROM) word = 0x0000;
   for(auto& word : necdsp.dataRAM) word = 0x0000;
@@ -632,7 +630,7 @@ auto Cartridge::loaduPD96050(Markup::Node node) -> void {
 }
 
 //rtc(manufacturer=Epson)
-auto Cartridge::loadEpsonRTC(Markup::Node node) -> void {
+void Cartridge::loadEpsonRTC(Markup::Node node) {
   has.EpsonRTC = true;
 
   epsonrtc.initialize();
@@ -653,7 +651,7 @@ auto Cartridge::loadEpsonRTC(Markup::Node node) -> void {
 }
 
 //rtc(manufacturer=Sharp)
-auto Cartridge::loadSharpRTC(Markup::Node node) -> void {
+void Cartridge::loadSharpRTC(Markup::Node node) {
   has.SharpRTC = true;
 
   sharprtc.initialize();
@@ -674,7 +672,7 @@ auto Cartridge::loadSharpRTC(Markup::Node node) -> void {
 }
 
 //processor(identifier=SPC7110)
-auto Cartridge::loadSPC7110(Markup::Node node) -> void {
+void Cartridge::loadSPC7110(Markup::Node node) {
   has.SPC7110 = true;
 
   for(auto map : node.find("map")) {
@@ -702,7 +700,7 @@ auto Cartridge::loadSPC7110(Markup::Node node) -> void {
 }
 
 //processor(identifier=SDD1)
-auto Cartridge::loadSDD1(Markup::Node node) -> void {
+void Cartridge::loadSDD1(Markup::Node node) {
   has.SDD1 = true;
 
   for(auto map : node.find("map")) {
@@ -720,7 +718,7 @@ auto Cartridge::loadSDD1(Markup::Node node) -> void {
 }
 
 //processor(identifier=OBC1)
-auto Cartridge::loadOBC1(Markup::Node node) -> void {
+void Cartridge::loadOBC1(Markup::Node node) {
   has.OBC1 = true;
 
   for(auto map : node.find("map")) {
@@ -733,13 +731,13 @@ auto Cartridge::loadOBC1(Markup::Node node) -> void {
 }
 
 //file::exists("msu1/data.rom")
-auto Cartridge::loadMSU1() -> void {
+void Cartridge::loadMSU1() {
   has.MSU1 = true;
 
   bus.map({&MSU1::readIO, &msu1}, {&MSU1::writeIO, &msu1}, "00-3f,80-bf:2000-2007");
 }
 
-auto Cartridge::saveCartridge(Markup::Node node) -> void {
+void Cartridge::saveCartridge(Markup::Node node) {
   if(auto node = board["memory(type=RAM,content=Save)"]) saveRAM(node);
   if(auto node = board["processor(identifier=MCC)"]) saveMCC(node);
   if(auto node = board["processor(architecture=W65C816S)"]) saveSA1(node);
@@ -754,7 +752,7 @@ auto Cartridge::saveCartridge(Markup::Node node) -> void {
   if(auto node = board["processor(identifier=OBC1)"]) saveOBC1(node);
 }
 
-auto Cartridge::saveCartridgeBSMemory(Markup::Node node) -> void {
+void Cartridge::saveCartridgeBSMemory(Markup::Node node) {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=Flash,content=Program)"]}) {
     if (bsmemory.memory.data() != nullptr) {
       platform->write(bsmemory.pathID, std::string(memory.name()), bsmemory.memory.data(), memory.size);
@@ -762,7 +760,7 @@ auto Cartridge::saveCartridgeBSMemory(Markup::Node node) -> void {
   }
 }
 
-auto Cartridge::saveCartridgeSufamiTurboA(Markup::Node node) -> void {
+void Cartridge::saveCartridgeSufamiTurboA(Markup::Node node) {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
     if(memory.nonVolatile) {
       platform->write(sufamiturboA.pathID, std::string(memory.name()), sufamiturboA.ram.data(), memory.size);
@@ -770,7 +768,7 @@ auto Cartridge::saveCartridgeSufamiTurboA(Markup::Node node) -> void {
   }
 }
 
-auto Cartridge::saveCartridgeSufamiTurboB(Markup::Node node) -> void {
+void Cartridge::saveCartridgeSufamiTurboB(Markup::Node node) {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
     if(memory.nonVolatile) {
       platform->write(sufamiturboB.pathID, std::string(memory.name()), sufamiturboB.ram.data(), memory.size);
@@ -778,9 +776,7 @@ auto Cartridge::saveCartridgeSufamiTurboB(Markup::Node node) -> void {
   }
 }
 
-//
-
-auto Cartridge::saveMemory(Memory& ram, Markup::Node node) -> void {
+void Cartridge::saveMemory(Memory& ram, Markup::Node node) {
   if(auto memory = game.memory(node)) {
     if(memory->type == "RAM" && !memory->nonVolatile) return;
     if(memory->type == "RTC" && !memory->nonVolatile) return;
@@ -789,12 +785,12 @@ auto Cartridge::saveMemory(Memory& ram, Markup::Node node) -> void {
 }
 
 //memory(type=RAM,content=Save)
-auto Cartridge::saveRAM(Markup::Node node) -> void {
+void Cartridge::saveRAM(Markup::Node node) {
   saveMemory(ram, node);
 }
 
 //processor(identifier=MCC)
-auto Cartridge::saveMCC(Markup::Node node) -> void {
+void Cartridge::saveMCC(Markup::Node node) {
   if(auto mcu = node["mcu"]) {
     if(auto memory = mcu["memory(type=RAM,content=Download)"]) {
       saveMemory(mcc.psram, memory);
@@ -803,7 +799,7 @@ auto Cartridge::saveMCC(Markup::Node node) -> void {
 }
 
 //processor(architecture=W65C816S)
-auto Cartridge::saveSA1(Markup::Node node) -> void {
+void Cartridge::saveSA1(Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Save)"]) {
     saveMemory(sa1.bwram, memory);
   }
@@ -814,14 +810,14 @@ auto Cartridge::saveSA1(Markup::Node node) -> void {
 }
 
 //processor(architecture=GSU)
-auto Cartridge::saveSuperFX(Markup::Node node) -> void {
+void Cartridge::saveSuperFX(Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Save)"]) {
     saveMemory(superfx.ram, memory);
   }
 }
 
 //processor(architecture=ARM6)
-auto Cartridge::saveARMDSP(Markup::Node node) -> void {
+void Cartridge::saveARMDSP(Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Data,architecture=ARM6)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
@@ -834,7 +830,7 @@ auto Cartridge::saveARMDSP(Markup::Node node) -> void {
 }
 
 //processor(architecture=HG51BS169)
-auto Cartridge::saveHitachiDSP(Markup::Node node) -> void {
+void Cartridge::saveHitachiDSP(Markup::Node node) {
   saveMemory(hitachidsp.ram, node["ram"]);
 
   if(auto memory = node["memory(type=RAM,content=Save)"]) {
@@ -853,7 +849,7 @@ auto Cartridge::saveHitachiDSP(Markup::Node node) -> void {
 }
 
 //processor(architecture=uPD7725)
-auto Cartridge::saveuPD7725(Markup::Node node) -> void {
+void Cartridge::saveuPD7725(Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD7725)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
@@ -866,7 +862,7 @@ auto Cartridge::saveuPD7725(Markup::Node node) -> void {
 }
 
 //processor(architecture=uPD96050)
-auto Cartridge::saveuPD96050(Markup::Node node) -> void {
+void Cartridge::saveuPD96050(Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD96050)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
@@ -879,7 +875,7 @@ auto Cartridge::saveuPD96050(Markup::Node node) -> void {
 }
 
 //rtc(manufacturer=Epson)
-auto Cartridge::saveEpsonRTC(Markup::Node node) -> void {
+void Cartridge::saveEpsonRTC(Markup::Node node) {
   if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Epson)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
@@ -894,7 +890,7 @@ auto Cartridge::saveEpsonRTC(Markup::Node node) -> void {
 }
 
 //rtc(manufacturer=Sharp)
-auto Cartridge::saveSharpRTC(Markup::Node node) -> void {
+void Cartridge::saveSharpRTC(Markup::Node node) {
   if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Sharp)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
@@ -909,26 +905,26 @@ auto Cartridge::saveSharpRTC(Markup::Node node) -> void {
 }
 
 //processor(identifier=SPC7110)
-auto Cartridge::saveSPC7110(Markup::Node node) -> void {
+void Cartridge::saveSPC7110(Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Save)"]) {
     saveMemory(spc7110.ram, memory);
   }
 }
 
 //processor(identifier=OBC1)
-auto Cartridge::saveOBC1(Markup::Node node) -> void {
+void Cartridge::saveOBC1(Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Save)"]) {
     saveMemory(obc1.ram, memory);
   }
 }
 
-auto Cartridge::serialize(serializer& s) -> void {
+void Cartridge::serialize(serializer& s) {
   s.array(ram.data(), ram.size());
 }
 
 Cartridge cartridge;
 
-auto Cartridge::hashes() const -> std::vector<string> {
+std::vector<string> Cartridge::hashes() const {
   std::vector<string> hashes;
   hashes.push_back(game.sha256);
   if(slotGameBoy.sha256) hashes.push_back(slotGameBoy.sha256);
@@ -938,7 +934,7 @@ auto Cartridge::hashes() const -> std::vector<string> {
   return hashes;
 }
 
-auto Cartridge::manifests() const -> std::vector<string> {
+std::vector<string> Cartridge::manifests() const {
   std::vector<string> manifests;
   manifests.push_back(string{BML::serialize(game.document), "\n", BML::serialize(board)});
   if(slotGameBoy.document) manifests.push_back(BML::serialize(slotGameBoy.document));
@@ -948,7 +944,7 @@ auto Cartridge::manifests() const -> std::vector<string> {
   return manifests;
 }
 
-auto Cartridge::titles() const -> std::vector<string> {
+std::vector<string> Cartridge::titles() const {
   std::vector<string> titles;
   titles.push_back(game.label);
   if(slotGameBoy.label) titles.push_back(slotGameBoy.label);
@@ -958,7 +954,7 @@ auto Cartridge::titles() const -> std::vector<string> {
   return titles;
 }
 
-auto Cartridge::title() const -> string {
+string Cartridge::title() const {
   if(slotGameBoy.label) return slotGameBoy.label;
   if(has.MCC && slotBSMemory.label) return slotBSMemory.label;
   if(slotBSMemory.label) return {game.label, " + ", slotBSMemory.label};
@@ -969,7 +965,7 @@ auto Cartridge::title() const -> string {
   return game.label;
 }
 
-auto Cartridge::load() -> bool {
+bool Cartridge::load() {
   information = {};
   has = {};
   game = {};
@@ -1049,7 +1045,7 @@ auto Cartridge::load() -> bool {
   return true;
 }
 
-auto Cartridge::loadBSMemory() -> bool {
+bool Cartridge::loadBSMemory() {
   if(auto fp = platform->open(bsmemory.pathID, "manifest.bml", File::Read, File::Required)) {
     slotBSMemory.load(std::string(fp->reads()));
   } else return false;
@@ -1057,7 +1053,7 @@ auto Cartridge::loadBSMemory() -> bool {
   return true;
 }
 
-auto Cartridge::loadSufamiTurboA() -> bool {
+bool Cartridge::loadSufamiTurboA() {
   if(auto fp = platform->open(sufamiturboA.pathID, "manifest.bml", File::Read, File::Required)) {
     slotSufamiTurboA.load(std::string(fp->reads()));
   } else return false;
@@ -1065,7 +1061,7 @@ auto Cartridge::loadSufamiTurboA() -> bool {
   return true;
 }
 
-auto Cartridge::loadSufamiTurboB() -> bool {
+bool Cartridge::loadSufamiTurboB() {
   if(auto fp = platform->open(sufamiturboB.pathID, "manifest.bml", File::Read, File::Required)) {
     slotSufamiTurboB.load(std::string(fp->reads()));
   } else return false;
@@ -1073,7 +1069,7 @@ auto Cartridge::loadSufamiTurboB() -> bool {
   return true;
 }
 
-auto Cartridge::save() -> void {
+void Cartridge::save() {
   saveCartridge(game.document);
   if(has.GameBoySlot) {
     icd.save();
@@ -1089,7 +1085,7 @@ auto Cartridge::save() -> void {
   }
 }
 
-auto Cartridge::unload() -> void {
+void Cartridge::unload() {
   rom.reset();
   ram.reset();
 }
