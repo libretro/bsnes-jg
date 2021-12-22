@@ -6,7 +6,7 @@ Settings settings;
 
 Configuration configuration;
 
-auto Configuration::process(Markup::Node document, bool load) -> void {
+void Configuration::process(Markup::Node document, bool load) {
   #define bind(type, path, name) \
     if(load) { \
       if(auto node = document[path]) name = node.type(); \
@@ -35,18 +35,18 @@ auto Configuration::process(Markup::Node document, bool load) -> void {
   #undef bind
 }
 
-auto Configuration::read() -> string {
+string Configuration::read() {
   Markup::Node document;
   process(document, false);
   return BML::serialize(document, " ");
 }
 
-auto Configuration::read(string name) -> string {
+string Configuration::read(string name) {
   auto document = BML::unserialize(read());
   return document[name].text();
 }
 
-auto Configuration::write(string configuration) -> bool {
+bool Configuration::write(string configuration) {
   *this = {};
 
   if(auto document = BML::unserialize(configuration)) {
@@ -56,7 +56,7 @@ auto Configuration::write(string configuration) -> bool {
   return false;
 }
 
-auto Configuration::write(string name, string value) -> bool {
+bool Configuration::write(string name, string value) {
   if(SuperFamicom::system.loaded() && name.beginsWith("System/")) return false;
 
   auto document = BML::unserialize(read());
@@ -89,7 +89,7 @@ auto Interface::display() -> Display {
   return display;
 }
 
-auto Interface::color(uint32_t color) -> uint64_t {
+uint64_t Interface::color(uint32_t color) {
   unsigned r = color >>  0 & 31;
   unsigned g = color >>  5 & 31;
   unsigned b = color >> 10 & 31;
@@ -127,35 +127,35 @@ auto Interface::color(uint32_t color) -> uint64_t {
   return R << 32 | G << 16 | B << 0;
 }
 
-auto Interface::loaded() -> bool {
+bool Interface::loaded() {
   return system.loaded();
 }
 
-auto Interface::hashes() -> std::vector<string> {
+std::vector<string> Interface::hashes() {
   return cartridge.hashes();
 }
 
-auto Interface::manifests() -> std::vector<string> {
+std::vector<string> Interface::manifests() {
   return cartridge.manifests();
 }
 
-auto Interface::titles() -> std::vector<string> {
+std::vector<string> Interface::titles() {
   return cartridge.titles();
 }
 
-auto Interface::title() -> string {
+string Interface::title() {
   return cartridge.title();
 }
 
-auto Interface::load() -> bool {
+bool Interface::load() {
   return system.load(this);
 }
 
-auto Interface::save() -> void {
+void Interface::save() {
   system.save();
 }
 
-auto Interface::unload() -> void {
+void Interface::unload() {
   save();
   system.unload();
 }
@@ -276,38 +276,38 @@ auto Interface::inputs(unsigned device) -> std::vector<Input> {
   return {};
 }
 
-auto Interface::connected(unsigned port) -> unsigned {
+unsigned Interface::connected(unsigned port) {
   if(port == ID::Port::Controller1) return settings.controllerPort1;
   if(port == ID::Port::Controller2) return settings.controllerPort2;
   if(port == ID::Port::Expansion) return settings.expansionPort;
   return 0;
 }
 
-auto Interface::connect(unsigned port, unsigned device) -> void {
+void Interface::connect(unsigned port, unsigned device) {
   if(port == ID::Port::Controller1) controllerPort1.connect(settings.controllerPort1 = device);
   if(port == ID::Port::Controller2) controllerPort2.connect(settings.controllerPort2 = device);
   if(port == ID::Port::Expansion) expansionPort.connect(settings.expansionPort = device);
 }
 
-auto Interface::power() -> void {
+void Interface::power() {
   system.power(/* reset = */ false);
 }
 
-auto Interface::reset() -> void {
+void Interface::reset() {
   system.power(/* reset = */ true);
 }
 
-auto Interface::run() -> void {
+void Interface::run() {
   system.run();
 }
 
-auto Interface::rtc() -> bool {
+bool Interface::rtc() {
   if(cartridge.has.EpsonRTC) return true;
   if(cartridge.has.SharpRTC) return true;
   return false;
 }
 
-auto Interface::synchronize(uint64_t timestamp) -> void {
+void Interface::synchronize(uint64_t timestamp) {
   // The line below was commented because in bsnes, there always seems to be
   // a timestamp. This allows nall/chrono.hpp to be removed.
   //if(!timestamp) timestamp = chrono::timestamp();
@@ -316,19 +316,19 @@ auto Interface::synchronize(uint64_t timestamp) -> void {
   if(cartridge.has.SharpRTC) sharprtc.synchronize(timestamp);
 }
 
-auto Interface::serialize(bool synchronize) -> serializer {
+serializer Interface::serialize(bool synchronize) {
   return system.serialize(synchronize);
 }
 
-auto Interface::unserialize(serializer& s) -> bool {
+bool Interface::unserialize(serializer& s) {
   return system.unserialize(s);
 }
 
-auto Interface::read(nall::Natural<24> address) -> uint8_t {
+uint8_t Interface::read(nall::Natural<24> address) {
   return cpu.readDisassembler(address);
 }
 
-auto Interface::cheats(const std::vector<string>& list) -> void {
+void Interface::cheats(const std::vector<string>& list) {
   if(cartridge.has.ICD) {
     icd.cheats.assign(list);
     return;
@@ -385,36 +385,36 @@ auto Interface::cheats(const std::vector<string>& list) -> void {
   Memory::GlobalWriteEnable = false;
 }
 
-auto Interface::configuration() -> string {
+string Interface::configuration() {
   return SuperFamicom::configuration.read();
 }
 
-auto Interface::configuration(string name) -> string {
+string Interface::configuration(string name) {
   return SuperFamicom::configuration.read(name);
 }
 
-auto Interface::configure(string configuration) -> bool {
+bool Interface::configure(string configuration) {
   return SuperFamicom::configuration.write(configuration);
 }
 
-auto Interface::configure(string name, string value) -> bool {
+bool Interface::configure(string name, string value) {
   return SuperFamicom::configuration.write(name, value);
 }
 
-auto Interface::frameSkip() -> unsigned {
+unsigned Interface::frameSkip() {
   return system.frameSkip;
 }
 
-auto Interface::setFrameSkip(unsigned frameSkip) -> void {
+void Interface::setFrameSkip(unsigned frameSkip) {
   system.frameSkip = frameSkip;
   system.frameCounter = frameSkip;
 }
 
-auto Interface::runAhead() -> bool {
+bool Interface::runAhead() {
   return system.runAhead;
 }
 
-auto Interface::setRunAhead(bool runAhead) -> void {
+void Interface::setRunAhead(bool runAhead) {
   system.runAhead = runAhead;
 }
 

@@ -36,53 +36,53 @@ struct Interface : Emulator::Interface {
   auto information() -> Information;
 
   auto display() -> Display override;
-  auto color(uint32_t color) -> uint64_t override;
+  uint64_t color(uint32_t color) override;
 
-  auto loaded() -> bool override;
-  auto hashes() -> std::vector<string> override;
-  auto manifests() -> std::vector<string> override;
-  auto titles() -> std::vector<string> override;
-  auto title() -> string override;
-  auto load() -> bool override;
-  auto save() -> void override;
-  auto unload() -> void override;
+  bool loaded() override;
+  std::vector<string> hashes() override;
+  std::vector<string> manifests() override;
+  std::vector<string> titles() override;
+  string title() override;
+  bool load() override;
+  void save() override;
+  void unload() override;
 
   auto ports() -> std::vector<Port> override;
   auto devices(unsigned port) -> std::vector<Device> override;
   auto inputs(unsigned device) -> std::vector<Input> override;
 
-  auto connected(unsigned port) -> unsigned override;
-  auto connect(unsigned port, unsigned device) -> void override;
-  auto power() -> void override;
-  auto reset() -> void override;
-  auto run() -> void override;
+  unsigned connected(unsigned port) override;
+  void connect(unsigned port, unsigned device) override;
+  void power() override;
+  void reset() override;
+  void run() override;
 
-  auto rtc() -> bool override;
-  auto synchronize(uint64_t timestamp) -> void override;
+  bool rtc() override;
+  void synchronize(uint64_t timestamp) override;
 
-  auto serialize(bool synchronize = true) -> serializer override;
-  auto unserialize(serializer&) -> bool override;
+  serializer serialize(bool synchronize = true) override;
+  bool unserialize(serializer&) override;
 
-  auto read(nall::Natural<24> address) -> uint8_t override;
-  auto cheats(const std::vector<string>&) -> void override;
+  uint8_t read(nall::Natural<24> address) override;
+  void cheats(const std::vector<string>&) override;
 
-  auto configuration() -> string override;
-  auto configuration(string name) -> string override;
-  auto configure(string configuration) -> bool override;
-  auto configure(string name, string value) -> bool override;
+  string configuration() override;
+  string configuration(string name) override;
+  bool configure(string configuration) override;
+  bool configure(string name, string value) override;
 
-  auto frameSkip() -> unsigned override;
-  auto setFrameSkip(unsigned frameSkip) -> void override;
+  unsigned frameSkip() override;
+  void setFrameSkip(unsigned frameSkip) override;
 
-  auto runAhead() -> bool override;
-  auto setRunAhead(bool runAhead) -> void override;
+  bool runAhead() override;
+  void setRunAhead(bool runAhead) override;
 };
 
 struct Configuration {
-  auto read() -> string;
-  auto read(string) -> string;
-  auto write(string) -> bool;
-  auto write(string, string) -> bool;
+  string read();
+  string read(string);
+  bool write(string);
+  bool write(string, string);
 
   struct System {
     struct CPU {
@@ -127,7 +127,7 @@ struct Configuration {
   } hacks;
 
 private:
-  auto process(Markup::Node document, bool load) -> void;
+  void process(Markup::Node document, bool load);
 };
 
 extern Configuration configuration;
