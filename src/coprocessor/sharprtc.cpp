@@ -40,13 +40,13 @@ auto SharpRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) -> void 
 }
 
 auto SharpRTC::load(const uint8_t* data) -> void {
-  for(auto byte : range(8)) {
+  for(auto byte : nall::range(8)) {
     rtcWrite(byte * 2 + 0, data[byte] >> 0);
     rtcWrite(byte * 2 + 1, data[byte] >> 4);
   }
 
   uint64_t timestamp = 0;
-  for(auto byte : range(8)) {
+  for(auto byte : nall::range(8)) {
     timestamp |= data[8 + byte] << (byte * 8);
   }
 
@@ -58,13 +58,13 @@ auto SharpRTC::load(const uint8_t* data) -> void {
 }
 
 auto SharpRTC::save(uint8_t* data) -> void {
-  for(auto byte : range(8)) {
+  for(auto byte : nall::range(8)) {
     data[byte]  = rtcRead(byte * 2 + 0) << 0;
     data[byte] |= rtcRead(byte * 2 + 1) << 4;
   }
 
   uint64_t timestamp = (uint64_t)time(nullptr);
-  for(auto byte : range(8)) {
+  for(auto byte : nall::range(8)) {
     data[8 + byte] = timestamp;
     timestamp >>= 8;
   }

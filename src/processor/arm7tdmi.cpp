@@ -276,9 +276,9 @@ auto ARM7TDMI::armInitialize() -> void {
   #define arguments \
     bits(opcode, 0,23),  /* displacement */ \
     bit1(opcode,24)      /* link */
-  for(nall::Natural< 4> displacementLo : range(16))
-  for(nall::Natural< 4> displacementHi : range(16))
-  for(nall::Natural< 1> link : range(2)) {
+  for(nall::Natural< 4> displacementLo : nall::range(16))
+  for(nall::Natural< 4> displacementHi : nall::range(16))
+  for(nall::Natural< 1> link : nall::range(2)) {
     auto opcode = pattern(".... 101? ???? ???? ???? ???? ???? ????")
                 | displacementLo << 4 | displacementHi << 20 | link << 24;
     bind(opcode, Branch);
@@ -300,9 +300,9 @@ auto ARM7TDMI::armInitialize() -> void {
     bits(opcode,16,19),  /* n */ \
     bit1(opcode,20),     /* save */ \
     bits(opcode,21,24)   /* mode */
-  for(nall::Natural< 4> shiftHi : range(16))
-  for(nall::Natural< 1> save : range(2))
-  for(nall::Natural< 4> mode : range(16)) {
+  for(nall::Natural< 4> shiftHi : nall::range(16))
+  for(nall::Natural< 1> save : nall::range(2))
+  for(nall::Natural< 4> mode : nall::range(16)) {
     if(mode >= 8 && mode <= 11 && !save) continue;  //TST, TEQ, CMP, CMN
     auto opcode = pattern(".... 001? ???? ???? ???? ???? ???? ????") | shiftHi << 4 | save << 20 | mode << 21;
     bind(opcode, DataImmediate);
@@ -317,10 +317,10 @@ auto ARM7TDMI::armInitialize() -> void {
     bits(opcode,16,19),  /* n */ \
     bit1(opcode,20),     /* save */ \
     bits(opcode,21,24)   /* mode */
-  for(nall::Natural< 2> type : range(4))
-  for(nall::Natural< 1> shiftLo : range(2))
-  for(nall::Natural< 1> save : range(2))
-  for(nall::Natural< 4> mode : range(16)) {
+  for(nall::Natural< 2> type : nall::range(4))
+  for(nall::Natural< 1> shiftLo : nall::range(2))
+  for(nall::Natural< 1> save : nall::range(2))
+  for(nall::Natural< 4> mode : nall::range(16)) {
     if(mode >= 8 && mode <= 11 && !save) continue;  //TST, TEQ, CMP, CMN
     auto opcode = pattern(".... 000? ???? ???? ???? ???? ???0 ????") | type << 5 | shiftLo << 7 | save << 20 | mode << 21;
     bind(opcode, DataImmediateShift);
@@ -335,9 +335,9 @@ auto ARM7TDMI::armInitialize() -> void {
     bits(opcode,16,19),  /* n */ \
     bit1(opcode,20),     /* save */ \
     bits(opcode,21,24)   /* mode */
-  for(nall::Natural< 2> type : range(4))
-  for(nall::Natural< 1> save : range(2))
-  for(nall::Natural< 4> mode : range(16)) {
+  for(nall::Natural< 2> type : nall::range(4))
+  for(nall::Natural< 1> save : nall::range(2))
+  for(nall::Natural< 4> mode : nall::range(16)) {
     if(mode >= 8 && mode <= 11 && !save) continue;  //TST, TEQ, CMP, CMN
     auto opcode = pattern(".... 000? ???? ???? ???? ???? 0??1 ????") | type << 5 | save << 20 | mode << 21;
     bind(opcode, DataRegisterShift);
@@ -352,10 +352,10 @@ auto ARM7TDMI::armInitialize() -> void {
     bit1(opcode,21),     /* writeback */ \
     bit1(opcode,23),     /* up */ \
     bit1(opcode,24)      /* pre */
-  for(nall::Natural< 1> half : range(2))
-  for(nall::Natural< 1> writeback : range(2))
-  for(nall::Natural< 1> up : range(2))
-  for(nall::Natural< 1> pre : range(2)) {
+  for(nall::Natural< 1> half : nall::range(2))
+  for(nall::Natural< 1> writeback : nall::range(2))
+  for(nall::Natural< 1> up : nall::range(2))
+  for(nall::Natural< 1> pre : nall::range(2)) {
     auto opcode = pattern(".... 000? ?1?1 ???? ???? ???? 11?1 ????") | half << 5 | writeback << 21 | up << 23 | pre << 24;
     bind(opcode, LoadImmediate);
   }
@@ -369,10 +369,10 @@ auto ARM7TDMI::armInitialize() -> void {
     bit1(opcode,21),     /* writeback */ \
     bit1(opcode,23),     /* up */ \
     bit1(opcode,24)      /* pre */
-  for(nall::Natural< 1> half : range(2))
-  for(nall::Natural< 1> writeback : range(2))
-  for(nall::Natural< 1> up : range(2))
-  for(nall::Natural< 1> pre : range(2)) {
+  for(nall::Natural< 1> half : nall::range(2))
+  for(nall::Natural< 1> writeback : nall::range(2))
+  for(nall::Natural< 1> up : nall::range(2))
+  for(nall::Natural< 1> pre : nall::range(2)) {
     auto opcode = pattern(".... 000? ?0?1 ???? ???? ---- 11?1 ????") | half << 5 | writeback << 21 | up << 23 | pre << 24;
     bind(opcode, LoadRegister);
   }
@@ -383,7 +383,7 @@ auto ARM7TDMI::armInitialize() -> void {
     bits(opcode,12,15),  /* d */ \
     bits(opcode,16,19),  /* n */ \
     bit1(opcode,22)      /* byte */
-  for(nall::Natural< 1> byte : range(2)) {
+  for(nall::Natural< 1> byte : nall::range(2)) {
     auto opcode = pattern(".... 0001 0?00 ???? ???? ---- 1001 ????") | byte << 22;
     bind(opcode, MemorySwap);
   }
@@ -397,10 +397,10 @@ auto ARM7TDMI::armInitialize() -> void {
     bit1(opcode,21),     /* writeback */ \
     bit1(opcode,23),     /* up */ \
     bit1(opcode,24)      /* pre */
-  for(nall::Natural< 1> mode : range(2))
-  for(nall::Natural< 1> writeback : range(2))
-  for(nall::Natural< 1> up : range(2))
-  for(nall::Natural< 1> pre : range(2)) {
+  for(nall::Natural< 1> mode : nall::range(2))
+  for(nall::Natural< 1> writeback : nall::range(2))
+  for(nall::Natural< 1> up : nall::range(2))
+  for(nall::Natural< 1> pre : nall::range(2)) {
     auto opcode = pattern(".... 000? ?1?? ???? ???? ???? 1011 ????") | mode << 20 | writeback << 21 | up << 23 | pre << 24;
     bind(opcode, MoveHalfImmediate);
   }
@@ -414,10 +414,10 @@ auto ARM7TDMI::armInitialize() -> void {
     bit1(opcode,21),     /* writeback */ \
     bit1(opcode,23),     /* up */ \
     bit1(opcode,24)      /* pre */
-  for(nall::Natural< 1> mode : range(2))
-  for(nall::Natural< 1> writeback : range(2))
-  for(nall::Natural< 1> up : range(2))
-  for(nall::Natural< 1> pre : range(2)) {
+  for(nall::Natural< 1> mode : nall::range(2))
+  for(nall::Natural< 1> writeback : nall::range(2))
+  for(nall::Natural< 1> up : nall::range(2))
+  for(nall::Natural< 1> pre : nall::range(2)) {
     auto opcode = pattern(".... 000? ?0?? ???? ???? ---- 1011 ????") | mode << 20 | writeback << 21 | up << 23 | pre << 24;
     bind(opcode, MoveHalfRegister);
   }
@@ -432,12 +432,12 @@ auto ARM7TDMI::armInitialize() -> void {
     bit1(opcode,22),     /* byte */ \
     bit1(opcode,23),     /* up */ \
     bit1(opcode,24)      /* pre */
-  for(nall::Natural< 4> immediatePart : range(16))
-  for(nall::Natural< 1> mode : range(2))
-  for(nall::Natural< 1> writeback : range(2))
-  for(nall::Natural< 1> byte : range(2))
-  for(nall::Natural< 1> up : range(2))
-  for(nall::Natural< 1> pre : range(2)) {
+  for(nall::Natural< 4> immediatePart : nall::range(16))
+  for(nall::Natural< 1> mode : nall::range(2))
+  for(nall::Natural< 1> writeback : nall::range(2))
+  for(nall::Natural< 1> byte : nall::range(2))
+  for(nall::Natural< 1> up : nall::range(2))
+  for(nall::Natural< 1> pre : nall::range(2)) {
     auto opcode = pattern(".... 010? ???? ???? ???? ???? ???? ????")
                 | immediatePart << 4 | mode << 20 | writeback << 21 | byte << 22 | up << 23 | pre << 24;
     bind(opcode, MoveImmediateOffset);
@@ -452,12 +452,12 @@ auto ARM7TDMI::armInitialize() -> void {
     bit1(opcode,22),     /* type */ \
     bit1(opcode,23),     /* up */ \
     bit1(opcode,24)      /* pre */
-  for(nall::Natural< 4> listPart : range(16))
-  for(nall::Natural< 1> mode : range(2))
-  for(nall::Natural< 1> writeback : range(2))
-  for(nall::Natural< 1> type : range(2))
-  for(nall::Natural< 1> up : range(2))
-  for(nall::Natural< 1> pre : range(2)) {
+  for(nall::Natural< 4> listPart : nall::range(16))
+  for(nall::Natural< 1> mode : nall::range(2))
+  for(nall::Natural< 1> writeback : nall::range(2))
+  for(nall::Natural< 1> type : nall::range(2))
+  for(nall::Natural< 1> up : nall::range(2))
+  for(nall::Natural< 1> pre : nall::range(2)) {
     auto opcode = pattern(".... 100? ???? ???? ???? ???? ???? ????")
                 | listPart << 4 | mode << 20 | writeback << 21 | type << 22 | up << 23 | pre << 24;
     bind(opcode, MoveMultiple);
@@ -475,13 +475,13 @@ auto ARM7TDMI::armInitialize() -> void {
     bit1(opcode,22),     /* byte */ \
     bit1(opcode,23),     /* up */ \
     bit1(opcode,24)      /* pre */
-  for(nall::Natural< 2> type : range(4))
-  for(nall::Natural< 1> shiftLo : range(2))
-  for(nall::Natural< 1> mode : range(2))
-  for(nall::Natural< 1> writeback : range(2))
-  for(nall::Natural< 1> byte : range(2))
-  for(nall::Natural< 1> up : range(2))
-  for(nall::Natural< 1> pre : range(2)) {
+  for(nall::Natural< 2> type : nall::range(4))
+  for(nall::Natural< 1> shiftLo : nall::range(2))
+  for(nall::Natural< 1> mode : nall::range(2))
+  for(nall::Natural< 1> writeback : nall::range(2))
+  for(nall::Natural< 1> byte : nall::range(2))
+  for(nall::Natural< 1> up : nall::range(2))
+  for(nall::Natural< 1> pre : nall::range(2)) {
     auto opcode = pattern(".... 011? ???? ???? ???? ???? ???0 ????")
                 | type << 5 | shiftLo << 7 | mode << 20 | writeback << 21 | byte << 22 | up << 23 | pre << 24;
     bind(opcode, MoveRegisterOffset);
@@ -491,7 +491,7 @@ auto ARM7TDMI::armInitialize() -> void {
   #define arguments \
     bits(opcode,12,15),  /* d */ \
     bit1(opcode,22)      /* mode */
-  for(nall::Natural< 1> mode : range(2)) {
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern(".... 0001 0?00 ---- ???? ---- 0000 ----") | mode << 22;
     bind(opcode, MoveToRegisterFromStatus);
   }
@@ -502,8 +502,8 @@ auto ARM7TDMI::armInitialize() -> void {
     bits(opcode, 8,11),  /* rotate */ \
     bits(opcode,16,19),  /* field */ \
     bit1(opcode,22)      /* mode */
-  for(nall::Natural< 4> immediateHi : range(16))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(nall::Natural< 4> immediateHi : nall::range(16))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern(".... 0011 0?10 ???? ---- ???? ???? ????") | immediateHi << 4 | mode << 22;
     bind(opcode, MoveToStatusFromImmediate);
   }
@@ -513,7 +513,7 @@ auto ARM7TDMI::armInitialize() -> void {
     bits(opcode, 0, 3),  /* m */ \
     bits(opcode,16,19),  /* field */ \
     bit1(opcode,22)      /* mode */
-  for(nall::Natural< 1> mode : range(2)) {
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern(".... 0001 0?10 ???? ---- ---- 0000 ????") | mode << 22;
     bind(opcode, MoveToStatusFromRegister);
   }
@@ -526,8 +526,8 @@ auto ARM7TDMI::armInitialize() -> void {
     bits(opcode,16,19),  /* d */ \
     bit1(opcode,20),     /* save */ \
     bit1(opcode,21)      /* accumulate */
-  for(nall::Natural< 1> save : range(2))
-  for(nall::Natural< 1> accumulate : range(2)) {
+  for(nall::Natural< 1> save : nall::range(2))
+  for(nall::Natural< 1> accumulate : nall::range(2)) {
     auto opcode = pattern(".... 0000 00?? ???? ???? ???? 1001 ????") | save << 20 | accumulate << 21;
     bind(opcode, Multiply);
   }
@@ -541,9 +541,9 @@ auto ARM7TDMI::armInitialize() -> void {
     bit1(opcode,20),     /* save */ \
     bit1(opcode,21),     /* accumulate */ \
     bit1(opcode,22)      /* sign */
-  for(nall::Natural< 1> save : range(2))
-  for(nall::Natural< 1> accumulate : range(2))
-  for(nall::Natural< 1> sign : range(2)) {
+  for(nall::Natural< 1> save : nall::range(2))
+  for(nall::Natural< 1> accumulate : nall::range(2))
+  for(nall::Natural< 1> sign : nall::range(2)) {
     auto opcode = pattern(".... 0000 1??? ???? ???? ???? 1001 ????") | save << 20 | accumulate << 21 | sign << 22;
     bind(opcode, MultiplyLong);
   }
@@ -551,15 +551,15 @@ auto ARM7TDMI::armInitialize() -> void {
 
   #define arguments \
     bits(opcode, 0,23)  /* immediate */
-  for(nall::Natural< 4> immediateLo : range(16))
-  for(nall::Natural< 4> immediateHi : range(16)) {
+  for(nall::Natural< 4> immediateLo : nall::range(16))
+  for(nall::Natural< 4> immediateHi : nall::range(16)) {
     auto opcode = pattern(".... 1111 ???? ???? ???? ???? ???? ????") | immediateLo << 4 | immediateHi << 20;
     bind(opcode, SoftwareInterrupt);
   }
   #undef arguments
 
   #define arguments
-  for(nall::Natural<12> id : range(4096)) {
+  for(nall::Natural<12> id : nall::range(4096)) {
     if(armInstruction[id]) continue;
     auto opcode = pattern(".... ???? ???? ---- ---- ---- ???? ----") | bits(id,0,3) << 4 | bits(id,4,11) << 20;
     bind(opcode, Undefined);
@@ -580,159 +580,159 @@ auto ARM7TDMI::thumbInitialize() -> void {
   #define pattern(s) \
     std::integral_constant<uint16_t, nall::test(s)>::value
 
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 3> m : range(8))
-  for(nall::Natural< 4> mode : range(16)) {
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 3> m : nall::range(8))
+  for(nall::Natural< 4> mode : nall::range(16)) {
     auto opcode = pattern("0100 00?? ???? ????") | d << 0 | m << 3 | mode << 6;
     bind(opcode, ALU, d, m, mode);
   }
 
-  for(nall::Natural< 4> d : range(16))
-  for(nall::Natural< 4> m : range(16))
-  for(nall::Natural< 2> mode : range(4)) {
+  for(nall::Natural< 4> d : nall::range(16))
+  for(nall::Natural< 4> m : nall::range(16))
+  for(nall::Natural< 2> mode : nall::range(4)) {
     if(mode == 3) continue;
     auto opcode = pattern("0100 01?? ???? ????") | bits(d,0,2) << 0 | m << 3 | bit1(d,3) << 7 | mode << 8;
     bind(opcode, ALUExtended, d, m, mode);
   }
 
-  for(uint8_t immediate : range(256))
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(uint8_t immediate : nall::range(256))
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern("1010 ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
     bind(opcode, AddRegister, immediate, d, mode);
   }
 
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 3> n : range(8))
-  for(nall::Natural< 3> immediate : range(8))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 3> n : nall::range(8))
+  for(nall::Natural< 3> immediate : nall::range(8))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern("0001 11?? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 9;
     bind(opcode, AdjustImmediate, d, n, immediate, mode);
   }
 
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 3> n : range(8))
-  for(nall::Natural< 3> m : range(8))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 3> n : nall::range(8))
+  for(nall::Natural< 3> m : nall::range(8))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern("0001 10?? ???? ????") | d << 0 | n << 3 | m << 6 | mode << 9;
     bind(opcode, AdjustRegister, d, n, m, mode);
   }
 
-  for(nall::Natural< 7> immediate : range(128))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(nall::Natural< 7> immediate : nall::range(128))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern("1011 0000 ???? ????") | immediate << 0 | mode << 7;
     bind(opcode, AdjustStack, immediate, mode);
   }
 
-  for(nall::Natural< 3> _ : range(8))
-  for(nall::Natural< 4> m : range(16)) {
+  for(nall::Natural< 3> _ : nall::range(8))
+  for(nall::Natural< 4> m : nall::range(16)) {
     auto opcode = pattern("0100 0111 0??? ?---") | _ << 0 | m << 3;
     bind(opcode, BranchExchange, m);
   }
 
-  for(nall::Natural<11> displacement : range(2048)) {
+  for(nall::Natural<11> displacement : nall::range(2048)) {
     auto opcode = pattern("1111 0??? ???? ????") | displacement << 0;
     bind(opcode, BranchFarPrefix, displacement);
   }
 
-  for(nall::Natural<11> displacement : range(2048)) {
+  for(nall::Natural<11> displacement : nall::range(2048)) {
     auto opcode = pattern("1111 1??? ???? ????") | displacement << 0;
     bind(opcode, BranchFarSuffix, displacement);
   }
 
-  for(nall::Natural<11> displacement : range(2048)) {
+  for(nall::Natural<11> displacement : nall::range(2048)) {
     auto opcode = pattern("1110 0??? ???? ????") | displacement << 0;
     bind(opcode, BranchNear, displacement);
   }
 
-  for(uint8_t displacement : range(256))
-  for(nall::Natural< 4> condition : range(16)) {
+  for(uint8_t displacement : nall::range(256))
+  for(nall::Natural< 4> condition : nall::range(16)) {
     if(condition == 15) continue;  //BNV
     auto opcode = pattern("1101 ???? ???? ????") | displacement << 0 | condition << 8;
     bind(opcode, BranchTest, displacement, condition);
   }
 
-  for(uint8_t immediate : range(256))
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 2> mode : range(4)) {
+  for(uint8_t immediate : nall::range(256))
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 2> mode : nall::range(4)) {
     auto opcode = pattern("001? ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
     bind(opcode, Immediate, immediate, d, mode);
   }
 
-  for(uint8_t displacement : range(256))
-  for(nall::Natural< 3> d : range(8)) {
+  for(uint8_t displacement : nall::range(256))
+  for(nall::Natural< 3> d : nall::range(8)) {
     auto opcode = pattern("0100 1??? ???? ????") | displacement << 0 | d << 8;
     bind(opcode, LoadLiteral, displacement, d);
   }
 
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 3> n : range(8))
-  for(nall::Natural< 5> immediate : range(32))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 3> n : nall::range(8))
+  for(nall::Natural< 5> immediate : nall::range(32))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern("0111 ???? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 11;
     bind(opcode, MoveByteImmediate, d, n, immediate, mode);
   }
 
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 3> n : range(8))
-  for(nall::Natural< 5> immediate : range(32))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 3> n : nall::range(8))
+  for(nall::Natural< 5> immediate : nall::range(32))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern("1000 ???? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 11;
     bind(opcode, MoveHalfImmediate, d, n, immediate, mode);
   }
 
-  for(uint8_t list : range(256))
-  for(nall::Natural< 3> n : range(8))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(uint8_t list : nall::range(256))
+  for(nall::Natural< 3> n : nall::range(8))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern("1100 ???? ???? ????") | list << 0 | n << 8 | mode << 11;
     bind(opcode, MoveMultiple, list, n, mode);
   }
 
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 3> n : range(8))
-  for(nall::Natural< 3> m : range(8))
-  for(nall::Natural< 3> mode : range(8)) {
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 3> n : nall::range(8))
+  for(nall::Natural< 3> m : nall::range(8))
+  for(nall::Natural< 3> mode : nall::range(8)) {
     auto opcode = pattern("0101 ???? ???? ????") | d << 0 | n << 3 | m << 6 | mode << 9;
     bind(opcode, MoveRegisterOffset, d, n, m, mode);
   }
 
-  for(uint8_t immediate : range(256))
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(uint8_t immediate : nall::range(256))
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern("1001 ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
     bind(opcode, MoveStack, immediate, d, mode);
   }
 
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 3> n : range(8))
-  for(nall::Natural< 5> offset : range(32))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 3> n : nall::range(8))
+  for(nall::Natural< 5> offset : nall::range(32))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern("0110 ???? ???? ????") | d << 0 | n << 3 | offset << 6 | mode << 11;
     bind(opcode, MoveWordImmediate, d, n, offset, mode);
   }
 
-  for(nall::Natural< 3> d : range(8))
-  for(nall::Natural< 3> m : range(8))
-  for(nall::Natural< 5> immediate : range(32))
-  for(nall::Natural< 2> mode : range(4)) {
+  for(nall::Natural< 3> d : nall::range(8))
+  for(nall::Natural< 3> m : nall::range(8))
+  for(nall::Natural< 5> immediate : nall::range(32))
+  for(nall::Natural< 2> mode : nall::range(4)) {
     if(mode == 3) continue;
     auto opcode = pattern("000? ???? ???? ????") | d << 0 | m << 3 | immediate << 6 | mode << 11;
     bind(opcode, ShiftImmediate, d, m, immediate, mode);
   }
 
-  for(uint8_t immediate : range(256)) {
+  for(uint8_t immediate : nall::range(256)) {
     auto opcode = pattern("1101 1111 ???? ????") | immediate << 0;
     bind(opcode, SoftwareInterrupt, immediate);
   }
 
-  for(uint8_t list : range(256))
-  for(nall::Natural< 1> lrpc : range(2))
-  for(nall::Natural< 1> mode : range(2)) {
+  for(uint8_t list : nall::range(256))
+  for(nall::Natural< 1> lrpc : nall::range(2))
+  for(nall::Natural< 1> mode : nall::range(2)) {
     auto opcode = pattern("1011 ?10? ???? ????") | list << 0 | lrpc << 8 | mode << 11;
     bind(opcode, StackMultiple, list, lrpc, mode);
   }
 
-  for(uint16_t id : range(65536)) {
+  for(uint16_t id : nall::range(65536)) {
     if(thumbInstruction[id]) continue;
     auto opcode = pattern("???? ???? ???? ????") | id << 0;
     bind(opcode, Undefined);
@@ -943,7 +943,7 @@ auto ARM7TDMI::armInstructionMoveMultiple
   if(usr) cpsr().m = PSR::USR;
 
   unsigned sequential = Nonsequential;
-  for(unsigned m : range(16)) {
+  for(unsigned m : nall::range(16)) {
     if(!(list & 1 << m)) continue;
     if(mode == 1) r(m) = read(Word | sequential, rn);
     if(mode == 0) write(Word | sequential, rn, r(m));
@@ -1186,7 +1186,7 @@ auto ARM7TDMI::thumbInstructionMoveMultiple
 (uint8_t list, nall::Natural< 3> n, nall::Natural< 1> mode) -> void {
   uint32_t rn = r(n);
 
-  for(unsigned m : range(8)) {
+  for(unsigned m : nall::range(8)) {
     if(!(list & 1 << m)) continue;
     switch(mode) {
     case 0: write(Word | Nonsequential, rn, r(m)); break;  //STMIA
@@ -1252,7 +1252,7 @@ auto ARM7TDMI::thumbInstructionStackMultiple
   }
 
   unsigned sequential = Nonsequential;
-  for(unsigned m : range(8)) {
+  for(unsigned m : nall::range(8)) {
     if(!(list & 1 << m)) continue;
     switch(mode) {
     case 0: write(Word | sequential, sp, r(m)); break;  //PUSH
@@ -1387,7 +1387,7 @@ auto ARM7TDMI::disassemble(maybe<uint32_t> pc, maybe<Boolean> thumb) -> string {
 
 auto ARM7TDMI::disassembleRegisters() -> string {
   string output;
-  for(unsigned n : range(16)) {
+  for(unsigned n : nall::range(16)) {
     output.append(_r[n], ":", hex(r(n), 8L), " ");
   }
 
@@ -1541,7 +1541,7 @@ auto ARM7TDMI::armDisassembleMoveImmediateOffset
 auto ARM7TDMI::armDisassembleMoveMultiple
 (uint16_t list, nall::Natural< 4> n, nall::Natural< 1> mode, nall::Natural< 1> writeback, nall::Natural< 1> type, nall::Natural< 1> up, nall::Natural< 1> pre) -> string {
   string registers;
-  for(auto index : range(16)) {
+  for(auto index : nall::range(16)) {
     if((list & 1 << index)) registers.append(_r[index], ",");
   }
   registers.trimRight(",", 1L);
@@ -1711,7 +1711,7 @@ auto ARM7TDMI::thumbDisassembleMoveHalfImmediate
 auto ARM7TDMI::thumbDisassembleMoveMultiple
 (uint8_t list, nall::Natural< 3> n, nall::Natural< 1> mode) -> string {
   string registers;
-  for(unsigned m : range(8)) {
+  for(unsigned m : nall::range(8)) {
     if((list & 1 << m)) registers.append(_r[m], ",");
   }
   registers.trimRight(",", 1L);
@@ -1748,7 +1748,7 @@ auto ARM7TDMI::thumbDisassembleSoftwareInterrupt
 auto ARM7TDMI::thumbDisassembleStackMultiple
 (uint8_t list, nall::Natural< 1> lrpc, nall::Natural< 1> mode) -> string {
   string registers;
-  for(unsigned m : range(8)) {
+  for(unsigned m : nall::range(8)) {
     if((list & 1 << m)) registers.append(_r[m], ",");
   }
   if(lrpc) registers.append(!mode ? "lr," : "pc,");

@@ -98,8 +98,8 @@ auto ArmDSP::firmware() const -> std::vector<uint8_t> {
   std::vector<uint8_t> buffer;
   if(!cartridge.has.ARMDSP) return buffer;
   buffer.reserve(128 * 1024 + 32 * 1024);
-  for(auto n : range(128 * 1024)) buffer.push_back(programROM[n]);
-  for(auto n : range( 32 * 1024)) buffer.push_back(dataROM[n]);
+  for(auto n : nall::range(128 * 1024)) buffer.push_back(programROM[n]);
+  for(auto n : nall::range( 32 * 1024)) buffer.push_back(dataROM[n]);
   return buffer;
 }
 

@@ -55,7 +55,7 @@ auto SuperMultitap::latch(bool data) -> void {
   counter2 = 0;
 
   if(latched == 0) {
-    for(unsigned id : range(4)) {
+    for(unsigned id : nall::range(4)) {
       auto& gamepad = gamepads[id];
       gamepad.b      = platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + B);
       gamepad.y      = platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + Y);

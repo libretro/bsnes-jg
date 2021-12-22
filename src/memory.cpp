@@ -11,7 +11,7 @@ Bus::~Bus() {
 }
 
 void Bus::reset() {
-  for(unsigned id : range(256)) {
+  for(unsigned id : nall::range(256)) {
     reader[id].reset();
     writer[id].reset();
     counter[id] = 0;

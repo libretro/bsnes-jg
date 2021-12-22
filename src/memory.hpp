@@ -28,7 +28,7 @@ struct ReadableMemory : Memory {
       delete[] self.data;
       self.data = new uint8_t[self.size = size];
     }
-    for(unsigned address : range(size)) {
+    for(unsigned address : nall::range(size)) {
       self.data[address] = fill;
     }
   }
@@ -74,7 +74,7 @@ struct WritableMemory : Memory {
       delete[] self.data;
       self.data = new uint8_t[self.size = size];
     }
-    for(unsigned address : range(size)) {
+    for(unsigned address : nall::range(size)) {
       self.data[address] = fill;
     }
   }
@@ -118,7 +118,7 @@ struct ProtectableMemory : Memory {
       delete[] self.data;
       self.data = new uint8_t[self.size = size];
     }
-    for(unsigned address : range(size)) {
+    for(unsigned address : nall::range(size)) {
       self.data[address] = fill;
     }
   }

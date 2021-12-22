@@ -1377,8 +1377,8 @@ auto PPU::Object::scanline() -> void {
   auto oamItem = t.item[t.active];
   auto oamTile = t.tile[t.active];
 
-  for(unsigned n : range(32)) oamItem[n].valid = false;
-  for(unsigned n : range(34)) oamTile[n].valid = false;
+  for(unsigned n : nall::range(32)) oamItem[n].valid = false;
+  for(unsigned n : nall::range(34)) oamTile[n].valid = false;
 
   if(t.y == ppu.vdisp() && !ppu.io.displayDisable) addressReset();
   if(t.y >= ppu.vdisp() - 1 || ppu.io.displayDisable) return;
@@ -1415,7 +1415,7 @@ auto PPU::Object::run() -> void {
   auto oamTile = t.tile[!t.active];
   unsigned x = t.x++;
 
-  for(unsigned n : range(34)) {
+  for(unsigned n : nall::range(34)) {
     const auto& tile = oamTile[n];
     if(!tile.valid) break;
 
@@ -1446,7 +1446,7 @@ auto PPU::Object::fetch() -> void {
   auto oamItem = t.item[t.active];
   auto oamTile = t.tile[t.active];
 
-  for(unsigned i : reverse(range(32))) {
+  for(unsigned i : nall::reverse(nall::range(32))) {
     if(!oamItem[i].valid) continue;
 
     if(ppu.io.displayDisable || ppu.vcounter() >= ppu.vdisp() - 1) {
@@ -1484,7 +1484,7 @@ auto PPU::Object::fetch() -> void {
     uint16_t chrx =  (sprite.character & 15);
     uint16_t chry = ((sprite.character >> 4) + (y >> 3) & 15) << 4;
 
-    for(unsigned tx : range(tileWidth)) {
+    for(unsigned tx : nall::range(tileWidth)) {
       unsigned sx = x + (tx << 3) & 511;
       if(x != 256 && sx >= 256 && sx + 7 < 512) continue;
       if(t.tileCount++ >= 34) break;
@@ -1534,12 +1534,12 @@ auto PPU::Object::power() -> void {
   t.tileCount = 0;
 
   t.active = 0;
-  for(unsigned p : range(2)) {
-    for(unsigned n : range(32)) {
+  for(unsigned p : nall::range(2)) {
+    for(unsigned n : nall::range(32)) {
       t.item[p][n].valid = false;
       t.item[p][n].index = 0;
     }
-    for(unsigned n : range(34)) {
+    for(unsigned n : nall::range(34)) {
       t.tile[p][n].valid = false;
       t.tile[p][n].x = 0;
       t.tile[p][n].priority = 0;
@@ -2030,12 +2030,12 @@ auto PPU::Object::serialize(serializer& s) -> void {
   s.integer(t.tileCount);
 
   s.integer(t.active);
-  for(auto p : range(2)) {
-    for(auto n : range(32)) {
+  for(auto p : nall::range(2)) {
+    for(auto n : nall::range(32)) {
       s.integer(t.item[p][n].valid);
       s.integer(t.item[p][n].index);
     }
-    for(auto n : range(34)) {
+    for(auto n : nall::range(34)) {
       s.integer(t.tile[p][n].valid);
       s.integer(t.tile[p][n].x);
       s.integer(t.tile[p][n].priority);
@@ -2327,9 +2327,9 @@ auto PPU::refresh() -> void {
   auto width  = 512;
   auto height = 480;
   if(configuration.video.blurEmulation) {
-    for(unsigned y : range(height)) {
+    for(unsigned y : nall::range(height)) {
       auto data = output + y * pitch;
-      for(unsigned x : range(width - 1)) {
+      for(unsigned x : nall::range(width - 1)) {
         auto a = data[x + 0];
         auto b = data[x + 1];
         data[x] = (a + b - ((a ^ b) & 0x0421)) >> 1;

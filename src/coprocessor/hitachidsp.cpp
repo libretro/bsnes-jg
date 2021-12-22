@@ -272,7 +272,7 @@ auto HitachiDSP::firmware() const -> std::vector<uint8_t> {
   std::vector<uint8_t> buffer;
   if(!cartridge.has.HitachiDSP) return buffer;
   buffer.reserve(1024 * 3);
-  for(auto n : range(1024)) {
+  for(auto n : nall::range(1024)) {
     buffer.push_back(dataROM[n] >>  0);
     buffer.push_back(dataROM[n] >>  8);
     buffer.push_back(dataROM[n] >> 16);

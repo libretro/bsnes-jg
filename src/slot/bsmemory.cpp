@@ -95,7 +95,7 @@ auto BSMemory::Enter() -> void {
 auto BSMemory::main() -> void {
   if(ROM) return step(1'000'000);  //1 second
 
-  for(nall::Natural< 6> id : range(block.count())) {
+  for(nall::Natural< 6> id : nall::range(block.count())) {
     if(block(id).erasing) return block(id).erase();
     block(id).status.ready = 1;
   }
@@ -145,7 +145,7 @@ auto BSMemory::load() -> bool {
     if(auto node = document["flash/serial"]) {
       chip.serial = node.natural();
     }
-    for(unsigned id : range(block.count())) {
+    for(unsigned id : nall::range(block.count())) {
       if(auto node = document[{"flash/block(id=", id, ")"}]) {
         if(auto erased = node["erased"]) {
           block(id).erased = erased.natural();
@@ -169,7 +169,7 @@ auto BSMemory::unload() -> void {
     manifest.append("  vendor: 0x", hex(chip.vendor,  4L), "\n");
     manifest.append("  device: 0x", hex(chip.device,  4L), "\n");
     manifest.append("  serial: 0x", hex(chip.serial, 12L), "\n");
-    for(nall::Natural< 6> id : range(block.count())) {
+    for(nall::Natural< 6> id : nall::range(block.count())) {
       manifest.append("  block\n");
       manifest.append("    id: ", id, "\n");
       manifest.append("    erased: ", (unsigned)block(id).erased, "\n");
@@ -297,7 +297,7 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
 
   //clear status register
   if(queue.data(0) == 0x50) {
-    for(nall::Natural< 6> id : range(block.count())) {
+    for(nall::Natural< 6> id : nall::range(block.count())) {
       block(id).status.vppLow = 0;
       block(id).status.failed = 0;
     }
@@ -375,7 +375,7 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
   if(queue.data(0) == 0x97) {
   if(queue.size() < 2) return;
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
-    for(nall::Natural< 6> id : range(block.count())) block(id).update();
+    for(nall::Natural< 6> id : nall::range(block.count())) block(id).update();
     return queue.flush();
   }
 
@@ -385,14 +385,14 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
     page.write(0x06, 0x06);  //unknown constant
     page.write(0x07, 0x00);  //unknown constant
-    for(nall::Natural< 6> id : range(block.count())) {
+    for(nall::Natural< 6> id : nall::range(block.count())) {
       uint8_t address;
       address += (id >> 0 & 3) * 0x08;  //verified for LH28F800SUT-ZI
       address += (id >> 2 & 3) * 0x40;  //verified for LH28F800SUT-ZI
       address += (id >> 4 & 1) * 0x20;  //guessed for LH28F016SU
       address += (id >> 5 & 1) * 0x04;  //guessed for LH28F032SU; will overwrite unknown constants
       uint32_t erased = 1 << 31 | block(id).erased;  //unknown if d31 is set when erased == 0
-      for(nall::Natural< 2> byte : range(4)) {
+      for(nall::Natural< 2> byte : nall::range(4)) {
         page.write(address + byte, erased >> byte * 8);  //little endian
       }
     }
@@ -404,7 +404,7 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
   if(queue.data(0) == 0xa7) {
   if(queue.size() < 2) return;
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
-    for(nall::Natural< 6> id : range(block.count())) block(id).erase();
+    for(nall::Natural< 6> id : nall::range(block.count())) block(id).erase();
     mode = Mode::CompatibleStatus;
     return queue.flush();
   }
@@ -522,7 +522,7 @@ auto BSMemory::Block::erase() -> void {
     return;
   }
 
-  for(unsigned address : range(byteCount())) {
+  for(unsigned address : nall::range(byteCount())) {
     self->memory.write(id << bitCount() | address, 0xff);
   }
 

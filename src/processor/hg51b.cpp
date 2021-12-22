@@ -122,622 +122,622 @@ HG51B::HG51B() {
   static const nall::Natural< 5> shifts[] = {0, 1, 8, 16};
 
   //NOP
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("0000 00.. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //???
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("0000 01.. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //JMP imm
-  for(uint8_t data : range(256))
-  for(nall::Natural< 1> null : range(  2))
-  for(nall::Natural< 1> far  : range(  2)) {
+  for(uint8_t data : nall::range(256))
+  for(nall::Natural< 1> null : nall::range(  2))
+  for(nall::Natural< 1> far  : nall::range(  2)) {
     auto opcode = pattern("0000 10f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, 1);
   }
 
   //JMP EQ,imm
-  for(uint8_t data : range(256))
-  for(nall::Natural< 1> null : range(  2))
-  for(nall::Natural< 1> far  : range(  2)) {
+  for(uint8_t data : nall::range(256))
+  for(nall::Natural< 1> null : nall::range(  2))
+  for(nall::Natural< 1> far  : nall::range(  2)) {
     auto opcode = pattern("0000 11f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.z);
   }
 
   //JMP GE,imm
-  for(uint8_t data : range(256))
-  for(nall::Natural< 1> null : range(  2))
-  for(nall::Natural< 1> far  : range(  2)) {
+  for(uint8_t data : nall::range(256))
+  for(nall::Natural< 1> null : nall::range(  2))
+  for(nall::Natural< 1> far  : nall::range(  2)) {
     auto opcode = pattern("0001 00f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.c);
   }
 
   //JMP MI,imm
-  for(uint8_t data : range(256))
-  for(nall::Natural< 1> null : range(  2))
-  for(nall::Natural< 1> far  : range(  2)) {
+  for(uint8_t data : nall::range(256))
+  for(nall::Natural< 1> null : nall::range(  2))
+  for(nall::Natural< 1> far  : nall::range(  2)) {
     auto opcode = pattern("0001 01f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.n);
   }
 
   //JMP VS,imm
-  for(uint8_t data : range(256))
-  for(nall::Natural< 1> null : range(  2))
-  for(nall::Natural< 1> far  : range(  2)) {
+  for(uint8_t data : nall::range(256))
+  for(nall::Natural< 1> null : nall::range(  2))
+  for(nall::Natural< 1> far  : nall::range(  2)) {
     auto opcode = pattern("0001 10f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.v);
   }
 
   //WAIT
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("0001 11.. .... ....");
     bind(opcode | null << 0, WAIT);
   }
 
   //???
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("0010 00.. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //SKIP V
-  for(nall::Natural< 1> take : range(  2))
-  for(nall::Natural< 7> null : range(128)) {
+  for(nall::Natural< 1> take : nall::range(  2))
+  for(nall::Natural< 7> null : nall::range(128)) {
     auto opcode = pattern("0010 0100 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.v);
   }
 
   //SKIP C
-  for(nall::Natural< 1> take : range(  2))
-  for(nall::Natural< 7> null : range(128)) {
+  for(nall::Natural< 1> take : nall::range(  2))
+  for(nall::Natural< 7> null : nall::range(128)) {
     auto opcode = pattern("0010 0101 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.c);
   }
 
   //SKIP Z
-  for(nall::Natural< 1> take : range(  2))
-  for(nall::Natural< 7> null : range(128)) {
+  for(nall::Natural< 1> take : nall::range(  2))
+  for(nall::Natural< 7> null : nall::range(128)) {
     auto opcode = pattern("0010 0110 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.z);
   }
 
   //SKIP N
-  for(nall::Natural< 1> take : range(  2))
-  for(nall::Natural< 7> null : range(128)) {
+  for(nall::Natural< 1> take : nall::range(  2))
+  for(nall::Natural< 7> null : nall::range(128)) {
     auto opcode = pattern("0010 0111 .... ...t");
     bind(opcode | take << 0 | null << 1, SKIP, take, r.n);
   }
 
   //JSR
-  for(uint8_t data : range(256))
-  for(nall::Natural< 1> null : range(  2))
-  for(nall::Natural< 1> far  : range(  2)) {
+  for(uint8_t data : nall::range(256))
+  for(nall::Natural< 1> null : nall::range(  2))
+  for(nall::Natural< 1> far  : nall::range(  2)) {
     auto opcode = pattern("0010 10f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, 1);
   }
 
   //JSR EQ,imm
-  for(uint8_t data : range(256))
-  for(nall::Natural< 1> null : range(  2))
-  for(nall::Natural< 1> far  : range(  2)) {
+  for(uint8_t data : nall::range(256))
+  for(nall::Natural< 1> null : nall::range(  2))
+  for(nall::Natural< 1> far  : nall::range(  2)) {
     auto opcode = pattern("0010 11f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.z);
   }
 
   //JSR GE,imm
-  for(uint8_t data : range(256))
-  for(nall::Natural< 1> null : range(  2))
-  for(nall::Natural< 1> far  : range(  2)) {
+  for(uint8_t data : nall::range(256))
+  for(nall::Natural< 1> null : nall::range(  2))
+  for(nall::Natural< 1> far  : nall::range(  2)) {
     auto opcode = pattern("0011 00f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.c);
   }
 
   //JSR MI,imm
-  for(uint8_t data : range(256))
-  for(nall::Natural< 1> null : range(  2))
-  for(nall::Natural< 1> far  : range(  2)) {
+  for(uint8_t data : nall::range(256))
+  for(nall::Natural< 1> null : nall::range(  2))
+  for(nall::Natural< 1> far  : nall::range(  2)) {
     auto opcode = pattern("0011 01f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.n);
   }
 
   //JSR VS,imm
-  for(uint8_t data : range(256))
-  for(nall::Natural< 1> null : range(  2))
-  for(nall::Natural< 1> far  : range(  2)) {
+  for(uint8_t data : nall::range(256))
+  for(nall::Natural< 1> null : nall::range(  2))
+  for(nall::Natural< 1> far  : nall::range(  2)) {
     auto opcode = pattern("0011 10f. dddd dddd");
     bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.v);
   }
 
   //RTS
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("0011 11.. .... ....");
     bind(opcode | null << 0, RTS);
   }
 
   //INC MAR
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("0100 00.. .... ....");
     bind(opcode | null << 0, INC, r.mar);
   }
 
   //???
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("0100 01.. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //CMPR A<<s,reg
-  for(nall::Natural< 7> reg   : range(128))
-  for(nall::Natural< 1> null  : range(  2))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(nall::Natural< 7> reg   : nall::range(128))
+  for(nall::Natural< 1> null  : nall::range(  2))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("0100 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, CMPR, reg, shifts[shift]);
   }
 
   //CMPR A<<s,imm
-  for(uint8_t imm   : range(256))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(uint8_t imm   : nall::range(256))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("0100 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, CMPR, imm, shifts[shift]);
   }
 
   //CMP A<<s,reg
-  for(nall::Natural< 7> reg   : range(128))
-  for(nall::Natural< 1> null  : range(  2))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(nall::Natural< 7> reg   : nall::range(128))
+  for(nall::Natural< 1> null  : nall::range(  2))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("0101 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, CMP, reg, shifts[shift]);
   }
 
   //CMP A<<s,imm
-  for(uint8_t imm   : range(256))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(uint8_t imm   : nall::range(256))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("0101 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, CMP, imm, shifts[shift]);
   }
 
   //???
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("0101 1000 .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //SXB A
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("0101 1001 .... ....");
     bind(opcode | null << 0, SXB);
   }
 
   //SXW A
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("0101 1010 .... ....");
     bind(opcode | null << 0, SXW);
   }
 
   //???
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("0101 1011 .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //???
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("0101 11.. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //LD A,reg
-  for(nall::Natural< 7> reg  : range(128))
-  for(nall::Natural< 1> null : range(  2)) {
+  for(nall::Natural< 7> reg  : nall::range(128))
+  for(nall::Natural< 1> null : nall::range(  2)) {
     auto opcode = pattern("0110 0000 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, LD, r.a, reg);
   }
 
   //LD MDR,reg
-  for(nall::Natural< 7> reg  : range(128))
-  for(nall::Natural< 1> null : range(  2)) {
+  for(nall::Natural< 7> reg  : nall::range(128))
+  for(nall::Natural< 1> null : nall::range(  2)) {
     auto opcode = pattern("0110 0001 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, LD, r.mdr, reg);
   }
 
   //LD MAR,reg
-  for(nall::Natural< 7> reg  : range(128))
-  for(nall::Natural< 1> null : range(  2)) {
+  for(nall::Natural< 7> reg  : nall::range(128))
+  for(nall::Natural< 1> null : nall::range(  2)) {
     auto opcode = pattern("0110 0010 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, LD, r.mar, reg);
   }
 
   //LD P,reg
-  for(nall::Natural< 4> reg  : range(16))
-  for(nall::Natural< 4> null : range(16)) {
+  for(nall::Natural< 4> reg  : nall::range(16))
+  for(nall::Natural< 4> null : nall::range(16)) {
     auto opcode = pattern("0110 0011 .... rrrr");
     bind(opcode | reg << 0 | null << 4, LD, r.p, reg);
   }
 
   //LD A,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("0110 0100 iiii iiii");
     bind(opcode | imm << 0, LD, r.a, imm);
   }
 
   //LD MDR,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("0110 0101 iiii iiii");
     bind(opcode | imm << 0, LD, r.mdr, imm);
   }
 
   //LD MAR,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("0110 0110 iiii iiii");
     bind(opcode | imm << 0, LD, r.mar, imm);
   }
 
   //LD P,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("0110 0111 iiii iiii");
     bind(opcode | imm << 0, LD, r.p, imm);
   }
 
   //RDRAM 0,A
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("0110 1000 .... ....");
     bind(opcode | null << 0, RDRAM, 0, r.a);
   }
 
   //RDRAM 1,A
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("0110 1001 .... ....");
     bind(opcode | null << 0, RDRAM, 1, r.a);
   }
 
   //RDRAM 2,A
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("0110 1010 .... ....");
     bind(opcode | null << 0, RDRAM, 2, r.a);
   }
 
   //???
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("0110 1011 .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //RDRAM 0,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("0110 1100 iiii iiii");
     bind(opcode | imm << 0, RDRAM, 0, imm);
   }
 
   //RDRAM 1,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("0110 1101 iiii iiii");
     bind(opcode | imm << 0, RDRAM, 1, imm);
   }
 
   //RDRAM 2,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("0110 1110 iiii iiii");
     bind(opcode | imm << 0, RDRAM, 2, imm);
   }
 
   //???
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("0110 1111 .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //RDROM A
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("0111 00.. .... ....");
     bind(opcode | null << 0, RDROM, r.a);
   }
 
   //RDROM imm
-  for(nall::Natural<10> imm : range(1024)) {
+  for(nall::Natural<10> imm : nall::range(1024)) {
     auto opcode = pattern("0111 01ii iiii iiii");
     bind(opcode | imm << 0, RDROM, imm);
   }
 
   //???
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("0111 10.. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //LD PL,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("0111 1100 iiii iiii");
     bind(opcode | imm << 0, LDL, r.p, imm);
   }
 
   //LD PH,imm
-  for(nall::Natural< 7> imm  : range(128))
-  for(nall::Natural< 1> null : range(  2)) {
+  for(nall::Natural< 7> imm  : nall::range(128))
+  for(nall::Natural< 1> null : nall::range(  2)) {
     auto opcode = pattern("0111 1101 .iii iiii");
     bind(opcode | imm << 0 | null << 7, LDH, r.p, imm);
   }
 
   //???
-  for(nall::Natural< 9> null : range(512)) {
+  for(nall::Natural< 9> null : nall::range(512)) {
     auto opcode = pattern("0111 111. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //ADD A<<s,reg
-  for(nall::Natural< 7> reg   : range(128))
-  for(nall::Natural< 1> null  : range(  2))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(nall::Natural< 7> reg   : nall::range(128))
+  for(nall::Natural< 1> null  : nall::range(  2))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1000 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, ADD, reg, shifts[shift]);
   }
 
   //ADD A<<s,imm
-  for(uint8_t imm   : range(256))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(uint8_t imm   : nall::range(256))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1000 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, ADD, imm, shifts[shift]);
   }
 
   //SUBR A<<s,reg
-  for(nall::Natural< 7> reg   : range(128))
-  for(nall::Natural< 1> null  : range(  2))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(nall::Natural< 7> reg   : nall::range(128))
+  for(nall::Natural< 1> null  : nall::range(  2))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1000 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, SUBR, reg, shifts[shift]);
   }
 
   //SUBR A<<s,imm
-  for(uint8_t imm   : range(256))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(uint8_t imm   : nall::range(256))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1000 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, SUBR, imm, shifts[shift]);
   }
 
   //SUB A<<s,reg
-  for(nall::Natural< 7> reg   : range(128))
-  for(nall::Natural< 1> null  : range(  2))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(nall::Natural< 7> reg   : nall::range(128))
+  for(nall::Natural< 1> null  : nall::range(  2))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1001 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, SUB, reg, shifts[shift]);
   }
 
   //SUB A<<s,imm
-  for(uint8_t imm   : range(256))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(uint8_t imm   : nall::range(256))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1001 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, SUB, imm, shifts[shift]);
   }
 
   //MUL reg
-  for(nall::Natural< 7> reg  : range(128))
-  for(nall::Natural< 3> null : range(  8)) {
+  for(nall::Natural< 7> reg  : nall::range(128))
+  for(nall::Natural< 3> null : nall::range(  8)) {
     auto opcode = pattern("1001 10.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, MUL, reg);
   }
 
   //MUL imm
-  for(uint8_t imm  : range(256))
-  for(nall::Natural< 2> null : range(  4)) {
+  for(uint8_t imm  : nall::range(256))
+  for(nall::Natural< 2> null : nall::range(  4)) {
     auto opcode = pattern("1001 11.. iiii iiii");
     bind(opcode | imm << 0 | null << 8, MUL, imm);
   }
 
   //XNOR A<<s,reg
-  for(nall::Natural< 7> reg   : range(128))
-  for(nall::Natural< 1> null  : range(  2))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(nall::Natural< 7> reg   : nall::range(128))
+  for(nall::Natural< 1> null  : nall::range(  2))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1010 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, XNOR, reg, shifts[shift]);
   }
 
   //XNOR A<<s,imm
-  for(uint8_t imm   : range(256))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(uint8_t imm   : nall::range(256))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1010 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, XNOR, imm, shifts[shift]);
   }
 
   //XOR A<<s,reg
-  for(nall::Natural< 7> reg   : range(128))
-  for(nall::Natural< 1> null  : range(  2))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(nall::Natural< 7> reg   : nall::range(128))
+  for(nall::Natural< 1> null  : nall::range(  2))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1010 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, XOR, reg, shifts[shift]);
   }
 
   //XOR A<<s,imm
-  for(uint8_t imm   : range(256))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(uint8_t imm   : nall::range(256))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1010 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, XOR, imm, shifts[shift]);
   }
 
   //AND A<<s,reg
-  for(nall::Natural< 7> reg   : range(128))
-  for(nall::Natural< 1> null  : range(  2))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(nall::Natural< 7> reg   : nall::range(128))
+  for(nall::Natural< 1> null  : nall::range(  2))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1011 00ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, AND, reg, shifts[shift]);
   }
 
   //AND A<<s,imm
-  for(uint8_t imm   : range(256))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(uint8_t imm   : nall::range(256))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1011 01ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, AND, imm, shifts[shift]);
   }
 
   //OR A<<s,reg
-  for(nall::Natural< 7> reg   : range(128))
-  for(nall::Natural< 1> null  : range(  2))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(nall::Natural< 7> reg   : nall::range(128))
+  for(nall::Natural< 1> null  : nall::range(  2))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1011 10ss .rrr rrrr");
     bind(opcode | reg << 0 | null << 7 | shift << 8, OR, reg, shifts[shift]);
   }
 
   //OR A<<s,imm
-  for(uint8_t imm   : range(256))
-  for(nall::Natural< 2> shift : range(  4)) {
+  for(uint8_t imm   : nall::range(256))
+  for(nall::Natural< 2> shift : nall::range(  4)) {
     auto opcode = pattern("1011 11ss iiii iiii");
     bind(opcode | imm << 0 | shift << 8, OR, imm, shifts[shift]);
   }
 
   //SHR A,reg
-  for(nall::Natural< 7> reg  : range(128))
-  for(nall::Natural< 3> null : range(  8)) {
+  for(nall::Natural< 7> reg  : nall::range(128))
+  for(nall::Natural< 3> null : nall::range(  8)) {
     auto opcode = pattern("1100 00.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, SHR, reg);
   }
 
   //SHR A,imm
-  for(nall::Natural< 5> imm  : range(32))
-  for(nall::Natural< 5> null : range(32)) {
+  for(nall::Natural< 5> imm  : nall::range(32))
+  for(nall::Natural< 5> null : nall::range(32)) {
     auto opcode = pattern("1100 01.. ...i iiii");
     bind(opcode | imm << 0 | null << 5, SHR, imm);
   }
 
   //ASR A,reg
-  for(nall::Natural< 7> reg  : range(128))
-  for(nall::Natural< 3> null : range(  8)) {
+  for(nall::Natural< 7> reg  : nall::range(128))
+  for(nall::Natural< 3> null : nall::range(  8)) {
     auto opcode = pattern("1100 10.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ASR, reg);
   }
 
   //ASR A,imm
-  for(nall::Natural< 5> imm  : range(32))
-  for(nall::Natural< 5> null : range(32)) {
+  for(nall::Natural< 5> imm  : nall::range(32))
+  for(nall::Natural< 5> null : nall::range(32)) {
     auto opcode = pattern("1100 11.. ...i iiii");
     bind(opcode | imm << 0 | null << 5, ASR, imm);
   }
 
   //ROR A,reg
-  for(nall::Natural< 7> reg  : range(128))
-  for(nall::Natural< 3> null : range(  8)) {
+  for(nall::Natural< 7> reg  : nall::range(128))
+  for(nall::Natural< 3> null : nall::range(  8)) {
     auto opcode = pattern("1101 00.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ROR, reg);
   }
 
   //ROR A,imm
-  for(nall::Natural< 5> imm  : range(32))
-  for(nall::Natural< 5> null : range(32)) {
+  for(nall::Natural< 5> imm  : nall::range(32))
+  for(nall::Natural< 5> null : nall::range(32)) {
     auto opcode = pattern("1101 01.. ...i iiii");
     bind(opcode | imm << 0 | null << 5, ROR, imm);
   }
 
   //SHL A,reg
-  for(nall::Natural< 7> reg  : range(128))
-  for(nall::Natural< 3> null : range(  8)) {
+  for(nall::Natural< 7> reg  : nall::range(128))
+  for(nall::Natural< 3> null : nall::range(  8)) {
     auto opcode = pattern("1101 10.. .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, SHL, reg);
   }
 
   //SHL A,imm
-  for(nall::Natural< 5> imm  : range(32))
-  for(nall::Natural< 5> null : range(32)) {
+  for(nall::Natural< 5> imm  : nall::range(32))
+  for(nall::Natural< 5> null : nall::range(32)) {
     auto opcode = pattern("1101 11.. ...i iiii");
     bind(opcode | imm << 0 | null << 5, SHL, imm);
   }
 
   //ST reg,A
-  for(nall::Natural< 7> reg  : range(128))
-  for(nall::Natural< 1> null : range(  2)) {
+  for(nall::Natural< 7> reg  : nall::range(128))
+  for(nall::Natural< 1> null : nall::range(  2)) {
     auto opcode = pattern("1110 0000 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ST, reg, r.a);
   }
 
   //ST reg,MDR
-  for(nall::Natural< 7> reg  : range(128))
-  for(nall::Natural< 1> null : range(  2)) {
+  for(nall::Natural< 7> reg  : nall::range(128))
+  for(nall::Natural< 1> null : nall::range(  2)) {
     auto opcode = pattern("1110 0001 .rrr rrrr");
     bind(opcode | reg << 0 | null << 7, ST, reg, r.mdr);
   }
 
   //???
-  for(nall::Natural< 9> null : range(512)) {
+  for(nall::Natural< 9> null : nall::range(512)) {
     auto opcode = pattern("1110 001. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //???
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("1110 01.. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //WRRAM 0,A
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("1110 1000 .... ....");
     bind(opcode | null << 0, WRRAM, 0, r.a);
   }
 
   //WRRAM 1,A
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("1110 1001 .... ....");
     bind(opcode | null << 0, WRRAM, 1, r.a);
   }
 
   //WRRAM 2,A
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("1110 1010 .... ....");
     bind(opcode | null << 0, WRRAM, 2, r.a);
   }
 
   //???
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("1110 1011 .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //WRRAM 0,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("1110 1100 iiii iiii");
     bind(opcode | imm << 0, WRRAM, 0, imm);
   }
 
   //WRRAM 1,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("1110 1101 iiii iiii");
     bind(opcode | imm << 0, WRRAM, 1, imm);
   }
 
   //WRRAM 2,imm
-  for(uint8_t imm : range(256)) {
+  for(uint8_t imm : nall::range(256)) {
     auto opcode = pattern("1110 1110 iiii iiii");
     bind(opcode | imm << 0, WRRAM, 2, imm);
   }
 
   //???
-  for(uint8_t null : range(256)) {
+  for(uint8_t null : nall::range(256)) {
     auto opcode = pattern("1110 1111 .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //SWAP A,Rn
-  for(nall::Natural< 4> reg  : range(16))
-  for(nall::Natural< 6> null : range(64)) {
+  for(nall::Natural< 4> reg  : nall::range(16))
+  for(nall::Natural< 6> null : nall::range(64)) {
     auto opcode = pattern("1111 00.. .... rrrr");
     bind(opcode | reg << 0 | null << 4, SWAP, r.a, reg);
   }
 
   //???
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("1111 01.. .... ....");
     bind(opcode | null << 0, NOP);
   }
 
   //CLEAR
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("1111 10.. .... ....");
     bind(opcode | null << 0, CLEAR);
   }
 
   //HALT
-  for(nall::Natural<10> null : range(1024)) {
+  for(nall::Natural<10> null : nall::range(1024)) {
     auto opcode = pattern("1111 11.. .... ....");
     bind(opcode | null << 0, HALT);
   }
@@ -745,7 +745,7 @@ HG51B::HG51B() {
   #undef bind
   #undef pattern
 
-  for(unsigned opcode : range(65536)) {
+  for(unsigned opcode : nall::range(65536)) {
     if(!instructionTable[opcode]) throw;
   }
 }
@@ -1230,7 +1230,7 @@ auto HG51B::cache() -> bool {
   if(io.cache.lock[io.cache.page]) return io.cache.enable = 0, false;
 
   io.cache.address[io.cache.page] = address;
-  for(unsigned offset : range(256)) {
+  for(unsigned offset : nall::range(256)) {
     step(wait(address));
     programRAM[io.cache.page][offset]  = read(address++) << 0;
     programRAM[io.cache.page][offset] |= read(address++) << 8;
@@ -1239,7 +1239,7 @@ auto HG51B::cache() -> bool {
 }
 
 auto HG51B::dma() -> void {
-  for(unsigned offset : range(io.dma.length)) {
+  for(unsigned offset : nall::range(io.dma.length)) {
     nall::Natural<24> source = io.dma.source + offset;
     nall::Natural<24> target = io.dma.target + offset;
 

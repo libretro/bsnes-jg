@@ -179,7 +179,7 @@ void CPU::Channel::hdmaTransfer() {
   if(!hdmaDoTransfer) return;
 
   static const unsigned lengths[8] = {1, 2, 2, 4, 4, 4, 2, 4};
-  for(nall::Natural< 2> index : range(lengths[transferMode])) {
+  for(nall::Natural< 2> index : nall::range(lengths[transferMode])) {
     nall::Natural<24> address = !indirect ? sourceBank << 16 | hdmaAddress++ : indirectBank << 16 | indirectAddress++;
     transfer(address, index);
   }
@@ -498,12 +498,12 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
     return;
 
   case 0x420b:  //DMAEN
-    for(auto n : range(8)) channels[n].dmaEnable = bool(data & 1 << n);
+    for(auto n : nall::range(8)) channels[n].dmaEnable = bool(data & 1 << n);
     if(data) status.dmaPending = true;
     return;
 
   case 0x420c:  //HDMAEN
-    for(auto n : range(8)) channels[n].hdmaEnable = bool(data & 1 << n);
+    for(auto n : nall::range(8)) channels[n].hdmaEnable = bool(data & 1 << n);
     return;
 
   case 0x420d:  //MEMSEL
@@ -1061,7 +1061,7 @@ void CPU::main() {
 
   if(status.resetPending) {
     status.resetPending = 0;
-    for(unsigned repeat : range(22)) step<6,0>();  //step(132);
+    for(unsigned repeat : nall::range(22)) step<6,0>();  //step(132);
     r.vector = 0xfffc;
     return interrupt();
   }
@@ -1114,7 +1114,7 @@ void CPU::power(bool reset) {
     }
   }
 
-  for(unsigned n : range(8)) {
+  for(unsigned n : nall::range(8)) {
     channels[n] = {};
     if(n != 7) channels[n].next = channels[n + 1];
   }

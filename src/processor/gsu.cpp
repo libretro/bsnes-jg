@@ -531,7 +531,7 @@ auto GSU::serialize(serializer& s) -> void {
   s.integer(regs.pipeline);
   s.integer(regs.ramaddr);
 
-  for(auto n : range(16)) {
+  for(auto n : nall::range(16)) {
     s.integer(regs.r[n].data);
     s.integer(regs.r[n].modified);
   }
@@ -577,7 +577,7 @@ auto GSU::serialize(serializer& s) -> void {
   s.array(cache.buffer);
   s.array(cache.valid);
 
-  for(unsigned n : range(2)) {
+  for(unsigned n : nall::range(2)) {
     s.integer(pixelcache[n].offset);
     s.integer(pixelcache[n].bitpend);
     s.array(pixelcache[n].data);

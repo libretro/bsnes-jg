@@ -572,7 +572,7 @@ auto uPD96050::power() -> void {
     regs.dp.resize(11);
   }
 
-  for(auto n : range(16)) regs.stack[n] = 0x0000;
+  for(auto n : nall::range(16)) regs.stack[n] = 0x0000;
   regs.pc = 0x0000;
   regs.rp = 0x0000;
   regs.dp = 0x0000;
