@@ -15,7 +15,7 @@ nall::Markup::Node Cartridge::loadBoard(nall::string board) {
   if(board.beginsWith("WEI-" )) board.replace("WEI-",  "SHVC-", 1L);
 
   if(auto fp = platform->open(ID::System, "boards.bml", File::Read, File::Required)) {
-    auto document = BML::unserialize(fp->reads());
+    auto document = nall::BML::unserialize(fp->reads());
     for(auto leaf : document.find("board")) {
       auto id = leaf.text();
       bool matched = id == board;
@@ -512,7 +512,7 @@ void Cartridge::loaduPD7725(nall::Markup::Node node) {
   }
 
   if(failed || configuration.hacks.coprocessor.preferHLE) {
-    auto manifest = BML::serialize(game.document);
+    auto manifest = nall::BML::serialize(game.document);
     if(manifest.find("identifier: DSP1")) {  //also matches DSP1B
       has.DSP1 = true;
       for(auto map : node.find("map")) {
@@ -592,7 +592,7 @@ void Cartridge::loaduPD96050(nall::Markup::Node node) {
   }
 
   if(failed || configuration.hacks.coprocessor.preferHLE) {
-    auto manifest = BML::serialize(game.document);
+    auto manifest = nall::BML::serialize(game.document);
     if(manifest.find("identifier: ST010")) {
       has.ST0010 = true;
       if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD96050)"]) {
@@ -936,11 +936,11 @@ std::vector<nall::string> Cartridge::hashes() const {
 
 std::vector<nall::string> Cartridge::manifests() const {
   std::vector<nall::string> manifests;
-  manifests.push_back(nall::string{BML::serialize(game.document), "\n", BML::serialize(board)});
-  if(slotGameBoy.document) manifests.push_back(BML::serialize(slotGameBoy.document));
-  if(slotBSMemory.document) manifests.push_back(BML::serialize(slotBSMemory.document));
-  if(slotSufamiTurboA.document) manifests.push_back(BML::serialize(slotSufamiTurboA.document));
-  if(slotSufamiTurboB.document) manifests.push_back(BML::serialize(slotSufamiTurboB.document));
+  manifests.push_back(nall::string{nall::BML::serialize(game.document), "\n", nall::BML::serialize(board)});
+  if(slotGameBoy.document) manifests.push_back(nall::BML::serialize(slotGameBoy.document));
+  if(slotBSMemory.document) manifests.push_back(nall::BML::serialize(slotBSMemory.document));
+  if(slotSufamiTurboA.document) manifests.push_back(nall::BML::serialize(slotSufamiTurboA.document));
+  if(slotSufamiTurboB.document) manifests.push_back(nall::BML::serialize(slotSufamiTurboB.document));
   return manifests;
 }
 

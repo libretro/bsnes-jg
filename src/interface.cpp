@@ -38,18 +38,18 @@ void Configuration::process(nall::Markup::Node document, bool load) {
 nall::string Configuration::read() {
   nall::Markup::Node document;
   process(document, false);
-  return BML::serialize(document, " ");
+  return nall::BML::serialize(document, " ");
 }
 
 nall::string Configuration::read(nall::string name) {
-  auto document = BML::unserialize(read());
+  auto document = nall::BML::unserialize(read());
   return document[name].text();
 }
 
 bool Configuration::write(nall::string configuration) {
   *this = {};
 
-  if(auto document = BML::unserialize(configuration)) {
+  if(auto document = nall::BML::unserialize(configuration)) {
     return process(document, true), true;
   }
 
@@ -59,7 +59,7 @@ bool Configuration::write(nall::string configuration) {
 bool Configuration::write(nall::string name, nall::string value) {
   if(SuperFamicom::system.loaded() && name.beginsWith("System/")) return false;
 
-  auto document = BML::unserialize(read());
+  auto document = nall::BML::unserialize(read());
   if(auto node = document[name]) {
     node.setValue(value);
     return process(document, true), true;

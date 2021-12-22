@@ -210,7 +210,7 @@ struct Game {
 };
 
 auto Game::load(std::string text) -> void {
-  document = BML::unserialize(text.c_str());
+  document = nall::BML::unserialize(text.c_str());
 
   sha256 = document["game/sha256"].text();
   label = document["game/label"].text();

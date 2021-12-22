@@ -135,7 +135,7 @@ auto BSMemory::load() -> bool {
   }
 
   if(auto fp = platform->open(pathID, "metadata.bml", File::Read, File::Optional)) {
-    auto document = BML::unserialize(fp->reads());
+    auto document = nall::BML::unserialize(fp->reads());
     if(auto node = document["flash/vendor"]) {
       chip.vendor = node.natural();
     }
