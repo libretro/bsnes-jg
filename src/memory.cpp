@@ -10,7 +10,7 @@ Bus::~Bus() {
   if(target) delete[] target;
 }
 
-auto Bus::reset() -> void {
+void Bus::reset() {
   for(unsigned id : range(256)) {
     reader[id].reset();
     writer[id].reset();
@@ -27,11 +27,11 @@ auto Bus::reset() -> void {
   writer[0] = [](unsigned, uint8_t) -> void {};
 }
 
-auto Bus::map(
+unsigned Bus::map(
   const function<uint8_t (unsigned, uint8_t)>& read,
   const function<void  (unsigned, uint8_t)>& write,
   const string& addr, unsigned size, unsigned base, unsigned mask
-) -> unsigned {
+) {
   unsigned id = 1;
   while(counter[id]) {
     if(++id >= 256) return printf("SFC error: bus map exhausted\n"), 0;
@@ -74,7 +74,7 @@ auto Bus::map(
   return id;
 }
 
-auto Bus::unmap(const string& addr) -> void {
+void Bus::unmap(const string& addr) {
   auto p = addr.split(":", 1L);
   auto banks = p(0).split(",");
   auto addrs = p(1).split(",");

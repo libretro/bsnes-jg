@@ -4,26 +4,26 @@ struct Memory {
   virtual ~Memory() { reset(); }
   inline explicit operator bool() const { return size() > 0; }
 
-  virtual auto reset() -> void {}
-  virtual auto allocate(unsigned, uint8_t = 0xff) -> void {}
+  virtual void reset() {}
+  virtual void allocate(unsigned, uint8_t = 0xff) {}
 
-  virtual auto data() -> uint8_t* = 0;
-  virtual auto size() const -> unsigned = 0;
+  virtual uint8_t* data() = 0;
+  virtual unsigned size() const = 0;
 
-  virtual auto read(unsigned address, uint8_t data = 0) -> uint8_t = 0;
-  virtual auto write(unsigned address, uint8_t data) -> void = 0;
+  virtual uint8_t read(unsigned address, uint8_t data = 0) = 0;
+  virtual void write(unsigned address, uint8_t data) = 0;
 
   unsigned id = 0;
 };
 
 struct ReadableMemory : Memory {
-  inline auto reset() -> void override {
+  inline void reset() override {
     delete[] self.data;
     self.data = nullptr;
     self.size = 0;
   }
 
-  inline auto allocate(unsigned size, uint8_t fill = 0xff) -> void override {
+  inline void allocate(unsigned size, uint8_t fill = 0xff) override {
     if(self.size != size) {
       delete[] self.data;
       self.data = new uint8_t[self.size = size];
@@ -33,25 +33,25 @@ struct ReadableMemory : Memory {
     }
   }
 
-  inline auto data() -> uint8_t* override {
+  inline uint8_t* data() override {
     return self.data;
   }
 
-  inline auto size() const -> unsigned override {
+  inline unsigned size() const override {
     return self.size;
   }
 
-  inline auto read(unsigned address, uint8_t data = 0) -> uint8_t override {
+  inline uint8_t read(unsigned address, uint8_t data = 0) override {
     return self.data[address];
   }
 
-  inline auto write(unsigned address, uint8_t data) -> void override {
+  inline void write(unsigned address, uint8_t data) override {
     if(Memory::GlobalWriteEnable) {
       self.data[address] = data;
     }
   }
 
-  inline auto operator[](unsigned address) const -> uint8_t {
+  inline uint8_t operator[](unsigned address) const {
     return self.data[address];
   }
 
@@ -63,13 +63,13 @@ private:
 };
 
 struct WritableMemory : Memory {
-  inline auto reset() -> void override {
+  inline void reset() override {
     delete[] self.data;
     self.data = nullptr;
     self.size = 0;
   }
 
-  inline auto allocate(unsigned size, uint8_t fill = 0xff) -> void override {
+  inline void allocate(unsigned size, uint8_t fill = 0xff) override {
     if(self.size != size) {
       delete[] self.data;
       self.data = new uint8_t[self.size = size];
@@ -79,23 +79,23 @@ struct WritableMemory : Memory {
     }
   }
 
-  inline auto data() -> uint8_t* override {
+  inline uint8_t* data() override {
     return self.data;
   }
 
-  inline auto size() const -> unsigned override {
+  inline unsigned size() const override {
     return self.size;
   }
 
-  inline auto read(unsigned address, uint8_t data = 0) -> uint8_t override {
+  inline uint8_t read(unsigned address, uint8_t data = 0) override {
     return self.data[address];
   }
 
-  inline auto write(unsigned address, uint8_t data) -> void override {
+  inline void write(unsigned address, uint8_t data) override {
     self.data[address] = data;
   }
 
-  inline auto operator[](unsigned address) -> uint8_t& {
+  inline uint8_t& operator[](unsigned address) {
     return self.data[address];
   }
 
@@ -107,13 +107,13 @@ private:
 };
 
 struct ProtectableMemory : Memory {
-  inline auto reset() -> void override {
+  inline void reset() override {
     delete[] self.data;
     self.data = nullptr;
     self.size = 0;
   }
 
-  inline auto allocate(unsigned size, uint8_t fill = 0xff) -> void override {
+  inline void allocate(unsigned size, uint8_t fill = 0xff) override {
     if(self.size != size) {
       delete[] self.data;
       self.data = new uint8_t[self.size = size];
@@ -123,33 +123,33 @@ struct ProtectableMemory : Memory {
     }
   }
 
-  inline auto data() -> uint8_t* override {
+  inline uint8_t* data() override {
     return self.data;
   }
 
-  inline auto size() const -> unsigned override {
+  inline unsigned size() const override {
     return self.size;
   }
 
-  inline auto writable() const -> bool {
+  inline bool writable() const {
     return self.writable;
   }
 
-  inline auto writable(bool writable) -> void {
+  inline void writable(bool writable) {
     self.writable = writable;
   }
 
-  inline auto read(unsigned address, uint8_t data = 0) -> uint8_t override {
+  inline uint8_t read(unsigned address, uint8_t data = 0) override {
     return self.data[address];
   }
 
-  inline auto write(unsigned address, uint8_t data) -> void override {
+  inline void write(unsigned address, uint8_t data) override {
     if(self.writable || Memory::GlobalWriteEnable) {
       self.data[address] = data;
     }
   }
 
-  inline auto operator[](unsigned address) const -> uint8_t {
+  inline uint8_t operator[](unsigned address) const {
     return self.data[address];
   }
 
@@ -162,21 +162,21 @@ private:
 };
 
 struct Bus {
-  inline static auto mirror(unsigned address, unsigned size) -> unsigned;
-  inline static auto reduce(unsigned address, unsigned mask) -> unsigned;
+  inline static unsigned mirror(unsigned address, unsigned size);
+  inline static unsigned reduce(unsigned address, unsigned mask);
 
   ~Bus();
 
-  inline auto read(unsigned address, uint8_t data = 0) -> uint8_t;
-  inline auto write(unsigned address, uint8_t data) -> void;
+  inline uint8_t read(unsigned address, uint8_t data = 0);
+  inline void write(unsigned address, uint8_t data);
 
-  auto reset() -> void;
-  auto map(
+  void reset();
+  unsigned map(
     const function<uint8_t (unsigned, uint8_t)>& read,
     const function<void (unsigned, uint8_t)>& write,
     const string& address, unsigned size = 0, unsigned base = 0, unsigned mask = 0
-  ) -> unsigned;
-  auto unmap(const string& address) -> void;
+  );
+  void unmap(const string& address);
 
 private:
   uint8_t *lookup = nullptr;
