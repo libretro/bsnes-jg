@@ -1,7 +1,6 @@
 #include <fstream>
-#include <iostream>
 #include <sstream>
-#include <cstdio>
+
 #include "../sfc.hpp"
 
 namespace SuperFamicom {
@@ -64,8 +63,10 @@ void MSU1::main() {
       }
       else {
         io.audioPlayOffset += 4;
-        left  = (int16_t)((audioFile.get() | (audioFile.get() << 8)) * (io.audioVolume / 255));
-        right = (int16_t)((audioFile.get() | (audioFile.get() << 8)) * (io.audioVolume / 255));
+        left  = audioFile.get() | (audioFile.get() << 8);
+        right = audioFile.get() | (audioFile.get() << 8);
+        left *= (io.audioVolume / 255.0);
+        right *= (io.audioVolume / 255.0);
         if(dsp.mute()) left = 0, right = 0;
       }
     }
@@ -207,7 +208,7 @@ void MSU1::writeIO(unsigned addr, uint8_t data) {
     if(io.audioError) break;
     io.audioPlay = bool(data & 1);
     io.audioRepeat = bool(data & 2);
-    nall::Boolean audioResume = bool(data & 4);
+    bool audioResume = bool(data & 4);
     if(!io.audioPlay && audioResume) {
       io.audioResumeTrack = io.audioTrack;
       io.audioResumeOffset = io.audioPlayOffset;
