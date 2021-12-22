@@ -4,22 +4,22 @@ namespace SuperFamicom {
 
 CPU cpu;
 
-auto CPU::dmaEnable() -> bool {
+bool CPU::dmaEnable() {
   for(auto& channel : channels) if(channel.dmaEnable) return true;
   return false;
 }
 
-auto CPU::hdmaEnable() -> bool {
+bool CPU::hdmaEnable() {
   for(auto& channel : channels) if(channel.hdmaEnable) return true;
   return false;
 }
 
-auto CPU::hdmaActive() -> bool {
+bool CPU::hdmaActive() {
   for(auto& channel : channels) if(channel.hdmaActive()) return true;
   return false;
 }
 
-auto CPU::dmaRun() -> void {
+void CPU::dmaRun() {
   counter.dma += 8;
   step<8,0>();
   dmaEdge();
@@ -27,18 +27,18 @@ auto CPU::dmaRun() -> void {
   status.irqLock = true;
 }
 
-auto CPU::hdmaReset() -> void {
+void CPU::hdmaReset() {
   for(auto& channel : channels) channel.hdmaReset();
 }
 
-auto CPU::hdmaSetup() -> void {
+void CPU::hdmaSetup() {
   counter.dma += 8;
   step<8,0>();
   for(auto& channel : channels) channel.hdmaSetup();
   status.irqLock = true;
 }
 
-auto CPU::hdmaRun() -> void {
+void CPU::hdmaRun() {
   counter.dma += 8;
   step<8,0>();
   for(auto& channel : channels) channel.hdmaTransfer();
@@ -47,16 +47,16 @@ auto CPU::hdmaRun() -> void {
 }
 
 template<unsigned Clocks, bool Synchronize>
-auto CPU::Channel::step() -> void {
+void CPU::Channel::step() {
   cpu.counter.dma += Clocks;
   cpu.step<Clocks, Synchronize>();
 }
 
-auto CPU::Channel::edge() -> void {
+void CPU::Channel::edge() {
   cpu.dmaEdge();
 }
 
-auto CPU::Channel::validA(nall::Natural<24> address) -> bool {
+bool CPU::Channel::validA(nall::Natural<24> address) {
   //A-bus cannot access the B-bus or CPU I/O registers
   if((address & 0x40ff00) == 0x2100) return false;  //00-3f,80-bf:2100-21ff
   if((address & 0x40fe00) == 0x4000) return false;  //00-3f,80-bf:4000-41ff
@@ -65,29 +65,29 @@ auto CPU::Channel::validA(nall::Natural<24> address) -> bool {
   return true;
 }
 
-auto CPU::Channel::readA(nall::Natural<24> address) -> uint8_t {
+uint8_t CPU::Channel::readA(nall::Natural<24> address) {
   step<4,1>();
   cpu.r.mdr = validA(address) ? bus.read(address, cpu.r.mdr) : (uint8_t)0x00;
   step<4,1>();
   return cpu.r.mdr;
 }
 
-auto CPU::Channel::readB(uint8_t address, bool valid) -> uint8_t {
+uint8_t CPU::Channel::readB(uint8_t address, bool valid) {
   step<4,1>();
   cpu.r.mdr = valid ? bus.read(0x2100 | address, cpu.r.mdr) : (uint8_t)0x00;
   step<4,1>();
   return cpu.r.mdr;
 }
 
-auto CPU::Channel::writeA(nall::Natural<24> address, uint8_t data) -> void {
+void CPU::Channel::writeA(nall::Natural<24> address, uint8_t data) {
   if(validA(address)) bus.write(address, data);
 }
 
-auto CPU::Channel::writeB(uint8_t address, uint8_t data, bool valid) -> void {
+void CPU::Channel::writeB(uint8_t address, uint8_t data, bool valid) {
   if(valid) bus.write(0x2100 | address, data);
 }
 
-auto CPU::Channel::transfer(nall::Natural<24> addressA, nall::Natural< 2> index) -> void {
+void CPU::Channel::transfer(nall::Natural<24> addressA, nall::Natural< 2> index) {
   uint8_t addressB = targetAddress;
   switch(transferMode) {
   case 1: case 5: addressB += index.bit(0); break;
@@ -108,7 +108,7 @@ auto CPU::Channel::transfer(nall::Natural<24> addressA, nall::Natural< 2> index)
   }
 }
 
-auto CPU::Channel::dmaRun() -> void {
+void CPU::Channel::dmaRun() {
   if(!dmaEnable) return;
 
   step<8,0>();
@@ -124,11 +124,11 @@ auto CPU::Channel::dmaRun() -> void {
   dmaEnable = false;
 }
 
-auto CPU::Channel::hdmaActive() -> bool {
+bool CPU::Channel::hdmaActive() {
   return hdmaEnable && !hdmaCompleted;
 }
 
-auto CPU::Channel::hdmaFinished() -> bool {
+bool CPU::Channel::hdmaFinished() {
   auto channel = next;
   while(channel) {
     if(channel->hdmaActive()) return false;
@@ -137,12 +137,12 @@ auto CPU::Channel::hdmaFinished() -> bool {
   return true;
 }
 
-auto CPU::Channel::hdmaReset() -> void {
+void CPU::Channel::hdmaReset() {
   hdmaCompleted = false;
   hdmaDoTransfer = false;
 }
 
-auto CPU::Channel::hdmaSetup() -> void {
+void CPU::Channel::hdmaSetup() {
   hdmaDoTransfer = true;  //note: needs hardware verification
   if(!hdmaEnable) return;
 
@@ -152,7 +152,7 @@ auto CPU::Channel::hdmaSetup() -> void {
   hdmaReload();
 }
 
-auto CPU::Channel::hdmaReload() -> void {
+void CPU::Channel::hdmaReload() {
   auto data = readA(cpu.r.mar = sourceBank << 16 | hdmaAddress);
 
   if((nall::Natural< 7>)lineCounter == 0) {
@@ -173,7 +173,7 @@ auto CPU::Channel::hdmaReload() -> void {
   }
 }
 
-auto CPU::Channel::hdmaTransfer() -> void {
+void CPU::Channel::hdmaTransfer() {
   if(!hdmaActive()) return;
   dmaEnable = false;  //HDMA will stop active DMA mid-transfer
   if(!hdmaDoTransfer) return;
@@ -185,14 +185,14 @@ auto CPU::Channel::hdmaTransfer() -> void {
   }
 }
 
-auto CPU::Channel::hdmaAdvance() -> void {
+void CPU::Channel::hdmaAdvance() {
   if(!hdmaActive()) return;
   lineCounter--;
   hdmaDoTransfer = bool(lineCounter & 0x80);
   hdmaReload();
 }
 
-auto CPU::idle() -> void {
+void CPU::idle() {
   status.clockCount = 6;
   dmaEdge();
   step<6,0>();
@@ -200,7 +200,7 @@ auto CPU::idle() -> void {
   aluEdge();
 }
 
-auto CPU::read(unsigned address) -> uint8_t {
+uint8_t CPU::read(unsigned address) {
   if(address & 0x408000) {
     if(address & 0x800000 && io.fastROM) {
       status.clockCount = 6;
@@ -239,7 +239,7 @@ auto CPU::read(unsigned address) -> uint8_t {
   return data;
 }
 
-auto CPU::write(unsigned address, uint8_t data) -> void {
+void CPU::write(unsigned address, uint8_t data) {
   aluEdge();
 
   if(address & 0x408000) {
@@ -275,20 +275,20 @@ auto CPU::write(unsigned address, uint8_t data) -> void {
   bus.write(address, r.mdr = data);
 }
 
-auto CPU::readDisassembler(unsigned address) -> uint8_t {
+uint8_t CPU::readDisassembler(unsigned address) {
   return bus.read(address, r.mdr);
 }
 
-auto CPU::readRAM(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t CPU::readRAM(unsigned addr, uint8_t data) {
   return wram[addr];
 }
 
-auto CPU::readAPU(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t CPU::readAPU(unsigned addr, uint8_t data) {
   synchronizeSMP();
   return smp.portRead(addr & 3);
 }
 
-auto CPU::readCPU(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t CPU::readCPU(unsigned addr, uint8_t data) {
   switch(addr & 0xffff) {
   case 0x2180:  //WMDATA
     return bus.read(0x7e0000 | io.wramAddress++, data);
@@ -346,7 +346,7 @@ auto CPU::readCPU(unsigned addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto CPU::readDMA(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t CPU::readDMA(unsigned addr, uint8_t data) {
   auto& channel = this->channels[addr >> 4 & 7];
 
   switch(addr & 0xff8f) {
@@ -379,16 +379,16 @@ auto CPU::readDMA(unsigned addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto CPU::writeRAM(unsigned addr, uint8_t data) -> void {
+void CPU::writeRAM(unsigned addr, uint8_t data) {
   wram[addr] = data;
 }
 
-auto CPU::writeAPU(unsigned addr, uint8_t data) -> void {
+void CPU::writeAPU(unsigned addr, uint8_t data) {
   synchronizeSMP();
   return smp.portWrite(addr & 3, data);
 }
 
-auto CPU::writeCPU(unsigned addr, uint8_t data) -> void {
+void CPU::writeCPU(unsigned addr, uint8_t data) {
   switch(addr & 0xffff) {
 
   case 0x2180:  //WMDATA
@@ -513,7 +513,7 @@ auto CPU::writeCPU(unsigned addr, uint8_t data) -> void {
   }
 }
 
-auto CPU::writeDMA(unsigned addr, uint8_t data) -> void {
+void CPU::writeDMA(unsigned addr, uint8_t data) {
   auto& channel = this->channels[addr >> 4 & 7];
 
   switch(addr & 0xff8f) {
@@ -579,16 +579,16 @@ auto CPU::writeDMA(unsigned addr, uint8_t data) -> void {
 }
 
 //DMA clock divider
-auto CPU::dmaCounter() const -> unsigned {
+unsigned CPU::dmaCounter() const {
   return counter.cpu & 7;
 }
 
 //joypad auto-poll clock divider
-auto CPU::joypadCounter() const -> unsigned {
+unsigned CPU::joypadCounter() const {
   return counter.cpu & 127;
 }
 
-auto CPU::stepOnce() -> void {
+void CPU::stepOnce() {
   counter.cpu += 2;
   tick();
   if(hcounter() & 2) nmiPoll(), irqPoll();
@@ -596,7 +596,7 @@ auto CPU::stepOnce() -> void {
 }
 
 template<unsigned Clocks, bool Synchronize>
-auto CPU::step() -> void {
+void CPU::step() {
   static_assert(Clocks == 2 || Clocks == 4 || Clocks == 6 || Clocks == 8 || Clocks == 10 || Clocks == 12);
 
   for(auto coprocessor : coprocessors) {
@@ -662,7 +662,7 @@ auto CPU::step() -> void {
   }
 }
 
-auto CPU::step(unsigned clocks) -> void {
+void CPU::step(unsigned clocks) {
   switch(clocks) {
   case  2: return step< 2,1>();
   case  4: return step< 4,1>();
@@ -674,7 +674,7 @@ auto CPU::step(unsigned clocks) -> void {
 }
 
 //called by ppu.tick() when Hcounter=0
-auto CPU::scanline() -> void {
+void CPU::scanline() {
   //forcefully sync S-CPU to other processors, in case chips are not communicating
   synchronizeSMP();
   synchronizePPU();
@@ -718,7 +718,7 @@ auto CPU::scanline() -> void {
   }
 }
 
-auto CPU::aluEdge() -> void {
+void CPU::aluEdge() {
   if(alu.mpyctr) {
     alu.mpyctr--;
     if(io.rddiv & 1) io.rdmpy += alu.shift;
@@ -737,7 +737,7 @@ auto CPU::aluEdge() -> void {
   }
 }
 
-auto CPU::dmaEdge() -> void {
+void CPU::dmaEdge() {
   //H/DMA pending && DMA inactive?
   //.. Run one full CPU cycle
   //.. HDMA pending && HDMA enabled ? DMA sync + HDMA run
@@ -780,7 +780,7 @@ auto CPU::dmaEdge() -> void {
 }
 
 //called every 128 clocks from inside the CPU::stepOnce() function
-auto CPU::joypadEdge() -> void {
+void CPU::joypadEdge() {
   //it is not yet confirmed if polling can be stopped early and/or (re)started later
   if(!io.autoJoypadPoll) return;
 
@@ -830,7 +830,7 @@ auto CPU::joypadEdge() -> void {
 //ppu.(vh)counter(n) returns the value of said counters n-clocks before current time;
 //it is used to emulate hardware communication delay between opcode and interrupt units.
 
-auto CPU::nmiPoll() -> void {
+void CPU::nmiPoll() {
   //NMI hold
   if(status.nmiHold.lower() && io.nmiEnable) {
     status.nmiTransition = 1;
@@ -842,7 +842,7 @@ auto CPU::nmiPoll() -> void {
   }
 }
 
-auto CPU::irqPoll() -> void {
+void CPU::irqPoll() {
   //IRQ hold
   status.irqHold = 0;
   if(status.irqLine && io.irqEnable) {
@@ -857,7 +857,7 @@ auto CPU::irqPoll() -> void {
   )) status.irqLine = status.irqHold = 1;  //hold /IRQ for four cycles
 }
 
-auto CPU::nmitimenUpdate(uint8_t data) -> void {
+void CPU::nmitimenUpdate(uint8_t data) {
   io.hirqEnable = data & 0x10;
   io.virqEnable = data & 0x20;
   io.irqEnable = io.hirqEnable || io.virqEnable;
@@ -876,7 +876,7 @@ auto CPU::nmitimenUpdate(uint8_t data) -> void {
   status.irqLock = 1;
 }
 
-auto CPU::rdnmi() -> bool {
+bool CPU::rdnmi() {
   bool result = status.nmiLine;
   if(!status.nmiHold) {
     status.nmiLine = 0;
@@ -884,7 +884,7 @@ auto CPU::rdnmi() -> bool {
   return result;
 }
 
-auto CPU::timeup() -> bool {
+bool CPU::timeup() {
   bool result = status.irqLine;
   if(!status.irqHold) {
     status.irqLine = 0;
@@ -893,14 +893,14 @@ auto CPU::timeup() -> bool {
   return result;
 }
 
-auto CPU::nmiTest() -> bool {
+bool CPU::nmiTest() {
   if(!status.nmiTransition) return 0;
   status.nmiTransition = 0;
   r.wai = 0;
   return 1;
 }
 
-auto CPU::irqTest() -> bool {
+bool CPU::irqTest() {
   if(!status.irqTransition && !r.irq) return 0;
   status.irqTransition = 0;
   r.wai = 0;
@@ -912,14 +912,14 @@ auto CPU::irqTest() -> bool {
 //
 //status.irqLock is used to simulate hardware delay before interrupts can
 //trigger during certain events (immediately after DMA, writes to $4200, etc)
-auto CPU::lastCycle() -> void {
+void CPU::lastCycle() {
   if(!status.irqLock) {
     if(nmiTest()) status.nmiPending = 1, status.interruptPending = 1;
     if(irqTest()) status.irqPending = 1, status.interruptPending = 1;
   }
 }
 
-auto CPU::serialize(serializer& s) -> void {
+void CPU::serialize(serializer& s) {
   WDC65816::serialize(s);
   Thread::serialize(s);
   PPUcounter::serialize(s);
@@ -1021,28 +1021,28 @@ auto CPU::serialize(serializer& s) -> void {
   }
 }
 
-auto CPU::synchronizeSMP() -> void {
+void CPU::synchronizeSMP() {
   if(smp.clock < 0) scheduler.resume(smp.thread);
 }
 
-auto CPU::synchronizePPU() -> void {
+void CPU::synchronizePPU() {
   if(ppu.clock < 0) scheduler.resume(ppu.thread);
 }
 
-auto CPU::synchronizeCoprocessors() -> void {
+void CPU::synchronizeCoprocessors() {
   for(auto coprocessor : coprocessors) {
     if(coprocessor->clock < 0) scheduler.resume(coprocessor->thread);
   }
 }
 
-auto CPU::Enter() -> void {
+void CPU::Enter() {
   while(true) {
     scheduler.synchronize();
     cpu.main();
   }
 }
 
-auto CPU::main() -> void {
+void CPU::main() {
   if(r.wai) return instructionWait();
   if(r.stp) return instructionStop();
   if(!status.interruptPending) return instruction();
@@ -1069,14 +1069,14 @@ auto CPU::main() -> void {
   status.interruptPending = 0;
 }
 
-auto CPU::load() -> bool {
+bool CPU::load() {
   version = configuration.system.cpu.version;
   if(version < 1) version = 1;
   if(version > 2) version = 2;
   return true;
 }
 
-auto CPU::power(bool reset) -> void {
+void CPU::power(bool reset) {
   WDC65816::power();
   Thread::create(Enter, system.cpuFrequency());
   coprocessors.clear();

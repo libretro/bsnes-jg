@@ -1,72 +1,72 @@
 struct CPU : Processor::WDC65816, Thread, PPUcounter {
-  inline auto interruptPending() const -> bool override { return status.interruptPending; }
-  inline auto pio() const -> uint8_t { return io.pio; }
-  inline auto refresh() const -> bool { return status.dramRefresh == 1; }
-  inline auto synchronizing() const -> bool override { return scheduler.synchronizing(); }
+  inline bool interruptPending() const override { return status.interruptPending; }
+  inline uint8_t pio() const { return io.pio; }
+  inline bool refresh() const { return status.dramRefresh == 1; }
+  inline bool synchronizing() const override { return scheduler.synchronizing(); }
 
   //cpu.cpp
-  auto synchronizeSMP() -> void;
-  auto synchronizePPU() -> void;
-  auto synchronizeCoprocessors() -> void;
-  static auto Enter() -> void;
-  auto main() -> void;
-  auto load() -> bool;
-  auto power(bool reset) -> void;
+  void synchronizeSMP();
+  void synchronizePPU();
+  void synchronizeCoprocessors();
+  static void Enter();
+  void main();
+  bool load();
+  void power(bool reset);
 
   //dma.cpp
-  inline auto dmaEnable() -> bool;
-  inline auto hdmaEnable() -> bool;
-  inline auto hdmaActive() -> bool;
+  inline bool dmaEnable();
+  inline bool hdmaEnable();
+  inline bool hdmaActive();
 
-  auto dmaRun() -> void;
-  auto hdmaReset() -> void;
-  auto hdmaSetup() -> void;
-  auto hdmaRun() -> void;
+  void dmaRun();
+  void hdmaReset();
+  void hdmaSetup();
+  void hdmaRun();
 
   //memory.cpp
-  auto idle() -> void override;
-  auto read(unsigned addr) -> uint8_t override;
-  auto write(unsigned addr, uint8_t data) -> void override;
-  auto readDisassembler(unsigned addr) -> uint8_t override;
+  void idle() override;
+  uint8_t read(unsigned addr) override;
+  void write(unsigned addr, uint8_t data) override;
+  uint8_t readDisassembler(unsigned addr) override;
 
   //io.cpp
-  auto readRAM(unsigned address, uint8_t data) -> uint8_t;
-  auto readAPU(unsigned address, uint8_t data) -> uint8_t;
-  auto readCPU(unsigned address, uint8_t data) -> uint8_t;
-  auto readDMA(unsigned address, uint8_t data) -> uint8_t;
-  auto writeRAM(unsigned address, uint8_t data) -> void;
-  auto writeAPU(unsigned address, uint8_t data) -> void;
-  auto writeCPU(unsigned address, uint8_t data) -> void;
-  auto writeDMA(unsigned address, uint8_t data) -> void;
+  uint8_t readRAM(unsigned address, uint8_t data);
+  uint8_t readAPU(unsigned address, uint8_t data);
+  uint8_t readCPU(unsigned address, uint8_t data);
+  uint8_t readDMA(unsigned address, uint8_t data);
+  void writeRAM(unsigned address, uint8_t data);
+  void writeAPU(unsigned address, uint8_t data);
+  void writeCPU(unsigned address, uint8_t data);
+  void writeDMA(unsigned address, uint8_t data);
 
   //timing.cpp
-  inline auto dmaCounter() const -> unsigned;
-  inline auto joypadCounter() const -> unsigned;
+  inline unsigned dmaCounter() const;
+  inline unsigned joypadCounter() const;
 
-  inline auto stepOnce() -> void;
-  inline auto step(unsigned clocks) -> void;
-  template<unsigned Clocks, bool Synchronize> auto step() -> void;
-  auto scanline() -> void;
+  inline void stepOnce();
+  inline void step(unsigned clocks);
+  template<unsigned Clocks, bool Synchronize> void step();
+  void scanline();
 
-  inline auto aluEdge() -> void;
-  inline auto dmaEdge() -> void;
+  inline void aluEdge();
+  inline void dmaEdge();
 
   //irq.cpp
-  inline auto nmiPoll() -> void;
-  inline auto irqPoll() -> void;
-  auto nmitimenUpdate(uint8_t data) -> void;
-  auto rdnmi() -> bool;
-  auto timeup() -> bool;
+  inline void nmiPoll();
+  inline void irqPoll();
+  void nmitimenUpdate(uint8_t data);
+  bool rdnmi();
+  bool timeup();
 
-  inline auto nmiTest() -> bool;
-  inline auto irqTest() -> bool;
-  inline auto lastCycle() -> void;
+  inline bool nmiTest();
+  inline bool irqTest();
+  inline void lastCycle();
 
   //joypad.cpp
-  auto joypadEdge() -> void;
+  void joypadEdge();
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   uint8_t wram[128 * 1024];
   std::vector<Thread*> coprocessors;
@@ -169,24 +169,24 @@ private:
 
   struct Channel {
     //dma.cpp
-    template<unsigned Clocks, bool Synchronize> inline auto step() -> void;
-    inline auto edge() -> void;
+    template<unsigned Clocks, bool Synchronize> inline void step();
+    inline void edge();
 
-    inline auto validA(nall::Natural<24> address) -> bool;
-    inline auto readA(nall::Natural<24> address) -> uint8_t;
-    inline auto readB(uint8_t address, bool valid) -> uint8_t;
-    inline auto writeA(nall::Natural<24> address, uint8_t data) -> void;
-    inline auto writeB(uint8_t address, uint8_t data, bool valid) -> void;
-    inline auto transfer(nall::Natural<24> address, nall::Natural< 2> index) -> void;
+    inline bool validA(nall::Natural<24> address);
+    inline uint8_t readA(nall::Natural<24> address);
+    inline uint8_t readB(uint8_t address, bool valid);
+    inline void writeA(nall::Natural<24> address, uint8_t data);
+    inline void writeB(uint8_t address, uint8_t data, bool valid);
+    inline void transfer(nall::Natural<24> address, nall::Natural< 2> index);
 
-    inline auto dmaRun() -> void;
-    inline auto hdmaActive() -> bool;
-    inline auto hdmaFinished() -> bool;
-    inline auto hdmaReset() -> void;
-    inline auto hdmaSetup() -> void;
-    inline auto hdmaReload() -> void;
-    inline auto hdmaTransfer() -> void;
-    inline auto hdmaAdvance() -> void;
+    inline void dmaRun();
+    inline bool hdmaActive();
+    inline bool hdmaFinished();
+    inline void hdmaReset();
+    inline void hdmaSetup();
+    inline void hdmaReload();
+    inline void hdmaTransfer();
+    inline void hdmaAdvance();
 
     //$420b
     nall::Natural< 1> dmaEnable = 0;
