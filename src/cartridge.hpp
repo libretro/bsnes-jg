@@ -74,7 +74,7 @@ private:
 
   void loadMemory(Memory&, nall::Markup::Node, bool required);
   template<typename T> unsigned loadMap(nall::Markup::Node, T&);
-  unsigned loadMap(nall::Markup::Node, const function<uint8_t (unsigned, uint8_t)>&, const function<void (unsigned, uint8_t)>&);
+  unsigned loadMap(nall::Markup::Node, const nall::function<uint8_t (unsigned, uint8_t)>&, const nall::function<void (unsigned, uint8_t)>&);
 
   void loadROM(nall::Markup::Node);
   void loadRAM(nall::Markup::Node);

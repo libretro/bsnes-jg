@@ -176,7 +176,7 @@ protected:
   } io;
 
   nall::Natural<23> stack[8];
-  function<void ()> instructionTable[65536];
+  nall::function<void ()> instructionTable[65536];
 };
 
 }

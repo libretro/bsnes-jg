@@ -145,8 +145,8 @@ unsigned Cartridge::loadMap(nall::Markup::Node map, T& memory) {
 
 unsigned Cartridge::loadMap(
   nall::Markup::Node map,
-  const function<uint8_t (unsigned, uint8_t)>& reader,
-  const function<void  (unsigned, uint8_t)>& writer
+  const nall::function<uint8_t (unsigned, uint8_t)>& reader,
+  const nall::function<void  (unsigned, uint8_t)>& writer
 ) {
   auto addr = map["address"].text();
   auto size = map["size"].natural();

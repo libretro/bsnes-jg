@@ -129,7 +129,7 @@ struct ARM7TDMI {
     }
 
     uint32_t data;
-    function<auto () -> void> modify;
+    nall::function<auto () -> void> modify;
   };
 
   struct PSR {
@@ -226,8 +226,8 @@ struct ARM7TDMI {
   nall::Boolean carry;
   nall::Boolean irq;
 
-  function<auto (uint32_t opcode) -> void> armInstruction[4096];
-  function<auto () -> void> thumbInstruction[65536];
+  nall::function<auto (uint32_t opcode) -> void> armInstruction[4096];
+  nall::function<auto () -> void> thumbInstruction[65536];
 
   //disassembler.cpp
   auto armDisassembleBranch(nall::Integer<24>, nall::Natural< 1>) -> nall::string;
@@ -275,8 +275,8 @@ struct ARM7TDMI {
   auto thumbDisassembleStackMultiple(uint8_t, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
   auto thumbDisassembleUndefined() -> nall::string;
 
-  function<auto (uint32_t opcode) -> nall::string> armDisassemble[4096];
-  function<auto () -> nall::string> thumbDisassemble[65536];
+  nall::function<auto (uint32_t opcode) -> nall::string> armDisassemble[4096];
+  nall::function<auto () -> nall::string> thumbDisassemble[65536];
 
   uint32_t _pc;
   nall::string _c;

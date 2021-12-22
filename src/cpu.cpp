@@ -1083,8 +1083,8 @@ void CPU::power(bool reset) {
   PPUcounter::reset();
   PPUcounter::scanline = {&CPU::scanline, this};
 
-  function<uint8_t (unsigned, uint8_t)> reader;
-  function<void  (unsigned, uint8_t)> writer;
+  nall::function<uint8_t (unsigned, uint8_t)> reader;
+  nall::function<void  (unsigned, uint8_t)> writer;
 
   reader = {&CPU::readRAM, this};
   writer = {&CPU::writeRAM, this};

@@ -2217,8 +2217,8 @@ auto PPU::power(bool reset) -> void {
   PPUcounter::reset();
   nall::memory::fill<uint16_t>(output, 512 * 480);
 
-  function<uint8_t (unsigned, uint8_t)> reader{&PPU::readIO, this};
-  function<void  (unsigned, uint8_t)> writer{&PPU::writeIO, this};
+  nall::function<uint8_t (unsigned, uint8_t)> reader{&PPU::readIO, this};
+  nall::function<void  (unsigned, uint8_t)> writer{&PPU::writeIO, this};
   bus.map(reader, writer, "00-3f,80-bf:2100-213f");
 
   if(!reset) random.array((uint8_t*)vram.data, sizeof(vram.data));
