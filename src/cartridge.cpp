@@ -76,7 +76,7 @@ auto Cartridge::loadCartridge(Markup::Node node) -> void {
   if(auto node = board["processor(identifier=SDD1)"]) loadSDD1(node);
   if(auto node = board["processor(identifier=OBC1)"]) loadOBC1(node);
 
-  if(auto fp = platform->open(pathID(), "msu1/data.rom", File::Read)) loadMSU1();
+  if(platform->fopen(ID::SuperFamicom, "msu1/data.rom")) loadMSU1();
 }
 
 auto Cartridge::loadCartridgeBSMemory(Markup::Node node) -> void {
