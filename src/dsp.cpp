@@ -4,17 +4,17 @@ namespace SuperFamicom {
 
 DSP dsp;
 
-static auto dsp_state_save(unsigned char** out, void* in, size_t size) -> void {
+static void dsp_state_save(unsigned char** out, void* in, size_t size) {
   memcpy(*out, in, size);
   *out += size;
 }
 
-static auto dsp_state_load(unsigned char** in, void* out, size_t size) -> void {
+static void dsp_state_load(unsigned char** in, void* out, size_t size) {
   memcpy(out, *in, size);
   *in += size;
 }
 
-auto DSP::serialize(serializer& s) -> void {
+void DSP::serialize(serializer& s) {
   s.array(apuram);
   s.array(samplebuffer);
   s.integer(clock);
@@ -33,7 +33,7 @@ auto DSP::serialize(serializer& s) -> void {
   }
 }
 
-auto DSP::main() -> void {
+void DSP::main() {
   spc_dsp.run(1);
   clock += 2;
 
@@ -49,19 +49,19 @@ auto DSP::main() -> void {
   }
 }
 
-auto DSP::read(uint8_t address) -> uint8_t {
+uint8_t DSP::read(uint8_t address) {
   return spc_dsp.read(address);
 }
 
-auto DSP::write(uint8_t address, uint8_t data) -> void {
+void DSP::write(uint8_t address, uint8_t data) {
   spc_dsp.write(address, data);
 }
 
-auto DSP::load() -> bool {
+bool DSP::load() {
   return true;
 }
 
-auto DSP::power(bool reset) -> void {
+void DSP::power(bool reset) {
   clock = 0;
   stream = Emulator::audio.createStream(system.apuFrequency() / 768.0);
 
@@ -83,7 +83,7 @@ auto DSP::power(bool reset) -> void {
   }
 }
 
-auto DSP::mute() -> bool {
+bool DSP::mute() {
   return spc_dsp.mute();
 }
 

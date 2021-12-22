@@ -5,15 +5,15 @@ struct DSP {
   Emulator::Stream *stream;
   uint8_t apuram[64 * 1024] = {};
 
-  auto main() -> void;
-  auto read(uint8_t address) -> uint8_t;
-  auto write(uint8_t address, uint8_t data) -> void;
+  void main();
+  uint8_t read(uint8_t address);
+  void write(uint8_t address, uint8_t data);
 
-  auto load() -> bool;
-  auto power(bool reset) -> void;
-  auto mute() -> bool;
+  bool load();
+  void power(bool reset);
+  bool mute();
 
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   int64_t clock = 0;
 
