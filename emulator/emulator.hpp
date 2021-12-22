@@ -172,7 +172,7 @@ struct Game {
 
   inline auto load(std::string) -> void;
   inline auto memory(nall::Markup::Node) -> nall::maybe<Memory>;
-  inline auto oscillator(Natural<> = 0) -> nall::maybe<Oscillator>;
+  inline auto oscillator(nall::Natural<> = 0) -> nall::maybe<Oscillator>;
 
   struct Memory {
     Memory() = default;
@@ -181,7 +181,7 @@ struct Game {
     inline auto name() const -> nall::string;
 
     nall::string type;
-    Natural<> size;
+    nall::Natural<> size;
     nall::string content;
     nall::string manufacturer;
     nall::string architecture;
@@ -194,7 +194,7 @@ struct Game {
     inline Oscillator(nall::Markup::Node);
     explicit operator bool() const { return frequency; }
 
-    Natural<> frequency;
+    nall::Natural<> frequency;
   };
 
   nall::Markup::Node document;
@@ -249,7 +249,7 @@ auto Game::memory(nall::Markup::Node node) -> nall::maybe<Memory> {
   return nothing;
 }
 
-auto Game::oscillator(Natural<> index) -> nall::maybe<Oscillator> {
+auto Game::oscillator(nall::Natural<> index) -> nall::maybe<Oscillator> {
   if(index < oscillatorList.size()) return oscillatorList[index];
   return nothing;
 }
