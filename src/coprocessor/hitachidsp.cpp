@@ -25,7 +25,7 @@ auto HitachiDSP::write(unsigned address, uint8_t data) -> void {
   if(auto linear = addressIO  (address)) return writeIO  (*linear, data);
 }
 
-auto HitachiDSP::addressROM(unsigned address) const -> maybe<unsigned> {
+auto HitachiDSP::addressROM(unsigned address) const -> nall::maybe<unsigned> {
   if(Mapping == 0) {
     //00-3f,80-bf:8000-ffff; c0-ff:0000-ffff
     if((address & 0x408000) == 0x008000 || (address & 0xc00000) == 0xc00000) {
@@ -56,7 +56,7 @@ auto HitachiDSP::readROM(unsigned address, uint8_t data) -> uint8_t {
 auto HitachiDSP::writeROM(unsigned address, uint8_t data) -> void {
 }
 
-auto HitachiDSP::addressRAM(unsigned address) const -> maybe<unsigned> {
+auto HitachiDSP::addressRAM(unsigned address) const -> nall::maybe<unsigned> {
   if(Mapping == 0) {
     //70-77:0000-7fff
     if((address & 0xf88000) == 0x700000) {
@@ -83,7 +83,7 @@ auto HitachiDSP::writeRAM(unsigned address, uint8_t data) -> void {
   return ram.write(bus.mirror(address, ram.size()), data);
 }
 
-auto HitachiDSP::addressDRAM(unsigned address) const -> maybe<unsigned> {
+auto HitachiDSP::addressDRAM(unsigned address) const -> nall::maybe<unsigned> {
   if(Mapping == 0) {
     //00-3f,80-bf:6000-6bff,7000-7bff
     if((address & 0x40e000) == 0x006000 && (address & 0x0c00) != 0x0c00) {
@@ -110,7 +110,7 @@ auto HitachiDSP::writeDRAM(unsigned address, uint8_t data) -> void {
   dataRAM[address] = data;
 }
 
-auto HitachiDSP::addressIO(unsigned address) const -> maybe<unsigned> {
+auto HitachiDSP::addressIO(unsigned address) const -> nall::maybe<unsigned> {
   if(Mapping == 0) {
     //00-3f,80-bf:6c00-6fff,7c00-7fff
     if((address & 0x40ec00) == 0x006c00) {

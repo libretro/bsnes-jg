@@ -275,7 +275,7 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
     page.write(0x00, 0x4d);  //'M' (memory)
     page.write(0x02, 0x50);  //'P' (pack)
-    page.write(0x04, 0x04);  //unknown constant (maybe block count? eg 1<<4 = 16 blocks)
+    page.write(0x04, 0x04);  //unknown constant (nall::maybe block count? eg 1<<4 = 16 blocks)
     page.write(0x06, 0x10 | (nall::Natural< 4>)log2(size() >> 10));  //d0-d3 = size; d4-d7 = type (1)
     page.write(0x08, chip.serial.byte(5));  //serial# (big endian; BCD format)
     page.write(0x0a, chip.serial.byte(4));  //smallest observed value:

@@ -19,22 +19,22 @@ struct HitachiDSP : Processor::HG51B, Thread {
   auto write(unsigned address, uint8_t data) -> void override;
 
   //CPU ROM read/write
-  auto addressROM(unsigned address) const -> maybe<unsigned>;
+  auto addressROM(unsigned address) const -> nall::maybe<unsigned>;
   auto readROM(unsigned address, uint8_t data = 0) -> uint8_t;
   auto writeROM(unsigned address, uint8_t data) -> void;
 
   //CPU RAM read/write
-  auto addressRAM(unsigned address) const -> maybe<unsigned>;
+  auto addressRAM(unsigned address) const -> nall::maybe<unsigned>;
   auto readRAM(unsigned address, uint8_t data = 0) -> uint8_t;
   auto writeRAM(unsigned address, uint8_t data) -> void;
 
   //HG51B data RAM read/write
-  auto addressDRAM(unsigned address) const -> maybe<unsigned>;
+  auto addressDRAM(unsigned address) const -> nall::maybe<unsigned>;
   auto readDRAM(unsigned address, uint8_t data = 0) -> uint8_t;
   auto writeDRAM(unsigned address, uint8_t data) -> void;
 
   //CPU IO read/write
-  auto addressIO(unsigned address) const -> maybe<unsigned>;
+  auto addressIO(unsigned address) const -> nall::maybe<unsigned>;
   auto readIO(unsigned address, uint8_t data = 0) -> uint8_t;
   auto writeIO(unsigned address, uint8_t data) -> void;
 

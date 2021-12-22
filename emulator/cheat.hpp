@@ -14,7 +14,7 @@ struct Cheat {
 
     unsigned address;
     unsigned data;
-    maybe<unsigned> compare;
+    nall::maybe<unsigned> compare;
     bool enable;
     unsigned restore;
   };
@@ -27,7 +27,7 @@ struct Cheat {
     codes.clear();
   }
 
-  auto append(unsigned address, unsigned data, maybe<unsigned> compare = {}) -> void {
+  auto append(unsigned address, unsigned data, nall::maybe<unsigned> compare = {}) -> void {
     codes.push_back({address, data, compare});
   }
 
@@ -42,7 +42,7 @@ struct Cheat {
     }
   }
 
-  auto find(unsigned address, unsigned compare) -> maybe<unsigned> {
+  auto find(unsigned address, unsigned compare) -> nall::maybe<unsigned> {
     for(auto& code : codes) {
       if(code.address == address && (!code.compare || code.compare() == compare)) {
         return code.data;

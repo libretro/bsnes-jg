@@ -1491,7 +1491,7 @@ auto WDC65816::disassemble(nall::Natural<24> address, bool e, bool m, bool x) ->
 
   nall::string name;
   nall::string operand;
-  maybe<nall::Natural<24>> effective;
+  nall::maybe<nall::Natural<24>> effective;
 
   auto read = [&](nall::Natural<24> address) -> uint8_t {
     //$00-3f,80-bf:2000-5fff: do not attempt to read I/O registers from the disassembler:

@@ -115,7 +115,7 @@ struct ARM7TDMI {
   auto serialize(serializer&) -> void;
 
   //disassembler.cpp
-  auto disassemble(maybe<uint32_t> pc = nothing, maybe<nall::Boolean> thumb = nothing) -> nall::string;
+  auto disassemble(nall::maybe<uint32_t> pc = nothing, nall::maybe<nall::Boolean> thumb = nothing) -> nall::string;
   auto disassembleRegisters() -> nall::string;
 
   struct GPR {

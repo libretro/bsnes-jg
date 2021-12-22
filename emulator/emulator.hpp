@@ -171,8 +171,8 @@ struct Game {
   struct Oscillator;
 
   inline auto load(std::string) -> void;
-  inline auto memory(nall::Markup::Node) -> maybe<Memory>;
-  inline auto oscillator(Natural<> = 0) -> maybe<Oscillator>;
+  inline auto memory(nall::Markup::Node) -> nall::maybe<Memory>;
+  inline auto oscillator(Natural<> = 0) -> nall::maybe<Oscillator>;
 
   struct Memory {
     Memory() = default;
@@ -229,7 +229,7 @@ auto Game::load(std::string text) -> void {
   }
 }
 
-auto Game::memory(nall::Markup::Node node) -> maybe<Memory> {
+auto Game::memory(nall::Markup::Node node) -> nall::maybe<Memory> {
   if(!node) return nothing;
   for(auto& memory : memoryList) {
     auto type = node["type"].text();
@@ -249,7 +249,7 @@ auto Game::memory(nall::Markup::Node node) -> maybe<Memory> {
   return nothing;
 }
 
-auto Game::oscillator(Natural<> index) -> maybe<Oscillator> {
+auto Game::oscillator(Natural<> index) -> nall::maybe<Oscillator> {
   if(index < oscillatorList.size()) return oscillatorList[index];
   return nothing;
 }

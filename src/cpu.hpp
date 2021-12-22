@@ -233,7 +233,7 @@ private:
     nall::Natural< 1> hdmaCompleted = 0;
     nall::Natural< 1> hdmaDoTransfer = 0;
 
-    maybe<Channel&> next;
+    nall::maybe<Channel&> next;
 
     Channel() : transferSize(0xffff) {}
   } channels[8];
