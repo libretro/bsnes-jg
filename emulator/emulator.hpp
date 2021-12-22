@@ -39,8 +39,8 @@ namespace Emulator {
 
   //nall/vfs shorthand constants for open(), load()
   namespace File {
-    static const auto Read  = vfs::file::mode::read;
-    static const auto Write = vfs::file::mode::write;
+    static const auto Read  = nall::vfs::file::mode::read;
+    static const auto Write = nall::vfs::file::mode::write;
     static const auto Optional = false;
     static const auto Required = true;
   };
@@ -56,7 +56,7 @@ struct Platform {
     string option;
   };
 
-  virtual auto open(unsigned id, std::string name, vfs::file::mode mode, bool required = false) -> vfs::file* { return {}; }
+  virtual auto open(unsigned id, std::string name, nall::vfs::file::mode mode, bool required = false) -> nall::vfs::file* { return {}; }
   virtual auto load(unsigned id, std::string name, std::string type, std::vector<std::string> options = {}) -> Load { return {}; }
   virtual auto fopen(unsigned id, std::string name) -> std::ifstream { return {}; }
   virtual auto write(unsigned id, std::string name, const uint8_t *data, unsigned size) -> void {}

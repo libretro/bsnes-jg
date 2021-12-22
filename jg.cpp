@@ -125,8 +125,8 @@ struct Program : Emulator::Platform {
     Program();
     ~Program();
     
-    vfs::file* open(unsigned id, std::string name,
-        vfs::file::mode mode, bool required) override;
+    nall::vfs::file* open(unsigned id, std::string name,
+        nall::vfs::file::mode mode, bool required) override;
     Emulator::Platform::Load load(unsigned id, std::string name,
         std::string type, std::vector<std::string> options = {}) override;
     std::ifstream fopen(unsigned id, std::string name) override;
@@ -147,11 +147,11 @@ struct Program : Emulator::Platform {
     
     void save();
     
-    vfs::file* openRomSuperFamicom(std::string name, vfs::file::mode mode);
-    vfs::file* openRomGameBoy(std::string name, vfs::file::mode mode);
-    vfs::file* openRomBSMemory(std::string name, vfs::file::mode mode);
-    vfs::file* openRomSufamiTurboA(std::string name, vfs::file::mode mode);
-    vfs::file* openRomSufamiTurboB(std::string name, vfs::file::mode mode);
+    nall::vfs::file* openRomSuperFamicom(std::string name, nall::vfs::file::mode mode);
+    nall::vfs::file* openRomGameBoy(std::string name, nall::vfs::file::mode mode);
+    nall::vfs::file* openRomBSMemory(std::string name, nall::vfs::file::mode mode);
+    nall::vfs::file* openRomSufamiTurboA(std::string name, nall::vfs::file::mode mode);
+    nall::vfs::file* openRomSufamiTurboB(std::string name, nall::vfs::file::mode mode);
     
     void hackPatchMemory(std::vector<uint8_t>& data);
 
@@ -202,35 +202,35 @@ void Program::save() {
     emulator->save();
 }
 
-vfs::file* Program::open(unsigned id, std::string name,
-    vfs::file::mode mode, bool required) {
+nall::vfs::file* Program::open(unsigned id, std::string name,
+    nall::vfs::file::mode mode, bool required) {
     
-    vfs::file *result;
+    nall::vfs::file *result;
     
-    if (name == "ipl.rom" && mode == vfs::file::mode::read) {
-        result = vfs::memory::file::open(iplrom, sizeof(iplrom));
+    if (name == "ipl.rom" && mode == nall::vfs::file::mode::read) {
+        result = nall::vfs::memory::file::open(iplrom, sizeof(iplrom));
     }
-    if (name == "boards.bml" && mode == vfs::file::mode::read) {
+    if (name == "boards.bml" && mode == nall::vfs::file::mode::read) {
         std::string boardspath = std::string(pathinfo.core) + "/boards.bml";
-        return vfs::fs::file::open(boardspath.c_str(), mode);
+        return nall::vfs::fs::file::open(boardspath.c_str(), mode);
     }
     
     if (id == 1) { // Super Famicom
-        if (name == "manifest.bml" && mode == vfs::file::mode::read) {
+        if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
             std::vector<uint8_t> manifest(superFamicom.manifest.begin(),
                 superFamicom.manifest.end());
-            result = vfs::memory::file::open(manifest.data(), manifest.size());
+            result = nall::vfs::memory::file::open(manifest.data(), manifest.size());
         }
-        else if (name == "program.rom" && mode == vfs::file::mode::read) {
-            result = vfs::memory::file::open(superFamicom.program.data(),
+        else if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+            result = nall::vfs::memory::file::open(superFamicom.program.data(),
                 superFamicom.program.size());
         }
-        else if (name == "data.rom" && mode == vfs::file::mode::read) {
-            result = vfs::memory::file::open(superFamicom.data.data(),
+        else if (name == "data.rom" && mode == nall::vfs::file::mode::read) {
+            result = nall::vfs::memory::file::open(superFamicom.data.data(),
                 superFamicom.data.size());
         }
-        else if (name == "expansion.rom" && mode == vfs::file::mode::read) {
-            result = vfs::memory::file::open(superFamicom.expansion.data(),
+        else if (name == "expansion.rom" && mode == nall::vfs::file::mode::read) {
+            result = nall::vfs::memory::file::open(superFamicom.expansion.data(),
                 superFamicom.expansion.size());
         }
         else {
@@ -238,13 +238,13 @@ vfs::file* Program::open(unsigned id, std::string name,
         }
     }
     else if (id == 2) { // Game Boy
-        if (name == "manifest.bml" && mode == vfs::file::mode::read) {
+        if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
             std::vector<uint8_t> manifest(gameBoy.manifest.begin(),
                 gameBoy.manifest.end());
-            result = vfs::memory::file::open(manifest.data(), manifest.size());
+            result = nall::vfs::memory::file::open(manifest.data(), manifest.size());
         }
-        else if (name == "program.rom" && mode == vfs::file::mode::read) {
-            result = vfs::memory::file::open(gameBoy.program.data(),
+        else if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+            result = nall::vfs::memory::file::open(gameBoy.program.data(),
                 gameBoy.program.size());
         }
         else {
@@ -252,18 +252,18 @@ vfs::file* Program::open(unsigned id, std::string name,
         }
     }
     else if (id == 3) { // BS Memory
-        if (name == "manifest.bml" && mode == vfs::file::mode::read) {
+        if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
             std::vector<uint8_t> manifest(bsMemory.manifest.begin(),
                 bsMemory.manifest.end());
-            result = vfs::memory::file::open(manifest.data(), manifest.size());
+            result = nall::vfs::memory::file::open(manifest.data(), manifest.size());
         }
-        else if (name == "program.rom" && mode == vfs::file::mode::read) {
-            result = vfs::memory::file::open(bsMemory.program.data(),
+        else if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+            result = nall::vfs::memory::file::open(bsMemory.program.data(),
                 bsMemory.program.size());
         }
         else if (name == "program.flash") {
             //writes are not flushed to disk in bsnes
-            result = vfs::memory::file::open(bsMemory.program.data(),
+            result = nall::vfs::memory::file::open(bsMemory.program.data(),
                 bsMemory.program.size());
         }
         else {
@@ -271,13 +271,13 @@ vfs::file* Program::open(unsigned id, std::string name,
         }
     }
     else if (id == 4) { // Sufami Turbo - Slot A
-        if (name == "manifest.bml" && mode == vfs::file::mode::read) {
+        if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
             std::vector<uint8_t> manifest(sufamiTurboA.manifest.begin(),
                 sufamiTurboA.manifest.end());
-            result = vfs::memory::file::open(manifest.data(), manifest.size());
+            result = nall::vfs::memory::file::open(manifest.data(), manifest.size());
         }
-        else if (name == "program.rom" && mode == vfs::file::mode::read) {
-            result = vfs::memory::file::open(sufamiTurboA.program.data(),
+        else if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+            result = nall::vfs::memory::file::open(sufamiTurboA.program.data(),
                 sufamiTurboA.program.size());
         }
         else {
@@ -285,13 +285,13 @@ vfs::file* Program::open(unsigned id, std::string name,
         }
     }
     else if (id == 5) { // Sufami Turbo - Slot B
-        if (name == "manifest.bml" && mode == vfs::file::mode::read) {
+        if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
             std::vector<uint8_t> manifest(sufamiTurboB.manifest.begin(),
                 sufamiTurboB.manifest.end());
-            result = vfs::memory::file::open(manifest.data(), manifest.size());
+            result = nall::vfs::memory::file::open(manifest.data(), manifest.size());
         }
-        else if (name == "program.rom" && mode == vfs::file::mode::read) {
-            result = vfs::memory::file::open(sufamiTurboB.program.data(),
+        else if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+            result = nall::vfs::memory::file::open(sufamiTurboB.program.data(),
             sufamiTurboB.program.size());
         }
         else {
@@ -528,83 +528,83 @@ int16_t Program::inputPoll(unsigned port, unsigned device, unsigned input) {
     return pollInputDevices(port, device, input);
 }
 
-vfs::file* Program::openRomSuperFamicom(std::string name,
-    vfs::file::mode mode) {
+nall::vfs::file* Program::openRomSuperFamicom(std::string name,
+    nall::vfs::file::mode mode) {
     
-    if (name == "program.rom" && mode == vfs::file::mode::read) {
-        return vfs::memory::file::open(superFamicom.program.data(),
+    if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+        return nall::vfs::memory::file::open(superFamicom.program.data(),
             superFamicom.program.size());
     }
     
-    if (name == "data.rom" && mode == vfs::file::mode::read) {
-        return vfs::memory::file::open(superFamicom.data.data(),
+    if (name == "data.rom" && mode == nall::vfs::file::mode::read) {
+        return nall::vfs::memory::file::open(superFamicom.data.data(),
             superFamicom.data.size());
     }
     
-    if (name == "expansion.rom" && mode == vfs::file::mode::read) {
-        return vfs::memory::file::open(superFamicom.expansion.data(),
+    if (name == "expansion.rom" && mode == nall::vfs::file::mode::read) {
+        return nall::vfs::memory::file::open(superFamicom.expansion.data(),
             superFamicom.expansion.size());
     }
     
     if (name == "save.ram") {
         std::string save_path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".srm";
-        return vfs::fs::file::open(save_path.c_str(), mode);
+        return nall::vfs::fs::file::open(save_path.c_str(), mode);
     }
     
     if (name == "download.ram") {
         std::string ram_path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".psr";
-        return vfs::fs::file::open(ram_path.c_str(), mode);
+        return nall::vfs::fs::file::open(ram_path.c_str(), mode);
     }
     
     return {};
 }
 
-vfs::file* Program::openRomGameBoy(std::string name,
-    vfs::file::mode mode) {
+nall::vfs::file* Program::openRomGameBoy(std::string name,
+    nall::vfs::file::mode mode) {
     
-    if (name == "program.rom" && mode == vfs::file::mode::read) {
-        return vfs::memory::file::open(gameBoy.program.data(),
+    if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+        return nall::vfs::memory::file::open(gameBoy.program.data(),
             gameBoy.program.size());
     }
 
     if (name == "save.ram") {
         std::string save_path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".srm";
-        return vfs::fs::file::open(save_path.c_str(), mode);
+        return nall::vfs::fs::file::open(save_path.c_str(), mode);
     }
     
     if (name == "time.rtc") {
         std::string save_path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".rtc";
-        return vfs::fs::file::open(save_path.c_str(), mode);
+        return nall::vfs::fs::file::open(save_path.c_str(), mode);
     }
 
     return {};
 }
 
-vfs::file* Program::openRomBSMemory(std::string name,
-    vfs::file::mode mode) {
+nall::vfs::file* Program::openRomBSMemory(std::string name,
+    nall::vfs::file::mode mode) {
     
-    if (name == "program.rom" && mode == vfs::file::mode::read) {
-        return vfs::memory::file::open(bsMemory.program.data(),
+    if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+        return nall::vfs::memory::file::open(bsMemory.program.data(),
             bsMemory.program.size());
     }
     
     if (name == "program.flash") {
         //writes are not flushed to disk
-        return vfs::memory::file::open(bsMemory.program.data(),
+        return nall::vfs::memory::file::open(bsMemory.program.data(),
             bsMemory.program.size());
     }
 
     return {};
 }
 
-vfs::file* Program::openRomSufamiTurboA(std::string name,
-    vfs::file::mode mode) {
-    if (name == "program.rom" && mode == vfs::file::mode::read) {
-        return vfs::memory::file::open(sufamiTurboA.program.data(),
+nall::vfs::file* Program::openRomSufamiTurboA(std::string name,
+    nall::vfs::file::mode mode) {
+    if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+        return nall::vfs::memory::file::open(sufamiTurboA.program.data(),
             sufamiTurboA.program.size());
     }
     
@@ -617,23 +617,23 @@ vfs::file* Program::openRomSufamiTurboA(std::string name,
             save_path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".srm";
         
-        return vfs::fs::file::open(save_path.c_str(), mode);
+        return nall::vfs::fs::file::open(save_path.c_str(), mode);
     }
     
     return {};
 }
 
-vfs::file* Program::openRomSufamiTurboB(std::string name,
-    vfs::file::mode mode) {
-    if (name == "program.rom" && mode == vfs::file::mode::read) {
-        return vfs::memory::file::open(sufamiTurboB.program.data(),
+nall::vfs::file* Program::openRomSufamiTurboB(std::string name,
+    nall::vfs::file::mode mode) {
+    if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+        return nall::vfs::memory::file::open(sufamiTurboB.program.data(),
             sufamiTurboB.program.size());
     }
     
     if (name == "save.ram") {
         std::string save_path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".srm";
-        return vfs::fs::file::open(save_path.c_str(), mode);
+        return nall::vfs::fs::file::open(save_path.c_str(), mode);
     }
     
     return {};
