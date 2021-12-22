@@ -52,7 +52,7 @@ std::string BSMemory::manifest() const {
   std::string gamename(location);
   gamename = gamename.substr(0, gamename.find_last_of("."));
   gamename = gamename.substr(gamename.find_last_of("/\\") + 1);
-  
+
   std::string output;
   output += "game\n";
   output += "  sha256: " + sha256_digest(data.data(), data.size()) + "\n";
@@ -369,7 +369,7 @@ std::string SufamiTurbo::manifest() const {
   std::string gamename(location);
   gamename = gamename.substr(0, gamename.find_last_of("."));
   gamename = gamename.substr(gamename.find_last_of("/\\") + 1);
-  
+
   std::string output;
   output += "game\n";
   output += "  sha256: " + sha256_digest(data.data(), data.size()) + "\n";
@@ -644,7 +644,7 @@ std::string SuperFamicom::board() const {
 
   std::string cser = serial();
   const char *cserial = cser.c_str();
-  
+
   if(serial() == "A9PJ") {
   //Sufami Turbo (JPN)
     board += "ST-" + mode;
@@ -677,7 +677,7 @@ std::string SuperFamicom::board() const {
   if(sharpRTC) board += "SHARPRTC-";
 
   board.erase(board.find_last_not_of('-') + 1);
-  
+
   if((board.rfind(    "LOROM-RAM") == 0) && romSize() <= 0x200000) board += "#A";
   if((board.rfind("NEC-LOROM-RAM") == 0) && romSize() <= 0x200000) board += "#A";
 
@@ -785,7 +785,7 @@ std::string SuperFamicom::title() const {
     if(y == 0xde && x >= 0xca && x <= 0xce) n++;
     if(y == 0xdf && x >= 0xca && y <= 0xce) n++;
   }
-  
+
   const char *badchars = " \t\n\r";
   label.erase(0, label.find_first_not_of(badchars));
   label.erase(label.find_last_not_of(badchars) + 1);

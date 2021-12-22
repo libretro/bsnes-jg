@@ -36,7 +36,7 @@ void Stream::setFrequency(double inputFrequency, double outputFrequency) {
 void Stream::write(const int16_t samples[]) {
   queue_in.push_back(samples[0] / 32768.0f);
   queue_in.push_back(samples[1] / 32768.0f);
-  
+
   if (queue_in.size() == spf_in) {
     srcdata.data_in = queue_in.data();
     srcdata.data_out = resamp_out.data();

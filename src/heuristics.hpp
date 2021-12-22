@@ -53,7 +53,7 @@ private:
   std::vector<uint8_t>& data;
   std::string location;
   unsigned headerAddress = 0;
-  
+
   uint8_t read(unsigned offset) const { return data[headerAddress + offset]; }
 };
 

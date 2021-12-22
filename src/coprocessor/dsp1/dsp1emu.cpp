@@ -419,7 +419,7 @@ void Dsp1::distance(int16 *input, int16 *output)
 
 #if DSP1_VERSION < 0x0102
 		if (Pos & 1) Distance -= (Node2 - Node1);
-#endif		
+#endif
 		Distance >>= (E >> 1);
    }
 }
@@ -485,7 +485,7 @@ void Dsp1::polar(int16 *input, int16 *output)
    X = (X1 * cos(Ay) >> 15) - (Z1 * sin(Ay) >> 15);
    X2 = X; Z1 = Z;
 
-   // Rotate Around X	
+   // Rotate Around X
    Y = (Z1 * sin(Ax) >> 15) + (Y1 * cos(Ax) >> 15);
    Z = (Z1 * cos(Ax) >> 15) - (Y1 * sin(Ax) >> 15);
    Y2 = Y; Z2 = Z;
@@ -850,9 +850,9 @@ void Dsp1::gyrate(int16 *input, int16 *output)
 //////////////////////////////////////////////////////////////////
 
 const int16 Dsp1::MaxAZS_Exp[16] = {
-   0x38b4, 0x38b7, 0x38ba, 0x38be, 0x38c0, 0x38c4, 0x38c7, 0x38ca,	
+   0x38b4, 0x38b7, 0x38ba, 0x38be, 0x38c0, 0x38c4, 0x38c7, 0x38ca,
    0x38ce, 0x38d0, 0x38d4, 0x38d7, 0x38da, 0x38dd, 0x38e0, 0x38e4
-};		
+};
 
 //////////////////////////////////////////////////////////////////
 
@@ -911,14 +911,14 @@ void Dsp1::parameter(int16 *input, int16 *output)
    shared.Hx = shared.CosAas*0x7fff>>15;
    shared.Hy = shared.SinAas*0x7fff>>15;
 
-   // vertical vector of the screen (norm 1, points toward the top of the screen) 
+   // vertical vector of the screen (norm 1, points toward the top of the screen)
    shared.Vx = shared.CosAzs*-shared.SinAas>>15;
    shared.Vy = shared.CosAzs*shared.CosAas>>15;
    shared.Vz = -shared.SinAzs*0x7fff>>15;
 
    LfeNx = Lfe*shared.Nx>>15;
    LfeNy = Lfe*shared.Ny>>15;
-   LfeNz = Lfe*shared.Nz>>15;  
+   LfeNz = Lfe*shared.Nz>>15;
 
    // Center of Projection
    shared.CentreX = Fx+LfeNx;
@@ -958,7 +958,7 @@ void Dsp1::parameter(int16 *input, int16 *output)
 
    // calculate the separation of (cx, cy) from the projection of
    // the 'centre of projection' over the ground... (CentreZ*tg(AZS))
-   inverse(shared.CosAZS, 0, shared.SecAZS_C1, shared.SecAZS_E1);	
+   inverse(shared.CosAZS, 0, shared.SecAZS_C1, shared.SecAZS_E1);
    normalize(C * shared.SecAZS_C1 >> 15, C, E);
    E += shared.SecAZS_E1;
    C = denormalizeAndClip(C, E) * shared.SinAZS >> 15;
@@ -980,7 +980,7 @@ void Dsp1::parameter(int16 *input, int16 *output)
       // we have only some few Taylor coefficients, so we cannot guess which ones
       // are the approximated functions and, what is worse, we don't know why
       // the own clipping stuff (and, particularly, this correction) is done
-      if (Azs == -32768) Azs = -32767;	
+      if (Azs == -32768) Azs = -32767;
 
       C = Azs - MaxAZS;
       if (C >= 0) C--;
@@ -1015,7 +1015,7 @@ void Dsp1::parameter(int16 *input, int16 *output)
    Vva = denormalizeAndClip(-C, E);
 
    // Store Secant of clipped Zenith angle
-   inverse(shared.CosAZS, 0, shared.SecAZS_C2, shared.SecAZS_E2);	
+   inverse(shared.CosAZS, 0, shared.SecAZS_C2, shared.SecAZS_E2);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1083,7 +1083,7 @@ void Dsp1::raster(int16 *input, int16 *output)
 // the centre of projection.
 // The only special point to take into account is the directions on the screen:
 // H is positive rightward, but V is positive downward; this is why
-// the signs take that configuration 
+// the signs take that configuration
 
 void Dsp1::target(int16 *input, int16 *output)
 {
@@ -1318,13 +1318,13 @@ void Dsp1::normalize(int16 m, int16 &Coefficient, int16 &Exponent)
    int16 e = 0;
 
    if (m < 0)
-      while ((m & i) && i) 
+      while ((m & i) && i)
    {
       i >>= 1;
       e++;
    }
    else
-      while (!(m & i) && i) 
+      while (!(m & i) && i)
    {
       i >>= 1;
       e++;
@@ -1350,13 +1350,13 @@ void Dsp1::normalizeDouble(int32 Product, int16 &Coefficient, int16 &Exponent)
    int16 e = 0;
 
    if (m < 0)
-      while ((m & i) && i) 
+      while ((m & i) && i)
    {
       i >>= 1;
       e++;
    }
    else
-      while (!(m & i) && i) 
+      while (!(m & i) && i)
    {
       i >>= 1;
       e++;
@@ -1373,13 +1373,13 @@ void Dsp1::normalizeDouble(int32 Product, int16 &Coefficient, int16 &Exponent)
          i = 0x4000;
 
          if (m < 0)
-            while ((n & i) && i) 
+            while ((n & i) && i)
          {
             i >>= 1;
             e++;
          }
          else
-            while (!(n & i) && i) 
+            while (!(n & i) && i)
          {
             i >>= 1;
             e++;

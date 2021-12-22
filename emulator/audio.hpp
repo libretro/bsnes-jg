@@ -42,7 +42,7 @@ struct Stream {
     int16_t samples[sizeof...(P)] = {std::forward<P>(p)...};
     write(samples);
   }
-  
+
   SRC_STATE *srcstate = nullptr;
   SRC_DATA srcdata;
   std::vector<float> queue_in;

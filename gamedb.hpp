@@ -334,7 +334,7 @@ static std::vector<mtentry_t> db_multitap_games = {
     { "43fad4683fe691c4fa3d50f73a70499e", 5 }, // Zero 4 Champ RR (Japan) (Rev 1)
     { "120f5e57adfc69885cdedad4433d3efe", 5 }, // Zero 4 Champ RR (Japan)
     { "43498a8764c3ff15d28e4120639a06f9", 5 }, // Zero 4 Champ RR-Z (Japan)
-    
+
     // Super Game Boy Enhanced Game Boy games
     { "9fb9c42cf52dcfdcfbad5e61ae1b5777", 4 }, // Bomberman Collection (Japan) (SGB Enhanced)
     { "2cad6ee6df3402aeb8f8ab7921517779", 4 }, // Bomberman GB (Japan) (SGB Enhanced)

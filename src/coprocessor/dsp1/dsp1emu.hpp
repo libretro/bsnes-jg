@@ -67,7 +67,7 @@ class Dsp1
          int16 Nx, Ny, Nz;    // normal vector to the screen (norm 1, points toward the center of projection)
          int16 Gx, Gy, Gz;    // center of the screen (global coordinates)
          int16 Hx, Hy;        // horizontal vector of the screen (Hz=0, norm 1, points toward the right of the screen)
-         int16 Vx, Vy, Vz;    // vertical vector of the screen (norm 1, points toward the top of the screen) 
+         int16 Vx, Vy, Vz;    // vertical vector of the screen (norm 1, points toward the top of the screen)
 
       } shared;
 
@@ -123,7 +123,7 @@ class Dsp1
       void normalize(int16 m, int16 &Coefficient, int16 &Exponent);
       void normalizeDouble(int32 Product, int16 &Coefficient, int16 &Exponent);
       int16 shiftR(int16 C, int16 E);
-}; 
+};
 
 #endif
 
