@@ -13,8 +13,6 @@
 
 #include <string.h>
 
-using namespace nall;
-
 struct serializer;
 
 template<typename T>
@@ -58,9 +56,9 @@ struct serializer {
     //but there is no standardized way to export FP-values
     auto p = (uint8_t*)&value;
     if(_mode == Save) {
-      for(unsigned n : range(size)) _data[_size++] = p[n];
+      for(unsigned n : nall::range(size)) _data[_size++] = p[n];
     } else if(_mode == Load) {
-      for(unsigned n : range(size)) p[n] = _data[_size++];
+      for(unsigned n : nall::range(size)) p[n] = _data[_size++];
     } else {
       _size += size;
     }
@@ -82,10 +80,10 @@ struct serializer {
     enum : unsigned { size = std::is_same<bool, T>::value ? 1 : sizeof(T) };
     if(_mode == Save) {
       T copy = value;
-      for(unsigned n : range(size)) _data[_size++] = copy, copy >>= 8;
+      for(unsigned n : nall::range(size)) _data[_size++] = copy, copy >>= 8;
     } else if(_mode == Load) {
       value = 0;
-      for(unsigned n : range(size)) value |= (T)_data[_size++] << (n << 3);
+      for(unsigned n : nall::range(size)) value |= (T)_data[_size++] << (n << 3);
     } else if(_mode == Size) {
       _size += size;
     }
@@ -93,12 +91,12 @@ struct serializer {
   }
 
   template<typename T, int N> auto array(T (&array)[N]) -> serializer& {
-    for(unsigned n : range(N)) operator()(array[n]);
+    for(unsigned n : nall::range(N)) operator()(array[n]);
     return *this;
   }
 
   template<typename T> auto array(T array, unsigned size) -> serializer& {
-    for(unsigned n : range(size)) operator()(array[n]);
+    for(unsigned n : nall::range(size)) operator()(array[n]);
     return *this;
   }
 
@@ -111,9 +109,9 @@ struct serializer {
 
   auto array(uint8_t* data, unsigned size) -> serializer& {
     if(_mode == Save) {
-      memory::copy(_data + _size, data, size);
+      nall::memory::copy(_data + _size, data, size);
     } else if(_mode == Load) {
-      memory::copy(data, _data + _size, size);
+      nall::memory::copy(data, _data + _size, size);
     } else {
     }
     _size += size;
