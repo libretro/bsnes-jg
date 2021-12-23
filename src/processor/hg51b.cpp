@@ -1,4 +1,5 @@
-#include <emulator/emulator.hpp>
+#include "../../emulator/emulator.hpp"
+
 #include "hg51b.hpp"
 
 namespace Processor {

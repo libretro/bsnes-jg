@@ -6,21 +6,21 @@
 #include <string>
 #include <vector>
 
-#include <nall/bit.hpp>
-#include <nall/function.hpp>
-#include <nall/iterator.hpp>
-#include <nall/array.hpp>
-#include <nall/maybe.hpp>
-#include <nall/memory.hpp>
+#include "../nall/bit.hpp"
+#include "../nall/function.hpp"
+#include "../nall/iterator.hpp"
+#include "../nall/array.hpp"
+#include "../nall/maybe.hpp"
+#include "../nall/memory.hpp"
 #include "../src/serializer.hpp"
-#include <nall/primitives.hpp>
-#include <nall/shared-pointer.hpp>
-#include <nall/varint.hpp>
-#include <nall/vector.hpp>
-#include <nall/string.hpp>
-#include <nall/markup.hpp>
-#include <nall/file-buffer.hpp>
-#include <nall/vfs.hpp>
+#include "../nall/primitives.hpp"
+#include "../nall/shared-pointer.hpp"
+#include "../nall/varint.hpp"
+#include "../nall/vector.hpp"
+#include "../nall/string.hpp"
+#include "../nall/markup.hpp"
+#include "../nall/file-buffer.hpp"
+#include "../nall/vfs.hpp"
 
 #include "audio.hpp"
 

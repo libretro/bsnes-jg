@@ -1,4 +1,5 @@
-#include <emulator/emulator.hpp>
+#include "../../emulator/emulator.hpp"
+
 #include "arm7tdmi.hpp"
 
 namespace Processor {
