@@ -2,19 +2,19 @@
 
 namespace SuperFamicom {
 
-auto SufamiTurboCartridge::serialize(serializer& s) -> void {
+void SufamiTurboCartridge::serialize(serializer& s) {
   s.array(ram.data(), ram.size());
 }
 
 SufamiTurboCartridge sufamiturboA;
 SufamiTurboCartridge sufamiturboB;
 
-auto SufamiTurboCartridge::unload() -> void {
+void SufamiTurboCartridge::unload() {
   rom.reset();
   ram.reset();
 }
 
-auto SufamiTurboCartridge::power() -> void {
+void SufamiTurboCartridge::power() {
 }
 
 }

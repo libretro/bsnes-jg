@@ -1,7 +1,7 @@
 struct SufamiTurboCartridge {
-  auto unload() -> void;
-  auto power() -> void;
-  auto serialize(serializer&) -> void;
+  void unload();
+  void power();
+  void serialize(serializer&);
 
   unsigned pathID = 0;
   ReadableMemory rom;
