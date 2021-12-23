@@ -14,8 +14,8 @@ private:
   unsigned counter2;
 
   struct Gamepad {
-    nall::Boolean b, y, select, start;
-    nall::Boolean up, down, left, right;
-    nall::Boolean a, x, l, r;
+    bool b, y, select, start;
+    bool up, down, left, right;
+    bool a, x, l, r;
   } gamepads[4];
 };
