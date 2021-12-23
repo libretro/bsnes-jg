@@ -1060,21 +1060,32 @@ bool Cartridge::loadBSMemory() {
 
   loadCartridgeBSMemory(slotBSMemory.document);
   return true;
-  
 }
 
 bool Cartridge::loadSufamiTurboA() {
-  if(auto fp = platform->open(sufamiturboA.pathID, "manifest.bml", File::Read, File::Required)) {
-    slotSufamiTurboA.load(std::string(fp->reads()));
-  } else return false;
+  std::string manifest = platform->stropen(sufamiturboA.pathID, "manifest.bml");
+
+  if (!manifest.empty()) {
+    slotSufamiTurboA.load(manifest);
+  }
+  else {
+      return false;
+  }
+
   loadCartridgeSufamiTurboA(slotSufamiTurboA.document);
   return true;
 }
 
 bool Cartridge::loadSufamiTurboB() {
-  if(auto fp = platform->open(sufamiturboB.pathID, "manifest.bml", File::Read, File::Required)) {
-    slotSufamiTurboB.load(std::string(fp->reads()));
-  } else return false;
+  std::string manifest = platform->stropen(sufamiturboB.pathID, "manifest.bml");
+
+  if (!manifest.empty()) {
+    slotSufamiTurboB.load(manifest);
+  }
+  else {
+      return false;
+  }
+
   loadCartridgeSufamiTurboB(slotSufamiTurboB.document);
   return true;
 }

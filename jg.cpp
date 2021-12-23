@@ -236,12 +236,7 @@ nall::vfs::file* Program::open(unsigned id, std::string name,
         }
     }
     else if (id == 4) { // Sufami Turbo - Slot A
-        if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
-            std::vector<uint8_t> manifest(sufamiTurboA.manifest.begin(),
-                sufamiTurboA.manifest.end());
-            result = nall::vfs::memory::file::open(manifest.data(), manifest.size());
-        }
-        else if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+        if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
             result = nall::vfs::memory::file::open(sufamiTurboA.program.data(),
                 sufamiTurboA.program.size());
         }
@@ -250,12 +245,7 @@ nall::vfs::file* Program::open(unsigned id, std::string name,
         }
     }
     else if (id == 5) { // Sufami Turbo - Slot B
-        if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
-            std::vector<uint8_t> manifest(sufamiTurboB.manifest.begin(),
-                sufamiTurboB.manifest.end());
-            result = nall::vfs::memory::file::open(manifest.data(), manifest.size());
-        }
-        else if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
+        if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
             result = nall::vfs::memory::file::open(sufamiTurboB.program.data(),
             sufamiTurboB.program.size());
         }
@@ -363,6 +353,16 @@ std::string Program::stropen(unsigned id, std::string name) {
     if (id == 3) { // BS-X
         if (name == "manifest.bml") {
             return bsMemory.manifest;
+        }
+    }
+    if (id == 4) { // Sufami Turbo Slot A
+        if (name == "manifest.bml") {
+            return sufamiTurboA.manifest;
+        }
+    }
+    if (id == 5) { // Sufami Turbo Slot B
+        if (name == "manifest.bml") {
+            return sufamiTurboB.manifest;
         }
     }
     return {};
@@ -600,6 +600,7 @@ nall::vfs::file* Program::openRomSufamiTurboA(std::string name,
 
 nall::vfs::file* Program::openRomSufamiTurboB(std::string name,
     nall::vfs::file::mode mode) {
+
     if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
         return nall::vfs::memory::file::open(sufamiTurboB.program.data(),
             sufamiTurboB.program.size());
