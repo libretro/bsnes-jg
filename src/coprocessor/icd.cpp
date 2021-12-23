@@ -1,3 +1,5 @@
+#include <iterator>
+
 #include "../sfc.hpp"
 #include "../sha256.hpp"
 
@@ -83,7 +85,8 @@ auto ICD::joypWrite(bool p14, bool p15) -> void {
       pulseLock = 1;
       bitOffset = 0;
       packetOffset = 0;
-    } else {
+    }
+    else {
       return;
     }
   }
@@ -182,6 +185,7 @@ auto ICD::writeIO(unsigned addr, uint8_t data) -> void {
     case 2: this->frequency = frequency / 7; break;  //slow
     case 3: this->frequency = frequency / 9; break;  //very slow
     }
+
     stream->setFrequency(this->frequency / 128, 0);
     r6003 = data;
     return;
@@ -220,13 +224,16 @@ auto ICD::serialize(serializer& s) -> void {
 
   auto size = GB_get_save_state_size(&sameboy);
   auto data = new uint8_t[size];
+
   if(s.mode() == serializer::Save) {
     GB_save_state_to_buffer(&sameboy, data);
   }
+
   s.array(data, size);
   if(s.mode() == serializer::Load) {
     GB_load_state_from_buffer(&sameboy, data, size);
   }
+
   delete[] data;
 
   for(auto n : nall::range(64)) s.array(packet[n].data);
@@ -315,7 +322,8 @@ auto ICD::main() -> void {
   if(r6003 & 0x80) {
     auto clocks = GB_run(&sameboy);
     step(clocks >> 1);
-  } else {  //DMG halted
+  }
+  else {  //DMG halted
     apuWrite(0, 0);
     step(128);
   }
@@ -339,7 +347,8 @@ auto ICD::load() -> bool {
   if(Frequency == 0) {
     GB_init(&sameboy, GB_MODEL_SGB_NO_SFC);
     GB_load_boot_rom_from_buffer(&sameboy, (const unsigned char*)&SGB1BootROM[0], 256);
-  } else {
+  }
+  else {
     GB_init(&sameboy, GB_MODEL_SGB2_NO_SFC);
     GB_load_boot_rom_from_buffer(&sameboy, (const unsigned char*)&SGB2BootROM[0], 256);
   }
@@ -355,27 +364,23 @@ auto ICD::load() -> bool {
   GB_set_vblank_callback(&sameboy, &SameBoy::vblank);
   GB_set_log_callback(&sameboy, &SameBoy::log);
   GB_set_pixels_output(&sameboy, &bitmap[0]);
+
   if(auto loaded = platform->load(ID::GameBoy, "Game Boy", "gb")) {
     information.pathID = loaded.pathID;
+  }
+  else return unload(), false;
+
+  std::vector<uint8_t> rom = platform->mopen(pathID(), "program.rom");
+  if(!rom.empty()) {
+    cartridge.information.sha256 = sha256_digest(rom.data(), rom.size()).c_str();
+    GB_load_rom_from_buffer(&sameboy, rom.data(), rom.size());
   } else return unload(), false;
-  if(auto fp = platform->open(pathID(), "manifest.bml", File::Read, File::Required)) {
-    auto manifest = fp->reads();
-    cartridge.slotGameBoy.load(std::string(manifest));
-  } else return unload(), false;
-  if(auto fp = platform->open(pathID(), "program.rom", File::Read, File::Required)) {
-    auto size = fp->size();
-    auto data = (uint8_t*)malloc(size);
-    cartridge.information.sha256 = sha256_digest(data, size).c_str();
-    fp->read(data, size);
-    GB_load_rom_from_buffer(&sameboy, data, size);
-    free(data);
-  } else return unload(), false;
-  if(auto fp = platform->open(pathID(), "save.ram", File::Read)) {
-    auto size = fp->size();
-    auto data = (uint8_t*)malloc(size);
-    fp->read(data, size);
-    GB_load_battery_from_buffer(&sameboy, data, size);
-    free(data);
+
+  std::ifstream sramfile = platform->fopen(pathID(), "save.ram");
+  if (sramfile.is_open()) {
+    std::vector<char> sram((std::istreambuf_iterator<char>(sramfile)),
+      (std::istreambuf_iterator<char>()));
+    GB_load_battery_from_buffer(&sameboy, (const uint8_t*)sram.data(), sram.size());
   }
   return true;
 }

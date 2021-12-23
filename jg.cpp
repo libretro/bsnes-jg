@@ -130,6 +130,7 @@ struct Program : Emulator::Platform {
     Emulator::Platform::Load load(unsigned id, std::string name,
         std::string type, std::vector<std::string> options = {}) override;
     std::ifstream fopen(unsigned id, std::string name) override;
+    std::vector<uint8_t> mopen(unsigned id, std::string name) override;
     void write(unsigned id, std::string name, const uint8_t *data,
         unsigned size) override;
     void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
@@ -140,7 +141,6 @@ struct Program : Emulator::Platform {
     void load();
     std::vector<uint8_t> loadFile(void *data, size_t size);
     bool loadSuperFamicom(std::string location);
-    bool loadGameBoy(std::string location);
     bool loadBSMemory(std::string location);
     bool loadSufamiTurboA(std::string location);
     bool loadSufamiTurboB(std::string location);
@@ -148,7 +148,6 @@ struct Program : Emulator::Platform {
     void save();
     
     nall::vfs::file* openRomSuperFamicom(std::string name, nall::vfs::file::mode mode);
-    nall::vfs::file* openRomGameBoy(std::string name, nall::vfs::file::mode mode);
     nall::vfs::file* openRomBSMemory(std::string name, nall::vfs::file::mode mode);
     nall::vfs::file* openRomSufamiTurboA(std::string name, nall::vfs::file::mode mode);
     nall::vfs::file* openRomSufamiTurboB(std::string name, nall::vfs::file::mode mode);
@@ -161,8 +160,7 @@ public:
         std::string location;
         std::string manifest;
         nall::Markup::Node document;
-        nall::Boolean patched;
-        nall::Boolean verified;
+        bool verified;
     };
     
     struct SuperFamicom : Game {
@@ -238,18 +236,6 @@ nall::vfs::file* Program::open(unsigned id, std::string name,
         }
     }
     else if (id == 2) { // Game Boy
-        if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
-            std::vector<uint8_t> manifest(gameBoy.manifest.begin(),
-                gameBoy.manifest.end());
-            result = nall::vfs::memory::file::open(manifest.data(), manifest.size());
-        }
-        else if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
-            result = nall::vfs::memory::file::open(gameBoy.program.data(),
-                gameBoy.program.size());
-        }
-        else {
-            result = openRomGameBoy(name, mode);
-        }
     }
     else if (id == 3) { // BS Memory
         if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
@@ -316,9 +302,6 @@ Emulator::Platform::Load Program::load(unsigned id, std::string name,
         }
     }
     else if (id == 2) {
-        if (loadGameBoy(gameBoy.location)) {
-            return { id, "" };
-        }
     }
     else if (id == 3) {
         if (loadBSMemory(bsMemory.location)) {
@@ -339,18 +322,41 @@ Emulator::Platform::Load Program::load(unsigned id, std::string name,
 }
 
 std::ifstream Program::fopen(unsigned id, std::string name) {
-    std::string location;
-    if (name == "msu1/data.rom") {
-        location = superFamicom.location;
-        location = location.substr(0, location.find_last_of(".")) + ".msu";
+    std::string path;
+    
+    if (id == 1) { // SFC
+        if (name == "msu1/data.rom") {
+            path = superFamicom.location;
+            path = path.substr(0, path.find_last_of(".")) + ".msu";
+        }
+        else if (name.find("msu1/track") != std::string::npos) {
+            path = superFamicom.location;
+            path = path.substr(0, path.find_last_of(".")) +
+                name.substr(name.find_first_of("track") + 5);
+        }
     }
-    else if (name.find("msu1/track") != std::string::npos) {
-        location = superFamicom.location;
-        location = location.substr(0, location.find_last_of(".")) +
-            name.substr(name.find_first_of("track") + 5);
+    else if (id == 2) { // GB
+        if (name == "save.ram") {
+            printf("sram save\n");
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".srm";
+        }
+        else if (name == "time.rtc") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".rtc";
+        }
     }
-    std::ifstream stream(location, std::ios::in | std::ios::binary);
+    std::ifstream stream(path, std::ios::in | std::ios::binary);
     return stream;
+}
+
+std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
+    if (id == 2) { // GB
+        if (name == "program.rom") {
+            return loadFile(gameinfo.data, gameinfo.size);
+        }
+    }
+    return {};
 }
 
 void Program::write(unsigned id, std::string name, const uint8_t *data,
@@ -561,29 +567,6 @@ nall::vfs::file* Program::openRomSuperFamicom(std::string name,
     return {};
 }
 
-nall::vfs::file* Program::openRomGameBoy(std::string name,
-    nall::vfs::file::mode mode) {
-    
-    if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
-        return nall::vfs::memory::file::open(gameBoy.program.data(),
-            gameBoy.program.size());
-    }
-
-    if (name == "save.ram") {
-        std::string save_path = std::string(pathinfo.save) + "/" +
-            std::string(gameinfo.name) + ".srm";
-        return nall::vfs::fs::file::open(save_path.c_str(), mode);
-    }
-    
-    if (name == "time.rtc") {
-        std::string save_path = std::string(pathinfo.save) + "/" +
-            std::string(gameinfo.name) + ".rtc";
-        return nall::vfs::fs::file::open(save_path.c_str(), mode);
-    }
-
-    return {};
-}
-
 nall::vfs::file* Program::openRomBSMemory(std::string name,
     nall::vfs::file::mode mode) {
     
@@ -711,22 +694,6 @@ bool Program::loadSuperFamicom(std::string location) {
         nall::memory::copy(&superFamicom.firmware[0], &rom[offset], size);
         offset += size;
     }
-    return true;
-}
-
-bool Program::loadGameBoy(std::string location) {
-    std::vector<uint8_t> rom;
-    rom = loadFile(gameinfo.data, gameinfo.size);
-    
-    if (rom.size() < 0x4000) return false;
-    
-    auto heuristics = Heuristics::GameBoy(rom, location);
-    
-    gameBoy.manifest = heuristics.manifest();
-    gameBoy.document = nall::BML::unserialize(gameBoy.manifest.c_str());
-    gameBoy.location = location;
-    gameBoy.program = rom;
-    
     return true;
 }
 
