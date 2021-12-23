@@ -6,7 +6,7 @@ namespace SuperFamicom {
 
 BSMemory bsmemory;
 
-auto BSMemory::serialize(serializer& s) -> void {
+void BSMemory::serialize(serializer& s) {
   if(ROM) return;
   Thread::serialize(s);
 
@@ -56,7 +56,7 @@ auto BSMemory::serialize(serializer& s) -> void {
   queue.serialize(s);
 }
 
-auto BSMemory::Queue::serialize(serializer& s) -> void {
+void BSMemory::Queue::serialize(serializer& s) {
   s.integer(history[0].valid);
   s.integer(history[0].address);
   s.integer(history[0].data);
@@ -81,18 +81,18 @@ BSMemory::BSMemory() {
   block.self = this;
 }
 
-auto BSMemory::synchronizeCPU() -> void {
+void BSMemory::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto BSMemory::Enter() -> void {
+void BSMemory::Enter() {
   while(true) {
     scheduler.synchronize();
     bsmemory.main();
   }
 }
 
-auto BSMemory::main() -> void {
+void BSMemory::main() {
   if(ROM) return step(1'000'000);  //1 second
 
   for(nall::Natural< 6> id : nall::range(block.count())) {
@@ -105,12 +105,12 @@ auto BSMemory::main() -> void {
   step(10'000);  //10 milliseconds
 }
 
-auto BSMemory::step(unsigned clocks) -> void {
+void BSMemory::step(unsigned clocks) {
   clock += clocks * (uint64_t)cpu.frequency;
   synchronizeCPU();
 }
 
-auto BSMemory::load() -> bool {
+bool BSMemory::load() {
   if(ROM) return true;
 
   if(size() != 0x100000 && size() != 0x200000 && size() != 0x400000) {
@@ -160,7 +160,7 @@ auto BSMemory::load() -> bool {
   return true;
 }
 
-auto BSMemory::unload() -> void {
+void BSMemory::unload() {
   if(ROM) return memory.reset();
 
   if(auto fp = platform->open(pathID, "metadata.bml", File::Write, File::Optional)) {
@@ -181,7 +181,7 @@ auto BSMemory::unload() -> void {
   memory.reset();
 }
 
-auto BSMemory::power() -> void {
+void BSMemory::power() {
   create(Enter, 1'000'000);  //microseconds
 
   for(auto& block : blocks) {
@@ -195,15 +195,15 @@ auto BSMemory::power() -> void {
   queue.flush();
 }
 
-auto BSMemory::data() -> uint8_t* {
+uint8_t* BSMemory::data() {
   return memory.data();
 }
 
-auto BSMemory::size() const -> unsigned {
+unsigned BSMemory::size() const {
   return memory.size();
 }
 
-auto BSMemory::read(unsigned address, uint8_t data) -> uint8_t {
+uint8_t BSMemory::read(unsigned address, uint8_t data) {
   if(!size()) return data;
   if(ROM) return memory.read(bus.mirror(address, size()));
 
@@ -231,7 +231,7 @@ auto BSMemory::read(unsigned address, uint8_t data) -> uint8_t {
   return block(address >> block.bitCount()).read(address);  //Mode::Flash
 }
 
-auto BSMemory::write(unsigned address, uint8_t data) -> void {
+void BSMemory::write(unsigned address, uint8_t data) {
   if(!size() || ROM) return;
   queue.push(address, data);
 
@@ -465,34 +465,34 @@ auto BSMemory::write(unsigned address, uint8_t data) -> void {
   return queue.flush();
 }
 
-auto BSMemory::failed() -> void {
+void BSMemory::failed() {
   compatible.status.writeFailed = 1;  //datasheet specifies these are for write/erase failures
   compatible.status.eraseFailed = 1;  //yet all errors seem to set both of these bits ...
   global.status.failed = 1;
 }
 
-auto BSMemory::Page::swap() -> void {
+void BSMemory::Page::swap() {
   self->global.status.page ^= 1;
 }
 
-auto BSMemory::Page::read(uint8_t address) -> uint8_t {
+uint8_t BSMemory::Page::read(uint8_t address) {
   return buffer[self->global.status.page][address];
 }
 
-auto BSMemory::Page::write(uint8_t address, uint8_t data) -> void {
+void BSMemory::Page::write(uint8_t address, uint8_t data) {
   buffer[self->global.status.page][address] = data;
 }
 
-auto BSMemory::BlockInformation::bitCount() const -> unsigned { return 16; }
-auto BSMemory::BlockInformation::byteCount() const -> unsigned { return 1 << bitCount(); }
-auto BSMemory::BlockInformation::count() const -> unsigned { return self->size() >> bitCount(); }
+unsigned BSMemory::BlockInformation::bitCount() const { return 16; }
+unsigned BSMemory::BlockInformation::byteCount() const { return 1 << bitCount(); }
+unsigned BSMemory::BlockInformation::count() const { return self->size() >> bitCount(); }
 
-auto BSMemory::Block::read(unsigned address) -> uint8_t {
+uint8_t BSMemory::Block::read(unsigned address) {
   address &= byteCount() - 1;
   return self->memory.read(id << bitCount() | address);
 }
 
-auto BSMemory::Block::write(unsigned address, uint8_t data) -> void {
+void BSMemory::Block::write(unsigned address, uint8_t data) {
   if(!self->writable() && status.locked) {
     status.failed = 1;
     return self->failed();
@@ -504,7 +504,7 @@ auto BSMemory::Block::write(unsigned address, uint8_t data) -> void {
   self->memory.write(id << bitCount() | address, data);
 }
 
-auto BSMemory::Block::erase() -> void {
+void BSMemory::Block::erase() {
   if(cpu.active()) {
     //erase command runs even if the block is not currently writable
     erasing = 1;
@@ -531,7 +531,7 @@ auto BSMemory::Block::erase() -> void {
   status.locked = 0;
 }
 
-auto BSMemory::Block::lock() -> void {
+void BSMemory::Block::lock() {
   if(!self->writable()) {
     //produces a failure result even if the page was already locked
     status.failed = 1;
@@ -544,7 +544,7 @@ auto BSMemory::Block::lock() -> void {
 
 //at reset, the locked status bit is set
 //this command refreshes the true locked status bit from the device
-auto BSMemory::Block::update() -> void {
+void BSMemory::Block::update() {
   status.locked = locked;
 }
 
@@ -552,7 +552,7 @@ auto BSMemory::Blocks::operator()(nall::Natural< 6> id) -> Block& {
   return self->blocks[id & count() - 1];
 }
 
-auto BSMemory::Block::Status::operator()() -> uint8_t {
+uint8_t BSMemory::Block::Status::operator()() {
   return (  //d0-d1 are reserved; always return zero
     vppLow    << 2
   | queueFull << 3
@@ -563,7 +563,7 @@ auto BSMemory::Block::Status::operator()() -> uint8_t {
   );
 }
 
-auto BSMemory::Compatible::Status::operator()() -> uint8_t {
+uint8_t BSMemory::Compatible::Status::operator()() {
   return (  //d0-d2 are reserved; always return zero
     vppLow         << 3
   | writeFailed    << 4
@@ -573,7 +573,7 @@ auto BSMemory::Compatible::Status::operator()() -> uint8_t {
   );
 }
 
-auto BSMemory::Global::Status::operator()() -> uint8_t {
+uint8_t BSMemory::Global::Status::operator()() {
   return (
     page          << 0
   | pageReady     << 1
@@ -586,28 +586,28 @@ auto BSMemory::Global::Status::operator()() -> uint8_t {
   );
 }
 
-auto BSMemory::Queue::flush() -> void {
+void BSMemory::Queue::flush() {
   history[0] = {};
   history[1] = {};
   history[2] = {};
   history[3] = {};
 }
 
-auto BSMemory::Queue::pop() -> void {
+void BSMemory::Queue::pop() {
   if(history[3].valid) { history[3] = {}; return; }
   if(history[2].valid) { history[2] = {}; return; }
   if(history[1].valid) { history[1] = {}; return; }
   if(history[0].valid) { history[0] = {}; return; }
 }
 
-auto BSMemory::Queue::push(nall::Natural<24> address, uint8_t data) -> void {
+void BSMemory::Queue::push(nall::Natural<24> address, uint8_t data) {
   if(!history[0].valid) { history[0] = {true, address, data}; return; }
   if(!history[1].valid) { history[1] = {true, address, data}; return; }
   if(!history[2].valid) { history[2] = {true, address, data}; return; }
   if(!history[3].valid) { history[3] = {true, address, data}; return; }
 }
 
-auto BSMemory::Queue::size() -> unsigned {
+unsigned BSMemory::Queue::size() {
   if(history[3].valid) return 4;
   if(history[2].valid) return 3;
   if(history[1].valid) return 2;
@@ -615,12 +615,12 @@ auto BSMemory::Queue::size() -> unsigned {
   return 0;
 }
 
-auto BSMemory::Queue::address(unsigned index) -> nall::Natural<24> {
+nall::Natural<24> BSMemory::Queue::address(unsigned index) {
   if(index > 3 || !history[index].valid) return 0;
   return history[index].address;
 }
 
-auto BSMemory::Queue::data(unsigned index) -> uint8_t {
+uint8_t BSMemory::Queue::data(unsigned index) {
   if(index > 3 || !history[index].valid) return 0;
   return history[index].data;
 }

@@ -24,22 +24,22 @@ struct BSMemory : Thread, Memory {
 
   //bsmemory.cpp
   BSMemory();
-  auto synchronizeCPU() -> void;
-  static auto Enter() -> void;
-  auto main() -> void;
-  auto step(unsigned clocks) -> void;
+  void synchronizeCPU();
+  static void Enter();
+  void main();
+  void step(unsigned clocks);
 
-  auto load() -> bool;
-  auto unload() -> void;
-  auto power() -> void;
+  bool load();
+  void unload();
+  void power();
 
-  auto data() -> uint8_t *override;
-  auto size() const -> unsigned override;
-  auto read(unsigned address, uint8_t data) -> uint8_t override;
-  auto write(unsigned address, uint8_t data) -> void override;
+  uint8_t* data() override;
+  unsigned size() const override;
+  uint8_t read(unsigned address, uint8_t data) override;
+  void write(unsigned address, uint8_t data) override;
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   WritableMemory memory;
 
@@ -57,9 +57,9 @@ private:
   struct Page {
     BSMemory* self = nullptr;
 
-    auto swap() -> void;
-    auto read(uint8_t address) -> uint8_t;
-    auto write(uint8_t address, uint8_t data) -> void;
+    void swap();
+    uint8_t read(uint8_t address);
+    void write(uint8_t address, uint8_t data);
 
     uint8_t buffer[2][256];
   } page;
@@ -67,17 +67,17 @@ private:
   struct BlockInformation {
     BSMemory* self = nullptr;
 
-    inline auto bitCount() const -> unsigned;
-    inline auto byteCount() const -> unsigned;
-    inline auto count() const -> unsigned;
+    inline unsigned bitCount() const;
+    inline unsigned byteCount() const;
+    inline unsigned count() const;
   };
 
   struct Block : BlockInformation {
-    auto read(unsigned address) -> uint8_t;
-    auto write(unsigned address, uint8_t data) -> void;
-    auto erase() -> void;
-    auto lock() -> void;
-    auto update() -> void;
+    uint8_t read(unsigned address);
+    void write(unsigned address, uint8_t data);
+    void erase();
+    void lock();
+    void update();
 
     nall::Natural< 4>  id;
     uint32_t erased;
@@ -85,7 +85,7 @@ private:
     nall::Natural< 1>  erasing;
 
     struct Status {
-      auto operator()() -> uint8_t;
+      uint8_t operator()();
 
       nall::Natural< 1> vppLow;
       nall::Natural< 1> queueFull;
@@ -102,7 +102,7 @@ private:
 
   struct Compatible {
     struct Status {
-      auto operator()() -> uint8_t;
+      uint8_t operator()();
 
       nall::Natural< 1> vppLow;
       nall::Natural< 1> writeFailed;
@@ -114,7 +114,7 @@ private:
 
   struct Global {
     struct Status {
-      auto operator()() -> uint8_t;
+      uint8_t operator()();
 
       nall::Natural< 1> page;
       nall::Natural< 1> pageReady = 1;
@@ -145,15 +145,15 @@ private:
   nall::Natural< 2> readyBusyMode;
 
   struct Queue {
-    auto flush() -> void;
-    auto pop() -> void;
-    auto push(nall::Natural<24> address, uint8_t data) -> void;
-    auto size() -> unsigned;
-    auto address(unsigned index) -> nall::Natural<24>;
-    auto data(unsigned index) -> uint8_t;
+    void flush();
+    void pop();
+    void push(nall::Natural<24> address, uint8_t data);
+    unsigned size();
+    nall::Natural<24> address(unsigned index);
+    uint8_t data(unsigned index);
 
     //serialization.cpp
-    auto serialize(serializer&) -> void;
+    void serialize(serializer&);
 
     struct History {
       nall::Natural< 1>  valid;
@@ -162,7 +162,7 @@ private:
     } history[4];
   } queue;
 
-  auto failed() -> void;
+  void failed();
 };
 
 extern BSMemory bsmemory;
