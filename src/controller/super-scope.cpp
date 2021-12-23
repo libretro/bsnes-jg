@@ -35,7 +35,7 @@ SuperScope::SuperScope(unsigned port) : Controller(port) {
   prev = 0;
 }
 
-auto SuperScope::data() -> nall::Natural< 2> {
+nall::Natural< 2> SuperScope::data() {
   if(counter >= 8) return 1;
 
   if(counter == 0) {
@@ -88,13 +88,13 @@ auto SuperScope::data() -> nall::Natural< 2> {
   return 0; // unreachable
 }
 
-auto SuperScope::latch(bool data) -> void {
+void SuperScope::latch(bool data) {
   if(latched == data) return;
   latched = data;
   counter = 0;
 }
 
-auto SuperScope::latch() -> void {
+void SuperScope::latch() {
   /*int nx = platform->inputPoll(port, ID::Device::SuperScope, X);
   int ny = platform->inputPoll(port, ID::Device::SuperScope, Y);
   x = max(-16, min(256 + 16, nx + x));
@@ -106,7 +106,7 @@ auto SuperScope::latch() -> void {
   if(!offscreen) ppu.latchCounters(x, y);
 }
 
-auto SuperScope::draw(uint16_t* data, unsigned pitch, unsigned width, unsigned height) -> void {
+void SuperScope::draw(uint16_t* data, unsigned pitch, unsigned width, unsigned height) {
   /*pitch >>= 1;
   float scaleX = (float)width  / 256.0;
   float scaleY = (float)height / (float)ppu.vdisp();
