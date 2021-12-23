@@ -10,7 +10,7 @@ Expansion::Expansion() {
 Expansion::~Expansion() {
 }
 
-auto ExpansionPort::connect(unsigned deviceID) -> void {
+void ExpansionPort::connect(unsigned deviceID) {
   if(!system.loaded()) return;
   delete device;
 
@@ -21,15 +21,15 @@ auto ExpansionPort::connect(unsigned deviceID) -> void {
   }
 }
 
-auto ExpansionPort::power() -> void {
+void ExpansionPort::power() {
 }
 
-auto ExpansionPort::unload() -> void {
+void ExpansionPort::unload() {
   delete device;
   device = nullptr;
 }
 
-auto ExpansionPort::serialize(serializer& s) -> void {
+void ExpansionPort::serialize(serializer& s) {
 }
 
 }

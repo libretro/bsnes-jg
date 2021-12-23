@@ -4,11 +4,11 @@ struct Expansion : Thread {
 };
 
 struct ExpansionPort {
-  auto connect(unsigned deviceID) -> void;
+  void connect(unsigned deviceID);
 
-  auto power() -> void;
-  auto unload() -> void;
-  auto serialize(serializer&) -> void;
+  void power();
+  void unload();
+  void serialize(serializer&);
 
   Expansion* device = nullptr;
 };
