@@ -5,9 +5,9 @@ struct Justifier : Controller {
 
   Justifier(unsigned port, bool chained);
 
-  auto data() -> nall::Natural< 2>;
-  auto latch(bool data) -> void;
-  auto latch() -> void override;
+  nall::Natural< 2> data();
+  void latch(bool data);
+  void latch() override;
 
 //private:
   const bool chained;  //true if the second justifier is attached to the first

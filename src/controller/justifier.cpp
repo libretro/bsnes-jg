@@ -31,7 +31,7 @@ device(!chained ? ID::Device::Justifier : ID::Device::Justifiers)
   }
 }
 
-auto Justifier::data() -> nall::Natural< 2> {
+nall::Natural< 2> Justifier::data() {
   if(counter >= 32) return 1;
 
   if(counter == 0) {
@@ -86,14 +86,14 @@ auto Justifier::data() -> nall::Natural< 2> {
   return 0; // unreachable
 }
 
-auto Justifier::latch(bool data) -> void {
+void Justifier::latch(bool data) {
   if(latched == data) return;
   latched = data;
   counter = 0;
   if(latched == 0) active = !active;  //toggle between both controllers, even when unchained
 }
 
-auto Justifier::latch() -> void {
+void Justifier::latch() {
   if(!active) {
     player1.x = platform->inputPoll(port, device, 0 + X);
     player1.y = platform->inputPoll(port, device, 0 + Y);
