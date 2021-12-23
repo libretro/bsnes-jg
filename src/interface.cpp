@@ -193,78 +193,76 @@ auto Interface::devices(unsigned port) -> std::vector<Device> {
 }
 
 auto Interface::inputs(unsigned device) -> std::vector<Input> {
-  using Type = Input::Type;
-
   if(device == ID::Device::None) return {
   };
 
   if(device == ID::Device::Gamepad) return {
-    {Type::Hat,     "Up"    },
-    {Type::Hat,     "Down"  },
-    {Type::Hat,     "Left"  },
-    {Type::Hat,     "Right" },
-    {Type::Button,  "B"     },
-    {Type::Button,  "A"     },
-    {Type::Button,  "Y"     },
-    {Type::Button,  "X"     },
-    {Type::Trigger, "L"     },
-    {Type::Trigger, "R"     },
-    {Type::Control, "Select"},
-    {Type::Control, "Start" }
+    {Input::Type::Hat,     "Up"    },
+    {Input::Type::Hat,     "Down"  },
+    {Input::Type::Hat,     "Left"  },
+    {Input::Type::Hat,     "Right" },
+    {Input::Type::Button,  "B"     },
+    {Input::Type::Button,  "A"     },
+    {Input::Type::Button,  "Y"     },
+    {Input::Type::Button,  "X"     },
+    {Input::Type::Trigger, "L"     },
+    {Input::Type::Trigger, "R"     },
+    {Input::Type::Control, "Select"},
+    {Input::Type::Control, "Start" }
   };
 
   if(device == ID::Device::Mouse) return {
-    {Type::Axis,   "X-axis"},
-    {Type::Axis,   "Y-axis"},
-    {Type::Button, "Left"  },
-    {Type::Button, "Right" }
+    {Input::Type::Axis,   "X-axis"},
+    {Input::Type::Axis,   "Y-axis"},
+    {Input::Type::Button, "Left"  },
+    {Input::Type::Button, "Right" }
   };
 
   // Not strictly needed, used for GUI interfaces, fix after nall removal
   /*if(device == ID::Device::SuperMultitap) {
     vector<Input> inputs;
     for(unsigned p = 2; p <= 5; p++) inputs.append({
-      {Type::Hat,     {"Port ", p, " - ", "Up"    }},
-      {Type::Hat,     {"Port ", p, " - ", "Down"  }},
-      {Type::Hat,     {"Port ", p, " - ", "Left"  }},
-      {Type::Hat,     {"Port ", p, " - ", "Right" }},
-      {Type::Button,  {"Port ", p, " - ", "B"     }},
-      {Type::Button,  {"Port ", p, " - ", "A"     }},
-      {Type::Button,  {"Port ", p, " - ", "Y"     }},
-      {Type::Button,  {"Port ", p, " - ", "X"     }},
-      {Type::Trigger, {"Port ", p, " - ", "L"     }},
-      {Type::Trigger, {"Port ", p, " - ", "R"     }},
-      {Type::Control, {"Port ", p, " - ", "Select"}},
-      {Type::Control, {"Port ", p, " - ", "Start" }}
+      {Input::Type::Hat,     {"Port ", p, " - ", "Up"    }},
+      {Input::Type::Hat,     {"Port ", p, " - ", "Down"  }},
+      {Input::Type::Hat,     {"Port ", p, " - ", "Left"  }},
+      {Input::Type::Hat,     {"Port ", p, " - ", "Right" }},
+      {Input::Type::Button,  {"Port ", p, " - ", "B"     }},
+      {Input::Type::Button,  {"Port ", p, " - ", "A"     }},
+      {Input::Type::Button,  {"Port ", p, " - ", "Y"     }},
+      {Input::Type::Button,  {"Port ", p, " - ", "X"     }},
+      {Input::Type::Trigger, {"Port ", p, " - ", "L"     }},
+      {Input::Type::Trigger, {"Port ", p, " - ", "R"     }},
+      {Input::Type::Control, {"Port ", p, " - ", "Select"}},
+      {Input::Type::Control, {"Port ", p, " - ", "Start" }}
     });
     return inputs;
   }*/
 
   if(device == ID::Device::SuperScope) return {
-    {Type::Axis,    "X-axis" },
-    {Type::Axis,    "Y-axis" },
-    {Type::Control, "Trigger"},
-    {Type::Control, "Cursor" },
-    {Type::Control, "Turbo"  },
-    {Type::Control, "Pause"  }
+    {Input::Type::Axis,    "X-axis" },
+    {Input::Type::Axis,    "Y-axis" },
+    {Input::Type::Control, "Trigger"},
+    {Input::Type::Control, "Cursor" },
+    {Input::Type::Control, "Turbo"  },
+    {Input::Type::Control, "Pause"  }
   };
 
   if(device == ID::Device::Justifier) return {
-    {Type::Axis,    "X-axis" },
-    {Type::Axis,    "Y-axis" },
-    {Type::Control, "Trigger"},
-    {Type::Control, "Start"  }
+    {Input::Type::Axis,    "X-axis" },
+    {Input::Type::Axis,    "Y-axis" },
+    {Input::Type::Control, "Trigger"},
+    {Input::Type::Control, "Start"  }
   };
 
   if(device == ID::Device::Justifiers) return {
-    {Type::Axis,    "Port 1 - X-axis" },
-    {Type::Axis,    "Port 1 - Y-axis" },
-    {Type::Control, "Port 1 - Trigger"},
-    {Type::Control, "Port 1 - Start"  },
-    {Type::Axis,    "Port 2 - X-axis" },
-    {Type::Axis,    "Port 2 - Y-axis" },
-    {Type::Control, "Port 2 - Trigger"},
-    {Type::Control, "Port 2 - Start"  }
+    {Input::Type::Axis,    "Port 1 - X-axis" },
+    {Input::Type::Axis,    "Port 1 - Y-axis" },
+    {Input::Type::Control, "Port 1 - Trigger"},
+    {Input::Type::Control, "Port 1 - Start"  },
+    {Input::Type::Axis,    "Port 2 - X-axis" },
+    {Input::Type::Axis,    "Port 2 - Y-axis" },
+    {Input::Type::Control, "Port 2 - Trigger"},
+    {Input::Type::Control, "Port 2 - Start"  }
   };
 
   if(device == ID::Device::Satellaview) return {
