@@ -335,8 +335,8 @@ void Interface::cheats(const std::vector<nall::string>& list) {
   //make all ROM data writable temporarily
   Memory::GlobalWriteEnable = true;
 
-  Cheat oldCheat = cheat;
-  Cheat newCheat;
+  Emulator::Cheat oldCheat = cheat;
+  Emulator::Cheat newCheat;
   newCheat.assign(list);
 
   //determine all old codes to remove

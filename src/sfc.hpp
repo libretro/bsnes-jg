@@ -27,9 +27,8 @@ namespace SuperFamicom {
   #define platform Emulator::platform
   namespace File = Emulator::File;
   using Random = Emulator::Random;
-  using Cheat = Emulator::Cheat;
   extern Random random;
-  extern Cheat cheat;
+  extern Emulator::Cheat cheat;
 
   struct Scheduler {
     enum class Mode : unsigned { Run, Synchronize } mode;

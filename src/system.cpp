@@ -5,7 +5,7 @@ namespace SuperFamicom {
 System system;
 Scheduler scheduler;
 Random random;
-Cheat cheat;
+Emulator::Cheat cheat;
 
 serializer System::serialize(bool synchronize) {
   //deterministic serialization (synchronize=false) is only possible with select libco methods
