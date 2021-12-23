@@ -159,32 +159,40 @@ MKDIRS := $(OBJDIR)/deps/gb \
 # List of object files
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 
+# Compiler commands
+COMPILE_C = $(CC) $(CFLAGS) $(1) -c $< -o $@
+COMPILE_CXX = $(CXX) $(CXXFLAGS) $(1) -c $< -o $@
+
+# Dependency commands
+BUILD_CO = $(call COMPILE_C, $(FLAGS_CO) $(WARNINGS_CO))
+BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE))
+
+# Core commands
+BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
+	$(INCLUDES_GB))
+BUILD_SNES = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
+
 .PHONY: all clean install install-strip uninstall
 
 # libco rules
 $(OBJDIR)/deps/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
-	$(info $(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c \
-		$(SUBST $(SOURCEDIR)/,,$<) -o $@)
-	@$(CC) $(CFLAGS) $(FLAGS_CO) $(WARNINGS_CO) -c $< -o $@
+	$(info $(subst $(SOURCEDIR)/,,$(BUILD_CO)))
+	@$(BUILD_CO)
 
 # libsamplerate rules
 $(OBJDIR)/deps/libsamplerate/%.o: $(SOURCEDIR)/deps/libsamplerate/%.c $(OBJDIR)/.tag
-	$(info $(CC) $(CFLAGS) $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE) -c \
-		$(subst $(SOURCEDIR)/,,$(INCLUDES) -c $<) -o $@)
-	@$(CC) $(CFLAGS) $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE) -c $< -o $@
+	$(info $(subst $(SOURCEDIR)/,,$(BUILD_SAMPLERATE)))
+	@$(BUILD_SAMPLERATE)
 
 # Game Boy rules
 $(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag
-	$(info $(CC) $(CFLAGS) $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
-		$(subst $(SOURCEDIR)/,,$(INCLUDES_GB) -c $<) -o $@)
-	@$(CC) $(CFLAGS) $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
-		$(INCLUDES_GB) -c $< -o $@
+	$(info $(subst $(SOURCEDIR)/,,$(BUILD_GB)))
+	@$(BUILD_GB)
 
 # SNES rules
 $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
-	$(info $(CXX) $(CXXFLAGS) $(FLAGS) $(WARNINGS) \
-		$(subst $(SOURCEDIR)/,,$(INCLUDES) -c $<) -o $@)
-	@$(CXX) $(CXXFLAGS) $(FLAGS) $(WARNINGS) $(INCLUDES) -c $< -o $@
+	$(info $(subst $(SOURCEDIR)/,,$(BUILD_SNES)))
+	@$(BUILD_SNES)
 
 all: $(TARGET)
 
