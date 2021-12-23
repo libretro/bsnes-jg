@@ -1,22 +1,22 @@
 //Sony CXP1100Q-1
 
 struct SMP : Processor::SPC700, Thread {
-  inline auto synchronizing() const -> bool override { return scheduler.synchronizing(); }
+  inline bool synchronizing() const override { return scheduler.synchronizing(); }
 
   //io.cpp
-  auto portRead(nall::Natural< 2> port) const -> uint8_t;
-  auto portWrite(nall::Natural< 2> port, uint8_t data) -> void;
+  uint8_t portRead(nall::Natural< 2> port) const;
+  void portWrite(nall::Natural< 2> port, uint8_t data);
 
   //smp.cpp
-  auto synchronizeCPU() -> void;
-  auto synchronizeDSP() -> void;
-  static auto Enter() -> void;
-  auto main() -> void;
-  auto load() -> bool;
-  auto power(bool reset) -> void;
+  void synchronizeCPU();
+  void synchronizeDSP();
+  static void Enter();
+  void main();
+  bool load();
+  void power(bool reset);
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   uint8_t iplrom[64];
 
@@ -58,18 +58,18 @@ private:
   } io;
 
   //memory.cpp
-  inline auto readRAM(uint16_t address) -> uint8_t;
-  inline auto writeRAM(uint16_t address, uint8_t data) -> void;
+  inline uint8_t readRAM(uint16_t address);
+  inline void writeRAM(uint16_t address, uint8_t data);
 
-  auto idle() -> void override;
-  auto read(uint16_t address) -> uint8_t override;
-  auto write(uint16_t address, uint8_t data) -> void override;
+  void idle() override;
+  uint8_t read(uint16_t address) override;
+  void write(uint16_t address, uint8_t data) override;
 
-  auto readDisassembler(uint16_t address) -> uint8_t override;
+  uint8_t readDisassembler(uint16_t address) override;
 
   //io.cpp
-  inline auto readIO(uint16_t address) -> uint8_t;
-  inline auto writeIO(uint16_t address, uint8_t data) -> void;
+  inline uint8_t readIO(uint16_t address);
+  inline void writeIO(uint16_t address, uint8_t data);
 
   //timing.cpp
   template<unsigned Frequency>
@@ -82,19 +82,19 @@ private:
     nall::Boolean enable = 0;
     uint8_t target = 0;
 
-    auto step(unsigned clocks) -> void;
-    auto synchronizeStage1() -> void;
+    void step(unsigned clocks);
+    void synchronizeStage1();
   };
 
   Timer<128> timer0;
   Timer<128> timer1;
   Timer< 16> timer2;
 
-  inline auto wait(nall::maybe<uint16_t> address = nall::nothing, bool half = false) -> void;
-  inline auto waitIdle(nall::maybe<uint16_t> address = nall::nothing, bool half = false) -> void;
-  inline auto step(unsigned clocks) -> void;
-  inline auto stepIdle(unsigned clocks) -> void;
-  inline auto stepTimers(unsigned clocks) -> void;
+  inline void wait(nall::maybe<uint16_t> address = nall::nothing, bool half = false);
+  inline void waitIdle(nall::maybe<uint16_t> address = nall::nothing, bool half = false);
+  inline void step(unsigned clocks);
+  inline void stepIdle(unsigned clocks);
+  inline void stepTimers(unsigned clocks);
 };
 
 extern SMP smp;

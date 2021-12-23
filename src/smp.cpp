@@ -4,22 +4,22 @@ namespace SuperFamicom {
 
 SMP smp;
 
-auto SMP::readRAM(uint16_t address) -> uint8_t {
+uint8_t SMP::readRAM(uint16_t address) {
   if(address >= 0xffc0 && io.iplromEnable) return iplrom[address & 0x3f];
   if(io.ramDisable) return 0x5a;  //0xff on mini-SNES
   return dsp.apuram[address];
 }
 
-auto SMP::writeRAM(uint16_t address, uint8_t data) -> void {
+void SMP::writeRAM(uint16_t address, uint8_t data) {
   //writes to $ffc0-$ffff always go to apuram, even if the iplrom is enabled
   if(io.ramWritable && !io.ramDisable) dsp.apuram[address] = data;
 }
 
-auto SMP::idle() -> void {
+void SMP::idle() {
   waitIdle();
 }
 
-auto SMP::read(uint16_t address) -> uint8_t {
+uint8_t SMP::read(uint16_t address) {
   //Kishin Douji Zenki - Tenchi Meidou requires bus hold delays on CPU I/O reads.
   //smp_mem_access_times requires no bus hold delays on APU RAM reads.
   if((address & 0xfffc) == 0x00f4) {
@@ -36,18 +36,18 @@ auto SMP::read(uint16_t address) -> uint8_t {
   }
 }
 
-auto SMP::write(uint16_t address, uint8_t data) -> void {
+void SMP::write(uint16_t address, uint8_t data) {
   wait(address);
   writeRAM(address, data);  //even IO writes affect underlying RAM
   if((address & 0xfff0) == 0x00f0) writeIO(address, data);
 }
 
-auto SMP::readDisassembler(uint16_t address) -> uint8_t {
+uint8_t SMP::readDisassembler(uint16_t address) {
   if((address & 0xfff0) == 0x00f0) return 0x00;
   return readRAM(address);
 }
 
-auto SMP::portRead(nall::Natural< 2> port) const -> uint8_t {
+uint8_t SMP::portRead(nall::Natural< 2> port) const {
   if(port == 0) return io.cpu0;
   if(port == 1) return io.cpu1;
   if(port == 2) return io.cpu2;
@@ -55,14 +55,14 @@ auto SMP::portRead(nall::Natural< 2> port) const -> uint8_t {
   return 0; // unreachable
 }
 
-auto SMP::portWrite(nall::Natural< 2> port, uint8_t data) -> void {
+void SMP::portWrite(nall::Natural< 2> port, uint8_t data) {
   if(port == 0) io.apu0 = data;
   if(port == 1) io.apu1 = data;
   if(port == 2) io.apu2 = data;
   if(port == 3) io.apu3 = data;
 }
 
-auto SMP::readIO(uint16_t address) -> uint8_t {
+uint8_t SMP::readIO(uint16_t address) {
   uint8_t data;
 
   switch(address) {
@@ -125,7 +125,7 @@ auto SMP::readIO(uint16_t address) -> uint8_t {
   return data;  //unreachable
 }
 
-auto SMP::writeIO(uint16_t address, uint8_t data) -> void {
+void SMP::writeIO(uint16_t address, uint8_t data) {
   switch(address) {
   case 0xf0:  //TEST
     if(r.p.p) break;  //writes only valid when P flag is clear
@@ -238,7 +238,7 @@ auto SMP::writeIO(uint16_t address, uint8_t data) -> void {
 //sometimes the SMP will run far slower than expected
 //other times (and more likely), the SMP will deadlock until the system is reset
 //the timers are not affected by this and advance by their expected values
-auto SMP::wait(nall::maybe<uint16_t> addr, bool half) -> void {
+void SMP::wait(nall::maybe<uint16_t> addr, bool half) {
   static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
   static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
 
@@ -251,7 +251,7 @@ auto SMP::wait(nall::maybe<uint16_t> addr, bool half) -> void {
   stepTimers(timerWaitStates[waitStates] >> half);
 }
 
-auto SMP::waitIdle(nall::maybe<uint16_t> addr, bool half) -> void {
+void SMP::waitIdle(nall::maybe<uint16_t> addr, bool half) {
   static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
   static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
 
@@ -264,7 +264,7 @@ auto SMP::waitIdle(nall::maybe<uint16_t> addr, bool half) -> void {
   stepTimers(timerWaitStates[waitStates] >> half);
 }
 
-auto SMP::step(unsigned clocks) -> void {
+void SMP::step(unsigned clocks) {
   clock += clocks * (uint64_t)cpu.frequency;
   dsp.clock -= clocks;
   synchronizeDSP();
@@ -272,18 +272,18 @@ auto SMP::step(unsigned clocks) -> void {
   if(clock > 768 * 24 * (int64_t)24'000'000) synchronizeCPU();
 }
 
-auto SMP::stepIdle(unsigned clocks) -> void {
+void SMP::stepIdle(unsigned clocks) {
   clock += clocks * (uint64_t)cpu.frequency;
   dsp.clock -= clocks;
 }
 
-auto SMP::stepTimers(unsigned clocks) -> void {
+void SMP::stepTimers(unsigned clocks) {
   timer0.step(clocks);
   timer1.step(clocks);
   timer2.step(clocks);
 }
 
-template<unsigned Frequency> auto SMP::Timer<Frequency>::step(unsigned clocks) -> void {
+template<unsigned Frequency> void SMP::Timer<Frequency>::step(unsigned clocks) {
   //stage 0 increment
   stage0 += clocks;
   if(stage0 < Frequency) return;
@@ -294,7 +294,7 @@ template<unsigned Frequency> auto SMP::Timer<Frequency>::step(unsigned clocks) -
   synchronizeStage1();
 }
 
-template<unsigned Frequency> auto SMP::Timer<Frequency>::synchronizeStage1() -> void {
+template<unsigned Frequency> void SMP::Timer<Frequency>::synchronizeStage1() {
   bool level = stage1;
   if(!smp.io.timersEnable) level = false;
   if(smp.io.timersDisable) level = false;
@@ -309,7 +309,7 @@ template<unsigned Frequency> auto SMP::Timer<Frequency>::synchronizeStage1() -> 
   stage3++;
 }
 
-auto SMP::serialize(serializer& s) -> void {
+void SMP::serialize(serializer& s) {
   SPC700::serialize(s);
   Thread::serialize(s);
 
@@ -365,28 +365,28 @@ auto SMP::serialize(serializer& s) -> void {
   s.integer(timer2.target);
 }
 
-auto SMP::synchronizeCPU() -> void {
+void SMP::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto SMP::synchronizeDSP() -> void {
+void SMP::synchronizeDSP() {
   while(dsp.clock < 0) dsp.main();
 }
 
-auto SMP::Enter() -> void {
+void SMP::Enter() {
   while(true) {
     scheduler.synchronize();
     smp.main();
   }
 }
 
-auto SMP::main() -> void {
+void SMP::main() {
   if(r.wait) return instructionWait();
   if(r.stop) return instructionStop();
   instruction();
 }
 
-auto SMP::load() -> bool {
+bool SMP::load() {
   if(auto fp = platform->open(ID::System, "ipl.rom", File::Read, File::Required)) {
     fp->read(iplrom, 64);
     return true;
@@ -394,7 +394,7 @@ auto SMP::load() -> bool {
   return false;
 }
 
-auto SMP::power(bool reset) -> void {
+void SMP::power(bool reset) {
   SPC700::power();
   create(Enter, system.apuFrequency() / 12.0);
 
