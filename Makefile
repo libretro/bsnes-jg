@@ -170,7 +170,7 @@ BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE))
 # Core commands
 BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
 	$(INCLUDES_GB))
-BUILD_SNES = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
+BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 .PHONY: all clean install install-strip uninstall
 
@@ -191,8 +191,8 @@ $(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag
 
 # SNES rules
 $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
-	$(info $(subst $(SOURCEDIR)/,,$(BUILD_SNES)))
-	@$(BUILD_SNES)
+	$(info $(subst $(SOURCEDIR)/,,$(BUILD_MAIN)))
+	@$(BUILD_MAIN)
 
 all: $(TARGET)
 
