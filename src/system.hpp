@@ -2,7 +2,7 @@ struct System {
   enum class Region : unsigned { NTSC, PAL };
 
   inline bool loaded() const { return information.loaded; }
-  inline auto region() const -> Region { return information.region; }
+  inline Region region() const { return information.region; }
   inline double cpuFrequency() const { return information.cpuFrequency; }
   inline double apuFrequency() const { return information.apuFrequency; }
 
