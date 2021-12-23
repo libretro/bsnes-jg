@@ -124,7 +124,7 @@ static Emulator::Interface *emulator;
 struct Program : Emulator::Platform {
     Program();
     ~Program();
-    
+
     nall::vfs::file* open(unsigned id, std::string name,
         nall::vfs::file::mode mode, bool required) override;
     Emulator::Platform::Load load(unsigned id, std::string name,
@@ -137,24 +137,24 @@ struct Program : Emulator::Platform {
         unsigned height, unsigned scale) override;
     void audioFrame(unsigned numsamps) override;
     int16_t inputPoll(unsigned port, unsigned device, unsigned input) override;
-    
+
     void load();
     std::vector<uint8_t> loadFile(void *data, size_t size);
     bool loadSuperFamicom(std::string location);
     bool loadBSMemory(std::string location);
     bool loadSufamiTurboA(std::string location);
     bool loadSufamiTurboB(std::string location);
-    
+
     void save();
-    
+
     nall::vfs::file* openRomSuperFamicom(std::string name, nall::vfs::file::mode mode);
     nall::vfs::file* openRomBSMemory(std::string name, nall::vfs::file::mode mode);
     nall::vfs::file* openRomSufamiTurboA(std::string name, nall::vfs::file::mode mode);
     nall::vfs::file* openRomSufamiTurboB(std::string name, nall::vfs::file::mode mode);
-    
+
     void hackPatchMemory(std::vector<uint8_t>& data);
 
-public: 
+public:
     struct Game {
         std::string option;
         std::string location;
@@ -162,7 +162,7 @@ public:
         nall::Markup::Node document;
         bool verified;
     };
-    
+
     struct SuperFamicom : Game {
         std::string title;
         std::string region;
@@ -171,15 +171,15 @@ public:
         std::vector<uint8_t> expansion;
         std::vector<uint8_t> firmware;
     } superFamicom;
-    
+
     struct GameBoy : Game {
         std::vector<uint8_t> program;
     } gameBoy;
-    
+
     struct BSMemory : Game {
         std::vector<uint8_t> program;
     } bsMemory;
-    
+
     struct SufamiTurbo : Game {
         std::vector<uint8_t> program;
     } sufamiTurboA, sufamiTurboB;
@@ -202,9 +202,9 @@ void Program::save() {
 
 nall::vfs::file* Program::open(unsigned id, std::string name,
     nall::vfs::file::mode mode, bool required) {
-    
+
     nall::vfs::file *result;
-    
+
     if (name == "ipl.rom" && mode == nall::vfs::file::mode::read) {
         result = nall::vfs::memory::file::open(iplrom, sizeof(iplrom));
     }
@@ -212,7 +212,7 @@ nall::vfs::file* Program::open(unsigned id, std::string name,
         std::string boardspath = std::string(pathinfo.core) + "/boards.bml";
         return nall::vfs::fs::file::open(boardspath.c_str(), mode);
     }
-    
+
     if (id == 1) { // Super Famicom
         if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
             std::vector<uint8_t> manifest(superFamicom.manifest.begin(),
@@ -284,7 +284,7 @@ nall::vfs::file* Program::open(unsigned id, std::string name,
             result = openRomSufamiTurboB(name, mode);
         }
     }
-    
+
     return result;
 }
 
@@ -295,7 +295,7 @@ void Program::load() {
 
 Emulator::Platform::Load Program::load(unsigned id, std::string name,
     std::string type, std::vector<std::string> options) {
-    
+
     if (id == 1) {
         if (loadSuperFamicom(superFamicom.location)) {
             return {id, superFamicom.region.c_str()};
@@ -323,7 +323,7 @@ Emulator::Platform::Load Program::load(unsigned id, std::string name,
 
 std::ifstream Program::fopen(unsigned id, std::string name) {
     std::string path;
-    
+
     if (id == 1) { // SFC
         if (name == "msu1/data.rom") {
             path = superFamicom.location;
@@ -361,9 +361,9 @@ std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
 
 void Program::write(unsigned id, std::string name, const uint8_t *data,
         unsigned size) {
-    
+
     std::string path;
-    
+
     if (id == 1) { // SFC
         if (name == "save.ram") {
             path = std::string(pathinfo.save) + "/" +
@@ -379,7 +379,7 @@ void Program::write(unsigned id, std::string name, const uint8_t *data,
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".srm";
         }
-        
+
         if (name == "time.rtc") {
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".rtc";
@@ -406,12 +406,12 @@ void Program::write(unsigned id, std::string name, const uint8_t *data,
                 std::string(gameinfo.name) + ".srm";
         }
     }
-    
+
     if (path.empty()) {
         jg_cb_log(JG_LOG_WRN, "No file routines for: %s\n", name.c_str());
         return;
     }
-    
+
     std::ofstream stream(path, std::ios::out | std::ios::binary);
     if (stream.is_open()) {
         stream.write((const char*)data, size);
@@ -425,7 +425,7 @@ void Program::write(unsigned id, std::string name, const uint8_t *data,
 
 void Program::videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
     unsigned height, unsigned scale) {
-    
+
     //print("p: ", pitch, " w: ", width, " h: ", height, "\n");
     vidmult = height / 240;
     vidinfo.y = 8 * vidmult;
@@ -526,7 +526,7 @@ static int16_t pollInputDevices(unsigned port, unsigned device, unsigned input) 
     else if (device == SuperFamicom::ID::Device::SuperMultitap) {
         return input_device[(input / 12) + 1]->button[imap[input % 12]];
     }
-    
+
     return port > 1 ? 0 : input_device[port]->button[imap[input]];
 }
 
@@ -536,45 +536,45 @@ int16_t Program::inputPoll(unsigned port, unsigned device, unsigned input) {
 
 nall::vfs::file* Program::openRomSuperFamicom(std::string name,
     nall::vfs::file::mode mode) {
-    
+
     if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
         return nall::vfs::memory::file::open(superFamicom.program.data(),
             superFamicom.program.size());
     }
-    
+
     if (name == "data.rom" && mode == nall::vfs::file::mode::read) {
         return nall::vfs::memory::file::open(superFamicom.data.data(),
             superFamicom.data.size());
     }
-    
+
     if (name == "expansion.rom" && mode == nall::vfs::file::mode::read) {
         return nall::vfs::memory::file::open(superFamicom.expansion.data(),
             superFamicom.expansion.size());
     }
-    
+
     if (name == "save.ram") {
         std::string save_path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".srm";
         return nall::vfs::fs::file::open(save_path.c_str(), mode);
     }
-    
+
     if (name == "download.ram") {
         std::string ram_path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".psr";
         return nall::vfs::fs::file::open(ram_path.c_str(), mode);
     }
-    
+
     return {};
 }
 
 nall::vfs::file* Program::openRomBSMemory(std::string name,
     nall::vfs::file::mode mode) {
-    
+
     if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
         return nall::vfs::memory::file::open(bsMemory.program.data(),
             bsMemory.program.size());
     }
-    
+
     if (name == "program.flash") {
         //writes are not flushed to disk
         return nall::vfs::memory::file::open(bsMemory.program.data(),
@@ -590,7 +590,7 @@ nall::vfs::file* Program::openRomSufamiTurboA(std::string name,
         return nall::vfs::memory::file::open(sufamiTurboA.program.data(),
             sufamiTurboA.program.size());
     }
-    
+
     if (name == "save.ram") {
         std::string save_path;
         if (sufamiinfo.size)
@@ -599,10 +599,10 @@ nall::vfs::file* Program::openRomSufamiTurboA(std::string name,
         else
             save_path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".srm";
-        
+
         return nall::vfs::fs::file::open(save_path.c_str(), mode);
     }
-    
+
     return {};
 }
 
@@ -612,35 +612,35 @@ nall::vfs::file* Program::openRomSufamiTurboB(std::string name,
         return nall::vfs::memory::file::open(sufamiTurboB.program.data(),
             sufamiTurboB.program.size());
     }
-    
+
     if (name == "save.ram") {
         std::string save_path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".srm";
         return nall::vfs::fs::file::open(save_path.c_str(), mode);
     }
-    
+
     return {};
 }
 
 std::vector<uint8_t> Program::loadFile(void *data, size_t size) {
     uint8_t *buf = (uint8_t*)data;
     std::vector<uint8_t> ret;
-    
+
     for (int i = 0; i < size; ++i)
         ret.push_back(buf[i]);
-    
+
     return ret;
 }
 
 bool Program::loadSuperFamicom(std::string location) {
     std::string manifest;
     std::vector<uint8_t> rom;
-    
+
     rom = addon ? loadFile(addoninfo.data, addoninfo.size) :
         loadFile(gameinfo.data, gameinfo.size);
-    
+
     if (rom.size() < 0x8000) return false;
-    
+
     //assume ROM and IPS agree on whether a copier header is present
     //superFamicom.patched = applyPatchIPS(rom, location);
     if ((rom.size() & 0x7fff) == 512) {
@@ -648,15 +648,15 @@ bool Program::loadSuperFamicom(std::string location) {
         nall::memory::move(&rom[0], &rom[512], rom.size() - 512);
         rom.resize(rom.size() - 512);
     }
-    
+
     auto heuristics = Heuristics::SuperFamicom(rom, location);
     auto sha256 = sha256_digest(rom.data(), rom.size());
-    
+
     superFamicom.title = heuristics.title();
     superFamicom.region = heuristics.videoRegion();
-    
+
     std::string dbpath = std::string(pathinfo.core) + "/Super Famicom.bml";
-    
+
     if (auto document = nall::BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = nall::BML::serialize(game);
@@ -666,13 +666,13 @@ bool Program::loadSuperFamicom(std::string location) {
             superFamicom.verified = true;
         }
     }
-    
+
     superFamicom.manifest = manifest.empty() ? heuristics.manifest() : manifest;
-    
+
     hackPatchMemory(rom);
     superFamicom.document = nall::BML::unserialize(superFamicom.manifest.c_str());
     superFamicom.location = location;
-    
+
     unsigned offset = 0;
     if (auto size = heuristics.programRomSize()) {
         superFamicom.program.resize(size);
@@ -701,25 +701,25 @@ bool Program::loadBSMemory(std::string location) {
     std::string manifest;
     std::vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
-    
+
     if (rom.size() < 0x8000) return false;
-    
+
     auto heuristics = Heuristics::BSMemory(rom, location);
     auto sha256 = sha256_digest(rom.data(), rom.size());
-    
+
     std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
-    
+
     if (auto document = nall::BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = nall::BML::serialize(game);
             bsMemory.verified = true;
         }
     }
-    
+
     bsMemory.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     bsMemory.document = nall::BML::unserialize(bsMemory.manifest.c_str());
     bsMemory.location = location;
-    
+
     bsMemory.program = rom;
     return true;
 }
@@ -727,30 +727,30 @@ bool Program::loadBSMemory(std::string location) {
 bool Program::loadSufamiTurboA(std::string location) {
     std::string manifest;
     std::vector<uint8_t> rom;
-    
+
     if (sufamiinfo.size)
         rom = loadFile(sufamiinfo.data, sufamiinfo.size);
     else
         rom = loadFile(gameinfo.data, gameinfo.size);
-    
+
     if (rom.size() < 0x20000) return false;
-    
+
     auto heuristics = Heuristics::SufamiTurbo(rom, location);
     auto sha256 = sha256_digest(rom.data(), rom.size());
-    
+
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
-    
+
     if (auto document = nall::BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = nall::BML::serialize(game);
             sufamiTurboA.verified = true;
         }
     }
-    
+
     sufamiTurboA.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     sufamiTurboA.document = nall::BML::unserialize(sufamiTurboA.manifest.c_str());
     sufamiTurboA.location = nall::string(gameinfo.path);//location;
-    
+
     sufamiTurboA.program = rom;
     return true;
 }
@@ -758,36 +758,36 @@ bool Program::loadSufamiTurboA(std::string location) {
 bool Program::loadSufamiTurboB(std::string location) {
     if (!sufamiinfo.size)
         return false;
-    
+
     std::string manifest;
     std::vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
-    
+
     if (rom.size() < 0x20000) return false;
-    
+
     auto heuristics = Heuristics::SufamiTurbo(rom, location);
     auto sha256 = sha256_digest(rom.data(), rom.size());
-    
+
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
-    
+
     if (auto document = nall::BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
             manifest = nall::BML::serialize(game);
             sufamiTurboB.verified = true;
         }
     }
-    
+
     sufamiTurboB.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     sufamiTurboB.document = nall::BML::unserialize(sufamiTurboB.manifest.c_str());
     sufamiTurboB.location = location;
-    
+
     sufamiTurboB.program = rom;
     return true;
 }
 
 void Program::hackPatchMemory(std::vector<uint8_t>& data) {
     auto title = superFamicom.title;
-    
+
     if (title == "Satellaview BS-X" && data.size() >= 0x100000) {
         //BS-X: Sore wa Namae o Nusumareta Machi no Monogatari (JPN) (1.1)
         //disable limited play check for BS Memory flash cartridges
@@ -813,7 +813,7 @@ static bool decodeSNES(nall::string& code) {
             if (n >= 'a' && n <= 'f') continue;
             return false;
         }
-        
+
         //decode
         code.transform("df4709156bc8a23e", "0123456789abcdef");
         uint32_t r = toHex(code);
@@ -836,7 +836,7 @@ static bool decodeSNES(nall::string& code) {
         code = {nall::hex(address, 6L), "=", nall::hex(data, 2L)};
         return true;
     }
-    
+
     //Pro Action Replay
     if (code.size() == 8) {
         //validate
@@ -845,7 +845,7 @@ static bool decodeSNES(nall::string& code) {
             if (n >= 'a' && n <= 'f') continue;
             return false;
         }
-        
+
         //decode
         uint32_t r = toHex(code);
         unsigned address = r >> 8;
@@ -853,7 +853,7 @@ static bool decodeSNES(nall::string& code) {
         code = {nall::hex(address, 6L), "=", nall::hex(data, 2L)};
         return true;
     }
-    
+
     //higan: address=data
     if (code.size() == 9 && code[6u] == '=') {
         nall::string nibbles = {code.slice(0, 6), code.slice(7, 2)};
@@ -866,7 +866,7 @@ static bool decodeSNES(nall::string& code) {
         //already in decoded form
         return true;
     }
-    
+
     //higan: address=compare?data
     if (code.size() == 12 && code[6u] == '=' && code[9u] == '?') {
         nall::string nibbles =
@@ -880,7 +880,7 @@ static bool decodeSNES(nall::string& code) {
         //already in decoded form
         return true;
     }
-    
+
     //unrecognized code format
     return false;
 }
@@ -891,7 +891,7 @@ static bool decodeGB(nall::string& code) {
         if (s[index] >= '0' && s[index] <= '9') return s[index] - '0';
         return s[index] - 'a' + 10;
     };
-    
+
     //Game Genie
     if (code.size() == 7 && code[3u] == '-') {
         code = {code.slice(0, 3), code.slice(4, 3)};
@@ -901,14 +901,14 @@ static bool decodeGB(nall::string& code) {
             if (n >= 'a' && n <= 'f') continue;
             return false;
         }
-        
+
         unsigned data = nibble(code, 0) << 4 | nibble(code, 1) << 0;
         unsigned address = (nibble(code, 5) ^ 15) << 12 | nibble(code, 2) << 8 |
             nibble(code, 3) << 4 | nibble(code, 4) << 0;
         code = {nall::hex(address, 4L), "=", nall::hex(data, 2L)};
         return true;
     }
-    
+
     //Game Genie
     if (code.size() == 11 && code[3u] == '-' && code[7u] == '-') {
         code = {code.slice(0, 3), code.slice(4, 3), code.slice(8, 3)};
@@ -918,7 +918,7 @@ static bool decodeGB(nall::string& code) {
             if (n >= 'a' && n <= 'f') continue;
             return false;
         }
-        
+
         unsigned data = nibble(code, 0) << 4 | nibble(code, 1) << 0;
         unsigned address = (nibble(code, 5) ^ 15) << 12 | nibble(code, 2) << 8 |
             nibble(code, 3) << 4 | nibble(code, 4) << 0;
@@ -928,7 +928,7 @@ static bool decodeGB(nall::string& code) {
         code = {nall::hex(address, 4L), "=", nall::hex(compare, 2L), "?", nall::hex(data, 2L)};
         return true;
     }
-    
+
     //GameShark
     if (code.size() == 8) {
         //validate
@@ -937,7 +937,7 @@ static bool decodeGB(nall::string& code) {
             if (n >= 'a' && n <= 'f') continue;
             return false;
         }
-        
+
         //first two characters are the code type / VRAM bank, which is almost
         //always 01. other values are presumably supported, but I have no info
         //on them, so they're not supported.
@@ -949,7 +949,7 @@ static bool decodeGB(nall::string& code) {
         code = {nall::hex(address, 4L), "=", nall::hex(data, 2L)};
         return true;
     }
-    
+
     //higan: address=data
     if (code.size() == 7 && code[4u] == '=') {
         nall::string nibbles = {code.slice(0, 4), code.slice(5, 2)};
@@ -962,7 +962,7 @@ static bool decodeGB(nall::string& code) {
         //already in decoded form
         return true;
     }
-    
+
     //higan: address=compare?data
     if (code.size() == 10 && code[4u] == '=' && code[7u] == '?') {
         nall::string nibbles = {code.slice(0, 4), code.slice(5, 2), code.slice(8, 2)};
@@ -975,7 +975,7 @@ static bool decodeGB(nall::string& code) {
         //already in decoded form
         return true;
     }
-    
+
     //unrecognized code format
     return false;
 }
@@ -1025,7 +1025,7 @@ void jg_exec_frame() {
 int jg_game_load() {
     emulator->configure("Audio/Frequency", SAMPLERATE);
     emulator->configure("Video/BlurEmulation", false);
-    
+
     emulator->configure("Hacks/Entropy", "Low");
     emulator->configure("Hacks/CPU/Overclock", 100);
     emulator->configure("Hacks/CPU/FastMath", false);
@@ -1033,17 +1033,17 @@ int jg_game_load() {
     emulator->configure("Hacks/SuperFX/Overclock", 100);
     emulator->configure("Hacks/Coprocessor/DelayedSync", false); // default true
     emulator->configure("Hacks/Coprocessor/PreferHLE", true);
-    
+
     // Load the game
     if (nall::string(gameinfo.path).endsWith(".gb") ||
         nall::string(gameinfo.path).endsWith(".gbc")) {
-        
+
         if (!addoninfo.size) {
             jg_cb_log(JG_LOG_ERR,
                 "Super Game Boy ROM required for GB/GBC content, exiting...\n");
             return 0;
         }
-        
+
         program->superFamicom.location = std::string(addoninfo.path);
         program->gameBoy.location = std::string(gameinfo.path);
         addon = true;
@@ -1054,7 +1054,7 @@ int jg_game_load() {
                 "BS-X BIOS ROM required for BS-X content, exiting...\n");
             return 0;
         }
-        
+
         program->superFamicom.location = std::string(addoninfo.path);
         program->bsMemory.location = std::string(gameinfo.path);
         addon = true;
@@ -1066,9 +1066,9 @@ int jg_game_load() {
                 "exiting...\n");
             return 0;
         }
-        
+
         program->superFamicom.location = std::string(addoninfo.path);
-        
+
         if (sufamiinfo.size) {
             program->sufamiTurboA.location = std::string(sufamiinfo.path);
             program->sufamiTurboB.location = std::string(gameinfo.path);
@@ -1081,9 +1081,9 @@ int jg_game_load() {
     else {
         program->superFamicom.location = std::string(gameinfo.path);
     }
-    
+
     program->load();
-    
+
     // Set up inputs
     int multitap = 0;
     for (int i = 0; i < db_multitap_games.size(); ++i) {
@@ -1092,7 +1092,7 @@ int jg_game_load() {
             break;
         }
     }
-    
+
     bool mouse = false;
     for (int i = 0; i < db_mouse_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_mouse_games[i]) {
@@ -1100,7 +1100,7 @@ int jg_game_load() {
             break;
         }
     }
-    
+
     bool superscope = false;
     for (int i = 0; i < db_superscope_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_superscope_games[i].md5) {
@@ -1110,7 +1110,7 @@ int jg_game_load() {
             break;
         }
     }
-    
+
     bool justifier = false;
     for (int i = 0; i < db_justifier_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_justifier_games[i]) {
@@ -1118,20 +1118,20 @@ int jg_game_load() {
             break;
         }
     }
-    
+
     // Default input devices are SNES Controllers
     inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_PAD);
     emulator->connect(SuperFamicom::ID::Port::Controller1,
         SuperFamicom::ID::Device::Gamepad);
-    
+
     inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_PAD);
     emulator->connect(SuperFamicom::ID::Port::Controller2,
         SuperFamicom::ID::Device::Gamepad);
-    
+
     if (multitap) {
         for (int i = 2; (i < multitap) && (i < 5); ++i)
             inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
-        
+
         emulator->connect(SuperFamicom::ID::Port::Controller2,
             SuperFamicom::ID::Device::SuperMultitap);
     }
@@ -1150,7 +1150,7 @@ int jg_game_load() {
         emulator->connect(SuperFamicom::ID::Port::Controller2,
             SuperFamicom::ID::Device::Justifier);
     }
-    
+
     // Set the aspect ratio
     switch (settings_bsnes[ASPECT].value) {
         default: case 0: { // Auto Region
@@ -1171,9 +1171,9 @@ int jg_game_load() {
             break;
         }
     }
-    
+
     Emulator::audio.setQuality(settings_bsnes[RSQUAL].value);
-    
+
     // Audio and timing adjustments
     if (program->superFamicom.region == "PAL") {
         audinfo.spf = (SAMPLERATE / FRAMERATE_PAL) * CHANNELS;
@@ -1184,9 +1184,9 @@ int jg_game_load() {
         Emulator::audio.setSpf(audinfo.spf);
         jg_cb_frametime(TIMING_NTSC);
     }
-    
+
     emulator->power(); // Power up!
-    
+
     return 1;
 }
 
