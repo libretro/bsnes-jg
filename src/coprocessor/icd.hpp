@@ -2,36 +2,36 @@ struct ICD : Emulator::Platform, Thread {
   Emulator::Stream *stream;
   Emulator::Cheat cheats;
 
-  inline auto pathID() const -> unsigned { return information.pathID; }
+  inline unsigned pathID() const { return information.pathID; }
 
-  auto synchronizeCPU() -> void;
-  static auto Enter() -> void;
-  auto main() -> void;
-  auto step(unsigned clocks) -> void;
-  auto clockFrequency() const -> unsigned;
+  void synchronizeCPU();
+  static void Enter();
+  void main();
+  void step(unsigned clocks);
+  unsigned clockFrequency() const;
 
-  auto load() -> bool;
-  auto save() -> void;
-  auto unload() -> void;
-  auto power(bool reset = false) -> void;
+  bool load();
+  void save();
+  void unload();
+  void power(bool reset = false);
 
   //interface.cpp
-  auto ppuHreset() -> void;
-  auto ppuVreset() -> void;
-  auto ppuWrite(nall::Natural< 2> color) -> void;
-  auto apuWrite(int16_t left, int16_t right) -> void;
-  auto joypWrite(bool p14, bool p15) -> void;
+  void ppuHreset();
+  void ppuVreset();
+  void ppuWrite(nall::Natural< 2> color);
+  void apuWrite(int16_t left, int16_t right);
+  void joypWrite(bool p14, bool p15);
 
   //io.cpp
-  auto readIO(unsigned addr, uint8_t data) -> uint8_t;
-  auto writeIO(unsigned addr, uint8_t data) -> void;
+  uint8_t readIO(unsigned addr, uint8_t data);
+  void writeIO(unsigned addr, uint8_t data);
 
   //boot-roms.cpp
   static const uint8_t SGB1BootROM[256];
   static const uint8_t SGB2BootROM[256];
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   unsigned Revision = 0;
   unsigned Frequency = 0;

@@ -7,18 +7,18 @@ namespace SuperFamicom {
 
 ICD icd;
 
-auto ICD::ppuHreset() -> void {
+void ICD::ppuHreset() {
   hcounter = 0;
   vcounter++;
   if((nall::Natural< 3>)vcounter == 0) writeBank++;
 }
 
-auto ICD::ppuVreset() -> void {
+void ICD::ppuVreset() {
   hcounter = 0;
   vcounter = 0;
 }
 
-auto ICD::ppuWrite(nall::Natural< 2> color) -> void {
+void ICD::ppuWrite(nall::Natural< 2> color) {
   auto x = (uint8_t)hcounter++;
   auto y = (nall::Natural< 3>)vcounter;
   if(x >= 160) return;  //unverified behavior
@@ -28,12 +28,12 @@ auto ICD::ppuWrite(nall::Natural< 2> color) -> void {
   output[address + 1] = (output[address + 1] << 1) | !!(color & 2);
 }
 
-auto ICD::apuWrite(int16_t left, int16_t right) -> void {
+void ICD::apuWrite(int16_t left, int16_t right) {
   int16_t samples[] = {left, right};
   if(!system.runAhead) stream->write(samples);
 }
 
-auto ICD::joypWrite(bool p14, bool p15) -> void {
+void ICD::joypWrite(bool p14, bool p15) {
   //joypad handling
   if(p14 == 1 && p15 == 1) {
     if(joypLock == 0) {
@@ -114,7 +114,7 @@ auto ICD::joypWrite(bool p14, bool p15) -> void {
   packetLock = 1;
 }
 
-auto ICD::readIO(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t ICD::readIO(unsigned addr, uint8_t data) {
   addr &= 0x40ffff;
 
   //LY counter
@@ -153,7 +153,7 @@ auto ICD::readIO(unsigned addr, uint8_t data) -> uint8_t {
   return 0x00;
 }
 
-auto ICD::writeIO(unsigned addr, uint8_t data) -> void {
+void ICD::writeIO(unsigned addr, uint8_t data) {
   addr &= 0xffff;
 
   //VRAM port
@@ -219,7 +219,7 @@ const uint8_t ICD::SGB2BootROM[256] = {
   245,34,35,34,35,201,60,66,185,165,185,165,66,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,62,255,224,80,
 };
 
-auto ICD::serialize(serializer& s) -> void {
+void ICD::serialize(serializer& s) {
   Thread::serialize(s);
 
   auto size = GB_get_save_state_size(&sameboy);
@@ -267,58 +267,58 @@ auto ICD::serialize(serializer& s) -> void {
 }
 
 namespace SameBoy {
-  static auto hreset(GB_gameboy_t*) -> void {
+  static void hreset(GB_gameboy_t*) {
     icd.ppuHreset();
   }
 
-  static auto vreset(GB_gameboy_t*) -> void {
+  static void vreset(GB_gameboy_t*) {
     icd.ppuVreset();
   }
 
-  static auto icd_pixel(GB_gameboy_t*, uint8_t pixel) -> void {
+  static void icd_pixel(GB_gameboy_t*, uint8_t pixel) {
     icd.ppuWrite(pixel);
   }
 
-  static auto joyp_write(GB_gameboy_t*, uint8_t value) -> void {
+  static void joyp_write(GB_gameboy_t*, uint8_t value) {
     bool p14 = value & 0x10;
     bool p15 = value & 0x20;
     icd.joypWrite(p14, p15);
   }
 
-  static auto read_memory(GB_gameboy_t*, uint16_t addr, uint8_t data) -> uint8_t {
+  static uint8_t read_memory(GB_gameboy_t*, uint16_t addr, uint8_t data) {
     if(auto replace = icd.cheats.find(addr, data)) return replace();
     return data;
   }
 
-  static auto rgb_encode(GB_gameboy_t*, uint8_t r, uint8_t g, uint8_t b) -> uint32_t {
+  static uint32_t rgb_encode(GB_gameboy_t*, uint8_t r, uint8_t g, uint8_t b) {
     return r << 16 | g << 8 | b << 0;
   }
 
-  static auto sample(GB_gameboy_t*, GB_sample_t* sample) -> void {
+  static void sample(GB_gameboy_t*, GB_sample_t* sample) {
     int16_t left  = sample->left;
     int16_t right = sample->right;
     icd.apuWrite(left, right);
   }
 
-  static auto vblank(GB_gameboy_t*) -> void {
+  static void vblank(GB_gameboy_t*) {
   }
 
-  static auto log(GB_gameboy_t *gb, const char *string, GB_log_attributes attributes) -> void {
+  static void log(GB_gameboy_t *gb, const char *string, GB_log_attributes attributes) {
   }
 }
 
-auto ICD::synchronizeCPU() -> void {
+void ICD::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto ICD::Enter() -> void {
+void ICD::Enter() {
   while(true) {
     scheduler.synchronize();
     icd.main();
   }
 }
 
-auto ICD::main() -> void {
+void ICD::main() {
   if(r6003 & 0x80) {
     auto clocks = GB_run(&sameboy);
     step(clocks >> 1);
@@ -330,17 +330,17 @@ auto ICD::main() -> void {
   synchronizeCPU();
 }
 
-auto ICD::step(unsigned clocks) -> void {
+void ICD::step(unsigned clocks) {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
 //SGB1 uses the CPU oscillator (~2.4% faster than a real Game Boy)
 //SGB2 uses a dedicated oscillator (same speed as a real Game Boy)
-auto ICD::clockFrequency() const -> unsigned {
+unsigned ICD::clockFrequency() const {
   return Frequency ? Frequency : system.cpuFrequency();
 }
 
-auto ICD::load() -> bool {
+bool ICD::load() {
   information = {};
 
   GB_random_set_enabled(configuration.hacks.entropy != "None");
@@ -385,7 +385,7 @@ auto ICD::load() -> bool {
   return true;
 }
 
-auto ICD::save() -> void {
+void ICD::save() {
   if(auto size = GB_save_battery_size(&sameboy)) {
     auto data = (uint8_t*)malloc(size);
     GB_save_battery_to_buffer(&sameboy, data, size);
@@ -394,12 +394,12 @@ auto ICD::save() -> void {
   }
 }
 
-auto ICD::unload() -> void {
+void ICD::unload() {
   //save(); // redundant
   GB_free(&sameboy);
 }
 
-auto ICD::power(bool reset) -> void {
+void ICD::power(bool reset) {
   auto frequency = clockFrequency() / 5;
   create(ICD::Enter, frequency);
   if(!reset) stream = Emulator::audio.createStream(frequency / 128);
