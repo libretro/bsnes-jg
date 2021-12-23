@@ -7,7 +7,7 @@ Scheduler scheduler;
 Random random;
 Cheat cheat;
 
-auto System::serialize(bool synchronize) -> serializer {
+serializer System::serialize(bool synchronize) {
   //deterministic serialization (synchronize=false) is only possible with select libco methods
   if(!co_serializable()) synchronize = true;
 
@@ -32,7 +32,7 @@ auto System::serialize(bool synchronize) -> serializer {
   return s;
 }
 
-auto System::unserialize(serializer& s) -> bool {
+bool System::unserialize(serializer& s) {
   unsigned signature = 0;
   unsigned serializeSize = 0;
   char version[16] = {};
@@ -58,7 +58,7 @@ auto System::unserialize(serializer& s) -> bool {
 
 //internal
 
-auto System::serializeAll(serializer& s, bool synchronize) -> void {
+void System::serializeAll(serializer& s, bool synchronize) {
   random.serialize(s);
   cartridge.serialize(s);
   cpu.serialize(s);
@@ -109,7 +109,7 @@ auto System::serializeAll(serializer& s, bool synchronize) -> void {
 //perform dry-run state save:
 //determines exactly how many bytes are needed to save state for this cartridge,
 //as amount varies per game (eg different RAM sizes, special chips, etc.)
-auto System::serializeInit(bool synchronize) -> unsigned {
+unsigned System::serializeInit(bool synchronize) {
   serializer s;
 
   unsigned signature = 0;
@@ -127,13 +127,13 @@ auto System::serializeInit(bool synchronize) -> unsigned {
   return s.size();
 }
 
-auto System::run() -> void {
+void System::run() {
   scheduler.mode = Scheduler::Mode::Run;
   scheduler.enter();
   if(scheduler.event == Scheduler::Event::Frame) frameEvent();
 }
 
-auto System::runToSave() -> void {
+void System::runToSave() {
   auto method = configuration.system.serialization.method;
 
   //these games will periodically deadlock when using "Fast" synchronization
@@ -151,7 +151,7 @@ auto System::runToSave() -> void {
   scheduler.active = cpu.thread;
 }
 
-auto System::runToSaveFast() -> void {
+void System::runToSaveFast() {
   //run the emulator normally until the CPU thread naturally hits a synchronization point
   while(true) {
     scheduler.enter();
@@ -181,7 +181,7 @@ auto System::runToSaveFast() -> void {
   }
 }
 
-auto System::runToSaveStrict() -> void {
+void System::runToSaveStrict() {
   //run every thread until it cleanly hits a synchronization point
   //if it fails, start resynchronizing every thread again
   auto synchronize = [&](cothread_t thread) -> bool {
@@ -213,7 +213,7 @@ auto System::runToSaveStrict() -> void {
   }
 }
 
-auto System::frameEvent() -> void {
+void System::frameEvent() {
   ppu.refresh();
 
   //refresh all cheat codes once per frame
@@ -226,7 +226,7 @@ auto System::frameEvent() -> void {
   Memory::GlobalWriteEnable = false;
 }
 
-auto System::load(Emulator::Interface* interface) -> bool {
+bool System::load(Emulator::Interface* interface) {
   information = {};
 
   bus.reset();
@@ -261,13 +261,13 @@ auto System::load(Emulator::Interface* interface) -> bool {
   return information.loaded = true;
 }
 
-auto System::save() -> void {
+void System::save() {
   if(!loaded()) return;
 
   cartridge.save();
 }
 
-auto System::unload() -> void {
+void System::unload() {
   if(!loaded()) return;
 
   controllerPort1.unload();
@@ -292,7 +292,7 @@ auto System::unload() -> void {
   information.loaded = false;
 }
 
-auto System::power(bool reset) -> void {
+void System::power(bool reset) {
   Emulator::audio.reset(interface);
 
   random.entropy(Random::Entropy::Low);  //fallback case

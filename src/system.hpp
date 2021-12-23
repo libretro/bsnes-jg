@@ -1,27 +1,27 @@
 struct System {
   enum class Region : unsigned { NTSC, PAL };
 
-  inline auto loaded() const -> bool { return information.loaded; }
+  inline bool loaded() const { return information.loaded; }
   inline auto region() const -> Region { return information.region; }
-  inline auto cpuFrequency() const -> double { return information.cpuFrequency; }
-  inline auto apuFrequency() const -> double { return information.apuFrequency; }
+  inline double cpuFrequency() const { return information.cpuFrequency; }
+  inline double apuFrequency() const { return information.apuFrequency; }
 
-  inline auto fastPPU() const -> bool { return hacks.fastPPU; }
+  inline bool fastPPU() const { return hacks.fastPPU; }
 
-  auto run() -> void;
-  auto runToSave() -> void;
-  auto runToSaveFast() -> void;
-  auto runToSaveStrict() -> void;
-  auto frameEvent() -> void;
+  void run();
+  void runToSave();
+  void runToSaveFast();
+  void runToSaveStrict();
+  void frameEvent();
 
-  auto load(Emulator::Interface*) -> bool;
-  auto save() -> void;
-  auto unload() -> void;
-  auto power(bool reset) -> void;
+  bool load(Emulator::Interface*);
+  void save();
+  void unload();
+  void power(bool reset);
 
   //serialization.cpp
-  auto serialize(bool synchronize) -> serializer;
-  auto unserialize(serializer&) -> bool;
+  serializer serialize(bool synchronize);
+  bool unserialize(serializer&);
 
   unsigned frameSkip = 0;
   unsigned frameCounter = 0;
@@ -42,13 +42,13 @@ private:
     bool fastPPU = false;
   } hacks;
 
-  auto serializeAll(serializer&, bool synchronize) -> void;
-  auto serializeInit(bool synchronize) -> unsigned;
+  void serializeAll(serializer&, bool synchronize);
+  unsigned serializeInit(bool synchronize);
 
   friend class Cartridge;
 };
 
 extern System system;
 
-auto Region::NTSC() -> bool { return system.region() == System::Region::NTSC; }
-auto Region::PAL() -> bool { return system.region() == System::Region::PAL; }
+bool Region::NTSC() { return system.region() == System::Region::NTSC; }
+bool Region::PAL() { return system.region() == System::Region::PAL; }
