@@ -163,6 +163,9 @@ OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 COMPILE_C = $(CC) $(CFLAGS) $(1) -c $< -o $@
 COMPILE_CXX = $(CXX) $(CXXFLAGS) $(1) -c $< -o $@
 
+# Info command
+COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
+
 # Dependency commands
 BUILD_CO = $(call COMPILE_C, $(FLAGS_CO) $(WARNINGS_CO))
 BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE))
@@ -176,22 +179,22 @@ BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 # libco rules
 $(OBJDIR)/deps/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
-	$(info $(subst $(SOURCEDIR)/,,$(BUILD_CO)))
+	$(call COMPILE_INFO, $(BUILD_CO))
 	@$(BUILD_CO)
 
 # libsamplerate rules
 $(OBJDIR)/deps/libsamplerate/%.o: $(SOURCEDIR)/deps/libsamplerate/%.c $(OBJDIR)/.tag
-	$(info $(subst $(SOURCEDIR)/,,$(BUILD_SAMPLERATE)))
+	$(call COMPILE_INFO, $(BUILD_SAMPLERATE))
 	@$(BUILD_SAMPLERATE)
 
 # Game Boy rules
 $(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag
-	$(info $(subst $(SOURCEDIR)/,,$(BUILD_GB)))
+	$(call COMPILE_INFO, $(BUILD_GB))
 	@$(BUILD_GB)
 
 # SNES rules
 $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
-	$(info $(subst $(SOURCEDIR)/,,$(BUILD_MAIN)))
+	$(call COMPILE_INFO, $(BUILD_MAIN))
 	@$(BUILD_MAIN)
 
 all: $(TARGET)
