@@ -2,8 +2,8 @@ struct Satellaview : Expansion {
   Satellaview();
   ~Satellaview();
 
-  auto read(unsigned addr, uint8_t data) -> uint8_t;
-  auto write(unsigned addr, uint8_t data) -> void;
+  uint8_t read(unsigned addr, uint8_t data);
+  void write(unsigned addr, uint8_t data);
 
 private:
   struct {
