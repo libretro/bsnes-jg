@@ -11,7 +11,7 @@ Controller::Controller(unsigned port) : port(port) {
 Controller::~Controller() {
 }
 
-auto Controller::iobit() -> bool {
+bool Controller::iobit() {
   switch(port) {
   case ID::Port::Controller1: return cpu.pio() & 0x40;
   case ID::Port::Controller2: return cpu.pio() & 0x80;
@@ -19,14 +19,14 @@ auto Controller::iobit() -> bool {
   return 0; // unreachable
 }
 
-auto Controller::iobit(bool data) -> void {
+void Controller::iobit(bool data) {
   switch(port) {
   case ID::Port::Controller1: bus.write(0x4201, (cpu.pio() & ~0x40) | (data << 6)); break;
   case ID::Port::Controller2: bus.write(0x4201, (cpu.pio() & ~0x80) | (data << 7)); break;
   }
 }
 
-auto ControllerPort::connect(unsigned deviceID) -> void {
+void ControllerPort::connect(unsigned deviceID) {
   if(!system.loaded()) return;
   delete device;
 
@@ -41,16 +41,16 @@ auto ControllerPort::connect(unsigned deviceID) -> void {
   }
 }
 
-auto ControllerPort::power(unsigned port) -> void {
+void ControllerPort::power(unsigned port) {
   this->port = port;
 }
 
-auto ControllerPort::unload() -> void {
+void ControllerPort::unload() {
   delete device;
   device = nullptr;
 }
 
-auto ControllerPort::serialize(serializer& s) -> void {
+void ControllerPort::serialize(serializer& s) {
 }
 
 }

@@ -15,22 +15,22 @@ struct Controller {
   Controller(unsigned port);
   virtual ~Controller();
 
-  auto iobit() -> bool;
-  auto iobit(bool data) -> void;
-  virtual auto data() -> nall::Natural< 2> { return 0; }
-  virtual auto latch(bool data) -> void {}
-  virtual auto latch() -> void {}  //light guns
-  virtual auto draw(uint16_t* output, unsigned pitch, unsigned width, unsigned height) -> void {}  //light guns
+  bool iobit();
+  void iobit(bool data);
+  virtual nall::Natural< 2> data() { return 0; }
+  virtual void latch(bool data) {}
+  virtual void latch() {}  // light guns
+  virtual void draw(uint16_t* output, unsigned pitch, unsigned width, unsigned height) {}  // light guns
 
   const unsigned port;
 };
 
 struct ControllerPort {
-  auto connect(unsigned deviceID) -> void;
+  void connect(unsigned deviceID);
 
-  auto power(unsigned port) -> void;
-  auto unload() -> void;
-  auto serialize(serializer&) -> void;
+  void power(unsigned port);
+  void unload();
+  void serialize(serializer&);
 
   unsigned port;
   Controller* device = nullptr;
