@@ -26,8 +26,7 @@ extern "C" {
 namespace SuperFamicom {
   #define platform Emulator::platform
   namespace File = Emulator::File;
-  using Random = Emulator::Random;
-  extern Random random;
+  extern Emulator::Random random;
   extern Emulator::Cheat cheat;
 
   struct Scheduler {

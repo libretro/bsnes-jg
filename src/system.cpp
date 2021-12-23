@@ -4,7 +4,7 @@ namespace SuperFamicom {
 
 System system;
 Scheduler scheduler;
-Random random;
+Emulator::Random random;
 Emulator::Cheat cheat;
 
 serializer System::serialize(bool synchronize) {
@@ -295,10 +295,14 @@ void System::unload() {
 void System::power(bool reset) {
   Emulator::audio.reset(interface);
 
-  random.entropy(Random::Entropy::Low);  //fallback case
-  if(configuration.hacks.entropy == "None") random.entropy(Random::Entropy::None);
-  if(configuration.hacks.entropy == "Low" ) random.entropy(Random::Entropy::Low );
-  if(configuration.hacks.entropy == "High") random.entropy(Random::Entropy::High);
+  if(configuration.hacks.entropy == "None")
+    random.entropy(Emulator::Random::Entropy::None);
+  else if(configuration.hacks.entropy == "Low" )
+    random.entropy(Emulator::Random::Entropy::Low );
+  else if(configuration.hacks.entropy == "High")
+    random.entropy(Emulator::Random::Entropy::High);
+  else
+    random.entropy(Emulator::Random::Entropy::Low);
 
   cpu.power(reset);
   smp.power(reset);
