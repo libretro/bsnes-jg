@@ -22,8 +22,6 @@ struct WDC65816 {
   inline auto irq() const -> bool { return r.irq; }
   inline auto irq(bool line) -> void { r.irq = line; }
 
-  using r8 = uint8_t;
-
   union r16 {
     inline r16() : w(0) {}
     inline r16(unsigned data) : w(data) {}
@@ -267,8 +265,9 @@ struct WDC65816 {
     r16 z;
     r16 s;
     r16 d;
-     r8 b;
      f8 p;
+
+    uint8_t b;
 
     bool e   = 0;  //emulation mode
     bool irq = 0;  //IRQ pin (0 = low, 1 = trigger)
@@ -277,7 +276,7 @@ struct WDC65816 {
 
     uint16_t vector;  //interrupt vector address
     nall::Natural<24> mar;     //memory address register
-     r8 mdr;      //memory data register
+    uint8_t mdr;      //memory data register
 
     r24 u;  //temporary register
     r24 v;  //temporary register
