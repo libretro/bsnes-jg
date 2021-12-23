@@ -16,7 +16,6 @@ PKGCONF ?= pkg-config
 CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
 
 INCLUDES := -I$(SOURCEDIR)/. -I$(SOURCEDIR)/deps $(CFLAGS_JG)
-INCLUDES_GB := -I$(SOURCEDIR)/sameboy
 WARNINGS := -Wreturn-type -Wno-unused-result
 WARNINGS_CO := -Wall -Wextra -Wshadow -Wmissing-prototypes
 WARNINGS_GB := -Wno-multichar
@@ -171,8 +170,7 @@ BUILD_CO = $(call COMPILE_C, $(FLAGS_CO) $(WARNINGS_CO))
 BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE))
 
 # Core commands
-BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB) \
-	$(INCLUDES_GB))
+BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB))
 BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 .PHONY: all clean install install-strip uninstall
