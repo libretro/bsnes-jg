@@ -131,6 +131,7 @@ struct Program : Emulator::Platform {
         std::string type, std::vector<std::string> options = {}) override;
     std::ifstream fopen(unsigned id, std::string name) override;
     std::vector<uint8_t> mopen(unsigned id, std::string name) override;
+    std::string stropen(unsigned id, std::string name) override;
     void write(unsigned id, std::string name, const uint8_t *data,
         unsigned size) override;
     void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
@@ -148,7 +149,6 @@ struct Program : Emulator::Platform {
     void save();
 
     nall::vfs::file* openRomSuperFamicom(std::string name, nall::vfs::file::mode mode);
-    nall::vfs::file* openRomBSMemory(std::string name, nall::vfs::file::mode mode);
     nall::vfs::file* openRomSufamiTurboA(std::string name, nall::vfs::file::mode mode);
     nall::vfs::file* openRomSufamiTurboB(std::string name, nall::vfs::file::mode mode);
 
@@ -203,7 +203,7 @@ void Program::save() {
 nall::vfs::file* Program::open(unsigned id, std::string name,
     nall::vfs::file::mode mode, bool required) {
 
-    nall::vfs::file *result;
+    nall::vfs::file *result = nullptr;
 
     if (name == "ipl.rom" && mode == nall::vfs::file::mode::read) {
         result = nall::vfs::memory::file::open(iplrom, sizeof(iplrom));
@@ -235,27 +235,6 @@ nall::vfs::file* Program::open(unsigned id, std::string name,
             result = openRomSuperFamicom(name, mode);
         }
     }
-    else if (id == 2) { // Game Boy
-    }
-    else if (id == 3) { // BS Memory
-        if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
-            std::vector<uint8_t> manifest(bsMemory.manifest.begin(),
-                bsMemory.manifest.end());
-            result = nall::vfs::memory::file::open(manifest.data(), manifest.size());
-        }
-        else if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
-            result = nall::vfs::memory::file::open(bsMemory.program.data(),
-                bsMemory.program.size());
-        }
-        else if (name == "program.flash") {
-            //writes are not flushed to disk in bsnes
-            result = nall::vfs::memory::file::open(bsMemory.program.data(),
-                bsMemory.program.size());
-        }
-        else {
-            result = openRomBSMemory(name, mode);
-        }
-    }
     else if (id == 4) { // Sufami Turbo - Slot A
         if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
             std::vector<uint8_t> manifest(sufamiTurboA.manifest.begin(),
@@ -285,7 +264,12 @@ nall::vfs::file* Program::open(unsigned id, std::string name,
         }
     }
 
-    return result;
+    if (result != nullptr) {
+        return result;
+    }
+    else {
+        return {};
+    }
 }
 
 void Program::load() {
@@ -337,7 +321,6 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
     }
     else if (id == 2) { // GB
         if (name == "save.ram") {
-            printf("sram save\n");
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".srm";
         }
@@ -353,7 +336,33 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
 std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
     if (id == 2) { // GB
         if (name == "program.rom") {
-            return loadFile(gameinfo.data, gameinfo.size);
+            std::vector<uint8_t> rom;
+            rom = loadFile(gameinfo.data, gameinfo.size);
+
+            if (rom.size() < 0x4000)
+                jg_cb_log(JG_LOG_ERR, "Game Boy ROM size too small\n");
+
+            auto heuristics = Heuristics::GameBoy(rom, gameinfo.path);
+
+            gameBoy.manifest = heuristics.manifest();
+            gameBoy.document = nall::BML::unserialize(gameBoy.manifest.c_str());
+            gameBoy.location = gameinfo.path;
+            gameBoy.program = rom;
+            return gameBoy.program;
+        }
+    }
+    else if (id == 3) { // BS-X
+        if (name == "program.rom" || name == "program.flash") {
+            return bsMemory.program;
+        }
+    }
+    return {};
+}
+
+std::string Program::stropen(unsigned id, std::string name) {
+    if (id == 3) { // BS-X
+        if (name == "manifest.bml") {
+            return bsMemory.manifest;
         }
     }
     return {};
@@ -562,23 +571,6 @@ nall::vfs::file* Program::openRomSuperFamicom(std::string name,
         std::string ram_path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".psr";
         return nall::vfs::fs::file::open(ram_path.c_str(), mode);
-    }
-
-    return {};
-}
-
-nall::vfs::file* Program::openRomBSMemory(std::string name,
-    nall::vfs::file::mode mode) {
-
-    if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
-        return nall::vfs::memory::file::open(bsMemory.program.data(),
-            bsMemory.program.size());
-    }
-
-    if (name == "program.flash") {
-        //writes are not flushed to disk
-        return nall::vfs::memory::file::open(bsMemory.program.data(),
-            bsMemory.program.size());
     }
 
     return {};

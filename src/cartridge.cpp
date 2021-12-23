@@ -1,3 +1,4 @@
+#include <iterator>
 #include <vector>
 
 #include "sfc.hpp"
@@ -83,8 +84,10 @@ void Cartridge::loadCartridgeBSMemory(nall::Markup::Node node) {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(content=Program)"]}) {
     bsmemory.ROM = memory.type == "ROM";
     bsmemory.memory.allocate(memory.size);
-    if(auto fp = platform->open(bsmemory.pathID, std::string(memory.name()), File::Read, File::Required)) {
-      fp->read(bsmemory.memory.data(), memory.size);
+    std::vector<uint8_t> buf = platform->mopen(bsmemory.pathID, std::string(memory.name()));
+    if (!buf.empty()) {
+      for (int i = 0; i < memory.size; ++i)
+        bsmemory.memory.data()[i] = buf[i];
     }
   }
 }
@@ -1046,11 +1049,18 @@ bool Cartridge::load() {
 }
 
 bool Cartridge::loadBSMemory() {
-  if(auto fp = platform->open(bsmemory.pathID, "manifest.bml", File::Read, File::Required)) {
-    slotBSMemory.load(std::string(fp->reads()));
-  } else return false;
+  std::string manifest = platform->stropen(bsmemory.pathID, "manifest.bml");
+
+  if (!manifest.empty()) {
+    slotBSMemory.load(manifest);
+  }
+  else {
+      return false;
+  }
+
   loadCartridgeBSMemory(slotBSMemory.document);
   return true;
+  
 }
 
 bool Cartridge::loadSufamiTurboA() {

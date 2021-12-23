@@ -58,6 +58,7 @@ struct Platform {
   virtual auto load(unsigned id, std::string name, std::string type, std::vector<std::string> options = {}) -> Load { return {}; }
   virtual auto fopen(unsigned id, std::string name) -> std::ifstream { return {}; }
   virtual auto mopen(unsigned id, std::string name) -> std::vector<uint8_t> { return {}; }
+  virtual auto stropen(unsigned id, std::string name) -> std::string { return {}; }
   virtual auto write(unsigned id, std::string name, const uint8_t *data, unsigned size) -> void {}
   virtual auto videoFrame(const uint16_t *data, unsigned pitch, unsigned width, unsigned height, unsigned scale) -> void {}
   virtual auto audioFrame(unsigned numsamps) -> void {}

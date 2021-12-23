@@ -381,6 +381,7 @@ bool ICD::load() {
     std::vector<char> sram((std::istreambuf_iterator<char>(sramfile)),
       (std::istreambuf_iterator<char>()));
     GB_load_battery_from_buffer(&sameboy, (const uint8_t*)sram.data(), sram.size());
+    sramfile.close();
   }
   return true;
 }
