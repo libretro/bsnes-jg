@@ -7,7 +7,7 @@ Gamepad::Gamepad(unsigned port) : Controller(port) {
   counter = 0;
 }
 
-auto Gamepad::data() -> nall::Natural< 2> {
+nall::Natural< 2> Gamepad::data() {
   if(counter >= 16) return 1;
   if(latched == 1) return platform->inputPoll(port, ID::Device::Gamepad, B);
 
@@ -30,7 +30,7 @@ auto Gamepad::data() -> nall::Natural< 2> {
   return 0;  //12-15: signature
 }
 
-auto Gamepad::latch(bool data) -> void {
+void Gamepad::latch(bool data) {
   if(latched == data) return;
   latched = data;
   counter = 0;
