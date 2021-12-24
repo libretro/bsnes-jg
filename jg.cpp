@@ -218,15 +218,18 @@ Emulator::Platform::Load Program::load(unsigned id, std::string name,
 
 std::ifstream Program::fopen(unsigned id, std::string name) {
     std::string path;
+    bool required = false;
 
     if (id == 0) {
         if (name == "boards.bml") {
             path = std::string(pathinfo.core) + "/boards.bml";
+            required = true;
         }
     }
     else if (id == 1) { // SFC
         if (name == "program.rom") {
             path = std::string(gameinfo.fname);
+            required = true;
         }
         else if (name == "save.ram") {
             path = std::string(pathinfo.save) + "/" +
@@ -241,8 +244,16 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
             path = path.substr(0, path.find_last_of(".")) +
                 name.substr(name.find_first_of("track") + 5);
         }
+        else if (name == "arm6.program.rom") {
+            path = std::string(pathinfo.bios) + "/st018.program.rom";
+            required = true;
+        }
+        else if (name == "arm6.data.rom") {
+            path = std::string(pathinfo.bios) + "/st018.data.rom";
+            required = true;
+        }
         else {
-            std::cout << "othername: " << name << std::endl;
+            jg_cb_log(JG_LOG_WRN, "File load attempt: %s\n", name.c_str());
         }
     }
     else if (id == 2) { // GB
@@ -275,6 +286,9 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
     }
 
     std::ifstream stream(path, std::ios::in | std::ios::binary);
+    if (required && !stream.is_open()) {
+        jg_cb_log(JG_LOG_ERR, "Failed to load file: %s\n", path.c_str());
+    }
     return stream;
 }
 
@@ -921,7 +935,6 @@ void jg_reset(int hard) {
 
 void jg_exec_frame() {
     emulator->run();
-    //Emulator::audio.frame();
 }
 
 int jg_game_load() {
@@ -934,7 +947,7 @@ int jg_game_load() {
     emulator->configure("Hacks/SA1/Overclock", 100);
     emulator->configure("Hacks/SuperFX/Overclock", 100);
     emulator->configure("Hacks/Coprocessor/DelayedSync", false); // default true
-    emulator->configure("Hacks/Coprocessor/PreferHLE", true);
+    emulator->configure("Hacks/Coprocessor/PreferHLE", true); // default true
 
     // Load the game
     if (nall::string(gameinfo.path).endsWith(".gb") ||

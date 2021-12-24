@@ -1,3 +1,4 @@
+#include <iostream>
 #include <iterator>
 #include <vector>
 
@@ -415,17 +416,21 @@ void Cartridge::loadARMDSP(nall::Markup::Node node) {
 
   if(auto memory = node["memory(type=ROM,content=Program,architecture=ARM6)"]) {
     if(auto file = game.memory(memory)) {
-      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read, File::Required)) {
-        for(auto n : nall::range(128 * 1024)) armdsp.programROM[n] = fp->read();
-      }*/
+      std::ifstream firmfile = platform->fopen(ID::SuperFamicom, std::string(file->name()));
+      if (firmfile.is_open()) {
+        firmfile.read((char*)armdsp.programROM, (128 * 1024));
+        firmfile.close();
+      }
     }
   }
 
   if(auto memory = node["memory(type=ROM,content=Data,architecture=ARM6)"]) {
     if(auto file = game.memory(memory)) {
-      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read, File::Required)) {
-        for(auto n : nall::range(32 * 1024)) armdsp.dataROM[n] = fp->read();
-      }*/
+      std::ifstream firmfile = platform->fopen(ID::SuperFamicom, std::string(file->name()));
+      if (firmfile.is_open()) {
+        firmfile.read((char*)armdsp.dataROM, (32 * 1024));
+        firmfile.close();
+      }
     }
   }
 
