@@ -190,7 +190,6 @@ public:
   inline auto operator[](unsigned) const -> const char&;
   template<typename T, typename... P> inline auto append(const T&, P&&...) -> string&;
   template<typename T> inline auto _append(const stringify<T>&) -> string&;
-  inline auto length() const -> unsigned;
 
   //find.hpp
   template<bool, bool> inline auto _find(int, string_view) const -> maybe<unsigned>;
@@ -492,15 +491,6 @@ template<> struct stringify<bool> {
   bool _value;
 };
 
-//characters
-
-template<> struct stringify<char> {
-  stringify(char source) { _data[0] = source; _data[1] = 0; }
-  auto data() const -> const char* { return _data; }
-  auto size() const -> unsigned { return 1; }
-  char _data[2];
-};
-
 //signed integers
 
 template<> struct stringify<signed int> {
@@ -623,10 +613,6 @@ template<typename T> auto string::_append(const stringify<T>& source) -> string&
   resize(size() + source.size());
   memory::copy(get() + size() - source.size(), source.data(), source.size());
   return *this;
-}
-
-auto string::length() const -> unsigned {
-  return strlen(data());
 }
 
 template<bool Insensitive, bool Quoted> auto string::_find(int offset, string_view source) const -> maybe<unsigned> {
@@ -970,12 +956,6 @@ template<typename T> auto fromNatural(char* result, T value) -> char* {
   for(int x = size - 1, y = 0; x >= 0 && y < size; x--, y++) result[x] = buffer[y];
   result[size] = 0;
   return result;
-}
-
-template<typename... P> auto vector<string>::append(const string& data, P&&... p) -> vector<string>& {
-  vector_base::append(data);
-  append(std::forward<P>(p)...);
-  return *this;
 }
 
 auto vector<string>::append() -> vector<string>& {
