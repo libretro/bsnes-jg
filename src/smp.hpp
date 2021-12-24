@@ -18,7 +18,7 @@ struct SMP : Processor::SPC700, Thread {
   //serialization.cpp
   void serialize(serializer&);
 
-  uint8_t iplrom[64];
+  static const uint8_t iplrom[64];
 
 private:
   struct IO {

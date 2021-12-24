@@ -134,7 +134,7 @@ bool BSMemory::load() {
     block.locked = 1;
   }
 
-  if(auto fp = platform->open(pathID, "metadata.bml", File::Read, File::Optional)) {
+  /*if(auto fp = platform->open(pathID, "metadata.bml", File::Read, File::Optional)) {
     auto document = nall::BML::unserialize(fp->reads());
     if(auto node = document["flash/vendor"]) {
       chip.vendor = node.natural();
@@ -155,7 +155,7 @@ bool BSMemory::load() {
         }
       }
     }
-  }
+  }*/
 
   return true;
 }
@@ -163,7 +163,7 @@ bool BSMemory::load() {
 void BSMemory::unload() {
   if(ROM) return memory.reset();
 
-  if(auto fp = platform->open(pathID, "metadata.bml", File::Write, File::Optional)) {
+  /*if(auto fp = platform->open(pathID, "metadata.bml", File::Write, File::Optional)) {
     nall::string manifest;
     manifest.append("flash\n");
     manifest.append("  vendor: 0x", nall::hex(chip.vendor,  4L), "\n");
@@ -176,7 +176,7 @@ void BSMemory::unload() {
       manifest.append("    locked: ", (bool)block(id).locked, "\n");
     }
     fp->writes(manifest);
-  }
+  }*/
 
   memory.reset();
 }

@@ -15,8 +15,11 @@ nall::Markup::Node Cartridge::loadBoard(nall::string board) {
   if(board.beginsWith("EA-"  )) board.replace("EA-",   "SHVC-", 1L);
   if(board.beginsWith("WEI-" )) board.replace("WEI-",  "SHVC-", 1L);
 
-  if(auto fp = platform->open(ID::System, "boards.bml", File::Read, File::Required)) {
-    auto document = nall::BML::unserialize(fp->reads());
+  std::ifstream boardsfile = platform->fopen(ID::System, "boards.bml");
+  if (boardsfile.is_open()) {
+    std::string boards((std::istreambuf_iterator<char>(boardsfile)),
+      (std::istreambuf_iterator<char>()));
+    auto document = nall::BML::unserialize(boards.c_str());
     for(auto leaf : document.find("board")) {
       auto id = leaf.text();
       bool matched = id == board;
@@ -132,13 +135,28 @@ void Cartridge::loadCartridgeSufamiTurboB(nall::Markup::Node node) {
   }
 }
 
-void Cartridge::loadMemory(Memory& ram, nall::Markup::Node node, bool required) {
+void Cartridge::loadMemory(Memory& mem, nall::Markup::Node node, bool required) {
   if(auto memory = game.memory(node)) {
-    ram.allocate(memory->size);
+    mem.allocate(memory->size);
     if(memory->type == "RAM" && !memory->nonVolatile) return;
     if(memory->type == "RTC" && !memory->nonVolatile) return;
-    if(auto fp = platform->open(pathID(), std::string(memory->name()), File::Read, required)) {
-      fp->read(ram.data(), std::min((unsigned)fp->size(), ram.size()));
+
+    if (memory->name() == "program.rom") {
+      std::vector<uint8_t> buf = platform->mopen(pathID(), std::string(memory->name()));
+      if (!buf.empty()) {
+      for (int i = 0; i < memory->size; ++i)
+        mem.data()[i] = buf[i];
+      }
+      return;
+    }
+
+    std::ifstream memfile = platform->fopen(pathID(), std::string(memory->name()));
+    if (memfile.is_open()) {
+      memfile.seekg(0, memfile.end);
+      unsigned fsize = memfile.tellg();
+      memfile.seekg(0, memfile.beg);
+      memfile.read((char*)ram.data(), std::min(fsize, ram.size()));
+      memfile.close();
     }
   }
 }
@@ -397,25 +415,25 @@ void Cartridge::loadARMDSP(nall::Markup::Node node) {
 
   if(auto memory = node["memory(type=ROM,content=Program,architecture=ARM6)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read, File::Required)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read, File::Required)) {
         for(auto n : nall::range(128 * 1024)) armdsp.programROM[n] = fp->read();
-      }
+      }*/
     }
   }
 
   if(auto memory = node["memory(type=ROM,content=Data,architecture=ARM6)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read, File::Required)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read, File::Required)) {
         for(auto n : nall::range(32 * 1024)) armdsp.dataROM[n] = fp->read();
-      }
+      }*/
     }
   }
 
   if(auto memory = node["memory(type=RAM,content=Data,architecture=ARM6)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         for(auto n : nall::range(16 * 1024)) armdsp.programRAM[n] = fp->read();
-      }
+      }*/
     }
   }
 }
@@ -462,23 +480,23 @@ void Cartridge::loadHitachiDSP(nall::Markup::Node node, unsigned roms) {
 
   if(auto memory = node["memory(type=ROM,content=Data,architecture=HG51BS169)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         for(auto n : nall::range(1 * 1024)) hitachidsp.dataROM[n] = fp->readl(3);
-      } else {
+      } else {*/
         for(auto n : nall::range(1 * 1024)) {
           hitachidsp.dataROM[n]  = hitachidsp.staticDataROM[n * 3 + 0] <<  0;
           hitachidsp.dataROM[n] |= hitachidsp.staticDataROM[n * 3 + 1] <<  8;
           hitachidsp.dataROM[n] |= hitachidsp.staticDataROM[n * 3 + 2] << 16;
         }
-      }
+      //}
     }
   }
 
   if(auto memory = node["memory(type=RAM,content=Data,architecture=HG51BS169)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         for(auto n : nall::range(3 * 1024)) hitachidsp.dataRAM[n] = fp->readl(1);
-      }
+      }*/
     }
     for(auto map : memory.find("map")) {
       loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
@@ -508,17 +526,17 @@ void Cartridge::loaduPD7725(nall::Markup::Node node) {
 
   if(auto memory = node["memory(type=ROM,content=Program,architecture=uPD7725)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         for(auto n : nall::range(2048)) necdsp.programROM[n] = fp->readl(3);
-      } else failed = true;
+      } else*/ failed = true;
     }
   }
 
   if(auto memory = node["memory(type=ROM,content=Data,architecture=uPD7725)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         for(auto n : nall::range(1024)) necdsp.dataROM[n] = fp->readl(2);
-      } else failed = true;
+      } else*/ failed = true;
     }
   }
 
@@ -549,15 +567,15 @@ void Cartridge::loaduPD7725(nall::Markup::Node node) {
 
   if(failed) {
     //throw an error to the user
-    platform->open(ID::SuperFamicom, "DSP3", File::Read, File::Required);
+    //platform->open(ID::SuperFamicom, "DSP3", File::Read, File::Required);
     return;
   }
 
   if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD7725)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         for(auto n : nall::range(256)) necdsp.dataRAM[n] = fp->readl(2);
-      }
+      }*/
     }
     for(auto map : memory.find("map")) {
       loadMap(map, {&NECDSP::readRAM, &necdsp}, {&NECDSP::writeRAM, &necdsp});
@@ -588,17 +606,17 @@ void Cartridge::loaduPD96050(nall::Markup::Node node) {
 
   if(auto memory = node["memory(type=ROM,content=Program,architecture=uPD96050)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         for(auto n : nall::range(16384)) necdsp.programROM[n] = fp->readl(3);
-      } else failed = true;
+      } else*/ failed = true;
     }
   }
 
   if(auto memory = node["memory(type=ROM,content=Data,architecture=uPD96050)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         for(auto n : nall::range(2048)) necdsp.dataROM[n] = fp->readl(2);
-      } else failed = true;
+      } else*/ failed = true;
     }
   }
 
@@ -617,15 +635,15 @@ void Cartridge::loaduPD96050(nall::Markup::Node node) {
 
   if(failed) {
     //throw an error to the user
-    platform->open(ID::SuperFamicom, "ST011", File::Read, File::Required);
+    //platform->open(ID::SuperFamicom, "ST011", File::Read, File::Required);
     return;
   }
 
   if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD96050)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         for(auto n : nall::range(2048)) necdsp.dataRAM[n] = fp->readl(2);
-      }
+      }*/
     }
     for(auto map : memory.find("map")) {
       loadMap(map, {&NECDSP::readRAM, &necdsp}, {&NECDSP::writeRAM, &necdsp});
@@ -652,11 +670,11 @@ void Cartridge::loadEpsonRTC(nall::Markup::Node node) {
 
   if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Epson)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         uint8_t data[16] = {0};
         for(auto& byte : data) byte = fp->read();
         epsonrtc.load(data);
-      }
+      }*/
     }
   }
 }
@@ -673,11 +691,11 @@ void Cartridge::loadSharpRTC(nall::Markup::Node node) {
 
   if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Sharp)"]) {
     if(auto file = game.memory(memory)) {
-      if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
+      /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
         uint8_t data[16] = {0};
         for(auto& byte : data) byte = fp->read();
         sharprtc.load(data);
-      }
+      }*/
     }
   }
 }
@@ -832,9 +850,9 @@ void Cartridge::saveARMDSP(nall::Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Data,architecture=ARM6)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
-        if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
+        /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
           for(auto n : nall::range(16 * 1024)) fp->write(armdsp.programRAM[n]);
-        }
+        }*/
       }
     }
   }
@@ -851,9 +869,9 @@ void Cartridge::saveHitachiDSP(nall::Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Data,architecture=HG51BS169)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
-        if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
+        /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
           for(auto n : nall::range(3 * 1024)) fp->write(hitachidsp.dataRAM[n]);
-        }
+        }*/
       }
     }
   }
@@ -864,9 +882,9 @@ void Cartridge::saveuPD7725(nall::Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD7725)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
-        if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
+        /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
           for(auto n : nall::range(256)) fp->writel(necdsp.dataRAM[n], 2);
-        }
+        }*/
       }
     }
   }
@@ -877,9 +895,9 @@ void Cartridge::saveuPD96050(nall::Markup::Node node) {
   if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD96050)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
-        if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
+        /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
           for(auto n : nall::range(2 * 1024)) fp->writel(necdsp.dataRAM[n], 2);
-        }
+        }*/
       }
     }
   }
@@ -890,11 +908,11 @@ void Cartridge::saveEpsonRTC(nall::Markup::Node node) {
   if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Epson)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
-        if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
+        /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
           uint8_t data[16] = {0};
           epsonrtc.save(data);
           fp->write(data, 16);
-        }
+        }*/
       }
     }
   }
@@ -905,11 +923,11 @@ void Cartridge::saveSharpRTC(nall::Markup::Node node) {
   if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Sharp)"]) {
     if(auto file = game.memory(memory)) {
       if(file->nonVolatile) {
-        if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
+        /*if(auto fp = platform->open(ID::SuperFamicom, std::string(file->name()), File::Write)) {
           uint8_t data[16] = {0};
           sharprtc.save(data);
           fp->write(data, 16);
-        }
+        }*/
       }
     }
   }
@@ -990,9 +1008,14 @@ bool Cartridge::load() {
     information.region = loaded.option;
   } else return false;
 
-  if(auto fp = platform->open(ID::SuperFamicom, "manifest.bml", File::Read, File::Required)) {
-    game.load(std::string(fp->reads()));
-  } else return false;
+  std::string manifest = platform->stropen(ID::SuperFamicom, "manifest.bml");
+
+  if (!manifest.empty()) {
+    game.load(manifest);
+  }
+  else {
+      return false;
+  }
 
   loadCartridge(game.document);
 

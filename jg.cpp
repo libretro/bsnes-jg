@@ -108,25 +108,12 @@ static int ss_offset_y = 0;
 
 static bool addon = false;
 
-static const unsigned char iplrom[64] = {
-    0xcd, 0xef, 0xbd, 0xe8, 0x00, 0xc6, 0x1d, 0xd0,
-    0xfc, 0x8f, 0xaa, 0xf4, 0x8f, 0xbb, 0xf5, 0x78,
-    0xcc, 0xf4, 0xd0, 0xfb, 0x2f, 0x19, 0xeb, 0xf4,
-    0xd0, 0xfc, 0x7e, 0xf4, 0xd0, 0x0b, 0xe4, 0xf5,
-    0xcb, 0xf4, 0xd7, 0x00, 0xfc, 0xd0, 0xf3, 0xab,
-    0x01, 0x10, 0xef, 0x7e, 0xf4, 0x10, 0xeb, 0xba,
-    0xf6, 0xda, 0x00, 0xba, 0xf4, 0xc4, 0xf4, 0xdd,
-    0x5d, 0xd0, 0xdb, 0x1f, 0x00, 0x00, 0xc0, 0xff
-};
-
 static Emulator::Interface *emulator;
 
 struct Program : Emulator::Platform {
     Program();
     ~Program();
 
-    nall::vfs::file* open(unsigned id, std::string name,
-        nall::vfs::file::mode mode, bool required) override;
     Emulator::Platform::Load load(unsigned id, std::string name,
         std::string type, std::vector<std::string> options = {}) override;
     std::ifstream fopen(unsigned id, std::string name) override;
@@ -198,50 +185,6 @@ void Program::save() {
     emulator->save();
 }
 
-nall::vfs::file* Program::open(unsigned id, std::string name,
-    nall::vfs::file::mode mode, bool required) {
-
-    nall::vfs::file *result = nullptr;
-
-    if (name == "ipl.rom" && mode == nall::vfs::file::mode::read) {
-        result = nall::vfs::memory::file::open(iplrom, sizeof(iplrom));
-    }
-    if (name == "boards.bml" && mode == nall::vfs::file::mode::read) {
-        std::string boardspath = std::string(pathinfo.core) + "/boards.bml";
-        return nall::vfs::fs::file::open(boardspath.c_str(), mode);
-    }
-
-    if (id == 1) { // Super Famicom
-        if (name == "manifest.bml" && mode == nall::vfs::file::mode::read) {
-            std::vector<uint8_t> manifest(superFamicom.manifest.begin(),
-                superFamicom.manifest.end());
-            result = nall::vfs::memory::file::open(manifest.data(), manifest.size());
-        }
-        else if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
-            result = nall::vfs::memory::file::open(superFamicom.program.data(),
-                superFamicom.program.size());
-        }
-        else if (name == "data.rom" && mode == nall::vfs::file::mode::read) {
-            result = nall::vfs::memory::file::open(superFamicom.data.data(),
-                superFamicom.data.size());
-        }
-        else if (name == "expansion.rom" && mode == nall::vfs::file::mode::read) {
-            result = nall::vfs::memory::file::open(superFamicom.expansion.data(),
-                superFamicom.expansion.size());
-        }
-        else {
-            result = openRomSuperFamicom(name, mode);
-        }
-    }
-
-    if (result != nullptr) {
-        return result;
-    }
-    else {
-        return {};
-    }
-}
-
 void Program::load() {
     emulator->unload();
     emulator->load();
@@ -278,8 +221,20 @@ Emulator::Platform::Load Program::load(unsigned id, std::string name,
 std::ifstream Program::fopen(unsigned id, std::string name) {
     std::string path;
 
-    if (id == 1) { // SFC
-        if (name == "msu1/data.rom") {
+    if (id == 0) {
+        if (name == "boards.bml") {
+            path = std::string(pathinfo.core) + "/boards.bml";
+        }
+    }
+    else if (id == 1) { // SFC
+        if (name == "program.rom") {
+            path = std::string(gameinfo.fname);
+        }
+        else if (name == "save.ram") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".srm";
+        }
+        else if (name == "msu1/data.rom") {
             path = superFamicom.location;
             path = path.substr(0, path.find_last_of(".")) + ".msu";
         }
@@ -287,6 +242,9 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
             path = superFamicom.location;
             path = path.substr(0, path.find_last_of(".")) +
                 name.substr(name.find_first_of("track") + 5);
+        }
+        else {
+            std::cout << "othername: " << name << std::endl;
         }
     }
     else if (id == 2) { // GB
@@ -323,7 +281,18 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
 }
 
 std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
-    if (id == 2) { // GB
+    if (id == 1) { // Super Famicom
+        if (name == "program.rom") {
+            return superFamicom.program;
+        }
+        else if (name == "data.rom") {
+            return superFamicom.data;
+        }
+        else if (name == "expansion.rom") {
+            return superFamicom.expansion;
+        }
+    }
+    else if (id == 2) { // GB
         if (name == "program.rom") {
             std::vector<uint8_t> rom;
             rom = loadFile(gameinfo.data, gameinfo.size);
@@ -359,6 +328,11 @@ std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
 }
 
 std::string Program::stropen(unsigned id, std::string name) {
+    if (id == 1) { // Super Famicom
+        if (name == "manifest.bml") {
+            return superFamicom.manifest;
+        }
+    }
     if (id == 3) { // BS-X
         if (name == "manifest.bml") {
             return bsMemory.manifest;
@@ -550,39 +524,6 @@ static int16_t pollInputDevices(unsigned port, unsigned device, unsigned input) 
 
 int16_t Program::inputPoll(unsigned port, unsigned device, unsigned input) {
     return pollInputDevices(port, device, input);
-}
-
-nall::vfs::file* Program::openRomSuperFamicom(std::string name,
-    nall::vfs::file::mode mode) {
-
-    if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
-        return nall::vfs::memory::file::open(superFamicom.program.data(),
-            superFamicom.program.size());
-    }
-
-    if (name == "data.rom" && mode == nall::vfs::file::mode::read) {
-        return nall::vfs::memory::file::open(superFamicom.data.data(),
-            superFamicom.data.size());
-    }
-
-    if (name == "expansion.rom" && mode == nall::vfs::file::mode::read) {
-        return nall::vfs::memory::file::open(superFamicom.expansion.data(),
-            superFamicom.expansion.size());
-    }
-
-    if (name == "save.ram") {
-        std::string save_path = std::string(pathinfo.save) + "/" +
-            std::string(gameinfo.name) + ".srm";
-        return nall::vfs::fs::file::open(save_path.c_str(), mode);
-    }
-
-    if (name == "download.ram") {
-        std::string ram_path = std::string(pathinfo.save) + "/" +
-            std::string(gameinfo.name) + ".psr";
-        return nall::vfs::fs::file::open(ram_path.c_str(), mode);
-    }
-
-    return {};
 }
 
 std::vector<uint8_t> Program::loadFile(void *data, size_t size) {

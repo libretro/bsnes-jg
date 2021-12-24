@@ -54,7 +54,6 @@ struct Platform {
     nall::string option;
   };
 
-  virtual auto open(unsigned id, std::string name, nall::vfs::file::mode mode, bool required = false) -> nall::vfs::file* { return {}; }
   virtual auto load(unsigned id, std::string name, std::string type, std::vector<std::string> options = {}) -> Load { return {}; }
   virtual auto fopen(unsigned id, std::string name) -> std::ifstream { return {}; }
   virtual auto mopen(unsigned id, std::string name) -> std::vector<uint8_t> { return {}; }
