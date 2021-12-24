@@ -95,15 +95,19 @@ void Cartridge::loadCartridgeBSMemory(nall::Markup::Node node) {
 void Cartridge::loadCartridgeSufamiTurboA(nall::Markup::Node node) {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=ROM,content=Program)"]}) {
     sufamiturboA.rom.allocate(memory.size);
-    if(auto fp = platform->open(sufamiturboA.pathID, std::string(memory.name()), File::Read, File::Required)) {
-      fp->read(sufamiturboA.rom.data(), memory.size);
+    std::vector<uint8_t> buf = platform->mopen(sufamiturboA.pathID, std::string(memory.name()));
+    if (!buf.empty()) {
+      for (int i = 0; i < memory.size; ++i)
+        sufamiturboA.rom.data()[i] = buf[i];
     }
   }
 
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
     sufamiturboA.ram.allocate(memory.size);
-    if(auto fp = platform->open(sufamiturboA.pathID, std::string(memory.name()), File::Read)) {
-      fp->read(sufamiturboA.ram.data(), memory.size);
+    std::ifstream sramfile = platform->fopen(sufamiturboA.pathID, "save.ram");
+    if (sramfile.is_open()) {
+      sramfile.read((char*)sufamiturboA.ram.data(), memory.size);
+      sramfile.close();
     }
   }
 }
@@ -111,15 +115,19 @@ void Cartridge::loadCartridgeSufamiTurboA(nall::Markup::Node node) {
 void Cartridge::loadCartridgeSufamiTurboB(nall::Markup::Node node) {
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=ROM,content=Program)"]}) {
     sufamiturboB.rom.allocate(memory.size);
-    if(auto fp = platform->open(sufamiturboB.pathID, std::string(memory.name()), File::Read, File::Required)) {
-      fp->read(sufamiturboB.rom.data(), memory.size);
+    std::vector<uint8_t> buf = platform->mopen(sufamiturboB.pathID, std::string(memory.name()));
+    if (!buf.empty()) {
+      for (int i = 0; i < memory.size; ++i)
+        sufamiturboB.rom.data()[i] = buf[i];
     }
   }
 
   if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
     sufamiturboB.ram.allocate(memory.size);
-    if(auto fp = platform->open(sufamiturboB.pathID, std::string(memory.name()), File::Read)) {
-      fp->read(sufamiturboB.ram.data(), memory.size);
+    std::ifstream sramfile = platform->fopen(sufamiturboB.pathID, "save.ram");
+    if (sramfile.is_open()) {
+      sramfile.read((char*)sufamiturboB.ram.data(), memory.size);
+      sramfile.close();
     }
   }
 }

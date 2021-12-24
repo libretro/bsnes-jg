@@ -149,8 +149,6 @@ struct Program : Emulator::Platform {
     void save();
 
     nall::vfs::file* openRomSuperFamicom(std::string name, nall::vfs::file::mode mode);
-    nall::vfs::file* openRomSufamiTurboA(std::string name, nall::vfs::file::mode mode);
-    nall::vfs::file* openRomSufamiTurboB(std::string name, nall::vfs::file::mode mode);
 
     void hackPatchMemory(std::vector<uint8_t>& data);
 
@@ -235,24 +233,6 @@ nall::vfs::file* Program::open(unsigned id, std::string name,
             result = openRomSuperFamicom(name, mode);
         }
     }
-    else if (id == 4) { // Sufami Turbo - Slot A
-        if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
-            result = nall::vfs::memory::file::open(sufamiTurboA.program.data(),
-                sufamiTurboA.program.size());
-        }
-        else {
-            result = openRomSufamiTurboA(name, mode);
-        }
-    }
-    else if (id == 5) { // Sufami Turbo - Slot B
-        if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
-            result = nall::vfs::memory::file::open(sufamiTurboB.program.data(),
-            sufamiTurboB.program.size());
-        }
-        else {
-            result = openRomSufamiTurboB(name, mode);
-        }
-    }
 
     if (result != nullptr) {
         return result;
@@ -319,6 +299,25 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
                 std::string(gameinfo.name) + ".rtc";
         }
     }
+    else if (id == 4) { // Sufami Turbo Slot A
+        if (name == "save.ram") {
+            if (sufamiinfo.size) {
+                path = std::string(pathinfo.save) + "/" +
+                    std::string(sufamiinfo.name) + ".srm";
+            }
+            else {
+                path = std::string(pathinfo.save) + "/" +
+                    std::string(gameinfo.name) + ".srm";
+            }
+        }
+    }
+    else if (id == 5) { // Sufami Turbo Slot B
+        if (name == "save.ram") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".srm";
+        }
+    }
+
     std::ifstream stream(path, std::ios::in | std::ios::binary);
     return stream;
 }
@@ -344,6 +343,16 @@ std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
     else if (id == 3) { // BS-X
         if (name == "program.rom" || name == "program.flash") {
             return bsMemory.program;
+        }
+    }
+    else if (id == 4) { // Sufami Turbo Slot A
+        if (name == "program.rom") {
+            return sufamiTurboA.program;
+        }
+    }
+    else if (id == 5) { // Sufami Turbo Slot B
+        if (name == "program.rom") {
+            return sufamiTurboB.program;
         }
     }
     return {};
@@ -571,45 +580,6 @@ nall::vfs::file* Program::openRomSuperFamicom(std::string name,
         std::string ram_path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".psr";
         return nall::vfs::fs::file::open(ram_path.c_str(), mode);
-    }
-
-    return {};
-}
-
-nall::vfs::file* Program::openRomSufamiTurboA(std::string name,
-    nall::vfs::file::mode mode) {
-    if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
-        return nall::vfs::memory::file::open(sufamiTurboA.program.data(),
-            sufamiTurboA.program.size());
-    }
-
-    if (name == "save.ram") {
-        std::string save_path;
-        if (sufamiinfo.size)
-            save_path = std::string(pathinfo.save) + "/" +
-                std::string(sufamiinfo.name) + ".srm";
-        else
-            save_path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".srm";
-
-        return nall::vfs::fs::file::open(save_path.c_str(), mode);
-    }
-
-    return {};
-}
-
-nall::vfs::file* Program::openRomSufamiTurboB(std::string name,
-    nall::vfs::file::mode mode) {
-
-    if (name == "program.rom" && mode == nall::vfs::file::mode::read) {
-        return nall::vfs::memory::file::open(sufamiTurboB.program.data(),
-            sufamiTurboB.program.size());
-    }
-
-    if (name == "save.ram") {
-        std::string save_path = std::string(pathinfo.save) + "/" +
-            std::string(gameinfo.name) + ".srm";
-        return nall::vfs::fs::file::open(save_path.c_str(), mode);
     }
 
     return {};
