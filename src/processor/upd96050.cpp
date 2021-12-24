@@ -1,4 +1,4 @@
-#include "../../emulator/emulator.hpp"
+#include "../emulator.hpp"
 #include "upd96050.hpp"
 
 namespace Processor {

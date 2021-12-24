@@ -3,9 +3,9 @@
 //license: GPLv3
 //started: 2004-10-14
 
-#include "../emulator/emulator.hpp"
-#include "../emulator/random.hpp"
-#include "../emulator/cheat.hpp"
+#include "emulator.hpp"
+#include "random.hpp"
+#include "cheat.hpp"
 
 #include "processor/arm7tdmi.hpp"
 #include "processor/gsu.hpp"

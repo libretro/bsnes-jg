@@ -1,4 +1,4 @@
-#include "../../emulator/emulator.hpp"
+#include "../emulator.hpp"
 
 #include "hg51b.hpp"
 

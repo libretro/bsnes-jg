@@ -74,8 +74,7 @@ CSRCS := $(OBJDIR)/deps/gb/apu.c \
 	$(OBJDIR)/deps/gb/workboy.c \
 	$(OBJDIR)/deps/libco/libco.c
 
-CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
-	$(OBJDIR)/emulator/emulator.cpp \
+CXXSRCS := $(OBJDIR)/src/audio.cpp \
 	$(OBJDIR)/src/cartridge.cpp \
 	$(OBJDIR)/src/controller/controller.cpp \
 	$(OBJDIR)/src/controller/gamepad.cpp \
@@ -106,6 +105,7 @@ CXXSRCS := $(OBJDIR)/emulator/audio.cpp \
 	$(OBJDIR)/src/cpu.cpp \
 	$(OBJDIR)/src/dsp.cpp \
 	$(OBJDIR)/src/dsp/SPC_DSP.cpp \
+	$(OBJDIR)/src/emulator.cpp \
 	$(OBJDIR)/src/expansion/expansion.cpp \
 	$(OBJDIR)/src/expansion/satellaview.cpp \
 	$(OBJDIR)/src/heuristics.cpp \
@@ -147,7 +147,6 @@ LIBS += $(LIBS_SAMPLERATE)
 MKDIRS := $(OBJDIR)/deps/gb \
 	$(OBJDIR)/deps/libco \
 	$(OBJDIR)/deps/libsamplerate \
-	$(OBJDIR)/emulator \
 	$(OBJDIR)/src/controller \
 	$(OBJDIR)/src/dsp \
 	$(OBJDIR)/src/expansion \
