@@ -235,6 +235,10 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".srm";
         }
+        else if (name == "time.rtc") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".rtc";
+        }
         else if (name == "msu1/data.rom") {
             path = superFamicom.location;
             path = path.substr(0, path.find_last_of(".")) + ".msu";
@@ -373,6 +377,10 @@ void Program::write(unsigned id, std::string name, const uint8_t *data,
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".srm";
         }
+        else if (name == "time.rtc") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".rtc";
+        }
         else if (name == "download.ram") {
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".psr";
@@ -383,8 +391,7 @@ void Program::write(unsigned id, std::string name, const uint8_t *data,
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".srm";
         }
-
-        if (name == "time.rtc") {
+        else if (name == "time.rtc") {
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".rtc";
         }
