@@ -60,5 +60,3 @@ private:
 extern Audio audio;
 
 }
-
-#undef double
