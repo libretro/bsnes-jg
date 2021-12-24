@@ -135,8 +135,6 @@ struct Program : Emulator::Platform {
 
     void save();
 
-    nall::vfs::file* openRomSuperFamicom(std::string name, nall::vfs::file::mode mode);
-
     void hackPatchMemory(std::vector<uint8_t>& data);
 
 public:

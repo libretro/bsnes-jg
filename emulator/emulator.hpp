@@ -19,8 +19,6 @@
 #include "../nall/vector.hpp"
 #include "../nall/string.hpp"
 #include "../nall/markup.hpp"
-#include "../nall/file-buffer.hpp"
-#include "../nall/vfs.hpp"
 
 #include "audio.hpp"
 
@@ -35,10 +33,7 @@ namespace Emulator {
     }
   }
 
-  //nall/vfs shorthand constants for open(), load()
   namespace File {
-    static const auto Read  = nall::vfs::file::mode::read;
-    static const auto Write = nall::vfs::file::mode::write;
     static const auto Optional = false;
     static const auto Required = true;
   };
