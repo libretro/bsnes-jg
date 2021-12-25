@@ -727,27 +727,24 @@ void Program::hackPatchMemory(std::vector<uint8_t>& data) {
     }
 }
 
-static bool decodeSNES(nall::string& code) {
-    std::string stdcode = std::string(code);
-
+static bool decodeSNES(std::string& code) {
     // Game Genie
     std::regex rgx_gg("[a-f0-9]{4}[-][a-f0-9]{4}");
-    if (std::regex_match(stdcode, rgx_gg)) {
-        stdcode.erase(std::remove(stdcode.begin(), stdcode.end(), '-'),
-            stdcode.end());
+    if (std::regex_match(code, rgx_gg)) {
+        code.erase(std::remove(code.begin(), code.end(), '-'), code.end());
 
         std::string ggcipher[2] = { "df4709156bc8a23e", "0123456789abcdef" };
-        for (int c = 0; c < stdcode.size(); ++c) {
+        for (int c = 0; c < code.size(); ++c) {
             for (int i = 0; i < 16; ++i) {
-                if (stdcode[c] == ggcipher[0][i]) {
-                    stdcode[c] = ggcipher[1][i];
+                if (code[c] == ggcipher[0][i]) {
+                    code[c] = ggcipher[1][i];
                     break;
                 }
             }
         }
 
         uint32_t r;
-        std::stringstream ss; ss << std::hex << stdcode; ss >> r;
+        std::stringstream ss; ss << std::hex << code; ss >> r;
 
         unsigned address =
           (!!(r & 0x002000) << 23) | (!!(r & 0x001000) << 22)
@@ -773,9 +770,9 @@ static bool decodeSNES(nall::string& code) {
 
     // Pro Action Replay
     std::regex rgx_par("[a-f0-9]{8}");
-    if (std::regex_match(stdcode, rgx_par)) {
+    if (std::regex_match(code, rgx_par)) {
         uint32_t r;
-        std::stringstream ss; ss << std::hex << stdcode; ss >> r;
+        std::stringstream ss; ss << std::hex << code; ss >> r;
         unsigned address = r >> 8;
         unsigned data = r & 0xff;
         ss.clear(); ss.str(std::string());
@@ -786,20 +783,19 @@ static bool decodeSNES(nall::string& code) {
     }
 
     std::regex rgx_raw8("[a-f0-9]{6}[=][a-f0-9]{2}");
-    if (std::regex_match(stdcode, rgx_raw8)) {
+    if (std::regex_match(code, rgx_raw8)) {
         return true;
     }
 
     std::regex rgx_raw10("[a-f0-9]{6}[=][a-f0-9]{2}[?][a-f0-9]{2}");
-    if (std::regex_match(stdcode, rgx_raw10)) {
+    if (std::regex_match(code, rgx_raw10)) {
         return true;
     }
 
     return false;
 }
 
-static bool decodeGB(nall::string& code) {
-    std::string stdcode = std::string(code);
+static bool decodeGB(std::string& code) {
     auto nib = [&](const std::string& s, unsigned index) -> unsigned {
         if (index >= s.size()) return 0;
         if (s[index] >= '0' && s[index] <= '9') return s[index] - '0';
@@ -808,12 +804,11 @@ static bool decodeGB(nall::string& code) {
 
     //Game Genie 6
     std::regex rgx_gg6("[a-f0-9]{3}[-][a-f0-9]{3}");
-    if (std::regex_match(stdcode, rgx_gg6)) {
-        stdcode.erase(std::remove(stdcode.begin(), stdcode.end(), '-'),
-            stdcode.end());
-        unsigned data = nib(stdcode, 0) << 4 | nib(stdcode, 1) << 0;
-        unsigned address = (nib(stdcode, 5) ^ 15) << 12 | nib(stdcode, 2) << 8 |
-            nib(stdcode, 3) << 4 | nib(stdcode, 4) << 0;
+    if (std::regex_match(code, rgx_gg6)) {
+        code.erase(std::remove(code.begin(), code.end(), '-'), code.end());
+        unsigned data = nib(code, 0) << 4 | nib(code, 1) << 0;
+        unsigned address = (nib(code, 5) ^ 15) << 12 | nib(code, 2) << 8 |
+            nib(code, 3) << 4 | nib(code, 4) << 0;
         std::stringstream ss;
         ss << std::hex << std::setfill('0') << std::setw(4) << address << "="
             << std::setw(2) << data;
@@ -823,13 +818,12 @@ static bool decodeGB(nall::string& code) {
 
     // Game Genie 8
     std::regex rgx_gg8("[a-f0-9]{3}[-][a-f0-9]{3}[-][a-f0-9]{3}");
-    if (std::regex_match(stdcode, rgx_gg8)) {
-        stdcode.erase(std::remove(stdcode.begin(), stdcode.end(), '-'),
-            stdcode.end());
-        unsigned data = nib(stdcode, 0) << 4 | nib(stdcode, 1) << 0;
-        unsigned address = (nib(stdcode, 5) ^ 15) << 12 | nib(stdcode, 2) << 8 |
-            nib(stdcode, 3) << 4 | nib(stdcode, 4) << 0;
-        uint8_t t = nib(stdcode, 6) << 4 | nib(stdcode, 8) << 0;
+    if (std::regex_match(code, rgx_gg8)) {
+        code.erase(std::remove(code.begin(), code.end(), '-'), code.end());
+        unsigned data = nib(code, 0) << 4 | nib(code, 1) << 0;
+        unsigned address = (nib(code, 5) ^ 15) << 12 | nib(code, 2) << 8 |
+            nib(code, 3) << 4 | nib(code, 4) << 0;
+        uint8_t t = nib(code, 6) << 4 | nib(code, 8) << 0;
         t = t >> 2 | t << 6;
         unsigned compare = t ^ 0xba;
         std::stringstream ss;
@@ -841,9 +835,9 @@ static bool decodeGB(nall::string& code) {
 
     // GameShark
     std::regex rgx_gs("[0]{1}[1]{1}[a-f0-9]{6}");
-    if (std::regex_match(stdcode, rgx_gs)) {
+    if (std::regex_match(code, rgx_gs)) {
         uint32_t r;
-        std::stringstream ss; ss << std::hex << stdcode; ss >> r;
+        std::stringstream ss; ss << std::hex << code; ss >> r;
         unsigned data = (r >> 16) & 0xff;
         uint16_t address = r & 0xffff;
         address = address >> 8 | address << 8;
@@ -855,12 +849,12 @@ static bool decodeGB(nall::string& code) {
     }
 
     std::regex rgx_raw6("[a-f0-9]{4}[=][a-f0-9]{2}");
-    if (std::regex_match(stdcode, rgx_raw6)) {
+    if (std::regex_match(code, rgx_raw6)) {
         return true;
     }
 
     std::regex rgx_raw8("[a-f0-9]{4}[=][a-f0-9]{2}[?][a-f0-9]{2}");
-    if (std::regex_match(stdcode, rgx_raw8)) {
+    if (std::regex_match(code, rgx_raw8)) {
         return true;
     }
 
@@ -1117,7 +1111,8 @@ void jg_cheat_clear() {
 }
 
 void jg_cheat_set(const char *code) {
-    nall::string cheat = nall::string(code).downcase();
+    std::string cheat = std::string(code);
+    std::transform(cheat.begin(), cheat.end(), cheat.begin(), ::tolower);
     bool decoded = false;
 
     if (!program->gameBoy.program.empty())
@@ -1126,7 +1121,7 @@ void jg_cheat_set(const char *code) {
         decoded = decodeSNES(cheat);
 
     if (decoded) {
-        cheatList.push_back(cheat);
+        cheatList.push_back(cheat.c_str());
         emulator->cheats(cheatList);
     }
 }
