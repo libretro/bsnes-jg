@@ -135,15 +135,15 @@ std::vector<std::string> Interface::hashes() {
   return cartridge.hashes();
 }
 
-std::vector<nall::string> Interface::manifests() {
+std::vector<std::string> Interface::manifests() {
   return cartridge.manifests();
 }
 
-std::vector<nall::string> Interface::titles() {
+std::vector<std::string> Interface::titles() {
   return cartridge.titles();
 }
 
-nall::string Interface::title() {
+std::string Interface::title() {
   return cartridge.title();
 }
 

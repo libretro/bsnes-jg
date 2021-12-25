@@ -4,9 +4,9 @@ struct Cartridge {
   nall::string headerTitle() const { return game.title; }
 
   std::vector<std::string> hashes() const;
-  std::vector<nall::string> manifests() const;
-  std::vector<nall::string> titles() const;
-  nall::string title() const;
+  std::vector<std::string> manifests() const;
+  std::vector<std::string> titles() const;
+  std::string title() const;
 
   bool load();
   void save();

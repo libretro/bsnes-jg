@@ -964,34 +964,41 @@ std::vector<std::string> Cartridge::hashes() const {
   return hashes;
 }
 
-std::vector<nall::string> Cartridge::manifests() const {
-  std::vector<nall::string> manifests;
-  manifests.push_back(nall::string{nall::BML::serialize(game.document), "\n", nall::BML::serialize(board)});
-  if(slotGameBoy.document) manifests.push_back(nall::BML::serialize(slotGameBoy.document));
-  if(slotBSMemory.document) manifests.push_back(nall::BML::serialize(slotBSMemory.document));
-  if(slotSufamiTurboA.document) manifests.push_back(nall::BML::serialize(slotSufamiTurboA.document));
-  if(slotSufamiTurboB.document) manifests.push_back(nall::BML::serialize(slotSufamiTurboB.document));
+std::vector<std::string> Cartridge::manifests() const {
+  std::vector<std::string> manifests;
+
+  manifests.push_back(std::string(
+    nall::string{nall::BML::serialize(game.document), "\n", nall::BML::serialize(board)}
+  ));
+
+  if(slotGameBoy.document) manifests.push_back(std::string(nall::BML::serialize(slotGameBoy.document)));
+  if(slotBSMemory.document) manifests.push_back(std::string(nall::BML::serialize(slotBSMemory.document)));
+  if(slotSufamiTurboA.document) manifests.push_back(std::string(nall::BML::serialize(slotSufamiTurboA.document)));
+  if(slotSufamiTurboB.document) manifests.push_back(std::string(nall::BML::serialize(slotSufamiTurboB.document)));
   return manifests;
 }
 
-std::vector<nall::string> Cartridge::titles() const {
-  std::vector<nall::string> titles;
+std::vector<std::string> Cartridge::titles() const {
+  std::vector<std::string> titles;
   titles.push_back(game.label);
-  if(slotGameBoy.label) titles.push_back(slotGameBoy.label);
-  if(slotBSMemory.label) titles.push_back(slotBSMemory.label);
-  if(slotSufamiTurboA.label) titles.push_back(slotSufamiTurboA.label);
-  if(slotSufamiTurboB.label) titles.push_back(slotSufamiTurboB.label);
+  if(!slotGameBoy.label.empty()) titles.push_back(slotGameBoy.label);
+  if(!slotBSMemory.label.empty()) titles.push_back(slotBSMemory.label);
+  if(!slotSufamiTurboA.label.empty()) titles.push_back(slotSufamiTurboA.label);
+  if(!slotSufamiTurboB.label.empty()) titles.push_back(slotSufamiTurboB.label);
   return titles;
 }
 
-nall::string Cartridge::title() const {
-  if(slotGameBoy.label) return slotGameBoy.label;
-  if(has.MCC && slotBSMemory.label) return slotBSMemory.label;
-  if(slotBSMemory.label) return {game.label, " + ", slotBSMemory.label};
-  if(slotSufamiTurboA.label && slotSufamiTurboB.label) return {slotSufamiTurboA.label, " + ", slotSufamiTurboB.label};
-  if(slotSufamiTurboA.label) return slotSufamiTurboA.label;
-  if(slotSufamiTurboB.label) return slotSufamiTurboB.label;
-  if(has.Cx4 || has.DSP1 || has.DSP2 || has.DSP4 || has.ST0010) return {"[HLE] ", game.label};
+std::string Cartridge::title() const {
+  if(!slotGameBoy.label.empty()) return slotGameBoy.label;
+  if(has.MCC && !slotBSMemory.label.empty()) return slotBSMemory.label;
+  if(!slotBSMemory.label.empty())
+    return game.label + " + " + slotBSMemory.label;
+  if(!slotSufamiTurboA.label.empty() && !slotSufamiTurboB.label.empty())
+    return slotSufamiTurboA.label + " + " + slotSufamiTurboB.label;
+  if(!slotSufamiTurboA.label.empty()) return slotSufamiTurboA.label;
+  if(!slotSufamiTurboB.label.empty()) return slotSufamiTurboB.label;
+  if(has.Cx4 || has.DSP1 || has.DSP2 || has.DSP4 || has.ST0010)
+    return "[HLE] " + game.label;
   return game.label;
 }
 

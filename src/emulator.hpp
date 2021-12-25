@@ -119,9 +119,9 @@ struct Interface {
   //game interface
   virtual auto loaded() -> bool { return false; }
   virtual auto hashes() -> std::vector<std::string> { return {}; }
-  virtual auto manifests() -> std::vector<nall::string> { return {}; }
-  virtual auto titles() -> std::vector<nall::string> { return {}; }
-  virtual auto title() -> nall::string { return {}; }
+  virtual auto manifests() -> std::vector<std::string> { return {}; }
+  virtual auto titles() -> std::vector<std::string> { return {}; }
+  virtual auto title() -> std::string { return {}; }
   virtual auto load() -> bool { return false; }
   virtual auto save() -> void {}
   virtual auto unload() -> void {}
@@ -194,7 +194,7 @@ struct Game {
 
   nall::Markup::Node document;
   std::string sha256;
-  nall::string label;
+  std::string label;
   std::string name;
   nall::string title;
   nall::string region;
