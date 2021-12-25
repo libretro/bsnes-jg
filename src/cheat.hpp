@@ -23,33 +23,10 @@ struct Cheat {
     return codes.size() > 0;
   }
 
-  auto reset() -> void {
-    codes.clear();
-  }
-
-  auto append(unsigned address, unsigned data, nall::maybe<unsigned> compare = {}) -> void {
-    codes.push_back({address, data, compare});
-  }
-
-  auto assign(const std::vector<nall::string>& list) -> void {
-    reset();
-    for(auto& entry : list) {
-      for(auto code : entry.split("+")) {
-        auto part = code.transform("=?", "//").split("/");
-        if(part.size() == 2) append(part[0].hex(), part[1].hex());
-        if(part.size() == 3) append(part[0].hex(), part[2].hex(), part[1].hex());
-      }
-    }
-  }
-
-  auto find(unsigned address, unsigned compare) -> nall::maybe<unsigned> {
-    for(auto& code : codes) {
-      if(code.address == address && (!code.compare || code.compare() == compare)) {
-        return code.data;
-      }
-    }
-    return nall::nothing;
-  }
+  void reset();
+  void append(unsigned address, unsigned data, nall::maybe<unsigned> compare = {});
+  void assign(const std::vector<nall::string>& list);
+  nall::maybe<unsigned> find(unsigned address, unsigned compare);
 
   std::vector<Code> codes;
 };

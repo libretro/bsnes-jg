@@ -76,6 +76,7 @@ CSRCS := $(OBJDIR)/deps/gb/apu.c \
 
 CXXSRCS := $(OBJDIR)/src/audio.cpp \
 	$(OBJDIR)/src/cartridge.cpp \
+	$(OBJDIR)/src/cheat.cpp \
 	$(OBJDIR)/src/controller/controller.cpp \
 	$(OBJDIR)/src/controller/gamepad.cpp \
 	$(OBJDIR)/src/controller/justifier.cpp \
