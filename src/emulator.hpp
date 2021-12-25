@@ -2,6 +2,8 @@
 
 #include <libco/libco.h>
 
+#include <algorithm>
+#include <iostream>
 #include <fstream>
 #include <optional>
 #include <string>
@@ -172,14 +174,14 @@ struct Game {
   struct Memory {
     Memory() = default;
     inline Memory(nall::Markup::Node);
-    explicit operator bool() const { return (bool)type; }
-    inline auto name() const -> nall::string;
+    explicit operator bool() const { return (bool)!type.empty(); }
+    inline std::string name() const;
 
-    nall::string type;
+    std::string type;
     nall::Natural<> size;
-    nall::string content;
+    std::string content;
     nall::string manufacturer;
-    nall::string architecture;
+    std::string architecture;
     nall::string identifier;
     bool nonVolatile;
   };
@@ -196,9 +198,9 @@ struct Game {
   std::string sha256;
   std::string label;
   std::string name;
-  nall::string title;
+  std::string title;
   nall::string region;
-  nall::string revision;
+  std::string revision;
   nall::string board;
   std::vector<Memory> memoryList;
   std::vector<Oscillator> oscillatorList;
@@ -227,17 +229,17 @@ auto Game::load(std::string text) -> void {
 auto Game::memory(nall::Markup::Node node) -> nall::maybe<Memory> {
   if(!node) return nall::nothing;
   for(auto& memory : memoryList) {
-    auto type = node["type"].text();
+    auto type = std::string(node["type"].text());
     auto size = node["size"].natural();
-    auto content = node["content"].text();
+    auto content = std::string(node["content"].text());
     auto manufacturer = node["manufacturer"].text();
-    auto architecture = node["architecture"].text();
+    auto architecture = std::string(node["architecture"].text());
     auto identifier = node["identifier"].text();
-    if(type && type != memory.type) continue;
+    if(!type.empty() && type != memory.type) continue;
     if(size && size != memory.size) continue;
-    if(content && content != memory.content) continue;
+    if(!content.empty() && content != memory.content) continue;
     if(manufacturer && manufacturer != memory.manufacturer) continue;
-    if(architecture && architecture != memory.architecture) continue;
+    if(!architecture.empty() && architecture != memory.architecture) continue;
     if(identifier && identifier != memory.identifier) continue;
     return memory;
   }
@@ -259,9 +261,17 @@ Game::Memory::Memory(nall::Markup::Node node) {
   nonVolatile = !(bool)node["volatile"];
 }
 
-auto Game::Memory::name() const -> nall::string {
-  if(architecture) return nall::string{architecture, ".", content, ".", type}.downcase();
-  return nall::string{content, ".", type}.downcase();
+std::string Game::Memory::name() const {
+  std::string ret;
+  if(!architecture.empty()) {
+    ret = architecture + "." + content + "." + type;
+  }
+  else {
+    ret = content + "." + type;
+  }
+
+  std::transform(ret.begin(), ret.end(), ret.begin(), ::tolower);
+  return ret;
 }
 
 Game::Oscillator::Oscillator(nall::Markup::Node node) {

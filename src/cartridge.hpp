@@ -1,7 +1,7 @@
 struct Cartridge {
   unsigned pathID() const { return information.pathID; }
   std::string region() const { return information.region; }
-  nall::string headerTitle() const { return game.title; }
+  std::string headerTitle() const { return game.title; }
 
   std::vector<std::string> hashes() const;
   std::vector<std::string> manifests() const;
