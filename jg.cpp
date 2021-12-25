@@ -785,13 +785,13 @@ static bool decodeSNES(nall::string& code) {
         return true;
     }
 
-    std::regex rgx_raw9("[a-f0-9]{6}[=][a-f0-9]{2}");
-    if (std::regex_match(stdcode, rgx_raw9)) {
+    std::regex rgx_raw8("[a-f0-9]{6}[=][a-f0-9]{2}");
+    if (std::regex_match(stdcode, rgx_raw8)) {
         return true;
     }
 
-    std::regex rgx_raw12("[a-f0-9]{6}[=][a-f0-9]{2}[?][a-f0-9]{2}");
-    if (std::regex_match(stdcode, rgx_raw12)) {
+    std::regex rgx_raw10("[a-f0-9]{6}[=][a-f0-9]{2}[?][a-f0-9]{2}");
+    if (std::regex_match(stdcode, rgx_raw10)) {
         return true;
     }
 
@@ -800,46 +800,42 @@ static bool decodeSNES(nall::string& code) {
 
 static bool decodeGB(nall::string& code) {
     std::string stdcode = std::string(code);
-    auto nibble = [&](const nall::string& s, unsigned index) -> unsigned {
+    auto nib = [&](const std::string& s, unsigned index) -> unsigned {
         if (index >= s.size()) return 0;
         if (s[index] >= '0' && s[index] <= '9') return s[index] - '0';
         return s[index] - 'a' + 10;
     };
 
-    //Game Genie
-    if (code.size() == 7 && code[3u] == '-') {
-        code = {code.slice(0, 3), code.slice(4, 3)};
-        //validate
-        for (unsigned n : code) {
-            if (n >= '0' && n <= '9') continue;
-            if (n >= 'a' && n <= 'f') continue;
-            return false;
-        }
-
-        unsigned data = nibble(code, 0) << 4 | nibble(code, 1) << 0;
-        unsigned address = (nibble(code, 5) ^ 15) << 12 | nibble(code, 2) << 8 |
-            nibble(code, 3) << 4 | nibble(code, 4) << 0;
-        code = {nall::hex(address, 4L), "=", nall::hex(data, 2L)};
+    //Game Genie 6
+    std::regex rgx_gg6("[a-f0-9]{3}[-][a-f0-9]{3}");
+    if (std::regex_match(stdcode, rgx_gg6)) {
+        stdcode.erase(std::remove(stdcode.begin(), stdcode.end(), '-'),
+            stdcode.end());
+        unsigned data = nib(stdcode, 0) << 4 | nib(stdcode, 1) << 0;
+        unsigned address = (nib(stdcode, 5) ^ 15) << 12 | nib(stdcode, 2) << 8 |
+            nib(stdcode, 3) << 4 | nib(stdcode, 4) << 0;
+        std::stringstream ss;
+        ss << std::hex << std::setfill('0') << std::setw(4) << address << "="
+            << std::setw(2) << data;
+        code = ss.str().c_str();
         return true;
     }
 
-    //Game Genie
-    if (code.size() == 11 && code[3u] == '-' && code[7u] == '-') {
-        code = {code.slice(0, 3), code.slice(4, 3), code.slice(8, 3)};
-        //validate
-        for (unsigned n : code) {
-            if (n >= '0' && n <= '9') continue;
-            if (n >= 'a' && n <= 'f') continue;
-            return false;
-        }
-
-        unsigned data = nibble(code, 0) << 4 | nibble(code, 1) << 0;
-        unsigned address = (nibble(code, 5) ^ 15) << 12 | nibble(code, 2) << 8 |
-            nibble(code, 3) << 4 | nibble(code, 4) << 0;
-        uint8_t t = nibble(code, 6) << 4 | nibble(code, 8) << 0;
+    // Game Genie 8
+    std::regex rgx_gg8("[a-f0-9]{3}[-][a-f0-9]{3}[-][a-f0-9]{3}");
+    if (std::regex_match(stdcode, rgx_gg8)) {
+        stdcode.erase(std::remove(stdcode.begin(), stdcode.end(), '-'),
+            stdcode.end());
+        unsigned data = nib(stdcode, 0) << 4 | nib(stdcode, 1) << 0;
+        unsigned address = (nib(stdcode, 5) ^ 15) << 12 | nib(stdcode, 2) << 8 |
+            nib(stdcode, 3) << 4 | nib(stdcode, 4) << 0;
+        uint8_t t = nib(stdcode, 6) << 4 | nib(stdcode, 8) << 0;
         t = t >> 2 | t << 6;
         unsigned compare = t ^ 0xba;
-        code = {nall::hex(address, 4L), "=", nall::hex(compare, 2L), "?", nall::hex(data, 2L)};
+        std::stringstream ss;
+        ss << std::hex << std::setfill('0') << std::setw(4) << address << "="
+            << std::setw(2) << compare << "?" << std::setw(2) << data;
+        code = ss.str().c_str();
         return true;
     }
 
@@ -858,13 +854,13 @@ static bool decodeGB(nall::string& code) {
         return true;
     }
 
-    std::regex rgx_raw7("[a-f0-9]{4}[=][a-f0-9]{2}");
-    if (std::regex_match(stdcode, rgx_raw7)) {
+    std::regex rgx_raw6("[a-f0-9]{4}[=][a-f0-9]{2}");
+    if (std::regex_match(stdcode, rgx_raw6)) {
         return true;
     }
 
-    std::regex rgx_raw10("[a-f0-9]{4}[=][a-f0-9]{2}[?][a-f0-9]{2}");
-    if (std::regex_match(stdcode, rgx_raw10)) {
+    std::regex rgx_raw8("[a-f0-9]{4}[=][a-f0-9]{2}[?][a-f0-9]{2}");
+    if (std::regex_match(stdcode, rgx_raw8)) {
         return true;
     }
 
