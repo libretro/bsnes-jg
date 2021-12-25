@@ -145,7 +145,7 @@ struct Interface {
 
   //cheat functions
   virtual auto read(nall::Natural<24> address) -> uint8_t { return 0; }
-  virtual auto cheats(const std::vector<nall::string>& = {}) -> void {}
+  virtual auto cheats(const std::vector<std::string>& = {}) -> void {}
 
   //configuration
   virtual auto configuration() -> nall::string { return {}; }

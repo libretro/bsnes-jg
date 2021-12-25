@@ -64,7 +64,7 @@ struct Interface : Emulator::Interface {
   bool unserialize(serializer&) override;
 
   uint8_t read(nall::Natural<24> address) override;
-  void cheats(const std::vector<nall::string>&) override;
+  void cheats(const std::vector<std::string>&) override;
 
   nall::string configuration() override;
   nall::string configuration(nall::string name) override;

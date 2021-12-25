@@ -25,7 +25,7 @@ struct Cheat {
 
   void reset();
   void append(unsigned address, unsigned data, nall::maybe<unsigned> compare = {});
-  void assign(const std::vector<nall::string>& list);
+  void assign(const std::vector<std::string>& list);
   nall::maybe<unsigned> find(unsigned address, unsigned compare);
 
   std::vector<Code> codes;

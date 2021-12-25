@@ -326,7 +326,7 @@ uint8_t Interface::read(nall::Natural<24> address) {
   return cpu.readDisassembler(address);
 }
 
-void Interface::cheats(const std::vector<nall::string>& list) {
+void Interface::cheats(const std::vector<std::string>& list) {
   if(cartridge.has.ICD) {
     icd.cheats.assign(list);
     return;

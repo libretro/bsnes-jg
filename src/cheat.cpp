@@ -1,4 +1,5 @@
-#include <iostream>
+#include <algorithm>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -15,14 +16,18 @@ void Cheat::append(unsigned address, unsigned data, nall::maybe<unsigned> compar
   codes.push_back({address, data, compare});
 }
 
-void Cheat::assign(const std::vector<nall::string>& list) {
+void Cheat::assign(const std::vector<std::string>& list) {
   reset();
-  for(auto& entry : list) {
-    for(auto code : entry.split("+")) {
-      auto part = code.transform("=?", "//").split("/");
-      if(part.size() == 2) append(part[0].hex(), part[1].hex());
-      if(part.size() == 3) append(part[0].hex(), part[2].hex(), part[1].hex());
-    }
+
+  for (std::string entry : list) {
+      std::replace(entry.begin(), entry.end(), '?', '=');
+      std::stringstream ss(entry);
+      std::vector<unsigned> part;
+      while(std::getline(ss, entry, '=')) {
+          part.push_back(std::stoul(entry, nullptr, 16));
+      }
+      if (part.size() == 2) append(part[0], part[1]);
+      if (part.size() == 3) append(part[0], part[2], part[1]);
   }
 }
 

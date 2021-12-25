@@ -102,7 +102,7 @@ enum {
     RSQUAL,
 };
 
-static std::vector<nall::string> cheatList;
+static std::vector<std::string> cheatList;
 
 static int vidmult = 1;
 static int ss_offset_x = 0;
@@ -764,7 +764,7 @@ static bool decodeSNES(std::string& code) {
         ss.clear(); ss.str(std::string());
         ss << std::hex << std::setfill('0') << std::setw(6) << address << "="
             << std::setw(2) << data;
-        code = ss.str().c_str();
+        code = ss.str();
         return true;
     }
 
@@ -778,7 +778,7 @@ static bool decodeSNES(std::string& code) {
         ss.clear(); ss.str(std::string());
         ss << std::hex << std::setfill('0') << std::setw(6) << address << "="
             << std::setw(2) << data;
-        code = ss.str().c_str();
+        code = ss.str();
         return true;
     }
 
@@ -812,7 +812,7 @@ static bool decodeGB(std::string& code) {
         std::stringstream ss;
         ss << std::hex << std::setfill('0') << std::setw(4) << address << "="
             << std::setw(2) << data;
-        code = ss.str().c_str();
+        code = ss.str();
         return true;
     }
 
@@ -829,7 +829,7 @@ static bool decodeGB(std::string& code) {
         std::stringstream ss;
         ss << std::hex << std::setfill('0') << std::setw(4) << address << "="
             << std::setw(2) << compare << "?" << std::setw(2) << data;
-        code = ss.str().c_str();
+        code = ss.str();
         return true;
     }
 
@@ -844,7 +844,7 @@ static bool decodeGB(std::string& code) {
         ss.clear(); ss.str(std::string());
         ss << std::hex << std::setfill('0') << std::setw(4) << address << "="
             << std::setw(2) << data;
-        code = ss.str().c_str();
+        code = ss.str();
         return true;
     }
 
@@ -1121,7 +1121,7 @@ void jg_cheat_set(const char *code) {
         decoded = decodeSNES(cheat);
 
     if (decoded) {
-        cheatList.push_back(cheat.c_str());
+        cheatList.push_back(cheat);
         emulator->cheats(cheatList);
     }
 }
