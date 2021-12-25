@@ -78,7 +78,7 @@ struct Interface {
       LCD,
     };};
     unsigned id = 0;
-    nall::string name;
+    std::string name;
     unsigned type = 0;
     unsigned colors = 0;
     unsigned width = 0;
@@ -180,9 +180,9 @@ struct Game {
     std::string type;
     nall::Natural<> size;
     std::string content;
-    nall::string manufacturer;
+    std::string manufacturer;
     std::string architecture;
-    nall::string identifier;
+    std::string identifier;
     bool nonVolatile;
   };
 
@@ -199,7 +199,7 @@ struct Game {
   std::string label;
   std::string name;
   std::string title;
-  nall::string region;
+  std::string region;
   std::string revision;
   nall::string board;
   std::vector<Memory> memoryList;
@@ -232,15 +232,15 @@ auto Game::memory(nall::Markup::Node node) -> nall::maybe<Memory> {
     auto type = std::string(node["type"].text());
     auto size = node["size"].natural();
     auto content = std::string(node["content"].text());
-    auto manufacturer = node["manufacturer"].text();
+    auto manufacturer = std::string(node["manufacturer"].text());
     auto architecture = std::string(node["architecture"].text());
-    auto identifier = node["identifier"].text();
+    auto identifier = std::string(node["identifier"].text());
     if(!type.empty() && type != memory.type) continue;
     if(size && size != memory.size) continue;
     if(!content.empty() && content != memory.content) continue;
-    if(manufacturer && manufacturer != memory.manufacturer) continue;
+    if(!manufacturer.empty() && manufacturer != memory.manufacturer) continue;
     if(!architecture.empty() && architecture != memory.architecture) continue;
-    if(identifier && identifier != memory.identifier) continue;
+    if(!identifier.empty() && identifier != memory.identifier) continue;
     return memory;
   }
   return nall::nothing;

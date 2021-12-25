@@ -42,19 +42,14 @@ void Cartridge::loadCartridge(nall::Markup::Node node) {
   if(!board) board = loadBoard(game.board);
 
   if(region() == "Auto") {
-    auto region = game.region;
-    if(region.endsWith("BRA")
-    || region.endsWith("CAN")
-    || region.endsWith("HKG")
-    || region.endsWith("JPN")
-    || region.endsWith("KOR")
-    || region.endsWith("LTN")
-    || region.endsWith("ROC")
-    || region.endsWith("USA")
-    || region.beginsWith("SHVC-")
-    || region == "NTSC") {
+    std::string regstr = game.region.substr(game.region.length() - 3, game.region.length());
+    if (regstr == "BRA" || regstr == "CAN" || regstr == "HKG" ||
+        regstr == "JPN" || regstr == "KOR" || regstr == "LTN" ||
+        regstr == "ROC" || regstr == "USA" || (!game.region.rfind("SHVC-", 0))
+        || game.region == "NTSC") {
       information.region = "NTSC";
-    } else {
+    }
+    else {
       information.region = "PAL";
     }
   }
