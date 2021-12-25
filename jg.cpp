@@ -799,6 +799,7 @@ static bool decodeSNES(nall::string& code) {
 }
 
 static bool decodeGB(nall::string& code) {
+    std::string stdcode = std::string(code);
     auto nibble = [&](const nall::string& s, unsigned index) -> unsigned {
         if (index >= s.size()) return 0;
         if (s[index] >= '0' && s[index] <= '9') return s[index] - '0';
@@ -863,29 +864,13 @@ static bool decodeGB(nall::string& code) {
         return true;
     }
 
-    //higan: address=data
-    if (code.size() == 7 && code[4u] == '=') {
-        nall::string nibbles = {code.slice(0, 4), code.slice(5, 2)};
-        //validate
-        for (unsigned n : nibbles) {
-            if (n >= '0' && n <= '9') continue;
-            if (n >= 'a' && n <= 'f') continue;
-            return false;
-        }
-        //already in decoded form
+    std::regex rgx_raw7("[a-f0-9]{4}[=][a-f0-9]{2}");
+    if (std::regex_match(stdcode, rgx_raw7)) {
         return true;
     }
 
-    //higan: address=compare?data
-    if (code.size() == 10 && code[4u] == '=' && code[7u] == '?') {
-        nall::string nibbles = {code.slice(0, 4), code.slice(5, 2), code.slice(8, 2)};
-        //validate
-        for (unsigned n : nibbles) {
-            if (n >= '0' && n <= '9') continue;
-            if (n >= 'a' && n <= 'f') continue;
-            return false;
-        }
-        //already in decoded form
+    std::regex rgx_raw10("[a-f0-9]{4}[=][a-f0-9]{2}[?][a-f0-9]{2}");
+    if (std::regex_match(stdcode, rgx_raw10)) {
         return true;
     }
 
