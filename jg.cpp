@@ -18,12 +18,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <iomanip>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include <regex>
 #include <vector>
 #include <stdint.h>
 
@@ -727,21 +729,26 @@ void Program::hackPatchMemory(std::vector<uint8_t>& data) {
 
 static bool decodeSNES(nall::string& code) {
     //Game Genie
-    if (code.size() == 9 && code[4u] == '-') {
-        //strip '-'
-        code = {code.slice(0, 4), code.slice(5, 4)};
-        //validate
-        for (unsigned n : code) {
-            if (n >= '0' && n <= '9') continue;
-            if (n >= 'a' && n <= 'f') continue;
-            return false;
+    std::string stdcode = std::string(code);
+
+    std::regex rgx_gg("[a-f0-9]{4}[-][a-f0-9]{4}");
+    if (std::regex_match(stdcode, rgx_gg)) {
+        stdcode.erase(std::remove(stdcode.begin(), stdcode.end(), '-'),
+            stdcode.end());
+
+        std::string ggcipher[2] = { "df4709156bc8a23e", "0123456789abcdef" };
+        for (int c = 0; c < stdcode.size(); ++c) {
+            for (int i = 0; i < 16; ++i) {
+                if (stdcode[c] == ggcipher[0][i]) {
+                    stdcode[c] = ggcipher[1][i];
+                    break;
+                }
+            }
         }
 
-        //decode
-        code.transform("df4709156bc8a23e", "0123456789abcdef");
-        uint32_t r = toHex(code);
-        //abcd efgh ijkl mnop qrst uvwx
-        //ijkl qrst opab cduv wxef ghmn
+        uint32_t r;   
+        std::stringstream ss; ss << std::hex << stdcode; ss >> r;
+
         unsigned address =
           (!!(r & 0x002000) << 23) | (!!(r & 0x001000) << 22)
         | (!!(r & 0x000800) << 21) | (!!(r & 0x000400) << 20)
@@ -756,8 +763,11 @@ static bool decodeSNES(nall::string& code) {
         | (!!(r & 0x000200) <<  3) | (!!(r & 0x000100) <<  2)
         | (!!(r & 0x000080) <<  1) | (!!(r & 0x000040) <<  0);
         unsigned data = r >> 24;
-        code = {nall::hex(address, 6L), "=", nall::hex(data, 2L)};
-        return true;
+
+        ss.clear(); ss.str(std::string());
+        ss << std::hex << std::setfill('0') << std::setw(6) << address << "="
+            << std::setw(2) << data;
+        code = ss.str().c_str();
     }
 
     //Pro Action Replay
