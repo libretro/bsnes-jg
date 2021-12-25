@@ -1,6 +1,6 @@
 struct Cartridge {
   unsigned pathID() const { return information.pathID; }
-  nall::string region() const { return information.region; }
+  std::string region() const { return information.region; }
   nall::string headerTitle() const { return game.title; }
 
   std::vector<nall::string> hashes() const;
@@ -19,7 +19,7 @@ struct Cartridge {
 
   struct Information {
     unsigned pathID = 0;
-    nall::string region;
+    std::string region;
     nall::string sha256;
   } information;
 

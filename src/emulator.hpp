@@ -42,12 +42,12 @@ namespace Emulator {
 struct Platform {
   struct Load {
     Load() = default;
-    Load(unsigned pathID, nall::string option = "") : valid(true), pathID(pathID), option(option) {}
+    Load(unsigned pathID, std::string option = "") : valid(true), pathID(pathID), option(option) {}
     explicit operator bool() const { return valid; }
 
     bool valid = false;
     unsigned pathID = 0;
-    nall::string option;
+    std::string option;
   };
 
   virtual auto load(unsigned id, std::string name, std::string type, std::vector<std::string> options = {}) -> Load { return {}; }

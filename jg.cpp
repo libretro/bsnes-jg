@@ -195,7 +195,7 @@ Emulator::Platform::Load Program::load(unsigned id, std::string name,
 
     if (id == 1) {
         if (loadSuperFamicom(superFamicom.location)) {
-            return {id, superFamicom.region.c_str()};
+            return {id, superFamicom.region};
         }
     }
     else if (id == 2) {
@@ -674,7 +674,7 @@ bool Program::loadSufamiTurboA(std::string location) {
 
     sufamiTurboA.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     sufamiTurboA.document = nall::BML::unserialize(sufamiTurboA.manifest.c_str());
-    sufamiTurboA.location = nall::string(gameinfo.path);//location;
+    sufamiTurboA.location = std::string(gameinfo.path);
 
     sufamiTurboA.program = rom;
     return true;
@@ -915,9 +915,11 @@ int jg_game_load() {
     emulator->configure("Hacks/Coprocessor/PreferHLE", true); // default true
 
     // Load the game
-    if (nall::string(gameinfo.path).endsWith(".gb") ||
-        nall::string(gameinfo.path).endsWith(".gbc")) {
+    std::string fname = std::string(gameinfo.fname);
+    std::string ext = fname.substr(fname.find_last_of(".") + 1);
+    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
+    if (ext == "gb" ||ext == "gbc") {
         if (!addoninfo.size) {
             jg_cb_log(JG_LOG_ERR,
                 "Super Game Boy ROM required for GB/GBC content, exiting...\n");
@@ -928,7 +930,7 @@ int jg_game_load() {
         program->gameBoy.location = std::string(gameinfo.path);
         addon = true;
     }
-    else if (nall::string(gameinfo.path).endsWith(".bs")) {
+    else if (ext == "bs") {
         if (!addoninfo.size) {
             jg_cb_log(JG_LOG_ERR,
                 "BS-X BIOS ROM required for BS-X content, exiting...\n");
@@ -939,7 +941,7 @@ int jg_game_load() {
         program->bsMemory.location = std::string(gameinfo.path);
         addon = true;
     }
-    else if (nall::string(gameinfo.path).endsWith(".st")) {
+    else if (ext == "st") {
         if (!addoninfo.size) {
             jg_cb_log(JG_LOG_ERR,
                 "Sufami Turbo ROM required for Sufami Turbo content, "
