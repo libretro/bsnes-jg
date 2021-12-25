@@ -954,13 +954,13 @@ void Cartridge::serialize(serializer& s) {
 
 Cartridge cartridge;
 
-std::vector<nall::string> Cartridge::hashes() const {
-  std::vector<nall::string> hashes;
+std::vector<std::string> Cartridge::hashes() const {
+  std::vector<std::string> hashes;
   hashes.push_back(game.sha256);
-  if(slotGameBoy.sha256) hashes.push_back(slotGameBoy.sha256);
-  if(slotBSMemory.sha256) hashes.push_back(slotBSMemory.sha256);
-  if(slotSufamiTurboA.sha256) hashes.push_back(slotSufamiTurboA.sha256);
-  if(slotSufamiTurboB.sha256) hashes.push_back(slotSufamiTurboB.sha256);
+  if(!slotGameBoy.sha256.empty()) hashes.push_back(slotGameBoy.sha256);
+  if(!slotBSMemory.sha256.empty()) hashes.push_back(slotBSMemory.sha256);
+  if(!slotSufamiTurboA.sha256.empty()) hashes.push_back(slotSufamiTurboA.sha256);
+  if(!slotSufamiTurboB.sha256.empty()) hashes.push_back(slotSufamiTurboB.sha256);
   return hashes;
 }
 
@@ -1027,7 +1027,7 @@ bool Cartridge::load() {
 
   //BS Memory
   else if(cartridge.has.MCC && cartridge.has.BSMemorySlot) {
-    information.sha256 = sha256_digest(bsmemory.data(), bsmemory.size()).c_str();
+    information.sha256 = sha256_digest(bsmemory.data(), bsmemory.size());
   }
 
   //Sufami Turbo
@@ -1044,7 +1044,7 @@ bool Cartridge::load() {
             carts.push_back(sufamiturboB.rom[i]);
     }
 
-    information.sha256 = sha256_digest(carts.data(), carts.size()).c_str();
+    information.sha256 = sha256_digest(carts.data(), carts.size());
   }
 
   //Super Famicom
@@ -1074,7 +1074,7 @@ bool Cartridge::load() {
     for (int i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
 
     //finalize hash
-    information.sha256 = sha256_digest(buf.data(), buf.size()).c_str();
+    information.sha256 = sha256_digest(buf.data(), buf.size());
   }
 
   return true;

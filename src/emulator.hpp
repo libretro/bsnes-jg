@@ -118,7 +118,7 @@ struct Interface {
 
   //game interface
   virtual auto loaded() -> bool { return false; }
-  virtual auto hashes() -> std::vector<nall::string> { return {}; }
+  virtual auto hashes() -> std::vector<std::string> { return {}; }
   virtual auto manifests() -> std::vector<nall::string> { return {}; }
   virtual auto titles() -> std::vector<nall::string> { return {}; }
   virtual auto title() -> nall::string { return {}; }
@@ -181,7 +181,7 @@ struct Game {
     nall::string manufacturer;
     nall::string architecture;
     nall::string identifier;
-    nall::Boolean nonVolatile;
+    bool nonVolatile;
   };
 
   struct Oscillator {
@@ -193,7 +193,7 @@ struct Game {
   };
 
   nall::Markup::Node document;
-  nall::string sha256;
+  std::string sha256;
   nall::string label;
   std::string name;
   nall::string title;

@@ -131,7 +131,7 @@ bool Interface::loaded() {
   return system.loaded();
 }
 
-std::vector<nall::string> Interface::hashes() {
+std::vector<std::string> Interface::hashes() {
   return cartridge.hashes();
 }
 

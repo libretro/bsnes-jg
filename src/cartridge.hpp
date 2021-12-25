@@ -3,7 +3,7 @@ struct Cartridge {
   std::string region() const { return information.region; }
   nall::string headerTitle() const { return game.title; }
 
-  std::vector<nall::string> hashes() const;
+  std::vector<std::string> hashes() const;
   std::vector<nall::string> manifests() const;
   std::vector<nall::string> titles() const;
   nall::string title() const;
@@ -20,36 +20,36 @@ struct Cartridge {
   struct Information {
     unsigned pathID = 0;
     std::string region;
-    nall::string sha256;
+    std::string sha256;
   } information;
 
   struct Has {
-    nall::Boolean ICD;
-    nall::Boolean MCC;
-    nall::Boolean DIP;
-    nall::Boolean Event;
-    nall::Boolean SA1;
-    nall::Boolean SuperFX;
-    nall::Boolean ARMDSP;
-    nall::Boolean HitachiDSP;
-    nall::Boolean NECDSP;
-    nall::Boolean EpsonRTC;
-    nall::Boolean SharpRTC;
-    nall::Boolean SPC7110;
-    nall::Boolean SDD1;
-    nall::Boolean OBC1;
-    nall::Boolean MSU1;
+    bool ICD;
+    bool MCC;
+    bool DIP;
+    bool Event;
+    bool SA1;
+    bool SuperFX;
+    bool ARMDSP;
+    bool HitachiDSP;
+    bool NECDSP;
+    bool EpsonRTC;
+    bool SharpRTC;
+    bool SPC7110;
+    bool SDD1;
+    bool OBC1;
+    bool MSU1;
 
-    nall::Boolean Cx4;
-    nall::Boolean DSP1;
-    nall::Boolean DSP2;
-    nall::Boolean DSP4;
-    nall::Boolean ST0010;
+    bool Cx4;
+    bool DSP1;
+    bool DSP2;
+    bool DSP4;
+    bool ST0010;
 
-    nall::Boolean GameBoySlot;
-    nall::Boolean BSMemorySlot;
-    nall::Boolean SufamiTurboSlotA;
-    nall::Boolean SufamiTurboSlotB;
+    bool GameBoySlot;
+    bool BSMemorySlot;
+    bool SufamiTurboSlotA;
+    bool SufamiTurboSlotB;
   } has;
 
 private:

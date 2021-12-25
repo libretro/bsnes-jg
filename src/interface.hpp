@@ -39,7 +39,7 @@ struct Interface : Emulator::Interface {
   uint64_t color(uint32_t color) override;
 
   bool loaded() override;
-  std::vector<nall::string> hashes() override;
+  std::vector<std::string> hashes() override;
   std::vector<nall::string> manifests() override;
   std::vector<nall::string> titles() override;
   nall::string title() override;
