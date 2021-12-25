@@ -785,34 +785,16 @@ static bool decodeSNES(nall::string& code) {
         return true;
     }
 
-    //higan: address=data
-    if (code.size() == 9 && code[6u] == '=') {
-        nall::string nibbles = {code.slice(0, 6), code.slice(7, 2)};
-        //validate
-        for (unsigned n : nibbles) {
-            if (n >= '0' && n <= '9') continue;
-            if (n >= 'a' && n <= 'f') continue;
-            return false;
-        }
-        //already in decoded form
+    std::regex rgx_raw9("[a-f0-9]{6}[=][a-f0-9]{2}");
+    if (std::regex_match(stdcode, rgx_raw9)) {
         return true;
     }
 
-    //higan: address=compare?data
-    if (code.size() == 12 && code[6u] == '=' && code[9u] == '?') {
-        nall::string nibbles =
-            {code.slice(0, 6), code.slice(7, 2), code.slice(10, 2)};
-        //validate
-        for (unsigned n : nibbles) {
-            if (n >= '0' && n <= '9') continue;
-            if (n >= 'a' && n <= 'f') continue;
-            return false;
-        }
-        //already in decoded form
+    std::regex rgx_raw12("[a-f0-9]{6}[=][a-f0-9]{2}[?][a-f0-9]{2}");
+    if (std::regex_match(stdcode, rgx_raw12)) {
         return true;
     }
 
-    //unrecognized code format
     return false;
 }
 
