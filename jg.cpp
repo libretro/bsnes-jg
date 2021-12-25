@@ -728,9 +728,9 @@ void Program::hackPatchMemory(std::vector<uint8_t>& data) {
 }
 
 static bool decodeSNES(nall::string& code) {
-    //Game Genie
     std::string stdcode = std::string(code);
 
+    // Game Genie
     std::regex rgx_gg("[a-f0-9]{4}[-][a-f0-9]{4}");
     if (std::regex_match(stdcode, rgx_gg)) {
         stdcode.erase(std::remove(stdcode.begin(), stdcode.end(), '-'),
@@ -746,7 +746,7 @@ static bool decodeSNES(nall::string& code) {
             }
         }
 
-        uint32_t r;   
+        uint32_t r;
         std::stringstream ss; ss << std::hex << stdcode; ss >> r;
 
         unsigned address =
@@ -768,22 +768,20 @@ static bool decodeSNES(nall::string& code) {
         ss << std::hex << std::setfill('0') << std::setw(6) << address << "="
             << std::setw(2) << data;
         code = ss.str().c_str();
+        return true;
     }
 
-    //Pro Action Replay
-    if (code.size() == 8) {
-        //validate
-        for (unsigned n : code) {
-            if (n >= '0' && n <= '9') continue;
-            if (n >= 'a' && n <= 'f') continue;
-            return false;
-        }
-
-        //decode
-        uint32_t r = toHex(code);
+    // Pro Action Replay
+    std::regex rgx_par("[a-f0-9]{8}");
+    if (std::regex_match(stdcode, rgx_par)) {
+        uint32_t r;
+        std::stringstream ss; ss << std::hex << stdcode; ss >> r;
         unsigned address = r >> 8;
         unsigned data = r & 0xff;
-        code = {nall::hex(address, 6L), "=", nall::hex(data, 2L)};
+        ss.clear(); ss.str(std::string());
+        ss << std::hex << std::setfill('0') << std::setw(6) << address << "="
+            << std::setw(2) << data;
+        code = ss.str().c_str();
         return true;
     }
 
