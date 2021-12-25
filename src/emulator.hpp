@@ -36,11 +36,6 @@ namespace Emulator {
     }
   }
 
-  namespace File {
-    static const auto Optional = false;
-    static const auto Required = true;
-  };
-
 struct Platform {
   struct Load {
     Load() = default;

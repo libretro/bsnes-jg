@@ -72,7 +72,7 @@ private:
   void loadCartridgeSufamiTurboA(nall::Markup::Node);
   void loadCartridgeSufamiTurboB(nall::Markup::Node);
 
-  void loadMemory(Memory&, nall::Markup::Node, bool required);
+  void loadMemory(Memory&, nall::Markup::Node);
   template<typename T> unsigned loadMap(nall::Markup::Node, T&);
   unsigned loadMap(nall::Markup::Node, const nall::function<uint8_t (unsigned, uint8_t)>&, const nall::function<void (unsigned, uint8_t)>&);
 
