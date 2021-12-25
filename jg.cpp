@@ -843,24 +843,18 @@ static bool decodeGB(nall::string& code) {
         return true;
     }
 
-    //GameShark
-    if (code.size() == 8) {
-        //validate
-        for (unsigned n : code) {
-            if (n >= '0' && n <= '9') continue;
-            if (n >= 'a' && n <= 'f') continue;
-            return false;
-        }
-
-        //first two characters are the code type / VRAM bank, which is almost
-        //always 01. other values are presumably supported, but I have no info
-        //on them, so they're not supported.
-        if (code[0u] != '0') return false;
-        if (code[1u] != '1') return false;
-        unsigned data = toHex(code.slice(2, 2));
-        uint16_t address = toHex(code.slice(4, 4));
+    // GameShark
+    std::regex rgx_gs("[0]{1}[1]{1}[a-f0-9]{6}");
+    if (std::regex_match(stdcode, rgx_gs)) {
+        uint32_t r;
+        std::stringstream ss; ss << std::hex << stdcode; ss >> r;
+        unsigned data = (r >> 16) & 0xff;
+        uint16_t address = r & 0xffff;
         address = address >> 8 | address << 8;
-        code = {nall::hex(address, 4L), "=", nall::hex(data, 2L)};
+        ss.clear(); ss.str(std::string());
+        ss << std::hex << std::setfill('0') << std::setw(4) << address << "="
+            << std::setw(2) << data;
+        code = ss.str().c_str();
         return true;
     }
 
@@ -874,7 +868,6 @@ static bool decodeGB(nall::string& code) {
         return true;
     }
 
-    //unrecognized code format
     return false;
 }
 
