@@ -368,7 +368,7 @@ void Interface::cheats(const std::vector<std::string>& list) {
     if(!found) {
       //create new cheat
       newCode.restore = bus.read(newCode.address);
-      if(!newCode.compare || newCode.compare() == newCode.restore) {
+      if(!newCode.compare || newCode.compare == newCode.restore) {
         newCode.enable = true;
         bus.write(newCode.address, newCode.data);
       } else {

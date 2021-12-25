@@ -8,13 +8,13 @@ struct Cheat {
       if(address != code.address) return false;
       if(data != code.data) return false;
       if((bool)compare != (bool)code.compare) return false;
-      if(compare && code.compare && compare() != code.compare()) return false;
+      if(compare && code.compare && compare != code.compare) return false;
       return true;
     }
 
     unsigned address;
     unsigned data;
-    nall::maybe<unsigned> compare;
+    std::optional<unsigned> compare;
     bool enable;
     unsigned restore;
   };
@@ -24,9 +24,9 @@ struct Cheat {
   }
 
   void reset();
-  void append(unsigned address, unsigned data, nall::maybe<unsigned> compare = {});
+  void append(unsigned address, unsigned data, std::optional<unsigned> compare = {});
   void assign(const std::vector<std::string>& list);
-  nall::maybe<unsigned> find(unsigned address, unsigned compare);
+  bool find(uint8_t *val, unsigned address, unsigned compare);
 
   std::vector<Code> codes;
 };

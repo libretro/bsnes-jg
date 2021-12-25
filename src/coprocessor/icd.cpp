@@ -286,7 +286,8 @@ namespace SameBoy {
   }
 
   static uint8_t read_memory(GB_gameboy_t*, uint16_t addr, uint8_t data) {
-    if(auto replace = icd.cheats.find(addr, data)) return replace();
+    uint8_t replace;
+    if(icd.cheats.find(&replace, addr, data)) return replace;
     return data;
   }
 

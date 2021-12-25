@@ -12,7 +12,7 @@ void Cheat::reset() {
   codes.clear();
 }
 
-void Cheat::append(unsigned address, unsigned data, nall::maybe<unsigned> compare) {
+void Cheat::append(unsigned address, unsigned data, std::optional<unsigned> compare) {
   codes.push_back({address, data, compare});
 }
 
@@ -31,13 +31,14 @@ void Cheat::assign(const std::vector<std::string>& list) {
   }
 }
 
-nall::maybe<unsigned> Cheat::find(unsigned address, unsigned compare) {
+bool Cheat::find(uint8_t *val, unsigned address, unsigned compare) {
   for(auto& code : codes) {
-    if(code.address == address && (!code.compare || code.compare() == compare)) {
-      return code.data;
+    if(code.address == address && (!code.compare || code.compare == compare)) {
+      *val = code.data;
+      return true;
     }
   }
-  return nall::nothing;
+  return false;
 }
 
 }

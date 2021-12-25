@@ -3,6 +3,7 @@
 #include <libco/libco.h>
 
 #include <fstream>
+#include <optional>
 #include <string>
 #include <vector>
 
