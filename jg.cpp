@@ -915,9 +915,9 @@ int jg_game_load() {
     emulator->configure("Hacks/SA1/Overclock", 100);
     emulator->configure("Hacks/SuperFX/Overclock", 100);
     emulator->configure("Hacks/Coprocessor/DelayedSync",
-        settings_bsnes[COPROC_DELAYSYNC].value);
+        (bool)settings_bsnes[COPROC_DELAYSYNC].value);
     emulator->configure("Hacks/Coprocessor/PreferHLE",
-        settings_bsnes[COPROC_PREFERHLE].value);
+        (bool)settings_bsnes[COPROC_PREFERHLE].value);
 
     // Load the game
     std::string fname = std::string(gameinfo.fname);
