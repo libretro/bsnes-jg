@@ -49,7 +49,6 @@ struct Interface : Emulator::Interface {
   void run() override;
 
   bool rtc() override;
-  void synchronize(uint64_t timestamp) override;
 
   serializer serialize(bool synchronize = true) override;
   bool unserialize(serializer&) override;
@@ -89,17 +88,13 @@ struct Configuration {
       unsigned version = 3;
     } ppu2;
     struct Serialization {
-      nall::string method = "Fast";
+      std::string method = "Fast";
     } serialization;
   } system;
 
-  struct Video {
-    bool colorEmulation = true;
-  } video;
-
   struct Hacks {
     bool hotfixes = true;
-    nall::string entropy = "Low";
+    std::string entropy = "Low";
     struct CPU {
       unsigned overclock = 100;
       bool fastMath = false;

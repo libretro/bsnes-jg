@@ -107,7 +107,6 @@ struct Interface {
 
   //time functions
   virtual auto rtc() -> bool { return false; }
-  virtual auto synchronize(uint64_t timestamp = 0) -> void {}
 
   //state functions
   virtual auto serialize(bool synchronize = true) -> serializer { return {}; }
