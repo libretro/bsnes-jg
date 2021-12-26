@@ -118,14 +118,14 @@ void Dsp1::fsmStep(bool read, uint8_t &data)
          mSr ^= DRS;
          if (!(mSr&DRS))
          {
-            mReadBuffer[mDataCounter++] = static_cast<int16>(mDr);
+            mReadBuffer[mDataCounter++] = static_cast<int16_t>(mDr);
             if (mDataCounter >= mCommandTable[mCommand].reads)
             {
                (this->*mCommandTable[mCommand].callback)(mReadBuffer, mWriteBuffer);
                if (0 != mCommandTable[mCommand].writes)  // any output?
                {
                   mDataCounter = 0;
-                  mDr = static_cast<uint16>(mWriteBuffer[mDataCounter]);
+                  mDr = static_cast<uint16_t>(mWriteBuffer[mDataCounter]);
                   mFsmMajorState = WRITE_DATA;
                }
                else
@@ -150,7 +150,7 @@ void Dsp1::fsmStep(bool read, uint8_t &data)
                   mReadBuffer[0]++;   // next raster line
                   (this->*mCommandTable[mCommand].callback)(mReadBuffer, mWriteBuffer);
                   mDataCounter = 0;
-                  mDr = static_cast<uint16>(mWriteBuffer[mDataCounter]);
+                  mDr = static_cast<uint16_t>(mWriteBuffer[mDataCounter]);
                }
                else
                {
@@ -161,7 +161,7 @@ void Dsp1::fsmStep(bool read, uint8_t &data)
             }
             else
             {
-               mDr = static_cast<uint16>(mWriteBuffer[mDataCounter]);
+               mDr = static_cast<uint16_t>(mWriteBuffer[mDataCounter]);
             }
          }
          break;
@@ -250,26 +250,26 @@ const Dsp1::Command Dsp1::mCommandTable[0x40] = {
 
 //////////////////////////////////////////////////////////////////
 
-void Dsp1::memoryTest(int16 *input, int16 *output)
+void Dsp1::memoryTest(int16_t *input, int16_t *output)
 {
-   int16& Size = input[0];
-   int16& Result = output[0];
+   int16_t& Size = input[0];
+   int16_t& Result = output[0];
 
    Result = 0x0000;
 }
 
 //////////////////////////////////////////////////////////////////
 
-void Dsp1::memoryDump(int16 *input, int16 *output)
+void Dsp1::memoryDump(int16_t *input, int16_t *output)
 {
    memcpy(output, DataRom, 1024);
 }
 
 //////////////////////////////////////////////////////////////////
 
-void Dsp1::memorySize(int16 *input, int16 *output)
+void Dsp1::memorySize(int16_t *input, int16_t *output)
 {
-   int16& Size = output[0];
+   int16_t& Size = output[0];
 
    Size = 0x0100;
 }
@@ -278,11 +278,11 @@ void Dsp1::memorySize(int16 *input, int16 *output)
 
 // 16-bit multiplication
 
-void Dsp1::multiply(int16 *input, int16 *output)
+void Dsp1::multiply(int16_t *input, int16_t *output)
 {
-   int16& Multiplicand = input[0];
-   int16& Multiplier = input[1];
-   int16& Product = output[0];
+   int16_t& Multiplicand = input[0];
+   int16_t& Multiplier = input[1];
+   int16_t& Product = output[0];
 
    Product = Multiplicand * Multiplier >> 15;
 }
@@ -291,11 +291,11 @@ void Dsp1::multiply(int16 *input, int16 *output)
 
 // 16-bit multiplication. 'Alternative' method. Can anyone check this carefully?
 
-void Dsp1::multiply2(int16 *input, int16 *output)
+void Dsp1::multiply2(int16_t *input, int16_t *output)
 {
-   int16& Multiplicand = input[0];
-   int16& Multiplier = input[1];
-   int16& Product = output[0];
+   int16_t& Multiplicand = input[0];
+   int16_t& Multiplier = input[1];
+   int16_t& Product = output[0];
 
    Product = (Multiplicand * Multiplier >> 15)+1;
 }
@@ -304,12 +304,12 @@ void Dsp1::multiply2(int16 *input, int16 *output)
 
 // This command determines the inverse of a floating point decimal number.
 
-void Dsp1::inverse(int16 *input, int16 *output)
+void Dsp1::inverse(int16_t *input, int16_t *output)
 {
-   int16& Coefficient = input[0];
-   int16& Exponent = input[1];
-   int16& iCoefficient = output[0];
-   int16& iExponent = output[1];
+   int16_t& Coefficient = input[0];
+   int16_t& Exponent = input[1];
+   int16_t& iCoefficient = output[0];
+   int16_t& iExponent = output[1];
 
    inverse(Coefficient, Exponent, iCoefficient, iExponent);
 }
@@ -321,12 +321,12 @@ void Dsp1::inverse(int16 *input, int16 *output)
 // Y = Radius * sin(Angle)
 // X = Radius * cos(Angle)
 
-void Dsp1::triangle(int16 *input, int16 *output)
+void Dsp1::triangle(int16_t *input, int16_t *output)
 {
-   int16& Angle = input[0];
-   int16& Radius = input[1];
-   int16& Y = output[0];
-   int16& X = output[1];
+   int16_t& Angle = input[0];
+   int16_t& Radius = input[1];
+   int16_t& Y = output[0];
+   int16_t& X = output[1];
 
    Y = sin(Angle) * Radius >> 15;
    X = cos(Angle) * Radius >> 15;
@@ -337,19 +337,19 @@ void Dsp1::triangle(int16 *input, int16 *output)
 // Determines the squared norm of a vector (X,Y,Z)
 // The output is Radius = X^2+Y^2+Z^2 (double integer)
 
-void Dsp1::radius(int16 *input, int16 *output)
+void Dsp1::radius(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& RadiusLow = output[0];
-   int16& RadiusHigh = output[1];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& RadiusLow = output[0];
+   int16_t& RadiusHigh = output[1];
 
-   int32 Radius;
+   int32_t Radius;
 
    Radius = (X * X + Y * Y + Z * Z) << 1;
-   RadiusLow = static_cast<int16>(Radius);
-   RadiusHigh = static_cast<int16>(Radius>>16);
+   RadiusLow = static_cast<int16_t>(Radius);
+   RadiusHigh = static_cast<int16_t>(Radius>>16);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -358,13 +358,13 @@ void Dsp1::radius(int16 *input, int16 *output)
 // from a particular point, and so may be used to determine if a point is within the sphere or radius R.
 // The output is D = X^2+Y^2+Z^2-R^2
 
-void Dsp1::range(int16 *input, int16 *output)
+void Dsp1::range(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& Radius = input[3];
-   int16& Range = output[0];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& Radius = input[3];
+   int16_t& Range = output[0];
 
    Range = (X * X + Y * Y + Z * Z - Radius * Radius) >> 15;
 }
@@ -373,13 +373,13 @@ void Dsp1::range(int16 *input, int16 *output)
 
 // Vector size comparison. 'Alternative' method.
 
-void Dsp1::range2(int16 *input, int16 *output)
+void Dsp1::range2(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& Radius = input[3];
-   int16& Range = output[0];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& Radius = input[3];
+   int16_t& Range = output[0];
 
    Range = ((X * X + Y * Y + Z * Z - Radius * Radius) >> 15) + 1;
 }
@@ -394,26 +394,26 @@ void Dsp1::range2(int16 *input, int16 *output)
 // c=sqrt(b) by using lineal interpolation between points of a
 // look-up table and, finally, you output the result as c*2^n.
 
-void Dsp1::distance(int16 *input, int16 *output)
+void Dsp1::distance(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& Distance = output[0];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& Distance = output[0];
 
-   int32 Radius = X * X + Y * Y + Z * Z;
+   int32_t Radius = X * X + Y * Y + Z * Z;
 
    if (Radius == 0) Distance = 0;
    else
    {
-      int16 C, E;
+      int16_t C, E;
       normalizeDouble(Radius, C, E);
       if (E & 1) C = C * 0x4000 >> 15;
 
-      int16 Pos = C * 0x0040 >> 15;
+      int16_t Pos = C * 0x0040 >> 15;
 
-      int16 Node1 = DataRom[0x00d5 + Pos];
-      int16 Node2 = DataRom[0x00d6 + Pos];
+      int16_t Node1 = DataRom[0x00d5 + Pos];
+      int16_t Node2 = DataRom[0x00d6 + Pos];
 
       Distance = ((Node2 - Node1) * (C & 0x1ff) >> 9) + Node1;
 
@@ -435,13 +435,13 @@ void Dsp1::distance(int16 *input, int16 *output)
 // |  | =  |                       | |  |
 // |Y2|    |-sin(Angle   cos(Angle)| |Y1|
 
-void Dsp1::rotate(int16 *input, int16 *output)
+void Dsp1::rotate(int16_t *input, int16_t *output)
 {
-   int16& Angle = input[0];
-   int16& X1 = input[1];
-   int16& Y1 = input[2];
-   int16& X2 = output[0];
-   int16& Y2 = output[1];
+   int16_t& Angle = input[0];
+   int16_t& X1 = input[1];
+   int16_t& Y1 = input[2];
+   int16_t& X2 = output[0];
+   int16_t& Y2 = output[1];
 
    X2 = (Y1 * sin(Angle) >> 15) + (X1 * cos(Angle) >> 15);
    Y2 = (Y1 * cos(Angle) >> 15) - (X1 * sin(Angle) >> 15);
@@ -461,19 +461,19 @@ void Dsp1::rotate(int16 *input, int16 *output)
 // |Y2| = |0    cosRx  sinRx| |  0     1      0  | |-sinRz  cosRz    0| |Y1|
 // |Z2|   |0   -sinRx  cosRx| |sinRy   0    cosRy| |   0      0      1| |Z1|
 
-void Dsp1::polar(int16 *input, int16 *output)
+void Dsp1::polar(int16_t *input, int16_t *output)
 {
-   int16& Az = input[0];
-   int16& Ay = input[1];
-   int16& Ax = input[2];
-   int16& X1 = input[3];
-   int16& Y1 = input[4];
-   int16& Z1 = input[5];
-   int16& X2 = output[0];
-   int16& Y2 = output[1];
-   int16& Z2 = output[2];
+   int16_t& Az = input[0];
+   int16_t& Ay = input[1];
+   int16_t& Ax = input[2];
+   int16_t& X1 = input[3];
+   int16_t& Y1 = input[4];
+   int16_t& Z1 = input[5];
+   int16_t& X2 = output[0];
+   int16_t& Y2 = output[1];
+   int16_t& Z2 = output[2];
 
-   int16 X, Y, Z;
+   int16_t X, Y, Z;
 
    // Rotate Around Z
    X = (Y1 * sin(Az) >> 15) + (X1 * cos(Az) >> 15);
@@ -525,19 +525,19 @@ void Dsp1::polar(int16 *input, int16 *output)
 // input[2]: Ry
 // input[3]: Rx
 
-void Dsp1::attitudeA(int16 *input, int16 *output)
+void Dsp1::attitudeA(int16_t *input, int16_t *output)
 {
-   int16& S = input[0];
-   int16& Rz = input[1];
-   int16& Ry = input[2];
-   int16& Rx = input[3];
+   int16_t& S = input[0];
+   int16_t& Rz = input[1];
+   int16_t& Ry = input[2];
+   int16_t& Rx = input[3];
 
-   int16 SinRz = sin(Rz);
-   int16 CosRz = cos(Rz);
-   int16 SinRy = sin(Ry);
-   int16 CosRy = cos(Ry);
-   int16 SinRx = sin(Rx);
-   int16 CosRx = cos(Rx);
+   int16_t SinRz = sin(Rz);
+   int16_t CosRz = cos(Rz);
+   int16_t SinRy = sin(Ry);
+   int16_t CosRy = cos(Ry);
+   int16_t SinRx = sin(Rx);
+   int16_t CosRx = cos(Rx);
 
    S >>= 1;
 
@@ -558,19 +558,19 @@ void Dsp1::attitudeA(int16 *input, int16 *output)
 
 // Same than 'attitudeA', but with a difference attitude matrix (matrixB)
 
-void Dsp1::attitudeB(int16 *input, int16 *output)
+void Dsp1::attitudeB(int16_t *input, int16_t *output)
 {
-   int16& S = input[0];
-   int16& Rz = input[1];
-   int16& Ry = input[2];
-   int16& Rx = input[3];
+   int16_t& S = input[0];
+   int16_t& Rz = input[1];
+   int16_t& Ry = input[2];
+   int16_t& Rx = input[3];
 
-   int16 SinRz = sin(Rz);
-   int16 CosRz = cos(Rz);
-   int16 SinRy = sin(Ry);
-   int16 CosRy = cos(Ry);
-   int16 SinRx = sin(Rx);
-   int16 CosRx = cos(Rx);
+   int16_t SinRz = sin(Rz);
+   int16_t CosRz = cos(Rz);
+   int16_t SinRy = sin(Ry);
+   int16_t CosRy = cos(Ry);
+   int16_t SinRx = sin(Rx);
+   int16_t CosRx = cos(Rx);
 
    S >>= 1;
 
@@ -591,19 +591,19 @@ void Dsp1::attitudeB(int16 *input, int16 *output)
 
 // Same than 'attitudeA', but with a difference attitude matrix (matrixC)
 
-void Dsp1::attitudeC(int16 *input, int16 *output)
+void Dsp1::attitudeC(int16_t *input, int16_t *output)
 {
-   int16& S = input[0];
-   int16& Rz = input[1];
-   int16& Ry = input[2];
-   int16& Rx = input[3];
+   int16_t& S = input[0];
+   int16_t& Rz = input[1];
+   int16_t& Ry = input[2];
+   int16_t& Rx = input[3];
 
-   int16 SinRz = sin(Rz);
-   int16 CosRz = cos(Rz);
-   int16 SinRy = sin(Ry);
-   int16 CosRy = cos(Ry);
-   int16 SinRx = sin(Rx);
-   int16 CosRx = cos(Rx);
+   int16_t SinRz = sin(Rz);
+   int16_t CosRz = cos(Rz);
+   int16_t SinRy = sin(Ry);
+   int16_t CosRy = cos(Ry);
+   int16_t SinRx = sin(Rx);
+   int16_t CosRx = cos(Rx);
 
    S >>= 1;
 
@@ -628,14 +628,14 @@ void Dsp1::attitudeC(int16 *input, int16 *output)
 // input[0]: X ; input[1]: Y ; input[2]: Z
 // output[0]: F ; output[1]: L ; output[2]: U
 
-void Dsp1::objectiveA(int16 *input, int16 *output)
+void Dsp1::objectiveA(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& F = output[0];
-   int16& L = output[1];
-   int16& U = output[2];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& F = output[0];
+   int16_t& L = output[1];
+   int16_t& U = output[2];
 
    F = (shared.MatrixA[0][0] * X >> 15) + (shared.MatrixA[1][0] * Y >> 15) + (shared.MatrixA[2][0] * Z >> 15);
    L = (shared.MatrixA[0][1] * X >> 15) + (shared.MatrixA[1][1] * Y >> 15) + (shared.MatrixA[2][1] * Z >> 15);
@@ -646,14 +646,14 @@ void Dsp1::objectiveA(int16 *input, int16 *output)
 
 // Same than 'objectiveA', but for the 'B' attitude
 
-void Dsp1::objectiveB(int16 *input, int16 *output)
+void Dsp1::objectiveB(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& F = output[0];
-   int16& L = output[1];
-   int16& U = output[2];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& F = output[0];
+   int16_t& L = output[1];
+   int16_t& U = output[2];
 
    F = (shared.MatrixB[0][0] * X >> 15) + (shared.MatrixB[1][0] * Y >> 15) + (shared.MatrixB[2][0] * Z >> 15);
    L = (shared.MatrixB[0][1] * X >> 15) + (shared.MatrixB[1][1] * Y >> 15) + (shared.MatrixB[2][1] * Z >> 15);
@@ -664,14 +664,14 @@ void Dsp1::objectiveB(int16 *input, int16 *output)
 
 // Same than 'objectiveA', but for the 'C' attitude
 
-void Dsp1::objectiveC(int16 *input, int16 *output)
+void Dsp1::objectiveC(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& F = output[0];
-   int16& L = output[1];
-   int16& U = output[2];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& F = output[0];
+   int16_t& L = output[1];
+   int16_t& U = output[2];
 
    F = (shared.MatrixC[0][0] * X >> 15) + (shared.MatrixC[1][0] * Y >> 15) + (shared.MatrixC[2][0] * Z >> 15);
    L = (shared.MatrixC[0][1] * X >> 15) + (shared.MatrixC[1][1] * Y >> 15) + (shared.MatrixC[2][1] * Z >> 15);
@@ -686,14 +686,14 @@ void Dsp1::objectiveC(int16 *input, int16 *output)
 // input[0]: F ; input[1]: L ; input[2]: U
 // output[0]: X ; output[1]: Y ; output[2]: Z
 
-void Dsp1::subjectiveA(int16 *input, int16 *output)
+void Dsp1::subjectiveA(int16_t *input, int16_t *output)
 {
-   int16& F = input[0];
-   int16& L = input[1];
-   int16& U = input[2];
-   int16& X = output[0];
-   int16& Y = output[1];
-   int16& Z = output[2];
+   int16_t& F = input[0];
+   int16_t& L = input[1];
+   int16_t& U = input[2];
+   int16_t& X = output[0];
+   int16_t& Y = output[1];
+   int16_t& Z = output[2];
 
    X = (shared.MatrixA[0][0] * F >> 15) + (shared.MatrixA[0][1] * L >> 15) + (shared.MatrixA[0][2] * U >> 15);
    Y = (shared.MatrixA[1][0] * F >> 15) + (shared.MatrixA[1][1] * L >> 15) + (shared.MatrixA[1][2] * U >> 15);
@@ -704,14 +704,14 @@ void Dsp1::subjectiveA(int16 *input, int16 *output)
 
 // Same than 'subjectiveA', but for the 'B' attitude
 
-void Dsp1::subjectiveB(int16 *input, int16 *output)
+void Dsp1::subjectiveB(int16_t *input, int16_t *output)
 {
-   int16& F = input[0];
-   int16& L = input[1];
-   int16& U = input[2];
-   int16& X = output[0];
-   int16& Y = output[1];
-   int16& Z = output[2];
+   int16_t& F = input[0];
+   int16_t& L = input[1];
+   int16_t& U = input[2];
+   int16_t& X = output[0];
+   int16_t& Y = output[1];
+   int16_t& Z = output[2];
 
    X = (shared.MatrixB[0][0] * F >> 15) + (shared.MatrixB[0][1] * L >> 15) + (shared.MatrixB[0][2] * U >> 15);
    Y = (shared.MatrixB[1][0] * F >> 15) + (shared.MatrixB[1][1] * L >> 15) + (shared.MatrixB[1][2] * U >> 15);
@@ -722,14 +722,14 @@ void Dsp1::subjectiveB(int16 *input, int16 *output)
 
 // Same than 'subjectiveA', but for the 'C' attitude
 
-void Dsp1::subjectiveC(int16 *input, int16 *output)
+void Dsp1::subjectiveC(int16_t *input, int16_t *output)
 {
-   int16& F = input[0];
-   int16& L = input[1];
-   int16& U = input[2];
-   int16& X = output[0];
-   int16& Y = output[1];
-   int16& Z = output[2];
+   int16_t& F = input[0];
+   int16_t& L = input[1];
+   int16_t& U = input[2];
+   int16_t& X = output[0];
+   int16_t& Y = output[1];
+   int16_t& Z = output[2];
 
    X = (shared.MatrixC[0][0] * F >> 15) + (shared.MatrixC[0][1] * L >> 15) + (shared.MatrixC[0][2] * U >> 15);
    Y = (shared.MatrixC[1][0] * F >> 15) + (shared.MatrixC[1][1] * L >> 15) + (shared.MatrixC[1][2] * U >> 15);
@@ -747,12 +747,12 @@ void Dsp1::subjectiveC(int16 *input, int16 *output)
 // input[0]: X ; input[1]: Y ; input[2]: Z
 // output[0]: S
 
-void Dsp1::scalarA(int16 *input, int16 *output)
+void Dsp1::scalarA(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& S = output[0];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& S = output[0];
 
    S = (X * shared.MatrixA[0][0] + Y * shared.MatrixA[1][0] + Z * shared.MatrixA[2][0]) >> 15;
 }
@@ -761,12 +761,12 @@ void Dsp1::scalarA(int16 *input, int16 *output)
 
 // Same than 'scalarA', but for the 'B' attitude
 
-void Dsp1::scalarB(int16 *input, int16 *output)
+void Dsp1::scalarB(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& S = output[0];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& S = output[0];
 
    S = (X * shared.MatrixB[0][0] + Y * shared.MatrixB[1][0] + Z * shared.MatrixB[2][0]) >> 15;
 }
@@ -775,12 +775,12 @@ void Dsp1::scalarB(int16 *input, int16 *output)
 
 // Same than 'scalarA', but for the 'C' attitude
 
-void Dsp1::scalarC(int16 *input, int16 *output)
+void Dsp1::scalarC(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& S = output[0];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& S = output[0];
 
    S = (X * shared.MatrixC[0][0] + Y * shared.MatrixC[1][0] + Z * shared.MatrixC[2][0]) >> 15;
 }
@@ -805,21 +805,21 @@ void Dsp1::scalarC(int16 *input, int16 *output)
 // opinion, a pretty severe implementation error. However, if you only use small "minor displacements", the error term
 // introduced by that incoherence should be almost negligible.
 
-void Dsp1::gyrate(int16 *input, int16 *output)
+void Dsp1::gyrate(int16_t *input, int16_t *output)
 {
-   int16& Az = input[0];
-   int16& Ax = input[1];
-   int16& Ay = input[2];
-   int16& U = input[3];
-   int16& F = input[4];
-   int16& L = input[5];
-   int16& Rz = output[0];
-   int16& Rx = output[1];
-   int16& Ry = output[2];
+   int16_t& Az = input[0];
+   int16_t& Ax = input[1];
+   int16_t& Ay = input[2];
+   int16_t& U = input[3];
+   int16_t& F = input[4];
+   int16_t& L = input[5];
+   int16_t& Rz = output[0];
+   int16_t& Rx = output[1];
+   int16_t& Ry = output[2];
 
-   int16 CSec, ESec, CSin, C, E;
-   int16 SinAy = sin(Ay);
-   int16 CosAy = cos(Ay);
+   int16_t CSec, ESec, CSin, C, E;
+   int16_t SinAy = sin(Ay);
+   int16_t CosAy = cos(Ay);
 
    inverse(cos(Ax), 0, CSec, ESec);
 
@@ -849,7 +849,7 @@ void Dsp1::gyrate(int16 *input, int16 *output)
 
 //////////////////////////////////////////////////////////////////
 
-const int16 Dsp1::MaxAZS_Exp[16] = {
+const int16_t Dsp1::MaxAZS_Exp[16] = {
    0x38b4, 0x38b7, 0x38ba, 0x38be, 0x38c0, 0x38c4, 0x38c7, 0x38ca,
    0x38ce, 0x38d0, 0x38d4, 0x38d7, 0x38da, 0x38dd, 0x38e0, 0x38e4
 };
@@ -870,26 +870,26 @@ const int16 Dsp1::MaxAZS_Exp[16] = {
 // Vva-> raster line representing the horizon line
 // (Cx, Cy)-> coordinates of the projection of the center of the screen over the ground (ground coordinates)
 
-void Dsp1::parameter(int16 *input, int16 *output)
+void Dsp1::parameter(int16_t *input, int16_t *output)
 {
-   int16& Fx = input[0];
-   int16& Fy = input[1];
-   int16& Fz = input[2];
-   int16& Lfe = input[3];
-   int16& Les = input[4];
-   int16& Aas = input[5];
-   int16& Azs = input[6];
-   int16& Vof = output[0];
-   int16& Vva = output[1];
-   int16& Cx = output[2];
-   int16& Cy = output[3];
+   int16_t& Fx = input[0];
+   int16_t& Fy = input[1];
+   int16_t& Fz = input[2];
+   int16_t& Lfe = input[3];
+   int16_t& Les = input[4];
+   int16_t& Aas = input[5];
+   int16_t& Azs = input[6];
+   int16_t& Vof = output[0];
+   int16_t& Vva = output[1];
+   int16_t& Cx = output[2];
+   int16_t& Cy = output[3];
 
-   int16 CSec, C, E;
-   int16 LfeNx, LfeNy, LfeNz;
-   int16 LesNx, LesNy, LesNz;
+   int16_t CSec, C, E;
+   int16_t LfeNx, LfeNy, LfeNz;
+   int16_t LesNx, LesNy, LesNz;
 
    // Copy Zenith angle for clipping
-   int16 AZS = Azs;
+   int16_t AZS = Azs;
 
    // Store Les and his coefficient and exponent when normalized
    shared.Les = Les;
@@ -943,7 +943,7 @@ void Dsp1::parameter(int16 *input, int16 *output)
 
    // Determine clip boundary and clip Zenith angle if necessary
    // (Why to clip? Maybe to avoid the screen can only show sky with no ground? Only a guess...)
-   int16 MaxAZS = MaxAZS_Exp[-E];
+   int16_t MaxAZS = MaxAZS_Exp[-E];
 
    if (AZS < 0) {
       MaxAZS = -MaxAZS;
@@ -984,7 +984,7 @@ void Dsp1::parameter(int16 *input, int16 *output)
 
       C = Azs - MaxAZS;
       if (C >= 0) C--;
-      int16 Aux = ~(C << 2);
+      int16_t Aux = ~(C << 2);
 
       // Vof += x+(1/3)*x^3, where x ranges from 0 to PI/4 when Azs-MaxAZS goes from 0 to 0x2000
       C = Aux * DataRom[0x0328] >> 15;
@@ -1045,15 +1045,15 @@ void Dsp1::parameter(int16 *input, int16 *output)
 // offset is 1, the ratio of the projection over the ground respect to the
 // line on the screen is 1/cos(Azs).
 
-void Dsp1::raster(int16 *input, int16 *output)
+void Dsp1::raster(int16_t *input, int16_t *output)
 {
-   int16& Vs = input[0];
-   int16& An = output[0];
-   int16& Bn = output[1];
-   int16& Cn = output[2];
-   int16& Dn = output[3];
+   int16_t& Vs = input[0];
+   int16_t& An = output[0];
+   int16_t& Bn = output[1];
+   int16_t& Cn = output[2];
+   int16_t& Dn = output[3];
 
-   int16 C, E, C1, E1;
+   int16_t C, E, C1, E1;
 
    inverse((Vs * shared.SinAzs >> 15) + shared.VOffset, 7, C, E);
 
@@ -1085,14 +1085,14 @@ void Dsp1::raster(int16 *input, int16 *output)
 // H is positive rightward, but V is positive downward; this is why
 // the signs take that configuration
 
-void Dsp1::target(int16 *input, int16 *output)
+void Dsp1::target(int16_t *input, int16_t *output)
 {
-   int16& H = input[0];
-   int16& V = input[1];
-   int16& X = output[0];
-   int16& Y = output[1];
+   int16_t& H = input[0];
+   int16_t& V = input[1];
+   int16_t& X = output[0];
+   int16_t& Y = output[1];
 
-   int16 C, E, C1, E1;
+   int16_t C, E, C1, E1;
 
    inverse((V * shared.SinAzs >> 15) + shared.VOffset, 8, C, E);
 
@@ -1122,25 +1122,25 @@ void Dsp1::target(int16 *input, int16 *output)
 // 'enlargement ratio' (M). The positive directions on the screen are as described
 // in the targe command. M is scaled down by 2^-7, that is, M==0x0100 means ratio 1:1
 
-      void Dsp1::project(int16 *input, int16 *output)
+      void Dsp1::project(int16_t *input, int16_t *output)
 {
-   int16& X = input[0];
-   int16& Y = input[1];
-   int16& Z = input[2];
-   int16& H = output[0];
-   int16& V = output[1];
-   int16& M = output[2];
+   int16_t& X = input[0];
+   int16_t& Y = input[1];
+   int16_t& Z = input[2];
+   int16_t& H = output[0];
+   int16_t& V = output[1];
+   int16_t& M = output[2];
 
-   int32 aux, aux4;
-   int16 E, E2, E3, E4, E5, refE, E6, E7;
-   int16 C2, C4, C6, C8, C9, C10, C11, C12, C16, C17, C18, C19, C20, C21, C22, C23, C24, C25, C26;
-   int16 Px, Py, Pz;
+   int32_t aux, aux4;
+   int16_t E, E2, E3, E4, E5, refE, E6, E7;
+   int16_t C2, C4, C6, C8, C9, C10, C11, C12, C16, C17, C18, C19, C20, C21, C22, C23, C24, C25, C26;
+   int16_t Px, Py, Pz;
 
    E4=E3=E2=E=E5=0;
 
-   normalizeDouble(int32(X)-shared.Gx, Px, E4);
-   normalizeDouble(int32(Y)-shared.Gy, Py, E);
-   normalizeDouble(int32(Z)-shared.Gz, Pz, E3);
+   normalizeDouble(int32_t(X)-shared.Gx, Px, E4);
+   normalizeDouble(int32_t(Y)-shared.Gy, Py, E);
+   normalizeDouble(int32_t(Z)-shared.Gz, Pz, E3);
    Px>>=1; E4--;   // to avoid overflows when calculating the scalar products
    Py>>=1; E--;
    Pz>>=1; E3--;
@@ -1166,7 +1166,7 @@ void Dsp1::target(int16 *input, int16 *output)
    if (aux4==-1) aux4 = 0;      // why?
    aux4>>=1;
 
-   aux = static_cast<uint16>(shared.Les) + aux4;   // Les - the scalar product of P with the normal vector of the screen
+   aux = static_cast<uint16_t>(shared.Les) + aux4;   // Les - the scalar product of P with the normal vector of the screen
    normalizeDouble(aux, C10, E2);
    E2 = 15-E2;
 
@@ -1206,31 +1206,31 @@ void Dsp1::target(int16 *input, int16 *output)
 // this is done by linear interpolation between
 // the points of a look-up table
 
-int16 Dsp1::sin(int16 Angle)
+int16_t Dsp1::sin(int16_t Angle)
 {
    if (Angle < 0) {
       if (Angle == -32768) return 0;
       return -sin(-Angle);
    }
-   int32 S = SinTable[Angle >> 8] + (MulTable[Angle & 0xff] * SinTable[0x40 + (Angle >> 8)] >> 15);
+   int32_t S = SinTable[Angle >> 8] + (MulTable[Angle & 0xff] * SinTable[0x40 + (Angle >> 8)] >> 15);
    if (S > 32767) S = 32767;
-   return (int16) S;
+   return (int16_t) S;
 }
 
 //////////////////////////////////////////////////////////////////
 
 // Calculate the cosine of the input parameter.
-// It's used the same method than in sin(int16)
+// It's used the same method than in sin(int16_t)
 
-int16 Dsp1::cos(int16 Angle)
+int16_t Dsp1::cos(int16_t Angle)
 {
    if (Angle < 0) {
       if (Angle == -32768) return -32768;
       Angle = -Angle;
    }
-   int32 S = SinTable[0x40 + (Angle >> 8)] - (MulTable[Angle & 0xff] * SinTable[Angle >> 8] >> 15);
+   int32_t S = SinTable[0x40 + (Angle >> 8)] - (MulTable[Angle & 0xff] * SinTable[Angle >> 8] >> 15);
    if (S < -32768) S = -32767;
-   return (int16) S;
+   return (int16_t) S;
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1244,7 +1244,7 @@ int16 Dsp1::cos(int16 Angle)
 // that verify Coefficient*y=1/2. This is why you have to correct the exponent by one
 // unit at the end.
 
-void Dsp1::inverse(int16 Coefficient, int16 Exponent, int16 &iCoefficient, int16 &iExponent)
+void Dsp1::inverse(int16_t Coefficient, int16_t Exponent, int16_t &iCoefficient, int16_t &iExponent)
 {
    // Step One: Division by Zero
    if (Coefficient == 0x0000)
@@ -1254,7 +1254,7 @@ void Dsp1::inverse(int16 Coefficient, int16 Exponent, int16 &iCoefficient, int16
    }
    else
    {
-      int16 Sign = 1;
+      int16_t Sign = 1;
 
       // Step Two: Remove Sign
       if (Coefficient < 0)
@@ -1280,7 +1280,7 @@ void Dsp1::inverse(int16 Coefficient, int16 Exponent, int16 &iCoefficient, int16
       }
       else {
          // Step Five: Initial Guess
-         int16 i = DataRom[((Coefficient - 0x4000) >> 7) + 0x0065];
+         int16_t i = DataRom[((Coefficient - 0x4000) >> 7) + 0x0065];
 
          // Step Six: Iterate Newton's Method
          i = (i + (-i * (Coefficient * i >> 15) >> 15)) << 1;
@@ -1295,7 +1295,7 @@ void Dsp1::inverse(int16 Coefficient, int16 Exponent, int16 &iCoefficient, int16
 
 //////////////////////////////////////////////////////////////////
 
-int16 Dsp1::denormalizeAndClip(int16 C, int16 E)
+int16_t Dsp1::denormalizeAndClip(int16_t C, int16_t E)
 {
    if (E > 0) {
       if (C > 0) return 32767; else if (C < 0) return -32767;
@@ -1310,12 +1310,12 @@ int16 Dsp1::denormalizeAndClip(int16 C, int16 E)
 // Normalize the input number (m), understood as ranging from -1 to 1,
 // to the form: Coefficient*2^Exponent,
 // where the absolute value of Coefficient is >= 1/2
-// (Coefficient>=0x4000 or Coefficient <= (int16)0xc001)
+// (Coefficient>=0x4000 or Coefficient <= (int16_t)0xc001)
 
-void Dsp1::normalize(int16 m, int16 &Coefficient, int16 &Exponent)
+void Dsp1::normalize(int16_t m, int16_t &Coefficient, int16_t &Exponent)
 {
-   int16 i = 0x4000;
-   int16 e = 0;
+   int16_t i = 0x4000;
+   int16_t e = 0;
 
    if (m < 0)
       while ((m & i) && i)
@@ -1340,14 +1340,14 @@ void Dsp1::normalize(int16 m, int16 &Coefficient, int16 &Exponent)
 
 //////////////////////////////////////////////////////////////////
 
-// Same than 'normalize' but with an int32 input
+// Same than 'normalize' but with an int32_t input
 
-void Dsp1::normalizeDouble(int32 Product, int16 &Coefficient, int16 &Exponent)
+void Dsp1::normalizeDouble(int32_t Product, int16_t &Coefficient, int16_t &Exponent)
 {
-   int16 n = Product & 0x7fff;
-   int16 m = Product >> 15;
-   int16 i = 0x4000;
-   int16 e = 0;
+   int16_t n = Product & 0x7fff;
+   int16_t m = Product >> 15;
+   int16_t i = 0x4000;
+   int16_t e = 0;
 
    if (m < 0)
       while ((m & i) && i)
@@ -1401,7 +1401,7 @@ void Dsp1::normalizeDouble(int32 Product, int16 &Coefficient, int16 &Exponent)
 
 // Shift to the right
 
-int16 Dsp1::shiftR(int16 C, int16 E)
+int16_t Dsp1::shiftR(int16_t C, int16_t E)
 {
    return (C * DataRom[0x0031 + E] >> 15);
 }
@@ -1409,7 +1409,7 @@ int16 Dsp1::shiftR(int16 C, int16 E)
 //////////////////////////////////////////////////////////////////
 
 // this is, indeed, only part of the Data ROM
-const int16 Dsp1::SinTable[256] = {
+const int16_t Dsp1::SinTable[256] = {
    0x0000,  0x0324,  0x0647,  0x096a,  0x0c8b,  0x0fab,  0x12c8,  0x15e2,
    0x18f8,  0x1c0b,  0x1f19,  0x2223,  0x2528,  0x2826,  0x2b1f,  0x2e11,
    0x30fb,  0x33de,  0x36ba,  0x398c,  0x3c56,  0x3f17,  0x41ce,  0x447a,
@@ -1446,7 +1446,7 @@ const int16 Dsp1::SinTable[256] = {
    //////////////////////////////////////////////////////////////////
 
 // Optimised for Performance
-   const int16 Dsp1::MulTable[256] = {
+   const int16_t Dsp1::MulTable[256] = {
       0x0000,  0x0003,  0x0006,  0x0009,  0x000c,  0x000f,  0x0012,  0x0015,
       0x0019,  0x001c,  0x001f,  0x0022,  0x0025,  0x0028,  0x002b,  0x002f,
       0x0032,  0x0035,  0x0038,  0x003b,  0x003e,  0x0041,  0x0045,  0x0048,
@@ -1493,7 +1493,7 @@ const int16 Dsp1::SinTable[256] = {
 // 257-points arccos table that, apparently, have been not used anywhere
 // (maybe for the MaxAZS_Exp table?).
 // byuu note: the error at DataRom[0x3c] has been corrected from 0x0001 to 0x0010
-      const uint16 Dsp1::DataRom[1024] = {
+      const uint16_t Dsp1::DataRom[1024] = {
          0x0000,  0x0000,  0x0000,  0x0000,  0x0000,  0x0000,  0x0000,  0x0000,
          0x0000,  0x0000,  0x0000,  0x0000,  0x0000,  0x0000,  0x0000,  0x0000,
          0x0000,  0x0000,  0x0000,  0x0000,  0x0000,  0x0000,  0x0000,  0x0000,

@@ -2,26 +2,10 @@
 
 namespace SuperFamicom {
 
-#define   int8   int8_t
-#define  int16  int16_t
-#define  int32  int32_t
-#define  int64  int64_t
-#define  uint8_t  uint8_t
-#define uint16 uint16_t
-#define uint32 uint32_t
-#define uint64 uint64_t
 #define DSP1_CPP
 #include "dsp1/dsp1emu.cpp"
-Dsp1 dsp1emu;
-#undef   int8
-#undef  int16
-#undef  int32
-#undef  int64
-#undef  uint8
-#undef uint16
-#undef uint32
-#undef uint64
 
+Dsp1 dsp1emu;
 DSP1 dsp1;
 
 auto DSP1::serialize(serializer& s) -> void {

@@ -40,89 +40,89 @@ class Dsp1
       enum MaxDataAccesses {MAX_READS=7, MAX_WRITES=1024};
 
       struct Command {
-         void (Dsp1::*callback)(int16 *, int16 *);
+         void (Dsp1::*callback)(int16_t *, int16_t *);
          unsigned int reads;
          unsigned int writes;
       };
 
       static const Command mCommandTable[];
-      static const int16 MaxAZS_Exp[16];
-      static const int16 SinTable[];
-      static const int16 MulTable[];
-      static const uint16 DataRom[];
+      static const int16_t MaxAZS_Exp[16];
+      static const int16_t SinTable[];
+      static const int16_t MulTable[];
+      static const uint16_t DataRom[];
 
       struct SharedData { // some RAM variables shared between commands
-         int16 MatrixA[3][3];          // attitude matrix A
-         int16 MatrixB[3][3];
-         int16 MatrixC[3][3];
-         int16 CentreX, CentreY, CentreZ;   // center of projection
-         int16 CentreZ_C, CentreZ_E;
-         int16 VOffset;                     // vertical offset of the screen with regard to the centre of projection
-         int16 Les, C_Les, E_Les;
-         int16 SinAas, CosAas;
-         int16 SinAzs, CosAzs;
-         int16 SinAZS, CosAZS;
-         int16 SecAZS_C1, SecAZS_E1;
-         int16 SecAZS_C2, SecAZS_E2;
-         int16 Nx, Ny, Nz;    // normal vector to the screen (norm 1, points toward the center of projection)
-         int16 Gx, Gy, Gz;    // center of the screen (global coordinates)
-         int16 Hx, Hy;        // horizontal vector of the screen (Hz=0, norm 1, points toward the right of the screen)
-         int16 Vx, Vy, Vz;    // vertical vector of the screen (norm 1, points toward the top of the screen)
+         int16_t MatrixA[3][3];          // attitude matrix A
+         int16_t MatrixB[3][3];
+         int16_t MatrixC[3][3];
+         int16_t CentreX, CentreY, CentreZ;   // center of projection
+         int16_t CentreZ_C, CentreZ_E;
+         int16_t VOffset;                     // vertical offset of the screen with regard to the centre of projection
+         int16_t Les, C_Les, E_Les;
+         int16_t SinAas, CosAas;
+         int16_t SinAzs, CosAzs;
+         int16_t SinAZS, CosAZS;
+         int16_t SecAZS_C1, SecAZS_E1;
+         int16_t SecAZS_C2, SecAZS_E2;
+         int16_t Nx, Ny, Nz;    // normal vector to the screen (norm 1, points toward the center of projection)
+         int16_t Gx, Gy, Gz;    // center of the screen (global coordinates)
+         int16_t Hx, Hy;        // horizontal vector of the screen (Hz=0, norm 1, points toward the right of the screen)
+         int16_t Vx, Vy, Vz;    // vertical vector of the screen (norm 1, points toward the top of the screen)
 
       } shared;
 
       uint8_t mSr;            // status register
       int mSrLowByteAccess;
-      uint16 mDr;           // "internal" representation of the data register
+      uint16_t mDr;           // "internal" representation of the data register
       unsigned mFsmMajorState;     // current major state of the FSM
       uint8_t mCommand;                  // current command processed by the FSM
-      uint8_t mDataCounter;                 // #uint16 read/writes counter used by the FSM
-      int16 mReadBuffer[MAX_READS];
-      int16 mWriteBuffer[MAX_WRITES];
+      uint8_t mDataCounter;                 // #uint16_t read/writes counter used by the FSM
+      int16_t mReadBuffer[MAX_READS];
+      int16_t mWriteBuffer[MAX_WRITES];
       bool mFreeze;                   // need explanation?  ;)
 
       void fsmStep(bool read, uint8_t &data);            // FSM logic
 
       // commands
-      void memoryTest(int16 *input, int16 *output);
-      void memoryDump(int16 *input, int16 *output);
-      void memorySize(int16 *input, int16 *output);
-      void multiply(int16* input, int16* output);
-      void multiply2(int16* input, int16* output);
-      void inverse(int16 *input, int16 *output);
-      void triangle(int16 *input, int16 *output);
-      void radius(int16 *input, int16 *output);
-      void range(int16 *input, int16 *output);
-      void range2(int16 *input, int16 *output);
-      void distance(int16 *input, int16 *output);
-      void rotate(int16 *input, int16 *output);
-      void polar(int16 *input, int16 *output);
-      void attitudeA(int16 *input, int16 *output);
-      void attitudeB(int16 *input, int16 *output);
-      void attitudeC(int16 *input, int16 *output);
-      void objectiveA(int16 *input, int16 *output);
-      void objectiveB(int16 *input, int16 *output);
-      void objectiveC(int16 *input, int16 *output);
-      void subjectiveA(int16 *input, int16 *output);
-      void subjectiveB(int16 *input, int16 *output);
-      void subjectiveC(int16 *input, int16 *output);
-      void scalarA(int16 *input, int16 *output);
-      void scalarB(int16 *input, int16 *output);
-      void scalarC(int16 *input, int16 *output);
-      void gyrate(int16 *input, int16 *output);
-      void parameter(int16 *input, int16 *output);
-      void raster(int16 *input, int16 *output);
-      void target(int16 *input, int16 *output);
-      void project(int16 *input, int16 *output);
+      void memoryTest(int16_t *input, int16_t *output);
+      void memoryDump(int16_t *input, int16_t *output);
+      void memorySize(int16_t *input, int16_t *output);
+      void multiply(int16_t* input, int16_t* output);
+      void multiply2(int16_t* input, int16_t* output);
+      void inverse(int16_t *input, int16_t *output);
+      void triangle(int16_t *input, int16_t *output);
+      void radius(int16_t *input, int16_t *output);
+      void range(int16_t *input, int16_t *output);
+      void range2(int16_t *input, int16_t *output);
+      void distance(int16_t *input, int16_t *output);
+      void rotate(int16_t *input, int16_t *output);
+      void polar(int16_t *input, int16_t *output);
+      void attitudeA(int16_t *input, int16_t *output);
+      void attitudeB(int16_t *input, int16_t *output);
+      void attitudeC(int16_t *input, int16_t *output);
+      void objectiveA(int16_t *input, int16_t *output);
+      void objectiveB(int16_t *input, int16_t *output);
+      void objectiveC(int16_t *input, int16_t *output);
+      void subjectiveA(int16_t *input, int16_t *output);
+      void subjectiveB(int16_t *input, int16_t *output);
+      void subjectiveC(int16_t *input, int16_t *output);
+      void scalarA(int16_t *input, int16_t *output);
+      void scalarB(int16_t *input, int16_t *output);
+      void scalarC(int16_t *input, int16_t *output);
+      void gyrate(int16_t *input, int16_t *output);
+      void parameter(int16_t *input, int16_t *output);
+      void raster(int16_t *input, int16_t *output);
+      void target(int16_t *input, int16_t *output);
+      void project(int16_t *input, int16_t *output);
 
       // auxiliar functions
-      int16 sin(int16 Angle);
-      int16 cos(int16 Angle);
-      void inverse(int16 Coefficient, int16 Exponent, int16 &iCoefficient, int16 &iExponent);
-      int16 denormalizeAndClip(int16 C, int16 E);
-      void normalize(int16 m, int16 &Coefficient, int16 &Exponent);
-      void normalizeDouble(int32 Product, int16 &Coefficient, int16 &Exponent);
-      int16 shiftR(int16 C, int16 E);
+      int16_t sin(int16_t Angle);
+      int16_t cos(int16_t Angle);
+      void inverse(int16_t Coefficient, int16_t Exponent, int16_t &iCoefficient, int16_t &iExponent);
+      int16_t denormalizeAndClip(int16_t C, int16_t E);
+      void normalize(int16_t m, int16_t &Coefficient, int16_t &Exponent);
+      void normalizeDouble(int32_t Product, int16_t &Coefficient, int16_t &Exponent);
+      int16_t shiftR(int16_t C, int16_t E);
 };
 
 #endif
