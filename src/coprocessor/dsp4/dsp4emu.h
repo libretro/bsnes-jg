@@ -4,11 +4,6 @@
 #ifndef DSP4EMU_H
 #define DSP4EMU_H
 
-#undef TRUE
-#undef FALSE
-#define TRUE  true
-#define FALSE false
-
 struct DSP4_t
 {
   uint8_t waiting4command;
