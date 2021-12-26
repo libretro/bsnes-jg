@@ -93,12 +93,16 @@ static jg_inputstate_t *input_device[NUMINPUTS];
 static jg_setting_t settings_bsnes[] = { // name, default, min, max
     // 0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL
     { "aspect_ratio", "", 0, 0, 3 },
+    { "coproc_delaysync", "", 0, 0, 1 }, // 0 = Off, 1 = On
+    { "coproc_preferhle", "", 0, 0, 1 }, // 0 = Off, 1 = On
     // 0 = Linear, 1 = ZOH, 2 = Sinc Fastest, 3 = Sinc Medium, 4 = Sinc Best
-    { "rsqual", "", 3, 0, 4 },
+    { "rsqual", "", 2, 0, 4 },
 };
 
 enum {
     ASPECT,
+    COPROC_DELAYSYNC,
+    COPROC_PREFERHLE,
     RSQUAL,
 };
 
@@ -911,8 +915,10 @@ int jg_game_load() {
     emulator->configure("Hacks/CPU/FastMath", false);
     emulator->configure("Hacks/SA1/Overclock", 100);
     emulator->configure("Hacks/SuperFX/Overclock", 100);
-    emulator->configure("Hacks/Coprocessor/DelayedSync", false); // default true
-    emulator->configure("Hacks/Coprocessor/PreferHLE", true); // default true
+    emulator->configure("Hacks/Coprocessor/DelayedSync",
+        settings_bsnes[COPROC_DELAYSYNC].value);
+    emulator->configure("Hacks/Coprocessor/PreferHLE",
+        settings_bsnes[COPROC_PREFERHLE].value);
 
     // Load the game
     std::string fname = std::string(gameinfo.fname);

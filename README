@@ -62,6 +62,12 @@ Settings
 aspect_ratio = 0
 0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL
 
+coproc_delaysync = 0
+0 = Off, 1 = On
+
+coproc_preferhle = 0
+0 = Off, 1 = On
+
 rsqual = 3
 0 = Linear, 1 = ZOH, 2 = Sinc Fastest, 3 = Sinc Medium, 4 = Sinc Best
 
