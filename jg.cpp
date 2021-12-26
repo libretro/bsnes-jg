@@ -94,9 +94,8 @@ static jg_setting_t settings_bsnes[] = { // name, default, min, max
     // 0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL
     { "aspect_ratio", "", 0, 0, 3 },
     { "coproc_delaysync", "", 0, 0, 1 }, // 0 = Off, 1 = On
-    { "coproc_preferhle", "", 0, 0, 1 }, // 0 = Off, 1 = On
-    // 0 = Linear, 1 = ZOH, 2 = Sinc Fastest, 3 = Sinc Medium, 4 = Sinc Best
-    { "rsqual", "", 2, 0, 4 },
+    { "coproc_preferhle", "", 1, 0, 1 }, // 0 = Off, 1 = On
+    { "rsqual", "", 0, 0, 2 }, // 0 = Fastest, 1 = Medium, 2 = Best
 };
 
 enum {

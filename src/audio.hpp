@@ -17,7 +17,7 @@ struct Audio {
   void setFrequency(double frequency) { _frequency = frequency; }
   void setBuffer(float *buffer) { this->buffer = buffer; }
   void setSpf(unsigned spf) { _spf = spf; }
-  void setQuality(unsigned rsqual) { _rsqual = 4 - rsqual; } // Low to High
+  void setQuality(unsigned rsqual) { _rsqual = 2 - rsqual; } // Low to High
 
 private:
   void process();
@@ -26,7 +26,7 @@ private:
   std::vector<Stream*> _streams;
 
   double _frequency = 48000.0;
-  unsigned _rsqual = SRC_SINC_MEDIUM_QUALITY;
+  unsigned _rsqual = SRC_SINC_FASTEST;
   unsigned _spf = 0;
   float *buffer = nullptr;
 
