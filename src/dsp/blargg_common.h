@@ -10,11 +10,7 @@
 #include <assert.h>
 #include <limits.h>
 
-#undef BLARGG_COMMON_H
-// allow blargg_config.h to #include blargg_common.h
 #include "blargg_config.h"
-#ifndef BLARGG_COMMON_H
-#define BLARGG_COMMON_H
 
 // BLARGG_RESTRICT: equivalent to restrict, where supported
 #if defined (__GNUC__) || _MSC_VER >= 1100
@@ -182,5 +178,4 @@ public:
 	};
 #endif
 
-#endif
 #endif
