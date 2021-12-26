@@ -56,11 +56,6 @@ struct Interface : Emulator::Interface {
   uint8_t read(nall::Natural<24> address) override;
   void cheats(const std::vector<std::string>&) override;
 
-  nall::string configuration() override;
-  nall::string configuration(nall::string name) override;
-  bool configure(nall::string configuration) override;
-  bool configure(nall::string name, nall::string value) override;
-
   unsigned frameSkip() override;
   void setFrameSkip(unsigned frameSkip) override;
 
@@ -69,11 +64,6 @@ struct Interface : Emulator::Interface {
 };
 
 struct Configuration {
-  nall::string read();
-  nall::string read(nall::string);
-  bool write(nall::string);
-  bool write(nall::string, nall::string);
-
   struct System {
     struct CPU {
       unsigned version = 2;

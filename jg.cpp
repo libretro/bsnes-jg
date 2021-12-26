@@ -770,10 +770,10 @@ void jg_exec_frame() {
 }
 
 int jg_game_load() {
-    emulator->configure("Hacks/Coprocessor/DelayedSync",
-        (bool)settings_bsnes[COPROC_DELAYSYNC].value);
-    emulator->configure("Hacks/Coprocessor/PreferHLE",
-        (bool)settings_bsnes[COPROC_PREFERHLE].value);
+    SuperFamicom::configuration.hacks.coprocessor.delayedSync =
+        (bool)settings_bsnes[COPROC_DELAYSYNC].value;
+    SuperFamicom::configuration.hacks.coprocessor.preferHLE =
+        (bool)settings_bsnes[COPROC_PREFERHLE].value;
 
     // Load the game
     std::string fname = std::string(gameinfo.fname);

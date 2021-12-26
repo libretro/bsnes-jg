@@ -116,12 +116,6 @@ struct Interface {
   virtual auto read(nall::Natural<24> address) -> uint8_t { return 0; }
   virtual auto cheats(const std::vector<std::string>& = {}) -> void {}
 
-  //configuration
-  virtual auto configuration() -> nall::string { return {}; }
-  virtual auto configuration(nall::string name) -> nall::string { return {}; }
-  virtual auto configure(nall::string configuration = "") -> bool { return false; }
-  virtual auto configure(nall::string name, nall::string value) -> bool { return false; }
-
   virtual auto frameSkip() -> unsigned { return 0; }
   virtual auto setFrameSkip(unsigned frameSkip) -> void {}
 

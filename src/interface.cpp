@@ -3,55 +3,8 @@
 namespace SuperFamicom {
 
 Settings settings;
-
 Configuration configuration;
 
-void Configuration::process(nall::Markup::Node document, bool load) {
-  #define bind(type, path, name) \
-    if(load) { \
-      if(auto node = document[path]) name = node.type(); \
-    } else { \
-      document(path).setValue(name); \
-    } \
-
-  bind(boolean, "Hacks/Coprocessor/DelayedSync", hacks.coprocessor.delayedSync);
-  bind(boolean, "Hacks/Coprocessor/PreferHLE", hacks.coprocessor.preferHLE);
-
-  #undef bind
-}
-
-nall::string Configuration::read() {
-  nall::Markup::Node document;
-  process(document, false);
-  return nall::BML::serialize(document, " ");
-}
-
-nall::string Configuration::read(nall::string name) {
-  auto document = nall::BML::unserialize(read());
-  return document[name].text();
-}
-
-bool Configuration::write(nall::string configuration) {
-  *this = {};
-
-  if(auto document = nall::BML::unserialize(configuration)) {
-    return process(document, true), true;
-  }
-
-  return false;
-}
-
-bool Configuration::write(nall::string name, nall::string value) {
-  if(SuperFamicom::system.loaded() && name.beginsWith("System/")) return false;
-
-  auto document = nall::BML::unserialize(read());
-  if(auto node = document[name]) {
-    node.setValue(value);
-    return process(document, true), true;
-  }
-
-  return false;
-}
 
 bool Interface::loaded() {
   return system.loaded();
@@ -184,22 +137,6 @@ void Interface::cheats(const std::vector<std::string>& list) {
 
   //restore ROM write protection
   Memory::GlobalWriteEnable = false;
-}
-
-nall::string Interface::configuration() {
-  return SuperFamicom::configuration.read();
-}
-
-nall::string Interface::configuration(nall::string name) {
-  return SuperFamicom::configuration.read(name);
-}
-
-bool Interface::configure(nall::string configuration) {
-  return SuperFamicom::configuration.write(configuration);
-}
-
-bool Interface::configure(nall::string name, nall::string value) {
-  return SuperFamicom::configuration.write(name, value);
 }
 
 unsigned Interface::frameSkip() {
