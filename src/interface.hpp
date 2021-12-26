@@ -99,7 +99,6 @@ struct Configuration {
   } system;
 
   struct Video {
-    bool blurEmulation = true;
     bool colorEmulation = true;
   } video;
 

@@ -771,8 +771,6 @@ void jg_exec_frame() {
 
 int jg_game_load() {
     emulator->configure("Audio/Frequency", SAMPLERATE);
-    emulator->configure("Video/BlurEmulation", false);
-
     emulator->configure("Hacks/Entropy", "Low");
     emulator->configure("Hacks/CPU/Overclock", 100);
     emulator->configure("Hacks/CPU/FastMath", false);
