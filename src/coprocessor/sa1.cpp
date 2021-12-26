@@ -3,7 +3,7 @@
 namespace SuperFamicom {
 
 auto SA1::ROM::conflict() const -> bool {
-  if(configuration.hacks.coprocessor.delayedSync) return false;
+  if(configuration.coprocessor.delayedSync) return false;
 
   if((cpu.r.mar & 0x408000) == 0x008000) return true;  //00-3f,80-bf:8000-ffff
   if((cpu.r.mar & 0xc00000) == 0xc00000) return true;  //c0-ff:0000-ffff
@@ -75,7 +75,7 @@ auto SA1::ROM::writeSA1(unsigned address, uint8_t data) -> void {
 }
 
 auto SA1::BWRAM::conflict() const -> bool {
-  if(configuration.hacks.coprocessor.delayedSync) return false;
+  if(configuration.coprocessor.delayedSync) return false;
 
   if((cpu.r.mar & 0x40e000) == 0x006000) return true;  //00-3f,80-bf:6000-7fff
   if((cpu.r.mar & 0xf00000) == 0x400000) return true;  //40-4f:0000-ffff
@@ -197,7 +197,7 @@ auto SA1::BWRAM::writeBitmap(nall::Natural<20> address, uint8_t data) -> void {
 }
 
 auto SA1::IRAM::conflict() const -> bool {
-  if(configuration.hacks.coprocessor.delayedSync) return false;
+  if(configuration.coprocessor.delayedSync) return false;
 
   if((cpu.r.mar & 0x40f800) == 0x003000) return cpu.refresh() == 0;  //00-3f,80-bf:3000-37ff
   return false;
@@ -1290,7 +1290,7 @@ auto SA1::unload() -> void {
 }
 
 auto SA1::power() -> void {
-  double overclock = std::max(1.0, std::min(4.0, configuration.hacks.sa1.overclock / 100.0));
+  double overclock = std::max(1.0, std::min(4.0, configuration.sa1.overclock / 100.0));
 
   WDC65816::power();
   create(SA1::Enter, system.cpuFrequency() * overclock);

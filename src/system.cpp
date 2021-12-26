@@ -246,7 +246,7 @@ bool System::load(Emulator::Interface* interface) {
     information.cpuFrequency = Emulator::Constants::Colorburst::PAL * 4.8;
   }
 
-  if(configuration.hacks.hotfixes) {
+  if(configuration.hotfixes) {
     //due to poor programming, Rendering Ranger R2 will rarely lock up at 32040 * 768hz.
     if(cartridge.headerTitle() == "RENDERING RANGER R2") {
       information.apuFrequency = 32000.0 * 768.0;
@@ -296,11 +296,11 @@ void System::unload() {
 void System::power(bool reset) {
   Emulator::audio.reset(interface);
 
-  if(configuration.hacks.entropy == "None")
+  if(configuration.entropy == "None")
     random.entropy(Emulator::Random::Entropy::None);
-  else if(configuration.hacks.entropy == "Low" )
+  else if(configuration.entropy == "Low" )
     random.entropy(Emulator::Random::Entropy::Low );
-  else if(configuration.hacks.entropy == "High")
+  else if(configuration.entropy == "High")
     random.entropy(Emulator::Random::Entropy::High);
   else
     random.entropy(Emulator::Random::Entropy::Low);

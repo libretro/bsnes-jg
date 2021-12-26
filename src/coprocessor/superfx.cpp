@@ -456,7 +456,7 @@ auto SuperFX::unload() -> void {
 }
 
 auto SuperFX::power() -> void {
-  double overclock = std::max(1.0, std::min(8.0, configuration.hacks.superfx.overclock / 100.0));
+  double overclock = std::max(1.0, std::min(8.0, configuration.superfx.overclock / 100.0));
 
   GSU::power();
   create(SuperFX::Enter, Frequency * overclock);

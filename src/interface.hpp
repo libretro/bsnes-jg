@@ -82,24 +82,22 @@ struct Configuration {
     } serialization;
   } system;
 
-  struct Hacks {
-    bool hotfixes = true;
-    std::string entropy = "Low";
-    struct CPU {
-      unsigned overclock = 100;
-      bool fastMath = false;
-    } cpu;
-    struct Coprocessor {
-      bool delayedSync = true;
-      bool preferHLE = false;
-    } coprocessor;
-    struct SA1 {
-      unsigned overclock = 100;
-    } sa1;
-    struct SuperFX {
-      unsigned overclock = 100;
-    } superfx;
-  } hacks;
+  bool hotfixes = true;
+  std::string entropy = "Low";
+  struct CPU {
+    unsigned overclock = 100;
+    bool fastMath = false;
+  } cpu;
+  struct Coprocessor {
+    bool delayedSync = true;
+    bool preferHLE = false;
+  } coprocessor;
+  struct SA1 {
+    unsigned overclock = 100;
+  } sa1;
+  struct SuperFX {
+    unsigned overclock = 100;
+  } superfx;
 
 private:
   void process(nall::Markup::Node document, bool load);

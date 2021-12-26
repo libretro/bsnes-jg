@@ -770,9 +770,9 @@ void jg_exec_frame() {
 }
 
 int jg_game_load() {
-    SuperFamicom::configuration.hacks.coprocessor.delayedSync =
+    SuperFamicom::configuration.coprocessor.delayedSync =
         (bool)settings_bsnes[COPROC_DELAYSYNC].value;
-    SuperFamicom::configuration.hacks.coprocessor.preferHLE =
+    SuperFamicom::configuration.coprocessor.preferHLE =
         (bool)settings_bsnes[COPROC_PREFERHLE].value;
 
     // Load the game

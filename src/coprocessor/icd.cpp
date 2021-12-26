@@ -344,7 +344,7 @@ unsigned ICD::clockFrequency() const {
 bool ICD::load() {
   information = {};
 
-  GB_random_set_enabled(configuration.hacks.entropy != "None");
+  GB_random_set_enabled(configuration.entropy != "None");
   if(Frequency == 0) {
     GB_init(&sameboy, GB_MODEL_SGB_NO_SFC);
     GB_load_boot_rom_from_buffer(&sameboy, (const unsigned char*)&SGB1BootROM[0], 256);

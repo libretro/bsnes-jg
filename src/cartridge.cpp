@@ -467,7 +467,7 @@ void Cartridge::loadHitachiDSP(nall::Markup::Node node, unsigned roms) {
     }
   }
 
-  if(configuration.hacks.coprocessor.preferHLE) {
+  if(configuration.coprocessor.preferHLE) {
     has.Cx4 = true;
     for(auto map : node.find("map")) {
       loadMap(map, {&Cx4::read, &cx4}, {&Cx4::write, &cx4});
@@ -540,7 +540,7 @@ void Cartridge::loaduPD7725(nall::Markup::Node node) {
     }
   }
 
-  if(failed || configuration.hacks.coprocessor.preferHLE) {
+  if(failed || configuration.coprocessor.preferHLE) {
     auto manifest = nall::BML::serialize(game.document);
     if(manifest.find("identifier: DSP1")) {  //also matches DSP1B
       has.DSP1 = true;
@@ -622,7 +622,7 @@ void Cartridge::loaduPD96050(nall::Markup::Node node) {
     }
   }
 
-  if(failed || configuration.hacks.coprocessor.preferHLE) {
+  if(failed || configuration.coprocessor.preferHLE) {
     auto manifest = nall::BML::serialize(game.document);
     if(manifest.find("identifier: ST010")) {
       has.ST0010 = true;

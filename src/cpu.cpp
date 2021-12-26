@@ -437,7 +437,7 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
     io.wrmpyb = data;
     io.rddiv = io.wrmpyb << 8 | io.wrmpya;
 
-    if(!configuration.hacks.cpu.fastMath) {
+    if(!configuration.cpu.fastMath) {
       alu.mpyctr = 8;  //perform multiplication over the next eight cycles
       alu.shift = io.wrmpyb;
     } else {
@@ -459,7 +459,7 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
 
     io.wrdivb = data;
 
-    if(!configuration.hacks.cpu.fastMath) {
+    if(!configuration.cpu.fastMath) {
       alu.divctr = 16;  //perform division over the next sixteen cycles
       alu.shift = io.wrdivb << 16;
     } else {
@@ -608,7 +608,7 @@ void CPU::step() {
     overclocking.counter += Clocks;
     if(overclocking.counter < overclocking.target) {
       if constexpr(Synchronize) {
-        if(configuration.hacks.coprocessor.delayedSync) return;
+        if(configuration.coprocessor.delayedSync) return;
         synchronizeCoprocessors();
       }
       return;
@@ -657,7 +657,7 @@ void CPU::step() {
   }
 
   if constexpr(Synchronize) {
-    if(configuration.hacks.coprocessor.delayedSync) return;
+    if(configuration.coprocessor.delayedSync) return;
     synchronizeCoprocessors();
   }
 }
@@ -702,7 +702,7 @@ void CPU::scanline() {
   if(vcounter() == (Region::NTSC() ? 261 : 311)) {
     overclocking.counter = 0;
     overclocking.target = 0;
-    double overclock = configuration.hacks.cpu.overclock / 100.0;
+    double overclock = configuration.cpu.overclock / 100.0;
     if(overclock > 1.0) {
       int clocks = (Region::NTSC() ? 262 : 312) * 1364;
       overclocking.target = clocks * overclock - clocks;
@@ -1105,7 +1105,7 @@ void CPU::power(bool reset) {
 
   if(!reset) random.array(wram, sizeof(wram));
 
-  if(configuration.hacks.hotfixes) {
+  if(configuration.hotfixes) {
     //Dirt Racer (Europe) relies on uninitialized memory containing certain values to boot without freezing.
     //the game itself is broken and will fail to run sometimes on real hardware, but for the sake of expedience,
     //WRAM is initialized to a constant value that will allow this game to always boot in successfully.
