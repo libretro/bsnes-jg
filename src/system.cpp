@@ -137,6 +137,7 @@ void System::runToSave() {
   auto method = configuration.system.serialization.method;
 
   //these games will periodically deadlock when using "Fast" synchronization
+  if(cartridge.headerTitle() == "MEGAMAN X3") method = "Strict";
   if(cartridge.headerTitle() == "Star Ocean") method = "Strict";
   if(cartridge.headerTitle() == "TALES OF PHANTASIA") method = "Strict";
 
