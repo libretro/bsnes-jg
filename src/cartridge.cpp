@@ -910,7 +910,7 @@ void Cartridge::saveEpsonRTC(nall::Markup::Node node) {
       if(file->nonVolatile) {
         uint8_t data[16] = {0};
         epsonrtc.save(data);
-        Emulator::platform->write(ID::SuperFamicom, "save.ram", data, 16);
+        Emulator::platform->write(ID::SuperFamicom, "time.rtc", data, 16);
       }
     }
   }
@@ -923,7 +923,7 @@ void Cartridge::saveSharpRTC(nall::Markup::Node node) {
       if(file->nonVolatile) {
         uint8_t data[16] = {0};
         sharprtc.save(data);
-        Emulator::platform->write(ID::SuperFamicom, "save.ram", data, 16);
+        Emulator::platform->write(ID::SuperFamicom, "time.rtc", data, 16);
       }
     }
   }
