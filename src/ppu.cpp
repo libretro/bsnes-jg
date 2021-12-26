@@ -2337,7 +2337,7 @@ auto PPU::refresh() -> void {
     }
   }
   if(auto device = controllerPort2.device) device->draw(output, pitch * sizeof(uint16_t), width, height);
-  platform->videoFrame(output, pitch * sizeof(uint16_t), width, height, /* scale = */ 1);
+  Emulator::platform->videoFrame(output, pitch * sizeof(uint16_t), width, height, /* scale = */ 1);
 }
 
 }

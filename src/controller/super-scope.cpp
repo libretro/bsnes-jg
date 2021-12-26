@@ -40,7 +40,7 @@ nall::Natural< 2> SuperScope::data() {
 
   if(counter == 0) {
     //turbo is a switch; toggle is edge sensitive
-    bool newturbo = platform->inputPoll(port, ID::Device::SuperScope, Turbo);
+    bool newturbo = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Turbo);
     if(newturbo && !oldturbo) {
       turbo = !turbo;  //toggle state
     }
@@ -49,7 +49,7 @@ nall::Natural< 2> SuperScope::data() {
     //trigger is a button
     //if turbo is active, trigger is level sensitive; otherwise, it is edge sensitive
     trigger = false;
-    bool newtrigger = platform->inputPoll(port, ID::Device::SuperScope, Trigger);
+    bool newtrigger = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Trigger);
     if(newtrigger && (turbo || !triggerlock)) {
       trigger = true;
       triggerlock = true;
@@ -58,11 +58,11 @@ nall::Natural< 2> SuperScope::data() {
     }
 
     //cursor is a button; it is always level sensitive
-    cursor = platform->inputPoll(port, ID::Device::SuperScope, Cursor);
+    cursor = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Cursor);
 
     //pause is a button; it is always edge sensitive
     pause = false;
-    bool newpause = platform->inputPoll(port, ID::Device::SuperScope, Pause);
+    bool newpause = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Pause);
     if(newpause && !pauselock) {
       pause = true;
       pauselock = true;
@@ -95,13 +95,13 @@ void SuperScope::latch(bool data) {
 }
 
 void SuperScope::latch() {
-  /*int nx = platform->inputPoll(port, ID::Device::SuperScope, X);
-  int ny = platform->inputPoll(port, ID::Device::SuperScope, Y);
+  /*int nx = Emulator::platform->inputPoll(port, ID::Device::SuperScope, X);
+  int ny = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Y);
   x = max(-16, min(256 + 16, nx + x));
   y = max(-16, min((int)ppu.vdisp() + 16, ny + y));*/
   // Changes were made here so that simple coords can be used JOLLYGOOD
-  x = platform->inputPoll(port, ID::Device::SuperScope, X);
-  y = platform->inputPoll(port, ID::Device::SuperScope, Y);
+  x = Emulator::platform->inputPoll(port, ID::Device::SuperScope, X);
+  y = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Y);
   offscreen = (x < 0 || y < 0 || x >= 512 || y >= 480);
   if(!offscreen) ppu.latchCounters(x, y);
 }

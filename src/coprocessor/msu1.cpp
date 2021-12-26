@@ -117,14 +117,14 @@ void MSU1::power() {
 
 void MSU1::dataOpen() {
   dataFile.close();
-  dataFile = platform->fopen(ID::SuperFamicom, "msu1/data.rom");
+  dataFile = Emulator::platform->fopen(ID::SuperFamicom, "msu1/data.rom");
 }
 
 void MSU1::audioOpen() {
   audioFile.close();
   std::stringstream name;
   name << "msu1/track-" << io.audioTrack << ".pcm";
-  audioFile = platform->fopen(ID::SuperFamicom, name.str());
+  audioFile = Emulator::platform->fopen(ID::SuperFamicom, name.str());
   if(audioFile.is_open()) {
     audioFile.seekg(0, audioFile.end);
     unsigned size = audioFile.tellg();

@@ -68,10 +68,10 @@ void Mouse::latch(bool data) {
   latched = data;
   counter = 0;
 
-  x = platform->inputPoll(port, ID::Device::Mouse, X);  //-n = left, 0 = center, +n = right
-  y = platform->inputPoll(port, ID::Device::Mouse, Y);  //-n = up,   0 = center, +n = down
-  l = platform->inputPoll(port, ID::Device::Mouse, Left);
-  r = platform->inputPoll(port, ID::Device::Mouse, Right);
+  x = Emulator::platform->inputPoll(port, ID::Device::Mouse, X);  //-n = left, 0 = center, +n = right
+  y = Emulator::platform->inputPoll(port, ID::Device::Mouse, Y);  //-n = up,   0 = center, +n = down
+  l = Emulator::platform->inputPoll(port, ID::Device::Mouse, Left);
+  r = Emulator::platform->inputPoll(port, ID::Device::Mouse, Right);
 
   dx = x < 0;  //0 = right, 1 = left
   dy = y < 0;  //0 = down,  1 = up

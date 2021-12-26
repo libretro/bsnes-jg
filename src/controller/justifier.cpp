@@ -35,13 +35,13 @@ nall::Natural< 2> Justifier::data() {
   if(counter >= 32) return 1;
 
   if(counter == 0) {
-    player1.trigger = platform->inputPoll(port, device, 0 + Trigger);
-    player1.start   = platform->inputPoll(port, device, 0 + Start);
+    player1.trigger = Emulator::platform->inputPoll(port, device, 0 + Trigger);
+    player1.start   = Emulator::platform->inputPoll(port, device, 0 + Start);
   }
 
   if(counter == 0 && chained) {
-    player2.trigger = platform->inputPoll(port, device, 4 + Trigger);
-    player2.start   = platform->inputPoll(port, device, 4 + Start);
+    player2.trigger = Emulator::platform->inputPoll(port, device, 4 + Trigger);
+    player2.start   = Emulator::platform->inputPoll(port, device, 4 + Start);
   }
 
   switch(counter++) {
@@ -95,14 +95,14 @@ void Justifier::latch(bool data) {
 
 void Justifier::latch() {
   if(!active) {
-    player1.x = platform->inputPoll(port, device, 0 + X);
-    player1.y = platform->inputPoll(port, device, 0 + Y);
+    player1.x = Emulator::platform->inputPoll(port, device, 0 + X);
+    player1.y = Emulator::platform->inputPoll(port, device, 0 + Y);
     bool offscreen = (player1.x < 0 || player1.y < 0 || player1.x >= 256 || player1.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player1.x, player1.y);
   }
   else {
-    player2.x = platform->inputPoll(port, device, 4 + X);
-    player2.y = platform->inputPoll(port, device, 4 + Y);
+    player2.x = Emulator::platform->inputPoll(port, device, 4 + X);
+    player2.y = Emulator::platform->inputPoll(port, device, 4 + Y);
     bool offscreen = (player2.x < 0 || player2.y < 0 || player2.x >= 256 || player2.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player2.x, player2.y);
   }

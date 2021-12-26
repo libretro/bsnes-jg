@@ -366,18 +366,18 @@ bool ICD::load() {
   GB_set_log_callback(&sameboy, &SameBoy::log);
   GB_set_pixels_output(&sameboy, &bitmap[0]);
 
-  if(auto loaded = platform->load(ID::GameBoy, "Game Boy", "gb")) {
+  if(auto loaded = Emulator::platform->load(ID::GameBoy, "Game Boy", "gb")) {
     information.pathID = loaded.pathID;
   }
   else return unload(), false;
 
-  std::vector<uint8_t> rom = platform->mopen(pathID(), "program.rom");
+  std::vector<uint8_t> rom = Emulator::platform->mopen(pathID(), "program.rom");
   if(!rom.empty()) {
     cartridge.information.sha256 = sha256_digest(rom.data(), rom.size()).c_str();
     GB_load_rom_from_buffer(&sameboy, rom.data(), rom.size());
   } else return unload(), false;
 
-  std::ifstream sramfile = platform->fopen(pathID(), "save.ram");
+  std::ifstream sramfile = Emulator::platform->fopen(pathID(), "save.ram");
   if (sramfile.is_open()) {
     std::vector<char> sram((std::istreambuf_iterator<char>(sramfile)),
       (std::istreambuf_iterator<char>()));
@@ -391,7 +391,7 @@ void ICD::save() {
   if(auto size = GB_save_battery_size(&sameboy)) {
     auto data = (uint8_t*)malloc(size);
     GB_save_battery_to_buffer(&sameboy, data, size);
-    platform->write(pathID(), "save.ram", data, size);
+    Emulator::platform->write(pathID(), "save.ram", data, size);
     free(data);
   }
 }

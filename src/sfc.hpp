@@ -24,7 +24,6 @@ extern "C" {
 }
 
 namespace SuperFamicom {
-  #define platform Emulator::platform
   extern Emulator::Random random;
   extern Emulator::Cheat cheat;
 

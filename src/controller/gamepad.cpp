@@ -9,7 +9,7 @@ Gamepad::Gamepad(unsigned port) : Controller(port) {
 
 nall::Natural< 2> Gamepad::data() {
   if(counter >= 16) return 1;
-  if(latched == 1) return platform->inputPoll(port, ID::Device::Gamepad, B);
+  if(latched == 1) return Emulator::platform->inputPoll(port, ID::Device::Gamepad, B);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -36,18 +36,18 @@ void Gamepad::latch(bool data) {
   counter = 0;
 
   if(latched == 0) {
-    b      = platform->inputPoll(port, ID::Device::Gamepad, B);
-    y      = platform->inputPoll(port, ID::Device::Gamepad, Y);
-    select = platform->inputPoll(port, ID::Device::Gamepad, Select);
-    start  = platform->inputPoll(port, ID::Device::Gamepad, Start);
-    up     = platform->inputPoll(port, ID::Device::Gamepad, Up);
-    down   = platform->inputPoll(port, ID::Device::Gamepad, Down);
-    left   = platform->inputPoll(port, ID::Device::Gamepad, Left);
-    right  = platform->inputPoll(port, ID::Device::Gamepad, Right);
-    a      = platform->inputPoll(port, ID::Device::Gamepad, A);
-    x      = platform->inputPoll(port, ID::Device::Gamepad, X);
-    l      = platform->inputPoll(port, ID::Device::Gamepad, L);
-    r      = platform->inputPoll(port, ID::Device::Gamepad, R);
+    b      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, B);
+    y      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Y);
+    select = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Select);
+    start  = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Start);
+    up     = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Up);
+    down   = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Down);
+    left   = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Left);
+    right  = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Right);
+    a      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, A);
+    x      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, X);
+    l      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, L);
+    r      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, R);
   }
 }
 
