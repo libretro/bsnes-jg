@@ -13,9 +13,12 @@ Fixed-point math reminder:
 1.15.00 * 1.00.15 = 2.15.15 -> 1.15.15 (DSP) -> 1.15.16 (LSB is '0')
 */
 
-namespace SuperFamicom::DSP4i {
+#include <cstdint>
+#include <cstring>
 
 #include "dsp4emu.hpp"
+
+namespace SuperFamicom::DSP4i {
 
 inline uint16_t READ_WORD(uint8_t *addr) {
   return (addr[0]) + (addr[1] << 8);

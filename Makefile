@@ -90,6 +90,7 @@ CXXSRCS := $(OBJDIR)/src/audio.cpp \
 	$(OBJDIR)/src/coprocessor/dsp1emu.cpp \
 	$(OBJDIR)/src/coprocessor/dsp2.cpp \
 	$(OBJDIR)/src/coprocessor/dsp4.cpp \
+	$(OBJDIR)/src/coprocessor/dsp4emu.cpp \
 	$(OBJDIR)/src/coprocessor/epsonrtc.cpp \
 	$(OBJDIR)/src/coprocessor/event.cpp \
 	$(OBJDIR)/src/coprocessor/hitachidsp.cpp \

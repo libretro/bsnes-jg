@@ -3,6 +3,8 @@
 
 #pragma once
 
+namespace SuperFamicom::DSP4i {
+
 struct DSP4_t
 {
   uint8_t waiting4command;
@@ -17,6 +19,8 @@ struct DSP4_t
 };
 
 extern struct DSP4_t DSP4;
+extern uint8_t dsp4_byte;
+extern uint16_t dsp4_address;
 
 struct DSP4_vars_t
 {
@@ -98,3 +102,9 @@ struct DSP4_vars_t
 };
 
 extern struct DSP4_vars_t DSP4_vars;
+
+void InitDSP4();
+void DSP4SetByte();
+void DSP4GetByte();
+
+}

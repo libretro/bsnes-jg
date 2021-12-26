@@ -1,6 +1,6 @@
 #include "../sfc.hpp"
 
-#include "dsp4emu.cpp"
+#include "dsp4emu.hpp"
 
 namespace SuperFamicom {
 
