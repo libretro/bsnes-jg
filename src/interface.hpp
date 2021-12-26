@@ -33,11 +33,6 @@ struct ID {
 };
 
 struct Interface : Emulator::Interface {
-  auto information() -> Information;
-
-  auto display() -> Display override;
-  uint64_t color(uint32_t color) override;
-
   bool loaded() override;
   std::vector<std::string> hashes() override;
   std::vector<std::string> manifests() override;

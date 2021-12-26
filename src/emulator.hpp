@@ -60,28 +60,6 @@ struct Platform {
 extern Platform* platform;
 
 struct Interface {
-  struct Information {
-    std::string manufacturer;
-    std::string name;
-    std::string extension;
-    bool resettable = false;
-  };
-
-  struct Display {
-    struct Type { enum : unsigned {
-      CRT,
-      LCD,
-    };};
-    unsigned id = 0;
-    std::string name;
-    unsigned type = 0;
-    unsigned colors = 0;
-    unsigned width = 0;
-    unsigned height = 0;
-    unsigned internalWidth = 0;
-    unsigned internalHeight = 0;
-    double aspectCorrection = 0;
-  };
 
   struct Port {
     unsigned id;
@@ -106,12 +84,6 @@ struct Interface {
     unsigned type;
     std::string name;
   };
-
-  //information
-  virtual auto information() -> Information { return {}; }
-
-  virtual auto display() -> Display { return {}; }
-  virtual auto color(uint32_t color) -> uint64_t { return 0; }
 
   //game interface
   virtual auto loaded() -> bool { return false; }

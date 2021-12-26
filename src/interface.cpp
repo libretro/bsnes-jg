@@ -14,22 +14,8 @@ void Configuration::process(nall::Markup::Node document, bool load) {
       document(path).setValue(name); \
     } \
 
-  bind(natural, "System/CPU/Version", system.cpu.version);
-  bind(natural, "System/PPU1/Version", system.ppu1.version);
-  bind(natural, "System/PPU1/VRAM/Size", system.ppu1.vram.size);
-  bind(natural, "System/PPU2/Version", system.ppu2.version);
-  bind(text,    "System/Serialization/Method", system.serialization.method);
-
-  bind(boolean, "Video/ColorEmulation", video.colorEmulation);
-
-  bind(boolean, "Hacks/Hotfixes", hacks.hotfixes);
-  bind(text,    "Hacks/Entropy", hacks.entropy);
-  bind(natural, "Hacks/CPU/Overclock", hacks.cpu.overclock);
-  bind(boolean, "Hacks/CPU/FastMath", hacks.cpu.fastMath);
   bind(boolean, "Hacks/Coprocessor/DelayedSync", hacks.coprocessor.delayedSync);
   bind(boolean, "Hacks/Coprocessor/PreferHLE", hacks.coprocessor.preferHLE);
-  bind(natural, "Hacks/SA1/Overclock", hacks.sa1.overclock);
-  bind(natural, "Hacks/SuperFX/Overclock", hacks.superfx.overclock);
 
   #undef bind
 }
@@ -65,65 +51,6 @@ bool Configuration::write(nall::string name, nall::string value) {
   }
 
   return false;
-}
-
-auto Interface::information() -> Information {
-  Information information;
-  information.manufacturer = "Nintendo";
-  information.name         = "Super Famicom";
-  information.extension    = "sfc";
-  information.resettable   = true;
-  return information;
-}
-
-auto Interface::display() -> Display {
-  Display display;
-  display.type   = Display::Type::CRT;
-  display.colors = 1 << 19;
-  display.width  = 256;
-  display.height = 240;
-  display.internalWidth  = 512;
-  display.internalHeight = 480;
-  display.aspectCorrection = 8.0 / 7.0;
-  return display;
-}
-
-uint64_t Interface::color(uint32_t color) {
-  unsigned r = color >>  0 & 31;
-  unsigned g = color >>  5 & 31;
-  unsigned b = color >> 10 & 31;
-  unsigned l = color >> 15 & 15;
-
-  auto normalize = [](uint64_t color, unsigned sourceDepth, unsigned targetDepth) {
-    if(sourceDepth == 0 || targetDepth == 0) return (uint64_t)0;
-    while(sourceDepth < targetDepth) {
-      color = (color << sourceDepth) | color;
-      sourceDepth += sourceDepth;
-    }
-    if(targetDepth < sourceDepth) color >>= (sourceDepth - targetDepth);
-    return color;
-  };
-
-  //luma=0 is not 100% black; but it's much darker than normal linear scaling
-  //exact effect seems to be analog; requires > 24-bit color depth to represent accurately
-  double L = (1.0 + l) / 16.0 * (l ? 1.0 : 0.25);
-  uint64_t R = L * normalize(r, 5, 16);
-  uint64_t G = L * normalize(g, 5, 16);
-  uint64_t B = L * normalize(b, 5, 16);
-
-  if(SuperFamicom::configuration.video.colorEmulation) {
-    static const uint8_t gammaRamp[32] = {
-      0x00, 0x01, 0x03, 0x06, 0x0a, 0x0f, 0x15, 0x1c,
-      0x24, 0x2d, 0x37, 0x42, 0x4e, 0x5b, 0x69, 0x78,
-      0x88, 0x90, 0x98, 0xa0, 0xa8, 0xb0, 0xb8, 0xc0,
-      0xc8, 0xd0, 0xd8, 0xe0, 0xe8, 0xf0, 0xf8, 0xff,
-    };
-    R = L * gammaRamp[r] * 0x0101;
-    G = L * gammaRamp[g] * 0x0101;
-    B = L * gammaRamp[b] * 0x0101;
-  }
-
-  return R << 32 | G << 16 | B << 0;
 }
 
 bool Interface::loaded() {
