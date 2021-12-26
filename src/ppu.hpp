@@ -173,7 +173,7 @@ struct Background {
   auto fetchNameTable() -> void;
   auto fetchOffset(unsigned y) -> void;
   auto fetchCharacter(unsigned index, bool half = 0) -> void;
-  auto run(bool screen) -> void;
+  inline void run(bool screen);
   auto power() -> void;
 
   //mode7.cpp

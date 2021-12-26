@@ -1215,7 +1215,7 @@ auto PPU::Background::fetchCharacter(unsigned index, bool half) -> void {
   );
 }
 
-auto PPU::Background::run(bool screen) -> void {
+inline void PPU::Background::run(bool screen) {
   if(ppu.vcounter() == 0) return;
 
   if(screen == Screen::Below) {
@@ -1237,7 +1237,7 @@ auto PPU::Background::run(bool screen) -> void {
   pixel.priority = tile.priority;
   pixel.palette = color ? unsigned(tile.palette + color) : 0;
   pixel.paletteGroup = tile.paletteGroup;
-  if(++pixelCounter == 0) renderingIndex++;
+  if(++pixelCounter == 0) ++renderingIndex;
 
   unsigned x = ppu.hcounter() - 56 >> 2;
 
@@ -1250,7 +1250,7 @@ auto PPU::Background::run(bool screen) -> void {
   } else if(mosaic.enable) {
     pixel = mosaic.pixel;
   }
-  if(screen == Screen::Above) x++;
+  if(screen == Screen::Above) ++x;
   if(pixel.palette == 0) return;
 
   if(!hires() || screen == Screen::Above) if(io.aboveEnable) output.above = pixel;
