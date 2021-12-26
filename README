@@ -1,12 +1,12 @@
 bsnes-jg
 --------
-bsnes-jg (aka BadgerSNES) is an emulator for the Super Nintendo Entertainment
-System/Super Famicom, including support for the Super Game Boy, BS-X
-Satellaview, and Sufami Turbo.
+bsnes-jg is an emulator for the Super Famicom/Super Nintendo Entertainment
+System, including support for the Super Game Boy, BS-X Satellaview, and
+Sufami Turbo.
 
 This is a fork of bsnes v115. Many changes have been made post-fork:
  - Higher quality resampler with settings
- - Improved performance (less CPU usage)
+ - Improved performance without loss of accuracy
  - Removal of hacks
  - Removal of code not required for emulation
  - Translation to standard C++ (ongoing)
@@ -65,7 +65,7 @@ aspect_ratio = 0
 coproc_delaysync = 0
 0 = Off, 1 = On
 
-coproc_preferhle = 0
+coproc_preferhle = 1
 0 = Off, 1 = On
 
 rsqual = 0
@@ -74,7 +74,7 @@ rsqual = 0
 Notes
 -----
 - Coprocessor Delayed Sync only applies for LLE coprocessor emulation.
-- Firmware is required for LLE coprocessor emulation in some cases
+- Firmware is required for LLE coprocessor emulation in some cases.
 - Save states created with LLE coprocessor emulation are incompatible with
   states created with HLE coprocessor emulation.
 
