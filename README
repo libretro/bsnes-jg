@@ -68,7 +68,7 @@ coproc_delaysync = 0
 coproc_preferhle = 0
 0 = Off, 1 = On
 
-rsqual = 3
+rsqual = 2
 0 = Linear, 1 = ZOH, 2 = Sinc Fastest, 3 = Sinc Medium, 4 = Sinc Best
 
 Copyright

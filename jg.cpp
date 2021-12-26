@@ -58,7 +58,7 @@ static jg_cb_rumble_t jg_cb_rumble;
 static jg_cb_settings_read_t jg_cb_settings_read;
 
 static jg_coreinfo_t coreinfo = {
-    "bsnes", "bsnes-jg", "115.0.0", "snes", NUMINPUTS, JG_HINT_VIDEO_INTERNAL
+    "bsnes", "bsnes-jg", "1.0.0-pre1", "snes", NUMINPUTS, JG_HINT_VIDEO_INTERNAL
 };
 
 static jg_videoinfo_t vidinfo = {
