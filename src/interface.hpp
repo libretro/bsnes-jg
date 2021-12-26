@@ -47,10 +47,6 @@ struct Interface : Emulator::Interface {
   void save() override;
   void unload() override;
 
-  auto ports() -> std::vector<Port> override;
-  auto devices(unsigned port) -> std::vector<Device> override;
-  auto inputs(unsigned device) -> std::vector<Input> override;
-
   unsigned connected(unsigned port) override;
   void connect(unsigned port, unsigned device) override;
   void power() override;
