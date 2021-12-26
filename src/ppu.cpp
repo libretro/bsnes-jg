@@ -1044,16 +1044,16 @@ auto PPU::Background::runMode7() -> void {
   }
 }
 
-auto PPU::Background::hires() const -> bool {
+inline bool PPU::Background::hires() const {
   return ppu.io.bgMode == 5 || ppu.io.bgMode == 6;
 }
 
 //V = 0, H = 0
-auto PPU::Background::frame() -> void {
+inline void PPU::Background::frame() {
 }
 
 //H = 0
-auto PPU::Background::scanline() -> void {
+inline void PPU::Background::scanline() {
   mosaic.hcounter = ppu.mosaic.size;
   mosaic.hoffset = 0;
 

@@ -164,11 +164,11 @@ struct Mosaic {
 struct Background {
   Background(unsigned id) : id(id) {}
 
-  inline auto hires() const -> bool;
+  inline bool hires() const;
 
   //background.cpp
-  auto frame() -> void;
-  auto scanline() -> void;
+  inline void frame();
+  inline void scanline();
   auto begin() -> void;
   auto fetchNameTable() -> void;
   auto fetchOffset(unsigned y) -> void;
