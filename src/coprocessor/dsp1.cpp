@@ -2,8 +2,7 @@
 
 namespace SuperFamicom {
 
-#define DSP1_CPP
-#include "dsp1/dsp1emu.cpp"
+#include "dsp1emu.hpp"
 
 Dsp1 dsp1emu;
 DSP1 dsp1;

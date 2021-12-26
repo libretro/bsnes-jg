@@ -87,6 +87,7 @@ CXXSRCS := $(OBJDIR)/src/audio.cpp \
 	$(OBJDIR)/src/coprocessor/cx4.cpp \
 	$(OBJDIR)/src/coprocessor/dip.cpp \
 	$(OBJDIR)/src/coprocessor/dsp1.cpp \
+	$(OBJDIR)/src/coprocessor/dsp1emu.cpp \
 	$(OBJDIR)/src/coprocessor/dsp2.cpp \
 	$(OBJDIR)/src/coprocessor/dsp4.cpp \
 	$(OBJDIR)/src/coprocessor/epsonrtc.cpp \

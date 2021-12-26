@@ -1,4 +1,6 @@
-#ifdef DSP1_CPP
+#include "../sfc.hpp"
+
+namespace SuperFamicom {
 
 #include "dsp1emu.hpp"
 
@@ -1623,6 +1625,4 @@ const int16_t Dsp1::SinTable[256] = {
          0xffff,  0xffff,  0xffff,  0xffff,  0xffff,  0xffff,  0xffff,  0xffff,
          0xffff,  0xffff,  0xffff,  0xffff,  0xffff,  0xffff,  0xffff,  0xffff};
 
-//////////////////////////////////////////////////////////////////
-
-#endif
+}
