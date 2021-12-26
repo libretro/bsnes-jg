@@ -1,8 +1,7 @@
 //DSP-4 emulator code
 //Copyright (c) 2004-2006 Dreamer Nom, John Weidman, Kris Bleakley, Nach, z80 gaiden
 
-#ifndef DSP4EMU_H
-#define DSP4EMU_H
+#pragma once
 
 struct DSP4_t
 {
@@ -99,5 +98,3 @@ struct DSP4_vars_t
 };
 
 extern struct DSP4_vars_t DSP4_vars;
-
-#endif

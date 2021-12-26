@@ -1,5 +1,3 @@
-#ifdef DSP4_CPP
-
 //DSP-4 emulator code
 //Copyright (c) 2004-2006 Dreamer Nom, John Weidman, Kris Bleakley, Nach, z80 gaiden
 
@@ -15,7 +13,22 @@ Fixed-point math reminder:
 1.15.00 * 1.00.15 = 2.15.15 -> 1.15.15 (DSP) -> 1.15.16 (LSB is '0')
 */
 
-#include "dsp4emu.h"
+namespace SuperFamicom::DSP4i {
+
+#include "dsp4emu.hpp"
+
+inline uint16_t READ_WORD(uint8_t *addr) {
+  return (addr[0]) + (addr[1] << 8);
+}
+
+inline uint32_t READ_DWORD(uint8_t *addr) {
+  return (addr[0]) + (addr[1] << 8) + (addr[2] << 16) + (addr[3] << 24);
+}
+
+inline void WRITE_WORD(uint8_t *addr, uint16_t data) {
+  addr[0] = data;
+  addr[1] = data >> 8;
+}
 
 struct DSP4_t DSP4;
 struct DSP4_vars_t DSP4_vars;
@@ -2147,4 +2160,4 @@ void DSP4GetByte()
   }
 }
 
-#endif
+}

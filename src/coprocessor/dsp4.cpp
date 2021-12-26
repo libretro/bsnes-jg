@@ -1,25 +1,8 @@
 #include "../sfc.hpp"
 
+#include "dsp4emu.cpp"
+
 namespace SuperFamicom {
-
-namespace DSP4i {
-  #define DSP4_CPP
-
-  inline uint16_t READ_WORD(uint8_t *addr) {
-    return (addr[0]) + (addr[1] << 8);
-  }
-
-  inline uint32_t READ_DWORD(uint8_t *addr) {
-    return (addr[0]) + (addr[1] << 8) + (addr[2] << 16) + (addr[3] << 24);
-  }
-
-  inline void WRITE_WORD(uint8_t *addr, uint16_t data) {
-    addr[0] = data;
-    addr[1] = data >> 8;
-  }
-
-  #include "dsp4/dsp4emu.c"
-}
 
 DSP4 dsp4;
 
