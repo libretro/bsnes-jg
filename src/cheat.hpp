@@ -32,3 +32,8 @@ struct Cheat {
 };
 
 }
+
+namespace CheatDecoder {
+  bool gb(std::string& code);
+  bool snes(std::string& code);
+}
