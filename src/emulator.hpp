@@ -21,9 +21,9 @@
 #include "../nall/varint.hpp"
 #include "../nall/vector.hpp"
 #include "../nall/string.hpp"
-#include "../nall/markup.hpp"
 
 #include "audio.hpp"
+#include "markup.hpp"
 
 namespace Emulator {
   //incremented only when serialization format changes

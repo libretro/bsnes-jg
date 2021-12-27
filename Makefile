@@ -113,6 +113,7 @@ CXXSRCS := $(OBJDIR)/src/audio.cpp \
 	$(OBJDIR)/src/expansion/satellaview.cpp \
 	$(OBJDIR)/src/heuristics.cpp \
 	$(OBJDIR)/src/interface.cpp \
+	$(OBJDIR)/src/markup.cpp \
 	$(OBJDIR)/src/memory.cpp \
 	$(OBJDIR)/src/ppu.cpp \
 	$(OBJDIR)/src/processor/arm7tdmi.cpp \
