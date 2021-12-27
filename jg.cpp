@@ -322,7 +322,7 @@ std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
             auto heuristics = Heuristics::GameBoy(rom, gameinfo.path);
 
             gameBoy.manifest = heuristics.manifest();
-            gameBoy.document = nall::BML::unserialize(gameBoy.manifest.c_str());
+            gameBoy.document = BML::unserialize(gameBoy.manifest.c_str());
             gameBoy.location = gameinfo.path;
             gameBoy.program = rom;
             return gameBoy.program;
@@ -583,9 +583,9 @@ bool Program::loadSuperFamicom(std::string location) {
 
     std::string dbpath = std::string(pathinfo.core) + "/Super Famicom.bml";
 
-    if (auto document = nall::BML::unserialize(nall::string::read(dbpath.c_str()))) {
+    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
-            manifest = nall::BML::serialize(game);
+            manifest = BML::serialize(game);
             //the internal ROM header title is not present in the database, but
             //is needed for internal core overrides
             manifest += "  title: " + superFamicom.title + "\n";
@@ -596,7 +596,7 @@ bool Program::loadSuperFamicom(std::string location) {
     superFamicom.manifest = manifest.empty() ? heuristics.manifest() : manifest;
 
     hackPatchMemory(rom);
-    superFamicom.document = nall::BML::unserialize(superFamicom.manifest.c_str());
+    superFamicom.document = BML::unserialize(superFamicom.manifest.c_str());
     superFamicom.location = location;
 
     unsigned offset = 0;
@@ -635,15 +635,15 @@ bool Program::loadBSMemory(std::string location) {
 
     std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
 
-    if (auto document = nall::BML::unserialize(nall::string::read(dbpath.c_str()))) {
+    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
-            manifest = nall::BML::serialize(game);
+            manifest = BML::serialize(game);
             bsMemory.verified = true;
         }
     }
 
     bsMemory.manifest = manifest.empty() ? heuristics.manifest() : manifest;
-    bsMemory.document = nall::BML::unserialize(bsMemory.manifest.c_str());
+    bsMemory.document = BML::unserialize(bsMemory.manifest.c_str());
     bsMemory.location = location;
 
     bsMemory.program = rom;
@@ -666,15 +666,15 @@ bool Program::loadSufamiTurboA(std::string location) {
 
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
 
-    if (auto document = nall::BML::unserialize(nall::string::read(dbpath.c_str()))) {
+    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
-            manifest = nall::BML::serialize(game);
+            manifest = BML::serialize(game);
             sufamiTurboA.verified = true;
         }
     }
 
     sufamiTurboA.manifest = manifest.empty() ? heuristics.manifest() : manifest;
-    sufamiTurboA.document = nall::BML::unserialize(sufamiTurboA.manifest.c_str());
+    sufamiTurboA.document = BML::unserialize(sufamiTurboA.manifest.c_str());
     sufamiTurboA.location = std::string(gameinfo.path);
 
     sufamiTurboA.program = rom;
@@ -696,15 +696,15 @@ bool Program::loadSufamiTurboB(std::string location) {
 
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
 
-    if (auto document = nall::BML::unserialize(nall::string::read(dbpath.c_str()))) {
+    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
         if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
-            manifest = nall::BML::serialize(game);
+            manifest = BML::serialize(game);
             sufamiTurboB.verified = true;
         }
     }
 
     sufamiTurboB.manifest = manifest.empty() ? heuristics.manifest() : manifest;
-    sufamiTurboB.document = nall::BML::unserialize(sufamiTurboB.manifest.c_str());
+    sufamiTurboB.document = BML::unserialize(sufamiTurboB.manifest.c_str());
     sufamiTurboB.location = location;
 
     sufamiTurboB.program = rom;

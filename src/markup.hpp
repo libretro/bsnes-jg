@@ -237,10 +237,10 @@ auto ManagedNode::_lookup(const nall::string& path) const -> Node {
 
 /*//faster, but cannot search
   if(auto position = path.find("/")) {
-    auto name = slice(path, 0, *position);
+    auto name = nall::slice(path, 0, *position);
     for(auto& node : _children) {
       if(name == node->_name) {
-        return node->_lookup(slice(path, *position + 1));
+        return node->_lookup(nall::slice(path, *position + 1));
       }
     }
   } else for(auto& node : _children) {
@@ -252,14 +252,14 @@ auto ManagedNode::_lookup(const nall::string& path) const -> Node {
 
 auto ManagedNode::_create(const nall::string& path) -> Node {
   if(auto position = path.find("/")) {
-    auto name = slice(path, 0, *position);
+    auto name = nall::slice(path, 0, *position);
     for(auto& node : _children) {
       if(name == node->_name) {
-        return node->_create(slice(path, *position + 1));
+        return node->_create(nall::slice(path, *position + 1));
       }
     }
     _children.append(new ManagedNode(name));
-    return _children.right()->_create(slice(path, *position + 1));
+    return _children.right()->_create(nall::slice(path, *position + 1));
   }
   for(auto& node : _children) {
     if(path == node->_name) return node;
@@ -270,7 +270,7 @@ auto ManagedNode::_create(const nall::string& path) -> Node {
 
 }
 
-namespace nall::BML {
+namespace BML {
 
 //metadata is used to store nesting level
 
@@ -300,33 +300,33 @@ protected:
     unsigned length = 0;
     while(valid(p[length])) length++;
     if(length == 0) throw "Invalid node name";
-    _name = slice(p, 0, length);
+    _name = nall::slice(p, 0, length);
     p += length;
   }
 
-  auto parseData(const char*& p, string_view spacing) -> void {
+  auto parseData(const char*& p, nall::string_view spacing) -> void {
     if(*p == '=' && *(p + 1) == '\"') {
       unsigned length = 2;
       while(p[length] && p[length] != '\n' && p[length] != '\"') length++;
       if(p[length] != '\"') throw "Unescaped value";
-      _value = {slice(p, 2, length - 2), "\n"};
+      _value = {nall::slice(p, 2, length - 2), "\n"};
       p += length + 1;
     } else if(*p == '=') {
       unsigned length = 1;
       while(p[length] && p[length] != '\n' && p[length] != '\"' && p[length] != ' ') length++;
       if(p[length] == '\"') throw "Illegal character in value";
-      _value = {slice(p, 1, length - 1), "\n"};
+      _value = {nall::slice(p, 1, length - 1), "\n"};
       p += length;
     } else if(*p == ':') {
       unsigned length = 1;
       while(p[length] && p[length] != '\n') length++;
-      _value = {slice(p, 1, length - 1).trimLeft(spacing, 1L), "\n"};
+      _value = {nall::slice(p, 1, length - 1).trimLeft(spacing, 1L), "\n"};
       p += length;
     }
   }
 
   //read all attributes for a node
-  auto parseAttributes(const char*& p, string_view spacing) -> void {
+  auto parseAttributes(const char*& p, nall::string_view spacing) -> void {
     while(*p && *p != '\n') {
       if(*p != ' ') throw "Invalid node name";
       while(*p == ' ') p++;  //skip excess spaces
@@ -336,7 +336,7 @@ protected:
       unsigned length = 0;
       while(valid(p[length])) length++;
       if(length == 0) throw "Invalid attribute name";
-      node->_name = slice(p, 0, length);
+      node->_name = nall::slice(p, 0, length);
       node->parseData(p += length, spacing);
       node->_value.trimRight("\n", 1L);
       _children.append(node);
@@ -344,7 +344,7 @@ protected:
   }
 
   //read a node and all of its child nodes
-  auto parseNode(const nall::vector<nall::string>& text, unsigned& y, string_view spacing) -> void {
+  auto parseNode(const nall::vector<nall::string>& text, unsigned& y, nall::string_view spacing) -> void {
     const char* p = text[y++];
     _metadata = parseDepth(p);
     parseName(p);
@@ -356,7 +356,7 @@ protected:
       if(depth <= _metadata) break;
 
       if(text[y][depth] == ':') {
-        _value.append(slice(text[y++], depth + 1).trimLeft(spacing, 1L), "\n");
+        _value.append(nall::slice(text[y++], depth + 1).trimLeft(spacing, 1L), "\n");
         continue;
       }
 
@@ -369,7 +369,7 @@ protected:
   }
 
   //read top-level nodes
-  auto parse(nall::string document, string_view spacing) -> void {
+  auto parse(nall::string document, nall::string_view spacing) -> void {
     //in order to simplify the parsing logic; we do an initial pass to normalize the data
     //the below code will turn '\r\n' into '\n'; skip empty lines; and skip comment lines
     char* p = document.get(), *output = p;
@@ -388,7 +388,7 @@ protected:
       }
       if(empty) continue;
 
-      memory::move(output, origin, p - origin);
+      nall::memory::move(output, origin, p - origin);
       output += p - origin;
     }
     document.resize(document.size() - (p - output)).trimRight("\n");
@@ -404,10 +404,10 @@ protected:
     }
   }
 
-  friend auto unserialize(const nall::string&, string_view) -> Markup::Node;
+  friend auto unserialize(const nall::string&, nall::string_view) -> Markup::Node;
 };
 
-Markup::Node unserialize(const nall::string& markup, string_view spacing = {});
-nall::string serialize(const Markup::Node& node, string_view spacing = {}, unsigned depth = 0);
+Markup::Node unserialize(const nall::string& markup, nall::string_view spacing = {});
+nall::string serialize(const Markup::Node& node, nall::string_view spacing = {}, unsigned depth = 0);
 
 }

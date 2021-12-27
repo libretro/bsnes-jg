@@ -1,9 +1,9 @@
 #include "emulator.hpp"
 
-namespace nall::BML {
+namespace BML {
 
-auto unserialize(const string& markup, string_view spacing) -> Markup::Node {
-  shared_pointer<ManagedNode> node(new ManagedNode);
+auto unserialize(const nall::string& markup, nall::string_view spacing) -> Markup::Node {
+  nall::shared_pointer<ManagedNode> node(new ManagedNode);
   try {
     node->parse(markup, spacing);
   } catch(const char* error) {
@@ -12,23 +12,23 @@ auto unserialize(const string& markup, string_view spacing) -> Markup::Node {
   return (Markup::SharedNode&)node;
 }
 
-string serialize(const Markup::Node& node, string_view spacing, unsigned depth) {
+nall::string serialize(const Markup::Node& node, nall::string_view spacing, unsigned depth) {
   if(!node.name()) {
-    string result;
+    nall::string result;
     for(auto leaf : node) {
       result.append(serialize(leaf, spacing, depth));
     }
     return result;
   }
 
-  string padding;
+  nall::string padding;
   padding.resize(depth * 2);
   padding.fill(' ');
 
-  vector<string> lines;
+  nall::vector<nall::string> lines;
   if(auto value = node.value()) lines = value.split("\n");
 
-  string result;
+  nall::string result;
   result.append(padding);
   result.append(node.name());
   if(lines.size() == 1) result.append(":", spacing, lines[0]);
