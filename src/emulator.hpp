@@ -128,12 +128,12 @@ struct Game {
   struct Oscillator;
 
   inline auto load(std::string) -> void;
-  inline auto memory(nall::Markup::Node) -> nall::maybe<Memory>;
+  inline auto memory(Markup::Node) -> nall::maybe<Memory>;
   inline auto oscillator(nall::Natural<> = 0) -> nall::maybe<Oscillator>;
 
   struct Memory {
     Memory() = default;
-    inline Memory(nall::Markup::Node);
+    inline Memory(Markup::Node);
     explicit operator bool() const { return (bool)!type.empty(); }
     inline std::string name() const;
 
@@ -148,13 +148,13 @@ struct Game {
 
   struct Oscillator {
     Oscillator() = default;
-    inline Oscillator(nall::Markup::Node);
+    inline Oscillator(Markup::Node);
     explicit operator bool() const { return frequency; }
 
     nall::Natural<> frequency;
   };
 
-  nall::Markup::Node document;
+  Markup::Node document;
   std::string sha256;
   std::string label;
   std::string name;
@@ -186,7 +186,7 @@ auto Game::load(std::string text) -> void {
   }
 }
 
-auto Game::memory(nall::Markup::Node node) -> nall::maybe<Memory> {
+auto Game::memory(Markup::Node node) -> nall::maybe<Memory> {
   if(!node) return nall::nothing;
   for(auto& memory : memoryList) {
     auto type = std::string(node["type"].text());
@@ -211,7 +211,7 @@ auto Game::oscillator(nall::Natural<> index) -> nall::maybe<Oscillator> {
   return nall::nothing;
 }
 
-Game::Memory::Memory(nall::Markup::Node node) {
+Game::Memory::Memory(Markup::Node node) {
   type = node["type"].text();
   size = node["size"].natural();
   content = node["content"].text();
@@ -234,7 +234,7 @@ std::string Game::Memory::name() const {
   return ret;
 }
 
-Game::Oscillator::Oscillator(nall::Markup::Node node) {
+Game::Oscillator::Oscillator(Markup::Node node) {
   frequency = node["frequency"].natural();
 }
 

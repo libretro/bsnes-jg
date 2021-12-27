@@ -145,7 +145,7 @@ public:
         std::string option;
         std::string location;
         std::string manifest;
-        nall::Markup::Node document;
+        Markup::Node document;
         bool verified;
     };
 

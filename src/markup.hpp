@@ -1,25 +1,25 @@
 #pragma once
 
-namespace nall::Markup {
+namespace Markup {
 
 struct Node;
 struct ManagedNode;
-using SharedNode = shared_pointer<ManagedNode>;
+using SharedNode = nall::shared_pointer<ManagedNode>;
 
 struct ManagedNode {
   ManagedNode() = default;
-  ManagedNode(const string& name) : _name(name) {}
-  ManagedNode(const string& name, const string& value) : _name(name), _value(value) {}
+  ManagedNode(const nall::string& name) : _name(name) {}
+  ManagedNode(const nall::string& name, const nall::string& value) : _name(name), _value(value) {}
 
-  auto clone() const -> shared_pointer<ManagedNode> {
-    shared_pointer<ManagedNode> clone{new ManagedNode(_name, _value)};
+  auto clone() const -> nall::shared_pointer<ManagedNode> {
+    nall::shared_pointer<ManagedNode> clone{new ManagedNode(_name, _value)};
     for(auto& child : _children) {
       clone->_children.append(child->clone());
     }
     return clone;
   }
 
-  auto copy(shared_pointer<ManagedNode> source) -> void {
+  auto copy(nall::shared_pointer<ManagedNode> source) -> void {
     _name = source->_name;
     _value = source->_value;
     _metadata = source->_metadata;
@@ -30,22 +30,22 @@ struct ManagedNode {
   }
 
 protected:
-  string _name;
-  string _value;
+  nall::string _name;
+  nall::string _value;
   uintptr_t _metadata = 0;
-  vector<shared_pointer<ManagedNode>> _children;
+  nall::vector<nall::shared_pointer<ManagedNode>> _children;
 
-  inline auto _evaluate(string query) const -> bool;
-  inline auto _find(const string& query) const -> vector<Node>;
-  inline auto _lookup(const string& path) const -> Node;
-  inline auto _create(const string& path) -> Node;
+  inline auto _evaluate(nall::string query) const -> bool;
+  inline auto _find(const nall::string& query) const -> nall::vector<Node>;
+  inline auto _lookup(const nall::string& path) const -> Node;
+  inline auto _create(const nall::string& path) -> Node;
 
   friend class Node;
 };
 
 struct Node {
   Node() : shared(new ManagedNode) {}
-  Node(const shared_pointer<ManagedNode>& source) : shared(source ? source : new ManagedNode) {}
+  Node(const nall::shared_pointer<ManagedNode>& source) : shared(source ? source : new ManagedNode) {}
   Node(const nall::string& name) : shared(new ManagedNode(name)) {}
   Node(const nall::string& name, const nall::string& value) : shared(new ManagedNode(name, value)) {}
 
@@ -86,7 +86,7 @@ struct Node {
   auto prepend(const Node& node) -> void { shared->_children.prepend(node.shared); }
   auto append(const Node& node) -> void { shared->_children.append(node.shared); }
   auto remove(const Node& node) -> bool {
-    for(auto n : range(size())) {
+    for(auto n : nall::range(size())) {
       if(node.shared == shared->_children[n]) {
         return shared->_children.remove(n), true;
       }
@@ -116,7 +116,7 @@ struct Node {
 
   auto operator[](const nall::string& path) const -> Node { return shared->_lookup(path); }
   auto operator()(const nall::string& path) -> Node { return shared->_create(path); }
-  auto find(const nall::string& query) const -> vector<Node> { return shared->_find(query); }
+  auto find(const nall::string& query) const -> nall::vector<Node> { return shared->_find(query); }
 
   struct iterator {
     auto operator*() -> Node { return {source.shared->_children[position]}; }
@@ -133,10 +133,10 @@ struct Node {
   auto end() const -> iterator { return iterator(*this, size()); }
 
 protected:
-  shared_pointer<ManagedNode> shared;
+  nall::shared_pointer<ManagedNode> shared;
 };
 
-auto ManagedNode::_evaluate(string query) const -> bool {
+auto ManagedNode::_evaluate(nall::string query) const -> bool {
   if(!query) return true;
 
   for(auto& rule : query.split(",")) {
@@ -154,7 +154,7 @@ auto ManagedNode::_evaluate(string query) const -> bool {
       return false;
     }
 
-    vector<string> side;
+    nall::vector<nall::string> side;
     switch(comparator) {
     case Comparator::EQ: side = rule.split ("=", 1L); break;
     case Comparator::NE: side = rule.split("!=", 1L); break;
@@ -164,7 +164,7 @@ auto ManagedNode::_evaluate(string query) const -> bool {
     case Comparator::GE: side = rule.split(">=", 1L); break;
     }
 
-    string data = string{_value}.strip();
+    nall::string data = nall::string{_value}.strip();
     if(side(0)) {
       auto result = _find(side(0));
       if(result.size() == 0) return false;
@@ -186,11 +186,11 @@ auto ManagedNode::_evaluate(string query) const -> bool {
   return true;
 }
 
-auto ManagedNode::_find(const string& query) const -> vector<Node> {
-  vector<Node> result;
+auto ManagedNode::_find(const nall::string& query) const -> nall::vector<Node> {
+  nall::vector<Node> result;
 
   auto path = query.split("/");
-  string name = path.take(0), rule;
+  nall::string name = path.take(0), rule;
   unsigned lo = 0u, hi = ~0u;
 
   if(name.match("*[*]")) {
@@ -230,8 +230,8 @@ auto ManagedNode::_find(const string& query) const -> vector<Node> {
   return result;
 }
 
-//operator[](string)
-auto ManagedNode::_lookup(const string& path) const -> Node {
+//operator[](nall::string)
+auto ManagedNode::_lookup(const nall::string& path) const -> Node {
   auto result = _find(path);
   return result ? result[0] : Node{};
 
@@ -250,7 +250,7 @@ auto ManagedNode::_lookup(const string& path) const -> Node {
 */
 }
 
-auto ManagedNode::_create(const string& path) -> Node {
+auto ManagedNode::_create(const nall::string& path) -> Node {
   if(auto position = path.find("/")) {
     auto name = slice(path, 0, *position);
     for(auto& node : _children) {
@@ -332,7 +332,7 @@ protected:
       while(*p == ' ') p++;  //skip excess spaces
       if(*(p + 0) == '/' && *(p + 1) == '/') break;  //skip comments
 
-      shared_pointer<ManagedNode> node(new ManagedNode);
+      nall::shared_pointer<ManagedNode> node(new ManagedNode);
       unsigned length = 0;
       while(valid(p[length])) length++;
       if(length == 0) throw "Invalid attribute name";
@@ -344,7 +344,7 @@ protected:
   }
 
   //read a node and all of its child nodes
-  auto parseNode(const vector<string>& text, unsigned& y, string_view spacing) -> void {
+  auto parseNode(const nall::vector<nall::string>& text, unsigned& y, string_view spacing) -> void {
     const char* p = text[y++];
     _metadata = parseDepth(p);
     parseName(p);
@@ -360,7 +360,7 @@ protected:
         continue;
       }
 
-      shared_pointer<ManagedNode> node(new ManagedNode);
+      nall::shared_pointer<ManagedNode> node(new ManagedNode);
       node->parseNode(text, y, spacing);
       _children.append(node);
     }
@@ -369,7 +369,7 @@ protected:
   }
 
   //read top-level nodes
-  auto parse(string document, string_view spacing) -> void {
+  auto parse(nall::string document, string_view spacing) -> void {
     //in order to simplify the parsing logic; we do an initial pass to normalize the data
     //the below code will turn '\r\n' into '\n'; skip empty lines; and skip comment lines
     char* p = document.get(), *output = p;
@@ -397,17 +397,17 @@ protected:
     auto text = document.split("\n");
     unsigned y = 0;
     while(y < text.size()) {
-      shared_pointer<ManagedNode> node(new ManagedNode);
+      nall::shared_pointer<ManagedNode> node(new ManagedNode);
       node->parseNode(text, y, spacing);
       if(node->_metadata > 0) throw "Root nodes cannot be indented";
       _children.append(node);
     }
   }
 
-  friend auto unserialize(const string&, string_view) -> Markup::Node;
+  friend auto unserialize(const nall::string&, string_view) -> Markup::Node;
 };
 
-Markup::Node unserialize(const string& markup, string_view spacing = {});
-string serialize(const Markup::Node& node, string_view spacing = {}, unsigned depth = 0);
+Markup::Node unserialize(const nall::string& markup, string_view spacing = {});
+nall::string serialize(const Markup::Node& node, string_view spacing = {}, unsigned depth = 0);
 
 }

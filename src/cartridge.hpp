@@ -58,7 +58,7 @@ private:
   Emulator::Game slotBSMemory;
   Emulator::Game slotSufamiTurboA;
   Emulator::Game slotSufamiTurboB;
-  nall::Markup::Node board;
+  Markup::Node board;
 
   //cartridge.cpp
   bool loadBSMemory();
@@ -66,58 +66,58 @@ private:
   bool loadSufamiTurboB();
 
   //load.cpp
-  nall::Markup::Node loadBoard(nall::string);
-  void loadCartridge(nall::Markup::Node);
-  void loadCartridgeBSMemory(nall::Markup::Node);
-  void loadCartridgeSufamiTurboA(nall::Markup::Node);
-  void loadCartridgeSufamiTurboB(nall::Markup::Node);
+  Markup::Node loadBoard(nall::string);
+  void loadCartridge(Markup::Node);
+  void loadCartridgeBSMemory(Markup::Node);
+  void loadCartridgeSufamiTurboA(Markup::Node);
+  void loadCartridgeSufamiTurboB(Markup::Node);
 
-  void loadMemory(Memory&, nall::Markup::Node);
-  template<typename T> unsigned loadMap(nall::Markup::Node, T&);
-  unsigned loadMap(nall::Markup::Node, const nall::function<uint8_t (unsigned, uint8_t)>&, const nall::function<void (unsigned, uint8_t)>&);
+  void loadMemory(Memory&, Markup::Node);
+  template<typename T> unsigned loadMap(Markup::Node, T&);
+  unsigned loadMap(Markup::Node, const nall::function<uint8_t (unsigned, uint8_t)>&, const nall::function<void (unsigned, uint8_t)>&);
 
-  void loadROM(nall::Markup::Node);
-  void loadRAM(nall::Markup::Node);
-  void loadICD(nall::Markup::Node);
-  void loadMCC(nall::Markup::Node);
-  void loadBSMemory(nall::Markup::Node);
-  void loadSufamiTurboA(nall::Markup::Node);
-  void loadSufamiTurboB(nall::Markup::Node);
-  void loadDIP(nall::Markup::Node);
-  void loadEvent(nall::Markup::Node);
-  void loadSA1(nall::Markup::Node);
-  void loadSuperFX(nall::Markup::Node);
-  void loadARMDSP(nall::Markup::Node);
-  void loadHitachiDSP(nall::Markup::Node, unsigned roms);
-  void loaduPD7725(nall::Markup::Node);
-  void loaduPD96050(nall::Markup::Node);
-  void loadEpsonRTC(nall::Markup::Node);
-  void loadSharpRTC(nall::Markup::Node);
-  void loadSPC7110(nall::Markup::Node);
-  void loadSDD1(nall::Markup::Node);
-  void loadOBC1(nall::Markup::Node);
+  void loadROM(Markup::Node);
+  void loadRAM(Markup::Node);
+  void loadICD(Markup::Node);
+  void loadMCC(Markup::Node);
+  void loadBSMemory(Markup::Node);
+  void loadSufamiTurboA(Markup::Node);
+  void loadSufamiTurboB(Markup::Node);
+  void loadDIP(Markup::Node);
+  void loadEvent(Markup::Node);
+  void loadSA1(Markup::Node);
+  void loadSuperFX(Markup::Node);
+  void loadARMDSP(Markup::Node);
+  void loadHitachiDSP(Markup::Node, unsigned roms);
+  void loaduPD7725(Markup::Node);
+  void loaduPD96050(Markup::Node);
+  void loadEpsonRTC(Markup::Node);
+  void loadSharpRTC(Markup::Node);
+  void loadSPC7110(Markup::Node);
+  void loadSDD1(Markup::Node);
+  void loadOBC1(Markup::Node);
   void loadMSU1();
 
   //save.cpp
-  void saveCartridge(nall::Markup::Node);
-  void saveCartridgeBSMemory(nall::Markup::Node);
-  void saveCartridgeSufamiTurboA(nall::Markup::Node);
-  void saveCartridgeSufamiTurboB(nall::Markup::Node);
+  void saveCartridge(Markup::Node);
+  void saveCartridgeBSMemory(Markup::Node);
+  void saveCartridgeSufamiTurboA(Markup::Node);
+  void saveCartridgeSufamiTurboB(Markup::Node);
 
-  void saveMemory(Memory&, nall::Markup::Node);
+  void saveMemory(Memory&, Markup::Node);
 
-  void saveRAM(nall::Markup::Node);
-  void saveMCC(nall::Markup::Node);
-  void saveSA1(nall::Markup::Node);
-  void saveSuperFX(nall::Markup::Node);
-  void saveARMDSP(nall::Markup::Node);
-  void saveHitachiDSP(nall::Markup::Node);
-  void saveuPD7725(nall::Markup::Node);
-  void saveuPD96050(nall::Markup::Node);
-  void saveEpsonRTC(nall::Markup::Node);
-  void saveSharpRTC(nall::Markup::Node);
-  void saveSPC7110(nall::Markup::Node);
-  void saveOBC1(nall::Markup::Node);
+  void saveRAM(Markup::Node);
+  void saveMCC(Markup::Node);
+  void saveSA1(Markup::Node);
+  void saveSuperFX(Markup::Node);
+  void saveARMDSP(Markup::Node);
+  void saveHitachiDSP(Markup::Node);
+  void saveuPD7725(Markup::Node);
+  void saveuPD96050(Markup::Node);
+  void saveEpsonRTC(Markup::Node);
+  void saveSharpRTC(Markup::Node);
+  void saveSPC7110(Markup::Node);
+  void saveOBC1(Markup::Node);
 
   friend class Interface;
   friend class ICD;
