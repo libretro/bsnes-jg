@@ -48,12 +48,12 @@ struct uPD96050 {
 
     auto serialize(serializer&) -> void;
 
-    nall::Boolean ov0;  //overflow 0
-    nall::Boolean ov1;  //overflow 1
-    nall::Boolean z;    //zero
-    nall::Boolean c;    //carry
-    nall::Boolean s0;   //sign 0
-    nall::Boolean s1;   //sign 1
+    bool ov0;  //overflow 0
+    bool ov1;  //overflow 1
+    bool z;    //zero
+    bool c;    //carry
+    bool s0;   //sign 0
+    bool s1;   //sign 1
   };
 
   struct Status {
@@ -80,21 +80,21 @@ struct uPD96050 {
 
     auto serialize(serializer&) -> void;
 
-    nall::Boolean p0;    //output port 0
-    nall::Boolean p1;    //output port 1
-    nall::Boolean ei;    //enable interrupts
-    nall::Boolean sic;   //serial input control  (0 = 16-bit; 1 = 8-bit)
-    nall::Boolean soc;   //serial output control (0 = 16-bit; 1 = 8-bit)
-    nall::Boolean drc;   //data register size    (0 = 16-bit; 1 = 8-bit)
-    nall::Boolean dma;   //data register DMA mode
-    nall::Boolean drs;   //data register status  (1 = active; 0 = stopped)
-    nall::Boolean usf0;  //user flag 0
-    nall::Boolean usf1;  //user flag 1
-    nall::Boolean rqm;   //request for master (=1 on internal access; =0 on external access)
+    bool p0;    //output port 0
+    bool p1;    //output port 1
+    bool ei;    //enable interrupts
+    bool sic;   //serial input control  (0 = 16-bit; 1 = 8-bit)
+    bool soc;   //serial output control (0 = 16-bit; 1 = 8-bit)
+    bool drc;   //data register size    (0 = 16-bit; 1 = 8-bit)
+    bool dma;   //data register DMA mode
+    bool drs;   //data register status  (1 = active; 0 = stopped)
+    bool usf0;  //user flag 0
+    bool usf1;  //user flag 1
+    bool rqm;   //request for master (=1 on internal access; =0 on external access)
 
     //internal
-    nall::Boolean siack;  //serial input acknowledge
-    nall::Boolean soack;  //serial output acknowledge
+    bool siack;  //serial input acknowledge
+    bool soack;  //serial output acknowledge
   };
 
   struct Registers {
