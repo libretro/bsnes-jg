@@ -115,8 +115,8 @@ struct ARM7TDMI {
   auto serialize(serializer&) -> void;
 
   //disassembler.cpp
-  auto disassemble(nall::maybe<uint32_t> pc = nall::nothing, nall::maybe<nall::Boolean> thumb = nall::nothing) -> nall::string;
-  auto disassembleRegisters() -> nall::string;
+  /*auto disassemble(nall::maybe<uint32_t> pc = nall::nothing, nall::maybe<nall::Boolean> thumb = nall::nothing) -> nall::string;
+  auto disassembleRegisters() -> nall::string;*/
 
   struct GPR {
     inline operator uint32_t() const { return data; }
@@ -230,7 +230,7 @@ struct ARM7TDMI {
   nall::function<auto () -> void> thumbInstruction[65536];
 
   //disassembler.cpp
-  auto armDisassembleBranch(nall::Integer<24>, nall::Natural< 1>) -> nall::string;
+  /*auto armDisassembleBranch(nall::Integer<24>, nall::Natural< 1>) -> nall::string;
   auto armDisassembleBranchExchangeRegister(nall::Natural< 4>) -> nall::string;
   auto armDisassembleDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> nall::string;
   auto armDisassembleDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> nall::string;
@@ -276,10 +276,10 @@ struct ARM7TDMI {
   auto thumbDisassembleUndefined() -> nall::string;
 
   nall::function<auto (uint32_t opcode) -> nall::string> armDisassemble[4096];
-  nall::function<auto () -> nall::string> thumbDisassemble[65536];
+  nall::function<auto () -> nall::string> thumbDisassemble[65536];*/
 
   uint32_t _pc;
-  nall::string _c;
+  //nall::string _c;
 };
 
 }

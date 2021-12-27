@@ -265,7 +265,6 @@ auto ARM7TDMI::armInitialize() -> void {
     unsigned index = (id & 0x0ff00000) >> 16 | (id & 0x000000f0) >> 4; \
     assert(!armInstruction[index]); \
     armInstruction[index] = [&](uint32_t opcode) { return armInstruction##name(arguments); }; \
-    armDisassemble[index] = [&](uint32_t opcode) { return armDisassemble##name(arguments); }; \
   }
 
   #define pattern(s) \
@@ -575,7 +574,6 @@ auto ARM7TDMI::thumbInitialize() -> void {
   #define bind(id, name, ...) { \
     assert(!thumbInstruction[id]); \
     thumbInstruction[id] = [=] { return thumbInstruction##name(__VA_ARGS__); }; \
-    thumbDisassemble[id] = [=] { return thumbDisassemble##name(__VA_ARGS__); }; \
   }
 
   #define pattern(s) \
@@ -1357,7 +1355,7 @@ auto ARM7TDMI::Pipeline::serialize(serializer& s) -> void {
   s.boolean(execute.thumb);
 }
 
-static const nall::string _r[] = {
+/*static const nall::string _r[] = {
   "r0", "r1",  "r2",  "r3",  "r4", "r5", "r6", "r7",
   "r8", "r9", "r10", "r11", "r12", "sp", "lr", "pc"
 };
@@ -1760,7 +1758,7 @@ auto ARM7TDMI::thumbDisassembleStackMultiple
 auto ARM7TDMI::thumbDisassembleUndefined
 () -> nall::string {
   return {"undefined"};
-}
+}*/
 
 #undef _s
 #undef _move
