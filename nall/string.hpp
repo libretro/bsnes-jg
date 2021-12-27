@@ -99,12 +99,8 @@ protected:
 //cast.hpp
 template<typename T> struct stringify;
 
-//format.hpp
-inline auto hex(uintmax value, long precision = 0, char padchar = '0') -> string;
-
 //utility.hpp
 inline auto slice(string_view self, int offset = 0, int length = -1) -> string;
-template<typename T> inline auto fromInteger(char* result, T value) -> char*;
 template<typename T> inline auto fromNatural(char* result, T value) -> char*;
 
 struct string {
@@ -183,7 +179,6 @@ public:
   //atoi.hpp
   inline auto integer() const -> intmax;
   inline auto natural() const -> uintmax;
-  inline auto hex() const -> uintmax;
   inline auto real() const -> double;
 
   //core.hpp
@@ -201,10 +196,8 @@ public:
 
   inline auto compare(string_view source) const -> int;
   inline auto beginsWith(string_view source) const -> bool;
-  inline auto endsWith(string_view source) const -> bool;
 
   //convert.hpp
-  inline auto downcase() -> string&;
   inline auto transform(string_view from, string_view to) -> string&;
 
   //match.hpp
@@ -239,7 +232,6 @@ public:
   inline auto remove(unsigned offset, unsigned length) -> string&;
   inline auto reverse() -> string&;
   inline auto size(int length, char fill = ' ') -> string&;
-  inline auto slice(int offset = 0, int length = -1) const -> string;
 };
 
 template<> struct vector<string> : vector_base<string> {
@@ -471,50 +463,12 @@ auto string::natural() const -> uintmax {
   return toNatural(data());
 }
 
-auto string::hex() const -> uintmax {
-  return toHex(data());
-}
-
 auto string::real() const -> double {
   return toReal(data());
 }
 
 //convert any (supported) type to a const char* without constructing a new nall::string
 //this is used inside string{...} to build nall::string values
-
-//booleans
-
-template<> struct stringify<bool> {
-  stringify(bool value) : _value(value) {}
-  auto data() const -> const char* { return _value ? "true" : "false"; }
-  auto size() const -> unsigned { return _value ? 4 : 5; }
-  bool _value;
-};
-
-//signed integers
-
-template<> struct stringify<signed int> {
-  stringify(signed int source) { fromInteger(_data, source); }
-  auto data() const -> const char* { return _data; }
-  auto size() const -> unsigned { return strlen(_data); }
-  char _data[2 + sizeof(signed int) * 3];
-};
-
-//unsigned integers
-
-template<> struct stringify<unsigned int> {
-  stringify(unsigned int source) { fromNatural(_data, source); }
-  auto data() const -> const char* { return _data; }
-  auto size() const -> unsigned { return strlen(_data); }
-  char _data[1 + sizeof(unsigned int) * 3];
-};
-
-template<unsigned Bits> struct stringify<Natural<Bits>> {
-  stringify(Natural<Bits> source) { fromNatural(_data, source); }
-  auto data() const -> const char* { return _data; }
-  auto size() const -> unsigned { return strlen(_data); }
-  char _data[1 + sizeof(uint64_t) * 3];
-};
 
 //char arrays
 
@@ -569,19 +523,6 @@ auto string::beginsWith(string_view source) const -> bool {
   return memory::compare(data(), source.data(), source.size()) == 0;
 }
 
-auto string::endsWith(string_view source) const -> bool {
-  if(source.size() > size()) return false;
-  return memory::compare(data() + size() - source.size(), source.data(), source.size()) == 0;
-}
-
-auto string::downcase() -> string& {
-  char* p = get();
-  for(unsigned n = 0; n < size(); n++) {
-    if(p[n] >= 'A' && p[n] <= 'Z') p[n] += 0x20;
-  }
-  return *this;
-}
-
 auto string::transform(string_view from, string_view to) -> string& {
   if(from.size() != to.size() || from.size() == 0) return *this;  //patterns must be the same length
   char* p = get();
@@ -627,23 +568,6 @@ template<bool Insensitive, bool Quoted> auto string::_find(int offset, string_vi
 }
 
 auto string::find(string_view source) const -> maybe<unsigned> { return _find<0, 0>(0, source); }
-
-auto hex(uintmax value, long precision, char padchar) -> string {
-  string buffer;
-  buffer.resize(sizeof(uintmax) * 2);
-  char* p = buffer.get();
-
-  unsigned size = 0;
-  do {
-    unsigned n = value & 15;
-    p[size++] = n < 10 ? '0' + n : 'a' + n - 10;
-    value >>= 4;
-  } while(value);
-  buffer.resize(size);
-  buffer.reverse();
-  if(precision) buffer.size(precision, padchar);
-  return buffer;
-}
 
 auto string::match(string_view source) const -> bool {
   const char* s = data();
@@ -917,29 +841,6 @@ auto slice(string_view self, int offset, int length) -> string {
       memory::copy(result.get(), self.data() + offset, length);
     }
   }
-  return result;
-}
-
-auto string::slice(int offset, int length) const -> string {
-  return nall::slice(*this, offset, length);
-}
-
-template<typename T> auto fromInteger(char* result, T value) -> char* {
-  bool negative = value < 0;
-  if(!negative) value = -value;  //negate positive integers to support eg INT_MIN
-
-  char buffer[1 + sizeof(T) * 3];
-  unsigned size = 0;
-
-  do {
-    int n = value % 10;  //-0 to -9
-    buffer[size++] = '0' - n;  //'0' to '9'
-    value /= 10;
-  } while(value);
-  if(negative) buffer[size++] = '-';
-
-  for(int x = size - 1, y = 0; x >= 0 && y < size; x--, y++) result[x] = buffer[y];
-  result[size] = 0;
   return result;
 }
 
