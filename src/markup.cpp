@@ -2,7 +2,7 @@
 
 namespace BML {
 
-auto unserialize(const nall::string& markup, nall::string_view spacing) -> Markup::Node {
+Markup::Node unserialize(const nall::string& markup, nall::string_view spacing) {
   nall::shared_pointer<ManagedNode> node(new ManagedNode);
   try {
     node->parse(markup, spacing);

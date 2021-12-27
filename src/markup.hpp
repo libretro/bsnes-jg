@@ -11,7 +11,7 @@ struct ManagedNode {
   ManagedNode(const nall::string& name) : _name(name) {}
   ManagedNode(const nall::string& name, const nall::string& value) : _name(name), _value(value) {}
 
-  auto clone() const -> nall::shared_pointer<ManagedNode> {
+  nall::shared_pointer<ManagedNode> clone() const {
     nall::shared_pointer<ManagedNode> clone{new ManagedNode(_name, _value)};
     for(auto& child : _children) {
       clone->_children.append(child->clone());
@@ -19,7 +19,7 @@ struct ManagedNode {
     return clone;
   }
 
-  auto copy(nall::shared_pointer<ManagedNode> source) -> void {
+  void copy(nall::shared_pointer<ManagedNode> source) {
     _name = source->_name;
     _value = source->_value;
     _metadata = source->_metadata;
@@ -35,10 +35,10 @@ protected:
   uintptr_t _metadata = 0;
   nall::vector<nall::shared_pointer<ManagedNode>> _children;
 
-  inline auto _evaluate(nall::string query) const -> bool;
-  inline auto _find(const nall::string& query) const -> nall::vector<Node>;
-  inline auto _lookup(const nall::string& path) const -> Node;
-  inline auto _create(const nall::string& path) -> Node;
+  inline bool _evaluate(nall::string query) const;
+  inline nall::vector<Node> _find(const nall::string& query) const;
+  inline Node _lookup(const nall::string& path) const;
+  inline Node _create(const nall::string& path);
 
   friend class Node;
 };
@@ -49,43 +49,43 @@ struct Node {
   Node(const nall::string& name) : shared(new ManagedNode(name)) {}
   Node(const nall::string& name, const nall::string& value) : shared(new ManagedNode(name, value)) {}
 
-  auto unique() const -> bool { return shared.unique(); }
-  auto clone() const -> Node { return shared->clone(); }
-  auto copy(Node source) -> void { return shared->copy(source.shared); }
+  bool unique() const { return shared.unique(); }
+  Node clone() const { return shared->clone(); }
+  void copy(Node source) { return shared->copy(source.shared); }
 
   explicit operator bool() const { return shared->_name || shared->_children; }
-  auto name() const -> nall::string { return shared->_name; }
-  auto value() const -> nall::string { return shared->_value; }
+  nall::string name() const { return shared->_name; }
+  nall::string value() const { return shared->_value; }
 
-  auto value(nall::string& target) const -> bool { if(shared) target = string(); return (bool)shared; }
-  auto value(bool& target) const -> bool { if(shared) target = boolean(); return (bool)shared; }
-  auto value(int& target) const -> bool { if(shared) target = integer(); return (bool)shared; }
-  auto value(unsigned& target) const -> bool { if(shared) target = natural(); return (bool)shared; }
-  auto value(double& target) const -> bool { if(shared) target = real(); return (bool)shared; }
+  bool value(nall::string& target) const { if(shared) target = string(); return (bool)shared; }
+  bool value(bool& target) const { if(shared) target = boolean(); return (bool)shared; }
+  bool value(int& target) const { if(shared) target = integer(); return (bool)shared; }
+  bool value(unsigned& target) const { if(shared) target = natural(); return (bool)shared; }
+  bool value(double& target) const { if(shared) target = real(); return (bool)shared; }
 
-  auto text() const -> nall::string { return value().strip(); }
-  auto string() const -> nall::string { return value().strip(); }
-  auto boolean() const -> bool { return text() == "true"; }
-  auto integer() const -> int64_t { return text().integer(); }
-  auto natural() const -> uint64_t { return text().natural(); }
-  auto real() const -> double { return text().real(); }
+  nall::string text() const { return value().strip(); }
+  nall::string string() const { return value().strip(); }
+  bool boolean() const { return text() == "true"; }
+  int64_t integer() const { return text().integer(); }
+  uint64_t natural() const { return text().natural(); }
+  double real() const { return text().real(); }
 
-  auto text(const nall::string& fallback) const -> nall::string { return bool(*this) ? text() : fallback; }
-  auto string(const nall::string& fallback) const -> nall::string { return bool(*this) ? string() : fallback; }
-  auto boolean(bool fallback) const -> bool { return bool(*this) ? boolean() : fallback; }
-  auto integer(int64_t fallback) const -> int64_t { return bool(*this) ? integer() : fallback; }
-  auto natural(uint64_t fallback) const -> uint64_t { return bool(*this) ? natural() : fallback; }
-  auto real(double fallback) const -> double { return bool(*this) ? real() : fallback; }
+  nall::string text(const nall::string& fallback) const { return bool(*this) ? text() : fallback; }
+  nall::string string(const nall::string& fallback) const { return bool(*this) ? string() : fallback; }
+  bool boolean(bool fallback) const { return bool(*this) ? boolean() : fallback; }
+  int64_t integer(int64_t fallback) const { return bool(*this) ? integer() : fallback; }
+  uint64_t natural(uint64_t fallback) const { return bool(*this) ? natural() : fallback; }
+  double real(double fallback) const { return bool(*this) ? real() : fallback; }
 
-  auto setName(const nall::string& name = "") -> Node& { shared->_name = name; return *this; }
-  auto setValue(const nall::string& value = "") -> Node& { shared->_value = value; return *this; }
+  Node& setName(const nall::string& name = "") { shared->_name = name; return *this; }
+  Node& setValue(const nall::string& value = "") { shared->_value = value; return *this; }
 
-  auto reset() -> void { shared->_children.reset(); }
-  auto size() const -> unsigned { return shared->_children.size(); }
+  void reset() { shared->_children.reset(); }
+  unsigned size() const { return shared->_children.size(); }
 
-  auto prepend(const Node& node) -> void { shared->_children.prepend(node.shared); }
-  auto append(const Node& node) -> void { shared->_children.append(node.shared); }
-  auto remove(const Node& node) -> bool {
+  void prepend(const Node& node) { shared->_children.prepend(node.shared); }
+  void append(const Node& node) { shared->_children.append(node.shared); }
+  bool remove(const Node& node) {
     for(auto n : nall::range(size())) {
       if(node.shared == shared->_children[n]) {
         return shared->_children.remove(n), true;
@@ -94,34 +94,34 @@ struct Node {
     return false;
   }
 
-  auto insert(unsigned position, const Node& node) -> bool {
+  bool insert(unsigned position, const Node& node) {
     if(position > size()) return false;  //used > instead of >= to allow indexed-equivalent of append()
     return shared->_children.insert(position, node.shared), true;
   }
 
-  auto remove(unsigned position) -> bool {
+  bool remove(unsigned position) {
     if(position >= size()) return false;
     return shared->_children.remove(position), true;
   }
 
-  auto swap(unsigned x, unsigned y) -> bool {
+  bool swap(unsigned x, unsigned y) {
     if(x >= size() || y >= size()) return false;
     return std::swap(shared->_children[x], shared->_children[y]), true;
   }
 
-  auto operator[](int position) -> Node {
+  Node operator[](int position) {
     if(position >= size()) return {};
     return shared->_children[position];
   }
 
-  auto operator[](const nall::string& path) const -> Node { return shared->_lookup(path); }
-  auto operator()(const nall::string& path) -> Node { return shared->_create(path); }
-  auto find(const nall::string& query) const -> nall::vector<Node> { return shared->_find(query); }
+  Node operator[](const nall::string& path) const { return shared->_lookup(path); }
+  Node operator()(const nall::string& path) { return shared->_create(path); }
+  nall::vector<Node> find(const nall::string& query) const { return shared->_find(query); }
 
   struct iterator {
-    auto operator*() -> Node { return {source.shared->_children[position]}; }
-    auto operator!=(const iterator& source) const -> bool { return position != source.position; }
-    auto operator++() -> iterator& { return position++, *this; }
+    Node operator*() { return {source.shared->_children[position]}; }
+    bool operator!=(const iterator& source) const { return position != source.position; }
+    iterator& operator++() { return position++, *this; }
     iterator(const Node& source, unsigned position) : source(source), position(position) {}
 
   private:
@@ -129,14 +129,14 @@ struct Node {
     unsigned position;
   };
 
-  auto begin() const -> iterator { return iterator(*this, 0); }
-  auto end() const -> iterator { return iterator(*this, size()); }
+  iterator begin() const { return iterator(*this, 0); }
+  iterator end() const { return iterator(*this, size()); }
 
 protected:
   nall::shared_pointer<ManagedNode> shared;
 };
 
-auto ManagedNode::_evaluate(nall::string query) const -> bool {
+bool ManagedNode::_evaluate(nall::string query) const {
   if(!query) return true;
 
   for(auto& rule : query.split(",")) {
@@ -186,7 +186,7 @@ auto ManagedNode::_evaluate(nall::string query) const -> bool {
   return true;
 }
 
-auto ManagedNode::_find(const nall::string& query) const -> nall::vector<Node> {
+nall::vector<Node> ManagedNode::_find(const nall::string& query) const {
   nall::vector<Node> result;
 
   auto path = query.split("/");
@@ -231,7 +231,7 @@ auto ManagedNode::_find(const nall::string& query) const -> nall::vector<Node> {
 }
 
 //operator[](nall::string)
-auto ManagedNode::_lookup(const nall::string& path) const -> Node {
+Node ManagedNode::_lookup(const nall::string& path) const {
   auto result = _find(path);
   return result ? result[0] : Node{};
 
@@ -250,7 +250,7 @@ auto ManagedNode::_lookup(const nall::string& path) const -> Node {
 */
 }
 
-auto ManagedNode::_create(const nall::string& path) -> Node {
+Node ManagedNode::_create(const nall::string& path) {
   if(auto position = path.find("/")) {
     auto name = nall::slice(path, 0, *position);
     for(auto& node : _children) {
@@ -277,26 +277,26 @@ namespace BML {
 struct ManagedNode : Markup::ManagedNode {
 protected:
   //test to verify if a valid character for a node name
-  auto valid(char p) const -> bool {  //A-Z, a-z, 0-9, -.
+  bool valid(char p) const {  //A-Z, a-z, 0-9, -.
     return p - 'A' < 26u || p - 'a' < 26u || p - '0' < 10u || p - '-' < 2u;
   }
 
   //determine indentation level, without incrementing pointer
-  auto readDepth(const char* p) -> unsigned {
+  unsigned readDepth(const char* p) {
     unsigned depth = 0;
     while(p[depth] == '\t' || p[depth] == ' ') depth++;
     return depth;
   }
 
   //determine indentation level
-  auto parseDepth(const char*& p) -> unsigned {
+  unsigned parseDepth(const char*& p) {
     unsigned depth = readDepth(p);
     p += depth;
     return depth;
   }
 
   //read name
-  auto parseName(const char*& p) -> void {
+  void parseName(const char*& p) {
     unsigned length = 0;
     while(valid(p[length])) length++;
     if(length == 0) throw "Invalid node name";
@@ -304,7 +304,7 @@ protected:
     p += length;
   }
 
-  auto parseData(const char*& p, nall::string_view spacing) -> void {
+  void parseData(const char*& p, nall::string_view spacing) {
     if(*p == '=' && *(p + 1) == '\"') {
       unsigned length = 2;
       while(p[length] && p[length] != '\n' && p[length] != '\"') length++;
@@ -326,7 +326,7 @@ protected:
   }
 
   //read all attributes for a node
-  auto parseAttributes(const char*& p, nall::string_view spacing) -> void {
+  void parseAttributes(const char*& p, nall::string_view spacing) {
     while(*p && *p != '\n') {
       if(*p != ' ') throw "Invalid node name";
       while(*p == ' ') p++;  //skip excess spaces
@@ -344,7 +344,7 @@ protected:
   }
 
   //read a node and all of its child nodes
-  auto parseNode(const nall::vector<nall::string>& text, unsigned& y, nall::string_view spacing) -> void {
+  void parseNode(const nall::vector<nall::string>& text, unsigned& y, nall::string_view spacing) {
     const char* p = text[y++];
     _metadata = parseDepth(p);
     parseName(p);
@@ -369,7 +369,7 @@ protected:
   }
 
   //read top-level nodes
-  auto parse(nall::string document, nall::string_view spacing) -> void {
+  void parse(nall::string document, nall::string_view spacing) {
     //in order to simplify the parsing logic; we do an initial pass to normalize the data
     //the below code will turn '\r\n' into '\n'; skip empty lines; and skip comment lines
     char* p = document.get(), *output = p;
@@ -404,7 +404,7 @@ protected:
     }
   }
 
-  friend auto unserialize(const nall::string&, nall::string_view) -> Markup::Node;
+  friend Markup::Node unserialize(const nall::string&, nall::string_view);
 };
 
 Markup::Node unserialize(const nall::string& markup, nall::string_view spacing = {});
