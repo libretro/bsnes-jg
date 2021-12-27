@@ -165,7 +165,7 @@ unsigned Cartridge::loadMap(nall::Markup::Node map, T& memory) {
   auto mask = map["mask"].natural();
   if(size == 0) size = memory.size();
   if(size == 0) return 0; //does this ever actually occur? - Yes! Sufami Turbo.
-  return bus.map({&T::read, &memory}, {&T::write, &memory}, addr, size, base, mask);
+  return bus.map({&T::read, &memory}, {&T::write, &memory}, std::string(addr), size, base, mask);
 }
 
 unsigned Cartridge::loadMap(
@@ -177,7 +177,7 @@ unsigned Cartridge::loadMap(
   auto size = map["size"].natural();
   auto base = map["base"].natural();
   auto mask = map["mask"].natural();
-  return bus.map(reader, writer, addr, size, base, mask);
+  return bus.map(reader, writer, std::string(addr), size, base, mask);
 }
 
 //memory(type=ROM,content=Program)

@@ -1,3 +1,7 @@
+#include <sstream>
+#include <string>
+#include <vector>
+
 #include "sfc.hpp"
 
 namespace SuperFamicom {
@@ -11,7 +15,7 @@ Bus::~Bus() {
 }
 
 void Bus::reset() {
-  for(unsigned id : nall::range(256)) {
+  for(unsigned id = 0; id < 256; ++id) {
     reader[id].reset();
     writer[id].reset();
     counter[id] = 0;
@@ -30,7 +34,7 @@ void Bus::reset() {
 unsigned Bus::map(
   const nall::function<uint8_t (unsigned, uint8_t)>& read,
   const nall::function<void  (unsigned, uint8_t)>& write,
-  const nall::string& addr, unsigned size, unsigned base, unsigned mask
+  const std::string& addr, unsigned size, unsigned base, unsigned mask
 ) {
   unsigned id = 1;
   while(counter[id]) {
@@ -40,20 +44,32 @@ unsigned Bus::map(
   reader[id] = read;
   writer[id] = write;
 
-  auto p = addr.split(":", 1L);
-  auto banks = p(0).split(",");
-  auto addrs = p(1).split(",");
-  for(auto& bank : banks) {
-    for(auto& addr : addrs) {
-      auto bankRange = bank.split("-", 1L);
-      auto addrRange = addr.split("-", 1L);
-      unsigned bankLo = bankRange(0).hex();
-      unsigned bankHi = bankRange(1, bankRange(0)).hex();
-      unsigned addrLo = addrRange(0).hex();
-      unsigned addrHi = addrRange(1, addrRange(0)).hex();
+  std::stringstream ss(addr);
+  std::vector<std::string> p;
+  for (std::string i; std::getline(ss, i, ':'); p.push_back(i));
 
-      for(unsigned bank = bankLo; bank <= bankHi; bank++) {
-        for(unsigned addr = addrLo; addr <= addrHi; addr++) {
+  ss.clear(); ss.str(p[0]);
+  std::vector<std::string> banks;
+  for (std::string i; std::getline(ss, i, ','); banks.push_back(i));
+
+  ss.clear(); ss.str(p[1]);
+  std::vector<std::string> addrs;
+  for (std::string i; std::getline(ss, i, ','); addrs.push_back(i));
+
+  for (auto& bank : banks) {
+    ss.clear(); ss.str(bank);
+    std::vector<unsigned> bankRange;
+    for (std::string i; std::getline(ss, i, '-');
+      bankRange.push_back(std::stoul(i, nullptr, 16)));
+
+    for (auto& addr : addrs) {
+      ss.clear(); ss.str(addr);
+      std::vector<unsigned> addrRange;
+      for (std::string i; std::getline(ss, i, '-');
+        addrRange.push_back(std::stoul(i, nullptr, 16)));
+
+      for(unsigned bank = bankRange[0]; bank <= bankRange[1]; bank++) {
+        for(unsigned addr = addrRange[0]; addr <= addrRange[1]; addr++) {
           unsigned pid = lookup[bank << 16 | addr];
           if(pid && --counter[pid] == 0) {
             reader[pid].reset();
@@ -74,21 +90,33 @@ unsigned Bus::map(
   return id;
 }
 
-void Bus::unmap(const nall::string& addr) {
-  auto p = addr.split(":", 1L);
-  auto banks = p(0).split(",");
-  auto addrs = p(1).split(",");
-  for(auto& bank : banks) {
-    for(auto& addr : addrs) {
-      auto bankRange = bank.split("-", 1L);
-      auto addrRange = addr.split("-", 1L);
-      unsigned bankLo = bankRange(0).hex();
-      unsigned bankHi = bankRange(1, bankRange(0)).hex();
-      unsigned addrLo = addrRange(0).hex();
-      unsigned addrHi = addrRange(1, addrRange(1)).hex();
+void Bus::unmap(const std::string& addr) {
+  std::stringstream ss(addr);
+  std::vector<std::string> p;
+  for (std::string i; std::getline(ss, i, ':'); p.push_back(i));
 
-      for(unsigned bank = bankLo; bank <= bankHi; bank++) {
-        for(unsigned addr = addrLo; addr <= addrHi; addr++) {
+  ss.clear(); ss.str(p[0]);
+  std::vector<std::string> banks;
+  for (std::string i; std::getline(ss, i, ','); banks.push_back(i));
+
+  ss.clear(); ss.str(p[1]);
+  std::vector<std::string> addrs;
+  for (std::string i; std::getline(ss, i, ','); addrs.push_back(i));
+
+  for (auto& bank : banks) {
+    ss.clear(); ss.str(bank);
+    std::vector<unsigned> bankRange;
+    for (std::string i; std::getline(ss, i, '-');
+      bankRange.push_back(std::stoul(i, nullptr, 16)));
+
+    for (auto& addr : addrs) {
+      ss.clear(); ss.str(addr);
+      std::vector<unsigned> addrRange;
+      for (std::string i; std::getline(ss, i, '-');
+        addrRange.push_back(std::stoul(i, nullptr, 16)));
+
+      for(unsigned bank = bankRange[0]; bank <= bankRange[1]; bank++) {
+        for(unsigned addr = addrRange[0]; addr <= addrRange[1]; addr++) {
           unsigned pid = lookup[bank << 16 | addr];
           if(pid && --counter[pid] == 0) {
             reader[pid].reset();
