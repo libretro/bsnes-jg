@@ -5,20 +5,20 @@
 
 namespace SuperFamicom {
 
-auto DIP::serialize(serializer& s) -> void {
+void DIP::serialize(serializer& s) {
   s.integer(value);
 }
 
 DIP dip;
 
-auto DIP::power() -> void {
+void DIP::power() {
 }
 
-auto DIP::read(unsigned, uint8_t) -> uint8_t {
+uint8_t DIP::read(unsigned, uint8_t) {
   return value;
 }
 
-auto DIP::write(unsigned, uint8_t) -> void {
+void DIP::write(unsigned, uint8_t) {
 }
 
 }
