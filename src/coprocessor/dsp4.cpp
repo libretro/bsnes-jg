@@ -6,7 +6,7 @@ namespace SuperFamicom {
 
 DSP4 dsp4;
 
-auto DSP4::serialize(serializer& s) -> void {
+void DSP4::serialize(serializer& s) {
   s.integer(DSP4i::DSP4.waiting4command);
   s.integer(DSP4i::DSP4.half_command);
   s.integer(DSP4i::DSP4.command);
@@ -79,11 +79,11 @@ auto DSP4::serialize(serializer& s) -> void {
   s.array(DSP4i::DSP4_vars.OAM_Row);
 }
 
-auto DSP4::power() -> void {
+void DSP4::power() {
   DSP4i::InitDSP4();
 }
 
-auto DSP4::read(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t DSP4::read(unsigned addr, uint8_t data) {
   if(addr & 1) return 0x80;
 
   DSP4i::dsp4_address = addr;
@@ -91,7 +91,7 @@ auto DSP4::read(unsigned addr, uint8_t data) -> uint8_t {
   return DSP4i::dsp4_byte;
 }
 
-auto DSP4::write(unsigned addr, uint8_t data) -> void {
+void DSP4::write(unsigned addr, uint8_t data) {
   if(addr & 1) return;
 
   DSP4i::dsp4_address = addr;
