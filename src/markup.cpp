@@ -163,5 +163,27 @@ std::vector<std::string> searchList(std::string text, std::vector<std::string> t
     return ret;
 }
 
+bool exists(std::string text, std::vector<std::string> terms) {
+    std::stringstream ss;
+    ss << text;
+    std::istream& is = ss;
+
+    streamreader bmlreader(is);
+    byuuML::document doc(bmlreader);
+
+    for (auto&& node : doc) {
+        byuuML::cursor c = node.query(doc, terms[0]);
+        if (c) {
+            for (int i = 1; i < terms.size(); ++i) {
+                c = c.query(terms[i]);
+            }
+            if (c) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
+}

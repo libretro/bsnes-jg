@@ -136,6 +136,7 @@ struct Game {
 
   struct Memory {
     Memory() = default;
+    Memory(std::string);
     Memory(Markup::Node);
     explicit operator bool() const { return (bool)!type.empty(); }
     std::string name() const;
