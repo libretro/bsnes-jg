@@ -39,7 +39,7 @@ Markup::Node Cartridge::loadBoard(nall::string board) {
 
 void Cartridge::loadCartridge(Markup::Node node) {
   board = node["board"];
-  if(!board) board = loadBoard(game.board);
+  if(!board) board = loadBoard(game.board.c_str());
 
   if(region() == "Auto") {
     std::string regstr = game.region.substr(game.region.length() - 3, game.region.length());
@@ -67,7 +67,6 @@ void Cartridge::loadCartridge(Markup::Node node) {
   if(auto node = board["processor(architecture=W65C816S)"]) loadSA1(node);
   if(auto node = board["processor(architecture=GSU)"]) loadSuperFX(node);
   if(auto node = board["processor(architecture=ARM6)"]) loadARMDSP(node);
-  if(auto node = board["processor(architecture=HG51BS169)"]) loadHitachiDSP(node, game.board.match("2DC*") ? 2 : 1);
   if(auto node = board["processor(architecture=uPD7725)"]) loaduPD7725(node);
   if(auto node = board["processor(architecture=uPD96050)"]) loaduPD96050(node);
   if(auto node = board["rtc(manufacturer=Epson)"]) loadEpsonRTC(node);
@@ -75,6 +74,9 @@ void Cartridge::loadCartridge(Markup::Node node) {
   if(auto node = board["processor(identifier=SPC7110)"]) loadSPC7110(node);
   if(auto node = board["processor(identifier=SDD1)"]) loadSDD1(node);
   if(auto node = board["processor(identifier=OBC1)"]) loadOBC1(node);
+  if(auto node = board["processor(architecture=HG51BS169)"]) {
+    loadHitachiDSP(node, game.board.find("2DC") != std::string::npos ? 2 : 1);
+  }
 
   if(Emulator::platform->fopen(ID::SuperFamicom, "msu1/data.rom")) loadMSU1();
 }

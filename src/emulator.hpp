@@ -15,10 +15,10 @@
 #include "../nall/array.hpp"
 #include "../nall/maybe.hpp"
 #include "../nall/memory.hpp"
-#include "../src/serializer.hpp"
+#include "serializer.hpp"
 #include "../nall/primitives.hpp"
-#include "../nall/shared-pointer.hpp"
 #include "../nall/varint.hpp"
+#include "../nall/shared-pointer.hpp"
 #include "../nall/vector.hpp"
 #include "../nall/string.hpp"
 
@@ -141,7 +141,7 @@ struct Game {
     inline std::string name() const;
 
     std::string type;
-    nall::Natural<> size;
+    unsigned size;
     std::string content;
     std::string manufacturer;
     std::string architecture;
@@ -164,7 +164,7 @@ struct Game {
   std::string title;
   std::string region;
   std::string revision;
-  nall::string board;
+  std::string board;
   std::vector<Memory> memoryList;
   std::vector<Oscillator> oscillatorList;
 };
