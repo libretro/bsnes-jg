@@ -74,7 +74,8 @@ CSRCS := $(OBJDIR)/deps/gb/apu.c \
 	$(OBJDIR)/deps/gb/workboy.c \
 	$(OBJDIR)/deps/libco/libco.c
 
-CXXSRCS := $(OBJDIR)/src/audio.cpp \
+CXXSRCS := $(OBJDIR)/deps/byuuML/byuuML.cpp \
+	$(OBJDIR)/src/audio.cpp \
 	$(OBJDIR)/src/cartridge.cpp \
 	$(OBJDIR)/src/cheat.cpp \
 	$(OBJDIR)/src/controller/controller.cpp \
@@ -148,7 +149,8 @@ INCLUDES += $(CFLAGS_SAMPLERATE)
 LIBS += $(LIBS_SAMPLERATE)
 
 # Object dirs
-MKDIRS := $(OBJDIR)/deps/gb \
+MKDIRS := $(OBJDIR)/deps/byuuML \
+	$(OBJDIR)/deps/gb \
 	$(OBJDIR)/deps/libco \
 	$(OBJDIR)/deps/libsamplerate \
 	$(OBJDIR)/src/controller \

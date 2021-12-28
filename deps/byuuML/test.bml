@@ -1,0 +1,22 @@
+// Commented line
+root-node
+// Commented line 2
+    child-node-1
+     :datacont1
+
+    child-node-2=
+     :datacont2
+
+root-node-2: Data
+  :   continues    :apace
+  :
+  child-node
+  child-node attribute="1 x=y" attribute="2" attribute=______________________________ plus-attribute: 127
+    additional-child with-a-dataless-attribute followed-by="never escape\" and=never give up
+    another-child // with comment
+    yet-another-child=// without comment
+
+ 	mixed-indentation-child	 mixed-indentation-child-2		confusion=maximum edge.case-1=there	is	no	edge.case-2: after all
+	 	:and then some
+oh-no-more-root-node a=1  b=2   c=3	d=4
+lost-child easily-misplaced:very true
