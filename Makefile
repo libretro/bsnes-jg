@@ -137,6 +137,7 @@ CXXSRCS := $(OBJDIR)/deps/byuuML/byuuML.cpp \
 ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 	Q_SAMPLERATE :=
 	CFLAGS_SAMPLERATE := -I$(DEPDIR)/deps/libsamplerate
+	LIBS_SAMPLERATE :=
 	CSRCS += $(OBJDIR)/deps/libsamplerate/samplerate.c \
 		$(OBJDIR)/deps/libsamplerate/src_linear.c \
 		$(OBJDIR)/deps/libsamplerate/src_sinc.c \
