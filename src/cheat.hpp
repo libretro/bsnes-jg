@@ -4,7 +4,7 @@ namespace Emulator {
 
 struct Cheat {
   struct Code {
-    auto operator==(const Code& code) const -> bool {
+    bool operator==(const Code& code) const {
       if(address != code.address) return false;
       if(data != code.data) return false;
       if((bool)compare != (bool)code.compare) return false;
