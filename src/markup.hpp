@@ -412,5 +412,6 @@ nall::string serialize(const Markup::Node& node, nall::string_view spacing = {},
 
 
 std::string gendoc(std::string dbpath, std::string parent, std::string child, std::string match);
+std::string search(std::string text, std::vector<std::string> terms);
 
 }

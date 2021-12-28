@@ -49,19 +49,19 @@ nall::string serialize(const Markup::Node& node, nall::string_view spacing, unsi
 }
 
 
-class ifreader : public byuuML::reader {
+class streamreader : public byuuML::reader {
     char buf[512];
-    std::ifstream& f;
+    std::istream& is;
 public:
-    ifreader(std::ifstream& f) : f(f) {}
+    streamreader(std::istream& is) : is(is) {}
     void read_more(const char*& begin, const char*& end) override {
         begin = buf;
-        if(!f) {
+        if(!is) {
             end = begin;
             return;
         }
-        f.read(buf, sizeof(buf));
-        end = begin + f.gcount();
+        is.read(buf, sizeof(buf));
+        end = begin + is.gcount();
     }
 };
 
@@ -81,7 +81,9 @@ std::string gendoc(std::string docpath, std::string parent, std::string child, s
     std::ifstream stream(docpath, std::ios::in | std::ios::binary);
     if (!stream.is_open()) return {};
 
-    ifreader bmlreader(stream);
+    std::istream& is = stream;
+
+    streamreader bmlreader(is);
     byuuML::document doc(bmlreader);
 
     for (auto&& node : doc) {
@@ -97,6 +99,31 @@ std::string gendoc(std::string docpath, std::string parent, std::string child, s
                     dumpnode(ss, doc, node);
                     return ss.str();
                 }
+            }
+        }
+    }
+
+    return {};
+}
+
+std::string search(std::string text, std::vector<std::string> terms) {
+    std::stringstream ss;
+    ss << text;
+    std::istream& is = ss;
+
+    streamreader bmlreader(is);
+    byuuML::document doc(bmlreader);
+
+    for (auto&& node : doc) {
+        byuuML::cursor c = node.query(doc, terms[0]);
+        if (c) {
+            for (int i = 1; i < terms.size(); ++i) {
+                c = c.query(terms[i]);
+            }
+            if (c) {
+                std::string str(c.value<std::string>());
+                str.erase(0, str.find_first_not_of(' '));
+                return str;
             }
         }
     }

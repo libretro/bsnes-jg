@@ -7,13 +7,13 @@ Platform* platform = nullptr;
 void Game::load(std::string text) {
   document = BML::unserialize(text.c_str());
 
-  sha256 = document["game/sha256"].text();
-  label = document["game/label"].text();
-  name = document["game/name"].text();
-  title = document["game/title"].text();
-  region = document["game/region"].text();
-  revision = document["game/revision"].text();
-  board = document["game/board"].text();
+  sha256 = BML::search(text, {"game", "sha256"});
+  label = BML::search(text, {"game", "label"});
+  name = BML::search(text, {"game", "name"});
+  title = BML::search(text, {"game", "title"});
+  region = BML::search(text, {"game", "region"});
+  revision = BML::search(text, {"game", "revision"});
+  board = BML::search(text, {"game", "board"});
 
   for(auto node : document.find("game/board/memory")) {
     memoryList.push_back(Memory{node});
