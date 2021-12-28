@@ -130,15 +130,15 @@ struct Game {
   struct Memory;
   struct Oscillator;
 
-  inline void load(std::string);
-  inline nall::maybe<Game::Memory> memory(Markup::Node);
-  inline nall::maybe<Game::Oscillator> oscillator(unsigned = 0);
+  void load(std::string);
+  nall::maybe<Game::Memory> memory(Markup::Node);
+  nall::maybe<Game::Oscillator> oscillator(unsigned = 0);
 
   struct Memory {
     Memory() = default;
-    inline Memory(Markup::Node);
+    Memory(Markup::Node);
     explicit operator bool() const { return (bool)!type.empty(); }
-    inline std::string name() const;
+    std::string name() const;
 
     std::string type;
     unsigned size;
@@ -151,7 +151,7 @@ struct Game {
 
   struct Oscillator {
     Oscillator() = default;
-    inline Oscillator(Markup::Node);
+    Oscillator(Markup::Node);
     explicit operator bool() const { return frequency; }
 
     unsigned frequency;
@@ -168,77 +168,5 @@ struct Game {
   std::vector<Game::Memory> memoryList;
   std::vector<Game::Oscillator> oscillatorList;
 };
-
-void Game::load(std::string text) {
-  document = BML::unserialize(text.c_str());
-
-  sha256 = document["game/sha256"].text();
-  label = document["game/label"].text();
-  name = document["game/name"].text();
-  title = document["game/title"].text();
-  region = document["game/region"].text();
-  revision = document["game/revision"].text();
-  board = document["game/board"].text();
-
-  for(auto node : document.find("game/board/memory")) {
-    memoryList.push_back(Memory{node});
-  }
-
-  for(auto node : document.find("game/board/oscillator")) {
-    oscillatorList.push_back(Oscillator{node});
-  }
-}
-
-nall::maybe<Game::Memory> Game::memory(Markup::Node node) {
-  if(!node) return nall::nothing;
-  for(auto& memory : memoryList) {
-    auto type = std::string(node["type"].text());
-    auto size = node["size"].natural();
-    auto content = std::string(node["content"].text());
-    auto manufacturer = std::string(node["manufacturer"].text());
-    auto architecture = std::string(node["architecture"].text());
-    auto identifier = std::string(node["identifier"].text());
-    if(!type.empty() && type != memory.type) continue;
-    if(size && size != memory.size) continue;
-    if(!content.empty() && content != memory.content) continue;
-    if(!manufacturer.empty() && manufacturer != memory.manufacturer) continue;
-    if(!architecture.empty() && architecture != memory.architecture) continue;
-    if(!identifier.empty() && identifier != memory.identifier) continue;
-    return memory;
-  }
-  return nall::nothing;
-}
-
-nall::maybe<Game::Oscillator> Game::oscillator(unsigned index) {
-  if(index < oscillatorList.size()) return oscillatorList[index];
-  return nall::nothing;
-}
-
-Game::Memory::Memory(Markup::Node node) {
-  type = node["type"].text();
-  size = node["size"].natural();
-  content = node["content"].text();
-  manufacturer = node["manufacturer"].text();
-  architecture = node["architecture"].text();
-  identifier = node["identifier"].text();
-  nonVolatile = !(bool)node["volatile"];
-}
-
-std::string Game::Memory::name() const {
-  std::string ret;
-  if(!architecture.empty()) {
-    ret = architecture + "." + content + "." + type;
-  }
-  else {
-    ret = content + "." + type;
-  }
-
-  std::transform(ret.begin(), ret.end(), ret.begin(), ::tolower);
-  return ret;
-}
-
-Game::Oscillator::Oscillator(Markup::Node node) {
-  frequency = node["frequency"].natural();
-}
 
 }
