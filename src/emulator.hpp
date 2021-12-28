@@ -151,7 +151,7 @@ struct Game {
 
   struct Oscillator {
     Oscillator() = default;
-    Oscillator(Markup::Node);
+    Oscillator(std::string);
     explicit operator bool() const { return frequency; }
 
     unsigned frequency;

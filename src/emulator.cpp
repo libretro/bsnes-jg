@@ -25,8 +25,8 @@ void Game::load(std::string text) {
     memoryList.push_back(Memory{node});
   }
 
-  for(auto node : document.find("game/board/oscillator")) {
-    oscillatorList.push_back(Oscillator{node});
+  for (auto node : osclist) {
+    oscillatorList.push_back(node);
   }
 }
 
@@ -55,8 +55,8 @@ nall::maybe<Game::Oscillator> Game::oscillator(unsigned index) {
   return nall::nothing;
 }
 
-Game::Oscillator::Oscillator(Markup::Node node) {
-  frequency = node["frequency"].natural();
+Game::Oscillator::Oscillator(std::string node) {
+  frequency = std::stoi(BML::search(node, {"oscillator", "frequency"}));
 }
 
 Game::Memory::Memory(Markup::Node node) {
