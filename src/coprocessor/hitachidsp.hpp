@@ -3,43 +3,43 @@ struct HitachiDSP : Processor::HG51B, Thread {
   WritableMemory ram;
 
   //hitachidsp.cpp
-  auto synchronizeCPU() -> void;
-  static auto Enter() -> void;
-  auto step(unsigned clocks) -> void override;
-  auto halt() -> void override;
+  void synchronizeCPU();
+  static void Enter();
+  void step(unsigned clocks) override;
+  void halt() override;
 
-  auto unload() -> void;
-  auto power() -> void;
+  void unload();
+  void power();
 
-  auto isROM(unsigned address) -> bool override;
-  auto isRAM(unsigned address) -> bool override;
+  bool isROM(unsigned address) override;
+  bool isRAM(unsigned address) override;
 
   //HG51B read/write
-  auto read(unsigned address) -> uint8_t override;
-  auto write(unsigned address, uint8_t data) -> void override;
+  uint8_t read(unsigned address) override;
+  void write(unsigned address, uint8_t data) override;
 
   //CPU ROM read/write
-  auto addressROM(unsigned address) const -> nall::maybe<unsigned>;
-  auto readROM(unsigned address, uint8_t data = 0) -> uint8_t;
-  auto writeROM(unsigned address, uint8_t data) -> void;
+  nall::maybe<unsigned> addressROM(unsigned address) const;
+  uint8_t readROM(unsigned address, uint8_t data = 0);
+  void writeROM(unsigned address, uint8_t data);
 
   //CPU RAM read/write
-  auto addressRAM(unsigned address) const -> nall::maybe<unsigned>;
-  auto readRAM(unsigned address, uint8_t data = 0) -> uint8_t;
-  auto writeRAM(unsigned address, uint8_t data) -> void;
+  nall::maybe<unsigned> addressRAM(unsigned address) const;
+  uint8_t readRAM(unsigned address, uint8_t data = 0);
+  void writeRAM(unsigned address, uint8_t data);
 
   //HG51B data RAM read/write
-  auto addressDRAM(unsigned address) const -> nall::maybe<unsigned>;
-  auto readDRAM(unsigned address, uint8_t data = 0) -> uint8_t;
-  auto writeDRAM(unsigned address, uint8_t data) -> void;
+  nall::maybe<unsigned> addressDRAM(unsigned address) const;
+  uint8_t readDRAM(unsigned address, uint8_t data = 0);
+  void writeDRAM(unsigned address, uint8_t data);
 
   //CPU IO read/write
-  auto addressIO(unsigned address) const -> nall::maybe<unsigned>;
-  auto readIO(unsigned address, uint8_t data = 0) -> uint8_t;
-  auto writeIO(unsigned address, uint8_t data) -> void;
+  nall::maybe<unsigned> addressIO(unsigned address) const;
+  uint8_t readIO(unsigned address, uint8_t data = 0);
+  void writeIO(unsigned address, uint8_t data);
 
-  auto firmware() const -> std::vector<uint8_t>;
-  auto serialize(serializer&) -> void;
+  std::vector<uint8_t> firmware() const;
+  void serialize(serializer&);
 
   unsigned Frequency;
   unsigned Roms;

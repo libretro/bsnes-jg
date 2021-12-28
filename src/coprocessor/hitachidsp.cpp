@@ -2,15 +2,15 @@
 
 namespace SuperFamicom {
 
-auto HitachiDSP::isROM(unsigned address) -> bool {
+bool HitachiDSP::isROM(unsigned address) {
   return (bool)addressROM(address);
 }
 
-auto HitachiDSP::isRAM(unsigned address) -> bool {
+bool HitachiDSP::isRAM(unsigned address) {
   return (bool)addressRAM(address);
 }
 
-auto HitachiDSP::read(unsigned address) -> uint8_t {
+uint8_t HitachiDSP::read(unsigned address) {
   if(auto linear = addressROM (address)) return readROM (*linear);
   if(auto linear = addressRAM (address)) return readRAM (*linear);
   if(auto linear = addressDRAM(address)) return readDRAM(*linear);
@@ -18,14 +18,14 @@ auto HitachiDSP::read(unsigned address) -> uint8_t {
   return 0x00;
 }
 
-auto HitachiDSP::write(unsigned address, uint8_t data) -> void {
+void HitachiDSP::write(unsigned address, uint8_t data) {
   if(auto linear = addressROM (address)) return writeROM (*linear, data);
   if(auto linear = addressRAM (address)) return writeRAM (*linear, data);
   if(auto linear = addressDRAM(address)) return writeDRAM(*linear, data);
   if(auto linear = addressIO  (address)) return writeIO  (*linear, data);
 }
 
-auto HitachiDSP::addressROM(unsigned address) const -> nall::maybe<unsigned> {
+nall::maybe<unsigned> HitachiDSP::addressROM(unsigned address) const {
   if(Mapping == 0) {
     //00-3f,80-bf:8000-ffff; c0-ff:0000-ffff
     if((address & 0x408000) == 0x008000 || (address & 0xc00000) == 0xc00000) {
@@ -41,7 +41,7 @@ auto HitachiDSP::addressROM(unsigned address) const -> nall::maybe<unsigned> {
   return {};
 }
 
-auto HitachiDSP::readROM(unsigned address, uint8_t data) -> uint8_t {
+uint8_t HitachiDSP::readROM(unsigned address, uint8_t data) {
   if(hitachidsp.active() || !busy()) {
     address = bus.mirror(address, rom.size());
   //if(Roms == 2 && mmio.r1f52 == 1 && address >= (nall::round(rom.size()) >> 1)) return 0x00;
@@ -53,10 +53,10 @@ auto HitachiDSP::readROM(unsigned address, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto HitachiDSP::writeROM(unsigned address, uint8_t data) -> void {
+void HitachiDSP::writeROM(unsigned address, uint8_t data) {
 }
 
-auto HitachiDSP::addressRAM(unsigned address) const -> nall::maybe<unsigned> {
+nall::maybe<unsigned> HitachiDSP::addressRAM(unsigned address) const {
   if(Mapping == 0) {
     //70-77:0000-7fff
     if((address & 0xf88000) == 0x700000) {
@@ -73,17 +73,17 @@ auto HitachiDSP::addressRAM(unsigned address) const -> nall::maybe<unsigned> {
   return {};
 }
 
-auto HitachiDSP::readRAM(unsigned address, uint8_t data) -> uint8_t {
+uint8_t HitachiDSP::readRAM(unsigned address, uint8_t data) {
   if(ram.size() == 0) return 0x00;  //not open bus
   return ram.read(bus.mirror(address, ram.size()), data);
 }
 
-auto HitachiDSP::writeRAM(unsigned address, uint8_t data) -> void {
+void HitachiDSP::writeRAM(unsigned address, uint8_t data) {
   if(ram.size() == 0) return;
   return ram.write(bus.mirror(address, ram.size()), data);
 }
 
-auto HitachiDSP::addressDRAM(unsigned address) const -> nall::maybe<unsigned> {
+nall::maybe<unsigned> HitachiDSP::addressDRAM(unsigned address) const {
   if(Mapping == 0) {
     //00-3f,80-bf:6000-6bff,7000-7bff
     if((address & 0x40e000) == 0x006000 && (address & 0x0c00) != 0x0c00) {
@@ -98,19 +98,19 @@ auto HitachiDSP::addressDRAM(unsigned address) const -> nall::maybe<unsigned> {
   return {};
 }
 
-auto HitachiDSP::readDRAM(unsigned address, uint8_t data) -> uint8_t {
+uint8_t HitachiDSP::readDRAM(unsigned address, uint8_t data) {
   address &= 0xfff;
   if(address >= 0xc00) return data;
   return dataRAM[address];
 }
 
-auto HitachiDSP::writeDRAM(unsigned address, uint8_t data) -> void {
+void HitachiDSP::writeDRAM(unsigned address, uint8_t data) {
   address &= 0xfff;
   if(address >= 0xc00) return;
   dataRAM[address] = data;
 }
 
-auto HitachiDSP::addressIO(unsigned address) const -> nall::maybe<unsigned> {
+nall::maybe<unsigned> HitachiDSP::addressIO(unsigned address) const {
   if(Mapping == 0) {
     //00-3f,80-bf:6c00-6fff,7c00-7fff
     if((address & 0x40ec00) == 0x006c00) {
@@ -125,7 +125,7 @@ auto HitachiDSP::addressIO(unsigned address) const -> nall::maybe<unsigned> {
   return {};
 }
 
-auto HitachiDSP::readIO(unsigned address, uint8_t data) -> uint8_t {
+uint8_t HitachiDSP::readIO(unsigned address, uint8_t data) {
   address = 0x7c00 | (address & 0x03ff);
 
   //IO
@@ -172,7 +172,7 @@ auto HitachiDSP::readIO(unsigned address, uint8_t data) -> uint8_t {
   return 0x00;
 }
 
-auto HitachiDSP::writeIO(unsigned address, uint8_t data) -> void {
+void HitachiDSP::writeIO(unsigned address, uint8_t data) {
   address = 0x7c00 | (address & 0x03ff);
 
   //IO
@@ -268,7 +268,7 @@ auto HitachiDSP::writeIO(unsigned address, uint8_t data) -> void {
   }
 }
 
-auto HitachiDSP::firmware() const -> std::vector<uint8_t> {
+std::vector<uint8_t> HitachiDSP::firmware() const {
   std::vector<uint8_t> buffer;
   if(!cartridge.has.HitachiDSP) return buffer;
   buffer.reserve(1024 * 3);
@@ -280,7 +280,7 @@ auto HitachiDSP::firmware() const -> std::vector<uint8_t> {
   return buffer;
 }
 
-auto HitachiDSP::serialize(serializer& s) -> void {
+void HitachiDSP::serialize(serializer& s) {
   HG51B::serialize(s);
   Thread::serialize(s);
 }
@@ -388,34 +388,34 @@ const uint8_t HitachiDSP::staticDataROM[3072] = {
 
 HitachiDSP hitachidsp;
 
-auto HitachiDSP::synchronizeCPU() -> void {
+void HitachiDSP::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto HitachiDSP::Enter() -> void {
+void HitachiDSP::Enter() {
   while(true) {
     scheduler.synchronize();
     hitachidsp.main();
   }
 }
 
-auto HitachiDSP::step(unsigned clocks) -> void {
+void HitachiDSP::step(unsigned clocks) {
   HG51B::step(clocks);
   clock += clocks * (uint64_t)cpu.frequency;
   synchronizeCPU();
 }
 
-auto HitachiDSP::halt() -> void {
+void HitachiDSP::halt() {
   HG51B::halt();
   if(io.irq == 0) cpu.irq(r.i = 1);
 }
 
-auto HitachiDSP::unload() -> void {
+void HitachiDSP::unload() {
   rom.reset();
   ram.reset();
 }
 
-auto HitachiDSP::power() -> void {
+void HitachiDSP::power() {
   HG51B::power();
   create(HitachiDSP::Enter, Frequency);
 }
