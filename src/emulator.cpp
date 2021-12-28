@@ -15,6 +15,12 @@ void Game::load(std::string text) {
   revision = BML::search(text, {"game", "revision"});
   board = BML::search(text, {"game", "board"});
 
+  std::vector<std::string> memlist =
+    BML::searchList(text, {"game", "board", "memory"});
+
+  std::vector<std::string> osclist =
+    BML::searchList(text, {"game", "board", "oscillator"});
+
   for(auto node : document.find("game/board/memory")) {
     memoryList.push_back(Memory{node});
   }

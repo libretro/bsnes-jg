@@ -131,5 +131,37 @@ std::string search(std::string text, std::vector<std::string> terms) {
     return {};
 }
 
+std::vector<std::string> searchList(std::string text, std::vector<std::string> terms) {
+    std::stringstream ss;
+    ss << text;
+    std::istream& is = ss;
+    std::vector<std::string> ret;
+
+    streamreader bmlreader(is);
+    byuuML::document doc(bmlreader);
+
+    for (auto&& node : doc) {
+        byuuML::cursor c = node.query(doc, terms[0]);
+        if (c) {
+            for(auto&& cnode : byuuML::node_in_document(node, doc)) {
+                for(auto&& ccnode : byuuML::node_in_document(cnode, doc)) {
+                    if (cnode.name == terms[1]) {
+                        byuuML::cursor cc = cnode.query(doc, terms[1]);
+                        if (cc) {
+                            if (ccnode.name == terms[2]) {
+                                std::stringstream out;
+                                dumpnode(out, doc, ccnode);
+                                ret.push_back(out.str());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return ret;
+}
+
 }
 
