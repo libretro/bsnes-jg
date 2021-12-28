@@ -50,14 +50,14 @@ struct Platform {
     std::string option;
   };
 
-  virtual auto load(unsigned id, std::string name, std::string type, std::vector<std::string> options = {}) -> Load { return {}; }
-  virtual auto fopen(unsigned id, std::string name) -> std::ifstream { return {}; }
-  virtual auto mopen(unsigned id, std::string name) -> std::vector<uint8_t> { return {}; }
-  virtual auto stropen(unsigned id, std::string name) -> std::string { return {}; }
-  virtual auto write(unsigned id, std::string name, const uint8_t *data, unsigned size) -> void {}
-  virtual auto videoFrame(const uint16_t *data, unsigned pitch, unsigned width, unsigned height, unsigned scale) -> void {}
-  virtual auto audioFrame(unsigned numsamps) -> void {}
-  virtual auto inputPoll(unsigned port, unsigned device, unsigned input) -> int16_t { return 0; }
+  virtual Load load(unsigned id, std::string name, std::string type, std::vector<std::string> options = {}) { return {}; }
+  virtual std::ifstream fopen(unsigned id, std::string name) { return {}; }
+  virtual std::vector<uint8_t> mopen(unsigned id, std::string name) { return {}; }
+  virtual std::string stropen(unsigned id, std::string name) { return {}; }
+  virtual void write(unsigned id, std::string name, const uint8_t *data, unsigned size) {}
+  virtual void videoFrame(const uint16_t *data, unsigned pitch, unsigned width, unsigned height, unsigned scale) {}
+  virtual void audioFrame(unsigned numsamps) {}
+  virtual int16_t inputPoll(unsigned port, unsigned device, unsigned input) { return 0; }
 };
 
 extern Platform* platform;
@@ -89,50 +89,50 @@ struct Interface {
   };
 
   //game interface
-  virtual auto loaded() -> bool { return false; }
-  virtual auto hashes() -> std::vector<std::string> { return {}; }
-  virtual auto manifests() -> std::vector<std::string> { return {}; }
-  virtual auto titles() -> std::vector<std::string> { return {}; }
-  virtual auto title() -> std::string { return {}; }
-  virtual auto load() -> bool { return false; }
-  virtual auto save() -> void {}
-  virtual auto unload() -> void {}
+  virtual bool loaded() { return false; }
+  virtual std::vector<std::string> hashes() { return {}; }
+  virtual std::vector<std::string> manifests() { return {}; }
+  virtual std::vector<std::string> titles() { return {}; }
+  virtual std::string title() { return {}; }
+  virtual bool load() { return false; }
+  virtual void save() {}
+  virtual void unload() {}
 
   //system interface
-  virtual auto ports() -> std::vector<Port> { return {}; }
-  virtual auto devices(unsigned port) -> std::vector<Device> { return {}; }
-  virtual auto inputs(unsigned device) -> std::vector<Input> { return {}; }
-  virtual auto connected(unsigned port) -> unsigned { return 0; }
-  virtual auto connect(unsigned port, unsigned device) -> void {}
-  virtual auto power() -> void {}
-  virtual auto reset() -> void {}
-  virtual auto run() -> void {}
+  virtual std::vector<Port> ports() { return {}; }
+  virtual std::vector<Device> devices(unsigned port) { return {}; }
+  virtual std::vector<Input> inputs(unsigned device) { return {}; }
+  virtual unsigned connected(unsigned port) { return 0; }
+  virtual void connect(unsigned port, unsigned device) {}
+  virtual void power() {}
+  virtual void reset() {}
+  virtual void run() {}
 
   //time functions
-  virtual auto rtc() -> bool { return false; }
+  virtual bool rtc() { return false; }
 
   //state functions
-  virtual auto serialize(bool synchronize = true) -> serializer { return {}; }
-  virtual auto unserialize(serializer&) -> bool { return false; }
+  virtual serializer serialize(bool synchronize = true) { return {}; }
+  virtual bool unserialize(serializer&) { return false; }
 
   //cheat functions
-  virtual auto read(nall::Natural<24> address) -> uint8_t { return 0; }
-  virtual auto cheats(const std::vector<std::string>& = {}) -> void {}
+  virtual uint8_t read(nall::Natural<24> address) { return 0; }
+  virtual void cheats(const std::vector<std::string>& = {}) {}
 
-  virtual auto frameSkip() -> unsigned { return 0; }
-  virtual auto setFrameSkip(unsigned frameSkip) -> void {}
+  virtual unsigned frameSkip() { return 0; }
+  virtual void setFrameSkip(unsigned frameSkip) {}
 
-  virtual auto runAhead() -> bool { return false; }
-  virtual auto setRunAhead(bool runAhead) -> void {}
+  virtual bool runAhead() { return false; }
+  virtual void setRunAhead(bool runAhead) {}
 };
 
 struct Game {
   struct Memory;
   struct Oscillator;
 
-  inline auto load(std::string) -> void;
-  inline auto memory(Markup::Node) -> nall::maybe<Memory>;
-  inline auto oscillator(nall::Natural<> = 0) -> nall::maybe<Oscillator>;
+  inline void load(std::string);
+  inline nall::maybe<Game::Memory> memory(Markup::Node);
+  inline nall::maybe<Game::Oscillator> oscillator(nall::Natural<> = 0);
 
   struct Memory {
     Memory() = default;
@@ -165,11 +165,11 @@ struct Game {
   std::string region;
   std::string revision;
   std::string board;
-  std::vector<Memory> memoryList;
-  std::vector<Oscillator> oscillatorList;
+  std::vector<Game::Memory> memoryList;
+  std::vector<Game::Oscillator> oscillatorList;
 };
 
-auto Game::load(std::string text) -> void {
+void Game::load(std::string text) {
   document = BML::unserialize(text.c_str());
 
   sha256 = document["game/sha256"].text();
@@ -189,7 +189,7 @@ auto Game::load(std::string text) -> void {
   }
 }
 
-auto Game::memory(Markup::Node node) -> nall::maybe<Memory> {
+nall::maybe<Game::Memory> Game::memory(Markup::Node node) {
   if(!node) return nall::nothing;
   for(auto& memory : memoryList) {
     auto type = std::string(node["type"].text());
@@ -209,7 +209,7 @@ auto Game::memory(Markup::Node node) -> nall::maybe<Memory> {
   return nall::nothing;
 }
 
-auto Game::oscillator(nall::Natural<> index) -> nall::maybe<Oscillator> {
+nall::maybe<Game::Oscillator> Game::oscillator(nall::Natural<> index) {
   if(index < oscillatorList.size()) return oscillatorList[index];
   return nall::nothing;
 }
