@@ -1,10 +1,10 @@
 struct DSP1 {
-  auto power() -> void;
+  void power();
 
-  auto read(unsigned addr, uint8_t data) -> uint8_t;
-  auto write(unsigned addr, uint8_t data) -> void;
+  uint8_t read(unsigned addr, uint8_t data);
+  void write(unsigned addr, uint8_t data);
 
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 };
 
 extern DSP1 dsp1;

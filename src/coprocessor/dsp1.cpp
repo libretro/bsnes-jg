@@ -7,11 +7,11 @@ namespace SuperFamicom {
 Dsp1 dsp1emu;
 DSP1 dsp1;
 
-auto DSP1::serialize(serializer& s) -> void {
+void DSP1::serialize(serializer& s) {
   dsp1emu.serialize(s);
 }
 
-auto Dsp1::serialize(serializer &s) -> void {
+void Dsp1::serialize(serializer &s) {
   for(unsigned i = 0; i < 3; i++) {
     s.array(shared.MatrixA[i]);
     s.array(shared.MatrixB[i]);
@@ -60,11 +60,11 @@ auto Dsp1::serialize(serializer &s) -> void {
   s.integer(mFreeze);
 }
 
-auto DSP1::power() -> void {
+void DSP1::power() {
   dsp1emu.reset();
 }
 
-auto DSP1::read(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t DSP1::read(unsigned addr, uint8_t data) {
   if(addr & 1) {
     return dsp1emu.getSr();
   } else {
@@ -72,7 +72,7 @@ auto DSP1::read(unsigned addr, uint8_t data) -> uint8_t {
   }
 }
 
-auto DSP1::write(unsigned addr, uint8_t data) -> void {
+void DSP1::write(unsigned addr, uint8_t data) {
   if(addr & 1) {
   } else {
     return dsp1emu.setDr(data);
