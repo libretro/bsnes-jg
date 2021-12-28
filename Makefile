@@ -169,8 +169,8 @@ MKDIRS := $(OBJDIR)/deps/byuuML \
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 
 # Compiler commands
-COMPILE_C = $(CC) $(CFLAGS) $(1) -c $< -o $@
-COMPILE_CXX = $(CXX) $(CXXFLAGS) $(1) -c $< -o $@
+COMPILE_C = $(strip $(CC) $(CFLAGS) $(1) -c $< -o $@)
+COMPILE_CXX = $(strip $(CXX) $(CXXFLAGS) $(1) -c $< -o $@)
 
 # Info command
 COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
