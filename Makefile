@@ -6,6 +6,7 @@ CXX ?= c++
 CFLAGS ?= -O2
 CXXFLAGS ?= -O2
 FLAGS := -fPIC -std=c++17 -fno-strict-aliasing -fwrapv
+FLAGS_BML := -fPIC -std=c++14
 FLAGS_CO := -fPIC -std=c89
 FLAGS_GB := -fPIC -std=c11
 FLAGS_SAMPLERATE := -fPIC -std=c99
@@ -17,6 +18,7 @@ CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
 
 INCLUDES := -I$(SOURCEDIR)/deps
 WARNINGS := -Wreturn-type -Wno-unused-result
+WARNINGS_BML := -Wall -Wextra -pedantic
 WARNINGS_CO := -Wall -Wextra -Wshadow -Wmissing-prototypes
 WARNINGS_GB := -Wno-multichar
 WARNINGS_SAMPLERATE := -Wall -Wextra -Wshadow -Wmissing-prototypes
@@ -174,6 +176,7 @@ COMPILE_CXX = $(CXX) $(CXXFLAGS) $(1) -c $< -o $@
 COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
 
 # Dependency commands
+BUILD_BML = $(call COMPILE_CXX, $(FLAGS_BML) $(WARNINGS_BML))
 BUILD_CO = $(call COMPILE_C, $(FLAGS_CO) $(WARNINGS_CO))
 BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE))
 
@@ -183,6 +186,11 @@ BUILD_JG = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES) $(CFLAGS_JG))
 BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 .PHONY: all clean install install-strip uninstall
+
+# byuuML rules
+$(OBJDIR)/deps/byuuML/%.o: $(SOURCEDIR)/deps/byuuML/%.cpp $(OBJDIR)/.tag
+	$(call COMPILE_INFO, $(BUILD_BML))
+	@$(BUILD_BML)
 
 # libco rules
 $(OBJDIR)/deps/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
