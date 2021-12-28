@@ -178,7 +178,7 @@ void DSP2::op0d() {
 
 DSP2 dsp2;
 
-auto DSP2::serialize(serializer& s) -> void {
+void DSP2::serialize(serializer& s) {
   s.integer(status.waiting_for_command);
   s.integer(status.command);
   s.integer(status.in_count);
@@ -201,7 +201,7 @@ auto DSP2::serialize(serializer& s) -> void {
   s.integer(status.op0dinlen);
 }
 
-auto DSP2::power() -> void {
+void DSP2::power() {
   status.waiting_for_command = true;
   status.in_count  = 0;
   status.in_index  = 0;
@@ -220,7 +220,7 @@ auto DSP2::power() -> void {
   status.op0dinlen       = 0;
 }
 
-auto DSP2::read(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t DSP2::read(unsigned addr, uint8_t data) {
   if(addr & 1) return 0x00;
 
   uint8_t r = 0xff;
@@ -234,7 +234,7 @@ auto DSP2::read(unsigned addr, uint8_t data) -> uint8_t {
   return r;
 }
 
-auto DSP2::write(unsigned addr, uint8_t data) -> void {
+void DSP2::write(unsigned addr, uint8_t data) {
   if(addr & 1) return;
 
   if(status.waiting_for_command) {
