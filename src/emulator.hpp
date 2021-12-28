@@ -132,7 +132,7 @@ struct Game {
 
   inline void load(std::string);
   inline nall::maybe<Game::Memory> memory(Markup::Node);
-  inline nall::maybe<Game::Oscillator> oscillator(nall::Natural<> = 0);
+  inline nall::maybe<Game::Oscillator> oscillator(unsigned = 0);
 
   struct Memory {
     Memory() = default;
@@ -154,7 +154,7 @@ struct Game {
     inline Oscillator(Markup::Node);
     explicit operator bool() const { return frequency; }
 
-    nall::Natural<> frequency;
+    unsigned frequency;
   };
 
   Markup::Node document;
@@ -209,7 +209,7 @@ nall::maybe<Game::Memory> Game::memory(Markup::Node node) {
   return nall::nothing;
 }
 
-nall::maybe<Game::Oscillator> Game::oscillator(nall::Natural<> index) {
+nall::maybe<Game::Oscillator> Game::oscillator(unsigned index) {
   if(index < oscillatorList.size()) return oscillatorList[index];
   return nall::nothing;
 }
