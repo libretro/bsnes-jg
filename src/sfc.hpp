@@ -35,27 +35,27 @@ namespace SuperFamicom {
     cothread_t active = nullptr;
     bool desynchronized = false;
 
-    auto enter() -> void {
+    void enter() {
       host = co_active();
       co_switch(active);
     }
 
-    auto leave(Event event_) -> void {
+    void leave(Event event_) {
       event = event_;
       active = co_active();
       co_switch(host);
     }
 
-    auto resume(cothread_t thread) -> void {
+    void resume(cothread_t thread) {
       if(mode == Mode::Synchronize) desynchronized = true;
       co_switch(thread);
     }
 
-    inline auto synchronizing() const -> bool {
+    inline bool synchronizing() const {
       return mode == Mode::Synchronize;
     }
 
-    inline auto synchronize() -> void {
+    inline void synchronize() {
       if(mode == Mode::Synchronize) {
         if(desynchronized) {
           desynchronized = false;
@@ -66,7 +66,7 @@ namespace SuperFamicom {
       }
     }
 
-    inline auto desynchronize() -> void {
+    inline void desynchronize() {
       desynchronized = true;
     }
   };
@@ -75,7 +75,7 @@ namespace SuperFamicom {
   struct Thread {
     enum : unsigned { Size = 4_KiB * sizeof(void*) };
 
-    auto create(auto (*entrypoint)() -> void, unsigned frequency_) -> void {
+    void create(void (*entrypoint)(), unsigned frequency_) {
       if(!thread) {
         thread = co_create(Thread::Size, entrypoint);
       } else {
@@ -85,16 +85,16 @@ namespace SuperFamicom {
       clock = 0;
     }
 
-    auto active() const -> bool {
+    bool active() const {
       return thread == co_active();
     }
 
-    auto serialize(serializer& s) -> void {
+    void serialize(serializer& s) {
       s.integer(frequency);
       s.integer(clock);
     }
 
-    auto serializeStack(serializer& s) -> void {
+    void serializeStack(serializer& s) {
       static uint8_t stack[Thread::Size];
       bool active = co_active() == thread;
 
@@ -123,8 +123,8 @@ namespace SuperFamicom {
   };
 
   struct Region {
-    static inline auto NTSC() -> bool;
-    static inline auto PAL() -> bool;
+    static inline bool NTSC();
+    static inline bool PAL();
   };
 
   //PPUcounter emulates the H/V latch counters of the S-PPU2.
@@ -140,23 +140,23 @@ namespace SuperFamicom {
   //V=128.
 
   struct PPUcounter {
-    inline auto tick() -> void;
-    inline auto tick(unsigned clocks) -> void; private:
-    inline auto tickScanline() -> void; public:
+    inline void tick();
+    inline void tick(unsigned clocks); private:
+    inline void tickScanline(); public:
 
-    inline auto interlace() const -> bool;
-    inline auto field() const -> bool;
-    inline auto vcounter() const -> unsigned;
-    inline auto hcounter() const -> unsigned;
-    inline auto hdot() const -> unsigned; private:
-    inline auto vperiod() const -> unsigned; public:
-    inline auto hperiod() const -> unsigned;
+    inline bool interlace() const;
+    inline bool field() const;
+    inline unsigned vcounter() const;
+    inline unsigned hcounter() const;
+    inline unsigned hdot() const; private:
+    inline unsigned vperiod() const; public:
+    inline unsigned hperiod() const;
 
-    inline auto vcounter(unsigned offset) const -> unsigned;
-    inline auto hcounter(unsigned offset) const -> unsigned;
+    inline unsigned vcounter(unsigned offset) const;
+    inline unsigned hcounter(unsigned offset) const;
 
-    inline auto reset() -> void;
-    auto serialize(serializer&) -> void;
+    inline void reset();
+    void serialize(serializer&);
 
     nall::function<void ()> scanline;
 
@@ -210,7 +210,7 @@ namespace SuperFamicom {
   #include "slot/bsmemory.hpp"
   #include "slot/sufamiturbo.hpp"
 
-  auto Bus::mirror(unsigned addr, unsigned size) -> unsigned {
+  unsigned Bus::mirror(unsigned addr, unsigned size) {
     if(size == 0) return 0;
     unsigned base = 0;
     unsigned mask = 1 << 23;
@@ -226,7 +226,7 @@ namespace SuperFamicom {
     return base + addr;
   }
 
-  auto Bus::reduce(unsigned addr, unsigned mask) -> unsigned {
+  unsigned Bus::reduce(unsigned addr, unsigned mask) {
     while(mask) {
       unsigned bits = (mask & -mask) - 1;
       addr = ((addr >> 1) & ~bits) | (addr & bits);
@@ -235,15 +235,15 @@ namespace SuperFamicom {
     return addr;
   }
 
-  auto Bus::read(unsigned addr, uint8_t data) -> uint8_t {
+  uint8_t Bus::read(unsigned addr, uint8_t data) {
     return reader[lookup[addr]](target[addr], data);
   }
 
-  auto Bus::write(unsigned addr, uint8_t data) -> void {
+  void Bus::write(unsigned addr, uint8_t data) {
     return writer[lookup[addr]](target[addr], data);
   }
 
-  auto PPUcounter::tick() -> void {
+  void PPUcounter::tick() {
     time.hcounter += 2;  //increment by smallest unit of time.
     if(time.hcounter == hperiod()) {
       last.hperiod = hperiod();
@@ -252,7 +252,7 @@ namespace SuperFamicom {
     }
   }
 
-  auto PPUcounter::tick(unsigned clocks) -> void {
+  void PPUcounter::tick(unsigned clocks) {
     time.hcounter += clocks;
     if(time.hcounter >= hperiod()) {
       last.hperiod = hperiod();
@@ -261,7 +261,7 @@ namespace SuperFamicom {
     }
   }
 
-  auto PPUcounter::tickScanline() -> void {
+  void PPUcounter::tickScanline() {
     if(++time.vcounter == 128) {
       //it's not important when this is captured: it is only needed at V=240 or V=311.
       time.interlace = ppu.interlace();
@@ -284,20 +284,20 @@ namespace SuperFamicom {
     if(scanline) scanline();
   }
 
-  auto PPUcounter::interlace() const -> bool { return time.interlace; }
-  auto PPUcounter::field() const -> bool { return time.field; }
-  auto PPUcounter::vcounter() const -> unsigned { return time.vcounter; }
-  auto PPUcounter::hcounter() const -> unsigned { return time.hcounter; }
-  auto PPUcounter::vperiod() const -> unsigned { return time.vperiod; }
-  auto PPUcounter::hperiod() const -> unsigned { return time.hperiod; }
+  bool PPUcounter::interlace() const { return time.interlace; }
+  bool PPUcounter::field() const { return time.field; }
+  unsigned PPUcounter::vcounter() const { return time.vcounter; }
+  unsigned PPUcounter::hcounter() const { return time.hcounter; }
+  unsigned PPUcounter::vperiod() const { return time.vperiod; }
+  unsigned PPUcounter::hperiod() const { return time.hperiod; }
 
-  auto PPUcounter::vcounter(unsigned offset) const -> unsigned {
+  unsigned PPUcounter::vcounter(unsigned offset) const {
     if(offset <= hcounter()) return vcounter();
     if(vcounter() > 0) return vcounter() - 1;
     return last.vperiod - 1;
   }
 
-  auto PPUcounter::hcounter(unsigned offset) const -> unsigned {
+  unsigned PPUcounter::hcounter(unsigned offset) const {
     if(offset <= hcounter()) return hcounter() - offset;
     return hcounter() + last.hperiod - offset;
   }
@@ -312,7 +312,7 @@ namespace SuperFamicom {
   //dot 323 range = {1292, 1294, 1296}
   //dot 327 range = {1310, 1312, 1314}
 
-  auto PPUcounter::hdot() const -> unsigned {
+  unsigned PPUcounter::hdot() const {
     if(hperiod() == 1360) {
       return hcounter() >> 2;
     } else {
@@ -320,7 +320,7 @@ namespace SuperFamicom {
     }
   }
 
-  auto PPUcounter::reset() -> void {
+  void PPUcounter::reset() {
     time = {};
     last = {};
 
