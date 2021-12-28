@@ -2,7 +2,7 @@
 
 namespace SuperFamicom {
 
-auto EpsonRTC::rtcReset() -> void {
+void EpsonRTC::rtcReset() {
   state = State::Mode;
   offset = 0;
 
@@ -11,7 +11,7 @@ auto EpsonRTC::rtcReset() -> void {
   test = 0;
 }
 
-auto EpsonRTC::rtcRead(nall::Natural< 4> addr) -> nall::Natural< 4> {
+nall::Natural< 4> EpsonRTC::rtcRead(nall::Natural< 4> addr) {
   switch(addr) { default:
   case  0: return secondlo;
   case  1: return secondhi | batteryfailure << 3;
@@ -36,7 +36,7 @@ auto EpsonRTC::rtcRead(nall::Natural< 4> addr) -> nall::Natural< 4> {
   }
 }
 
-auto EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) -> void {
+void EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
   switch(addr) {
   case 0:
     secondlo = data;
@@ -114,7 +114,7 @@ auto EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) -> void 
   }
 }
 
-auto EpsonRTC::load(const uint8_t* data) -> void {
+void EpsonRTC::load(const uint8_t* data) {
   secondlo = data[0] >> 0;
   secondhi = data[0] >> 4;
   batteryfailure = data[0] >> 7;
@@ -166,7 +166,7 @@ auto EpsonRTC::load(const uint8_t* data) -> void {
   while(diff--) tickSecond();
 }
 
-auto EpsonRTC::save(uint8_t* data) -> void {
+void EpsonRTC::save(uint8_t* data) {
   data[0] = secondlo << 0 | secondhi << 4 | batteryfailure << 7;
   data[1] = minutelo << 0 | minutehi << 4 | resync << 7;
   data[2] = hourlo << 0 | hourhi << 4 | meridian << 6 | resync << 7;
@@ -183,17 +183,17 @@ auto EpsonRTC::save(uint8_t* data) -> void {
   }
 }
 
-auto EpsonRTC::irq(nall::Natural< 2> period) -> void {
+void EpsonRTC::irq(nall::Natural< 2> period) {
   if(stop || pause) return;
 
   if(period == irqperiod) irqflag = 1;
 }
 
-auto EpsonRTC::duty() -> void {
+void EpsonRTC::duty() {
   if(irqduty) irqflag = 0;
 }
 
-auto EpsonRTC::roundSeconds() -> void {
+void EpsonRTC::roundSeconds() {
   if(roundseconds == 0) return;
   roundseconds = 0;
 
@@ -202,7 +202,7 @@ auto EpsonRTC::roundSeconds() -> void {
   secondhi = 0;
 }
 
-auto EpsonRTC::tick() -> void {
+void EpsonRTC::tick() {
   if(stop || pause) return;
 
   if(hold) {
@@ -217,7 +217,7 @@ auto EpsonRTC::tick() -> void {
 //below code provides bit-perfect emulation of invalid BCD values on the RTC-4513
 //code makes extensive use of variable-length integers (see epsonrtc.hpp for sizes)
 
-auto EpsonRTC::tickSecond() -> void {
+void EpsonRTC::tickSecond() {
   if(secondlo <= 8 || secondlo == 12) {
     secondlo++;
   } else {
@@ -231,7 +231,7 @@ auto EpsonRTC::tickSecond() -> void {
   }
 }
 
-auto EpsonRTC::tickMinute() -> void {
+void EpsonRTC::tickMinute() {
   if(minutelo <= 8 || minutelo == 12) {
     minutelo++;
   } else {
@@ -245,7 +245,7 @@ auto EpsonRTC::tickMinute() -> void {
   }
 }
 
-auto EpsonRTC::tickHour() -> void {
+void EpsonRTC::tickHour() {
   if(atime) {
     if(hourhi < 2) {
       if(hourlo <= 8 || hourlo == 12) {
@@ -289,7 +289,7 @@ auto EpsonRTC::tickHour() -> void {
   }
 }
 
-auto EpsonRTC::tickDay() -> void {
+void EpsonRTC::tickDay() {
   if(calendar == 0) return;
   weekday = (weekday + 1) + (weekday == 6);
 
@@ -338,7 +338,7 @@ auto EpsonRTC::tickDay() -> void {
   }
 }
 
-auto EpsonRTC::tickMonth() -> void {
+void EpsonRTC::tickMonth() {
   if(monthhi == 0 || !(monthlo & 2)) {
     if(monthlo <= 8 || monthlo == 12) {
       monthlo++;
@@ -353,7 +353,7 @@ auto EpsonRTC::tickMonth() -> void {
   }
 }
 
-auto EpsonRTC::tickYear() -> void {
+void EpsonRTC::tickYear() {
   if(yearlo <= 8 || yearlo == 12) {
     yearlo++;
   } else {
@@ -366,7 +366,7 @@ auto EpsonRTC::tickYear() -> void {
   }
 }
 
-auto EpsonRTC::serialize(serializer& s) -> void {
+void EpsonRTC::serialize(serializer& s) {
   Thread::serialize(s);
 
   s.integer(clocks);
@@ -422,18 +422,18 @@ auto EpsonRTC::serialize(serializer& s) -> void {
 
 EpsonRTC epsonrtc;
 
-auto EpsonRTC::synchronizeCPU() -> void {
+void EpsonRTC::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto EpsonRTC::Enter() -> void {
+void EpsonRTC::Enter() {
   while(true) {
     scheduler.synchronize();
     epsonrtc.main();
   }
 }
 
-auto EpsonRTC::main() -> void {
+void EpsonRTC::main() {
   if(wait) { if(--wait == 0) ready = 1; }
 
   clocks++;
@@ -452,11 +452,11 @@ auto EpsonRTC::main() -> void {
   synchronizeCPU();
 }
 
-auto EpsonRTC::step(unsigned clocks) -> void {
+void EpsonRTC::step(unsigned clocks) {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
-auto EpsonRTC::initialize() -> void {
+void EpsonRTC::initialize() {
   secondlo = 0;
   secondhi = 0;
   batteryfailure = 1;
@@ -497,7 +497,7 @@ auto EpsonRTC::initialize() -> void {
   test = 0;
 }
 
-auto EpsonRTC::power() -> void {
+void EpsonRTC::power() {
   create(EpsonRTC::Enter, 32'768 * 64);
 
   clocks = 0;
@@ -511,7 +511,7 @@ auto EpsonRTC::power() -> void {
   holdtick = 0;
 }
 
-auto EpsonRTC::synchronize(uint64_t timestamp) -> void {
+void EpsonRTC::synchronize(uint64_t timestamp) {
   time_t systime = timestamp;
   tm* timeinfo = localtime(&systime);
 
@@ -552,7 +552,7 @@ auto EpsonRTC::synchronize(uint64_t timestamp) -> void {
   resync = true;  //alert program that time has changed
 }
 
-auto EpsonRTC::read(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t EpsonRTC::read(unsigned addr, uint8_t data) {
   cpu.synchronizeCoprocessors();
   addr &= 3;
 
@@ -577,7 +577,7 @@ auto EpsonRTC::read(unsigned addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto EpsonRTC::write(unsigned addr, uint8_t data) -> void {
+void EpsonRTC::write(unsigned addr, uint8_t data) {
   cpu.synchronizeCoprocessors();
   addr &= 3, data &= 15;
 
