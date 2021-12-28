@@ -679,7 +679,7 @@ std::string SuperFamicom::board() const {
   board.erase(board.find_last_not_of('-') + 1);
 
   if((board.rfind(    "LOROM-RAM") == 0) && romSize() <= 0x200000) board += "#A";
-  if((board.rfind("NEC-LOROM-RAM") == 0) && romSize() <= 0x200000) board += "#A";
+  if((board.rfind("NEC-LOROM-RAM") == 0) && romSize() <= 0x100000) board += "#A";
 
   //Tengai Makyou Zero (fan translation)
   if((board.rfind("SPC7110-") == 0) && data.size() == 0x700000) board = "EX" + board;
