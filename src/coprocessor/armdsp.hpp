@@ -18,7 +18,7 @@ struct ArmDSP : Processor::ARM7TDMI, Thread {
     bool ready;
     bool signal;
 
-    auto status() const -> uint8_t {
+    uint8_t status() const {
       return (
         armtocpu.ready << 0
       | signal         << 2
@@ -28,24 +28,24 @@ struct ArmDSP : Processor::ARM7TDMI, Thread {
     }
   } bridge;
 
-  auto synchronizeCPU() -> void;
-  static auto Enter() -> void;
-  auto boot() -> void;
-  auto main() -> void;
+  void synchronizeCPU();
+  static void Enter();
+  void boot();
+  void main();
 
-  auto step(unsigned clocks) -> void override;
-  auto sleep() -> void override;
-  auto get(unsigned mode, uint32_t addr) -> uint32_t override;
-  auto set(unsigned mode, uint32_t addr, uint32_t word) -> void override;
+  void step(unsigned clocks) override;
+  void sleep() override;
+  uint32_t get(unsigned mode, uint32_t addr) override;
+  void set(unsigned mode, uint32_t addr, uint32_t word) override;
 
-  auto read(unsigned addr, uint8_t data) -> uint8_t;
-  auto write(unsigned addr, uint8_t data) -> void;
+  uint8_t read(unsigned addr, uint8_t data);
+  void write(unsigned addr, uint8_t data);
 
-  auto power() -> void;
-  auto reset() -> void;  //soft reset
+  void power();
+  void reset(); //soft reset
 
-  auto firmware() const -> std::vector<uint8_t>;
-  auto serialize(serializer&) -> void;
+  std::vector<uint8_t> firmware() const;
+  void serialize(serializer&);
 
   unsigned Frequency;
 

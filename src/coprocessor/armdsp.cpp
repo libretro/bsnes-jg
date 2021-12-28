@@ -5,11 +5,11 @@ namespace SuperFamicom {
 //note: timings are completely unverified
 //due to the ST018 chip design (on-die ROM), testing is nearly impossible
 
-auto ArmDSP::sleep() -> void {
+void ArmDSP::sleep() {
   step(1);
 }
 
-auto ArmDSP::get(unsigned mode, uint32_t addr) -> uint32_t {
+uint32_t ArmDSP::get(unsigned mode, uint32_t addr) {
   step(1);
 
   static auto memory = [&](const uint8_t* memory, unsigned mode, uint32_t addr) -> uint32_t {
@@ -50,7 +50,7 @@ auto ArmDSP::get(unsigned mode, uint32_t addr) -> uint32_t {
   return 0;
 }
 
-auto ArmDSP::set(unsigned mode, uint32_t addr, uint32_t word) -> void {
+void ArmDSP::set(unsigned mode, uint32_t addr, uint32_t word) {
   step(1);
 
   static auto memory = [](uint8_t *memory, unsigned mode, uint32_t addr, uint32_t word) {
@@ -94,7 +94,7 @@ auto ArmDSP::set(unsigned mode, uint32_t addr, uint32_t word) -> void {
   if(addr == 0x4000'002c) bridge.timer = bridge.timerlatch;
 }
 
-auto ArmDSP::firmware() const -> std::vector<uint8_t> {
+std::vector<uint8_t> ArmDSP::firmware() const {
   std::vector<uint8_t> buffer;
   if(!cartridge.has.ARMDSP) return buffer;
   buffer.reserve(128 * 1024 + 32 * 1024);
@@ -103,7 +103,7 @@ auto ArmDSP::firmware() const -> std::vector<uint8_t> {
   return buffer;
 }
 
-auto ArmDSP::serialize(serializer& s) -> void {
+void ArmDSP::serialize(serializer& s) {
   ARM7TDMI::serialize(s);
   Thread::serialize(s);
 
@@ -122,11 +122,11 @@ auto ArmDSP::serialize(serializer& s) -> void {
 
 ArmDSP armdsp;
 
-auto ArmDSP::synchronizeCPU() -> void {
+void ArmDSP::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto ArmDSP::Enter() -> void {
+void ArmDSP::Enter() {
   armdsp.boot();
   while(true) {
     scheduler.synchronize();
@@ -134,7 +134,7 @@ auto ArmDSP::Enter() -> void {
   }
 }
 
-auto ArmDSP::boot() -> void {
+void ArmDSP::boot() {
   //reset hold delay
   while(bridge.reset) {
     step(1);
@@ -148,12 +148,12 @@ auto ArmDSP::boot() -> void {
   }
 }
 
-auto ArmDSP::main() -> void {
+void ArmDSP::main() {
   processor.cpsr.t = 0;  //force ARM mode
   instruction();
 }
 
-auto ArmDSP::step(unsigned clocks) -> void {
+void ArmDSP::step(unsigned clocks) {
   if(bridge.timer && --bridge.timer == 0);
   clock += clocks * (uint64_t)cpu.frequency;
   synchronizeCPU();
@@ -163,7 +163,7 @@ auto ArmDSP::step(unsigned clocks) -> void {
 //3800-3807 mirrored throughout
 //a0 ignored
 
-auto ArmDSP::read(unsigned addr, uint8_t) -> uint8_t {
+uint8_t ArmDSP::read(unsigned addr, uint8_t) {
   cpu.synchronizeCoprocessors();
 
   uint8_t data = 0x00;
@@ -187,7 +187,7 @@ auto ArmDSP::read(unsigned addr, uint8_t) -> uint8_t {
   return data;
 }
 
-auto ArmDSP::write(unsigned addr, uint8_t data) -> void {
+void ArmDSP::write(unsigned addr, uint8_t data) {
   cpu.synchronizeCoprocessors();
 
   addr &= 0xff06;
@@ -204,13 +204,13 @@ auto ArmDSP::write(unsigned addr, uint8_t data) -> void {
   }
 }
 
-auto ArmDSP::power() -> void {
+void ArmDSP::power() {
   random.array((uint8_t*)programRAM, sizeof(programRAM));
   bridge.reset = false;
   reset();
 }
 
-auto ArmDSP::reset() -> void {
+void ArmDSP::reset() {
   ARM7TDMI::power();
   create(ArmDSP::Enter, Frequency);
 
