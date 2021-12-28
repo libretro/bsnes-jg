@@ -1,10 +1,10 @@
 struct Cx4 {
-  auto power() -> void;
+  void power();
 
-  auto read(unsigned addr, uint8_t data = 0) -> uint8_t;
-  auto write(unsigned addr, uint8_t data) -> void;
+  uint8_t read(unsigned addr, uint8_t data = 0);
+  void write(unsigned addr, uint8_t data);
 
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   uint8_t  ram[0x0c00];
   uint8_t  reg[0x0100];

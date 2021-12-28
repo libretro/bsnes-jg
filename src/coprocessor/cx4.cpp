@@ -886,7 +886,7 @@ void Cx4::op89() {
   str(1, 0xffffff);
 }
 
-auto Cx4::serialize(serializer& s) -> void {
+void Cx4::serialize(serializer& s) {
   s.array(ram);
   s.array(reg);
 
@@ -922,7 +922,7 @@ auto Cx4::serialize(serializer& s) -> void {
   s.integer(C41FDistVal);
 }
 
-auto Cx4::power() -> void {
+void Cx4::power() {
   memset(ram, 0, 0x0c00);
   memset(reg, 0, 0x0100);
 }
