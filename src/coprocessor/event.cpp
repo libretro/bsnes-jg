@@ -2,7 +2,7 @@
 
 namespace SuperFamicom {
 
-auto Event::serialize(serializer& s) -> void {
+void Event::serialize(serializer& s) {
   Thread::serialize(s);
   s.integer(status);
   s.integer(select);
@@ -14,18 +14,18 @@ auto Event::serialize(serializer& s) -> void {
 
 Event event;
 
-auto Event::synchronizeCPU() -> void {
+void Event::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto Event::Enter() -> void {
+void Event::Enter() {
   while(true) {
     scheduler.synchronize();
     event.main();
   }
 }
 
-auto Event::main() -> void {
+void Event::main() {
   if(scoreActive && scoreSecondsRemaining) {
     if(--scoreSecondsRemaining == 0) {
       scoreActive = false;
@@ -45,18 +45,18 @@ auto Event::main() -> void {
   synchronizeCPU();
 }
 
-auto Event::step(unsigned clocks) -> void {
+void Event::step(unsigned clocks) {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
-auto Event::unload() -> void {
+void Event::unload() {
   rom[0].reset();
   rom[1].reset();
   rom[2].reset();
   rom[3].reset();
 }
 
-auto Event::power() -> void {
+void Event::power() {
   create(Event::Enter, 1);
 
   //DIP switches 0-3 control the time: 3 minutes + 0-15 extra minutes
@@ -72,7 +72,7 @@ auto Event::power() -> void {
   scoreSecondsRemaining = 0;
 }
 
-auto Event::mcuRead(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t Event::mcuRead(unsigned addr, uint8_t data) {
   if(board == Board::CampusChallenge92) {
     unsigned id = 0;
     if(select == 0x09) id = 1;
@@ -108,17 +108,17 @@ auto Event::mcuRead(unsigned addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto Event::mcuWrite(unsigned addr, uint8_t data) -> void {
+void Event::mcuWrite(unsigned addr, uint8_t data) {
 }
 
-auto Event::read(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t Event::read(unsigned addr, uint8_t data) {
   if(addr == 0x106000 || addr == 0xc00000) {
     return status;
   }
   return data;
 }
 
-auto Event::write(unsigned addr, uint8_t data) -> void {
+void Event::write(unsigned addr, uint8_t data) {
   if(addr == 0x206000 || addr == 0xe00000) {
     select = data;
     if(timer && data == 0x09) {

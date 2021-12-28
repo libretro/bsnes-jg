@@ -15,21 +15,21 @@
 
 struct Event : Thread {
   //event.cpp
-  auto synchronizeCPU() -> void;
-  static auto Enter() -> void;
-  auto main() -> void;
-  auto step(unsigned clocks) -> void;
-  auto unload() -> void;
-  auto power() -> void;
+  void synchronizeCPU();
+  static void Enter();
+  void main();
+  void step(unsigned clocks);
+  void unload();
+  void power();
 
-  auto mcuRead(unsigned addr, uint8_t) -> uint8_t;
-  auto mcuWrite(unsigned addr, uint8_t) -> void;
+  uint8_t mcuRead(unsigned addr, uint8_t);
+  void mcuWrite(unsigned addr, uint8_t);
 
-  auto read(unsigned addr, uint8_t data) -> uint8_t;
-  auto write(unsigned addr, uint8_t data) -> void;
+  uint8_t read(unsigned addr, uint8_t data);
+  void write(unsigned addr, uint8_t data);
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
 public:
   ReadableMemory rom[4];
