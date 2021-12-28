@@ -146,7 +146,6 @@ public:
         std::string location;
         std::string manifest;
         Markup::Node document;
-        bool verified;
     };
 
     struct SuperFamicom : Game {
@@ -582,7 +581,15 @@ bool Program::loadSuperFamicom(std::string location) {
     std::string dbpath = std::string(pathinfo.core) + "/Super Famicom.bml";
     std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
 
-    superFamicom.manifest = manifest.empty() ? heuristics.manifest() : manifest;
+    if (manifest.empty()) {
+        superFamicom.manifest = heuristics.manifest();
+    }
+    else {
+        //the internal ROM header title is not present in the database, but
+        //is needed for internal core overrides
+        manifest += "  title: " + superFamicom.title + "\n";
+        superFamicom.manifest = manifest;
+    }
 
     hackPatchMemory(rom);
     superFamicom.document = BML::unserialize(superFamicom.manifest.c_str());
