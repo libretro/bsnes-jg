@@ -5,16 +5,16 @@ namespace Emulator {
 struct Random {
   enum class Entropy : unsigned { None, Low, High };
 
-  auto operator()() -> uint64_t {
+  uint64_t operator()() {
     return random();
   }
 
-  auto entropy(Entropy entropy) -> void {
+  void entropy(Entropy entropy) {
     _entropy = entropy;
     seed();
   }
 
-  auto seed(nall::maybe<uint32_t> seed = nall::nothing, nall::maybe<uint32_t> sequence = nall::nothing) -> void {
+  void seed(nall::maybe<uint32_t> seed = nall::nothing, nall::maybe<uint32_t> sequence = nall::nothing) {
     if(!seed) seed = (uint32_t)clock();
     if(!sequence) sequence = 0;
 
@@ -25,17 +25,17 @@ struct Random {
     step();
   }
 
-  auto random() -> uint64_t {
+  uint64_t random() {
     if(_entropy == Entropy::None) return 0;
     return (uint64_t)step() << 32 | (uint64_t)step() << 0;
   }
 
-  auto bias(uint64_t bias) -> uint64_t {
+  uint64_t bias(uint64_t bias) {
     if(_entropy == Entropy::None) return bias;
     return random();
   }
 
-  auto bound(uint64_t bound) -> uint64_t {
+  uint64_t bound(uint64_t bound) {
     uint64_t threshold = -bound % bound;
     while(true) {
       uint64_t result = random();
@@ -43,7 +43,7 @@ struct Random {
     }
   }
 
-  auto array(uint8_t* data, uint32_t size) -> void {
+  void array(uint8_t* data, uint32_t size) {
     if(_entropy == Entropy::None) {
       nall::memory::fill(data, size);
       return;
@@ -73,14 +73,14 @@ struct Random {
     }
   }
 
-  auto serialize(serializer& s) -> void {
+  void serialize(serializer& s) {
     s.integer((unsigned&)_entropy);
     s.integer(_state);
     s.integer(_increment);
   }
 
 private:
-  auto step() -> uint32_t {
+  uint32_t step() {
     uint64_t state = _state;
     _state = state * 6364136223846793005ull + _increment;
     uint32_t xorshift = (state >> 18 ^ state) >> 27;
