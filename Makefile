@@ -135,12 +135,14 @@ CXXSRCS := $(OBJDIR)/deps/byuuML/byuuML.cpp \
 #	$(OBJDIR)/src/expansion/21fx.cpp \
 
 ifneq ($(USE_VENDORED_SAMPLERATE), 0)
+	Q_SAMPLERATE :=
 	CFLAGS_SAMPLERATE := -I$(DEPDIR)/deps/libsamplerate
 	CSRCS += $(OBJDIR)/deps/libsamplerate/samplerate.c \
 		$(OBJDIR)/deps/libsamplerate/src_linear.c \
 		$(OBJDIR)/deps/libsamplerate/src_sinc.c \
 		$(OBJDIR)/deps/libsamplerate/src_zoh.c
 else
+	Q_SAMPLERATE := @
 	CFLAGS_SAMPLERATE := $(shell $(PKGCONF) --cflags samplerate)
 	LIBS_SAMPLERATE := $(shell $(PKGCONF) --libs samplerate)
 endif
@@ -238,7 +240,7 @@ install: all
 	cp $(SOURCEDIR)/deps/byuuML/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-byuuML
 	cp $(SOURCEDIR)/deps/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
 	cp $(SOURCEDIR)/deps/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
-	if test $(USE_VENDORED_SAMPLERATE) != 0; then \
+	$(Q_SAMPLERATE)if test $(USE_VENDORED_SAMPLERATE) != 0; then \
 		cp $(SOURCEDIR)/deps/libsamplerate/COPYING \
 			$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate; \
 	fi
