@@ -238,6 +238,10 @@ install: all
 	cp $(SOURCEDIR)/deps/byuuML/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-byuuML
 	cp $(SOURCEDIR)/deps/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
 	cp $(SOURCEDIR)/deps/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
+	if test $(USE_VENDORED_SAMPLERATE) != 0; then \
+		cp $(SOURCEDIR)/deps/libsamplerate/COPYING \
+			$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate; \
+	fi
 
 install-strip: install
 	strip $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
