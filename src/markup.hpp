@@ -410,4 +410,7 @@ protected:
 Markup::Node unserialize(const nall::string& markup, nall::string_view spacing = {});
 nall::string serialize(const Markup::Node& node, nall::string_view spacing = {}, unsigned depth = 0);
 
+
+std::string gendoc(std::string dbpath, std::string parent, std::string child, std::string match);
+
 }

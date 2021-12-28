@@ -559,10 +559,8 @@ std::vector<uint8_t> Program::loadFile(void *data, size_t size) {
 }
 
 bool Program::loadSuperFamicom(std::string location) {
-    std::string manifest;
-    std::vector<uint8_t> rom;
-
-    rom = addon ? loadFile(addoninfo.data, addoninfo.size) :
+    std::vector<uint8_t> rom = addon ?
+        loadFile(addoninfo.data, addoninfo.size) :
         loadFile(gameinfo.data, gameinfo.size);
 
     if (rom.size() < 0x8000) return false;
@@ -582,16 +580,7 @@ bool Program::loadSuperFamicom(std::string location) {
     superFamicom.region = heuristics.videoRegion();
 
     std::string dbpath = std::string(pathinfo.core) + "/Super Famicom.bml";
-
-    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
-        if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
-            manifest = BML::serialize(game);
-            //the internal ROM header title is not present in the database, but
-            //is needed for internal core overrides
-            manifest += "  title: " + superFamicom.title + "\n";
-            superFamicom.verified = true;
-        }
-    }
+    std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
 
     superFamicom.manifest = manifest.empty() ? heuristics.manifest() : manifest;
 
@@ -624,7 +613,6 @@ bool Program::loadSuperFamicom(std::string location) {
 }
 
 bool Program::loadBSMemory(std::string location) {
-    std::string manifest;
     std::vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
 
@@ -634,13 +622,7 @@ bool Program::loadBSMemory(std::string location) {
     auto sha256 = sha256_digest(rom.data(), rom.size());
 
     std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
-
-    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
-        if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
-            manifest = BML::serialize(game);
-            bsMemory.verified = true;
-        }
-    }
+    std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
 
     bsMemory.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     bsMemory.document = BML::unserialize(bsMemory.manifest.c_str());
@@ -651,7 +633,6 @@ bool Program::loadBSMemory(std::string location) {
 }
 
 bool Program::loadSufamiTurboA(std::string location) {
-    std::string manifest;
     std::vector<uint8_t> rom;
 
     if (sufamiinfo.size)
@@ -665,13 +646,7 @@ bool Program::loadSufamiTurboA(std::string location) {
     auto sha256 = sha256_digest(rom.data(), rom.size());
 
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
-
-    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
-        if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
-            manifest = BML::serialize(game);
-            sufamiTurboA.verified = true;
-        }
-    }
+    std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
 
     sufamiTurboA.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     sufamiTurboA.document = BML::unserialize(sufamiTurboA.manifest.c_str());
@@ -685,7 +660,6 @@ bool Program::loadSufamiTurboB(std::string location) {
     if (!sufamiinfo.size)
         return false;
 
-    std::string manifest;
     std::vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
 
@@ -695,13 +669,7 @@ bool Program::loadSufamiTurboB(std::string location) {
     auto sha256 = sha256_digest(rom.data(), rom.size());
 
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
-
-    if (auto document = BML::unserialize(nall::string::read(dbpath.c_str()))) {
-        if (auto game = document[{"game(sha256=", sha256.c_str(), ")"}]) {
-            manifest = BML::serialize(game);
-            sufamiTurboB.verified = true;
-        }
-    }
+    std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
 
     sufamiTurboB.manifest = manifest.empty() ? heuristics.manifest() : manifest;
     sufamiTurboB.document = BML::unserialize(sufamiTurboB.manifest.c_str());

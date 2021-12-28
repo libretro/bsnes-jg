@@ -1,3 +1,6 @@
+#include <iostream>
+#include <sstream>
+
 #include "emulator.hpp"
 
 namespace BML {
@@ -45,4 +48,61 @@ nall::string serialize(const Markup::Node& node, nall::string_view spacing, unsi
   return result;
 }
 
+
+class ifreader : public byuuML::reader {
+    char buf[512];
+    std::ifstream& f;
+public:
+    ifreader(std::ifstream& f) : f(f) {}
+    void read_more(const char*& begin, const char*& end) override {
+        begin = buf;
+        if(!f) {
+            end = begin;
+            return;
+        }
+        f.read(buf, sizeof(buf));
+        end = begin + f.gcount();
+    }
+};
+
+void dumpnode(std::ostream& out, const byuuML::document& document, const byuuML::node& node, int indent_level = 0) {
+
+    for (int n = 0; n < indent_level; ++n) out << "  ";
+    out << node.name;
+    if (!node.data.empty()) out << ":" << node.data;
+    out << "\n";
+
+    for (auto&& child : byuuML::node_in_document(node, document)) {
+        dumpnode(out, document, child, indent_level + 1);
+    }
 }
+
+std::string gendoc(std::string docpath, std::string parent, std::string child, std::string val) {
+    std::ifstream stream(docpath, std::ios::in | std::ios::binary);
+    if (!stream.is_open()) return {};
+
+    ifreader bmlreader(stream);
+    byuuML::document doc(bmlreader);
+
+    for (auto&& node : doc) {
+        byuuML::cursor p0 = node.query(doc, parent);
+        if (p0) {
+            byuuML::cursor p1 = node.query(doc, parent, child);
+            if (p1) {
+                std::string str(p1.value<std::string>());
+                str.erase(0, str.find_first_not_of(' '));
+                if (str == val) {
+                    if (node.name != parent) continue;
+                    std::stringstream ss;
+                    dumpnode(ss, doc, node);
+                    return ss.str();
+                }
+            }
+        }
+    }
+
+    return {};
+}
+
+}
+

@@ -22,6 +22,9 @@
 #include "../nall/vector.hpp"
 #include "../nall/string.hpp"
 
+#include "byuuML/byuuML.hpp"
+#include "byuuML/byuuML_query.hpp"
+
 #include "audio.hpp"
 #include "markup.hpp"
 
