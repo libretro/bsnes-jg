@@ -2,7 +2,7 @@
 
 namespace SuperFamicom {
 
-auto NECDSP::firmware() const -> std::vector<uint8_t> {
+std::vector<uint8_t> NECDSP::firmware() const {
   std::vector<uint8_t> buffer;
   if(!cartridge.has.NECDSP) return buffer;
   unsigned plength = 2048, dlength = 1024;
@@ -23,35 +23,35 @@ auto NECDSP::firmware() const -> std::vector<uint8_t> {
   return buffer;
 }
 
-auto NECDSP::serialize(serializer& s) -> void {
+void NECDSP::serialize(serializer& s) {
   uPD96050::serialize(s);
   Thread::serialize(s);
 }
 
 NECDSP necdsp;
 
-auto NECDSP::synchronizeCPU() -> void {
+void NECDSP::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto NECDSP::Enter() -> void {
+void NECDSP::Enter() {
   while(true) {
     scheduler.synchronize();
     necdsp.main();
   }
 }
 
-auto NECDSP::main() -> void {
+void NECDSP::main() {
   exec();
   step(1);
   synchronizeCPU();
 }
 
-auto NECDSP::step(unsigned clocks) -> void {
+void NECDSP::step(unsigned clocks) {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
-auto NECDSP::read(unsigned addr, uint8_t) -> uint8_t {
+uint8_t NECDSP::read(unsigned addr, uint8_t) {
   cpu.synchronizeCoprocessors();
   if(addr & 1) {
     return uPD96050::readSR();
@@ -60,7 +60,7 @@ auto NECDSP::read(unsigned addr, uint8_t) -> uint8_t {
   }
 }
 
-auto NECDSP::write(unsigned addr, uint8_t data) -> void {
+void NECDSP::write(unsigned addr, uint8_t data) {
   cpu.synchronizeCoprocessors();
   if(addr & 1) {
     return uPD96050::writeSR(data);
@@ -69,17 +69,17 @@ auto NECDSP::write(unsigned addr, uint8_t data) -> void {
   }
 }
 
-auto NECDSP::readRAM(unsigned addr, uint8_t) -> uint8_t {
+uint8_t NECDSP::readRAM(unsigned addr, uint8_t) {
   cpu.synchronizeCoprocessors();
   return uPD96050::readDP(addr);
 }
 
-auto NECDSP::writeRAM(unsigned addr, uint8_t data) -> void {
+void NECDSP::writeRAM(unsigned addr, uint8_t data) {
   cpu.synchronizeCoprocessors();
   return uPD96050::writeDP(addr, data);
 }
 
-auto NECDSP::power() -> void {
+void NECDSP::power() {
   uPD96050::power();
   create(NECDSP::Enter, Frequency);
 }
