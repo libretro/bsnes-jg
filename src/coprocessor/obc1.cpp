@@ -2,7 +2,7 @@
 
 namespace SuperFamicom {
 
-auto OBC1::serialize(serializer& s) -> void {
+void OBC1::serialize(serializer& s) {
   s.array(ram.data(), ram.size());
 
   s.integer(status.address);
@@ -12,17 +12,17 @@ auto OBC1::serialize(serializer& s) -> void {
 
 OBC1 obc1;
 
-auto OBC1::unload() -> void {
+void OBC1::unload() {
   ram.reset();
 }
 
-auto OBC1::power() -> void {
+void OBC1::power() {
   status.baseptr = (ramRead(0x1ff5) & 1) ? 0x1800 : 0x1c00;
   status.address = (ramRead(0x1ff6) & 0x7f);
   status.shift   = (ramRead(0x1ff6) & 3) << 1;
 }
 
-auto OBC1::read(unsigned addr, uint8_t) -> uint8_t {
+uint8_t OBC1::read(unsigned addr, uint8_t) {
   addr &= 0x1fff;
 
   switch(addr) {
@@ -36,7 +36,7 @@ auto OBC1::read(unsigned addr, uint8_t) -> uint8_t {
   return ramRead(addr);
 }
 
-auto OBC1::write(unsigned addr, uint8_t data) -> void {
+void OBC1::write(unsigned addr, uint8_t data) {
   addr &= 0x1fff;
 
   switch(addr) {
@@ -66,11 +66,11 @@ auto OBC1::write(unsigned addr, uint8_t data) -> void {
   return ramWrite(addr, data);
 }
 
-auto OBC1::ramRead(unsigned addr) -> uint8_t {
+uint8_t OBC1::ramRead(unsigned addr) {
   return ram.read(addr & 0x1fff);
 }
 
-auto OBC1::ramWrite(unsigned addr, uint8_t data) -> void {
+void OBC1::ramWrite(unsigned addr, uint8_t data) {
   ram.write(addr & 0x1fff, data);
 }
 
