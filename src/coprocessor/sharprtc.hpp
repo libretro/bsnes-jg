@@ -1,17 +1,17 @@
 struct SharpRTC : Thread {
-  auto synchronizeCPU() -> void;
-  static auto Enter() -> void;
-  auto main() -> void;
-  auto step(unsigned clocks) -> void;
+  void synchronizeCPU();
+  static void Enter();
+  void main();
+  void step(unsigned clocks);
 
-  auto initialize() -> void;
-  auto power() -> void;
-  auto synchronize(uint64_t timestamp) -> void;
+  void initialize();
+  void power();
+  void synchronize(uint64_t timestamp);
 
-  auto read(unsigned addr, uint8_t data) -> uint8_t;
-  auto write(unsigned addr, uint8_t data) -> void;
+  uint8_t read(unsigned addr, uint8_t data);
+  void write(unsigned addr, uint8_t data);
 
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   enum class State : unsigned { Ready, Command, Read, Write } state;
   int index;
@@ -25,22 +25,22 @@ struct SharpRTC : Thread {
   unsigned weekday;
 
   //memory.cpp
-  auto rtcRead(nall::Natural< 4> addr) -> nall::Natural< 4>;
-  auto rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) -> void;
+  nall::Natural< 4> rtcRead(nall::Natural< 4> addr);
+  void rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data);
 
-  auto load(const uint8_t* data) -> void;
-  auto save(uint8_t* data) -> void;
+  void load(const uint8_t* data);
+  void save(uint8_t* data);
 
   //time.cpp
   static const unsigned daysInMonth[12];
-  auto tickSecond() -> void;
-  auto tickMinute() -> void;
-  auto tickHour() -> void;
-  auto tickDay() -> void;
-  auto tickMonth() -> void;
-  auto tickYear() -> void;
+  void tickSecond();
+  void tickMinute();
+  void tickHour();
+  void tickDay();
+  void tickMonth();
+  void tickYear();
 
-  auto calculateWeekday(int year, int month, int day) -> unsigned;
+  unsigned calculateWeekday(int year, int month, int day);
 };
 
 extern SharpRTC sharprtc;
