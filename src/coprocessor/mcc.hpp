@@ -6,24 +6,24 @@ struct MCC {
   WritableMemory psram;
 
   //mcc.cpp
-  auto unload() -> void;
-  auto power() -> void;
-  auto commit() -> void;
+  void unload();
+  void power();
+  void commit();
 
-  auto read(unsigned address, uint8_t data) -> uint8_t;
-  auto write(unsigned address, uint8_t data) -> void;
+  uint8_t read(unsigned address, uint8_t data);
+  void write(unsigned address, uint8_t data);
 
-  auto mcuRead(unsigned address, uint8_t data) -> uint8_t;
-  auto mcuWrite(unsigned address, uint8_t data) -> void;
+  uint8_t mcuRead(unsigned address, uint8_t data);
+  void mcuWrite(unsigned address, uint8_t data);
 
-  auto mcuAccess(bool mode, unsigned address, uint8_t data) -> uint8_t;
-  auto romAccess(bool mode, unsigned address, uint8_t data) -> uint8_t;
-  auto psramAccess(bool mode, unsigned address, uint8_t data) -> uint8_t;
-  auto exAccess(bool mode, unsigned address, uint8_t data) -> uint8_t;
-  auto bsAccess(bool mode, unsigned address, uint8_t data) -> uint8_t;
+  uint8_t mcuAccess(bool mode, unsigned address, uint8_t data);
+  uint8_t romAccess(bool mode, unsigned address, uint8_t data);
+  uint8_t psramAccess(bool mode, unsigned address, uint8_t data);
+  uint8_t exAccess(bool mode, unsigned address, uint8_t data);
+  uint8_t bsAccess(bool mode, unsigned address, uint8_t data);
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
 private:
   struct IRQ {
