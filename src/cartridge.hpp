@@ -66,6 +66,7 @@ private:
   bool loadSufamiTurboB();
 
   //load.cpp
+  std::string loadBoard(std::string board);
   Markup::Node loadBoard(nall::string);
   void loadCartridge(Markup::Node);
   void loadCartridgeBSMemory(Markup::Node);

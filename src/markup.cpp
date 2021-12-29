@@ -106,6 +106,52 @@ std::string gendoc(std::string docpath, std::string parent, std::string child, s
     return {};
 }
 
+std::string boardsearch(std::string text, std::string board) {
+    std::stringstream ss;
+    ss << text;
+    std::istream& is = ss;
+
+    streamreader bmlreader(is);
+    byuuML::document doc(bmlreader);
+
+    for (auto&& node : doc) {
+        byuuML::cursor c = node.query(doc, "board");
+        if (c) {
+            std::string b = c.value<std::string>();
+            b.erase(0, b.find_first_not_of(' '));
+            if (b == board) {
+                std::stringstream out;
+                dumpnode(out, doc, node);
+                return out.str();
+            }
+            else if (b.find("(") != std::string::npos) {
+                std::string v = b;
+                v.erase(0, v.find_first_of("(") + 1);
+                v.erase(v.find_first_of(")"), v.length());
+                b.erase(b.find_last_of('-') + 1, b.length());
+
+                std::vector<std::string> ver;
+                std::stringstream ss_ver(v);
+
+                while(std::getline(ss_ver, v, ',')) {
+                    ver.push_back(v);
+                }
+
+                for (std::string& version : ver) {
+                    std::string boardversion = b + version;
+                    if (boardversion == board) {
+                        std::stringstream out;
+                        dumpnode(out, doc, node);
+                        return out.str();
+                    }
+                }
+            }
+        }
+    }
+
+    return {};
+}
+
 std::string search(std::string text, std::vector<std::string> terms) {
     std::stringstream ss;
     ss << text;

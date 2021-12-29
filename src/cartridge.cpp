@@ -7,6 +7,25 @@
 
 namespace SuperFamicom {
 
+std::string Cartridge::loadBoard(std::string board) {
+  if (board.find("SNSP-") == 0) board.replace(0, 5, "SHVC-");
+  if (board.find("MAXI-") == 0) board.replace(0, 5, "SHVC-");
+  if (board.find("MJSC-") == 0) board.replace(0, 5, "SHVC-");
+  if (board.find("EA-") == 0) board.replace(0, 3, "SHVC-");
+  if (board.find("WEI-") == 0) board.replace(0, 4, "SHVC-");
+
+  std::ifstream boardsfile = Emulator::platform->fopen(ID::System, "boards.bml");
+  if (boardsfile.is_open()) {
+    std::string boards((std::istreambuf_iterator<char>(boardsfile)),
+      (std::istreambuf_iterator<char>()));
+
+    std::string bdoc = BML::boardsearch(boards, board);
+    return bdoc;
+  }
+
+  return {};
+}
+
 Markup::Node Cartridge::loadBoard(nall::string board) {
   nall::string output;
 
@@ -37,9 +56,10 @@ Markup::Node Cartridge::loadBoard(nall::string board) {
   return {};
 }
 
+
 void Cartridge::loadCartridge(Markup::Node node) {
   board = node["board"];
-  if(!board) board = loadBoard(game.board.c_str());
+  if(!board) board = loadBoard(nall::string(game.board.c_str()));
 
   if(region() == "Auto") {
     std::string regstr = game.region.substr(game.region.length() - 3, game.region.length());
