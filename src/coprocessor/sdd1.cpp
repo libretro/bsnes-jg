@@ -14,12 +14,12 @@ SDD1 sdd1;
 
 //input manager
 
-auto SDD1::Decompressor::IM::init(unsigned offset_) -> void {
+void SDD1::Decompressor::IM::init(unsigned offset_) {
   offset = offset_;
   bitCount = 4;
 }
 
-auto SDD1::Decompressor::IM::getCodeWord(uint8_t codeLength) -> uint8_t {
+uint8_t SDD1::Decompressor::IM::getCodeWord(uint8_t codeLength) {
   uint8_t codeWord;
   uint8_t compCount;
 
@@ -76,7 +76,7 @@ const uint8_t SDD1::Decompressor::GCD::runCount[] = {
   0x70, 0x30, 0x50, 0x10, 0x60, 0x20, 0x40, 0x00,
 };
 
-auto SDD1::Decompressor::GCD::getRunCount(uint8_t codeNumber, uint8_t &mpsCount, bool &lpsIndex) -> void {
+void SDD1::Decompressor::GCD::getRunCount(uint8_t codeNumber, uint8_t &mpsCount, bool &lpsIndex) {
   uint8_t codeWord = self.im.getCodeWord(codeNumber);
 
   if(codeWord & 0x80) {
@@ -89,12 +89,12 @@ auto SDD1::Decompressor::GCD::getRunCount(uint8_t codeNumber, uint8_t &mpsCount,
 
 //bits generator
 
-auto SDD1::Decompressor::BG::init() -> void {
+void SDD1::Decompressor::BG::init() {
   mpsCount = 0;
   lpsIndex = 0;
 }
 
-auto SDD1::Decompressor::BG::getBit(bool& endOfRun) -> uint8_t {
+uint8_t SDD1::Decompressor::BG::getBit(bool& endOfRun) {
   if(!(mpsCount || lpsIndex)) self.gcd.getRunCount(codeNumber, mpsCount, lpsIndex);
 
   uint8_t bit;
@@ -148,14 +148,14 @@ const SDD1::Decompressor::PEM::State SDD1::Decompressor::PEM::evolutionTable[33]
   {7, 24, 22},
 };
 
-auto SDD1::Decompressor::PEM::init() -> void {
+void SDD1::Decompressor::PEM::init() {
   for(auto n : nall::range(32)) {
     contextInfo[n].status = 0;
     contextInfo[n].mps = 0;
   }
 }
 
-auto SDD1::Decompressor::PEM::getBit(uint8_t context) -> uint8_t {
+uint8_t SDD1::Decompressor::PEM::getBit(uint8_t context) {
   ContextInfo& info = contextInfo[context];
   uint8_t currentStatus = info.status;
   uint8_t currentMps = info.mps;
@@ -188,7 +188,7 @@ auto SDD1::Decompressor::PEM::getBit(uint8_t context) -> uint8_t {
 
 //context model
 
-auto SDD1::Decompressor::CM::init(unsigned offset) -> void {
+void SDD1::Decompressor::CM::init(unsigned offset) {
   bitplanesInfo = sdd1.mmcRead(offset) & 0xc0;
   contextBitsInfo = sdd1.mmcRead(offset) & 0x30;
   bitNumber = 0;
@@ -200,7 +200,7 @@ auto SDD1::Decompressor::CM::init(unsigned offset) -> void {
   }
 }
 
-auto SDD1::Decompressor::CM::getBit() -> uint8_t {
+uint8_t SDD1::Decompressor::CM::getBit() {
   switch(bitplanesInfo) {
   case 0x00:
     currentBitplane ^= 0x01;
@@ -236,12 +236,12 @@ auto SDD1::Decompressor::CM::getBit() -> uint8_t {
 
 //output logic
 
-auto SDD1::Decompressor::OL::init(unsigned offset) -> void {
+void SDD1::Decompressor::OL::init(unsigned offset) {
   bitplanesInfo = sdd1.mmcRead(offset) & 0xc0;
   r0 = 0x01;
 }
 
-auto SDD1::Decompressor::OL::decompress() -> uint8_t {
+uint8_t SDD1::Decompressor::OL::decompress() {
   switch(bitplanesInfo) {
   case 0x00: case 0x40: case 0x80:
     if(r0 == 0) {
@@ -272,7 +272,7 @@ bg4(*this, 4), bg5(*this, 5), bg6(*this, 6), bg7(*this, 7),
 pem(*this), cm(*this), ol(*this) {
 }
 
-auto SDD1::Decompressor::init(unsigned offset) -> void {
+void SDD1::Decompressor::init(unsigned offset) {
   im.init(offset);
   bg0.init();
   bg1.init();
@@ -287,11 +287,11 @@ auto SDD1::Decompressor::init(unsigned offset) -> void {
   ol.init(offset);
 }
 
-auto SDD1::Decompressor::read() -> uint8_t {
+uint8_t SDD1::Decompressor::read() {
   return ol.decompress();
 }
 
-auto SDD1::serialize(serializer& s) -> void {
+void SDD1::serialize(serializer& s) {
   s.integer(r4800);
   s.integer(r4801);
   s.integer(r4804);
@@ -308,7 +308,7 @@ auto SDD1::serialize(serializer& s) -> void {
   decompressor.serialize(s);
 }
 
-auto SDD1::Decompressor::serialize(serializer& s) -> void {
+void SDD1::Decompressor::serialize(serializer& s) {
   im.serialize(s);
   gcd.serialize(s);
   bg0.serialize(s);
@@ -324,27 +324,27 @@ auto SDD1::Decompressor::serialize(serializer& s) -> void {
   ol.serialize(s);
 }
 
-auto SDD1::Decompressor::IM::serialize(serializer& s) -> void {
+void SDD1::Decompressor::IM::serialize(serializer& s) {
   s.integer(offset);
   s.integer(bitCount);
 }
 
-auto SDD1::Decompressor::GCD::serialize(serializer& s) -> void {
+void SDD1::Decompressor::GCD::serialize(serializer& s) {
 }
 
-auto SDD1::Decompressor::BG::serialize(serializer& s) -> void {
+void SDD1::Decompressor::BG::serialize(serializer& s) {
   s.integer(mpsCount);
   s.integer(lpsIndex);
 }
 
-auto SDD1::Decompressor::PEM::serialize(serializer& s) -> void {
+void SDD1::Decompressor::PEM::serialize(serializer& s) {
   for(auto& info : contextInfo) {
     s.integer(info.status);
     s.integer(info.mps);
   }
 }
 
-auto SDD1::Decompressor::CM::serialize(serializer& s) -> void {
+void SDD1::Decompressor::CM::serialize(serializer& s) {
   s.integer(bitplanesInfo);
   s.integer(contextBitsInfo);
   s.integer(bitNumber);
@@ -352,18 +352,18 @@ auto SDD1::Decompressor::CM::serialize(serializer& s) -> void {
   s.array(previousBitplaneBits);
 }
 
-auto SDD1::Decompressor::OL::serialize(serializer& s) -> void {
+void SDD1::Decompressor::OL::serialize(serializer& s) {
   s.integer(bitplanesInfo);
   s.integer(r0);
   s.integer(r1);
   s.integer(r2);
 }
 
-auto SDD1::unload() -> void {
+void SDD1::unload() {
   rom.reset();
 }
 
-auto SDD1::power() -> void {
+void SDD1::power() {
   //hook S-CPU DMA MMIO registers to gather information for struct dma[];
   //buffer address and transfer size information for use in SDD1::mcu_read()
   bus.map({&SDD1::dmaRead, &sdd1}, {&SDD1::dmaWrite, &sdd1}, "00-3f,80-bf:4300-437f");
@@ -382,7 +382,7 @@ auto SDD1::power() -> void {
   dmaReady = false;
 }
 
-auto SDD1::ioRead(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t SDD1::ioRead(unsigned addr, uint8_t data) {
   addr = 0x4800 | addr & 0xf;
 
   switch(addr) {
@@ -398,7 +398,7 @@ auto SDD1::ioRead(unsigned addr, uint8_t data) -> uint8_t {
   return rom.read(addr);
 }
 
-auto SDD1::ioWrite(unsigned addr, uint8_t data) -> void {
+void SDD1::ioWrite(unsigned addr, uint8_t data) {
   addr = 0x4800 | addr & 0xf;
 
   switch(addr) {
@@ -411,11 +411,11 @@ auto SDD1::ioWrite(unsigned addr, uint8_t data) -> void {
   }
 }
 
-auto SDD1::dmaRead(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t SDD1::dmaRead(unsigned addr, uint8_t data) {
   return cpu.readDMA(addr, data);
 }
 
-auto SDD1::dmaWrite(unsigned addr, uint8_t data) -> void {
+void SDD1::dmaWrite(unsigned addr, uint8_t data) {
   unsigned channel = addr >> 4 & 7;
   switch(addr & 15) {
   case 2: dma[channel].addr = dma[channel].addr & 0xffff00 | data <<  0; break;
@@ -427,7 +427,7 @@ auto SDD1::dmaWrite(unsigned addr, uint8_t data) -> void {
   return cpu.writeDMA(addr, data);
 }
 
-auto SDD1::mmcRead(unsigned addr) -> uint8_t {
+uint8_t SDD1::mmcRead(unsigned addr) {
   switch(addr >> 20 & 3) {
   case 0: return rom.read((r4804 & 0xf) << 20 | addr & 0xfffff);  //c0-cf:0000-ffff
   case 1: return rom.read((r4805 & 0xf) << 20 | addr & 0xfffff);  //d0-df:0000-ffff
@@ -439,7 +439,7 @@ auto SDD1::mmcRead(unsigned addr) -> uint8_t {
 
 //map address=00-3f,80-bf:8000-ffff
 //map address=c0-ff:0000-ffff
-auto SDD1::mcuRead(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t SDD1::mcuRead(unsigned addr, uint8_t data) {
   //map address=00-3f,80-bf:8000-ffff
   if(!(addr & 1 << 22)) {
     if(!(addr & 1 << 23) && (addr & 1 << 21) && (r4805 & 0x80)) addr &= ~(1 << 21);  //20-3f:8000-ffff
@@ -478,7 +478,7 @@ auto SDD1::mcuRead(unsigned addr, uint8_t data) -> uint8_t {
   return mmcRead(addr);
 }
 
-auto SDD1::mcuWrite(unsigned addr, uint8_t data) -> void {
+void SDD1::mcuWrite(unsigned addr, uint8_t data) {
 }
 
 }

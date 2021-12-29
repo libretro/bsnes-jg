@@ -1,19 +1,19 @@
 struct SDD1 {
-  auto unload() -> void;
-  auto power() -> void;
+  void unload();
+  void power();
 
-  auto ioRead(unsigned addr, uint8_t data) -> uint8_t;
-  auto ioWrite(unsigned addr, uint8_t data) -> void;
+  uint8_t ioRead(unsigned addr, uint8_t data);
+  void ioWrite(unsigned addr, uint8_t data);
 
-  auto dmaRead(unsigned addr, uint8_t data) -> uint8_t;
-  auto dmaWrite(unsigned addr, uint8_t data) -> void;
+  uint8_t dmaRead(unsigned addr, uint8_t data);
+  void dmaWrite(unsigned addr, uint8_t data);
 
-  auto mmcRead(unsigned addr) -> uint8_t;
+  uint8_t mmcRead(unsigned addr);
 
-  auto mcuRead(unsigned addr, uint8_t data) -> uint8_t;
-  auto mcuWrite(unsigned addr, uint8_t data) -> void;
+  uint8_t mcuRead(unsigned addr, uint8_t data);
+  void mcuWrite(unsigned addr, uint8_t data);
 
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   ReadableMemory rom;
 
@@ -35,9 +35,9 @@ public:
   struct Decompressor {
     struct IM {  //input manager
       IM(SDD1::Decompressor& self) : self(self) {}
-      auto init(unsigned offset) -> void;
-      auto getCodeWord(uint8_t codeLength) -> uint8_t;
-      auto serialize(serializer&) -> void;
+      void init(unsigned offset);
+      uint8_t getCodeWord(uint8_t codeLength);
+      void serialize(serializer&);
 
     private:
       Decompressor& self;
@@ -47,8 +47,8 @@ public:
 
     struct GCD {  //golomb-code decoder
       GCD(SDD1::Decompressor& self) : self(self) {}
-      auto getRunCount(uint8_t codeNumber, uint8_t &mpsCount, bool& lpsIndex) -> void;
-      auto serialize(serializer&) -> void;
+      void getRunCount(uint8_t codeNumber, uint8_t &mpsCount, bool& lpsIndex);
+      void serialize(serializer&);
 
     private:
       Decompressor& self;
@@ -57,9 +57,9 @@ public:
 
     struct BG {  //bits generator
       BG(SDD1::Decompressor& self, uint8_t codeNumber) : self(self), codeNumber(codeNumber) {}
-      auto init() -> void;
-      auto getBit(bool& endOfRun) -> uint8_t;
-      auto serialize(serializer&) -> void;
+      void init();
+      uint8_t getBit(bool& endOfRun);
+      void serialize(serializer&);
 
     private:
       Decompressor& self;
@@ -70,9 +70,9 @@ public:
 
     struct PEM {  //probability estimation module
       PEM(SDD1::Decompressor& self) : self(self) {}
-      auto init() -> void;
-      auto getBit(uint8_t context) -> uint8_t;
-      auto serialize(serializer&) -> void;
+      void init();
+      uint8_t getBit(uint8_t context);
+      void serialize(serializer&);
 
     private:
       Decompressor& self;
@@ -90,9 +90,9 @@ public:
 
     struct CM {  //context model
       CM(SDD1::Decompressor& self) : self(self) {}
-      auto init(unsigned offset) -> void;
-      auto getBit() -> uint8_t;
-      auto serialize(serializer&) -> void;
+      void init(unsigned offset);
+      uint8_t getBit();
+      void serialize(serializer&);
 
     private:
       Decompressor& self;
@@ -105,9 +105,9 @@ public:
 
     struct OL {  //output logic
       OL(SDD1::Decompressor& self) : self(self) {}
-      auto init(unsigned offset) -> void;
-      auto decompress() -> uint8_t;
-      auto serialize(serializer&) -> void;
+      void init(unsigned offset);
+      uint8_t decompress();
+      void serialize(serializer&);
 
     private:
       Decompressor& self;
@@ -116,9 +116,9 @@ public:
     };
 
     Decompressor();
-    auto init(unsigned offset) -> void;
-    auto read() -> uint8_t;
-    auto serialize(serializer&) -> void;
+    void init(unsigned offset);
+    uint8_t read();
+    void serialize(serializer&);
 
     IM  im;
     GCD gcd;
