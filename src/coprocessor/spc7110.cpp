@@ -11,13 +11,13 @@ struct Decompressor {
 
   Decompressor(SPC7110& spc7110) : spc7110(spc7110) {}
 
-  auto read() -> uint8_t {
+  uint8_t read() {
     return spc7110.dataromRead(offset++);
   }
 
   //inverse morton code transform: unpack big-endian packed pixels
   //returns odd bits in lower half; even bits in upper half
-  auto deinterleave(uint64_t data, unsigned bits) -> uint32_t {
+  uint32_t deinterleave(uint64_t data, unsigned bits) {
     data = data & (1ull << bits) - 1;
     data = 0x5555555555555555ull & (data << bits | data >> 1);
     data = 0x3333333333333333ull & (data | data >> 1);
@@ -28,7 +28,7 @@ struct Decompressor {
   }
 
   //extract a nibble and move it to the low four bits
-  auto moveToFront(uint64_t list, unsigned nibble) -> uint64_t {
+  uint64_t moveToFront(uint64_t list, unsigned nibble) {
     for(uint64_t n = 0, mask = ~15; n < 64; n += 4, mask <<= 4) {
       if((list >> n & 15) != nibble) continue;
       return list = (list & mask) + (list << 4 & ~mask) + nibble;
@@ -36,7 +36,7 @@ struct Decompressor {
     return list;
   }
 
-  auto initialize(unsigned mode, unsigned origin) -> void {
+  void initialize(unsigned mode, unsigned origin) {
     for(auto& root : context) for(auto& node : root) node = {0, 0};
     bpp = 1 << mode;
     offset = origin;
@@ -49,7 +49,7 @@ struct Decompressor {
     colormap = 0xfedcba9876543210ull;
   }
 
-  auto decode() -> void {
+  void decode() {
     for(unsigned pixel = 0; pixel < 8; pixel++) {
       uint64_t map = colormap;
       unsigned diff = 0;
@@ -123,7 +123,7 @@ struct Decompressor {
     if(bpp == 4) result = deinterleave(deinterleave(pixels, 32), 32);
   }
 
-  auto serialize(serializer& s) -> void {
+  void serialize(serializer& s) {
     for(auto& root : context) {
       for(auto& node : root) {
         s.integer(node.prediction);
@@ -193,7 +193,7 @@ Decompressor::ModelState Decompressor::evolution[53] = {
   {0x41, {51,49}}, {0x3c, {52,50}}, {0x37, {43,51}},
 };
 
-auto SPC7110::dcuLoadAddress() -> void {
+void SPC7110::dcuLoadAddress() {
   unsigned table = r4801 | r4802 << 8 | r4803 << 16;
   unsigned index = r4804 << 2;
 
@@ -204,7 +204,7 @@ auto SPC7110::dcuLoadAddress() -> void {
   dcuAddress |= dataromRead(address + 3) <<  0;
 }
 
-auto SPC7110::dcuBeginTransfer() -> void {
+void SPC7110::dcuBeginTransfer() {
   if(dcuMode == 3) return;  //invalid mode
 
   addClocks(20);
@@ -218,7 +218,7 @@ auto SPC7110::dcuBeginTransfer() -> void {
   dcuOffset = 0;
 }
 
-auto SPC7110::dcuRead() -> uint8_t {
+uint8_t SPC7110::dcuRead() {
   if((r480c & 0x80) == 0) return 0x00;
 
   if(dcuOffset == 0) {
@@ -249,7 +249,7 @@ auto SPC7110::dcuRead() -> uint8_t {
   return data;
 }
 
-auto SPC7110::dataromRead(unsigned addr) -> uint8_t {
+uint8_t SPC7110::dataromRead(unsigned addr) {
   unsigned size = 1 << (r4834 & 3);  //size in MB
   unsigned mask = 0x100000 * size - 1;
   unsigned offset = addr & mask;
@@ -257,20 +257,20 @@ auto SPC7110::dataromRead(unsigned addr) -> uint8_t {
   return drom.read(Bus::mirror(offset, drom.size()));
 }
 
-auto SPC7110::dataOffset() -> unsigned { return r4811 | r4812 << 8 | r4813 << 16; }
-auto SPC7110::dataAdjust() -> unsigned { return r4814 | r4815 << 8; }
-auto SPC7110::dataStride() -> unsigned { return r4816 | r4817 << 8; }
-auto SPC7110::setDataOffset(unsigned addr) -> void { r4811 = addr; r4812 = addr >> 8; r4813 = addr >> 16; }
-auto SPC7110::setDataAdjust(unsigned addr) -> void { r4814 = addr; r4815 = addr >> 8; }
+unsigned SPC7110::dataOffset() { return r4811 | r4812 << 8 | r4813 << 16; }
+unsigned SPC7110::dataAdjust() { return r4814 | r4815 << 8; }
+unsigned SPC7110::dataStride() { return r4816 | r4817 << 8; }
+void SPC7110::setDataOffset(unsigned addr) { r4811 = addr; r4812 = addr >> 8; r4813 = addr >> 16; }
+void SPC7110::setDataAdjust(unsigned addr) { r4814 = addr; r4815 = addr >> 8; }
 
-auto SPC7110::dataPortRead() -> void {
+void SPC7110::dataPortRead() {
   unsigned offset = dataOffset();
   unsigned adjust = r4818 & 2 ? dataAdjust() : 0;
   if(r4818 & 8) adjust = (int16_t)adjust;
   r4810 = dataromRead(offset + adjust);
 }
 
-auto SPC7110::dataPortIncrement4810() -> void {
+void SPC7110::dataPortIncrement4810() {
   unsigned offset = dataOffset();
   unsigned stride = r4818 & 1 ? dataStride() : 1;
   unsigned adjust = dataAdjust();
@@ -281,7 +281,7 @@ auto SPC7110::dataPortIncrement4810() -> void {
   dataPortRead();
 }
 
-auto SPC7110::dataPortIncrement4814() -> void {
+void SPC7110::dataPortIncrement4814() {
   if(r4818 >> 5 != 1) return;
   unsigned offset = dataOffset();
   unsigned adjust = dataAdjust();
@@ -290,7 +290,7 @@ auto SPC7110::dataPortIncrement4814() -> void {
   dataPortRead();
 }
 
-auto SPC7110::dataPortIncrement4815() -> void {
+void SPC7110::dataPortIncrement4815() {
   if(r4818 >> 5 != 2) return;
   unsigned offset = dataOffset();
   unsigned adjust = dataAdjust();
@@ -299,7 +299,7 @@ auto SPC7110::dataPortIncrement4815() -> void {
   dataPortRead();
 }
 
-auto SPC7110::dataPortIncrement481a() -> void {
+void SPC7110::dataPortIncrement481a() {
   if(r4818 >> 5 != 3) return;
   unsigned offset = dataOffset();
   unsigned adjust = dataAdjust();
@@ -308,7 +308,7 @@ auto SPC7110::dataPortIncrement481a() -> void {
   dataPortRead();
 }
 
-auto SPC7110::aluMultiply() -> void {
+void SPC7110::aluMultiply() {
   addClocks(30);
 
   if(r482e & 1) {
@@ -336,7 +336,7 @@ auto SPC7110::aluMultiply() -> void {
   r482f &= 0x7f;
 }
 
-auto SPC7110::aluDivide() -> void {
+void SPC7110::aluDivide() {
   addClocks(40);
 
   if(r482e & 1) {
@@ -392,7 +392,7 @@ auto SPC7110::aluDivide() -> void {
   r482f &= 0x7f;
 }
 
-auto SPC7110::serialize(serializer& s) -> void {
+void SPC7110::serialize(serializer& s) {
   Thread::serialize(s);
   s.array(ram.data(), ram.size());
 
@@ -463,40 +463,40 @@ SPC7110::~SPC7110() {
   delete decompressor;
 }
 
-auto SPC7110::synchronizeCPU() -> void {
+void SPC7110::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto SPC7110::Enter() -> void {
+void SPC7110::Enter() {
   while(true) {
     scheduler.synchronize();
     spc7110.main();
   }
 }
 
-auto SPC7110::main() -> void {
+void SPC7110::main() {
   if(dcuPending) { dcuPending = 0; dcuBeginTransfer(); }
   if(mulPending) { mulPending = 0; aluMultiply(); }
   if(divPending) { divPending = 0; aluDivide(); }
   addClocks(1);
 }
 
-auto SPC7110::step(unsigned clocks) -> void {
+void SPC7110::step(unsigned clocks) {
   clock += clocks * (uint64_t)cpu.frequency;
 }
 
-auto SPC7110::addClocks(unsigned clocks) -> void {
+void SPC7110::addClocks(unsigned clocks) {
   step(clocks);
   synchronizeCPU();
 }
 
-auto SPC7110::unload() -> void {
+void SPC7110::unload() {
   prom.reset();
   drom.reset();
   ram.reset();
 }
 
-auto SPC7110::power() -> void {
+void SPC7110::power() {
   create(SPC7110::Enter, 21'477'272);
 
   r4801 = 0x00;
@@ -553,7 +553,7 @@ auto SPC7110::power() -> void {
   r4834 = 0x00;
 }
 
-auto SPC7110::read(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t SPC7110::read(unsigned addr, uint8_t data) {
   cpu.synchronizeCoprocessors();
   if((addr & 0xff0000) == 0x500000) addr = 0x4800;  //$50:0000-ffff == $4800
   if((addr & 0xff0000) == 0x580000) addr = 0x4808;  //$58:0000-ffff == $4808
@@ -637,7 +637,7 @@ auto SPC7110::read(unsigned addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto SPC7110::write(unsigned addr, uint8_t data) -> void {
+void SPC7110::write(unsigned addr, uint8_t data) {
   cpu.synchronizeCoprocessors();
   if((addr & 0xff0000) == 0x500000) addr = 0x4800;  //$50:0000-ffff == $4800
   if((addr & 0xff0000) == 0x580000) addr = 0x4808;  //$58:0000-ffff == $4808
@@ -701,7 +701,7 @@ auto SPC7110::write(unsigned addr, uint8_t data) -> void {
 
 //map address=00-3f,80-bf:8000-ffff mask=0x800000 => 00-3f:8000-ffff
 //map address=c0-ff:0000-ffff mask=0xc00000 => c0-ff:0000-ffff
-auto SPC7110::mcuromRead(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t SPC7110::mcuromRead(unsigned addr, uint8_t data) {
   unsigned mask = (1 << (r4834 & 3)) - 1;  //8mbit, 16mbit, 32mbit, 64mbit DROM
 
   if(addr < 0x100000) {  //$00-0f,80-8f:8000-ffff; $c0-cf:0000-ffff
@@ -737,7 +737,7 @@ auto SPC7110::mcuromRead(unsigned addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto SPC7110::mcuromWrite(unsigned addr, uint8_t data) -> void {
+void SPC7110::mcuromWrite(unsigned addr, uint8_t data) {
 }
 
 //===============
@@ -745,7 +745,7 @@ auto SPC7110::mcuromWrite(unsigned addr, uint8_t data) -> void {
 //===============
 
 //map address=00-3f,80-bf:6000-7fff mask=0x80e000 => 00-07:0000-ffff
-auto SPC7110::mcuramRead(unsigned addr, uint8_t) -> uint8_t {
+uint8_t SPC7110::mcuramRead(unsigned addr, uint8_t) {
   if(r4830 & 0x80) {
     addr = bus.mirror(addr, ram.size());
     return ram.read(addr);
@@ -753,7 +753,7 @@ auto SPC7110::mcuramRead(unsigned addr, uint8_t) -> uint8_t {
   return 0x00;
 }
 
-auto SPC7110::mcuramWrite(unsigned addr, uint8_t data) -> void {
+void SPC7110::mcuramWrite(unsigned addr, uint8_t data) {
   if(r4830 & 0x80) {
     addr = bus.mirror(addr, ram.size());
     ram.write(addr, data);

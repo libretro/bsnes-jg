@@ -4,55 +4,55 @@ struct SPC7110 : Thread {
   SPC7110();
   ~SPC7110();
 
-  auto synchronizeCPU() -> void;
-  static auto Enter() -> void;
-  auto main() -> void;
-  auto step(unsigned clocks) -> void;
-  auto unload() -> void;
-  auto power() -> void;
+  void synchronizeCPU();
+  static void Enter();
+  void main();
+  void step(unsigned clocks);
+  void unload();
+  void power();
 
-  auto addClocks(unsigned clocks) -> void;
+  void addClocks(unsigned clocks);
 
-  auto read(unsigned addr, uint8_t data) -> uint8_t;
-  auto write(unsigned addr, uint8_t data) -> void;
+  uint8_t read(unsigned addr, uint8_t data);
+  void write(unsigned addr, uint8_t data);
 
-  auto mcuromRead(unsigned addr, uint8_t data) -> uint8_t;
-  auto mcuromWrite(unsigned addr, uint8_t data) -> void;
+  uint8_t mcuromRead(unsigned addr, uint8_t data);
+  void mcuromWrite(unsigned addr, uint8_t data);
 
-  auto mcuramRead(unsigned addr, uint8_t data) -> uint8_t;
-  auto mcuramWrite(unsigned addr, uint8_t data) -> void;
+  uint8_t mcuramRead(unsigned addr, uint8_t data);
+  void mcuramWrite(unsigned addr, uint8_t data);
 
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   //dcu.cpp
-  auto dcuLoadAddress() -> void;
-  auto dcuBeginTransfer() -> void;
-  auto dcuRead() -> uint8_t;
+  void dcuLoadAddress();
+  void dcuBeginTransfer();
+  uint8_t dcuRead();
 
-  auto deinterleave1bpp(unsigned length) -> void;
-  auto deinterleave2bpp(unsigned length) -> void;
-  auto deinterleave4bpp(unsigned length) -> void;
+  void deinterleave1bpp(unsigned length);
+  void deinterleave2bpp(unsigned length);
+  void deinterleave4bpp(unsigned length);
 
   //data.cpp
-  auto dataromRead(unsigned addr) -> uint8_t;
+  uint8_t dataromRead(unsigned addr);
 
-  auto dataOffset() -> unsigned;
-  auto dataAdjust() -> unsigned;
-  auto dataStride() -> unsigned;
+  unsigned dataOffset();
+  unsigned dataAdjust();
+  unsigned dataStride();
 
-  auto setDataOffset(unsigned addr) -> void;
-  auto setDataAdjust(unsigned addr) -> void;
+  void setDataOffset(unsigned addr);
+  void setDataAdjust(unsigned addr);
 
-  auto dataPortRead() -> void;
+  void dataPortRead();
 
-  auto dataPortIncrement4810() -> void;
-  auto dataPortIncrement4814() -> void;
-  auto dataPortIncrement4815() -> void;
-  auto dataPortIncrement481a() -> void;
+  void dataPortIncrement4810();
+  void dataPortIncrement4814();
+  void dataPortIncrement4815();
+  void dataPortIncrement481a();
 
   //alu.cpp
-  auto aluMultiply() -> void;
-  auto aluDivide() -> void;
+  void aluMultiply();
+  void aluDivide();
 
   ReadableMemory prom;  //program ROM
   ReadableMemory drom;  //data ROM
