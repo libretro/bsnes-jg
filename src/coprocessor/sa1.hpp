@@ -1,21 +1,21 @@
 //Super Accelerator (SA-1)
 
 struct SA1 : Processor::WDC65816, Thread {
-  inline auto synchronizing() const -> bool override { return scheduler.synchronizing(); }
+  inline bool synchronizing() const override { return scheduler.synchronizing(); }
 
   //sa1.cpp
-  auto synchronizeCPU() -> void;
-  static auto Enter() -> void;
-  auto main() -> void;
-  auto step() -> void;
-  auto interrupt() -> void override;
+  void synchronizeCPU();
+  static void Enter();
+  void main();
+  void step();
+  void interrupt() override;
 
-  inline auto triggerIRQ() -> void;
-  inline auto lastCycle() -> void override;
-  inline auto interruptPending() const -> bool override;
+  inline void triggerIRQ();
+  inline void lastCycle() override;
+  inline bool interruptPending() const override;
 
-  auto unload() -> void;
-  auto power() -> void;
+  void unload();
+  void power();
 
   //dma.cpp
   struct DMA {
@@ -25,82 +25,82 @@ struct SA1 : Processor::WDC65816, Thread {
     unsigned line;
   };
 
-  auto dmaNormal() -> void;
-  auto dmaCC1() -> void;
-  auto dmaCC1Read(unsigned addr) -> uint8_t;
-  auto dmaCC2() -> void;
+  void dmaNormal();
+  void dmaCC1();
+  uint8_t dmaCC1Read(unsigned addr);
+  void dmaCC2();
 
   //memory.cpp
-  inline auto conflictROM() const -> bool;
-  inline auto conflictBWRAM() const -> bool;
-  inline auto conflictIRAM() const -> bool;
+  inline bool conflictROM() const;
+  inline bool conflictBWRAM() const;
+  inline bool conflictIRAM() const;
 
-  inline auto idle() -> void override;
-  inline auto idleJump() -> void override;
-  inline auto idleBranch() -> void override;
-  inline auto read(unsigned address) -> uint8_t override;
-  inline auto write(unsigned address, uint8_t data) -> void override;
-  auto readVBR(unsigned address, uint8_t data = 0) -> uint8_t;
-  auto readDisassembler(unsigned address) -> uint8_t override;
+  inline void idle() override;
+  inline void idleJump() override;
+  inline void idleBranch() override;
+  inline uint8_t read(unsigned address) override;
+  inline void write(unsigned address, uint8_t data) override;
+  uint8_t readVBR(unsigned address, uint8_t data = 0);
+  uint8_t readDisassembler(unsigned address) override;
 
   //io.cpp
-  auto readIOCPU(unsigned address, uint8_t data) -> uint8_t;
-  auto readIOSA1(unsigned address, uint8_t data) -> uint8_t;
-  auto writeIOCPU(unsigned address, uint8_t data) -> void;
-  auto writeIOSA1(unsigned address, uint8_t data) -> void;
-  auto writeIOShared(unsigned address, uint8_t data) -> void;
+  uint8_t readIOCPU(unsigned address, uint8_t data);
+  uint8_t readIOSA1(unsigned address, uint8_t data);
+  void writeIOCPU(unsigned address, uint8_t data);
+  void writeIOSA1(unsigned address, uint8_t data);
+  void writeIOShared(unsigned address, uint8_t data);
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   struct ROM : ReadableMemory {
     //rom.cpp
-    inline auto conflict() const -> bool;
+    inline bool conflict() const;
 
-    inline auto read(unsigned address, uint8_t data = 0) -> uint8_t override;
-    inline auto write(unsigned address, uint8_t data) -> void override;
+    inline uint8_t read(unsigned address, uint8_t data = 0) override;
+    inline void write(unsigned address, uint8_t data) override;
 
-    auto readCPU(unsigned address, uint8_t data = 0) -> uint8_t;
-    auto writeCPU(unsigned address, uint8_t data) -> void;
+    uint8_t readCPU(unsigned address, uint8_t data = 0);
+    void writeCPU(unsigned address, uint8_t data);
 
-    auto readSA1(unsigned address, uint8_t data = 0) -> uint8_t;
-    auto writeSA1(unsigned address, uint8_t data) -> void;
+    uint8_t readSA1(unsigned address, uint8_t data = 0);
+    void writeSA1(unsigned address, uint8_t data);
   } rom;
 
   struct BWRAM : WritableMemory {
     //bwram.cpp
-    inline auto conflict() const -> bool;
+    inline bool conflict() const;
 
-    inline auto read(unsigned address, uint8_t data = 0) -> uint8_t override;
-    inline auto write(unsigned address, uint8_t data) -> void override;
+    inline uint8_t read(unsigned address, uint8_t data = 0) override;
+    inline void write(unsigned address, uint8_t data) override;
 
-    auto readCPU(unsigned address, uint8_t data = 0) -> uint8_t;
-    auto writeCPU(unsigned address, uint8_t data) -> void;
+    uint8_t readCPU(unsigned address, uint8_t data = 0);
+    void writeCPU(unsigned address, uint8_t data);
 
-    auto readSA1(unsigned address, uint8_t data = 0) -> uint8_t;
-    auto writeSA1(unsigned address, uint8_t data) -> void;
+    uint8_t readSA1(unsigned address, uint8_t data = 0);
+    void writeSA1(unsigned address, uint8_t data);
 
-    auto readLinear(unsigned address, uint8_t data = 0) -> uint8_t;
-    auto writeLinear(unsigned address, uint8_t data) -> void;
+    uint8_t readLinear(unsigned address, uint8_t data = 0);
+    void writeLinear(unsigned address, uint8_t data);
 
-    auto readBitmap(nall::Natural<20> address, uint8_t data = 0) -> uint8_t;
-    auto writeBitmap(nall::Natural<20> address, uint8_t data) -> void;
+    uint8_t readBitmap(nall::Natural<20> address, uint8_t data = 0);
+    void writeBitmap(nall::Natural<20> address, uint8_t data);
 
     bool dma;
   } bwram;
 
   struct IRAM : WritableMemory {
     //iram.cpp
-    inline auto conflict() const -> bool;
+    inline bool conflict() const;
 
-    inline auto read(unsigned address, uint8_t data = 0) -> uint8_t override;
-    inline auto write(unsigned address, uint8_t data) -> void override;
+    inline uint8_t read(unsigned address, uint8_t data = 0) override;
+    inline void write(unsigned address, uint8_t data) override;
 
-    auto readCPU(unsigned address, uint8_t data) -> uint8_t;
-    auto writeCPU(unsigned address, uint8_t data) -> void;
+    uint8_t readCPU(unsigned address, uint8_t data);
+    void writeCPU(unsigned address, uint8_t data);
 
-    auto readSA1(unsigned address, uint8_t data = 0) -> uint8_t;
-    auto writeSA1(unsigned address, uint8_t data) -> void;
+    uint8_t readSA1(unsigned address, uint8_t data = 0);
+    void writeSA1(unsigned address, uint8_t data);
   } iram;
 
 private:

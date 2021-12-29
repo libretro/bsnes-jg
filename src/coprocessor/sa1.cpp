@@ -2,7 +2,7 @@
 
 namespace SuperFamicom {
 
-auto SA1::ROM::conflict() const -> bool {
+bool SA1::ROM::conflict() const {
   if(configuration.coprocessor.delayedSync) return false;
 
   if((cpu.r.mar & 0x408000) == 0x008000) return true;  //00-3f,80-bf:8000-ffff
@@ -10,18 +10,18 @@ auto SA1::ROM::conflict() const -> bool {
   return false;
 }
 
-auto SA1::ROM::read(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::ROM::read(unsigned address, uint8_t data) {
   address = bus.mirror(address, size());
   return ReadableMemory::read(address, data);
 }
 
-auto SA1::ROM::write(unsigned address, uint8_t data) -> void {
+void SA1::ROM::write(unsigned address, uint8_t data) {
 }
 
 //note: addresses are translated prior to invoking this function:
 //00-3f,80-bf:8000-ffff mask=0x408000 => 00-3f:0000-ffff
 //c0-ff:0000-ffff => untranslated
-auto SA1::ROM::readCPU(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::ROM::readCPU(unsigned address, uint8_t data) {
   //reset vector overrides
   if((address & 0xffffe0) == 0x007fe0) {  //00:ffe0-ffef
     if(address == 0x7fea && sa1.mmio.cpu_nvsw) return sa1.mmio.snv >> 0;
@@ -61,20 +61,20 @@ auto SA1::ROM::readCPU(unsigned address, uint8_t data) -> uint8_t {
   return data;  //unreachable
 }
 
-auto SA1::ROM::writeCPU(unsigned address, uint8_t data) -> void {
+void SA1::ROM::writeCPU(unsigned address, uint8_t data) {
 }
 
-auto SA1::ROM::readSA1(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::ROM::readSA1(unsigned address, uint8_t data) {
   if((address & 0x408000) == 0x008000) {
     address = (address & 0x800000) >> 2 | (address & 0x3f0000) >> 1 | address & 0x007fff;
   }
   return readCPU(address, data);
 }
 
-auto SA1::ROM::writeSA1(unsigned address, uint8_t data) -> void {
+void SA1::ROM::writeSA1(unsigned address, uint8_t data) {
 }
 
-auto SA1::BWRAM::conflict() const -> bool {
+bool SA1::BWRAM::conflict() const {
   if(configuration.coprocessor.delayedSync) return false;
 
   if((cpu.r.mar & 0x40e000) == 0x006000) return true;  //00-3f,80-bf:6000-7fff
@@ -82,13 +82,13 @@ auto SA1::BWRAM::conflict() const -> bool {
   return false;
 }
 
-auto SA1::BWRAM::read(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::BWRAM::read(unsigned address, uint8_t data) {
   if(!size()) return data;
   address = bus.mirror(address, size());
   return WritableMemory::read(address, data);
 }
 
-auto SA1::BWRAM::write(unsigned address, uint8_t data) -> void {
+void SA1::BWRAM::write(unsigned address, uint8_t data) {
   if(!size()) return;
   address = bus.mirror(address, size());
   return WritableMemory::write(address, data);
@@ -97,7 +97,7 @@ auto SA1::BWRAM::write(unsigned address, uint8_t data) -> void {
 //note: addresses are translated prior to invoking this function:
 //00-3f,80-bf:6000-7fff size=0x2000 => 00:0000-1fff
 //40-4f:0000-ffff => untranslated
-auto SA1::BWRAM::readCPU(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::BWRAM::readCPU(unsigned address, uint8_t data) {
   cpu.synchronizeCoprocessors();
 
   if(address < 0x2000) {  //$00-3f,80-bf:6000-7fff
@@ -108,7 +108,7 @@ auto SA1::BWRAM::readCPU(unsigned address, uint8_t data) -> uint8_t {
   return read(address, data);
 }
 
-auto SA1::BWRAM::writeCPU(unsigned address, uint8_t data) -> void {
+void SA1::BWRAM::writeCPU(unsigned address, uint8_t data) {
   cpu.synchronizeCoprocessors();
 
   if(address < 0x2000) {  //$00-3f,80-bf:6000-7fff
@@ -118,7 +118,7 @@ auto SA1::BWRAM::writeCPU(unsigned address, uint8_t data) -> void {
   return write(address, data);
 }
 
-auto SA1::BWRAM::readSA1(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::BWRAM::readSA1(unsigned address, uint8_t data) {
   if(sa1.mmio.sw46 == 0) {
     //$40-43:0000-ffff x  32 projection
     address = (sa1.mmio.cbm & 0x1f) * 0x2000 + (address & 0x1fff);
@@ -130,7 +130,7 @@ auto SA1::BWRAM::readSA1(unsigned address, uint8_t data) -> uint8_t {
   }
 }
 
-auto SA1::BWRAM::writeSA1(unsigned address, uint8_t data) -> void {
+void SA1::BWRAM::writeSA1(unsigned address, uint8_t data) {
   if(sa1.mmio.sw46 == 0) {
     //$40-43:0000-ffff x  32 projection
     address = (sa1.mmio.cbm & 0x1f) * 0x2000 + (address & 0x1fff);
@@ -142,15 +142,15 @@ auto SA1::BWRAM::writeSA1(unsigned address, uint8_t data) -> void {
   }
 }
 
-auto SA1::BWRAM::readLinear(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::BWRAM::readLinear(unsigned address, uint8_t data) {
   return read(address, data);
 }
 
-auto SA1::BWRAM::writeLinear(unsigned address, uint8_t data) -> void {
+void SA1::BWRAM::writeLinear(unsigned address, uint8_t data) {
   return write(address, data);
 }
 
-auto SA1::BWRAM::readBitmap(nall::Natural<20> address, uint8_t data) -> uint8_t {
+uint8_t SA1::BWRAM::readBitmap(nall::Natural<20> address, uint8_t data) {
   if(sa1.mmio.bbf == 0) {
     //4bpp
     unsigned shift = address & 1;
@@ -173,7 +173,7 @@ auto SA1::BWRAM::readBitmap(nall::Natural<20> address, uint8_t data) -> uint8_t 
   return 0; // unreachable
 }
 
-auto SA1::BWRAM::writeBitmap(nall::Natural<20> address, uint8_t data) -> void {
+void SA1::BWRAM::writeBitmap(nall::Natural<20> address, uint8_t data) {
   if(sa1.mmio.bbf == 0) {
     //4bpp
     unsigned shift = address & 1;
@@ -196,45 +196,45 @@ auto SA1::BWRAM::writeBitmap(nall::Natural<20> address, uint8_t data) -> void {
   write(address, data);
 }
 
-auto SA1::IRAM::conflict() const -> bool {
+bool SA1::IRAM::conflict() const {
   if(configuration.coprocessor.delayedSync) return false;
 
   if((cpu.r.mar & 0x40f800) == 0x003000) return cpu.refresh() == 0;  //00-3f,80-bf:3000-37ff
   return false;
 }
 
-auto SA1::IRAM::read(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::IRAM::read(unsigned address, uint8_t data) {
   if(!size()) return data;
   address = bus.mirror(address, size());
   return WritableMemory::read(address, data);
 }
 
-auto SA1::IRAM::write(unsigned address, uint8_t data) -> void {
+void SA1::IRAM::write(unsigned address, uint8_t data) {
   if(!size()) return;
   address = bus.mirror(address, size());
   return WritableMemory::write(address, data);
 }
 
-auto SA1::IRAM::readCPU(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::IRAM::readCPU(unsigned address, uint8_t data) {
   cpu.synchronizeCoprocessors();
   return read(address, data);
 }
 
-auto SA1::IRAM::writeCPU(unsigned address, uint8_t data) -> void {
+void SA1::IRAM::writeCPU(unsigned address, uint8_t data) {
   cpu.synchronizeCoprocessors();
   return write(address, data);
 }
 
-auto SA1::IRAM::readSA1(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::IRAM::readSA1(unsigned address, uint8_t data) {
   return read(address, data);
 }
 
-auto SA1::IRAM::writeSA1(unsigned address, uint8_t data) -> void {
+void SA1::IRAM::writeSA1(unsigned address, uint8_t data) {
   return write(address, data);
 }
 
 //direct data transfer
-auto SA1::dmaNormal() -> void {
+void SA1::dmaNormal() {
   while(mmio.dtc--) {
     uint8_t data = r.mdr;
     nall::Natural<24> source = mmio.dsa++;
@@ -281,7 +281,7 @@ auto SA1::dmaNormal() -> void {
 }
 
 //type-1 character conversion
-auto SA1::dmaCC1() -> void {
+void SA1::dmaCC1() {
   bwram.dma = true;
   mmio.chdma_irqfl = true;
   if(mmio.chdma_irqen) {
@@ -296,7 +296,7 @@ auto SA1::dmaCC1() -> void {
 //works for 2bpp, 4bpp and 8bpp modes
 
 //type-1 character conversion
-auto SA1::dmaCC1Read(unsigned addr) -> uint8_t {
+uint8_t SA1::dmaCC1Read(unsigned addr) {
   //16 bytes/char (2bpp); 32 bytes/char (4bpp); 64 bytes/char (8bpp)
   unsigned charmask = (1 << (6 - mmio.dmacb)) - 1;
 
@@ -342,7 +342,7 @@ auto SA1::dmaCC1Read(unsigned addr) -> uint8_t {
 }
 
 //type-2 character conversion
-auto SA1::dmaCC2() -> void {
+void SA1::dmaCC2() {
   //select register file index (0-7 or 8-15)
   const uint8_t *brf = &mmio.brf[(dma.line & 1) << 3];
   unsigned bpp = 2 << (2 - mmio.dmacb);
@@ -362,12 +362,12 @@ auto SA1::dmaCC2() -> void {
   dma.line = (dma.line + 1) & 15;
 }
 
-auto SA1::idle() -> void {
+void SA1::idle() {
   step();
 }
 
 //RTx, JMx, JSx
-auto SA1::idleJump() -> void {
+void SA1::idleJump() {
   //ROM access penalty cycle: does not apply to BWRAM or IRAM
   if((r.pc.d & 0x408000) == 0x008000  //00-3f,80-bf:8000-ffff
   || (r.pc.d & 0xc00000) == 0xc00000  //c0-ff:0000-ffff
@@ -378,11 +378,11 @@ auto SA1::idleJump() -> void {
 }
 
 //Bxx
-auto SA1::idleBranch() -> void {
+void SA1::idleBranch() {
   if(r.pc.d & 1) idleJump();
 }
 
-auto SA1::read(unsigned address) -> uint8_t {
+uint8_t SA1::read(unsigned address) {
   r.mar = address;
   uint8_t data = r.mdr;
 
@@ -426,7 +426,7 @@ auto SA1::read(unsigned address) -> uint8_t {
   return data;
 }
 
-auto SA1::write(unsigned address, uint8_t data) -> void {
+void SA1::write(unsigned address, uint8_t data) {
   r.mar = address;
   r.mdr = data;
 
@@ -474,7 +474,7 @@ auto SA1::write(unsigned address, uint8_t data) -> void {
 //this is used both to keep VBR-reads from accessing MMIO registers, and
 //to avoid syncing the S-CPU and SA-1*; as both chips are able to access
 //these ports.
-auto SA1::readVBR(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::readVBR(unsigned address, uint8_t data) {
   if((address & 0x408000) == 0x008000  //00-3f,80-bf:8000-ffff
   || (address & 0xc00000) == 0xc00000  //c0-ff:0000-ffff
   ) {
@@ -496,13 +496,13 @@ auto SA1::readVBR(unsigned address, uint8_t data) -> uint8_t {
   return 0xff;
 }
 
-auto SA1::readDisassembler(unsigned address) -> uint8_t {
+uint8_t SA1::readDisassembler(unsigned address) {
   //TODO: this is a hack; SA1::read() advances the clock; whereas Bus::read() does not
   //the CPU and SA1 bus are identical for ROM, but have differences in BWRAM and IRAM
   return bus.read(address, r.mdr);
 }
 
-auto SA1::readIOCPU(unsigned address, uint8_t data) -> uint8_t {
+uint8_t SA1::readIOCPU(unsigned address, uint8_t data) {
   cpu.synchronizeCoprocessors();
 
   switch(0x2200 | address & 0x1ff) {
@@ -528,7 +528,7 @@ auto SA1::readIOCPU(unsigned address, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto SA1::readIOSA1(unsigned address, uint8_t) -> uint8_t {
+uint8_t SA1::readIOSA1(unsigned address, uint8_t) {
   synchronizeCPU();
 
   switch(0x2200 | address & 0x1ff) {
@@ -604,7 +604,7 @@ auto SA1::readIOSA1(unsigned address, uint8_t) -> uint8_t {
   return 0xff;
 }
 
-auto SA1::writeIOCPU(unsigned address, uint8_t data) -> void {
+void SA1::writeIOCPU(unsigned address, uint8_t data) {
   cpu.synchronizeCoprocessors();
 
   switch(0x2200 | address & 0x1ff) {
@@ -739,7 +739,7 @@ auto SA1::writeIOCPU(unsigned address, uint8_t data) -> void {
   }
 }
 
-auto SA1::writeIOSA1(unsigned address, uint8_t data) -> void {
+void SA1::writeIOSA1(unsigned address, uint8_t data) {
   synchronizeCPU();
 
   switch(0x2200 | address & 0x1ff) {
@@ -981,7 +981,7 @@ auto SA1::writeIOSA1(unsigned address, uint8_t data) -> void {
   }
 }
 
-auto SA1::writeIOShared(unsigned address, uint8_t data) -> void {
+void SA1::writeIOShared(unsigned address, uint8_t data) {
   switch(0x2200 | address & 0x1ff) {
 
   //(CDMA) character conversion DMA parameters
@@ -1025,7 +1025,7 @@ auto SA1::writeIOShared(unsigned address, uint8_t data) -> void {
   }
 }
 
-auto SA1::serialize(serializer& s) -> void {
+void SA1::serialize(serializer& s) {
   WDC65816::serialize(s);
   Thread::serialize(s);
 
@@ -1171,18 +1171,18 @@ auto SA1::serialize(serializer& s) -> void {
 
 SA1 sa1;
 
-auto SA1::synchronizeCPU() -> void {
+void SA1::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto SA1::Enter() -> void {
+void SA1::Enter() {
   while(true) {
     scheduler.synchronize();
     sa1.main();
   }
 }
 
-auto SA1::main() -> void {
+void SA1::main() {
   if(r.wai) return instructionWait();
   if(r.stp) return instructionStop();
 
@@ -1202,7 +1202,7 @@ auto SA1::main() -> void {
 }
 
 //override R65816::interrupt() to support SA-1 vector location IO registers
-auto SA1::interrupt() -> void {
+void SA1::interrupt() {
   read(r.pc.d);
   idle();
   if(!r.e) push(r.pc.b);
@@ -1214,7 +1214,7 @@ auto SA1::interrupt() -> void {
   r.pc.d = r.vector;  //PC bank set to 0x00
 }
 
-auto SA1::lastCycle() -> void {
+void SA1::lastCycle() {
   if(mmio.sa1_nmi && !mmio.sa1_nmicl) {
     status.interruptPending = true;
     r.vector = mmio.cnv;
@@ -1241,11 +1241,11 @@ auto SA1::lastCycle() -> void {
   }
 }
 
-auto SA1::interruptPending() const -> bool {
+bool SA1::interruptPending() const {
   return status.interruptPending;
 }
 
-auto SA1::step() -> void {
+void SA1::step() {
   clock += (uint64_t)cpu.frequency << 1;
   synchronizeCPU();
 
@@ -1278,18 +1278,18 @@ auto SA1::step() -> void {
   }
 }
 
-auto SA1::triggerIRQ() -> void {
+void SA1::triggerIRQ() {
   mmio.timer_irqfl = true;
   if(mmio.timer_irqen) mmio.timer_irqcl = 0;
 }
 
-auto SA1::unload() -> void {
+void SA1::unload() {
   rom.reset();
   iram.reset();
   bwram.reset();
 }
 
-auto SA1::power() -> void {
+void SA1::power() {
   double overclock = std::max(1.0, std::min(4.0, configuration.sa1.overclock / 100.0));
 
   WDC65816::power();
