@@ -5,11 +5,11 @@ CC ?= cc
 CXX ?= c++
 CFLAGS ?= -O2
 CXXFLAGS ?= -O2
-FLAGS := -fPIC -std=c++17 -fno-strict-aliasing -fwrapv
-FLAGS_BML := -fPIC -std=c++14
-FLAGS_CO := -fPIC -std=c89
-FLAGS_GB := -fPIC -std=c11
-FLAGS_SAMPLERATE := -fPIC -std=c99
+FLAGS := -std=c++17 -fno-strict-aliasing -fwrapv
+FLAGS_BML := -std=c++14
+FLAGS_CO := -std=c89
+FLAGS_GB := -std=c11
+FLAGS_SAMPLERATE := -std=c99
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.14.7\"
 
@@ -23,7 +23,8 @@ WARNINGS_CO := -Wall -Wextra -Wshadow -Wmissing-prototypes
 WARNINGS_GB := -Wno-multichar
 WARNINGS_SAMPLERATE := -Wall -Wextra -Wshadow -Wmissing-prototypes
 LIBS := -lm -lstdc++
-SHARED := -fPIC
+PIC := -fPIC
+SHARED := $(PIC)
 
 NAME := bsnes
 PREFIX ?= /usr/local
@@ -169,8 +170,9 @@ MKDIRS := $(OBJDIR)/deps/byuuML \
 OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
 
 # Compiler commands
-COMPILE_C = $(strip $(CC) $(CFLAGS) $(CPPFLAGS) $(1) -c $< -o $@)
-COMPILE_CXX = $(strip $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(1) -c $< -o $@)
+COMPILE = $(strip $(1) $(CPPFLAGS) $(PIC) $(2) -c $< -o $@)
+COMPILE_C = $(call COMPILE, $(CC) $(CFLAGS), $(1))
+COMPILE_CXX = $(call COMPILE, $(CXX) $(CXXFLAGS), $(1))
 
 # Info command
 COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
