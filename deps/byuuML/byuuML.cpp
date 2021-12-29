@@ -97,7 +97,7 @@ namespace {
       }
     }
   public:
-    line_getter(class reader& raw_reader) : raw_reader(raw_reader) {}
+    line_getter(class reader& line_reader) : raw_reader(line_reader) {}
     // like reader, begin == end means no more lines
     void get_line(const char*& out_begin, const char*& out_end) {
       while(true) {

@@ -18,7 +18,7 @@ CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
 
 INCLUDES := -I$(SOURCEDIR)/deps
 WARNINGS := -Wreturn-type -Wno-unused-result
-WARNINGS_BML := -Wall -Wextra -pedantic
+WARNINGS_BML := -Wall -Wextra -Wshadow -pedantic
 WARNINGS_CO := -Wall -Wextra -Wshadow -Wmissing-prototypes
 WARNINGS_GB := -Wno-multichar
 WARNINGS_SAMPLERATE := -Wall -Wextra -Wshadow -Wmissing-prototypes

@@ -33,9 +33,9 @@ namespace byuuML {
       const std::unique_ptr<node[]>* node_buffer;
       index node_index;
     public:
-      const_iterator(const std::unique_ptr<node[]>& node_buffer,
-                     index node_index)
-        : node_buffer(&node_buffer), node_index(node_index) {}
+      const_iterator(const std::unique_ptr<node[]>& _node_buffer,
+                     index _node_index)
+        : node_buffer(&_node_buffer), node_index(_node_index) {}
       const_iterator& operator++() {
         node_index = (*node_buffer)[node_index].sibling;
         return *this;
@@ -57,8 +57,8 @@ namespace byuuML {
       }
     };
     node() : sibling(SENTINEL_INDEX), child(SENTINEL_INDEX) {}
-    node(std::string name, std::string data, index sibling, index child)
-      : name(name), data(data), sibling(sibling), child(child) {}
+    node(std::string node_name, std::string node_data, index node_sibling, index node_child)
+      : name(node_name), data(node_data), sibling(node_sibling), child(node_child) {}
     bool has_children() const { return child != SENTINEL_INDEX; }
     const std::string& get_name() const { return name; }
     const std::string& get_data() const { return data; }
@@ -96,18 +96,18 @@ namespace byuuML {
     const std::unique_ptr<node[]>& node_buffer;
     const node& node_ref;
   public:
-    node_in_document(const std::unique_ptr<node[]>& node_buffer,
-                     const node& node_ref)
-      : node_buffer(node_buffer), node_ref(node_ref) {}
+    node_in_document(const std::unique_ptr<node[]>& doc_node_buffer,
+                     const node& doc_node_ref)
+      : node_buffer(doc_node_buffer), node_ref(doc_node_ref) {}
     node_in_document(const document& document,
-                     const node& node_ref)
-      : node_buffer(document.get_node_buffer()), node_ref(node_ref) {}
-    node_in_document(const node& node_ref,
-                     const std::unique_ptr<node[]>& node_buffer)
-      : node_buffer(node_buffer), node_ref(node_ref) {}
-    node_in_document(const node& node_ref,
+                     const node& doc_node_ref)
+      : node_buffer(document.get_node_buffer()), node_ref(doc_node_ref) {}
+    node_in_document(const node& doc_node_ref,
+                     const std::unique_ptr<node[]>& doc_node_buffer)
+      : node_buffer(doc_node_buffer), node_ref(doc_node_ref) {}
+    node_in_document(const node& doc_node_ref,
                      const document& document)
-      : node_buffer(document.get_node_buffer()), node_ref(node_ref) {}
+      : node_buffer(document.get_node_buffer()), node_ref(doc_node_ref) {}
     node::const_iterator begin() const {
       return node::const_iterator(node_buffer, node_ref.get_child_index());
     }
