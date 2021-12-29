@@ -429,19 +429,19 @@ void ST0010::op_08() {
 
 ST0010 st0010;
 
-auto ST0010::serialize(serializer& s) -> void {
+void ST0010::serialize(serializer& s) {
   s.array(ram);
 }
 
-auto ST0010::power() -> void {
+void ST0010::power() {
   memset(ram, 0x00, sizeof ram);
 }
 
-auto ST0010::read(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t ST0010::read(unsigned addr, uint8_t data) {
   return readb(addr);
 }
 
-auto ST0010::write(unsigned addr, uint8_t data) -> void {
+void ST0010::write(unsigned addr, uint8_t data) {
   writeb(addr, data);
 
   if((addr & 0xfff) == 0x0021 && (data & 0x80)) {

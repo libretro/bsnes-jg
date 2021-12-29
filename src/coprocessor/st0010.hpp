@@ -1,10 +1,10 @@
 struct ST0010 {
-  auto power() -> void;
+  void power();
 
-  auto read(unsigned addr, uint8_t data) -> uint8_t;
-  auto write(unsigned addr, uint8_t data) -> void;
+  uint8_t read(unsigned addr, uint8_t data);
+  void write(unsigned addr, uint8_t data);
 
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   uint8_t ram[0x1000];
   static const int16_t sin_table[256];
