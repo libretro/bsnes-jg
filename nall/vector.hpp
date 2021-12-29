@@ -54,6 +54,7 @@ struct vector_base {
   auto insert(uint64_t offset, const T& value) -> void;
 
   auto removeLeft(uint64_t length = 1) -> void;
+  auto removeRight(uint64_t length = 1) -> void;
   auto remove(uint64_t offset, uint64_t length = 1) -> void;
 
   auto takeLeft() -> T;
@@ -272,9 +273,34 @@ template<typename T> auto vector_base<T>::removeLeft(uint64_t length) -> void {
   resizeLeft(size() - length);
 }
 
+template<typename T> auto vector_base<T>::removeRight(uint64_t length) -> void {
+  if(length > size()) length = size();
+  resizeRight(size() - length);
+}
+
+template<typename T> auto vector_base<T>::remove(uint64_t offset, uint64_t length) -> void {
+  if(offset == 0) return removeLeft(length);
+  if(offset == size() - 1) return removeRight(length);
+
+  for(uint64_t n = offset; n < size(); n++) {
+    if(n + length < size()) {
+      _pool[n] = std::move(_pool[n + length]);
+    } else {
+      _pool[n].~T();
+    }
+  }
+  _size -= length;
+}
+
 template<typename T> auto vector_base<T>::takeLeft() -> T {
   T value = std::move(_pool[0]);
   removeLeft();
+  return value;
+}
+
+template<typename T> auto vector_base<T>::takeRight() -> T {
+  T value = std::move(_pool[size() - 1]);
+  removeRight();
   return value;
 }
 
