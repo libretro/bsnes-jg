@@ -2,67 +2,67 @@ struct SuperFX : Processor::GSU, Thread {
   ReadableMemory rom;
   WritableMemory ram;
 
-  inline auto synchronizing() const -> bool { return scheduler.synchronizing(); }
+  inline bool synchronizing() const { return scheduler.synchronizing(); }
 
   //superfx.cpp
-  auto synchronizeCPU() -> void;
-  static auto Enter() -> void;
-  auto main() -> void;
-  auto unload() -> void;
-  auto power() -> void;
+  void synchronizeCPU();
+  static void Enter();
+  void main();
+  void unload();
+  void power();
 
   //bus.cpp
   struct CPUROM : Memory {
-    auto data() -> uint8_t *override;
-    auto size() const -> unsigned override;
-    auto read(unsigned, uint8_t) -> uint8_t override;
-    auto write(unsigned, uint8_t) -> void override;
+    uint8_t* data() override;
+    unsigned size() const override;
+    uint8_t read(unsigned, uint8_t) override;
+    void write(unsigned, uint8_t) override;
   };
 
   struct CPURAM : Memory {
-    auto data() -> uint8_t *override;
-    auto size() const -> unsigned override;
-    auto read(unsigned, uint8_t) -> uint8_t override;
-    auto write(unsigned, uint8_t) -> void override;
+    uint8_t* data() override;
+    unsigned size() const override;
+    uint8_t read(unsigned, uint8_t) override;
+    void write(unsigned, uint8_t) override;
   };
 
   //core.cpp
-  auto stop() -> void override;
-  auto color(uint8_t source) -> uint8_t override;
-  auto plot(uint8_t x, uint8_t y) -> void override;
-  auto rpix(uint8_t x, uint8_t y) -> uint8_t override;
+  void stop() override;
+  uint8_t color(uint8_t source) override;
+  void plot(uint8_t x, uint8_t y) override;
+  uint8_t rpix(uint8_t x, uint8_t y) override;
 
-  auto flushPixelCache(PixelCache& cache) -> void;
+  void flushPixelCache(PixelCache& cache);
 
   //memory.cpp
-  auto read(unsigned addr, uint8_t data = 0x00) -> uint8_t override;
-  auto write(unsigned addr, uint8_t data) -> void override;
+  uint8_t read(unsigned addr, uint8_t data = 0x00) override;
+  void write(unsigned addr, uint8_t data) override;
 
-  auto readOpcode(uint16_t addr) -> uint8_t;
-  inline auto peekpipe() -> uint8_t;
-  inline auto pipe() -> uint8_t override;
+  uint8_t readOpcode(uint16_t addr);
+  inline uint8_t peekpipe();
+  inline uint8_t pipe() override;
 
-  auto flushCache() -> void override;
-  auto readCache(uint16_t addr) -> uint8_t;
-  auto writeCache(uint16_t addr, uint8_t data) -> void;
+  void flushCache() override;
+  uint8_t readCache(uint16_t addr);
+  void writeCache(uint16_t addr, uint8_t data);
 
   //io.cpp
-  auto readIO(unsigned addr, uint8_t data) -> uint8_t;
-  auto writeIO(unsigned addr, uint8_t data) -> void;
+  uint8_t readIO(unsigned addr, uint8_t data);
+  void writeIO(unsigned addr, uint8_t data);
 
   //timing.cpp
-  auto step(unsigned clocks) -> void override;
+  void step(unsigned clocks) override;
 
-  auto syncROMBuffer() -> void override;
-  auto readROMBuffer() -> uint8_t override;
-  auto updateROMBuffer() -> void;
+  void syncROMBuffer() override;
+  uint8_t readROMBuffer() override;
+  void updateROMBuffer();
 
-  auto syncRAMBuffer() -> void override;
-  auto readRAMBuffer(uint16_t addr) -> uint8_t override;
-  auto writeRAMBuffer(uint16_t addr, uint8_t data) -> void override;
+  void syncRAMBuffer() override;
+  uint8_t readRAMBuffer(uint16_t addr) override;
+  void writeRAMBuffer(uint16_t addr, uint8_t data) override;
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   unsigned Frequency;
 
