@@ -98,7 +98,12 @@ void Cartridge::loadCartridge(Markup::Node node) {
     loadHitachiDSP(node, game.board.find("2DC") != std::string::npos ? 2 : 1);
   }
 
-  if(Emulator::platform->fopen(ID::SuperFamicom, "msu1/data.rom")) loadMSU1();
+  std::ifstream msu1file =
+    Emulator::platform->fopen(ID::SuperFamicom, "msu1/data.rom");
+  if (msu1file.is_open()) {
+    msu1file.close();
+    loadMSU1();
+  }
 }
 
 void Cartridge::loadCartridgeBSMemory(Markup::Node node) {
