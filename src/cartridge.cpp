@@ -80,11 +80,13 @@ void Cartridge::loadCartridge(Markup::Node node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "ROM" && content == "Program") loadROM(m);
+    if (type == "ROM" && content == "Expansion") loadROM(m); //todo: handle this better
+    if (type == "RAM" && content == "Save") loadRAM(m);
   }
 
   //if(auto node = board["memory(type=ROM,content=Program)"]) loadROM(node);
-  if(auto node = board["memory(type=ROM,content=Expansion)"]) loadROM(node);  //todo: handle this better
-  if(auto node = board["memory(type=RAM,content=Save)"]) loadRAM(node);
+  //if(auto node = board["memory(type=ROM,content=Expansion)"]) loadROM(node); //todo: handle this better
+  //if(auto node = board["memory(type=RAM,content=Save)"]) loadRAM(node);
   if(auto node = board["processor(identifier=ICD)"]) loadICD(node);
   if(auto node = board["processor(identifier=MCC)"]) loadMCC(node);
   if(auto node = board["slot(type=BSMemory)"]) loadBSMemory(node);
@@ -260,6 +262,12 @@ void Cartridge::loadROM(std::string node) {
   loadMemory(rom, node);
   std::vector<std::string> maps = BML::searchList(node, "map");
   for (auto map : maps) loadMap(map, rom);
+}
+
+void Cartridge::loadRAM(std::string node) {
+  loadMemory(ram, node);
+  std::vector<std::string> maps = BML::searchList(node, "map");
+  for (auto map : maps) loadMap(map, ram);
 }
 
 void Cartridge::loadROM(Markup::Node node) {

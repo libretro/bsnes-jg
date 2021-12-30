@@ -82,6 +82,7 @@ private:
   unsigned loadMap(Markup::Node, const nall::function<uint8_t (unsigned, uint8_t)>&, const nall::function<void (unsigned, uint8_t)>&);
 
   void loadROM(std::string);
+  void loadRAM(std::string);
 
   void loadROM(Markup::Node);
   void loadRAM(Markup::Node);
