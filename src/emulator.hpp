@@ -131,6 +131,7 @@ struct Game {
   struct Oscillator;
 
   void load(std::string);
+  nall::maybe<Game::Memory> memory(std::string);
   nall::maybe<Game::Memory> memory(Markup::Node);
   nall::maybe<Game::Oscillator> oscillator(unsigned = 0);
 
