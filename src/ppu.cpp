@@ -4,7 +4,7 @@ namespace SuperFamicom {
 
 PPU ppu;
 
-auto PPU::main() -> void {
+void PPU::main() {
   if(vcounter() == 0) {
     if(display.overscan && !io.overscan) {
       //when disabling overscan, clear the overscan area that won't be rendered to:
@@ -79,12 +79,12 @@ auto PPU::main() -> void {
 //but due to the multiple template instantiations, that destroys L1 cache.
 //it's a performance penalty of about 25% for the entire(!!) emulator.
 
-auto PPU::cycleObjectEvaluate() -> void {
+void PPU::cycleObjectEvaluate() {
   obj.evaluate(hcounter() >> 3);
 }
 
 template<unsigned Cycle>
-auto PPU::cycleBackgroundFetch() -> void {
+void PPU::cycleBackgroundFetch() {
   switch(io.bgMode) {
   case 0:
     if constexpr(Cycle == 0) bg4.fetchNameTable();
@@ -162,35 +162,35 @@ auto PPU::cycleBackgroundFetch() -> void {
   }
 }
 
-auto PPU::cycleBackgroundBegin() -> void {
+void PPU::cycleBackgroundBegin() {
   bg1.begin();
   bg2.begin();
   bg3.begin();
   bg4.begin();
 }
 
-auto PPU::cycleBackgroundBelow() -> void {
+void PPU::cycleBackgroundBelow() {
   bg1.run(1);
   bg2.run(1);
   bg3.run(1);
   bg4.run(1);
 }
 
-auto PPU::cycleBackgroundAbove() -> void {
+void PPU::cycleBackgroundAbove() {
   bg1.run(0);
   bg2.run(0);
   bg3.run(0);
   bg4.run(0);
 }
 
-auto PPU::cycleRenderPixel() -> void {
+void PPU::cycleRenderPixel() {
   obj.run();
   window.run();
   screen.run();
 }
 
 template<unsigned Cycle>
-auto PPU::cycle() -> void {
+void PPU::cycle() {
   if constexpr(Cycle >=  0 && Cycle <= 1016 && (Cycle -  0) % 8 == 0) cycleObjectEvaluate();
   if constexpr(Cycle >=  0 && Cycle <= 1054 && (Cycle -  0) % 4 == 0) cycleBackgroundFetch<(Cycle - 0) / 4 & 7>();
   if constexpr(Cycle == 56                                          ) cycleBackgroundBegin();
@@ -200,20 +200,20 @@ auto PPU::cycle() -> void {
   step();
 }
 
-auto PPU::latchCounters(unsigned hcounter, unsigned vcounter) -> void {
+void PPU::latchCounters(unsigned hcounter, unsigned vcounter) {
   io.hcounter = hcounter;
   io.vcounter = vcounter;
   latch.counters = 1;
 }
 
-auto PPU::latchCounters() -> void {
+void PPU::latchCounters() {
   cpu.synchronizePPU();
   io.hcounter = hdot();
   io.vcounter = vcounter();
   latch.counters = 1;
 }
 
-auto PPU::addressVRAM() const -> uint16_t {
+uint16_t PPU::addressVRAM() const {
   uint16_t address = io.vramAddress;
   switch(io.vramMapping) {
   case 0: return address;
@@ -224,30 +224,30 @@ auto PPU::addressVRAM() const -> uint16_t {
   return 0; // unreachable
 }
 
-auto PPU::readVRAM() -> uint16_t {
+uint16_t PPU::readVRAM() {
   if(!io.displayDisable && vcounter() < vdisp()) return 0x0000;
   auto address = addressVRAM();
   return vram[address];
 }
 
-auto PPU::writeVRAM(bool byte, uint8_t data) -> void {
+void PPU::writeVRAM(bool byte, uint8_t data) {
   if(!io.displayDisable && vcounter() < vdisp()) return;
   auto address = addressVRAM();
   if(byte == 0) vram[address] = vram[address] & 0xff00 | data << 0;
   if(byte == 1) vram[address] = vram[address] & 0x00ff | data << 8;
 }
 
-auto PPU::readOAM(nall::Natural<10> addr) -> uint8_t {
+uint8_t PPU::readOAM(nall::Natural<10> addr) {
   if(!io.displayDisable && vcounter() < vdisp()) addr = latch.oamAddress;
   return obj.oam.read(addr);
 }
 
-auto PPU::writeOAM(nall::Natural<10> addr, uint8_t data) -> void {
+void PPU::writeOAM(nall::Natural<10> addr, uint8_t data) {
   if(!io.displayDisable && vcounter() < vdisp()) addr = latch.oamAddress;
   obj.oam.write(addr, data);
 }
 
-auto PPU::readCGRAM(bool byte, uint8_t addr) -> uint8_t {
+uint8_t PPU::readCGRAM(bool byte, uint8_t addr) {
   if(!io.displayDisable
   && vcounter() > 0 && vcounter() < vdisp()
   && hcounter() >= 88 && hcounter() < 1096
@@ -255,7 +255,7 @@ auto PPU::readCGRAM(bool byte, uint8_t addr) -> uint8_t {
   return screen.cgram[addr].byte(byte);
 }
 
-auto PPU::writeCGRAM(uint8_t addr, nall::Natural<15> data) -> void {
+void PPU::writeCGRAM(uint8_t addr, nall::Natural<15> data) {
   if(!io.displayDisable
   && vcounter() > 0 && vcounter() < vdisp()
   && hcounter() >= 88 && hcounter() < 1096
@@ -263,7 +263,7 @@ auto PPU::writeCGRAM(uint8_t addr, nall::Natural<15> data) -> void {
   screen.cgram[addr] = data;
 }
 
-auto PPU::readIO(unsigned addr, uint8_t data) -> uint8_t {
+uint8_t PPU::readIO(unsigned addr, uint8_t data) {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {
@@ -391,7 +391,7 @@ auto PPU::readIO(unsigned addr, uint8_t data) -> uint8_t {
   return data;
 }
 
-auto PPU::writeIO(unsigned addr, uint8_t data) -> void {
+void PPU::writeIO(unsigned addr, uint8_t data) {
   cpu.synchronizePPU();
 
   switch(addr & 0xffff) {
@@ -844,7 +844,7 @@ auto PPU::writeIO(unsigned addr, uint8_t data) -> void {
   }
 }
 
-auto PPU::updateVideoMode() -> void {
+void PPU::updateVideoMode() {
   display.vdisp = !io.overscan ? 225 : 240;
 
   switch(io.bgMode) {
@@ -948,7 +948,7 @@ auto PPU::updateVideoMode() -> void {
   }
 }
 
-auto PPU::Mosaic::enable() const -> bool {
+bool PPU::Mosaic::enable() const {
   if(ppu.bg1.mosaic.enable) return true;
   if(ppu.bg2.mosaic.enable) return true;
   if(ppu.bg3.mosaic.enable) return true;
@@ -956,12 +956,12 @@ auto PPU::Mosaic::enable() const -> bool {
   return false;
 }
 
-auto PPU::Mosaic::voffset() const -> unsigned {
+unsigned PPU::Mosaic::voffset() const {
   return size - vcounter;
 }
 
 //H = 0
-auto PPU::Mosaic::scanline() -> void {
+void PPU::Mosaic::scanline() {
   if(ppu.vcounter() == 1) {
     vcounter = enable() ? size + 1 : 0;
   }
@@ -970,17 +970,17 @@ auto PPU::Mosaic::scanline() -> void {
   }
 }
 
-auto PPU::Mosaic::power() -> void {
+void PPU::Mosaic::power() {
   size = (random() & 15) + 1;
   vcounter = 0;
 }
 
-auto PPU::Background::clip(int n) -> int {
+int PPU::Background::clip(int n) {
   //13-bit sign extend: --s---nnnnnnnnnn -> ssssssnnnnnnnnnn
   return n & 0x2000 ? (n | ~1023) : (n & 1023);
 }
 
-auto PPU::Background::runMode7() -> void {
+void PPU::Background::runMode7() {
   int a = (int16_t)ppu.io.m7a;
   int b = (int16_t)ppu.io.m7b;
   int c = (int16_t)ppu.io.m7c;
@@ -1065,12 +1065,12 @@ inline void PPU::Background::scanline() {
 }
 
 //H = 56
-auto PPU::Background::begin() -> void {
+void PPU::Background::begin() {
   //remove partial tile columns that have been scrolled offscreen
   for(auto& data : tiles[0].data) data >>= pixelCounter << 1;
 }
 
-auto PPU::Background::fetchNameTable() -> void {
+void PPU::Background::fetchNameTable() {
   if(ppu.vcounter() == 0) return;
 
   unsigned nameTableIndex = ppu.hcounter() >> 5 << hires();
@@ -1166,7 +1166,7 @@ auto PPU::Background::fetchNameTable() -> void {
   }
 }
 
-auto PPU::Background::fetchOffset(unsigned y) -> void {
+void PPU::Background::fetchOffset(unsigned y) {
   if(ppu.vcounter() == 0) return;
 
   unsigned characterIndex = ppu.hcounter() >> 5 << hires();
@@ -1193,7 +1193,7 @@ auto PPU::Background::fetchOffset(unsigned y) -> void {
   if(y == 8) opt.voffset = ppu.vram[address];
 }
 
-auto PPU::Background::fetchCharacter(unsigned index, bool half) -> void {
+void PPU::Background::fetchCharacter(unsigned index, bool half) {
   if(ppu.vcounter() == 0) return;
 
   unsigned characterIndex = (ppu.hcounter() >> 5 << hires()) + half;
@@ -1257,7 +1257,7 @@ inline void PPU::Background::run(bool screen) {
   if(!hires() || screen == Screen::Below) if(io.belowEnable) output.below = pixel;
 }
 
-auto PPU::Background::power() -> void {
+void PPU::Background::power() {
   io = {};
   io.tiledataAddress = (random() & 0x0f) << 12;
   io.screenAddress = (random() & 0xfc) << 8;
@@ -1275,7 +1275,7 @@ auto PPU::Background::power() -> void {
   mosaic.enable = random();
 }
 
-auto PPU::OAM::read(nall::Natural<10> address) -> uint8_t {
+uint8_t PPU::OAM::read(nall::Natural<10> address) {
   if(!(address & 0x200)) {
     unsigned n = address >> 2;  //object#
     address &= 3;
@@ -1304,7 +1304,7 @@ auto PPU::OAM::read(nall::Natural<10> address) -> uint8_t {
   }
 }
 
-auto PPU::OAM::write(nall::Natural<10> address, uint8_t data) -> void {
+void PPU::OAM::write(nall::Natural<10> address, uint8_t data) {
   if(!(address & 0x200)) {
     unsigned n = address >> 2;  //object#
     address &= 3;
@@ -1329,7 +1329,7 @@ auto PPU::OAM::write(nall::Natural<10> address, uint8_t data) -> void {
   }
 }
 
-auto PPU::OAM::Object::width() const -> unsigned {
+unsigned PPU::OAM::Object::width() const {
   if(size == 0) {
     static const unsigned width[] = { 8,  8,  8, 16, 16, 32, 16, 16};
     return width[ppu.obj.io.baseSize];
@@ -1339,7 +1339,7 @@ auto PPU::OAM::Object::width() const -> unsigned {
   }
 }
 
-auto PPU::OAM::Object::height() const -> unsigned {
+unsigned PPU::OAM::Object::height() const {
   if(size == 0) {
     if(ppu.obj.io.interlace && ppu.obj.io.baseSize >= 6) return 16;  //hardware quirk
     static const unsigned height[] = { 8,  8,  8, 16, 16, 32, 32, 32};
@@ -1350,22 +1350,21 @@ auto PPU::OAM::Object::height() const -> unsigned {
   }
 }
 
-
-auto PPU::Object::addressReset() -> void {
+void PPU::Object::addressReset() {
   ppu.io.oamAddress = ppu.io.oamBaseAddress;
   setFirstSprite();
 }
 
-auto PPU::Object::setFirstSprite() -> void {
+void PPU::Object::setFirstSprite() {
   io.firstSprite = !ppu.io.oamPriority ? 0 : unsigned(ppu.io.oamAddress >> 2);
 }
 
-auto PPU::Object::frame() -> void {
+void PPU::Object::frame() {
   io.timeOver = false;
   io.rangeOver = false;
 }
 
-auto PPU::Object::scanline() -> void {
+void PPU::Object::scanline() {
   latch.firstSprite = io.firstSprite;
 
   t.x = 0;
@@ -1384,7 +1383,7 @@ auto PPU::Object::scanline() -> void {
   if(t.y >= ppu.vdisp() - 1 || ppu.io.displayDisable) return;
 }
 
-auto PPU::Object::evaluate(nall::Natural< 7> index) -> void {
+void PPU::Object::evaluate(nall::Natural< 7> index) {
   if(ppu.io.displayDisable) return;
   if(t.itemCount > 32) return;
 
@@ -1400,7 +1399,7 @@ auto PPU::Object::evaluate(nall::Natural< 7> index) -> void {
   }
 }
 
-auto PPU::Object::onScanline(PPU::OAM::Object& sprite) -> bool {
+bool PPU::Object::onScanline(PPU::OAM::Object& sprite) {
   if(sprite.x > 256 && sprite.x + sprite.width() - 1 < 512) return false;
   unsigned height = sprite.height() >> io.interlace;
   if(t.y >= sprite.y && t.y < sprite.y + height) return true;
@@ -1408,7 +1407,7 @@ auto PPU::Object::onScanline(PPU::OAM::Object& sprite) -> bool {
   return false;
 }
 
-auto PPU::Object::run() -> void {
+void PPU::Object::run() {
   output.above.priority = 0;
   output.below.priority = 0;
 
@@ -1442,7 +1441,7 @@ auto PPU::Object::run() -> void {
   }
 }
 
-auto PPU::Object::fetch() -> void {
+void PPU::Object::fetch() {
   auto oamItem = t.item[t.active];
   auto oamTile = t.tile[t.active];
 
@@ -1514,7 +1513,7 @@ auto PPU::Object::fetch() -> void {
   io.rangeOver |= (t.itemCount > 32);
 }
 
-auto PPU::Object::power() -> void {
+void PPU::Object::power() {
   for(auto& object : oam.object) {
     object.x = 0;
     object.y = 0;
@@ -1571,11 +1570,11 @@ auto PPU::Object::power() -> void {
   output.below.priority = 0;
 }
 
-auto PPU::Window::scanline() -> void {
+void PPU::Window::scanline() {
   x = 0;
 }
 
-auto PPU::Window::run() -> void {
+void PPU::Window::run() {
   bool one = (x >= io.oneLeft && x <= io.oneRight);
   bool two = (x >= io.twoLeft && x <= io.twoRight);
   x++;
@@ -1611,7 +1610,7 @@ auto PPU::Window::run() -> void {
   output.below.colorEnable = array[io.col.belowMask];
 }
 
-auto PPU::Window::test(bool oneEnable, bool one, bool twoEnable, bool two, unsigned mask) -> bool {
+bool PPU::Window::test(bool oneEnable, bool one, bool twoEnable, bool two, unsigned mask) {
   if(!oneEnable) return two && twoEnable;
   if(!twoEnable) return one;
   if(mask == 0) return (one | two);
@@ -1619,7 +1618,7 @@ auto PPU::Window::test(bool oneEnable, bool one, bool twoEnable, bool two, unsig
                 return (one ^ two) == 3 - mask;
 }
 
-auto PPU::Window::power() -> void {
+void PPU::Window::power() {
   io.bg1.oneEnable = random();
   io.bg1.oneInvert = random();
   io.bg1.twoEnable = random();
@@ -1679,7 +1678,7 @@ auto PPU::Window::power() -> void {
   x = 0;
 }
 
-auto PPU::Screen::scanline() -> void {
+void PPU::Screen::scanline() {
   auto y = ppu.vcounter() + (!ppu.display.overscan ? 7 : 0);
 
   lineA = ppu.output + y * 1024;
@@ -1699,7 +1698,7 @@ auto PPU::Screen::scanline() -> void {
   math.colorHalve  = io.colorHalve && !io.blendMode && math.above.colorEnable;
 }
 
-auto PPU::Screen::run() -> void {
+void PPU::Screen::run() {
   if(ppu.vcounter() == 0) return;
 
   bool hires      = ppu.io.pseudoHires || ppu.io.bgMode == 5 || ppu.io.bgMode == 6;
@@ -1710,7 +1709,7 @@ auto PPU::Screen::run() -> void {
   *lineA++ = *lineB++ = ppu.lightTable[ppu.io.displayBrightness][aboveColor];
 }
 
-auto PPU::Screen::below(bool hires) -> uint16_t {
+uint16_t PPU::Screen::below(bool hires) {
   if(ppu.io.displayDisable || (!ppu.io.overscan && ppu.vcounter() >= 225)) return 0;
 
   unsigned priority = 0;
@@ -1749,7 +1748,7 @@ auto PPU::Screen::below(bool hires) -> uint16_t {
   );
 }
 
-auto PPU::Screen::above() -> uint16_t {
+uint16_t PPU::Screen::above() {
   if(ppu.io.displayDisable || (!ppu.io.overscan && ppu.vcounter() >= 225)) return 0;
 
   unsigned priority = 0;
@@ -1805,7 +1804,7 @@ auto PPU::Screen::above() -> uint16_t {
   );
 }
 
-auto PPU::Screen::blend(unsigned x, unsigned y) const -> nall::Natural<15> {
+nall::Natural<15> PPU::Screen::blend(unsigned x, unsigned y) const {
   if(!io.colorMode) {  //add
     if(!math.colorHalve) {
       unsigned sum = x + y;
@@ -1825,12 +1824,12 @@ auto PPU::Screen::blend(unsigned x, unsigned y) const -> nall::Natural<15> {
   }
 }
 
-auto PPU::Screen::paletteColor(uint8_t palette) const -> nall::Natural<15> {
+nall::Natural<15> PPU::Screen::paletteColor(uint8_t palette) const {
   ppu.latch.cgramAddress = palette;
   return cgram[palette];
 }
 
-auto PPU::Screen::directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const -> nall::Natural<15> {
+nall::Natural<15> PPU::Screen::directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const {
   //palette = -------- BBGGGRRR
   //group   = -------- -----bgr
   //output  = 0BBb00GG Gg0RRRr0
@@ -1839,11 +1838,11 @@ auto PPU::Screen::directColor(uint8_t palette, nall::Natural< 3> paletteGroup) c
        + (palette << 2 & 0x001c) + (paletteGroup <<  1 & 0x0002);
 }
 
-auto PPU::Screen::fixedColor() const -> nall::Natural<15> {
+nall::Natural<15> PPU::Screen::fixedColor() const {
   return io.colorBlue << 10 | io.colorGreen << 5 | io.colorRed << 0;
 }
 
-auto PPU::Screen::power() -> void {
+void PPU::Screen::power() {
   random.array((uint8_t*)cgram, sizeof(cgram));
   for(auto& word : cgram) word &= 0x7fff;
 
@@ -1862,7 +1861,7 @@ auto PPU::Screen::power() -> void {
   io.colorRed = random();
 }
 
-auto PPU::serialize(serializer& s) -> void {
+void PPU::serialize(serializer& s) {
   s.integer(display.interlace);
   s.integer(display.overscan);
   s.integer(display.vdisp);
@@ -1943,12 +1942,12 @@ auto PPU::serialize(serializer& s) -> void {
   screen.serialize(s);
 }
 
-auto PPU::Mosaic::serialize(serializer& s) -> void {
+void PPU::Mosaic::serialize(serializer& s) {
   s.integer(size);
   s.integer(vcounter);
 }
 
-auto PPU::Background::serialize(serializer& s) -> void {
+void PPU::Background::serialize(serializer& s) {
   s.integer(io.tiledataAddress);
   s.integer(io.screenAddress);
   s.integer(io.screenSize);
@@ -1994,7 +1993,7 @@ auto PPU::Background::serialize(serializer& s) -> void {
   s.integer(pixelCounter);
 }
 
-auto PPU::Object::serialize(serializer& s) -> void {
+void PPU::Object::serialize(serializer& s) {
   for(auto& object : oam.object) {
     s.integer(object.x);
     s.integer(object.y);
@@ -2052,7 +2051,7 @@ auto PPU::Object::serialize(serializer& s) -> void {
   s.integer(output.below.palette);
 }
 
-auto PPU::Window::serialize(serializer& s) -> void {
+void PPU::Window::serialize(serializer& s) {
   s.integer(io.bg1.oneEnable);
   s.integer(io.bg1.oneInvert);
   s.integer(io.bg1.twoEnable);
@@ -2112,7 +2111,7 @@ auto PPU::Window::serialize(serializer& s) -> void {
   s.integer(x);
 }
 
-auto PPU::Screen::serialize(serializer& s) -> void {
+void PPU::Screen::serialize(serializer& s) {
   s.array(cgram);
 
   s.integer(io.blendMode);
@@ -2140,7 +2139,7 @@ auto PPU::Screen::serialize(serializer& s) -> void {
   s.integer(math.colorHalve);
 }
 
-auto PPUcounter::serialize(serializer& s) -> void {
+void PPUcounter::serialize(serializer& s) {
   s.integer(time.interlace);
   s.integer(time.field);
   s.integer(time.vperiod);
@@ -2178,17 +2177,17 @@ bg4(Background::ID::BG4) {
 PPU::~PPU() {
 }
 
-auto PPU::synchronizeCPU() -> void {
+void PPU::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-auto PPU::step() -> void {
+void PPU::step() {
   tick(2);
   clock += 2;
   synchronizeCPU();
 }
 
-auto PPU::step(unsigned clocks) -> void {
+void PPU::step(unsigned clocks) {
   clocks >>= 1;
   while(clocks--) {
     tick(2);
@@ -2197,14 +2196,14 @@ auto PPU::step(unsigned clocks) -> void {
   }
 }
 
-auto PPU::Enter() -> void {
+void PPU::Enter() {
   while(true) {
     scheduler.synchronize();
     ppu.main();
   }
 }
 
-auto PPU::load() -> bool {
+bool PPU::load() {
   ppu1.version = std::max(1, std::min(1, (int)configuration.system.ppu1.version));
   ppu2.version = std::max(1, std::min(3, (int)configuration.system.ppu2.version));
   vram.mask = configuration.system.ppu1.vram.size / sizeof(uint16_t) - 1;
@@ -2212,7 +2211,7 @@ auto PPU::load() -> bool {
   return true;
 }
 
-auto PPU::power(bool reset) -> void {
+void PPU::power(bool reset) {
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
   nall::memory::fill<uint16_t>(output, 512 * 480);
@@ -2319,7 +2318,7 @@ auto PPU::power(bool reset) -> void {
   updateVideoMode();
 }
 
-auto PPU::refresh() -> void {
+void PPU::refresh() {
   if(system.runAhead) return;
 
   auto output = this->output;
