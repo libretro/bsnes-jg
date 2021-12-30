@@ -55,95 +55,93 @@ ifeq ($(shell $(CXX) -v 2>&1 | grep -c "clang"),1)
 	WARNINGS += -Wno-parentheses -Wno-shift-count-overflow
 endif
 
-OBJDIR := objs
+CSRCS := deps/gb/apu.c \
+	deps/gb/camera.c \
+	deps/gb/display.c \
+	deps/gb/gb.c \
+	deps/gb/joypad.c \
+	deps/gb/mbc.c \
+	deps/gb/memory.c \
+	deps/gb/printer.c \
+	deps/gb/random.c \
+	deps/gb/rewind.c \
+	deps/gb/rumble.c \
+	deps/gb/save_state.c \
+	deps/gb/sgb.c \
+	deps/gb/sm83_cpu.c \
+	deps/gb/symbol_hash.c \
+	deps/gb/timing.c \
+	deps/gb/workboy.c \
+	deps/libco/libco.c
 
-CSRCS := $(OBJDIR)/deps/gb/apu.c \
-	$(OBJDIR)/deps/gb/camera.c \
-	$(OBJDIR)/deps/gb/display.c \
-	$(OBJDIR)/deps/gb/gb.c \
-	$(OBJDIR)/deps/gb/joypad.c \
-	$(OBJDIR)/deps/gb/mbc.c \
-	$(OBJDIR)/deps/gb/memory.c \
-	$(OBJDIR)/deps/gb/printer.c \
-	$(OBJDIR)/deps/gb/random.c \
-	$(OBJDIR)/deps/gb/rewind.c \
-	$(OBJDIR)/deps/gb/rumble.c \
-	$(OBJDIR)/deps/gb/save_state.c \
-	$(OBJDIR)/deps/gb/sgb.c \
-	$(OBJDIR)/deps/gb/sm83_cpu.c \
-	$(OBJDIR)/deps/gb/symbol_hash.c \
-	$(OBJDIR)/deps/gb/timing.c \
-	$(OBJDIR)/deps/gb/workboy.c \
-	$(OBJDIR)/deps/libco/libco.c
-
-CXXSRCS := $(OBJDIR)/deps/byuuML/byuuML.cpp \
-	$(OBJDIR)/src/audio.cpp \
-	$(OBJDIR)/src/cartridge.cpp \
-	$(OBJDIR)/src/cheat.cpp \
-	$(OBJDIR)/src/controller/controller.cpp \
-	$(OBJDIR)/src/controller/gamepad.cpp \
-	$(OBJDIR)/src/controller/justifier.cpp \
-	$(OBJDIR)/src/controller/mouse.cpp \
-	$(OBJDIR)/src/controller/super-multitap.cpp \
-	$(OBJDIR)/src/controller/super-scope.cpp \
-	$(OBJDIR)/src/coprocessor/armdsp.cpp \
-	$(OBJDIR)/src/coprocessor/cx4.cpp \
-	$(OBJDIR)/src/coprocessor/dip.cpp \
-	$(OBJDIR)/src/coprocessor/dsp1.cpp \
-	$(OBJDIR)/src/coprocessor/dsp1emu.cpp \
-	$(OBJDIR)/src/coprocessor/dsp2.cpp \
-	$(OBJDIR)/src/coprocessor/dsp4.cpp \
-	$(OBJDIR)/src/coprocessor/dsp4emu.cpp \
-	$(OBJDIR)/src/coprocessor/epsonrtc.cpp \
-	$(OBJDIR)/src/coprocessor/event.cpp \
-	$(OBJDIR)/src/coprocessor/hitachidsp.cpp \
-	$(OBJDIR)/src/coprocessor/icd.cpp \
-	$(OBJDIR)/src/coprocessor/mcc.cpp \
-	$(OBJDIR)/src/coprocessor/msu1.cpp \
-	$(OBJDIR)/src/coprocessor/necdsp.cpp \
-	$(OBJDIR)/src/coprocessor/obc1.cpp \
-	$(OBJDIR)/src/coprocessor/sa1.cpp \
-	$(OBJDIR)/src/coprocessor/sdd1.cpp \
-	$(OBJDIR)/src/coprocessor/sharprtc.cpp \
-	$(OBJDIR)/src/coprocessor/spc7110.cpp \
-	$(OBJDIR)/src/coprocessor/st0010.cpp \
-	$(OBJDIR)/src/coprocessor/superfx.cpp \
-	$(OBJDIR)/src/cpu.cpp \
-	$(OBJDIR)/src/dsp.cpp \
-	$(OBJDIR)/src/dsp/SPC_DSP.cpp \
-	$(OBJDIR)/src/emulator.cpp \
-	$(OBJDIR)/src/expansion/expansion.cpp \
-	$(OBJDIR)/src/expansion/satellaview.cpp \
-	$(OBJDIR)/src/heuristics.cpp \
-	$(OBJDIR)/src/interface.cpp \
-	$(OBJDIR)/src/markup.cpp \
-	$(OBJDIR)/src/memory.cpp \
-	$(OBJDIR)/src/ppu.cpp \
-	$(OBJDIR)/src/processor/arm7tdmi.cpp \
-	$(OBJDIR)/src/processor/gsu.cpp \
-	$(OBJDIR)/src/processor/hg51b.cpp \
-	$(OBJDIR)/src/processor/spc700.cpp \
-	$(OBJDIR)/src/processor/upd96050.cpp \
-	$(OBJDIR)/src/processor/wdc65816.cpp \
-	$(OBJDIR)/src/sha256.cpp \
-	$(OBJDIR)/src/slot/bsmemory.cpp \
-	$(OBJDIR)/src/slot/sufamiturbo.cpp \
-	$(OBJDIR)/src/smp.cpp \
-	$(OBJDIR)/src/system.cpp \
-	$(OBJDIR)/jg.cpp
+CXXSRCS := deps/byuuML/byuuML.cpp \
+	src/audio.cpp \
+	src/cartridge.cpp \
+	src/cheat.cpp \
+	src/controller/controller.cpp \
+	src/controller/gamepad.cpp \
+	src/controller/justifier.cpp \
+	src/controller/mouse.cpp \
+	src/controller/super-multitap.cpp \
+	src/controller/super-scope.cpp \
+	src/coprocessor/armdsp.cpp \
+	src/coprocessor/cx4.cpp \
+	src/coprocessor/dip.cpp \
+	src/coprocessor/dsp1.cpp \
+	src/coprocessor/dsp1emu.cpp \
+	src/coprocessor/dsp2.cpp \
+	src/coprocessor/dsp4.cpp \
+	src/coprocessor/dsp4emu.cpp \
+	src/coprocessor/epsonrtc.cpp \
+	src/coprocessor/event.cpp \
+	src/coprocessor/hitachidsp.cpp \
+	src/coprocessor/icd.cpp \
+	src/coprocessor/mcc.cpp \
+	src/coprocessor/msu1.cpp \
+	src/coprocessor/necdsp.cpp \
+	src/coprocessor/obc1.cpp \
+	src/coprocessor/sa1.cpp \
+	src/coprocessor/sdd1.cpp \
+	src/coprocessor/sharprtc.cpp \
+	src/coprocessor/spc7110.cpp \
+	src/coprocessor/st0010.cpp \
+	src/coprocessor/superfx.cpp \
+	src/cpu.cpp \
+	src/dsp.cpp \
+	src/dsp/SPC_DSP.cpp \
+	src/emulator.cpp \
+	src/expansion/expansion.cpp \
+	src/expansion/satellaview.cpp \
+	src/heuristics.cpp \
+	src/interface.cpp \
+	src/markup.cpp \
+	src/memory.cpp \
+	src/ppu.cpp \
+	src/processor/arm7tdmi.cpp \
+	src/processor/gsu.cpp \
+	src/processor/hg51b.cpp \
+	src/processor/spc700.cpp \
+	src/processor/upd96050.cpp \
+	src/processor/wdc65816.cpp \
+	src/sha256.cpp \
+	src/slot/bsmemory.cpp \
+	src/slot/sufamiturbo.cpp \
+	src/smp.cpp \
+	src/system.cpp \
+	jg.cpp
 
 # TODO: Do we need this?
 # https://github.com/defparam/21FX
-#	$(OBJDIR)/src/expansion/21fx.cpp \
+#	src/expansion/21fx.cpp \
 
 ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 	Q_SAMPLERATE :=
-	CFLAGS_SAMPLERATE := -I$(DEPDIR)/deps/libsamplerate
+	CFLAGS_SAMPLERATE := -I$(SOURCEDIR)/deps/libsamplerate
 	LIBS_SAMPLERATE :=
-	CSRCS += $(OBJDIR)/deps/libsamplerate/samplerate.c \
-		$(OBJDIR)/deps/libsamplerate/src_linear.c \
-		$(OBJDIR)/deps/libsamplerate/src_sinc.c \
-		$(OBJDIR)/deps/libsamplerate/src_zoh.c
+	CSRCS += deps/libsamplerate/samplerate.c \
+		deps/libsamplerate/src_linear.c \
+		deps/libsamplerate/src_sinc.c \
+		deps/libsamplerate/src_zoh.c
 else
 	Q_SAMPLERATE := @
 	CFLAGS_SAMPLERATE := $(shell $(PKGCONF) --cflags samplerate)
@@ -154,19 +152,21 @@ INCLUDES += $(CFLAGS_SAMPLERATE)
 LIBS += $(LIBS_SAMPLERATE)
 
 # Object dirs
-MKDIRS := $(OBJDIR)/deps/byuuML \
-	$(OBJDIR)/deps/gb \
-	$(OBJDIR)/deps/libco \
-	$(OBJDIR)/deps/libsamplerate \
-	$(OBJDIR)/src/controller \
-	$(OBJDIR)/src/dsp \
-	$(OBJDIR)/src/expansion \
-	$(OBJDIR)/src/coprocessor \
-	$(OBJDIR)/src/processor \
-	$(OBJDIR)/src/slot
+MKDIRS := deps/byuuML \
+	deps/gb \
+	deps/libco \
+	deps/libsamplerate \
+	src/controller \
+	src/coprocessor \
+	src/dsp \
+	src/expansion \
+	src/processor \
+	src/slot
+
+OBJDIR := objs
 
 # List of object files
-OBJS := $(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)
+OBJS := $(patsubst %,$(OBJDIR)/%,$(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o))
 
 # Compiler commands
 COMPILE = $(strip $(1) $(CPPFLAGS) $(PIC) $(2) -c $< -o $@)
@@ -221,7 +221,7 @@ $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
 all: $(TARGET)
 
 $(OBJDIR)/.tag:
-	@mkdir -p -- $(sort $(MKDIRS))
+	@mkdir -p -- $(patsubst %,$(OBJDIR)/%,$(MKDIRS))
 	@touch $@
 
 $(TARGET): $(OBJS)
