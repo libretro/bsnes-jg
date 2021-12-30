@@ -60,6 +60,7 @@ Markup::Node Cartridge::loadBoard(nall::string board) {
 void Cartridge::loadCartridge(Markup::Node node) {
   board = node["board"];
   if(!board) board = loadBoard(nall::string(game.board.c_str()));
+  stdboard = loadBoard(game.board);
 
   if(region() == "Auto") {
     std::string regstr = game.region.substr(game.region.length() - 3, game.region.length());
@@ -74,7 +75,14 @@ void Cartridge::loadCartridge(Markup::Node node) {
     }
   }
 
-  if(auto node = board["memory(type=ROM,content=Program)"]) loadROM(node);
+  std::vector<std::string> boardmem = BML::searchList(stdboard, "memory");
+  for (std::string& m : boardmem) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "ROM" && content == "Program") loadROM(m);
+  }
+
+  //if(auto node = board["memory(type=ROM,content=Program)"]) loadROM(node);
   if(auto node = board["memory(type=ROM,content=Expansion)"]) loadROM(node);  //todo: handle this better
   if(auto node = board["memory(type=RAM,content=Save)"]) loadRAM(node);
   if(auto node = board["processor(identifier=ICD)"]) loadICD(node);
@@ -185,6 +193,20 @@ void Cartridge::loadMemory(Memory& mem, Markup::Node node) {
 }
 
 template<typename T>  //T = ReadableMemory, WritableMemory, ProtectableMemory
+unsigned Cartridge::loadMap(std::string map, T& memory) {
+  auto addr = BML::search(map, {"map", "address"});
+  std::string strsize = BML::search(map, {"map", "size"});
+  std::string strbase = BML::search(map, {"map", "base"});
+  std::string strmask = BML::search(map, {"map", "mask"});
+  auto size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);
+  auto base = strsize.empty() ? 0 : std::stoi(strbase, nullptr, 16);
+  auto mask = strsize.empty() ? 0 : std::stoi(strmask, nullptr, 16);
+  if(size == 0) size = memory.size();
+  if(size == 0) return 0; //does this ever actually occur? - Yes! Sufami Turbo.
+  return bus.map({&T::read, &memory}, {&T::write, &memory}, addr, size, base, mask);
+}
+
+template<typename T>  //T = ReadableMemory, WritableMemory, ProtectableMemory
 unsigned Cartridge::loadMap(Markup::Node map, T& memory) {
   auto addr = map["address"].text();
   auto size = map["size"].natural();
@@ -207,7 +229,39 @@ unsigned Cartridge::loadMap(
   return bus.map(reader, writer, std::string(addr), size, base, mask);
 }
 
+void Cartridge::loadMemory(Memory& mem, std::string node) {
+  if(auto memory = game.memory(node)) {
+    mem.allocate(memory->size);
+    if(memory->type == "RAM" && !memory->nonVolatile) return;
+    if(memory->type == "RTC" && !memory->nonVolatile) return;
+
+    if (memory->name() == "program.rom") {
+      std::vector<uint8_t> buf = Emulator::platform->mopen(pathID(), std::string(memory->name()));
+      if (!buf.empty()) {
+      for (int i = 0; i < memory->size; ++i)
+        mem.data()[i] = buf[i];
+      }
+      return;
+    }
+
+    std::ifstream memfile = Emulator::platform->fopen(pathID(), std::string(memory->name()));
+    if (memfile.is_open()) {
+      memfile.seekg(0, memfile.end);
+      unsigned fsize = memfile.tellg();
+      memfile.seekg(0, memfile.beg);
+      memfile.read((char*)ram.data(), std::min(fsize, ram.size()));
+      memfile.close();
+    }
+  }
+}
+
 //memory(type=ROM,content=Program)
+void Cartridge::loadROM(std::string node) {
+  loadMemory(rom, node);
+  std::vector<std::string> maps = BML::searchList(node, "map");
+  for (auto map : maps) loadMap(map, rom);
+}
+
 void Cartridge::loadROM(Markup::Node node) {
   loadMemory(rom, node);
   for(auto leaf : node.find("map")) loadMap(leaf, rom);

@@ -59,6 +59,7 @@ private:
   Emulator::Game slotSufamiTurboA;
   Emulator::Game slotSufamiTurboB;
   Markup::Node board;
+  std::string stdboard;
 
   //cartridge.cpp
   bool loadBSMemory();
@@ -73,9 +74,14 @@ private:
   void loadCartridgeSufamiTurboA(Markup::Node);
   void loadCartridgeSufamiTurboB(Markup::Node);
 
+  void loadMemory(Memory&, std::string);
+  template<typename T> unsigned loadMap(std::string, T&);
+
   void loadMemory(Memory&, Markup::Node);
   template<typename T> unsigned loadMap(Markup::Node, T&);
   unsigned loadMap(Markup::Node, const nall::function<uint8_t (unsigned, uint8_t)>&, const nall::function<void (unsigned, uint8_t)>&);
+
+  void loadROM(std::string);
 
   void loadROM(Markup::Node);
   void loadRAM(Markup::Node);
