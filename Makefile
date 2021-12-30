@@ -188,6 +188,8 @@ BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 .PHONY: all clean install install-strip uninstall
 
+all: $(TARGET)
+
 # byuuML rules
 $(OBJDIR)/deps/byuuML/%.o: $(SOURCEDIR)/deps/byuuML/%.cpp $(OBJDIR)/.tag
 	$(call COMPILE_INFO, $(BUILD_BML))
@@ -217,8 +219,6 @@ $(OBJDIR)/src/%.o: $(SOURCEDIR)/src/%.cpp $(OBJDIR)/.tag
 $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
 	$(call COMPILE_INFO, $(BUILD_JG))
 	@$(BUILD_JG)
-
-all: $(TARGET)
 
 $(OBJDIR)/.tag:
 	@mkdir -p -- $(patsubst %,$(OBJDIR)/%,$(MKDIRS))
