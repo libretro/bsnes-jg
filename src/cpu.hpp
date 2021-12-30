@@ -60,7 +60,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
 
   inline bool nmiTest();
   inline bool irqTest();
-  inline void lastCycle();
+  inline void lastCycle() override;
 
   //joypad.cpp
   void joypadEdge();

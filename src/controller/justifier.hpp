@@ -5,8 +5,8 @@ struct Justifier : Controller {
 
   Justifier(unsigned port, bool chained);
 
-  nall::Natural< 2> data();
-  void latch(bool data);
+  nall::Natural< 2> data() override;
+  void latch(bool data) override;
   void latch() override;
 
 //private:

@@ -162,6 +162,7 @@ bool ManagedNode::_evaluate(nall::string query) const {
     case Comparator::LE: side = rule.split("<=", 1L); break;
     case Comparator::GT: side = rule.split (">", 1L); break;
     case Comparator::GE: side = rule.split(">=", 1L); break;
+    case Comparator::ID: break;
     }
 
     nall::string data = nall::string{_value}.strip();
@@ -178,6 +179,7 @@ bool ManagedNode::_evaluate(nall::string query) const {
     case Comparator::LE: if(data.natural() <= side(1).natural()) continue; break;
     case Comparator::GT: if(data.natural()  > side(1).natural()) continue; break;
     case Comparator::GE: if(data.natural() >= side(1).natural()) continue; break;
+    case Comparator::ID: break;
     }
 
     return false;

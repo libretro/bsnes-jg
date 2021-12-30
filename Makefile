@@ -52,8 +52,7 @@ ifeq ($(UNAME), Linux)
 endif
 
 ifeq ($(shell $(CXX) -v 2>&1 | grep -c "clang"),1)
-	WARNINGS += -Wno-inconsistent-missing-override -Wno-parentheses \
-		-Wno-shift-count-overflow -Wno-switch
+	WARNINGS += -Wno-parentheses -Wno-shift-count-overflow
 endif
 
 OBJDIR := objs
