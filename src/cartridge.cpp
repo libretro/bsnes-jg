@@ -200,9 +200,9 @@ unsigned Cartridge::loadMap(std::string map, T& memory) {
   std::string strsize = BML::search(map, {"map", "size"});
   std::string strbase = BML::search(map, {"map", "base"});
   std::string strmask = BML::search(map, {"map", "mask"});
-  auto size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);
-  auto base = strsize.empty() ? 0 : std::stoi(strbase, nullptr, 16);
-  auto mask = strsize.empty() ? 0 : std::stoi(strmask, nullptr, 16);
+  unsigned size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);
+  unsigned base = strbase.empty() ? 0 : std::stoi(strbase, nullptr, 16);
+  unsigned mask = strmask.empty() ? 0 : std::stoi(strmask, nullptr, 16);
   if(size == 0) size = memory.size();
   if(size == 0) return 0; //does this ever actually occur? - Yes! Sufami Turbo.
   return bus.map({&T::read, &memory}, {&T::write, &memory}, addr, size, base, mask);
