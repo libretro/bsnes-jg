@@ -17,119 +17,119 @@ struct ARM7TDMI {
     Signed        = 1 << 8,  //sign-extend
   };
 
-  virtual auto step(unsigned clocks) -> void = 0;
-  virtual auto sleep() -> void = 0;
-  virtual auto get(unsigned mode, uint32_t address) -> uint32_t = 0;
-  virtual auto set(unsigned mode, uint32_t address, uint32_t word) -> void = 0;
+  virtual void step(unsigned clocks) = 0;
+  virtual void sleep() = 0;
+  virtual uint32_t get(unsigned mode, uint32_t address) = 0;
+  virtual void set(unsigned mode, uint32_t address, uint32_t word) = 0;
 
   //arm7tdmi.cpp
   ARM7TDMI();
-  auto power() -> void;
+  void power();
 
   //registers.cpp
   struct GPR;
   struct PSR;
-  inline auto r(nall::Natural< 4>) -> GPR&;
-  inline auto cpsr() -> PSR&;
-  inline auto spsr() -> PSR&;
-  inline auto privileged() const -> bool;
-  inline auto exception() const -> bool;
+  inline GPR& r(nall::Natural< 4>);
+  inline PSR& cpsr();
+  inline PSR& spsr();
+  inline bool privileged() const;
+  inline bool exception() const;
 
   //memory.cpp
-  auto idle() -> void;
-  auto read(unsigned mode, uint32_t address) -> uint32_t;
-  auto load(unsigned mode, uint32_t address) -> uint32_t;
-  auto write(unsigned mode, uint32_t address, uint32_t word) -> void;
-  auto store(unsigned mode, uint32_t address, uint32_t word) -> void;
+  void idle();
+  uint32_t read(unsigned mode, uint32_t address);
+  uint32_t load(unsigned mode, uint32_t address);
+  void write(unsigned mode, uint32_t address, uint32_t word);
+  void store(unsigned mode, uint32_t address, uint32_t word);
 
   //algorithms.cpp
-  auto ADD(uint32_t, uint32_t, bool) -> uint32_t;
-  auto ASR(uint32_t, uint8_t) -> uint32_t;
-  auto BIT(uint32_t) -> uint32_t;
-  auto LSL(uint32_t, uint8_t) -> uint32_t;
-  auto LSR(uint32_t, uint8_t) -> uint32_t;
-  auto MUL(uint32_t, uint32_t, uint32_t) -> uint32_t;
-  auto ROR(uint32_t, uint8_t) -> uint32_t;
-  auto RRX(uint32_t) -> uint32_t;
-  auto SUB(uint32_t, uint32_t, bool) -> uint32_t;
-  auto TST(nall::Natural< 4>) -> bool;
+  uint32_t ADD(uint32_t, uint32_t, bool);
+  uint32_t ASR(uint32_t, uint8_t);
+  uint32_t BIT(uint32_t);
+  uint32_t LSL(uint32_t, uint8_t);
+  uint32_t LSR(uint32_t, uint8_t);
+  uint32_t MUL(uint32_t, uint32_t, uint32_t);
+  uint32_t ROR(uint32_t, uint8_t);
+  uint32_t RRX(uint32_t);
+  uint32_t SUB(uint32_t, uint32_t, bool);
+  bool TST(nall::Natural< 4>);
 
   //instruction.cpp
-  auto fetch() -> void;
-  auto instruction() -> void;
-  auto exception(unsigned mode, uint32_t address) -> void;
-  auto armInitialize() -> void;
-  auto thumbInitialize() -> void;
+  void fetch();
+  void instruction();
+  void exception(unsigned mode, uint32_t address);
+  void armInitialize();
+  void thumbInitialize();
 
   //instructions-arm.cpp
-  auto armALU(nall::Natural< 4> mode, nall::Natural< 4> target, nall::Natural< 4> source, uint32_t data) -> void;
-  auto armMoveToStatus(nall::Natural< 4> field, nall::Natural< 1> source, uint32_t data) -> void;
+  void armALU(nall::Natural< 4> mode, nall::Natural< 4> target, nall::Natural< 4> source, uint32_t data);
+  void armMoveToStatus(nall::Natural< 4> field, nall::Natural< 1> source, uint32_t data);
 
-  auto armInstructionBranch(nall::Integer<24>, nall::Natural< 1>) -> void;
-  auto armInstructionBranchExchangeRegister(nall::Natural< 4>) -> void;
-  auto armInstructionDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> void;
-  auto armInstructionDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> void;
-  auto armInstructionDataRegisterShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> void;
-  auto armInstructionLoadImmediate(uint8_t, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> void;
-  auto armInstructionLoadRegister(nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> void;
-  auto armInstructionMemorySwap(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>) -> void;
-  auto armInstructionMoveHalfImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> void;
-  auto armInstructionMoveHalfRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> void;
-  auto armInstructionMoveImmediateOffset(nall::Natural<12>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> void;
-  auto armInstructionMoveMultiple(uint16_t, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> void;
-  auto armInstructionMoveRegisterOffset(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> void;
-  auto armInstructionMoveToRegisterFromStatus(nall::Natural< 4>, nall::Natural< 1>) -> void;
-  auto armInstructionMoveToStatusFromImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>) -> void;
-  auto armInstructionMoveToStatusFromRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>) -> void;
-  auto armInstructionMultiply(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>) -> void;
-  auto armInstructionMultiplyLong(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> void;
-  auto armInstructionSoftwareInterrupt(nall::Natural<24> immediate) -> void;
-  auto armInstructionUndefined() -> void;
+  void armInstructionBranch(nall::Integer<24>, nall::Natural< 1>);
+  void armInstructionBranchExchangeRegister(nall::Natural< 4>);
+  void armInstructionDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
+  void armInstructionDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
+  void armInstructionDataRegisterShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
+  void armInstructionLoadImmediate(uint8_t, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  void armInstructionLoadRegister(nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  void armInstructionMemorySwap(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
+  void armInstructionMoveHalfImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  void armInstructionMoveHalfRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  void armInstructionMoveImmediateOffset(nall::Natural<12>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  void armInstructionMoveMultiple(uint16_t, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  void armInstructionMoveRegisterOffset(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  void armInstructionMoveToRegisterFromStatus(nall::Natural< 4>, nall::Natural< 1>);
+  void armInstructionMoveToStatusFromImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
+  void armInstructionMoveToStatusFromRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
+  void armInstructionMultiply(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>);
+  void armInstructionMultiplyLong(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  void armInstructionSoftwareInterrupt(nall::Natural<24> immediate);
+  void armInstructionUndefined();
 
   //instructions-thumb.cpp
-  auto thumbInstructionALU(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 4>) -> void;
-  auto thumbInstructionALUExtended(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 2>) -> void;
-  auto thumbInstructionAddRegister(uint8_t, nall::Natural< 3>, nall::Natural< 1>) -> void;
-  auto thumbInstructionAdjustImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>) -> void;
-  auto thumbInstructionAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>) -> void;
-  auto thumbInstructionAdjustStack(nall::Natural< 7>, nall::Natural< 1>) -> void;
-  auto thumbInstructionBranchExchange(nall::Natural< 4>) -> void;
-  auto thumbInstructionBranchFarPrefix(nall::Integer<11>) -> void;
-  auto thumbInstructionBranchFarSuffix(nall::Natural<11>) -> void;
-  auto thumbInstructionBranchNear(nall::Integer<11>) -> void;
-  auto thumbInstructionBranchTest(int8_t, nall::Natural< 4>) -> void;
-  auto thumbInstructionImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>) -> void;
-  auto thumbInstructionLoadLiteral(uint8_t, nall::Natural< 3>) -> void;
-  auto thumbInstructionMoveByteImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>) -> void;
-  auto thumbInstructionMoveHalfImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>) -> void;
-  auto thumbInstructionMoveMultiple(uint8_t, nall::Natural< 3>, nall::Natural< 1>) -> void;
-  auto thumbInstructionMoveRegisterOffset(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>) -> void;
-  auto thumbInstructionMoveStack(uint8_t, nall::Natural< 3>, nall::Natural< 1>) -> void;
-  auto thumbInstructionMoveWordImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>) -> void;
-  auto thumbInstructionShiftImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 2>) -> void;
-  auto thumbInstructionSoftwareInterrupt(uint8_t) -> void;
-  auto thumbInstructionStackMultiple(uint8_t, nall::Natural< 1>, nall::Natural< 1>) -> void;
-  auto thumbInstructionUndefined() -> void;
+  void thumbInstructionALU(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 4>);
+  void thumbInstructionALUExtended(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 2>);
+  void thumbInstructionAddRegister(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
+  void thumbInstructionAdjustImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>);
+  void thumbInstructionAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>);
+  void thumbInstructionAdjustStack(nall::Natural< 7>, nall::Natural< 1>);
+  void thumbInstructionBranchExchange(nall::Natural< 4>);
+  void thumbInstructionBranchFarPrefix(nall::Integer<11>);
+  void thumbInstructionBranchFarSuffix(nall::Natural<11>);
+  void thumbInstructionBranchNear(nall::Integer<11>);
+  void thumbInstructionBranchTest(int8_t, nall::Natural< 4>);
+  void thumbInstructionImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>);
+  void thumbInstructionLoadLiteral(uint8_t, nall::Natural< 3>);
+  void thumbInstructionMoveByteImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
+  void thumbInstructionMoveHalfImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
+  void thumbInstructionMoveMultiple(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
+  void thumbInstructionMoveRegisterOffset(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>);
+  void thumbInstructionMoveStack(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
+  void thumbInstructionMoveWordImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
+  void thumbInstructionShiftImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 2>);
+  void thumbInstructionSoftwareInterrupt(uint8_t);
+  void thumbInstructionStackMultiple(uint8_t, nall::Natural< 1>, nall::Natural< 1>);
+  void thumbInstructionUndefined();
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   //disassembler.cpp
-  /*auto disassemble(nall::maybe<uint32_t> pc = nall::nothing, nall::maybe<bool> thumb = nall::nothing) -> nall::string;
-  auto disassembleRegisters() -> nall::string;*/
+  /*nall::string disassemble(nall::maybe<uint32_t> pc = nall::nothing, nall::maybe<bool> thumb = nall::nothing);
+  nall::string disassembleRegisters();*/
 
   struct GPR {
     inline operator uint32_t() const { return data; }
-    inline auto operator=(const GPR& value) -> GPR& { return operator=(value.data); }
+    inline GPR& operator=(const GPR& value) { return operator=(value.data); }
 
-    inline auto operator=(uint32_t value) -> GPR& {
+    inline GPR& operator=(uint32_t value) {
       data = value;
       if(modify) modify();
       return *this;
     }
 
     uint32_t data;
-    nall::function<auto () -> void> modify;
+    nall::function<void ()> modify;
   };
 
   struct PSR {
@@ -147,7 +147,7 @@ struct ARM7TDMI {
       return m << 0 | t << 5 | f << 6 | i << 7 | v << 28 | c << 29 | z << 30 | n << 31;
     }
 
-    inline auto operator=(uint32_t data) -> PSR& {
+    inline PSR& operator=(uint32_t data) {
       m = data >>  0 & 31;
       t = data >>  5 & 1;
       f = data >>  6 & 1;
@@ -160,7 +160,7 @@ struct ARM7TDMI {
     }
 
     //serialization.cpp
-    auto serialize(serializer&) -> void;
+    void serialize(serializer&);
 
     nall::Natural< 5> m;    //mode
     bool t;  //thumb
@@ -174,7 +174,7 @@ struct ARM7TDMI {
 
   struct Processor {
     //serialization.cpp
-    auto serialize(serializer&) -> void;
+    void serialize(serializer&);
 
     GPR r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
     PSR cpsr;
@@ -207,7 +207,7 @@ struct ARM7TDMI {
 
   struct Pipeline {
     //serialization.cpp
-    auto serialize(serializer&) -> void;
+    void serialize(serializer&);
 
     struct Instruction {
       uint32_t address;
@@ -226,57 +226,57 @@ struct ARM7TDMI {
   bool carry;
   bool irq;
 
-  nall::function<auto (uint32_t opcode) -> void> armInstruction[4096];
-  nall::function<auto () -> void> thumbInstruction[65536];
+  nall::function<void (uint32_t opcode)> armInstruction[4096];
+  nall::function<void ()> thumbInstruction[65536];
 
   //disassembler.cpp
-  /*auto armDisassembleBranch(nall::Integer<24>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleBranchExchangeRegister(nall::Natural< 4>) -> nall::string;
-  auto armDisassembleDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> nall::string;
-  auto armDisassembleDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> nall::string;
-  auto armDisassembleDataRegisterShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>) -> nall::string;
-  auto armDisassembleLoadImmediate(uint8_t, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleLoadRegister(nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMemorySwap(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMoveHalfImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMoveHalfRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMoveImmediateOffset(nall::Natural<12>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMoveMultiple(uint16_t, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMoveRegisterOffset(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMoveToRegisterFromStatus(nall::Natural< 4>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMoveToStatusFromImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMoveToStatusFromRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMultiply(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleMultiplyLong(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
-  auto armDisassembleSoftwareInterrupt(nall::Natural<24>) -> nall::string;
-  auto armDisassembleUndefined() -> nall::string;
+  /*nall::string armDisassembleBranch(nall::Integer<24>, nall::Natural< 1>);
+  nall::string armDisassembleBranchExchangeRegister(nall::Natural< 4>);
+  nall::string armDisassembleDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
+  nall::string armDisassembleDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
+  nall::string armDisassembleDataRegisterShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
+  nall::string armDisassembleLoadImmediate(uint8_t, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  nall::string armDisassembleLoadRegister(nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  nall::string armDisassembleMemorySwap(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
+  nall::string armDisassembleMoveHalfImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  nall::string armDisassembleMoveHalfRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  nall::string armDisassembleMoveImmediateOffset(nall::Natural<12>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  nall::string armDisassembleMoveMultiple(uint16_t, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  nall::string armDisassembleMoveRegisterOffset(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  nall::string armDisassembleMoveToRegisterFromStatus(nall::Natural< 4>, nall::Natural< 1>);
+  nall::string armDisassembleMoveToStatusFromImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
+  nall::string armDisassembleMoveToStatusFromRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
+  nall::string armDisassembleMultiply(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>);
+  nall::string armDisassembleMultiplyLong(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  nall::string armDisassembleSoftwareInterrupt(nall::Natural<24>);
+  nall::string armDisassembleUndefined();
 
-  auto thumbDisassembleALU(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 4>) -> nall::string;
-  auto thumbDisassembleALUExtended(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 2>) -> nall::string;
-  auto thumbDisassembleAddRegister(uint8_t, nall::Natural< 3>, nall::Natural< 1>) -> nall::string;
-  auto thumbDisassembleAdjustImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>) -> nall::string;
-  auto thumbDisassembleAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>) -> nall::string;
-  auto thumbDisassembleAdjustStack(nall::Natural< 7>, nall::Natural< 1>) -> nall::string;
-  auto thumbDisassembleBranchExchange(nall::Natural< 4>) -> nall::string;
-  auto thumbDisassembleBranchFarPrefix(nall::Integer<11>) -> nall::string;
-  auto thumbDisassembleBranchFarSuffix(nall::Natural<11>) -> nall::string;
-  auto thumbDisassembleBranchNear(nall::Integer<11>) -> nall::string;
-  auto thumbDisassembleBranchTest(int8_t, nall::Natural< 4>) -> nall::string;
-  auto thumbDisassembleImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>) -> nall::string;
-  auto thumbDisassembleLoadLiteral(uint8_t, nall::Natural< 3>) -> nall::string;
-  auto thumbDisassembleMoveByteImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>) -> nall::string;
-  auto thumbDisassembleMoveHalfImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>) -> nall::string;
-  auto thumbDisassembleMoveMultiple(uint8_t, nall::Natural< 3>, nall::Natural< 1>) -> nall::string;
-  auto thumbDisassembleMoveRegisterOffset(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>) -> nall::string;
-  auto thumbDisassembleMoveStack(uint8_t, nall::Natural< 3>, nall::Natural< 1>) -> nall::string;
-  auto thumbDisassembleMoveWordImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>) -> nall::string;
-  auto thumbDisassembleShiftImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 2>) -> nall::string;
-  auto thumbDisassembleSoftwareInterrupt(uint8_t) -> nall::string;
-  auto thumbDisassembleStackMultiple(uint8_t, nall::Natural< 1>, nall::Natural< 1>) -> nall::string;
-  auto thumbDisassembleUndefined() -> nall::string;
+  nall::string thumbDisassembleALU(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 4>);
+  nall::string thumbDisassembleALUExtended(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 2>);
+  nall::string thumbDisassembleAddRegister(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
+  nall::string thumbDisassembleAdjustImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>);
+  nall::string thumbDisassembleAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>);
+  nall::string thumbDisassembleAdjustStack(nall::Natural< 7>, nall::Natural< 1>);
+  nall::string thumbDisassembleBranchExchange(nall::Natural< 4>);
+  nall::string thumbDisassembleBranchFarPrefix(nall::Integer<11>);
+  nall::string thumbDisassembleBranchFarSuffix(nall::Natural<11>);
+  nall::string thumbDisassembleBranchNear(nall::Integer<11>);
+  nall::string thumbDisassembleBranchTest(int8_t, nall::Natural< 4>);
+  nall::string thumbDisassembleImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>);
+  nall::string thumbDisassembleLoadLiteral(uint8_t, nall::Natural< 3>);
+  nall::string thumbDisassembleMoveByteImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
+  nall::string thumbDisassembleMoveHalfImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
+  nall::string thumbDisassembleMoveMultiple(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
+  nall::string thumbDisassembleMoveRegisterOffset(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>);
+  nall::string thumbDisassembleMoveStack(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
+  nall::string thumbDisassembleMoveWordImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
+  nall::string thumbDisassembleShiftImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 2>);
+  nall::string thumbDisassembleSoftwareInterrupt(uint8_t);
+  nall::string thumbDisassembleStackMultiple(uint8_t, nall::Natural< 1>, nall::Natural< 1>);
+  nall::string thumbDisassembleUndefined();
 
-  nall::function<auto (uint32_t opcode) -> nall::string> armDisassemble[4096];
-  nall::function<auto () -> nall::string> thumbDisassemble[65536];*/
+  nall::function<nall::string (uint32_t opcode)> armDisassemble[4096];
+  nall::function<nall::string ()> thumbDisassemble[65536];*/
 
   uint32_t _pc;
   //nall::string _c;
