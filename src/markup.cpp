@@ -68,7 +68,7 @@ public:
 void dumpnode(std::ostream& out, const byuuML::document& document, const byuuML::node& node, int indent_level = 0) {
 
     for (int n = 0; n < indent_level; ++n) out << "  ";
-    out << node.name;
+    out << node.get_name();
     if (!node.data.empty()) out << ":" << node.data;
     out << "\n";
 
@@ -94,7 +94,7 @@ std::string gendoc(std::string docpath, std::string parent, std::string child, s
                 std::string str(p1.value<std::string>());
                 str.erase(0, str.find_first_not_of(' '));
                 if (str == val) {
-                    if (node.name != parent) continue;
+                    if (node.get_name() != parent) continue;
                     std::stringstream ss;
                     dumpnode(ss, doc, node);
                     return ss.str();
