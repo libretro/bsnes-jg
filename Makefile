@@ -17,7 +17,7 @@ PKGCONF ?= pkg-config
 CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
 
 INCLUDES := -I$(SOURCEDIR)/deps
-WARNINGS := -Wreturn-type -Wno-unused-result
+WARNINGS := -Wreturn-type
 WARNINGS_BML := -Wall -Wextra -Wshadow -pedantic
 WARNINGS_CO := -Wall -Wextra -Wshadow -Wmissing-prototypes
 WARNINGS_GB := -Wno-multichar
