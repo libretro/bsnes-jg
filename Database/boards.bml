@@ -1,10 +1,10 @@
-database
-  revision: 2020-06-07
+//database
+//  revision: 2020-06-07
 
 //Boards (Production)
 
-database
-  revision: 2020-01-21
+//database
+//  revision: 2020-01-21
 
 board: BANDAI-PT-923
   memory type=ROM content=Program
@@ -598,8 +598,8 @@ board: SHVC-4PV5B-01
 
 //Boards (Generic)
 
-database
-  revision: 2020-06-07
+//database
+//  revision: 2020-06-07
 
 board: ARM-LOROM-RAM
   memory type=ROM content=Program

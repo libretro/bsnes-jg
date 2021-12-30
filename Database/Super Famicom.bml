@@ -1,10 +1,10 @@
-database
-  revision: 2020-01-21
+//database
+//  revision: 2020-01-21
 
 //Prototypes (JPN)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   182cd72c2ef57119b56bef1f7c18660498422a912f1bb652771d465cd183b04e
@@ -32,8 +32,8 @@ game
 
 //Super Comboy (KOR)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   b820ef79c16b3f43139cc9622c685020db3e87364c3a0f3946242bff93b787c8
@@ -101,8 +101,8 @@ game
 
 //Super Famicom (HKG)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   bd763c1a56365c244be92e6cffefd318780a2a19eda7d5baf1c6d5bd6c1b3e06
@@ -124,8 +124,8 @@ game
 
 //Super Famicom (JPN)
 
-database
-  revision: 2020-01-21
+//database
+//  revision: 2020-01-21
 
 game
   sha256:   5c4e283efc338958b8dd45ebd6daf133a9eb280420a98e2e1df358ae0242c366
@@ -1627,8 +1627,8 @@ game
 
 //Super Famicom (ROC)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   1cf13dac329f83a7fe5347dcc20f92c3a09b3eab1511dd461f9cec90e9258403
@@ -1648,8 +1648,8 @@ game
 
 //Super Nintendo (AUS)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   7dbaebb1007984610623cb0b571f0e7167d73d89274598bfffc845cfb2de4aac
@@ -1693,8 +1693,8 @@ game
 
 //Super Nintendo (BRA)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   1edcceab07d1544dcbd0fd681148b0fbefeea58b7077136fa0c3011973bf34df
@@ -1715,8 +1715,8 @@ game
 
 //Super Nintendo (CAN)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   dd499445275fca6692c0487a8bd70a23f6c8e78e766df0e3c58fbbe53f8adb06
@@ -1736,8 +1736,8 @@ game
 
 //Super Nintendo (ESP)
 
-database
-  revision: 2018-09-21
+//database
+//  revision: 2018-09-21
 
 game
   sha256:   bd5e7a6bc08f64d39c54204b82c6c156f144c03e13c890128588c5faa560659c
@@ -1973,8 +1973,8 @@ game
 
 //Super Nintendo (EUR)
 
-database
-  revision: 2018-09-21
+//database
+//  revision: 2018-09-21
 
 game
   sha256:   ec3e81d628a293514e303b44e3b1ac03461ddd1da32764b10b7fab1e507602df
@@ -3155,8 +3155,8 @@ game
 
 //Super Nintendo (FAH)
 
-database
-  revision: 2018-09-21
+//database
+//  revision: 2018-09-21
 
 game
   sha256:   0aafd04a43ae29266e43920a7f9954d4a49f6fe43a5abffecc9c2fd5ad7d6cea
@@ -3589,8 +3589,8 @@ game
 
 //Super Nintendo (FRA)
 
-database
-  revision: 2018-09-21
+//database
+//  revision: 2018-09-21
 
 game
   sha256:   65df600780021f13ced52e7fbc507b7b2e6491b2c5c25fe78d0515dcbe669403
@@ -3890,8 +3890,8 @@ game
 
 //Super Nintendo (FRG)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   f415cafaaac4d5fe062b61be35e64ee6b5e8b925f12b9c82777b4566d31de8f4
@@ -3931,8 +3931,8 @@ game
 
 //Super Nintendo (GPS)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   0d4c05f75c95d5b8c0fc00e61027ce3fda2dd288fcf6695656232176fce7843e
@@ -3952,8 +3952,8 @@ game
 
 //Super Nintendo (HOL)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   dc8b3144329a23459bfcce93c89e0e561d133709aca6bfc74f9e0755f1a04b91
@@ -3973,8 +3973,8 @@ game
 
 //Super Nintendo (ITA)
 
-database
-  revision: 2018-09-21
+//database
+//  revision: 2018-09-21
 
 game
   sha256:   deab7aad7c168423e43eae14e9e31efa29c7341ab84f936be508911ce508b372
@@ -4006,8 +4006,8 @@ game
 
 //Super Nintendo (LTN)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   e678a29a93111cf2016c487ba9977b14de8f719040651a42c74bd74eea2d0d81
@@ -4023,8 +4023,8 @@ game
 
 //Super Nintendo (NOE)
 
-database
-  revision: 2020-01-01
+//database
+//  revision: 2020-01-01
 
 game
   sha256:   b342d12d71729edebc1911725ea23d58c1a397b27253a5c8cd96cfb58af242a9
@@ -5317,8 +5317,8 @@ game
 
 //Super Nintendo (SCN)
 
-database
-  revision: 2018-09-21
+//database
+//  revision: 2018-09-21
 
 game
   sha256:   beb379ba48f63561c0f939ecd8f623ec06c1b5e06976eef9887e5c62f3df2766
@@ -5402,8 +5402,8 @@ game
 
 //Super Nintendo (UKV)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   38e050ac3ffec01031c6dd8ead20676aacec78ebf8d890a3a00d1badaaba3d3b
@@ -6052,8 +6052,8 @@ game
 
 //Super Nintendo (USA)
 
-database
-  revision: 2020-01-01
+//database
+//  revision: 2020-01-01
 
 game
   sha256:   2ffe8828480f943056fb1ab5c3c84d48a0bf8cbe3ed7c9960b349b59adb07f3b

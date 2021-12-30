@@ -1,10 +1,10 @@
-database
-  revision: 2020-01-01
+//database
+//  revision: 2020-01-01
 
 //BS Memory (JPN)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   80c34b50817d58820bc8c88d2d9fa462550b4a76372e19c6467cbfbc8cf5d9ef

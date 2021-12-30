@@ -1,10 +1,10 @@
-database
-  revision: 2020-01-01
+//database
+//  revision: 2020-01-01
 
 //Sufami Turbo (JPN)
 
-database
-  revision: 2018-04-14
+//database
+//  revision: 2018-04-14
 
 game
   sha256:   f73bda08743565e0bd101632ebbac2d363d703a3ab39d23f49d95217cab29269
