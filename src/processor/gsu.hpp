@@ -11,7 +11,7 @@ struct GSU {
       return data;
     }
 
-    inline auto assign(unsigned value) -> uint16_t {
+    inline uint16_t assign(unsigned value) {
       modified = true;
       return data = value;
     }
@@ -147,7 +147,7 @@ struct GSU {
     auto& sr() { return r[sreg]; }  //source register (from)
     auto& dr() { return r[dreg]; }  //destination register (to)
 
-    auto reset() -> void {
+    void reset() {
       sfr.b    = 0;
       sfr.alt1 = 0;
       sfr.alt2 = 0;
@@ -168,81 +168,81 @@ struct GSU {
     uint8_t data[8];
   } pixelcache[2];
 
-  virtual auto step(unsigned clocks) -> void = 0;
+  virtual void step(unsigned clocks) = 0;
 
-  virtual auto stop() -> void = 0;
-  virtual auto color(uint8_t source) -> uint8_t = 0;
-  virtual auto plot(uint8_t x, uint8_t y) -> void = 0;
-  virtual auto rpix(uint8_t x, uint8_t y) -> uint8_t = 0;
+  virtual void stop() = 0;
+  virtual uint8_t color(uint8_t source) = 0;
+  virtual void plot(uint8_t x, uint8_t y) = 0;
+  virtual uint8_t rpix(uint8_t x, uint8_t y) = 0;
 
-  virtual auto pipe() -> uint8_t = 0;
-  virtual auto syncROMBuffer() -> void = 0;
-  virtual auto readROMBuffer() -> uint8_t = 0;
-  virtual auto syncRAMBuffer() -> void = 0;
-  virtual auto readRAMBuffer(uint16_t addr) -> uint8_t = 0;
-  virtual auto writeRAMBuffer(uint16_t addr, uint8_t data) -> void = 0;
-  virtual auto flushCache() -> void = 0;
+  virtual uint8_t pipe() = 0;
+  virtual void syncROMBuffer() = 0;
+  virtual uint8_t readROMBuffer() = 0;
+  virtual void syncRAMBuffer() = 0;
+  virtual uint8_t readRAMBuffer(uint16_t addr) = 0;
+  virtual void writeRAMBuffer(uint16_t addr, uint8_t data) = 0;
+  virtual void flushCache() = 0;
 
-  virtual auto read(unsigned addr, uint8_t data = 0x00) -> uint8_t = 0;
-  virtual auto write(unsigned addr, uint8_t data) -> void = 0;
+  virtual uint8_t read(unsigned addr, uint8_t data = 0x00) = 0;
+  virtual void write(unsigned addr, uint8_t data) = 0;
 
   //gsu.cpp
-  auto power() -> void;
+  void power();
 
   //instructions.cpp
-  auto instructionADD_ADC(unsigned n) -> void;
-  auto instructionALT1() -> void;
-  auto instructionALT2() -> void;
-  auto instructionALT3() -> void;
-  auto instructionAND_BIC(unsigned n) -> void;
-  auto instructionASR_DIV2() -> void;
-  auto instructionBranch(bool c) -> void;
-  auto instructionCACHE() -> void;
-  auto instructionCOLOR_CMODE() -> void;
-  auto instructionDEC(unsigned n) -> void;
-  auto instructionFMULT_LMULT() -> void;
-  auto instructionFROM_MOVES(unsigned n) -> void;
-  auto instructionGETB() -> void;
-  auto instructionGETC_RAMB_ROMB() -> void;
-  auto instructionHIB() -> void;
-  auto instructionIBT_LMS_SMS(unsigned n) -> void;
-  auto instructionINC(unsigned n) -> void;
-  auto instructionIWT_LM_SM(unsigned n) -> void;
-  auto instructionJMP_LJMP(unsigned n) -> void;
-  auto instructionLINK(unsigned n) -> void;
-  auto instructionLoad(unsigned n) -> void;
-  auto instructionLOB() -> void;
-  auto instructionLOOP() -> void;
-  auto instructionLSR() -> void;
-  auto instructionMERGE() -> void;
-  auto instructionMULT_UMULT(unsigned n) -> void;
-  auto instructionNOP() -> void;
-  auto instructionNOT() -> void;
-  auto instructionOR_XOR(unsigned n) -> void;
-  auto instructionPLOT_RPIX() -> void;
-  auto instructionROL() -> void;
-  auto instructionROR() -> void;
-  auto instructionSBK() -> void;
-  auto instructionSEX() -> void;
-  auto instructionStore(unsigned n) -> void;
-  auto instructionSTOP() -> void;
-  auto instructionSUB_SBC_CMP(unsigned n) -> void;
-  auto instructionSWAP() -> void;
-  auto instructionTO_MOVE(unsigned n) -> void;
-  auto instructionWITH(unsigned n) -> void;
+  void instructionADD_ADC(unsigned n);
+  void instructionALT1();
+  void instructionALT2();
+  void instructionALT3();
+  void instructionAND_BIC(unsigned n);
+  void instructionASR_DIV2();
+  void instructionBranch(bool c);
+  void instructionCACHE();
+  void instructionCOLOR_CMODE();
+  void instructionDEC(unsigned n);
+  void instructionFMULT_LMULT();
+  void instructionFROM_MOVES(unsigned n);
+  void instructionGETB();
+  void instructionGETC_RAMB_ROMB();
+  void instructionHIB();
+  void instructionIBT_LMS_SMS(unsigned n);
+  void instructionINC(unsigned n);
+  void instructionIWT_LM_SM(unsigned n);
+  void instructionJMP_LJMP(unsigned n);
+  void instructionLINK(unsigned n);
+  void instructionLoad(unsigned n);
+  void instructionLOB();
+  void instructionLOOP();
+  void instructionLSR();
+  void instructionMERGE();
+  void instructionMULT_UMULT(unsigned n);
+  void instructionNOP();
+  void instructionNOT();
+  void instructionOR_XOR(unsigned n);
+  void instructionPLOT_RPIX();
+  void instructionROL();
+  void instructionROR();
+  void instructionSBK();
+  void instructionSEX();
+  void instructionStore(unsigned n);
+  void instructionSTOP();
+  void instructionSUB_SBC_CMP(unsigned n);
+  void instructionSWAP();
+  void instructionTO_MOVE(unsigned n);
+  void instructionWITH(unsigned n);
 
   //switch.cpp
-  auto instruction(uint8_t opcode) -> void;
+  void instruction(uint8_t opcode);
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   //disassembler.cpp
-  auto disassembleOpcode(char* output) -> void;
-  auto disassembleALT0(char* output) -> void;
-  auto disassembleALT1(char* output) -> void;
-  auto disassembleALT2(char* output) -> void;
-  auto disassembleALT3(char* output) -> void;
+  void disassembleOpcode(char* output);
+  void disassembleALT0(char* output);
+  void disassembleALT1(char* output);
+  void disassembleALT2(char* output);
+  void disassembleALT3(char* output);
 };
 
 }

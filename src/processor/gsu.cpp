@@ -8,7 +8,7 @@
 
 namespace Processor {
 
-auto GSU::instruction(uint8_t opcode) -> void {
+void GSU::instruction(uint8_t opcode) {
   #define op(id, name, ...) \
     case id: return instruction##name(__VA_ARGS__); \
 
@@ -104,7 +104,7 @@ auto GSU::instruction(uint8_t opcode) -> void {
 }
 
 //$00 stop
-auto GSU::instructionSTOP() -> void {
+void GSU::instructionSTOP() {
   if(regs.cfgr.irq == 0) {
     regs.sfr.irq = 1;
     stop();
@@ -115,12 +115,12 @@ auto GSU::instructionSTOP() -> void {
 }
 
 //$01 nop
-auto GSU::instructionNOP() -> void {
+void GSU::instructionNOP() {
   regs.reset();
 }
 
 //$02 cache
-auto GSU::instructionCACHE() -> void {
+void GSU::instructionCACHE() {
   if(regs.cbr != (regs.r[15] & 0xfff0)) {
     regs.cbr = regs.r[15] & 0xfff0;
     flushCache();
@@ -129,7 +129,7 @@ auto GSU::instructionCACHE() -> void {
 }
 
 //$03 lsr
-auto GSU::instructionLSR() -> void {
+void GSU::instructionLSR() {
   regs.sfr.cy = (regs.sr() & 1);
   regs.dr() = regs.sr() >> 1;
   regs.sfr.s = (regs.dr() & 0x8000);
@@ -138,7 +138,7 @@ auto GSU::instructionLSR() -> void {
 }
 
 //$04 rol
-auto GSU::instructionROL() -> void {
+void GSU::instructionROL() {
   bool carry = (regs.sr() & 0x8000);
   regs.dr() = (regs.sr() << 1) | regs.sfr.cy;
   regs.sfr.s  = (regs.dr() & 0x8000);
@@ -158,14 +158,14 @@ auto GSU::instructionROL() -> void {
 //$0d bcs e
 //$0e bvc e
 //$0f bvs e
-auto GSU::instructionBranch(bool take) -> void {
+void GSU::instructionBranch(bool take) {
   auto displacement = (int8_t)pipe();
   if(take) regs.r[15] += displacement;
 }
 
 //$10-1f(b0) to rN
 //$10-1f(b1) move rN
-auto GSU::instructionTO_MOVE(unsigned n) -> void {
+void GSU::instructionTO_MOVE(unsigned n) {
   if(!regs.sfr.b) {
     regs.dreg = n;
   } else {
@@ -175,7 +175,7 @@ auto GSU::instructionTO_MOVE(unsigned n) -> void {
 }
 
 //$20-2f with rN
-auto GSU::instructionWITH(unsigned n) -> void {
+void GSU::instructionWITH(unsigned n) {
   regs.sreg = n;
   regs.dreg = n;
   regs.sfr.b = 1;
@@ -183,7 +183,7 @@ auto GSU::instructionWITH(unsigned n) -> void {
 
 //$30-3b(alt0) stw (rN)
 //$30-3b(alt1) stb (rN)
-auto GSU::instructionStore(unsigned n) -> void {
+void GSU::instructionStore(unsigned n) {
   regs.ramaddr = regs.r[n];
   writeRAMBuffer(regs.ramaddr, regs.sr());
   if(!regs.sfr.alt1) writeRAMBuffer(regs.ramaddr ^ 1, regs.sr() >> 8);
@@ -191,7 +191,7 @@ auto GSU::instructionStore(unsigned n) -> void {
 }
 
 //$3c loop
-auto GSU::instructionLOOP() -> void {
+void GSU::instructionLOOP() {
   regs.r[12]--;
   regs.sfr.s = (regs.r[12] & 0x8000);
   regs.sfr.z = (regs.r[12] == 0);
@@ -200,19 +200,19 @@ auto GSU::instructionLOOP() -> void {
 }
 
 //$3d alt1
-auto GSU::instructionALT1() -> void {
+void GSU::instructionALT1() {
   regs.sfr.b = 0;
   regs.sfr.alt1 = 1;
 }
 
 //$3e alt2
-auto GSU::instructionALT2() -> void {
+void GSU::instructionALT2() {
   regs.sfr.b = 0;
   regs.sfr.alt2 = 1;
 }
 
 //$3f alt3
-auto GSU::instructionALT3() -> void {
+void GSU::instructionALT3() {
   regs.sfr.b = 0;
   regs.sfr.alt1 = 1;
   regs.sfr.alt2 = 1;
@@ -220,7 +220,7 @@ auto GSU::instructionALT3() -> void {
 
 //$40-4b(alt0) ldw (rN)
 //$40-4b(alt1) ldb (rN)
-auto GSU::instructionLoad(unsigned n) -> void {
+void GSU::instructionLoad(unsigned n) {
   regs.ramaddr = regs.r[n];
   regs.dr() = readRAMBuffer(regs.ramaddr);
   if(!regs.sfr.alt1) regs.dr() |= readRAMBuffer(regs.ramaddr ^ 1) << 8;
@@ -229,7 +229,7 @@ auto GSU::instructionLoad(unsigned n) -> void {
 
 //$4c(alt0) plot
 //$4c(alt1) rpix
-auto GSU::instructionPLOT_RPIX() -> void {
+void GSU::instructionPLOT_RPIX() {
   if(!regs.sfr.alt1) {
     plot(regs.r[1], regs.r[2]);
     regs.r[1]++;
@@ -242,7 +242,7 @@ auto GSU::instructionPLOT_RPIX() -> void {
 }
 
 //$4d swap
-auto GSU::instructionSWAP() -> void {
+void GSU::instructionSWAP() {
   regs.dr() = regs.sr() >> 8 | regs.sr() << 8;
   regs.sfr.s = (regs.dr() & 0x8000);
   regs.sfr.z = (regs.dr() == 0);
@@ -251,7 +251,7 @@ auto GSU::instructionSWAP() -> void {
 
 //$4e(alt0) color
 //$4e(alt1) cmode
-auto GSU::instructionCOLOR_CMODE() -> void {
+void GSU::instructionCOLOR_CMODE() {
   if(!regs.sfr.alt1) {
     regs.colr = color(regs.sr());
   } else {
@@ -261,7 +261,7 @@ auto GSU::instructionCOLOR_CMODE() -> void {
 }
 
 //$4f not
-auto GSU::instructionNOT() -> void {
+void GSU::instructionNOT() {
   regs.dr() = ~regs.sr();
   regs.sfr.s = (regs.dr() & 0x8000);
   regs.sfr.z = (regs.dr() == 0);
@@ -272,7 +272,7 @@ auto GSU::instructionNOT() -> void {
 //$50-5f(alt1) adc rN
 //$50-5f(alt2) add #N
 //$50-5f(alt3) adc #N
-auto GSU::instructionADD_ADC(unsigned n) -> void {
+void GSU::instructionADD_ADC(unsigned n) {
   if(!regs.sfr.alt2) n = regs.r[n];
   int r = regs.sr() + n + (regs.sfr.alt1 ? regs.sfr.cy : 0);
   regs.sfr.ov = ~(regs.sr() ^ n) & (n ^ r) & 0x8000;
@@ -287,7 +287,7 @@ auto GSU::instructionADD_ADC(unsigned n) -> void {
 //$60-6f(alt1) sbc rN
 //$60-6f(alt2) sub #N
 //$60-6f(alt3) cmp rN
-auto GSU::instructionSUB_SBC_CMP(unsigned n) -> void {
+void GSU::instructionSUB_SBC_CMP(unsigned n) {
   if(!regs.sfr.alt2 || regs.sfr.alt1) n = regs.r[n];
   int r = regs.sr() - n - (!regs.sfr.alt2 && regs.sfr.alt1 ? !regs.sfr.cy : 0);
   regs.sfr.ov = (regs.sr() ^ n) & (regs.sr() ^ r) & 0x8000;
@@ -299,7 +299,7 @@ auto GSU::instructionSUB_SBC_CMP(unsigned n) -> void {
 }
 
 //$70 merge
-auto GSU::instructionMERGE() -> void {
+void GSU::instructionMERGE() {
   regs.dr() = (regs.r[7] & 0xff00) | (regs.r[8] >> 8);
   regs.sfr.ov = (regs.dr() & 0xc0c0);
   regs.sfr.s  = (regs.dr() & 0x8080);
@@ -312,7 +312,7 @@ auto GSU::instructionMERGE() -> void {
 //$71-7f(alt1) bic rN
 //$71-7f(alt2) and #N
 //$71-7f(alt3) bic #N
-auto GSU::instructionAND_BIC(unsigned n) -> void {
+void GSU::instructionAND_BIC(unsigned n) {
   if(!regs.sfr.alt2) n = regs.r[n];
   regs.dr() = regs.sr() & (regs.sfr.alt1 ? ~n : n);
   regs.sfr.s = (regs.dr() & 0x8000);
@@ -324,7 +324,7 @@ auto GSU::instructionAND_BIC(unsigned n) -> void {
 //$80-8f(alt1) umult rN
 //$80-8f(alt2) mult #N
 //$80-8f(alt3) umult #N
-auto GSU::instructionMULT_UMULT(unsigned n) -> void {
+void GSU::instructionMULT_UMULT(unsigned n) {
   if(!regs.sfr.alt2) n = regs.r[n];
   regs.dr() = (!regs.sfr.alt1 ? uint16_t((int8_t)regs.sr() * (int8_t)n) : uint16_t((uint8_t)regs.sr() * (uint8_t)n));
   regs.sfr.s = (regs.dr() & 0x8000);
@@ -334,20 +334,20 @@ auto GSU::instructionMULT_UMULT(unsigned n) -> void {
 }
 
 //$90 sbk
-auto GSU::instructionSBK() -> void {
+void GSU::instructionSBK() {
   writeRAMBuffer(regs.ramaddr ^ 0, regs.sr() >> 0);
   writeRAMBuffer(regs.ramaddr ^ 1, regs.sr() >> 8);
   regs.reset();
 }
 
 //$91-94 link #N
-auto GSU::instructionLINK(unsigned n) -> void {
+void GSU::instructionLINK(unsigned n) {
   regs.r[11] = regs.r[15] + n;
   regs.reset();
 }
 
 //$95 sex
-auto GSU::instructionSEX() -> void {
+void GSU::instructionSEX() {
   regs.dr() = (int8_t)regs.sr();
   regs.sfr.s = (regs.dr() & 0x8000);
   regs.sfr.z = (regs.dr() == 0);
@@ -356,7 +356,7 @@ auto GSU::instructionSEX() -> void {
 
 //$96(alt0) asr
 //$96(alt1) div2
-auto GSU::instructionASR_DIV2() -> void {
+void GSU::instructionASR_DIV2() {
   regs.sfr.cy = (regs.sr() & 1);
   regs.dr() = ((int16_t)regs.sr() >> 1) + (regs.sfr.alt1 ? ((regs.sr() + 1) >> 16) : 0);
   regs.sfr.s = (regs.dr() & 0x8000);
@@ -365,7 +365,7 @@ auto GSU::instructionASR_DIV2() -> void {
 }
 
 //$97 ror
-auto GSU::instructionROR() -> void {
+void GSU::instructionROR() {
   bool carry = (regs.sr() & 1);
   regs.dr() = (regs.sfr.cy << 15) | (regs.sr() >> 1);
   regs.sfr.s  = (regs.dr() & 0x8000);
@@ -376,7 +376,7 @@ auto GSU::instructionROR() -> void {
 
 //$98-9d(alt0) jmp rN
 //$98-9d(alt1) ljmp rN
-auto GSU::instructionJMP_LJMP(unsigned n) -> void {
+void GSU::instructionJMP_LJMP(unsigned n) {
   if(!regs.sfr.alt1) {
     regs.r[15] = regs.r[n];
   } else {
@@ -389,7 +389,7 @@ auto GSU::instructionJMP_LJMP(unsigned n) -> void {
 }
 
 //$9e lob
-auto GSU::instructionLOB() -> void {
+void GSU::instructionLOB() {
   regs.dr() = regs.sr() & 0xff;
   regs.sfr.s = (regs.dr() & 0x80);
   regs.sfr.z = (regs.dr() == 0);
@@ -398,7 +398,7 @@ auto GSU::instructionLOB() -> void {
 
 //$9f(alt0) fmult
 //$9f(alt1) lmult
-auto GSU::instructionFMULT_LMULT() -> void {
+void GSU::instructionFMULT_LMULT() {
   uint32_t result = (int16_t)regs.sr() * (int16_t)regs.r[6];
   if(regs.sfr.alt1) regs.r[4] = result;
   regs.dr() = result >> 16;
@@ -412,7 +412,7 @@ auto GSU::instructionFMULT_LMULT() -> void {
 //$a0-af(alt0) ibt rN,#pp
 //$a0-af(alt1) lms rN,(yy)
 //$a0-af(alt2) sms (yy),rN
-auto GSU::instructionIBT_LMS_SMS(unsigned n) -> void {
+void GSU::instructionIBT_LMS_SMS(unsigned n) {
   if(regs.sfr.alt1) {
     regs.ramaddr = pipe() << 1;
     uint8_t lo  = readRAMBuffer(regs.ramaddr ^ 0) << 0;
@@ -429,7 +429,7 @@ auto GSU::instructionIBT_LMS_SMS(unsigned n) -> void {
 
 //$b0-bf(b0) from rN
 //$b0-bf(b1) moves rN
-auto GSU::instructionFROM_MOVES(unsigned n) -> void {
+void GSU::instructionFROM_MOVES(unsigned n) {
   if(!regs.sfr.b) {
     regs.sreg = n;
   } else {
@@ -442,7 +442,7 @@ auto GSU::instructionFROM_MOVES(unsigned n) -> void {
 }
 
 //$c0 hib
-auto GSU::instructionHIB() -> void {
+void GSU::instructionHIB() {
   regs.dr() = regs.sr() >> 8;
   regs.sfr.s = (regs.dr() & 0x80);
   regs.sfr.z = (regs.dr() == 0);
@@ -453,7 +453,7 @@ auto GSU::instructionHIB() -> void {
 //$c1-cf(alt1) xor rN
 //$c1-cf(alt2) or #N
 //$c1-cf(alt3) xor #N
-auto GSU::instructionOR_XOR(unsigned n) -> void {
+void GSU::instructionOR_XOR(unsigned n) {
   if(!regs.sfr.alt2) n = regs.r[n];
   regs.dr() = (!regs.sfr.alt1 ? (regs.sr() | n) : (regs.sr() ^ n));
   regs.sfr.s = (regs.dr() & 0x8000);
@@ -462,7 +462,7 @@ auto GSU::instructionOR_XOR(unsigned n) -> void {
 }
 
 //$d0-de inc rN
-auto GSU::instructionINC(unsigned n) -> void {
+void GSU::instructionINC(unsigned n) {
   regs.r[n]++;
   regs.sfr.s = (regs.r[n] & 0x8000);
   regs.sfr.z = (regs.r[n] == 0);
@@ -472,7 +472,7 @@ auto GSU::instructionINC(unsigned n) -> void {
 //$df(alt0) getc
 //$df(alt2) ramb
 //$df(alt3) romb
-auto GSU::instructionGETC_RAMB_ROMB() -> void {
+void GSU::instructionGETC_RAMB_ROMB() {
   if(!regs.sfr.alt2) {
     regs.colr = color(readROMBuffer());
   } else if(!regs.sfr.alt1) {
@@ -486,7 +486,7 @@ auto GSU::instructionGETC_RAMB_ROMB() -> void {
 }
 
 //$e0-ee dec rN
-auto GSU::instructionDEC(unsigned n) -> void {
+void GSU::instructionDEC(unsigned n) {
   regs.r[n]--;
   regs.sfr.s = (regs.r[n] & 0x8000);
   regs.sfr.z = (regs.r[n] == 0);
@@ -497,7 +497,7 @@ auto GSU::instructionDEC(unsigned n) -> void {
 //$ef(alt1) getbh
 //$ef(alt2) getbl
 //$ef(alt3) getbs
-auto GSU::instructionGETB() -> void {
+void GSU::instructionGETB() {
   switch(regs.sfr.alt2 << 1 | regs.sfr.alt1 << 0) {
   case 0: regs.dr() = readROMBuffer(); break;
   case 1: regs.dr() = readROMBuffer() << 8 | (uint8_t)regs.sr(); break;
@@ -510,7 +510,7 @@ auto GSU::instructionGETB() -> void {
 //$f0-ff(alt0) iwt rN,#xx
 //$f0-ff(alt1) lm rN,(xx)
 //$f0-ff(alt2) sm (xx),rN
-auto GSU::instructionIWT_LM_SM(unsigned n) -> void {
+void GSU::instructionIWT_LM_SM(unsigned n) {
   if(regs.sfr.alt1) {
     regs.ramaddr  = pipe() << 0;
     regs.ramaddr |= pipe() << 8;
@@ -528,7 +528,7 @@ auto GSU::instructionIWT_LM_SM(unsigned n) -> void {
   regs.reset();
 }
 
-auto GSU::serialize(serializer& s) -> void {
+void GSU::serialize(serializer& s) {
   s.integer(regs.pipeline);
   s.integer(regs.ramaddr);
 
@@ -585,7 +585,7 @@ auto GSU::serialize(serializer& s) -> void {
   }
 }
 
-auto GSU::disassembleOpcode(char* output) -> void {
+void GSU::disassembleOpcode(char* output) {
   *output = 0;
 
   switch(regs.sfr.alt2 << 1 | regs.sfr.alt1 << 0) {
@@ -617,7 +617,7 @@ auto GSU::disassembleOpcode(char* output) -> void {
 #define op1 read((regs.pbr << 16) + regs.r[15] + 0)
 #define op2 read((regs.pbr << 16) + regs.r[15] + 1)
 
-auto GSU::disassembleALT0(char* output) -> void {
+void GSU::disassembleALT0(char* output) {
   char t[256] = "";
   switch(op0) {
     case  (0x00): sprintf(t, "stop"); break;
@@ -674,7 +674,7 @@ auto GSU::disassembleALT0(char* output) -> void {
   strcat(output, t);
 }
 
-auto GSU::disassembleALT1(char* output) -> void {
+void GSU::disassembleALT1(char* output) {
   char t[256] = "";
   switch(op0) {
     case  (0x00): sprintf(t, "stop"); break;
@@ -731,7 +731,7 @@ auto GSU::disassembleALT1(char* output) -> void {
   strcat(output, t);
 }
 
-auto GSU::disassembleALT2(char* output) -> void {
+void GSU::disassembleALT2(char* output) {
   char t[256] = "";
   switch(op0) {
     case  (0x00): sprintf(t, "stop"); break;
@@ -788,7 +788,7 @@ auto GSU::disassembleALT2(char* output) -> void {
   strcat(output, t);
 }
 
-auto GSU::disassembleALT3(char* output) -> void {
+void GSU::disassembleALT3(char* output) {
   char t[256] = "";
   switch(op0) {
     case  (0x00): sprintf(t, "stop"); break;
@@ -854,7 +854,7 @@ auto GSU::disassembleALT3(char* output) -> void {
 #undef op1
 #undef op2
 
-auto GSU::power() -> void {
+void GSU::power() {
   for(auto& r : regs.r) {
     r.data = 0x0000;
     r.modified = false;
