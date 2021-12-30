@@ -9,106 +9,106 @@ struct HG51B {
   HG51B();
 
   //hg51b.cpp
-  virtual auto step(unsigned clocks) -> void;
-  virtual auto isROM(unsigned address) -> bool = 0;
-  virtual auto isRAM(unsigned address) -> bool = 0;
-  virtual auto read(unsigned address) -> uint8_t = 0;
-  virtual auto write(unsigned address, uint8_t data) -> void = 0;
-  virtual auto lock() -> void;
-  virtual auto halt() -> void;
-  auto wait(nall::Natural<24> address) -> unsigned;
-  auto main() -> void;
-  auto execute() -> void;
-  auto advance() -> void;
-  auto suspend() -> void;
-  auto cache() -> bool;
-  auto dma() -> void;
-  auto running() const -> bool;
-  auto busy() const -> bool;
+  virtual void step(unsigned clocks);
+  virtual bool isROM(unsigned address) = 0;
+  virtual bool isRAM(unsigned address) = 0;
+  virtual uint8_t read(unsigned address) = 0;
+  virtual void write(unsigned address, uint8_t data) = 0;
+  virtual void lock();
+  virtual void halt();
+  unsigned wait(nall::Natural<24> address);
+  void main();
+  void execute();
+  void advance();
+  void suspend();
+  bool cache();
+  void dma();
+  bool running() const;
+  bool busy() const;
 
-  auto power() -> void;
+  void power();
 
   //instructions.cpp
-  auto push() -> void;
-  auto pull() -> void;
+  void push();
+  void pull();
 
-  auto algorithmADD(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
-  auto algorithmAND(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
-  auto algorithmASR(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24>;
-  auto algorithmMUL(nall::Integer<24> x, nall::Integer<24> y) -> nall::Natural<48>;
-  auto algorithmOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
-  auto algorithmROR(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24>;
-  auto algorithmSHL(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24>;
-  auto algorithmSHR(nall::Natural<24> a, nall::Natural< 5> s) -> nall::Natural<24>;
-  auto algorithmSUB(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
-  auto algorithmSX(nall::Natural<24> x) -> nall::Natural<24>;
-  auto algorithmXNOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
-  auto algorithmXOR(nall::Natural<24> x, nall::Natural<24> y) -> nall::Natural<24>;
+  nall::Natural<24> algorithmADD(nall::Natural<24> x, nall::Natural<24> y);
+  nall::Natural<24> algorithmAND(nall::Natural<24> x, nall::Natural<24> y);
+  nall::Natural<24> algorithmASR(nall::Natural<24> a, nall::Natural< 5> s);
+  nall::Natural<48> algorithmMUL(nall::Integer<24> x, nall::Integer<24> y);
+  nall::Natural<24> algorithmOR(nall::Natural<24> x, nall::Natural<24> y);
+  nall::Natural<24> algorithmROR(nall::Natural<24> a, nall::Natural< 5> s);
+  nall::Natural<24> algorithmSHL(nall::Natural<24> a, nall::Natural< 5> s);
+  nall::Natural<24> algorithmSHR(nall::Natural<24> a, nall::Natural< 5> s);
+  nall::Natural<24> algorithmSUB(nall::Natural<24> x, nall::Natural<24> y);
+  nall::Natural<24> algorithmSX(nall::Natural<24> x);
+  nall::Natural<24> algorithmXNOR(nall::Natural<24> x, nall::Natural<24> y);
+  nall::Natural<24> algorithmXOR(nall::Natural<24> x, nall::Natural<24> y);
 
-  auto instructionADD(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
-  auto instructionADD(uint8_t imm, nall::Natural< 5> shift) -> void;
-  auto instructionAND(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
-  auto instructionAND(uint8_t imm, nall::Natural< 5> shift) -> void;
-  auto instructionASR(nall::Natural< 7> reg) -> void;
-  auto instructionASR(nall::Natural< 5> imm) -> void;
-  auto instructionCLEAR() -> void;
-  auto instructionCMP(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
-  auto instructionCMP(uint8_t imm, nall::Natural< 5> shift) -> void;
-  auto instructionCMPR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
-  auto instructionCMPR(uint8_t imm, nall::Natural< 5> shift) -> void;
-  auto instructionHALT() -> void;
-  auto instructionINC(nall::Natural<24>& reg) -> void;
-  auto instructionJMP(uint8_t data, nall::Natural< 1> far, const nall::Natural< 1>& take) -> void;
-  auto instructionJSR(uint8_t data, nall::Natural< 1> far, const nall::Natural< 1>& take) -> void;
-  auto instructionLD(nall::Natural<24>& out, nall::Natural< 7> reg) -> void;
-  auto instructionLD(nall::Natural<15>& out, nall::Natural< 4> reg) -> void;
-  auto instructionLD(nall::Natural<24>& out, uint8_t imm) -> void;
-  auto instructionLD(nall::Natural<15>& out, uint8_t imm) -> void;
-  auto instructionLDL(nall::Natural<15>& out, uint8_t imm) -> void;
-  auto instructionLDH(nall::Natural<15>& out, nall::Natural< 7> imm) -> void;
-  auto instructionMUL(nall::Natural< 7> reg) -> void;
-  auto instructionMUL(uint8_t imm) -> void;
-  auto instructionNOP() -> void;
-  auto instructionOR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
-  auto instructionOR(uint8_t imm, nall::Natural< 5> shift) -> void;
-  auto instructionRDRAM(nall::Natural< 2> byte, nall::Natural<24>& a) -> void;
-  auto instructionRDRAM(nall::Natural< 2> byte, uint8_t imm) -> void;
-  auto instructionRDROM(nall::Natural<24>& reg) -> void;
-  auto instructionRDROM(nall::Natural<10> imm) -> void;
-  auto instructionROR(nall::Natural< 7> reg) -> void;
-  auto instructionROR(nall::Natural< 5> imm) -> void;
-  auto instructionRTS() -> void;
-  auto instructionSHL(nall::Natural< 7> reg) -> void;
-  auto instructionSHL(nall::Natural< 5> imm) -> void;
-  auto instructionSHR(nall::Natural< 7> reg) -> void;
-  auto instructionSHR(nall::Natural< 5> imm) -> void;
-  auto instructionSKIP(nall::Natural< 1> take, const nall::Natural< 1>& flag) -> void;
-  auto instructionST(nall::Natural< 7> reg, nall::Natural<24>& in) -> void;
-  auto instructionSUB(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
-  auto instructionSUB(uint8_t imm, nall::Natural< 5> shift) -> void;
-  auto instructionSUBR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
-  auto instructionSUBR(uint8_t imm, nall::Natural< 5> shift) -> void;
-  auto instructionSWAP(nall::Natural<24>& a, nall::Natural< 4> reg) -> void;
-  auto instructionSXB() -> void;
-  auto instructionSXW() -> void;
-  auto instructionWAIT() -> void;
-  auto instructionWRRAM(nall::Natural< 2> byte, nall::Natural<24>& a) -> void;
-  auto instructionWRRAM(nall::Natural< 2> byte, uint8_t imm) -> void;
-  auto instructionXNOR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
-  auto instructionXNOR(uint8_t imm, nall::Natural< 5> shift) -> void;
-  auto instructionXOR(nall::Natural< 7> reg, nall::Natural< 5> shift) -> void;
-  auto instructionXOR(uint8_t imm, nall::Natural< 5> shift) -> void;
+  void instructionADD(nall::Natural< 7> reg, nall::Natural< 5> shift);
+  void instructionADD(uint8_t imm, nall::Natural< 5> shift);
+  void instructionAND(nall::Natural< 7> reg, nall::Natural< 5> shift);
+  void instructionAND(uint8_t imm, nall::Natural< 5> shift);
+  void instructionASR(nall::Natural< 7> reg);
+  void instructionASR(nall::Natural< 5> imm);
+  void instructionCLEAR();
+  void instructionCMP(nall::Natural< 7> reg, nall::Natural< 5> shift);
+  void instructionCMP(uint8_t imm, nall::Natural< 5> shift);
+  void instructionCMPR(nall::Natural< 7> reg, nall::Natural< 5> shift);
+  void instructionCMPR(uint8_t imm, nall::Natural< 5> shift);
+  void instructionHALT();
+  void instructionINC(nall::Natural<24>& reg);
+  void instructionJMP(uint8_t data, nall::Natural< 1> far, const nall::Natural< 1>& take);
+  void instructionJSR(uint8_t data, nall::Natural< 1> far, const nall::Natural< 1>& take);
+  void instructionLD(nall::Natural<24>& out, nall::Natural< 7> reg);
+  void instructionLD(nall::Natural<15>& out, nall::Natural< 4> reg);
+  void instructionLD(nall::Natural<24>& out, uint8_t imm);
+  void instructionLD(nall::Natural<15>& out, uint8_t imm);
+  void instructionLDL(nall::Natural<15>& out, uint8_t imm);
+  void instructionLDH(nall::Natural<15>& out, nall::Natural< 7> imm);
+  void instructionMUL(nall::Natural< 7> reg);
+  void instructionMUL(uint8_t imm);
+  void instructionNOP();
+  void instructionOR(nall::Natural< 7> reg, nall::Natural< 5> shift);
+  void instructionOR(uint8_t imm, nall::Natural< 5> shift);
+  void instructionRDRAM(nall::Natural< 2> byte, nall::Natural<24>& a);
+  void instructionRDRAM(nall::Natural< 2> byte, uint8_t imm);
+  void instructionRDROM(nall::Natural<24>& reg);
+  void instructionRDROM(nall::Natural<10> imm);
+  void instructionROR(nall::Natural< 7> reg);
+  void instructionROR(nall::Natural< 5> imm);
+  void instructionRTS();
+  void instructionSHL(nall::Natural< 7> reg);
+  void instructionSHL(nall::Natural< 5> imm);
+  void instructionSHR(nall::Natural< 7> reg);
+  void instructionSHR(nall::Natural< 5> imm);
+  void instructionSKIP(nall::Natural< 1> take, const nall::Natural< 1>& flag);
+  void instructionST(nall::Natural< 7> reg, nall::Natural<24>& in);
+  void instructionSUB(nall::Natural< 7> reg, nall::Natural< 5> shift);
+  void instructionSUB(uint8_t imm, nall::Natural< 5> shift);
+  void instructionSUBR(nall::Natural< 7> reg, nall::Natural< 5> shift);
+  void instructionSUBR(uint8_t imm, nall::Natural< 5> shift);
+  void instructionSWAP(nall::Natural<24>& a, nall::Natural< 4> reg);
+  void instructionSXB();
+  void instructionSXW();
+  void instructionWAIT();
+  void instructionWRRAM(nall::Natural< 2> byte, nall::Natural<24>& a);
+  void instructionWRRAM(nall::Natural< 2> byte, uint8_t imm);
+  void instructionXNOR(nall::Natural< 7> reg, nall::Natural< 5> shift);
+  void instructionXNOR(uint8_t imm, nall::Natural< 5> shift);
+  void instructionXOR(nall::Natural< 7> reg, nall::Natural< 5> shift);
+  void instructionXOR(uint8_t imm, nall::Natural< 5> shift);
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   uint16_t programRAM[2][256];  //instruction cache
   nall::Natural<24> dataROM[1024];
   uint8_t dataRAM[3072];
 
   //registers.cpp
-  auto readRegister(nall::Natural< 7> address) -> nall::Natural<24>;
-  auto writeRegister(nall::Natural< 7> address, nall::Natural<24> data) -> void;
+  nall::Natural<24> readRegister(nall::Natural< 7> address);
+  void writeRegister(nall::Natural< 7> address, nall::Natural<24> data);
 
 protected:
   struct Registers {
@@ -123,7 +123,7 @@ protected:
 
     nall::Natural<24> a;              //accumulator
     nall::Natural<15> p;              //page register
-    nall::Natural<48> mul; //multiplier
+    nall::Natural<48> mul;            //multiplier
     nall::Natural<24> mdr;            //bus memory data register
     nall::Natural<24> rom;            //data ROM data buffer
     nall::Natural<24> ram;            //data RAM data buffer
