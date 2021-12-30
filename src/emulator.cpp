@@ -14,10 +14,8 @@ void Game::load(std::string text) {
   region = BML::search(text, {"game", "region"});
   revision = BML::search(text, {"game", "revision"});
   board = BML::search(text, {"game", "board"});
-  std::vector<std::string> memlist =
-    BML::searchList(text, {"game", "board", "memory"});
-  std::vector<std::string> osclist =
-    BML::searchList(text, {"game", "board", "oscillator"});
+  std::vector<std::string> memlist = BML::searchList(text, "memory");
+  std::vector<std::string> osclist = BML::searchList(text, "oscillator");
 
   for (auto node : memlist) {
     memoryList.push_back(Memory{node});
