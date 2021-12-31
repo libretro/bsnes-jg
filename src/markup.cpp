@@ -229,6 +229,24 @@ std::vector<std::string> searchList(std::string text, std::string term) {
     return ret;
 }
 
+std::vector<std::string> searchListShallow(std::string text, std::string parent, std::string child) {
+    std::stringstream ss;
+    ss << text;
+    std::istream& is = ss;
+    std::vector<std::string> ret;
+
+    streamreader bmlreader(is);
+    byuuML::document doc(bmlreader);
+
+    for(auto&& c : doc[parent][child]) {
+        std::stringstream out;
+        dumpnode(out, doc, c.get_node());
+        ret.push_back(out.str());
+    }
+
+    return ret;
+}
+
 bool exists(std::string text, std::vector<std::string> terms) {
     std::stringstream ss;
     ss << text;

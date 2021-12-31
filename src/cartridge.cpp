@@ -74,7 +74,11 @@ void Cartridge::loadCartridge(Markup::Node node) {
     }
   }
 
-  std::vector<std::string> boardmem = BML::searchList(stdboard, "memory");
+  /* Some boards define memory deeper in the BML document, and in these cases
+     it is loaded elsewhere. Loading it twice will break things, so a shallow
+     search is necessary here.
+  */
+  std::vector<std::string> boardmem = BML::searchListShallow(stdboard, "board", "memory");
   for (std::string& m : boardmem) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
