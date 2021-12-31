@@ -76,6 +76,7 @@ private:
 
   void loadMemory(Memory&, std::string);
   template<typename T> unsigned loadMap(std::string, T&);
+  unsigned loadMap(std::string, const nall::function<uint8_t (unsigned, uint8_t)>&, const nall::function<void (unsigned, uint8_t)>&);
 
   void loadMemory(Memory&, Markup::Node);
   template<typename T> unsigned loadMap(Markup::Node, T&);
@@ -83,6 +84,7 @@ private:
 
   void loadROM(std::string);
   void loadRAM(std::string);
+  void loadICD(std::string);
 
   void loadROM(Markup::Node);
   void loadRAM(Markup::Node);

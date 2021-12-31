@@ -84,10 +84,17 @@ void Cartridge::loadCartridge(Markup::Node node) {
     if (type == "RAM" && content == "Save") loadRAM(m);
   }
 
+  std::vector<std::string> processors = BML::searchList(stdboard, "processor");
+  for (std::string& p : processors) {
+    std::string arch = BML::search(p, {"processor", "architecture"});
+    std::string id = BML::search(p, {"processor", "identifier"});
+    if (id == "ICD") loadICD(p);
+  }
+
   //if(auto node = board["memory(type=ROM,content=Program)"]) loadROM(node);
   //if(auto node = board["memory(type=ROM,content=Expansion)"]) loadROM(node); //todo: handle this better
   //if(auto node = board["memory(type=RAM,content=Save)"]) loadRAM(node);
-  if(auto node = board["processor(identifier=ICD)"]) loadICD(node);
+  //if(auto node = board["processor(identifier=ICD)"]) loadICD(node);
   if(auto node = board["processor(identifier=MCC)"]) loadMCC(node);
   if(auto node = board["slot(type=BSMemory)"]) loadBSMemory(node);
   if(auto node = board["slot(type=SufamiTurbo)[0]"]) loadSufamiTurboA(node);
@@ -220,6 +227,21 @@ unsigned Cartridge::loadMap(Markup::Node map, T& memory) {
 }
 
 unsigned Cartridge::loadMap(
+  std::string map,
+  const nall::function<uint8_t (unsigned, uint8_t)>& reader,
+  const nall::function<void  (unsigned, uint8_t)>& writer
+) {
+  auto addr = BML::search(map, {"map", "address"});
+  std::string strsize = BML::search(map, {"map", "size"});
+  std::string strbase = BML::search(map, {"map", "base"});
+  std::string strmask = BML::search(map, {"map", "mask"});
+  unsigned size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);
+  unsigned base = strbase.empty() ? 0 : std::stoi(strbase, nullptr, 16);
+  unsigned mask = strmask.empty() ? 0 : std::stoi(strmask, nullptr, 16);
+  return bus.map(reader, writer, addr, size, base, mask);
+}
+
+unsigned Cartridge::loadMap(
   Markup::Node map,
   const nall::function<uint8_t (unsigned, uint8_t)>& reader,
   const nall::function<void  (unsigned, uint8_t)>& writer
@@ -282,6 +304,26 @@ void Cartridge::loadRAM(Markup::Node node) {
 }
 
 //processor(identifier=ICD)
+void Cartridge::loadICD(std::string node) {
+  has.GameBoySlot = true;
+  has.ICD = true;
+
+  std::string strrev = BML::search(node, {"processor", "revision"});
+  unsigned rev = strrev.empty() ? 0 : std::stoi(strrev);
+
+  if(auto oscillator = game.oscillator()) {
+    icd.Frequency = oscillator->frequency;
+  } else {
+    icd.Frequency = 0;
+  }
+
+  //Game Boy core loads data through ICD interface
+  std::vector<std::string> maps = BML::searchList(node, "map");
+  for (auto map : maps) {
+    loadMap(map, {&ICD::readIO, &icd}, {&ICD::writeIO, &icd});
+  }
+}
+
 void Cartridge::loadICD(Markup::Node node) {
   has.GameBoySlot = true;
   has.ICD = true;
