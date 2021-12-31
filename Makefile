@@ -188,7 +188,7 @@ BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 .PHONY: all clean install install-strip uninstall
 
-all: $(TARGET)
+all: $(NAME)/$(TARGET)
 
 # byuuML rules
 $(OBJDIR)/deps/byuuML/%.o: $(SOURCEDIR)/deps/byuuML/%.cpp $(OBJDIR)/.tag
@@ -224,9 +224,9 @@ $(OBJDIR)/.tag:
 	@mkdir -p -- $(patsubst %,$(OBJDIR)/%,$(MKDIRS))
 	@touch $@
 
-$(TARGET): $(OBJS)
+$(NAME)/$(TARGET): $(OBJS)
 	@mkdir -p $(NAME)
-	$(CXX) $^ $(LDFLAGS) $(LIBS) $(SHARED) -o $(NAME)/$(TARGET)
+	$(CXX) $^ $(LDFLAGS) $(LIBS) $(SHARED) -o $@
 	@cp $(SOURCEDIR)/Database/boards.bml $(NAME)/
 	@cp $(SOURCEDIR)/Database/BS\ Memory.bml $(NAME)/
 	@cp $(SOURCEDIR)/Database/Sufami\ Turbo.bml $(NAME)/
