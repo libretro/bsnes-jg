@@ -95,6 +95,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
     if (id == "MCC") loadMCC(p);
     if (arch == "W65C816S") loadSA1(p);
     if (arch == "GSU") loadSuperFX(p);
+    if (arch == "ARM6") loadARMDSP(p);
 
     if (id == "SDD1") loadSDD1(p);
     if (id == "OBC1") loadOBC1(p);
@@ -122,7 +123,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
   //if(auto node = board["processor(architecture=uPD78214)"]) loadEvent(node);
   //if(auto node = board["processor(architecture=W65C816S)"]) loadSA1(node);
   //if(auto node = board["processor(architecture=GSU)"]) loadSuperFX(node);
-  if(auto node = board["processor(architecture=ARM6)"]) loadARMDSP(node);
+  //if(auto node = board["processor(architecture=ARM6)"]) loadARMDSP(node);
   if(auto node = board["processor(architecture=uPD7725)"]) loaduPD7725(node);
   if(auto node = board["processor(architecture=uPD96050)"]) loaduPD96050(node);
   if(auto node = board["rtc(manufacturer=Epson)"]) loadEpsonRTC(node);
@@ -713,6 +714,61 @@ void Cartridge::loadSuperFX(Markup::Node node) {
 }
 
 //processor(architecture=ARM6)
+void Cartridge::loadARMDSP(std::string node) {
+  has.ARMDSP = true;
+
+  for(auto& word : armdsp.programROM) word = 0x00;
+  for(auto& word : armdsp.dataROM) word = 0x00;
+  for(auto& word : armdsp.programRAM) word = 0x00;
+
+  if(auto oscillator = game.oscillator()) {
+    armdsp.Frequency = oscillator->frequency;
+  } else {
+    armdsp.Frequency = 21'440'000;
+  }
+
+  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  if (!pmap.empty()) loadMap(pmap, {&ArmDSP::read, &armdsp}, {&ArmDSP::write, &armdsp});
+
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    std::string arch = BML::search(m, {"memory", "architecture"});
+
+    if (type == "ROM" && content == "Program" && arch == "ARM6") {
+      if(auto file = game.memory(m)) {
+        std::ifstream firmfile = Emulator::platform->fopen(ID::SuperFamicom, std::string(file->name()));
+        if (firmfile.is_open()) {
+          firmfile.read((char*)armdsp.programROM, (128 * 1024));
+          firmfile.close();
+        }
+      }
+    }
+
+    if (type == "ROM" && content == "Data" && arch == "ARM6") {
+      if(auto file = game.memory(m)) {
+        std::ifstream firmfile = Emulator::platform->fopen(ID::SuperFamicom, std::string(file->name()));
+        if (firmfile.is_open()) {
+          firmfile.read((char*)armdsp.dataROM, (32 * 1024));
+          firmfile.close();
+        }
+      }
+    }
+
+    if (type == "RAM" && content == "Data" && arch == "ARM6") {
+      if(auto file = game.memory(m)) {
+        std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
+        if (sramfile.is_open()) {
+          sramfile.read((char*)armdsp.programRAM, (16 * 1024));
+          sramfile.close();
+        }
+      }
+    }
+
+  }
+}
+
 void Cartridge::loadARMDSP(Markup::Node node) {
   has.ARMDSP = true;
 
