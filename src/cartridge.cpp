@@ -99,6 +99,8 @@ void Cartridge::loadCartridge(Markup::Node node) {
     if (type == "SufamiTurbo" && i == 1) loadSufamiTurboB(slots[i]);
   }
 
+  if (BML::exists(stdboard, {"board", "processor", "dip"})) loadDIP(node);
+
   //if(auto node = board["memory(type=ROM,content=Program)"]) loadROM(node);
   //if(auto node = board["memory(type=ROM,content=Expansion)"]) loadROM(node); //todo: handle this better
   //if(auto node = board["memory(type=RAM,content=Save)"]) loadRAM(node);
@@ -107,7 +109,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
   //if(auto node = board["slot(type=BSMemory)"]) loadBSMemory(node);
   //if(auto node = board["slot(type=SufamiTurbo)[0]"]) loadSufamiTurboA(node);
   //if(auto node = board["slot(type=SufamiTurbo)[1]"]) loadSufamiTurboB(node);
-  if(auto node = board["dip"]) loadDIP(node);
+  //if(auto node = board["dip"]) loadDIP(node);
   if(auto node = board["processor(architecture=uPD78214)"]) loadEvent(node);
   if(auto node = board["processor(architecture=W65C816S)"]) loadSA1(node);
   if(auto node = board["processor(architecture=GSU)"]) loadSuperFX(node);
@@ -495,6 +497,19 @@ void Cartridge::loadSufamiTurboB(Markup::Node node) {
 }
 
 //dip
+void Cartridge::loadDIP(std::string node) {
+  has.DIP = true;
+  // Multi-game carts (Campus Challenge '92, PowerFest '94) were no longer
+  // supported after higan v106, and in bsnes standalone this always returns 0.
+  //dip.value = Emulator::platform->dipSettings(node);
+  dip.value = 0;
+
+  std::vector<std::string> maps = BML::searchList(node, "map");
+  for (auto map : maps) {
+    loadMap(map, {&DIP::read, &dip}, {&DIP::write, &dip});
+  }
+}
+
 void Cartridge::loadDIP(Markup::Node node) {
   has.DIP = true;
   // Multi-game carts (Campus Challenge '92, PowerFest '94) were no longer

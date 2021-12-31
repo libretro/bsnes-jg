@@ -89,6 +89,7 @@ private:
   void loadBSMemory(std::string);
   void loadSufamiTurboA(std::string);
   void loadSufamiTurboB(std::string);
+  void loadDIP(std::string);
 
   void loadROM(Markup::Node);
   void loadRAM(Markup::Node);
