@@ -24,7 +24,7 @@ namespace byuuML {
     */
     typedef unsigned int index;
     static constexpr index SENTINEL_INDEX = ~index(0);
-  //private:
+  private:
     std::string name;
     std::string data;
     unsigned int sibling, child;

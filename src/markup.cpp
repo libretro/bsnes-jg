@@ -69,7 +69,7 @@ void dumpnode(std::ostream& out, const byuuML::document& document, const byuuML:
 
     for (int n = 0; n < indent_level; ++n) out << "  ";
     out << node.get_name();
-    if (!node.data.empty()) out << ":" << node.data;
+    if (!node.get_data().empty()) out << ":" << node.get_data();
     out << "\n";
 
     for (auto&& child : byuuML::node_in_document(node, document)) {
