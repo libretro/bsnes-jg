@@ -26,8 +26,8 @@ void Game::load(std::string text) {
   }
 }
 
-nall::maybe<Game::Memory> Game::memory(std::string node) {
-  if (node.empty()) return nall::nothing;
+std::optional<Game::Memory> Game::memory(std::string node) {
+  if (node.empty()) return std::nullopt;
   for (auto& m : memoryList) {
     auto type = BML::search(node, {"memory", "type"});
     auto strsize = BML::search(node, {"memory", "size"});
@@ -45,7 +45,7 @@ nall::maybe<Game::Memory> Game::memory(std::string node) {
     if(!identifier.empty() && identifier != m.identifier) continue;
     return m;
   }
-  return nall::nothing;
+  return std::nullopt;
 }
 
 nall::maybe<Game::Memory> Game::memory(Markup::Node node) {
