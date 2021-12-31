@@ -92,6 +92,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
 
     if (arch == "GSU") loadSuperFX(p);
 
+    if (id == "SDD1") loadSDD1(p);
     if (id == "OBC1") loadOBC1(p);
   }
 
@@ -123,7 +124,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
   if(auto node = board["rtc(manufacturer=Epson)"]) loadEpsonRTC(node);
   if(auto node = board["rtc(manufacturer=Sharp)"]) loadSharpRTC(node);
   if(auto node = board["processor(identifier=SPC7110)"]) loadSPC7110(node);
-  if(auto node = board["processor(identifier=SDD1)"]) loadSDD1(node);
+  //if(auto node = board["processor(identifier=SDD1)"]) loadSDD1(node);
   //if(auto node = board["processor(identifier=OBC1)"]) loadOBC1(node);
   if(auto node = board["processor(architecture=HG51BS169)"]) {
     loadHitachiDSP(node, game.board.find("2DC") != std::string::npos ? 2 : 1);
@@ -1001,6 +1002,29 @@ void Cartridge::loadSPC7110(Markup::Node node) {
 }
 
 //processor(identifier=SDD1)
+void Cartridge::loadSDD1(std::string node) {
+  has.SDD1 = true;
+
+  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  if (!pmap.empty()) loadMap(pmap, {&SDD1::ioRead, &sdd1}, {&SDD1::ioWrite, &sdd1});
+
+  std::string mcu = BML::searchnode(node, {"processor", "mcu"});
+
+  if (!mcu.empty()) {
+    std::vector<std::string> maps = BML::searchList(mcu, "map");
+    for (auto map : maps) {
+      loadMap(map, {&SDD1::mcuRead, &sdd1}, {&SDD1::mcuWrite, &sdd1});
+    }
+
+    std::vector<std::string> mcumem = BML::searchList(mcu, "memory");
+    for (std::string& m : mcumem) {
+      std::string type = BML::search(m, {"memory", "type"});
+      std::string content = BML::search(m, {"memory", "content"});
+      if (type == "ROM" && content == "Program") loadMemory(sdd1.rom, m);
+    }
+  }
+}
+
 void Cartridge::loadSDD1(Markup::Node node) {
   has.SDD1 = true;
 
