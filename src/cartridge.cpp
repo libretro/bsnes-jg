@@ -112,7 +112,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
   //if(auto node = board["slot(type=SufamiTurbo)[0]"]) loadSufamiTurboA(node);
   //if(auto node = board["slot(type=SufamiTurbo)[1]"]) loadSufamiTurboB(node);
   //if(auto node = board["dip"]) loadDIP(node);
-  if(auto node = board["processor(architecture=uPD78214)"]) loadEvent(node);
+  //if(auto node = board["processor(architecture=uPD78214)"]) loadEvent(node);
   if(auto node = board["processor(architecture=W65C816S)"]) loadSA1(node);
   //if(auto node = board["processor(architecture=GSU)"]) loadSuperFX(node);
   if(auto node = board["processor(architecture=ARM6)"]) loadARMDSP(node);
@@ -525,7 +525,7 @@ void Cartridge::loadDIP(Markup::Node node) {
 }
 
 //processor(architecture=uPD78214)
-void Cartridge::loadEvent(Markup::Node node) {
+/*void Cartridge::loadEvent(Markup::Node node) {
   has.Event = true;
   event.board = Event::Board::Unknown;
   if(node["identifier"].text() == "Campus Challenge '92") event.board = Event::Board::CampusChallenge92;
@@ -552,7 +552,7 @@ void Cartridge::loadEvent(Markup::Node node) {
       loadMemory(event.rom[3], memory);
     }
   }
-}
+}*/
 
 //processor(architecture=W65C816S)
 void Cartridge::loadSA1(Markup::Node node) {

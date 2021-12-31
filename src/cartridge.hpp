@@ -101,7 +101,6 @@ private:
   void loadSufamiTurboA(Markup::Node);
   void loadSufamiTurboB(Markup::Node);
   void loadDIP(Markup::Node);
-  void loadEvent(Markup::Node);
   void loadSA1(Markup::Node);
   void loadSuperFX(Markup::Node);
   void loadARMDSP(Markup::Node);
