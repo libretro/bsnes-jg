@@ -89,7 +89,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
     std::string id = BML::search(p, {"processor", "identifier"});
     if (id == "ICD") loadICD(p);
     if (id == "MCC") loadMCC(p);
-
+    if (arch == "W65C816S") loadSA1(p);
     if (arch == "GSU") loadSuperFX(p);
 
     if (id == "SDD1") loadSDD1(p);
@@ -116,7 +116,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
   //if(auto node = board["slot(type=SufamiTurbo)[1]"]) loadSufamiTurboB(node);
   //if(auto node = board["dip"]) loadDIP(node);
   //if(auto node = board["processor(architecture=uPD78214)"]) loadEvent(node);
-  if(auto node = board["processor(architecture=W65C816S)"]) loadSA1(node);
+  //if(auto node = board["processor(architecture=W65C816S)"]) loadSA1(node);
   //if(auto node = board["processor(architecture=GSU)"]) loadSuperFX(node);
   if(auto node = board["processor(architecture=ARM6)"]) loadARMDSP(node);
   if(auto node = board["processor(architecture=uPD7725)"]) loaduPD7725(node);
@@ -558,6 +558,58 @@ void Cartridge::loadDIP(Markup::Node node) {
 }*/
 
 //processor(architecture=W65C816S)
+void Cartridge::loadSA1(std::string node) {
+  has.SA1 = true;
+
+  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  if (!pmap.empty()) {
+      loadMap(pmap, {&SA1::readIOCPU, &sa1}, {&SA1::writeIOCPU, &sa1});
+  }
+
+  std::string mcu = BML::searchnode(node, {"processor", "mcu"});
+
+  if (!mcu.empty()) {
+    std::vector<std::string> maps = BML::searchList(mcu, "map");
+    for (auto map : maps) {
+      loadMap(map, {&SA1::ROM::readCPU, &sa1.rom}, {&SA1::ROM::writeCPU, &sa1.rom});
+    }
+
+    std::vector<std::string> mcumem = BML::searchList(mcu, "memory");
+    for (std::string& m : mcumem) {
+      std::string type = BML::search(m, {"memory", "type"});
+      std::string content = BML::search(m, {"memory", "content"});
+      if (type == "ROM" && content == "Program") loadMemory(sa1.rom, m);
+    }
+
+    std::string slot = BML::searchnode(mcu, {"slot"});
+    if (!slot.empty()) {
+      if (BML::search(slot, {"type"}) == "BSMemory") loadBSMemory(slot);
+    }
+  }
+
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+
+    if (type == "RAM" && content == "Save") {
+      loadMemory(sa1.bwram, m);
+      std::vector<std::string> maps = BML::searchList(m, "map");
+      for (auto map : maps) {
+        loadMap(map, {&SA1::BWRAM::readCPU, &sa1.bwram}, {&SA1::BWRAM::writeCPU, &sa1.bwram});
+      }
+    }
+
+    if (type == "RAM" && content == "Internal") {
+      loadMemory(sa1.iram, m);
+      std::vector<std::string> maps = BML::searchList(m, "map");
+      for (auto map : maps) {
+        loadMap(map, {&SA1::IRAM::readCPU, &sa1.iram}, {&SA1::IRAM::writeCPU, &sa1.iram});
+      }
+    }
+  }
+}
+
 void Cartridge::loadSA1(Markup::Node node) {
   has.SA1 = true;
 

@@ -90,7 +90,7 @@ private:
   void loadSufamiTurboA(std::string);
   void loadSufamiTurboB(std::string);
   void loadDIP(std::string);
-
+  void loadSA1(std::string);
   void loadSuperFX(std::string);
 
   void loadSDD1(std::string);
