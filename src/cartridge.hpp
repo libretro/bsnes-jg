@@ -91,6 +91,8 @@ private:
   void loadSufamiTurboB(std::string);
   void loadDIP(std::string);
 
+  void loadSuperFX(std::string);
+
   void loadROM(Markup::Node);
   void loadRAM(Markup::Node);
   void loadICD(Markup::Node);

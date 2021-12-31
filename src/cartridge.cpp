@@ -89,6 +89,8 @@ void Cartridge::loadCartridge(Markup::Node node) {
     std::string id = BML::search(p, {"processor", "identifier"});
     if (id == "ICD") loadICD(p);
     if (id == "MCC") loadMCC(p);
+
+    if (arch == "GSU") loadSuperFX(p);
   }
 
   std::vector<std::string> slots = BML::searchList(stdboard, "slot");
@@ -112,7 +114,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
   //if(auto node = board["dip"]) loadDIP(node);
   if(auto node = board["processor(architecture=uPD78214)"]) loadEvent(node);
   if(auto node = board["processor(architecture=W65C816S)"]) loadSA1(node);
-  if(auto node = board["processor(architecture=GSU)"]) loadSuperFX(node);
+  //if(auto node = board["processor(architecture=GSU)"]) loadSuperFX(node);
   if(auto node = board["processor(architecture=ARM6)"]) loadARMDSP(node);
   if(auto node = board["processor(architecture=uPD7725)"]) loaduPD7725(node);
   if(auto node = board["processor(architecture=uPD96050)"]) loaduPD96050(node);
@@ -588,6 +590,41 @@ void Cartridge::loadSA1(Markup::Node node) {
 }
 
 //processor(architecture=GSU)
+void Cartridge::loadSuperFX(std::string node) {
+  has.SuperFX = true;
+
+  if(auto oscillator = game.oscillator()) {
+    superfx.Frequency = oscillator->frequency;  //GSU-1, GSU-2
+  } else {
+    superfx.Frequency = system.cpuFrequency();  //MARIO CHIP 1
+  }
+
+  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  if (!pmap.empty()) {
+      loadMap(pmap, {&SuperFX::readIO, &superfx}, {&SuperFX::writeIO, &superfx});
+  }
+
+  std::vector<std::string> sfxmem = BML::searchList(node, "memory");
+  for (std::string& m : sfxmem) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "ROM" && content == "Program") {
+      loadMemory(superfx.rom, m);
+      std::vector<std::string> cpumaps = BML::searchList(m, "map");
+      for (std::string& c : cpumaps) {
+        loadMap(c, superfx.cpurom);
+      }
+    }
+    if (type == "RAM" && content == "Save") {
+      loadMemory(superfx.ram, m);
+      std::vector<std::string> cpumaps = BML::searchList(m, "map");
+      for (std::string& c : cpumaps) {
+        loadMap(c, superfx.cpuram);
+      }
+    }
+  }
+}
+
 void Cartridge::loadSuperFX(Markup::Node node) {
   has.SuperFX = true;
 
