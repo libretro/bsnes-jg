@@ -899,73 +899,24 @@ void Cartridge::loaduPD7725(Markup::Node node) {
     necdsp.Frequency = 7'600'000;
   }
 
-  bool failed = false;
-
-  if(auto memory = node["memory(type=ROM,content=Program,architecture=uPD7725)"]) {
-    if(auto file = game.memory(memory)) {
-      /*if(auto fp = Emulator::platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
-        for(auto n : nall::range(2048)) necdsp.programROM[n] = fp->readl(3);
-      } else*/ failed = true;
+  auto manifest = BML::serialize(game.document);
+  if(manifest.find("identifier: DSP1")) {  //also matches DSP1B
+    has.DSP1 = true;
+    for(auto map : node.find("map")) {
+      loadMap(map, {&DSP1::read, &dsp1}, {&DSP1::write, &dsp1});
     }
   }
-
-  if(auto memory = node["memory(type=ROM,content=Data,architecture=uPD7725)"]) {
-    if(auto file = game.memory(memory)) {
-      /*if(auto fp = Emulator::platform->open(ID::SuperFamicom, std::string(file->name()), File::Read)) {
-        for(auto n : nall::range(1024)) necdsp.dataROM[n] = fp->readl(2);
-      } else*/ failed = true;
+  if(manifest.find("identifier: DSP2")) {
+    has.DSP2 = true;
+    for(auto map : node.find("map")) {
+      loadMap(map, {&DSP2::read, &dsp2}, {&DSP2::write, &dsp2});
     }
   }
-
-  if(failed || configuration.coprocessor.preferHLE) {
-    auto manifest = BML::serialize(game.document);
-    if(manifest.find("identifier: DSP1")) {  //also matches DSP1B
-      has.DSP1 = true;
-      for(auto map : node.find("map")) {
-        loadMap(map, {&DSP1::read, &dsp1}, {&DSP1::write, &dsp1});
-      }
-      return;
+  if(manifest.find("identifier: DSP4")) {
+    has.DSP4 = true;
+    for(auto map : node.find("map")) {
+      loadMap(map, {&DSP4::read, &dsp4}, {&DSP4::write, &dsp4});
     }
-    if(manifest.find("identifier: DSP2")) {
-      has.DSP2 = true;
-      for(auto map : node.find("map")) {
-        loadMap(map, {&DSP2::read, &dsp2}, {&DSP2::write, &dsp2});
-      }
-      return;
-    }
-    if(manifest.find("identifier: DSP4")) {
-      has.DSP4 = true;
-      for(auto map : node.find("map")) {
-        loadMap(map, {&DSP4::read, &dsp4}, {&DSP4::write, &dsp4});
-      }
-      return;
-    }
-  }
-
-  if(failed) {
-    //throw an error to the user
-    //Emulator::platform->open(ID::SuperFamicom, "DSP3", File::Read, File::Required);
-    return;
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD7725)"]) {
-    if(auto file = game.memory(memory)) {
-      std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
-      if (sramfile.is_open()) {
-        sramfile.read((char*)necdsp.dataRAM, 2 * 256);
-        sramfile.close();
-      }
-    }
-    for(auto map : memory.find("map")) {
-      loadMap(map, {&NECDSP::readRAM, &necdsp}, {&NECDSP::writeRAM, &necdsp});
-    }
-  }
-
-  has.NECDSP = true;
-  necdsp.revision = NECDSP::Revision::uPD7725;
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
   }
 }
 
