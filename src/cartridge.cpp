@@ -89,14 +89,21 @@ void Cartridge::loadCartridge(Markup::Node node) {
     std::string arch = BML::search(p, {"processor", "architecture"});
     std::string id = BML::search(p, {"processor", "identifier"});
     if (id == "ICD") loadICD(p);
+    if (id == "MCC") loadMCC(p);
+  }
+
+  std::vector<std::string> slots = BML::searchList(stdboard, "slot");
+  for (std::string& s : slots) {
+    std::string type = BML::search(s, {"slot", "type"});
+    if (type == "BSMemory") loadBSMemory(s);
   }
 
   //if(auto node = board["memory(type=ROM,content=Program)"]) loadROM(node);
   //if(auto node = board["memory(type=ROM,content=Expansion)"]) loadROM(node); //todo: handle this better
   //if(auto node = board["memory(type=RAM,content=Save)"]) loadRAM(node);
   //if(auto node = board["processor(identifier=ICD)"]) loadICD(node);
-  if(auto node = board["processor(identifier=MCC)"]) loadMCC(node);
-  if(auto node = board["slot(type=BSMemory)"]) loadBSMemory(node);
+  //if(auto node = board["processor(identifier=MCC)"]) loadMCC(node);
+  //if(auto node = board["slot(type=BSMemory)"]) loadBSMemory(node);
   if(auto node = board["slot(type=SufamiTurbo)[0]"]) loadSufamiTurboA(node);
   if(auto node = board["slot(type=SufamiTurbo)[1]"]) loadSufamiTurboB(node);
   if(auto node = board["dip"]) loadDIP(node);
@@ -342,6 +349,35 @@ void Cartridge::loadICD(Markup::Node node) {
 }
 
 //processor(identifier=MCC)
+void Cartridge::loadMCC(std::string node) {
+  has.MCC = true;
+
+  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  if (!pmap.empty()) loadMap(pmap, {&MCC::read, &mcc}, {&MCC::write, &mcc});
+
+  std::string mcu = BML::searchnode(node, {"processor", "mcu"});
+
+  if (!mcu.empty()) {
+    std::vector<std::string> maps = BML::searchList(mcu, "map");
+    for (auto map : maps) {
+      loadMap(map, {&MCC::mcuRead, &mcc}, {&MCC::mcuWrite, &mcc});
+    }
+
+    std::vector<std::string> mcumem = BML::searchList(mcu, "memory");
+    for (std::string& m : mcumem) {
+      std::string type = BML::search(m, {"memory", "type"});
+      std::string content = BML::search(m, {"memory", "content"});
+      if (type == "ROM" && content == "Program") loadMemory(mcc.rom, m);
+      if (type == "RAM" && content == "Download") loadMemory(mcc.psram, m);
+    }
+
+    std::vector<std::string> mcuslot = BML::searchList(mcu, "slot");
+    for (std::string& s : mcuslot) {
+      loadBSMemory(s);
+    }
+  }
+}
+
 void Cartridge::loadMCC(Markup::Node node) {
   has.MCC = true;
 
@@ -366,6 +402,20 @@ void Cartridge::loadMCC(Markup::Node node) {
 }
 
 //slot(type=BSMemory)
+void Cartridge::loadBSMemory(std::string node) {
+  has.BSMemorySlot = true;
+
+  if(auto loaded = Emulator::platform->load(ID::BSMemory, "BS Memory", "bs")) {
+    bsmemory.pathID = loaded.pathID;
+    loadBSMemory();
+
+    std::vector<std::string> maps = BML::searchList(node, "map");
+    for (auto map : maps) {
+      loadMap(map, bsmemory);
+    }
+  }
+}
+
 void Cartridge::loadBSMemory(Markup::Node node) {
   has.BSMemorySlot = true;
 

@@ -416,6 +416,7 @@ nall::string serialize(const Markup::Node& node, nall::string_view spacing = {},
 std::string gendoc(std::string dbpath, std::string parent, std::string child, std::string match);
 std::string boardsearch(std::string text, std::string board);
 std::string search(std::string text, std::vector<std::string> terms);
+std::string searchnode(std::string text, std::vector<std::string> terms);
 std::vector<std::string> searchList(std::string text, std::string term);
 bool exists(std::string text, std::vector<std::string> terms);
 

@@ -85,6 +85,8 @@ private:
   void loadROM(std::string);
   void loadRAM(std::string);
   void loadICD(std::string);
+  void loadMCC(std::string);
+  void loadBSMemory(std::string);
 
   void loadROM(Markup::Node);
   void loadRAM(Markup::Node);

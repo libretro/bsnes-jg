@@ -177,6 +177,31 @@ std::string search(std::string text, std::vector<std::string> terms) {
     return {};
 }
 
+std::string searchnode(std::string text, std::vector<std::string> terms) {
+    std::stringstream ss;
+    ss << text;
+    std::istream& is = ss;
+
+    streamreader bmlreader(is);
+    byuuML::document doc(bmlreader);
+
+    for (auto&& node : doc) {
+        byuuML::cursor c = node.query(doc, terms[0]);
+        if (c) {
+            for (int i = 1; i < terms.size(); ++i) {
+                c = c.query(terms[i]);
+            }
+            if (c) {
+                std::stringstream out;
+                dumpnode(out, doc, c.get_node());
+                return out.str();
+            }
+        }
+    }
+
+    return {};
+}
+
 void traverse(std::vector<std::string>& ret, const byuuML::document& doc, const byuuML::node& node, std::string& term) {
     for (auto&& child : byuuML::node_in_document(node, doc)) {
         if (child.get_name() == term) {
