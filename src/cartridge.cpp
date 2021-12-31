@@ -288,7 +288,7 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
       memfile.seekg(0, memfile.end);
       unsigned fsize = memfile.tellg();
       memfile.seekg(0, memfile.beg);
-      memfile.read((char*)ram.data(), std::min(fsize, ram.size()));
+      memfile.read((char*)mem.data(), std::min(fsize, mem.size()));
       memfile.close();
     }
   }
