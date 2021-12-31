@@ -56,7 +56,6 @@ Markup::Node Cartridge::loadBoard(nall::string board) {
   return {};
 }
 
-
 void Cartridge::loadCartridge(Markup::Node node) {
   board = node["board"];
   if(!board) board = loadBoard(nall::string(game.board.c_str()));
@@ -93,9 +92,11 @@ void Cartridge::loadCartridge(Markup::Node node) {
   }
 
   std::vector<std::string> slots = BML::searchList(stdboard, "slot");
-  for (std::string& s : slots) {
-    std::string type = BML::search(s, {"slot", "type"});
-    if (type == "BSMemory") loadBSMemory(s);
+  for (int i = 0; i < slots.size(); ++i) {
+    std::string type = BML::search(slots[i], {"slot", "type"});
+    if (type == "BSMemory") loadBSMemory(slots[i]);
+    if (type == "SufamiTurbo" && i == 0) loadSufamiTurboA(slots[i]);
+    if (type == "SufamiTurbo" && i == 1) loadSufamiTurboB(slots[i]);
   }
 
   //if(auto node = board["memory(type=ROM,content=Program)"]) loadROM(node);
@@ -104,8 +105,8 @@ void Cartridge::loadCartridge(Markup::Node node) {
   //if(auto node = board["processor(identifier=ICD)"]) loadICD(node);
   //if(auto node = board["processor(identifier=MCC)"]) loadMCC(node);
   //if(auto node = board["slot(type=BSMemory)"]) loadBSMemory(node);
-  if(auto node = board["slot(type=SufamiTurbo)[0]"]) loadSufamiTurboA(node);
-  if(auto node = board["slot(type=SufamiTurbo)[1]"]) loadSufamiTurboB(node);
+  //if(auto node = board["slot(type=SufamiTurbo)[0]"]) loadSufamiTurboA(node);
+  //if(auto node = board["slot(type=SufamiTurbo)[1]"]) loadSufamiTurboB(node);
   if(auto node = board["dip"]) loadDIP(node);
   if(auto node = board["processor(architecture=uPD78214)"]) loadEvent(node);
   if(auto node = board["processor(architecture=W65C816S)"]) loadSA1(node);
@@ -426,6 +427,34 @@ void Cartridge::loadBSMemory(Markup::Node node) {
     for(auto map : node.find("map")) {
       loadMap(map, bsmemory);
     }
+  }
+}
+
+//slot(type=SufamiTurbo)[0]
+void Cartridge::loadSufamiTurboA(std::string node) {
+  has.SufamiTurboSlotA = true;
+
+  if(auto loaded = Emulator::platform->load(ID::SufamiTurboA, "Sufami Turbo", "st")) {
+    sufamiturboA.pathID = loaded.pathID;
+    loadSufamiTurboA();
+    std::string rommap = BML::searchnode(node, {"slot", "rom", "map"});
+    std::string rammap = BML::searchnode(node, {"slot", "ram", "map"});
+    loadMap(rommap, sufamiturboA.rom);
+    loadMap(rammap, sufamiturboA.ram);
+  }
+}
+
+//slot(type=SufamiTurbo)[1]
+void Cartridge::loadSufamiTurboB(std::string node) {
+  has.SufamiTurboSlotB = true;
+
+  if(auto loaded = Emulator::platform->load(ID::SufamiTurboB, "Sufami Turbo", "st")) {
+    sufamiturboB.pathID = loaded.pathID;
+    loadSufamiTurboB();
+    std::string rommap = BML::searchnode(node, {"slot", "rom", "map"});
+    std::string rammap = BML::searchnode(node, {"slot", "ram", "map"});
+    loadMap(rommap, sufamiturboB.rom);
+    loadMap(rammap, sufamiturboB.ram);
   }
 }
 

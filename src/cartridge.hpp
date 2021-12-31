@@ -87,6 +87,8 @@ private:
   void loadICD(std::string);
   void loadMCC(std::string);
   void loadBSMemory(std::string);
+  void loadSufamiTurboA(std::string);
+  void loadSufamiTurboB(std::string);
 
   void loadROM(Markup::Node);
   void loadRAM(Markup::Node);
