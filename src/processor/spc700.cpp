@@ -23,27 +23,27 @@ namespace Processor {
 
 #define alu (this->*op)
 
-auto SPC700::fetch() -> uint8_t {
+uint8_t SPC700::fetch() {
   return read(PC++);
 }
 
-auto SPC700::load(uint8_t address) -> uint8_t {
+uint8_t SPC700::load(uint8_t address) {
   return read(PF << 8 | address);
 }
 
-auto SPC700::store(uint8_t address, uint8_t data) -> void {
+void SPC700::store(uint8_t address, uint8_t data) {
   return write(PF << 8 | address, data);
 }
 
-auto SPC700::pull() -> uint8_t {
+uint8_t SPC700::pull() {
   return read(1 << 8 | ++S);
 }
 
-auto SPC700::push(uint8_t data) -> void {
+void SPC700::push(uint8_t data) {
   return write(1 << 8 | S--, data);
 }
 
-auto SPC700::algorithmADC(uint8_t x, uint8_t y) -> uint8_t {
+uint8_t SPC700::algorithmADC(uint8_t x, uint8_t y) {
   int z = x + y + CF;
   CF = z > 0xff;
   ZF = (uint8_t)z == 0;
@@ -53,14 +53,14 @@ auto SPC700::algorithmADC(uint8_t x, uint8_t y) -> uint8_t {
   return z;
 }
 
-auto SPC700::algorithmAND(uint8_t x, uint8_t y) -> uint8_t {
+uint8_t SPC700::algorithmAND(uint8_t x, uint8_t y) {
   x &= y;
   ZF = x == 0;
   NF = x & 0x80;
   return x;
 }
 
-auto SPC700::algorithmASL(uint8_t x) -> uint8_t {
+uint8_t SPC700::algorithmASL(uint8_t x) {
   CF = x & 0x80;
   x <<= 1;
   ZF = x == 0;
@@ -68,7 +68,7 @@ auto SPC700::algorithmASL(uint8_t x) -> uint8_t {
   return x;
 }
 
-auto SPC700::algorithmCMP(uint8_t x, uint8_t y) -> uint8_t {
+uint8_t SPC700::algorithmCMP(uint8_t x, uint8_t y) {
   int z = x - y;
   CF = z >= 0;
   ZF = (uint8_t)z == 0;
@@ -76,34 +76,34 @@ auto SPC700::algorithmCMP(uint8_t x, uint8_t y) -> uint8_t {
   return x;
 }
 
-auto SPC700::algorithmDEC(uint8_t x) -> uint8_t {
+uint8_t SPC700::algorithmDEC(uint8_t x) {
   x--;
   ZF = x == 0;
   NF = x & 0x80;
   return x;
 }
 
-auto SPC700::algorithmEOR(uint8_t x, uint8_t y) -> uint8_t {
+uint8_t SPC700::algorithmEOR(uint8_t x, uint8_t y) {
   x ^= y;
   ZF = x == 0;
   NF = x & 0x80;
   return x;
 }
 
-auto SPC700::algorithmINC(uint8_t x) -> uint8_t {
+uint8_t SPC700::algorithmINC(uint8_t x) {
   x++;
   ZF = x == 0;
   NF = x & 0x80;
   return x;
 }
 
-auto SPC700::algorithmLD(uint8_t x, uint8_t y) -> uint8_t {
+uint8_t SPC700::algorithmLD(uint8_t x, uint8_t y) {
   ZF = y == 0;
   NF = y & 0x80;
   return y;
 }
 
-auto SPC700::algorithmLSR(uint8_t x) -> uint8_t {
+uint8_t SPC700::algorithmLSR(uint8_t x) {
   CF = x & 0x01;
   x >>= 1;
   ZF = x == 0;
@@ -111,14 +111,14 @@ auto SPC700::algorithmLSR(uint8_t x) -> uint8_t {
   return x;
 }
 
-auto SPC700::algorithmOR(uint8_t x, uint8_t y) -> uint8_t {
+uint8_t SPC700::algorithmOR(uint8_t x, uint8_t y) {
   x |= y;
   ZF = x == 0;
   NF = x & 0x80;
   return x;
 }
 
-auto SPC700::algorithmROL(uint8_t x) -> uint8_t {
+uint8_t SPC700::algorithmROL(uint8_t x) {
   bool carry = CF;
   CF = x & 0x80;
   x = x << 1 | carry;
@@ -127,7 +127,7 @@ auto SPC700::algorithmROL(uint8_t x) -> uint8_t {
   return x;
 }
 
-auto SPC700::algorithmROR(uint8_t x) -> uint8_t {
+uint8_t SPC700::algorithmROR(uint8_t x) {
   bool carry = CF;
   CF = x & 0x01;
   x = carry << 7 | x >> 1;
@@ -136,11 +136,11 @@ auto SPC700::algorithmROR(uint8_t x) -> uint8_t {
   return x;
 }
 
-auto SPC700::algorithmSBC(uint8_t x, uint8_t y) -> uint8_t {
+uint8_t SPC700::algorithmSBC(uint8_t x, uint8_t y) {
   return algorithmADC(x, ~y);
 }
 
-auto SPC700::algorithmADW(uint16_t x, uint16_t y) -> uint16_t {
+uint16_t SPC700::algorithmADW(uint16_t x, uint16_t y) {
   uint16_t z;
   CF = 0;
   z  = algorithmADC(x, y);
@@ -149,7 +149,7 @@ auto SPC700::algorithmADW(uint16_t x, uint16_t y) -> uint16_t {
   return z;
 }
 
-auto SPC700::algorithmCPW(uint16_t x, uint16_t y) -> uint16_t {
+uint16_t SPC700::algorithmCPW(uint16_t x, uint16_t y) {
   int z = x - y;
   CF = z >= 0;
   ZF = (uint16_t)z == 0;
@@ -157,13 +157,13 @@ auto SPC700::algorithmCPW(uint16_t x, uint16_t y) -> uint16_t {
   return x;
 }
 
-auto SPC700::algorithmLDW(uint16_t x, uint16_t y) -> uint16_t {
+uint16_t SPC700::algorithmLDW(uint16_t x, uint16_t y) {
   ZF = y == 0;
   NF = y & 0x8000;
   return y;
 }
 
-auto SPC700::algorithmSBW(uint16_t x, uint16_t y) -> uint16_t {
+uint16_t SPC700::algorithmSBW(uint16_t x, uint16_t y) {
   uint16_t z;
   CF = 1;
   z  = algorithmSBC(x, y);
@@ -172,7 +172,7 @@ auto SPC700::algorithmSBW(uint16_t x, uint16_t y) -> uint16_t {
   return z;
 }
 
-auto SPC700::instructionAbsoluteBitModify(nall::Natural< 3> mode) -> void {
+void SPC700::instructionAbsoluteBitModify(nall::Natural< 3> mode) {
   uint16_t address = fetch();
   address |= fetch() << 8;
   nall::Natural< 3> bit = address >> 13;
@@ -213,7 +213,7 @@ auto SPC700::instructionAbsoluteBitModify(nall::Natural< 3> mode) -> void {
   }
 }
 
-auto SPC700::instructionAbsoluteBitSet(nall::Natural< 3> bit, bool value) -> void {
+void SPC700::instructionAbsoluteBitSet(nall::Natural< 3> bit, bool value) {
   uint8_t address = fetch();
   uint8_t data = load(address);
   data &= ~(1 << bit);
@@ -221,28 +221,28 @@ auto SPC700::instructionAbsoluteBitSet(nall::Natural< 3> bit, bool value) -> voi
   store(address, data);
 }
 
-auto SPC700::instructionAbsoluteRead(fpb op, uint8_t &target) -> void {
+void SPC700::instructionAbsoluteRead(fpb op, uint8_t &target) {
   uint16_t address = fetch();
   address |= fetch() << 8;
   uint8_t data = read(address);
   target = alu(target, data);
 }
 
-auto SPC700::instructionAbsoluteModify(fps op) -> void {
+void SPC700::instructionAbsoluteModify(fps op) {
   uint16_t address = fetch();
   address |= fetch() << 8;
   uint8_t data = read(address);
   write(address, alu(data));
 }
 
-auto SPC700::instructionAbsoluteWrite(uint8_t &data) -> void {
+void SPC700::instructionAbsoluteWrite(uint8_t &data) {
   uint16_t address = fetch();
   address |= fetch() << 8;
   read(address);
   write(address, data);
 }
 
-auto SPC700::instructionAbsoluteIndexedRead(fpb op, uint8_t &index) -> void {
+void SPC700::instructionAbsoluteIndexedRead(fpb op, uint8_t &index) {
   uint16_t address = fetch();
   address |= fetch() << 8;
   idle();
@@ -250,7 +250,7 @@ auto SPC700::instructionAbsoluteIndexedRead(fpb op, uint8_t &index) -> void {
   A = alu(A, data);
 }
 
-auto SPC700::instructionAbsoluteIndexedWrite(uint8_t &index) -> void {
+void SPC700::instructionAbsoluteIndexedWrite(uint8_t &index) {
   uint16_t address = fetch();
   address |= fetch() << 8;
   idle();
@@ -258,7 +258,7 @@ auto SPC700::instructionAbsoluteIndexedWrite(uint8_t &index) -> void {
   write(address + index, A);
 }
 
-auto SPC700::instructionBranch(bool take) -> void {
+void SPC700::instructionBranch(bool take) {
   uint8_t data = fetch();
   if(!take) return;
   idle();
@@ -266,7 +266,7 @@ auto SPC700::instructionBranch(bool take) -> void {
   PC += (int8_t)data;
 }
 
-auto SPC700::instructionBranchBit(nall::Natural< 3> bit, bool match) -> void {
+void SPC700::instructionBranchBit(nall::Natural< 3> bit, bool match) {
   uint8_t address = fetch();
   uint8_t data = load(address);
   idle();
@@ -277,7 +277,7 @@ auto SPC700::instructionBranchBit(nall::Natural< 3> bit, bool match) -> void {
   PC += (int8_t)displacement;
 }
 
-auto SPC700::instructionBranchNotDirect() -> void {
+void SPC700::instructionBranchNotDirect() {
   uint8_t address = fetch();
   uint8_t data = load(address);
   idle();
@@ -288,7 +288,7 @@ auto SPC700::instructionBranchNotDirect() -> void {
   PC += (int8_t)displacement;
 }
 
-auto SPC700::instructionBranchNotDirectDecrement() -> void {
+void SPC700::instructionBranchNotDirectDecrement() {
   uint8_t address = fetch();
   uint8_t data = load(address);
   store(address, --data);
@@ -299,7 +299,7 @@ auto SPC700::instructionBranchNotDirectDecrement() -> void {
   PC += (int8_t)displacement;
 }
 
-auto SPC700::instructionBranchNotDirectIndexed(uint8_t &index) -> void {
+void SPC700::instructionBranchNotDirectIndexed(uint8_t &index) {
   uint8_t address = fetch();
   idle();
   uint8_t data = load(address + index);
@@ -311,7 +311,7 @@ auto SPC700::instructionBranchNotDirectIndexed(uint8_t &index) -> void {
   PC += (int8_t)displacement;
 }
 
-auto SPC700::instructionBranchNotYDecrement() -> void {
+void SPC700::instructionBranchNotYDecrement() {
   read(PC);
   idle();
   uint8_t displacement = fetch();
@@ -321,7 +321,7 @@ auto SPC700::instructionBranchNotYDecrement() -> void {
   PC += (int8_t)displacement;
 }
 
-auto SPC700::instructionBreak() -> void {
+void SPC700::instructionBreak() {
   read(PC);
   push(PC >> 8);
   push(PC >> 0);
@@ -334,7 +334,7 @@ auto SPC700::instructionBreak() -> void {
   BF = 1;
 }
 
-auto SPC700::instructionCallAbsolute() -> void {
+void SPC700::instructionCallAbsolute() {
   uint16_t address = fetch();
   address |= fetch() << 8;
   idle();
@@ -345,7 +345,7 @@ auto SPC700::instructionCallAbsolute() -> void {
   PC = address;
 }
 
-auto SPC700::instructionCallPage() -> void {
+void SPC700::instructionCallPage() {
   uint8_t address = fetch();
   idle();
   push(PC >> 8);
@@ -354,7 +354,7 @@ auto SPC700::instructionCallPage() -> void {
   PC = 0xff00 | address;
 }
 
-auto SPC700::instructionCallTable(nall::Natural< 4> vector) -> void {
+void SPC700::instructionCallTable(nall::Natural< 4> vector) {
   read(PC);
   idle();
   push(PC >> 8);
@@ -366,13 +366,13 @@ auto SPC700::instructionCallTable(nall::Natural< 4> vector) -> void {
   PC = pc;
 }
 
-auto SPC700::instructionComplementCarry() -> void {
+void SPC700::instructionComplementCarry() {
   read(PC);
   idle();
   CF = !CF;
 }
 
-auto SPC700::instructionDecimalAdjustAdd() -> void {
+void SPC700::instructionDecimalAdjustAdd() {
   read(PC);
   idle();
   if(CF || A > 0x99) {
@@ -386,7 +386,7 @@ auto SPC700::instructionDecimalAdjustAdd() -> void {
   NF = A & 0x80;
 }
 
-auto SPC700::instructionDecimalAdjustSub() -> void {
+void SPC700::instructionDecimalAdjustSub() {
   read(PC);
   idle();
   if(!CF || A > 0x99) {
@@ -400,25 +400,25 @@ auto SPC700::instructionDecimalAdjustSub() -> void {
   NF = A & 0x80;
 }
 
-auto SPC700::instructionDirectRead(fpb op, uint8_t &target) -> void {
+void SPC700::instructionDirectRead(fpb op, uint8_t &target) {
   uint8_t address = fetch();
   uint8_t data = load(address);
   target = alu(target, data);
 }
 
-auto SPC700::instructionDirectModify(fps op) -> void {
+void SPC700::instructionDirectModify(fps op) {
   uint8_t address = fetch();
   uint8_t data = load(address);
   store(address, alu(data));
 }
 
-auto SPC700::instructionDirectWrite(uint8_t &data) -> void {
+void SPC700::instructionDirectWrite(uint8_t &data) {
   uint8_t address = fetch();
   load(address);
   store(address, data);
 }
 
-auto SPC700::instructionDirectDirectCompare(fpb op) -> void {
+void SPC700::instructionDirectDirectCompare(fpb op) {
   uint8_t source = fetch();
   uint8_t rhs = load(source);
   uint8_t target = fetch();
@@ -427,7 +427,7 @@ auto SPC700::instructionDirectDirectCompare(fpb op) -> void {
   idle();
 }
 
-auto SPC700::instructionDirectDirectModify(fpb op) -> void {
+void SPC700::instructionDirectDirectModify(fpb op) {
   uint8_t source = fetch();
   uint8_t rhs = load(source);
   uint8_t target = fetch();
@@ -436,14 +436,14 @@ auto SPC700::instructionDirectDirectModify(fpb op) -> void {
   store(target, lhs);
 }
 
-auto SPC700::instructionDirectDirectWrite() -> void {
+void SPC700::instructionDirectDirectWrite() {
   uint8_t source = fetch();
   uint8_t data = load(source);
   uint8_t target = fetch();
   store(target, data);
 }
 
-auto SPC700::instructionDirectImmediateCompare(fpb op) -> void {
+void SPC700::instructionDirectImmediateCompare(fpb op) {
   uint8_t immediate = fetch();
   uint8_t address = fetch();
   uint8_t data = load(address);
@@ -451,7 +451,7 @@ auto SPC700::instructionDirectImmediateCompare(fpb op) -> void {
   idle();
 }
 
-auto SPC700::instructionDirectImmediateModify(fpb op) -> void {
+void SPC700::instructionDirectImmediateModify(fpb op) {
   uint8_t immediate = fetch();
   uint8_t address = fetch();
   uint8_t data = load(address);
@@ -459,21 +459,21 @@ auto SPC700::instructionDirectImmediateModify(fpb op) -> void {
   store(address, data);
 }
 
-auto SPC700::instructionDirectImmediateWrite() -> void {
+void SPC700::instructionDirectImmediateWrite() {
   uint8_t immediate = fetch();
   uint8_t address = fetch();
   load(address);
   store(address, immediate);
 }
 
-auto SPC700::instructionDirectCompareWord(fpw op) -> void {
+void SPC700::instructionDirectCompareWord(fpw op) {
   uint8_t address = fetch();
   uint16_t data = load(address + 0);
   data |= load(address + 1) << 8;
   YA = alu(YA, data);
 }
 
-auto SPC700::instructionDirectReadWord(fpw op) -> void {
+void SPC700::instructionDirectReadWord(fpw op) {
   uint8_t address = fetch();
   uint16_t data = load(address + 0);
   idle();
@@ -481,7 +481,7 @@ auto SPC700::instructionDirectReadWord(fpw op) -> void {
   YA = alu(YA, data);
 }
 
-auto SPC700::instructionDirectModifyWord(int adjust) -> void {
+void SPC700::instructionDirectModifyWord(int adjust) {
   uint8_t address = fetch();
   uint16_t data = load(address + 0) + adjust;
   store(address + 0, data >> 0);
@@ -491,35 +491,35 @@ auto SPC700::instructionDirectModifyWord(int adjust) -> void {
   NF = data & 0x8000;
 }
 
-auto SPC700::instructionDirectWriteWord() -> void {
+void SPC700::instructionDirectWriteWord() {
   uint8_t address = fetch();
   load(address + 0);
   store(address + 0, A);
   store(address + 1, Y);
 }
 
-auto SPC700::instructionDirectIndexedRead(fpb op, uint8_t &target, uint8_t &index) -> void {
+void SPC700::instructionDirectIndexedRead(fpb op, uint8_t &target, uint8_t &index) {
   uint8_t address = fetch();
   idle();
   uint8_t data = load(address + index);
   target = alu(target, data);
 }
 
-auto SPC700::instructionDirectIndexedModify(fps op, uint8_t &index) -> void {
+void SPC700::instructionDirectIndexedModify(fps op, uint8_t &index) {
   uint8_t address = fetch();
   idle();
   uint8_t data = load(address + index);
   store(address + index, alu(data));
 }
 
-auto SPC700::instructionDirectIndexedWrite(uint8_t &data, uint8_t &index) -> void {
+void SPC700::instructionDirectIndexedWrite(uint8_t &data, uint8_t &index) {
   uint8_t address = fetch();
   idle();
   load(address + index);
   store(address + index, data);
 }
 
-auto SPC700::instructionDivide() -> void {
+void SPC700::instructionDivide() {
   read(PC);
   idle();
   idle();
@@ -550,7 +550,7 @@ auto SPC700::instructionDivide() -> void {
   NF = A & 0x80;
 }
 
-auto SPC700::instructionExchangeNibble() -> void {
+void SPC700::instructionExchangeNibble() {
   read(PC);
   idle();
   idle();
@@ -560,23 +560,23 @@ auto SPC700::instructionExchangeNibble() -> void {
   NF = A & 0x80;
 }
 
-auto SPC700::instructionFlagSet(bool& flag, bool value) -> void {
+void SPC700::instructionFlagSet(bool& flag, bool value) {
   read(PC);
   if(&flag == &IF) idle();
   flag = value;
 }
 
-auto SPC700::instructionImmediateRead(fpb op, uint8_t &target) -> void {
+void SPC700::instructionImmediateRead(fpb op, uint8_t &target) {
   uint8_t data = fetch();
   target = alu(target, data);
 }
 
-auto SPC700::instructionImpliedModify(fps op, uint8_t &target) -> void {
+void SPC700::instructionImpliedModify(fps op, uint8_t &target) {
   read(PC);
   target = alu(target);
 }
 
-auto SPC700::instructionIndexedIndirectRead(fpb op, uint8_t &index) -> void {
+void SPC700::instructionIndexedIndirectRead(fpb op, uint8_t &index) {
   uint8_t indirect = fetch();
   idle();
   uint16_t address = load(indirect + index + 0);
@@ -585,7 +585,7 @@ auto SPC700::instructionIndexedIndirectRead(fpb op, uint8_t &index) -> void {
   A = alu(A, data);
 }
 
-auto SPC700::instructionIndexedIndirectWrite(uint8_t &data, uint8_t &index) -> void {
+void SPC700::instructionIndexedIndirectWrite(uint8_t &data, uint8_t &index) {
   uint8_t indirect = fetch();
   idle();
   uint16_t address = load(indirect + index + 0);
@@ -594,7 +594,7 @@ auto SPC700::instructionIndexedIndirectWrite(uint8_t &data, uint8_t &index) -> v
   write(address, data);
 }
 
-auto SPC700::instructionIndirectIndexedRead(fpb op, uint8_t &index) -> void {
+void SPC700::instructionIndirectIndexedRead(fpb op, uint8_t &index) {
   uint8_t indirect = fetch();
   uint16_t address = load(indirect + 0);
   address |= load(indirect + 1) << 8;
@@ -603,7 +603,7 @@ auto SPC700::instructionIndirectIndexedRead(fpb op, uint8_t &index) -> void {
   A = alu(A, data);
 }
 
-auto SPC700::instructionIndirectIndexedWrite(uint8_t &data, uint8_t &index) -> void {
+void SPC700::instructionIndirectIndexedWrite(uint8_t &data, uint8_t &index) {
   uint8_t indirect = fetch();
   uint16_t address = load(indirect + 0);
   address |= load(indirect + 1) << 8;
@@ -612,19 +612,19 @@ auto SPC700::instructionIndirectIndexedWrite(uint8_t &data, uint8_t &index) -> v
   write(address + index, data);
 }
 
-auto SPC700::instructionIndirectXRead(fpb op) -> void {
+void SPC700::instructionIndirectXRead(fpb op) {
   read(PC);
   uint8_t data = load(X);
   A = alu(A, data);
 }
 
-auto SPC700::instructionIndirectXWrite(uint8_t &data) -> void {
+void SPC700::instructionIndirectXWrite(uint8_t &data) {
   read(PC);
   load(X);
   store(X, data);
 }
 
-auto SPC700::instructionIndirectXIncrementRead(uint8_t &data) -> void {
+void SPC700::instructionIndirectXIncrementRead(uint8_t &data) {
   read(PC);
   data = load(X++);
   idle();  //quirk: consumes extra idle cycle compared to most read instructions
@@ -632,13 +632,13 @@ auto SPC700::instructionIndirectXIncrementRead(uint8_t &data) -> void {
   NF = data & 0x80;
 }
 
-auto SPC700::instructionIndirectXIncrementWrite(uint8_t &data) -> void {
+void SPC700::instructionIndirectXIncrementWrite(uint8_t &data) {
   read(PC);
   idle();  //quirk: not a read cycle as with most write instructions
   store(X++, data);
 }
 
-auto SPC700::instructionIndirectXCompareIndirectY(fpb op) -> void {
+void SPC700::instructionIndirectXCompareIndirectY(fpb op) {
   read(PC);
   uint8_t rhs = load(Y);
   uint8_t lhs = load(X);
@@ -646,7 +646,7 @@ auto SPC700::instructionIndirectXCompareIndirectY(fpb op) -> void {
   idle();
 }
 
-auto SPC700::instructionIndirectXWriteIndirectY(fpb op) -> void {
+void SPC700::instructionIndirectXWriteIndirectY(fpb op) {
   read(PC);
   uint8_t rhs = load(Y);
   uint8_t lhs = load(X);
@@ -654,13 +654,13 @@ auto SPC700::instructionIndirectXWriteIndirectY(fpb op) -> void {
   store(X, lhs);
 }
 
-auto SPC700::instructionJumpAbsolute() -> void {
+void SPC700::instructionJumpAbsolute() {
   uint16_t address = fetch();
   address |= fetch() << 8;
   PC = address;
 }
 
-auto SPC700::instructionJumpIndirectX() -> void {
+void SPC700::instructionJumpIndirectX() {
   uint16_t address = fetch();
   address |= fetch() << 8;
   idle();
@@ -669,7 +669,7 @@ auto SPC700::instructionJumpIndirectX() -> void {
   PC = pc;
 }
 
-auto SPC700::instructionMultiply() -> void {
+void SPC700::instructionMultiply() {
   read(PC);
   idle();
   idle();
@@ -686,35 +686,35 @@ auto SPC700::instructionMultiply() -> void {
   NF = Y & 0x80;
 }
 
-auto SPC700::instructionNoOperation() -> void {
+void SPC700::instructionNoOperation() {
   read(PC);
 }
 
-auto SPC700::instructionOverflowClear() -> void {
+void SPC700::instructionOverflowClear() {
   read(PC);
   HF = 0;
   VF = 0;
 }
 
-auto SPC700::instructionPull(uint8_t &data) -> void {
+void SPC700::instructionPull(uint8_t &data) {
   read(PC);
   idle();
   data = pull();
 }
 
-auto SPC700::instructionPullP() -> void {
+void SPC700::instructionPullP() {
   read(PC);
   idle();
   P = pull();
 }
 
-auto SPC700::instructionPush(uint8_t data) -> void {
+void SPC700::instructionPush(uint8_t data) {
   read(PC);
   push(data);
   idle();
 }
 
-auto SPC700::instructionReturnInterrupt() -> void {
+void SPC700::instructionReturnInterrupt() {
   read(PC);
   idle();
   P = pull();
@@ -723,7 +723,7 @@ auto SPC700::instructionReturnInterrupt() -> void {
   PC = address;
 }
 
-auto SPC700::instructionReturnSubroutine() -> void {
+void SPC700::instructionReturnSubroutine() {
   read(PC);
   idle();
   uint16_t address = pull();
@@ -731,7 +731,7 @@ auto SPC700::instructionReturnSubroutine() -> void {
   PC = address;
 }
 
-auto SPC700::instructionStop() -> void {
+void SPC700::instructionStop() {
   r.stop = true;
   while(r.stop && !synchronizing()) {
     read(PC);
@@ -739,7 +739,7 @@ auto SPC700::instructionStop() -> void {
   }
 }
 
-auto SPC700::instructionTestSetBitsAbsolute(bool set) -> void {
+void SPC700::instructionTestSetBitsAbsolute(bool set) {
   uint16_t address = fetch();
   address |= fetch() << 8;
   uint8_t data = read(address);
@@ -749,7 +749,7 @@ auto SPC700::instructionTestSetBitsAbsolute(bool set) -> void {
   write(address, set ? data | A : data & ~A);
 }
 
-auto SPC700::instructionTransfer(uint8_t &from, uint8_t &to) -> void {
+void SPC700::instructionTransfer(uint8_t &from, uint8_t &to) {
   read(PC);
   to = from;
   if(&to == &S) return;
@@ -757,7 +757,7 @@ auto SPC700::instructionTransfer(uint8_t &from, uint8_t &to) -> void {
   NF = to & 0x80;
 }
 
-auto SPC700::instructionWait() -> void {
+void SPC700::instructionWait() {
   r.wait = true;
   while(r.wait && !synchronizing()) {
     read(PC);
@@ -768,7 +768,7 @@ auto SPC700::instructionWait() -> void {
 #define op(id, name, ...) case id: return instruction##name(__VA_ARGS__);
 #define fp(name) &SPC700::algorithm##name
 
-auto SPC700::instruction() -> void {
+void SPC700::instruction() {
   switch(fetch()) {
   op(0x00, NoOperation)
   op(0x01, CallTable, 0)
@@ -1032,7 +1032,7 @@ auto SPC700::instruction() -> void {
 #undef op
 #undef fp
 
-auto SPC700::serialize(serializer& s) -> void {
+void SPC700::serialize(serializer& s) {
   s.integer(r.pc.w);
   s.integer(r.ya.w);
   s.integer(r.x);
@@ -1050,12 +1050,12 @@ auto SPC700::serialize(serializer& s) -> void {
   s.integer(r.stop);
 }
 
-/*auto SPC700::disassemble(uint16_t addr, bool p) -> nall::string {
-  auto read = [&](uint16_t addr) -> uint8_t {
+/*nall::string SPC700::disassemble(uint16_t addr, bool p) {
+  uint8_t read = [&](uint16_t addr) {
     return readDisassembler(addr);
   };
 
-  auto relative = [&](unsigned length, int8_t offset) -> uint16_t {
+  uint16_t relative = [&](unsigned length, int8_t offset) {
     uint16_t pc = addr + length;
     return pc + offset;
   };
@@ -1069,7 +1069,7 @@ auto SPC700::serialize(serializer& s) -> void {
     return nall::string{nall::hex(n & 0x1fff, 4L), ":", nall::hex(n >> 13, 1L)};
   };
 
-  auto mnemonic = [&]() -> nall::string {
+  nall::string mnemonic = [&]() {
     switch(read(addr)) {
     case 0x00: return { "nop" };
     case 0x01: return { "jst $ffde" };
@@ -1356,7 +1356,7 @@ auto SPC700::serialize(serializer& s) -> void {
   return output;
 }*/
 
-auto SPC700::power() -> void {
+void SPC700::power() {
   PC = 0x0000;
   YA = 0x0000;
   X = 0x00;
