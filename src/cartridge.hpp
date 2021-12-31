@@ -92,6 +92,7 @@ private:
   void loadDIP(std::string);
 
   void loadSuperFX(std::string);
+  void loadOBC1(std::string);
 
   void loadROM(Markup::Node);
   void loadRAM(Markup::Node);

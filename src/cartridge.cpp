@@ -91,6 +91,8 @@ void Cartridge::loadCartridge(Markup::Node node) {
     if (id == "MCC") loadMCC(p);
 
     if (arch == "GSU") loadSuperFX(p);
+
+    if (id == "OBC1") loadOBC1(p);
   }
 
   std::vector<std::string> slots = BML::searchList(stdboard, "slot");
@@ -122,7 +124,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
   if(auto node = board["rtc(manufacturer=Sharp)"]) loadSharpRTC(node);
   if(auto node = board["processor(identifier=SPC7110)"]) loadSPC7110(node);
   if(auto node = board["processor(identifier=SDD1)"]) loadSDD1(node);
-  if(auto node = board["processor(identifier=OBC1)"]) loadOBC1(node);
+  //if(auto node = board["processor(identifier=OBC1)"]) loadOBC1(node);
   if(auto node = board["processor(architecture=HG51BS169)"]) {
     loadHitachiDSP(node, game.board.find("2DC") != std::string::npos ? 2 : 1);
   }
@@ -1017,6 +1019,23 @@ void Cartridge::loadSDD1(Markup::Node node) {
 }
 
 //processor(identifier=OBC1)
+void Cartridge::loadOBC1(std::string node) {
+  has.OBC1 = true;
+
+  std::vector<std::string> maps = BML::searchList(node, "map");
+  for (auto map : maps) {
+    loadMap(map, {&OBC1::read, &obc1}, {&OBC1::write, &obc1});
+  }
+
+  std::vector<std::string> memory = BML::searchList(node, "memory");
+  for (auto m : memory) {
+    if (BML::search(m, {"memory", "type"}) == "RAM" &&
+        BML::search(m, {"memory", "content"}) == "Save") {
+      loadMemory(obc1.ram, m);
+    }
+  }
+}
+
 void Cartridge::loadOBC1(Markup::Node node) {
   has.OBC1 = true;
 
