@@ -93,6 +93,7 @@ private:
   void loadSA1(std::string);
   void loadSuperFX(std::string);
   void loadARMDSP(std::string);
+  void loaduPD7725(std::string);
 
   void loadSDD1(std::string);
   void loadOBC1(std::string);

@@ -96,6 +96,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
     if (arch == "W65C816S") loadSA1(p);
     if (arch == "GSU") loadSuperFX(p);
     if (arch == "ARM6") loadARMDSP(p);
+    if (arch == "uPD7725") loaduPD7725(p);
 
     if (id == "SDD1") loadSDD1(p);
     if (id == "OBC1") loadOBC1(p);
@@ -124,7 +125,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
   //if(auto node = board["processor(architecture=W65C816S)"]) loadSA1(node);
   //if(auto node = board["processor(architecture=GSU)"]) loadSuperFX(node);
   //if(auto node = board["processor(architecture=ARM6)"]) loadARMDSP(node);
-  if(auto node = board["processor(architecture=uPD7725)"]) loaduPD7725(node);
+  //if(auto node = board["processor(architecture=uPD7725)"]) loaduPD7725(node);
   if(auto node = board["processor(architecture=uPD96050)"]) loaduPD96050(node);
   if(auto node = board["rtc(manufacturer=Epson)"]) loadEpsonRTC(node);
   if(auto node = board["rtc(manufacturer=Sharp)"]) loadSharpRTC(node);
@@ -888,6 +889,43 @@ void Cartridge::loadHitachiDSP(Markup::Node node, unsigned roms) {
 }
 
 //processor(architecture=uPD7725)
+void Cartridge::loaduPD7725(std::string node) {
+  for(auto& word : necdsp.programROM) word = 0x000000;
+  for(auto& word : necdsp.dataROM) word = 0x0000;
+  for(auto& word : necdsp.dataRAM) word = 0x0000;
+
+  if(auto oscillator = game.oscillator()) {
+    necdsp.Frequency = oscillator->frequency;
+  } else {
+    necdsp.Frequency = 7'600'000;
+  }
+
+  std::vector<std::string> identifiers = BML::searchList(game.stddocument, "identifier");
+  std::string ident = identifiers[0].erase(0, identifiers[0].find_first_of(' ') + 1);
+  ident.pop_back();
+
+  std::string pmap = BML::searchnode(node, {"processor", "map"});
+
+  if (ident == "DSP1" || ident == "DSP1B") {
+    has.DSP1 = true;
+    if (!pmap.empty()) {
+      loadMap(pmap, {&DSP1::read, &dsp1}, {&DSP1::write, &dsp1});
+    }
+  }
+  else if (ident == "DSP2") {
+    has.DSP2 = true;
+    if (!pmap.empty()) {
+      loadMap(pmap, {&DSP2::read, &dsp2}, {&DSP2::write, &dsp2});
+    }
+  }
+  else if (ident == "DSP4") {
+    has.DSP4 = true;
+    if (!pmap.empty()) {
+      loadMap(pmap, {&DSP4::read, &dsp4}, {&DSP4::write, &dsp4});
+    }
+  }
+}
+
 void Cartridge::loaduPD7725(Markup::Node node) {
   for(auto& word : necdsp.programROM) word = 0x000000;
   for(auto& word : necdsp.dataROM) word = 0x0000;

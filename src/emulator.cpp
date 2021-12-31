@@ -6,6 +6,7 @@ Platform* platform = nullptr;
 
 void Game::load(std::string text) {
   document = BML::unserialize(text.c_str());
+  stddocument = text;
 
   sha256 = BML::search(text, {"game", "sha256"});
   label = BML::search(text, {"game", "label"});

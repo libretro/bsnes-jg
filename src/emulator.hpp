@@ -159,6 +159,7 @@ struct Game {
     unsigned frequency;
   };
 
+  std::string stddocument;
   Markup::Node document;
   std::string sha256;
   std::string label;
