@@ -869,26 +869,47 @@ void Cartridge::saveCartridge(Markup::Node node) {
   if(auto node = board["processor(identifier=OBC1)"]) saveOBC1(node);
 }
 
-void Cartridge::saveCartridgeBSMemory(Markup::Node node) {
-  if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=Flash,content=Program)"]}) {
-    if (bsmemory.memory.data() != nullptr) {
-      Emulator::platform->write(bsmemory.pathID, std::string(memory.name()), bsmemory.memory.data(), memory.size);
+void Cartridge::saveCartridgeBSMemory(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "Flash" && content == "Program") {
+      if(auto memory = Emulator::Game::Memory(m)) {
+        if (bsmemory.memory.data() != nullptr) {
+          Emulator::platform->write(bsmemory.pathID, memory.name(), bsmemory.memory.data(), memory.size);
+        }
+      }
     }
   }
 }
 
-void Cartridge::saveCartridgeSufamiTurboA(Markup::Node node) {
-  if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
-    if(memory.nonVolatile) {
-      Emulator::platform->write(sufamiturboA.pathID, std::string(memory.name()), sufamiturboA.ram.data(), memory.size);
+void Cartridge::saveCartridgeSufamiTurboA(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "RAM" && content == "Save") {
+      if(auto memory = Emulator::Game::Memory(m)) {
+        if (memory.nonVolatile) {
+          Emulator::platform->write(sufamiturboA.pathID, memory.name(), sufamiturboA.ram.data(), memory.size);
+        }
+      }
     }
   }
 }
 
-void Cartridge::saveCartridgeSufamiTurboB(Markup::Node node) {
-  if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
-    if(memory.nonVolatile) {
-      Emulator::platform->write(sufamiturboB.pathID, std::string(memory.name()), sufamiturboB.ram.data(), memory.size);
+void Cartridge::saveCartridgeSufamiTurboB(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "RAM" && content == "Save") {
+      if(auto memory = Emulator::Game::Memory(m)) {
+        if (memory.nonVolatile) {
+          Emulator::platform->write(sufamiturboB.pathID, memory.name(), sufamiturboB.ram.data(), memory.size);
+        }
+      }
     }
   }
 }
@@ -1204,13 +1225,13 @@ void Cartridge::save() {
     icd.save();
   }
   if(has.BSMemorySlot) {
-    saveCartridgeBSMemory(slotBSMemory.document);
+    saveCartridgeBSMemory(slotBSMemory.stddocument);
   }
   if(has.SufamiTurboSlotA) {
-    saveCartridgeSufamiTurboA(slotSufamiTurboA.document);
+    saveCartridgeSufamiTurboA(slotSufamiTurboA.stddocument);
   }
   if(has.SufamiTurboSlotB) {
-    saveCartridgeSufamiTurboB(slotSufamiTurboB.document);
+    saveCartridgeSufamiTurboB(slotSufamiTurboB.stddocument);
   }
 }
 

@@ -101,9 +101,9 @@ private:
 
   //save.cpp
   void saveCartridge(Markup::Node);
-  void saveCartridgeBSMemory(Markup::Node);
-  void saveCartridgeSufamiTurboA(Markup::Node);
-  void saveCartridgeSufamiTurboB(Markup::Node);
+  void saveCartridgeBSMemory(std::string);
+  void saveCartridgeSufamiTurboA(std::string);
+  void saveCartridgeSufamiTurboB(std::string);
 
   void saveMemory(Memory&, Markup::Node);
 
