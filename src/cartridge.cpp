@@ -854,8 +854,30 @@ void Cartridge::loadMSU1() {
   bus.map({&MSU1::readIO, &msu1}, {&MSU1::writeIO, &msu1}, "00-3f,80-bf:2000-2007");
 }
 
+void Cartridge::saveCartridge(std::string node) {
+  std::vector<std::string> boardmem = BML::searchListShallow(stdboard, "board", "memory");
+  for (std::string& m : boardmem) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "RAM" && content == "Save") saveRAM(m);
+  }
+
+  std::vector<std::string> processors = BML::searchList(stdboard, "processor");
+  for (std::string& p : processors) {
+    std::string arch = BML::search(p, {"processor", "architecture"});
+    std::string id = BML::search(p, {"processor", "identifier"});
+    if (id == "SPC7110") saveSPC7110(p);
+  }
+
+  std::vector<std::string> rtclist = BML::searchList(stdboard, "rtc");
+  for (std::string& rtc : rtclist) {
+    std::string manufacturer = BML::search(rtc, {"rtc", "manufacturer"});
+    if (manufacturer == "Epson") saveEpsonRTC(rtc);
+    if (manufacturer == "Sharp") saveSharpRTC(rtc);
+  }
+}
+
 void Cartridge::saveCartridge(Markup::Node node) {
-  if(auto node = board["memory(type=RAM,content=Save)"]) saveRAM(node);
   if(auto node = board["processor(identifier=MCC)"]) saveMCC(node);
   if(auto node = board["processor(architecture=W65C816S)"]) saveSA1(node);
   if(auto node = board["processor(architecture=GSU)"]) saveSuperFX(node);
@@ -863,9 +885,6 @@ void Cartridge::saveCartridge(Markup::Node node) {
   if(auto node = board["processor(architecture=HG51BS169)"]) saveHitachiDSP(node);
   if(auto node = board["processor(architecture=uPD7725)"]) saveuPD7725(node);
   if(auto node = board["processor(architecture=uPD96050)"]) saveuPD96050(node);
-  if(auto node = board["rtc(manufacturer=Epson)"]) saveEpsonRTC(node);
-  if(auto node = board["rtc(manufacturer=Sharp)"]) saveSharpRTC(node);
-  if(auto node = board["processor(identifier=SPC7110)"]) saveSPC7110(node);
   if(auto node = board["processor(identifier=OBC1)"]) saveOBC1(node);
 }
 
@@ -914,6 +933,14 @@ void Cartridge::saveCartridgeSufamiTurboB(std::string node) {
   }
 }
 
+void Cartridge::saveMemory(Memory& ram, std::string node) {
+  if(auto memory = game.memory(node)) {
+    if(memory->type == "RAM" && !memory->nonVolatile) return;
+    if(memory->type == "RTC" && !memory->nonVolatile) return;
+    Emulator::platform->write(pathID(), memory->name(), ram.data(), ram.size());
+  }
+}
+
 void Cartridge::saveMemory(Memory& ram, Markup::Node node) {
   if(auto memory = game.memory(node)) {
     if(memory->type == "RAM" && !memory->nonVolatile) return;
@@ -923,7 +950,7 @@ void Cartridge::saveMemory(Memory& ram, Markup::Node node) {
 }
 
 //memory(type=RAM,content=Save)
-void Cartridge::saveRAM(Markup::Node node) {
+void Cartridge::saveRAM(std::string node) {
   saveMemory(ram, node);
 }
 
@@ -1005,35 +1032,38 @@ void Cartridge::saveuPD96050(Markup::Node node) {
 }
 
 //rtc(manufacturer=Epson)
-void Cartridge::saveEpsonRTC(Markup::Node node) {
-  if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Epson)"]) {
-    if(auto file = game.memory(memory)) {
-      if(file->nonVolatile) {
-        uint8_t data[16] = {0};
-        epsonrtc.save(data);
-        Emulator::platform->write(ID::SuperFamicom, "time.rtc", data, 16);
-      }
+void Cartridge::saveEpsonRTC(std::string node) {
+  std::string memory = BML::searchnode(node, {"rtc", "memory"});
+  if(auto file = game.memory(memory)) {
+    if(file->nonVolatile) {
+      uint8_t data[16] = {0};
+      epsonrtc.save(data);
+      Emulator::platform->write(ID::SuperFamicom, "time.rtc", data, 16);
     }
   }
 }
 
 //rtc(manufacturer=Sharp)
-void Cartridge::saveSharpRTC(Markup::Node node) {
-  if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Sharp)"]) {
-    if(auto file = game.memory(memory)) {
-      if(file->nonVolatile) {
-        uint8_t data[16] = {0};
-        sharprtc.save(data);
-        Emulator::platform->write(ID::SuperFamicom, "time.rtc", data, 16);
-      }
+void Cartridge::saveSharpRTC(std::string node) {
+  std::string memory = BML::searchnode(node, {"rtc", "memory"});
+  if(auto file = game.memory(memory)) {
+    if(file->nonVolatile) {
+      uint8_t data[16] = {0};
+      sharprtc.save(data);
+      Emulator::platform->write(ID::SuperFamicom, "time.rtc", data, 16);
     }
   }
 }
 
 //processor(identifier=SPC7110)
-void Cartridge::saveSPC7110(Markup::Node node) {
-  if(auto memory = node["memory(type=RAM,content=Save)"]) {
-    saveMemory(spc7110.ram, memory);
+void Cartridge::saveSPC7110(std::string node) {
+  std::string sram = BML::searchnode(node, {"processor", "memory"});
+  if (!sram.empty()) {
+    std::string type = BML::search(sram, {"memory", "type"});
+    std::string content = BML::search(sram, {"memory", "content"});
+    if (type == "RAM" && content == "Save") {
+      saveMemory(spc7110.ram, sram);
+    }
   }
 }
 
@@ -1221,6 +1251,7 @@ bool Cartridge::loadSufamiTurboB() {
 
 void Cartridge::save() {
   saveCartridge(game.document);
+  saveCartridge(game.stddocument);
   if(has.GameBoySlot) {
     icd.save();
   }

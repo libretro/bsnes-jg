@@ -100,14 +100,21 @@ private:
   void loadMSU1();
 
   //save.cpp
+  void saveCartridge(std::string);
   void saveCartridge(Markup::Node);
   void saveCartridgeBSMemory(std::string);
   void saveCartridgeSufamiTurboA(std::string);
   void saveCartridgeSufamiTurboB(std::string);
 
+  void saveMemory(Memory&, std::string);
   void saveMemory(Memory&, Markup::Node);
 
-  void saveRAM(Markup::Node);
+  void saveRAM(std::string);
+  void saveSPC7110(std::string);
+
+  void saveEpsonRTC(std::string);
+  void saveSharpRTC(std::string);
+
   void saveMCC(Markup::Node);
   void saveSA1(Markup::Node);
   void saveSuperFX(Markup::Node);
@@ -115,9 +122,6 @@ private:
   void saveHitachiDSP(Markup::Node);
   void saveuPD7725(Markup::Node);
   void saveuPD96050(Markup::Node);
-  void saveEpsonRTC(Markup::Node);
-  void saveSharpRTC(Markup::Node);
-  void saveSPC7110(Markup::Node);
   void saveOBC1(Markup::Node);
 
   friend class Interface;
