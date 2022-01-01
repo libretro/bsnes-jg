@@ -58,7 +58,6 @@ private:
   Emulator::Game slotBSMemory;
   Emulator::Game slotSufamiTurboA;
   Emulator::Game slotSufamiTurboB;
-  Markup::Node board;
   std::string stdboard;
 
   //cartridge.cpp
@@ -68,8 +67,7 @@ private:
 
   //load.cpp
   std::string loadBoard(std::string board);
-  Markup::Node loadBoard(nall::string);
-  void loadCartridge(Markup::Node);
+  void loadCartridge(std::string);
   void loadCartridgeBSMemory(std::string);
   void loadCartridgeSufamiTurboA(std::string);
   void loadCartridgeSufamiTurboB(std::string);
@@ -101,13 +99,11 @@ private:
 
   //save.cpp
   void saveCartridge(std::string);
-  void saveCartridge(Markup::Node);
   void saveCartridgeBSMemory(std::string);
   void saveCartridgeSufamiTurboA(std::string);
   void saveCartridgeSufamiTurboB(std::string);
 
   void saveMemory(Memory&, std::string);
-  void saveMemory(Memory&, Markup::Node);
 
   void saveRAM(std::string);
   void saveMCC(std::string);

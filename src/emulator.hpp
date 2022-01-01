@@ -132,13 +132,11 @@ struct Game {
 
   void load(std::string);
   std::optional<Game::Memory> memory(std::string);
-  nall::maybe<Game::Memory> memory(Markup::Node);
   nall::maybe<Game::Oscillator> oscillator(unsigned = 0);
 
   struct Memory {
     Memory() = default;
     Memory(std::string);
-    Memory(Markup::Node);
     explicit operator bool() const { return (bool)!type.empty(); }
     std::string name() const;
 
@@ -160,7 +158,6 @@ struct Game {
   };
 
   std::string stddocument;
-  Markup::Node document;
   std::string sha256;
   std::string label;
   std::string name;

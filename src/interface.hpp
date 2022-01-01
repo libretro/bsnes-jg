@@ -98,9 +98,6 @@ struct Configuration {
   struct SuperFX {
     unsigned overclock = 100;
   } superfx;
-
-private:
-  void process(Markup::Node document, bool load);
 };
 
 extern Configuration configuration;

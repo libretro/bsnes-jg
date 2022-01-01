@@ -26,40 +26,9 @@ std::string Cartridge::loadBoard(std::string board) {
   return {};
 }
 
-Markup::Node Cartridge::loadBoard(nall::string board) {
-  nall::string output;
-
-  if(board.beginsWith("SNSP-")) board.replace("SNSP-", "SHVC-", 1L);
-  if(board.beginsWith("MAXI-")) board.replace("MAXI-", "SHVC-", 1L);
-  if(board.beginsWith("MJSC-")) board.replace("MJSC-", "SHVC-", 1L);
-  if(board.beginsWith("EA-"  )) board.replace("EA-",   "SHVC-", 1L);
-  if(board.beginsWith("WEI-" )) board.replace("WEI-",  "SHVC-", 1L);
-
-  std::ifstream boardsfile = Emulator::platform->fopen(ID::System, "boards.bml");
-  if (boardsfile.is_open()) {
-    std::string boards((std::istreambuf_iterator<char>(boardsfile)),
-      (std::istreambuf_iterator<char>()));
-    auto document = BML::unserialize(boards.c_str());
-    for(auto leaf : document.find("board")) {
-      auto id = leaf.text();
-      bool matched = id == board;
-      if(!matched && id.match("*(*)*")) {
-        auto part = id.transform("()", "||").split("|");
-        for(auto& revision : part(1).split(",")) {
-          if(nall::string{part(0), revision, part(2)} == board) matched = true;
-        }
-      }
-      if(matched) return leaf;
-    }
-  }
-
-  return {};
-}
-
-void Cartridge::loadCartridge(Markup::Node node) {
-  board = node["board"];
-  if(!board) board = loadBoard(nall::string(game.board.c_str()));
-  stdboard = loadBoard(game.board);
+void Cartridge::loadCartridge(std::string node) {
+  stdboard = BML::searchnode(node, {"board"});
+  if (stdboard.empty()) stdboard = loadBoard(game.board);
 
   if(region() == "Auto") {
     std::string regstr = game.region.substr(game.region.length() - 3, game.region.length());
@@ -885,9 +854,6 @@ void Cartridge::saveCartridge(std::string node) {
   }
 }
 
-void Cartridge::saveCartridge(Markup::Node node) {
-}
-
 void Cartridge::saveCartridgeBSMemory(std::string node) {
   std::vector<std::string> memlist = BML::searchList(node, "memory");
   for (std::string& m : memlist) {
@@ -938,14 +904,6 @@ void Cartridge::saveMemory(Memory& ram, std::string node) {
     if(memory->type == "RAM" && !memory->nonVolatile) return;
     if(memory->type == "RTC" && !memory->nonVolatile) return;
     Emulator::platform->write(pathID(), memory->name(), ram.data(), ram.size());
-  }
-}
-
-void Cartridge::saveMemory(Memory& ram, Markup::Node node) {
-  if(auto memory = game.memory(node)) {
-    if(memory->type == "RAM" && !memory->nonVolatile) return;
-    if(memory->type == "RTC" && !memory->nonVolatile) return;
-    Emulator::platform->write(pathID(), std::string(memory->name()), ram.data(), ram.size());
   }
 }
 
@@ -1121,14 +1079,12 @@ std::vector<std::string> Cartridge::hashes() const {
 std::vector<std::string> Cartridge::manifests() const {
   std::vector<std::string> manifests;
 
-  manifests.push_back(std::string(
-    nall::string{BML::serialize(game.document), "\n", BML::serialize(board)}
-  ));
+  manifests.push_back({game.stddocument + "\n" + stdboard});
 
-  if(slotGameBoy.document) manifests.push_back(std::string(BML::serialize(slotGameBoy.document)));
-  if(slotBSMemory.document) manifests.push_back(std::string(BML::serialize(slotBSMemory.document)));
-  if(slotSufamiTurboA.document) manifests.push_back(std::string(BML::serialize(slotSufamiTurboA.document)));
-  if(slotSufamiTurboB.document) manifests.push_back(std::string(BML::serialize(slotSufamiTurboB.document)));
+  if(!slotGameBoy.stddocument.empty()) manifests.push_back(slotGameBoy.stddocument);
+  if(!slotBSMemory.stddocument.empty()) manifests.push_back(slotBSMemory.stddocument);
+  if(!slotSufamiTurboA.stddocument.empty()) manifests.push_back(slotSufamiTurboA.stddocument);
+  if(!slotSufamiTurboB.stddocument.empty()) manifests.push_back(slotSufamiTurboB.stddocument);
   return manifests;
 }
 
@@ -1179,7 +1135,7 @@ bool Cartridge::load() {
       return false;
   }
 
-  loadCartridge(game.document);
+  loadCartridge(game.stddocument);
 
   //Game Boy
   if(cartridge.has.ICD) {
@@ -1278,7 +1234,6 @@ bool Cartridge::loadSufamiTurboB() {
 }
 
 void Cartridge::save() {
-  saveCartridge(game.document);
   saveCartridge(game.stddocument);
   if(has.GameBoySlot) {
     icd.save();

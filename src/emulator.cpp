@@ -5,7 +5,6 @@ namespace Emulator {
 Platform* platform = nullptr;
 
 void Game::load(std::string text) {
-  document = BML::unserialize(text.c_str());
   stddocument = text;
 
   sha256 = BML::search(text, {"game", "sha256"});
@@ -49,26 +48,6 @@ std::optional<Game::Memory> Game::memory(std::string node) {
   return std::nullopt;
 }
 
-nall::maybe<Game::Memory> Game::memory(Markup::Node node) {
-  if(!node) return nall::nothing;
-  for(auto& memory : memoryList) {
-    auto type = std::string(node["type"].text());
-    auto size = node["size"].natural();
-    auto content = std::string(node["content"].text());
-    auto manufacturer = std::string(node["manufacturer"].text());
-    auto architecture = std::string(node["architecture"].text());
-    auto identifier = std::string(node["identifier"].text());
-    if(!type.empty() && type != memory.type) continue;
-    if(size && size != memory.size) continue;
-    if(!content.empty() && content != memory.content) continue;
-    if(!manufacturer.empty() && manufacturer != memory.manufacturer) continue;
-    if(!architecture.empty() && architecture != memory.architecture) continue;
-    if(!identifier.empty() && identifier != memory.identifier) continue;
-    return memory;
-  }
-  return nall::nothing;
-}
-
 nall::maybe<Game::Oscillator> Game::oscillator(unsigned index) {
   if(index < oscillatorList.size()) return oscillatorList[index];
   return nall::nothing;
@@ -86,16 +65,6 @@ Game::Memory::Memory(std::string node) {
   architecture = BML::search(node, {"memory", "architecture"});
   identifier = BML::search(node, {"memory", "identifier"});
   nonVolatile = !BML::exists(node, {"memory", "volatile"});
-}
-
-Game::Memory::Memory(Markup::Node node) {
-  type = node["type"].text();
-  size = node["size"].natural();
-  content = node["content"].text();
-  manufacturer = node["manufacturer"].text();
-  architecture = node["architecture"].text();
-  identifier = node["identifier"].text();
-  nonVolatile = !(bool)node["volatile"];
 }
 
 std::string Game::Memory::name() const {
