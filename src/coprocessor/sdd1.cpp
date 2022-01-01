@@ -149,7 +149,7 @@ const SDD1::Decompressor::PEM::State SDD1::Decompressor::PEM::evolutionTable[33]
 };
 
 void SDD1::Decompressor::PEM::init() {
-  for(auto n : nall::range(32)) {
+  for(auto n = 0; n < 32; ++n) {
     contextInfo[n].status = 0;
     contextInfo[n].mps = 0;
   }
@@ -192,7 +192,7 @@ void SDD1::Decompressor::CM::init(unsigned offset) {
   bitplanesInfo = sdd1.mmcRead(offset) & 0xc0;
   contextBitsInfo = sdd1.mmcRead(offset) & 0x30;
   bitNumber = 0;
-  for(auto n : nall::range(8)) previousBitplaneBits[n] = 0;
+  for(auto n = 0; n < 8; ++n) previousBitplaneBits[n] = 0;
   switch(bitplanesInfo) {
   case 0x00: currentBitplane = 1; break;
   case 0x40: currentBitplane = 7; break;
@@ -375,7 +375,7 @@ void SDD1::power() {
   r4806 = 0x02;
   r4807 = 0x03;
 
-  for(auto n : nall::range(8)) {
+  for(auto n = 0; n < 8; ++n) {
     dma[n].addr = 0;
     dma[n].size = 0;
   }
@@ -451,7 +451,7 @@ uint8_t SDD1::mcuRead(unsigned addr, uint8_t data) {
   //map address=c0-ff:0000-ffff
   if(r4800 & r4801) {
     //at least one channel has S-DD1 decompression enabled ...
-    for(auto n : nall::range(8)) {
+    for(auto n = 0; n < 8; ++n) {
       if((r4800 & 1 << n) && (r4801 & 1 << n)) {
         //S-DD1 always uses fixed transfer mode, so address will not change during transfer
         if(addr == dma[n].addr) {
