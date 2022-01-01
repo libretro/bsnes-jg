@@ -866,7 +866,9 @@ void Cartridge::saveCartridge(std::string node) {
   for (std::string& p : processors) {
     std::string arch = BML::search(p, {"processor", "architecture"});
     std::string id = BML::search(p, {"processor", "identifier"});
+    if (id == "MCC") saveMCC(p);
     if (id == "SPC7110") saveSPC7110(p);
+    if (arch == "W65C816S") saveSA1(p);
   }
 
   std::vector<std::string> rtclist = BML::searchList(stdboard, "rtc");
@@ -878,8 +880,6 @@ void Cartridge::saveCartridge(std::string node) {
 }
 
 void Cartridge::saveCartridge(Markup::Node node) {
-  if(auto node = board["processor(identifier=MCC)"]) saveMCC(node);
-  if(auto node = board["processor(architecture=W65C816S)"]) saveSA1(node);
   if(auto node = board["processor(architecture=GSU)"]) saveSuperFX(node);
   if(auto node = board["processor(architecture=ARM6)"]) saveARMDSP(node);
   if(auto node = board["processor(architecture=HG51BS169)"]) saveHitachiDSP(node);
@@ -955,22 +955,26 @@ void Cartridge::saveRAM(std::string node) {
 }
 
 //processor(identifier=MCC)
-void Cartridge::saveMCC(Markup::Node node) {
-  if(auto mcu = node["mcu"]) {
-    if(auto memory = mcu["memory(type=RAM,content=Download)"]) {
-      saveMemory(mcc.psram, memory);
+void Cartridge::saveMCC(std::string node) {
+  std::string mcu = BML::searchnode(node, {"processor", "mcu"});
+  if (!mcu.empty()) {
+    std::vector<std::string> mcumem = BML::searchList(mcu, "memory");
+    for (std::string& m : mcumem) {
+      std::string type = BML::search(m, {"memory", "type"});
+      std::string content = BML::search(m, {"memory", "content"});
+      if (type == "RAM" && content == "Download") saveMemory(mcc.psram, m);
     }
   }
 }
 
 //processor(architecture=W65C816S)
-void Cartridge::saveSA1(Markup::Node node) {
-  if(auto memory = node["memory(type=RAM,content=Save)"]) {
-    saveMemory(sa1.bwram, memory);
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Internal)"]) {
-    saveMemory(sa1.iram, memory);
+void Cartridge::saveSA1(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "RAM" && content == "Save") saveMemory(sa1.bwram, m);
+    if (type == "RAM" && content == "Internal") saveMemory(sa1.iram, m);
   }
 }
 

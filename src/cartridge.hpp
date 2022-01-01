@@ -110,13 +110,13 @@ private:
   void saveMemory(Memory&, Markup::Node);
 
   void saveRAM(std::string);
+  void saveMCC(std::string);
+  void saveSA1(std::string);
   void saveSPC7110(std::string);
 
   void saveEpsonRTC(std::string);
   void saveSharpRTC(std::string);
 
-  void saveMCC(Markup::Node);
-  void saveSA1(Markup::Node);
   void saveSuperFX(Markup::Node);
   void saveARMDSP(Markup::Node);
   void saveHitachiDSP(Markup::Node);
