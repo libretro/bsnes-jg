@@ -12,7 +12,6 @@
 #include "../nall/bit.hpp"
 #include "../nall/function.hpp"
 #include "../nall/iterator.hpp"
-#include "../nall/array.hpp"
 #include "../nall/maybe.hpp"
 #include "../nall/memory.hpp"
 #include "serializer.hpp"
