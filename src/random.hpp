@@ -14,14 +14,14 @@ struct Random {
     seed();
   }
 
-  void seed(nall::maybe<uint32_t> seed = nall::nothing, nall::maybe<uint32_t> sequence = nall::nothing) {
+  void seed(std::optional<uint32_t> seed = std::nullopt, std::optional<uint32_t> sequence = std::nullopt) {
     if(!seed) seed = (uint32_t)clock();
     if(!sequence) sequence = 0;
 
     _state = 0;
-    _increment = sequence() << 1 | 1;
+    _increment = sequence.value() << 1 | 1;
     step();
-    _state += seed();
+    _state += seed.value();
     step();
   }
 
