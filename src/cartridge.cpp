@@ -869,6 +869,8 @@ void Cartridge::saveCartridge(std::string node) {
     if (id == "MCC") saveMCC(p);
     if (id == "SPC7110") saveSPC7110(p);
     if (arch == "W65C816S") saveSA1(p);
+    if (arch == "GSU") saveSuperFX(p);
+    if (arch == "ARM6") saveARMDSP(p);
   }
 
   std::vector<std::string> rtclist = BML::searchList(stdboard, "rtc");
@@ -880,8 +882,6 @@ void Cartridge::saveCartridge(std::string node) {
 }
 
 void Cartridge::saveCartridge(Markup::Node node) {
-  if(auto node = board["processor(architecture=GSU)"]) saveSuperFX(node);
-  if(auto node = board["processor(architecture=ARM6)"]) saveARMDSP(node);
   if(auto node = board["processor(architecture=HG51BS169)"]) saveHitachiDSP(node);
   if(auto node = board["processor(architecture=uPD7725)"]) saveuPD7725(node);
   if(auto node = board["processor(architecture=uPD96050)"]) saveuPD96050(node);
@@ -979,19 +979,28 @@ void Cartridge::saveSA1(std::string node) {
 }
 
 //processor(architecture=GSU)
-void Cartridge::saveSuperFX(Markup::Node node) {
-  if(auto memory = node["memory(type=RAM,content=Save)"]) {
-    saveMemory(superfx.ram, memory);
+void Cartridge::saveSuperFX(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "RAM" && content == "Save") saveMemory(superfx.ram, m);
   }
 }
 
 //processor(architecture=ARM6)
-void Cartridge::saveARMDSP(Markup::Node node) {
-  if(auto memory = node["memory(type=RAM,content=Data,architecture=ARM6)"]) {
-    if(auto file = game.memory(memory)) {
+void Cartridge::saveARMDSP(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    std::string arch = BML::search(m, {"memory", "architecture"});
+    if (type == "RAM" && content == "Data" && arch == "ARM6") {
+      if(auto file = game.memory(m)) {
       if(file->nonVolatile) {
         Emulator::platform->write(ID::SuperFamicom, "save.ram", armdsp.programRAM, (16 * 1024));
       }
+    }
     }
   }
 }

@@ -112,13 +112,13 @@ private:
   void saveRAM(std::string);
   void saveMCC(std::string);
   void saveSA1(std::string);
+  void saveSuperFX(std::string);
+  void saveARMDSP(std::string);
   void saveSPC7110(std::string);
 
   void saveEpsonRTC(std::string);
   void saveSharpRTC(std::string);
 
-  void saveSuperFX(Markup::Node);
-  void saveARMDSP(Markup::Node);
   void saveHitachiDSP(Markup::Node);
   void saveuPD7725(Markup::Node);
   void saveuPD96050(Markup::Node);
