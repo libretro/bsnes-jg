@@ -80,10 +80,10 @@ struct serializer {
     enum : unsigned { size = std::is_same<bool, T>::value ? 1 : sizeof(T) };
     if(_mode == Save) {
       T copy = value;
-      for(unsigned n : nall::range(size)) _data[_size++] = copy, copy >>= 8;
+      for(unsigned n = 0; n < size; ++n) _data[_size++] = copy, copy >>= 8;
     } else if(_mode == Load) {
       value = 0;
-      for(unsigned n : nall::range(size)) value |= (T)_data[_size++] << (n << 3);
+      for(unsigned n = 0; n < size; ++n) value |= (T)_data[_size++] << (n << 3);
     } else if(_mode == Size) {
       _size += size;
     }
@@ -91,12 +91,12 @@ struct serializer {
   }
 
   template<typename T, int N> serializer& array(T (&array)[N]) {
-    for(unsigned n : nall::range(N)) operator()(array[n]);
+    for(unsigned n = 0; n < N; ++n) operator()(array[n]);
     return *this;
   }
 
   template<typename T> serializer& array(T array, unsigned size) {
-    for(unsigned n : nall::range(size)) operator()(array[n]);
+    for(unsigned n = 0; n < size; ++n) operator()(array[n]);
     return *this;
   }
 
