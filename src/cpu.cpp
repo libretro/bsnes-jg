@@ -129,8 +129,8 @@ bool CPU::Channel::hdmaActive() {
 }
 
 bool CPU::Channel::hdmaFinished() {
-  auto channel = next;
-  while(channel) {
+  Channel *channel = next;
+  while(channel != nullptr) {
     if(channel->hdmaActive()) return false;
     channel = channel->next;
   }
@@ -1114,9 +1114,10 @@ void CPU::power(bool reset) {
     }
   }
 
-  for(unsigned n : nall::range(8)) {
+  for(unsigned n = 0; n < 8; ++n) {
     channels[n] = {};
-    if(n != 7) channels[n].next = channels[n + 1];
+    if(n != 7) channels[n].next = &channels[n + 1];
+    else channels[n].next = nullptr;
   }
 
   counter = {};
