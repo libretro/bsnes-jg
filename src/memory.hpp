@@ -106,61 +106,6 @@ private:
   } self;
 };
 
-struct ProtectableMemory : Memory {
-  inline void reset() override {
-    delete[] self.data;
-    self.data = nullptr;
-    self.size = 0;
-  }
-
-  inline void allocate(unsigned size, uint8_t fill = 0xff) override {
-    if(self.size != size) {
-      delete[] self.data;
-      self.data = new uint8_t[self.size = size];
-    }
-    for(unsigned address : nall::range(size)) {
-      self.data[address] = fill;
-    }
-  }
-
-  inline uint8_t* data() override {
-    return self.data;
-  }
-
-  inline unsigned size() const override {
-    return self.size;
-  }
-
-  inline bool writable() const {
-    return self.writable;
-  }
-
-  inline void writable(bool writable) {
-    self.writable = writable;
-  }
-
-  inline uint8_t read(unsigned address, uint8_t data = 0) override {
-    return self.data[address];
-  }
-
-  inline void write(unsigned address, uint8_t data) override {
-    if(self.writable || Memory::GlobalWriteEnable) {
-      self.data[address] = data;
-    }
-  }
-
-  inline uint8_t operator[](unsigned address) const {
-    return self.data[address];
-  }
-
-private:
-  struct {
-    uint8_t* data = nullptr;
-    unsigned size = 0;
-    bool writable = false;
-  } self;
-};
-
 struct Bus {
   inline static unsigned mirror(unsigned address, unsigned size);
   inline static unsigned reduce(unsigned address, unsigned mask);

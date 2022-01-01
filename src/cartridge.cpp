@@ -203,7 +203,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
   }
 }
 
-template<typename T>  //T = ReadableMemory, WritableMemory, ProtectableMemory
+template<typename T>  //T = ReadableMemory, WritableMemory
 unsigned Cartridge::loadMap(std::string map, T& memory) {
   auto addr = BML::search(map, {"map", "address"});
   std::string strsize = BML::search(map, {"map", "size"});
