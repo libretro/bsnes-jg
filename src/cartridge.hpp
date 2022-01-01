@@ -94,6 +94,7 @@ private:
   void loadSuperFX(std::string);
   void loadARMDSP(std::string);
   void loaduPD7725(std::string);
+  void loaduPD96050(std::string);
 
   void loadSDD1(std::string);
   void loadOBC1(std::string);
