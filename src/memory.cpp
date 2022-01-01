@@ -61,12 +61,14 @@ unsigned Bus::map(
     std::vector<unsigned> bankRange;
     for (std::string i; std::getline(ss, i, '-');
       bankRange.push_back(std::stoul(i, nullptr, 16)));
+    if (bankRange.size() == 1) bankRange.push_back(bankRange[0]);
 
     for (auto& addr : addrs) {
       ss.clear(); ss.str(addr);
       std::vector<unsigned> addrRange;
       for (std::string i; std::getline(ss, i, '-');
         addrRange.push_back(std::stoul(i, nullptr, 16)));
+      if (addrRange.size() == 1) addrRange.push_back(addrRange[0]);
 
       for(unsigned bank = bankRange[0]; bank <= bankRange[1]; bank++) {
         for(unsigned addr = addrRange[0]; addr <= addrRange[1]; addr++) {
