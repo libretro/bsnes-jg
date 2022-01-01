@@ -93,6 +93,7 @@ private:
   void loadSA1(std::string);
   void loadSuperFX(std::string);
   void loadARMDSP(std::string);
+  void loadHitachiDSP(std::string, unsigned roms);
   void loaduPD7725(std::string);
   void loaduPD96050(std::string);
 

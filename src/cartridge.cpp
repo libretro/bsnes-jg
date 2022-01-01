@@ -96,6 +96,9 @@ void Cartridge::loadCartridge(Markup::Node node) {
     if (arch == "W65C816S") loadSA1(p);
     if (arch == "GSU") loadSuperFX(p);
     if (arch == "ARM6") loadARMDSP(p);
+    if (arch == "HG51BS169") {
+      loadHitachiDSP(p, game.board.find("2DC") != std::string::npos ? 2 : 1);
+    }
     if (arch == "uPD7725") loaduPD7725(p);
     if (arch == "uPD96050") loaduPD96050(p);
     if (id == "SPC7110") loadSPC7110(p);
@@ -133,9 +136,9 @@ void Cartridge::loadCartridge(Markup::Node node) {
   //if(auto node = board["processor(identifier=SPC7110)"]) loadSPC7110(node);
   //if(auto node = board["processor(identifier=SDD1)"]) loadSDD1(node);
   //if(auto node = board["processor(identifier=OBC1)"]) loadOBC1(node);
-  if(auto node = board["processor(architecture=HG51BS169)"]) {
+  /*if(auto node = board["processor(architecture=HG51BS169)"]) {
     loadHitachiDSP(node, game.board.find("2DC") != std::string::npos ? 2 : 1);
-  }
+  }*/
 
   std::ifstream msu1file =
     Emulator::platform->fopen(ID::SuperFamicom, "msu1/data.rom");
@@ -820,6 +823,102 @@ void Cartridge::loadARMDSP(Markup::Node node) {
 }
 
 //processor(architecture=HG51BS169)
+void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
+  for(auto& word : hitachidsp.dataROM) word = 0x000000;
+  for(auto& word : hitachidsp.dataRAM) word = 0x00;
+
+  if(auto oscillator = game.oscillator()) {
+    hitachidsp.Frequency = oscillator->frequency;
+  } else {
+    hitachidsp.Frequency = 20'000'000;
+  }
+  hitachidsp.Roms = roms;  //1 or 2
+  hitachidsp.Mapping = 0;  //0 or 1
+
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "ROM" && content == "Program") {
+      loadMemory(hitachidsp.rom, m);
+      std::vector<std::string> maps = BML::searchList(m, "map");
+      for (std::string map : maps) {
+        loadMap(map, {&HitachiDSP::readROM, &hitachidsp}, {&HitachiDSP::writeROM, &hitachidsp});
+      }
+    }
+  }
+
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "RAM" && content == "Save") {
+      loadMemory(hitachidsp.ram, m);
+      std::vector<std::string> maps = BML::searchList(m, "map");
+      for (std::string map : maps) {
+        loadMap(map, {&HitachiDSP::readRAM, &hitachidsp}, {&HitachiDSP::writeRAM, &hitachidsp});
+      }
+    }
+  }
+
+  if(configuration.coprocessor.preferHLE) {
+    has.Cx4 = true;
+    std::string pmap = BML::searchnode(node, {"processor", "map"});
+    if (!pmap.empty()) {
+      loadMap(pmap, {&Cx4::read, &cx4}, {&Cx4::write, &cx4});
+    }
+
+    for (std::string& m : memlist) {
+      std::string type = BML::search(m, {"memory", "type"});
+      std::string content = BML::search(m, {"memory", "content"});
+      std::string arch = BML::search(m, {"memory", "architecture"});
+      if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
+        std::vector<std::string> maps = BML::searchList(m, "map");
+        for (std::string map : maps) {
+          loadMap(map, {&Cx4::read, &cx4}, {&Cx4::write, &cx4});
+        }
+      }
+    }
+    return;
+  }
+
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    std::string arch = BML::search(m, {"memory", "architecture"});
+    if (type == "ROM" && content == "Data" && arch == "HG51BS169") {
+      if(auto file = game.memory(m)) {
+        for (int n = 0; n < 1024; ++n) {
+          hitachidsp.dataROM[n]  = hitachidsp.staticDataROM[n * 3 + 0] <<  0;
+          hitachidsp.dataROM[n] |= hitachidsp.staticDataROM[n * 3 + 1] <<  8;
+          hitachidsp.dataROM[n] |= hitachidsp.staticDataROM[n * 3 + 2] << 16;
+        }
+      }
+    }
+    else if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
+      if(auto file = game.memory(m)) {
+        std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
+        if (sramfile.is_open()) {
+          sramfile.read((char*)hitachidsp.dataRAM, (3 * 1024));
+          sramfile.close();
+        }
+      }
+
+      std::vector<std::string> maps = BML::searchList(m, "map");
+      for (std::string map : maps) {
+          loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
+      }
+    }
+  }
+
+  has.HitachiDSP = true;
+
+  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  if (!pmap.empty()) {
+      loadMap(pmap, {&HitachiDSP::readIO, &hitachidsp}, {&HitachiDSP::writeIO, &hitachidsp});
+  }
+}
+
 void Cartridge::loadHitachiDSP(Markup::Node node, unsigned roms) {
   for(auto& word : hitachidsp.dataROM) word = 0x000000;
   for(auto& word : hitachidsp.dataRAM) word = 0x00;
