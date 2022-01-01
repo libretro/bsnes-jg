@@ -7,20 +7,20 @@
 namespace Processor {
 
 struct WDC65816 {
-  virtual auto idle() -> void = 0;
-  virtual auto idleBranch() -> void {}
-  virtual auto idleJump() -> void {}
-  virtual auto read(unsigned addr) -> uint8_t = 0;
-  virtual auto write(unsigned addr, uint8_t data) -> void = 0;
-  virtual auto lastCycle() -> void = 0;
-  virtual auto interruptPending() const -> bool = 0;
-  virtual auto interrupt() -> void;
-  virtual auto synchronizing() const -> bool = 0;
+  virtual void idle() = 0;
+  virtual void idleBranch() {}
+  virtual void idleJump() {}
+  virtual uint8_t read(unsigned addr) = 0;
+  virtual void write(unsigned addr, uint8_t data) = 0;
+  virtual void lastCycle() = 0;
+  virtual bool interruptPending() const = 0;
+  virtual void interrupt();
+  virtual bool synchronizing() const = 0;
 
-  virtual auto readDisassembler(unsigned addr) -> uint8_t { return 0; }
+  virtual uint8_t readDisassembler(unsigned addr) { return 0; }
 
-  inline auto irq() const -> bool { return r.irq; }
-  inline auto irq(bool line) -> void { r.irq = line; }
+  inline bool irq() const { return r.irq; }
+  inline void irq(bool line) { r.irq = line; }
 
   union r16 {
     inline r16() : w(0) {}
@@ -42,193 +42,193 @@ struct WDC65816 {
   };
 
   //wdc65816.cpp
-  auto power() -> void;
+  void power();
 
   //memory.cpp
-  inline auto idleIRQ() -> void;
-  inline auto idle2() -> void;
-  inline auto idle4(uint16_t x, uint16_t y) -> void;
-  inline auto idle6(uint16_t address) -> void;
-  inline auto fetch() -> uint8_t;
-  inline auto pull() -> uint8_t;
-               auto push(uint8_t data) -> void;
-  inline auto pullN() -> uint8_t;
-  inline auto pushN(uint8_t data) -> void;
-  inline auto readDirect(unsigned address) -> uint8_t;
-  inline auto writeDirect(unsigned address, uint8_t data) -> void;
-  inline auto readDirectN(unsigned address) -> uint8_t;
-  inline auto readBank(unsigned address) -> uint8_t;
-  inline auto writeBank(unsigned address, uint8_t data) -> void;
-  inline auto readLong(unsigned address) -> uint8_t;
-  inline auto writeLong(unsigned address, uint8_t data) -> void;
-  inline auto readStack(unsigned address) -> uint8_t;
-  inline auto writeStack(unsigned address, uint8_t data) -> void;
+  inline void idleIRQ();
+  inline void idle2();
+  inline void idle4(uint16_t x, uint16_t y);
+  inline void idle6(uint16_t address);
+  inline uint8_t fetch();
+  inline uint8_t pull();
+  void push(uint8_t data);
+  inline uint8_t pullN();
+  inline void pushN(uint8_t data);
+  inline uint8_t readDirect(unsigned address);
+  inline void writeDirect(unsigned address, uint8_t data);
+  inline uint8_t readDirectN(unsigned address);
+  inline uint8_t readBank(unsigned address);
+  inline void writeBank(unsigned address, uint8_t data);
+  inline uint8_t readLong(unsigned address);
+  inline void writeLong(unsigned address, uint8_t data);
+  inline uint8_t readStack(unsigned address);
+  inline void writeStack(unsigned address, uint8_t data);
 
   //algorithms.cpp
-  using  alu8 = auto (WDC65816::*)( uint8_t) ->  uint8_t;
-  using alu16 = auto (WDC65816::*)(uint16_t) -> uint16_t;
+  using  alu8 = uint8_t (WDC65816::*)( uint8_t);
+  using alu16 = uint16_t (WDC65816::*)(uint16_t);
 
-  auto algorithmADC8(uint8_t) -> uint8_t;
-  auto algorithmADC16(uint16_t) -> uint16_t;
-  auto algorithmAND8(uint8_t) -> uint8_t;
-  auto algorithmAND16(uint16_t) -> uint16_t;
-  auto algorithmASL8(uint8_t) -> uint8_t;
-  auto algorithmASL16(uint16_t) -> uint16_t;
-  auto algorithmBIT8(uint8_t) -> uint8_t;
-  auto algorithmBIT16(uint16_t) -> uint16_t;
-  auto algorithmCMP8(uint8_t) -> uint8_t;
-  auto algorithmCMP16(uint16_t) -> uint16_t;
-  auto algorithmCPX8(uint8_t) -> uint8_t;
-  auto algorithmCPX16(uint16_t) -> uint16_t;
-  auto algorithmCPY8(uint8_t) -> uint8_t;
-  auto algorithmCPY16(uint16_t) -> uint16_t;
-  auto algorithmDEC8(uint8_t) -> uint8_t;
-  auto algorithmDEC16(uint16_t) -> uint16_t;
-  auto algorithmEOR8(uint8_t) -> uint8_t;
-  auto algorithmEOR16(uint16_t) -> uint16_t;
-  auto algorithmINC8(uint8_t) -> uint8_t;
-  auto algorithmINC16(uint16_t) -> uint16_t;
-  auto algorithmLDA8(uint8_t) -> uint8_t;
-  auto algorithmLDA16(uint16_t) -> uint16_t;
-  auto algorithmLDX8(uint8_t) -> uint8_t;
-  auto algorithmLDX16(uint16_t) -> uint16_t;
-  auto algorithmLDY8(uint8_t) -> uint8_t;
-  auto algorithmLDY16(uint16_t) -> uint16_t;
-  auto algorithmLSR8(uint8_t) -> uint8_t;
-  auto algorithmLSR16(uint16_t) -> uint16_t;
-  auto algorithmORA8(uint8_t) -> uint8_t;
-  auto algorithmORA16(uint16_t) -> uint16_t;
-  auto algorithmROL8(uint8_t) -> uint8_t;
-  auto algorithmROL16(uint16_t) -> uint16_t;
-  auto algorithmROR8(uint8_t) -> uint8_t;
-  auto algorithmROR16(uint16_t) -> uint16_t;
-  auto algorithmSBC8(uint8_t) -> uint8_t;
-  auto algorithmSBC16(uint16_t) -> uint16_t;
-  auto algorithmTRB8(uint8_t) -> uint8_t;
-  auto algorithmTRB16(uint16_t) -> uint16_t;
-  auto algorithmTSB8(uint8_t) -> uint8_t;
-  auto algorithmTSB16(uint16_t) -> uint16_t;
+  uint8_t algorithmADC8(uint8_t);
+  uint16_t algorithmADC16(uint16_t);
+  uint8_t algorithmAND8(uint8_t);
+  uint16_t algorithmAND16(uint16_t);
+  uint8_t algorithmASL8(uint8_t);
+  uint16_t algorithmASL16(uint16_t);
+  uint8_t algorithmBIT8(uint8_t);
+  uint16_t algorithmBIT16(uint16_t);
+  uint8_t algorithmCMP8(uint8_t);
+  uint16_t algorithmCMP16(uint16_t);
+  uint8_t algorithmCPX8(uint8_t);
+  uint16_t algorithmCPX16(uint16_t);
+  uint8_t algorithmCPY8(uint8_t);
+  uint16_t algorithmCPY16(uint16_t);
+  uint8_t algorithmDEC8(uint8_t);
+  uint16_t algorithmDEC16(uint16_t);
+  uint8_t algorithmEOR8(uint8_t);
+  uint16_t algorithmEOR16(uint16_t);
+  uint8_t algorithmINC8(uint8_t);
+  uint16_t algorithmINC16(uint16_t);
+  uint8_t algorithmLDA8(uint8_t);
+  uint16_t algorithmLDA16(uint16_t);
+  uint8_t algorithmLDX8(uint8_t);
+  uint16_t algorithmLDX16(uint16_t);
+  uint8_t algorithmLDY8(uint8_t);
+  uint16_t algorithmLDY16(uint16_t);
+  uint8_t algorithmLSR8(uint8_t);
+  uint16_t algorithmLSR16(uint16_t);
+  uint8_t algorithmORA8(uint8_t);
+  uint16_t algorithmORA16(uint16_t);
+  uint8_t algorithmROL8(uint8_t);
+  uint16_t algorithmROL16(uint16_t);
+  uint8_t algorithmROR8(uint8_t);
+  uint16_t algorithmROR16(uint16_t);
+  uint8_t algorithmSBC8(uint8_t);
+  uint16_t algorithmSBC16(uint16_t);
+  uint8_t algorithmTRB8(uint8_t);
+  uint16_t algorithmTRB16(uint16_t);
+  uint8_t algorithmTSB8(uint8_t);
+  uint16_t algorithmTSB16(uint16_t);
 
   //instructions-read.cpp
-  auto instructionImmediateRead8(alu8) -> void;
-  auto instructionImmediateRead16(alu16) -> void;
-  auto instructionBankRead8(alu8) -> void;
-  auto instructionBankRead16(alu16) -> void;
-  auto instructionBankRead8(alu8, r16) -> void;
-  auto instructionBankRead16(alu16, r16) -> void;
-  auto instructionLongRead8(alu8, r16 = {}) -> void;
-  auto instructionLongRead16(alu16, r16 = {}) -> void;
-  auto instructionDirectRead8(alu8) -> void;
-  auto instructionDirectRead16(alu16) -> void;
-  auto instructionDirectRead8(alu8, r16) -> void;
-  auto instructionDirectRead16(alu16, r16) -> void;
-  auto instructionIndirectRead8(alu8) -> void;
-  auto instructionIndirectRead16(alu16) -> void;
-  auto instructionIndexedIndirectRead8(alu8) -> void;
-  auto instructionIndexedIndirectRead16(alu16) -> void;
-  auto instructionIndirectIndexedRead8(alu8) -> void;
-  auto instructionIndirectIndexedRead16(alu16) -> void;
-  auto instructionIndirectLongRead8(alu8, r16 = {}) -> void;
-  auto instructionIndirectLongRead16(alu16, r16 = {}) -> void;
-  auto instructionStackRead8(alu8) -> void;
-  auto instructionStackRead16(alu16) -> void;
-  auto instructionIndirectStackRead8(alu8) -> void;
-  auto instructionIndirectStackRead16(alu16) -> void;
+  void instructionImmediateRead8(alu8);
+  void instructionImmediateRead16(alu16);
+  void instructionBankRead8(alu8);
+  void instructionBankRead16(alu16);
+  void instructionBankRead8(alu8, r16);
+  void instructionBankRead16(alu16, r16);
+  void instructionLongRead8(alu8, r16 = {});
+  void instructionLongRead16(alu16, r16 = {});
+  void instructionDirectRead8(alu8);
+  void instructionDirectRead16(alu16);
+  void instructionDirectRead8(alu8, r16);
+  void instructionDirectRead16(alu16, r16);
+  void instructionIndirectRead8(alu8);
+  void instructionIndirectRead16(alu16);
+  void instructionIndexedIndirectRead8(alu8);
+  void instructionIndexedIndirectRead16(alu16);
+  void instructionIndirectIndexedRead8(alu8);
+  void instructionIndirectIndexedRead16(alu16);
+  void instructionIndirectLongRead8(alu8, r16 = {});
+  void instructionIndirectLongRead16(alu16, r16 = {});
+  void instructionStackRead8(alu8);
+  void instructionStackRead16(alu16);
+  void instructionIndirectStackRead8(alu8);
+  void instructionIndirectStackRead16(alu16);
 
   //instructions-write.cpp
-  auto instructionBankWrite8(r16) -> void;
-  auto instructionBankWrite16(r16) -> void;
-  auto instructionBankWrite8(r16, r16) -> void;
-  auto instructionBankWrite16(r16, r16) -> void;
-  auto instructionLongWrite8(r16 = {}) -> void;
-  auto instructionLongWrite16(r16 = {}) -> void;
-  auto instructionDirectWrite8(r16) -> void;
-  auto instructionDirectWrite16(r16) -> void;
-  auto instructionDirectWrite8(r16, r16) -> void;
-  auto instructionDirectWrite16(r16, r16) -> void;
-  auto instructionIndirectWrite8() -> void;
-  auto instructionIndirectWrite16() -> void;
-  auto instructionIndexedIndirectWrite8() -> void;
-  auto instructionIndexedIndirectWrite16() -> void;
-  auto instructionIndirectIndexedWrite8() -> void;
-  auto instructionIndirectIndexedWrite16() -> void;
-  auto instructionIndirectLongWrite8(r16 = {}) -> void;
-  auto instructionIndirectLongWrite16(r16 = {}) -> void;
-  auto instructionStackWrite8() -> void;
-  auto instructionStackWrite16() -> void;
-  auto instructionIndirectStackWrite8() -> void;
-  auto instructionIndirectStackWrite16() -> void;
+  void instructionBankWrite8(r16);
+  void instructionBankWrite16(r16);
+  void instructionBankWrite8(r16, r16);
+  void instructionBankWrite16(r16, r16);
+  void instructionLongWrite8(r16 = {});
+  void instructionLongWrite16(r16 = {});
+  void instructionDirectWrite8(r16);
+  void instructionDirectWrite16(r16);
+  void instructionDirectWrite8(r16, r16);
+  void instructionDirectWrite16(r16, r16);
+  void instructionIndirectWrite8();
+  void instructionIndirectWrite16();
+  void instructionIndexedIndirectWrite8();
+  void instructionIndexedIndirectWrite16();
+  void instructionIndirectIndexedWrite8();
+  void instructionIndirectIndexedWrite16();
+  void instructionIndirectLongWrite8(r16 = {});
+  void instructionIndirectLongWrite16(r16 = {});
+  void instructionStackWrite8();
+  void instructionStackWrite16();
+  void instructionIndirectStackWrite8();
+  void instructionIndirectStackWrite16();
 
   //instructions-modify.cpp
-  auto instructionImpliedModify8(alu8, r16&) -> void;
-  auto instructionImpliedModify16(alu16, r16&) -> void;
-  auto instructionBankModify8(alu8) -> void;
-  auto instructionBankModify16(alu16) -> void;
-  auto instructionBankIndexedModify8(alu8) -> void;
-  auto instructionBankIndexedModify16(alu16) -> void;
-  auto instructionDirectModify8(alu8) -> void;
-  auto instructionDirectModify16(alu16) -> void;
-  auto instructionDirectIndexedModify8(alu8) -> void;
-  auto instructionDirectIndexedModify16(alu16) -> void;
+  void instructionImpliedModify8(alu8, r16&);
+  void instructionImpliedModify16(alu16, r16&);
+  void instructionBankModify8(alu8);
+  void instructionBankModify16(alu16);
+  void instructionBankIndexedModify8(alu8);
+  void instructionBankIndexedModify16(alu16);
+  void instructionDirectModify8(alu8);
+  void instructionDirectModify16(alu16);
+  void instructionDirectIndexedModify8(alu8);
+  void instructionDirectIndexedModify16(alu16);
 
   //instructions-pc.cpp
-  auto instructionBranch(bool = 1) -> void;
-  auto instructionBranchLong() -> void;
-  auto instructionJumpShort() -> void;
-  auto instructionJumpLong() -> void;
-  auto instructionJumpIndirect() -> void;
-  auto instructionJumpIndexedIndirect() -> void;
-  auto instructionJumpIndirectLong() -> void;
-  auto instructionCallShort() -> void;
-  auto instructionCallLong() -> void;
-  auto instructionCallIndexedIndirect() -> void;
-  auto instructionReturnInterrupt() -> void;
-  auto instructionReturnShort() -> void;
-  auto instructionReturnLong() -> void;
+  void instructionBranch(bool = 1);
+  void instructionBranchLong();
+  void instructionJumpShort();
+  void instructionJumpLong();
+  void instructionJumpIndirect();
+  void instructionJumpIndexedIndirect();
+  void instructionJumpIndirectLong();
+  void instructionCallShort();
+  void instructionCallLong();
+  void instructionCallIndexedIndirect();
+  void instructionReturnInterrupt();
+  void instructionReturnShort();
+  void instructionReturnLong();
 
   //instructions-misc.cpp
-  auto instructionBitImmediate8() -> void;
-  auto instructionBitImmediate16() -> void;
-  auto instructionNoOperation() -> void;
-  auto instructionPrefix() -> void;
-  auto instructionExchangeBA() -> void;
-  auto instructionBlockMove8(int) -> void;
-  auto instructionBlockMove16(int) -> void;
-  auto instructionInterrupt(r16) -> void;
-  auto instructionStop() -> void;
-  auto instructionWait() -> void;
-  auto instructionExchangeCE() -> void;
-  auto instructionSetFlag(bool&) -> void;
-  auto instructionClearFlag(bool&) -> void;
-  auto instructionResetP() -> void;
-  auto instructionSetP() -> void;
-  auto instructionTransfer8(r16, r16&) -> void;
-  auto instructionTransfer16(r16, r16&) -> void;
-  auto instructionTransferCS() -> void;
-  auto instructionTransferSX8() -> void;
-  auto instructionTransferSX16() -> void;
-  auto instructionTransferXS() -> void;
-  auto instructionPush8(r16) -> void;
-  auto instructionPush16(r16) -> void;
-  auto instructionPushD() -> void;
-  auto instructionPull8(r16&) -> void;
-  auto instructionPull16(r16&) -> void;
-  auto instructionPullD() -> void;
-  auto instructionPullB() -> void;
-  auto instructionPullP() -> void;
-  auto instructionPushEffectiveAddress() -> void;
-  auto instructionPushEffectiveIndirectAddress() -> void;
-  auto instructionPushEffectiveRelativeAddress() -> void;
+  void instructionBitImmediate8();
+  void instructionBitImmediate16();
+  void instructionNoOperation();
+  void instructionPrefix();
+  void instructionExchangeBA();
+  void instructionBlockMove8(int);
+  void instructionBlockMove16(int);
+  void instructionInterrupt(r16);
+  void instructionStop();
+  void instructionWait();
+  void instructionExchangeCE();
+  void instructionSetFlag(bool&);
+  void instructionClearFlag(bool&);
+  void instructionResetP();
+  void instructionSetP();
+  void instructionTransfer8(r16, r16&);
+  void instructionTransfer16(r16, r16&);
+  void instructionTransferCS();
+  void instructionTransferSX8();
+  void instructionTransferSX16();
+  void instructionTransferXS();
+  void instructionPush8(r16);
+  void instructionPush16(r16);
+  void instructionPushD();
+  void instructionPull8(r16&);
+  void instructionPull16(r16&);
+  void instructionPullD();
+  void instructionPullB();
+  void instructionPullP();
+  void instructionPushEffectiveAddress();
+  void instructionPushEffectiveIndirectAddress();
+  void instructionPushEffectiveRelativeAddress();
 
   //instruction.cpp
-  auto instruction() -> void;
+  void instruction();
 
   //serialization.cpp
-  auto serialize(serializer&) -> void;
+  void serialize(serializer&);
 
   //disassembler.cpp
-  /*auto disassemble() -> nall::string;
-  auto disassemble(nall::Natural<24> addr, bool e, bool m, bool x) -> nall::string;*/
+  /*nall::string disassemble();
+  nall::string disassemble(nall::Natural<24> addr, bool e, bool m, bool x);*/
 
   struct f8 {
     bool c = 0;  //carry
