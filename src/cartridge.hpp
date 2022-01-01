@@ -98,8 +98,8 @@ private:
   void loadSPC7110(std::string);
   void loadSDD1(std::string);
   void loadOBC1(std::string);
-  void loadEpsonRTC(Markup::Node);
-  void loadSharpRTC(Markup::Node);
+  void loadEpsonRTC(std::string);
+  void loadSharpRTC(std::string);
   void loadMSU1();
 
   //save.cpp

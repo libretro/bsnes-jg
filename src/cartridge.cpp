@@ -116,8 +116,12 @@ void Cartridge::loadCartridge(Markup::Node node) {
 
   if (BML::exists(stdboard, {"board", "processor", "dip"})) loadDIP(stdboard);
 
-  if(auto node = board["rtc(manufacturer=Epson)"]) loadEpsonRTC(node);
-  if(auto node = board["rtc(manufacturer=Sharp)"]) loadSharpRTC(node);
+  std::vector<std::string> rtclist = BML::searchList(stdboard, "rtc");
+  for (std::string& rtc : rtclist) {
+    std::string manufacturer = BML::search(rtc, {"rtc", "manufacturer"});
+    if (manufacturer == "Epson") loadEpsonRTC(rtc);
+    if (manufacturer == "Sharp") loadSharpRTC(rtc);
+  }
 
   std::ifstream msu1file =
     Emulator::platform->fopen(ID::SuperFamicom, "msu1/data.rom");
@@ -719,47 +723,43 @@ void Cartridge::loaduPD96050(std::string node) {
 }
 
 //rtc(manufacturer=Epson)
-void Cartridge::loadEpsonRTC(Markup::Node node) {
+void Cartridge::loadEpsonRTC(std::string node) {
   has.EpsonRTC = true;
 
   epsonrtc.initialize();
 
-  for(auto map : node.find("map")) {
-    loadMap(map, {&EpsonRTC::read, &epsonrtc}, {&EpsonRTC::write, &epsonrtc});
-  }
+  std::string map = BML::searchnode(node, {"rtc", "map"});
+  loadMap(map, {&EpsonRTC::read, &epsonrtc}, {&EpsonRTC::write, &epsonrtc});
 
-  if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Epson)"]) {
-    if(auto file = game.memory(memory)) {
-      std::ifstream rtcfile = Emulator::platform->fopen(ID::SuperFamicom, "time.rtc");
-      if (rtcfile.is_open()) {
-        uint8_t data[16] = {0};
-        for(auto& byte : data) byte = rtcfile.get();
-        epsonrtc.load(data);
-        rtcfile.close();
-      }
+  std::string memory = BML::searchnode(node, {"rtc", "memory"});
+  if(auto file = game.memory(memory)) {
+    std::ifstream rtcfile = Emulator::platform->fopen(ID::SuperFamicom, "time.rtc");
+    if (rtcfile.is_open()) {
+      uint8_t data[16] = {0};
+      for(auto& byte : data) byte = rtcfile.get();
+      epsonrtc.load(data);
+      rtcfile.close();
     }
   }
 }
 
 //rtc(manufacturer=Sharp)
-void Cartridge::loadSharpRTC(Markup::Node node) {
+void Cartridge::loadSharpRTC(std::string node) {
   has.SharpRTC = true;
 
   sharprtc.initialize();
 
-  for(auto map : node.find("map")) {
-    loadMap(map, {&SharpRTC::read, &sharprtc}, {&SharpRTC::write, &sharprtc});
-  }
+  std::string map = BML::searchnode(node, {"rtc", "map"});
+  loadMap(map, {&SharpRTC::read, &sharprtc}, {&SharpRTC::write, &sharprtc});
 
-  if(auto memory = node["memory(type=RTC,content=Time,manufacturer=Sharp)"]) {
-    if(auto file = game.memory(memory)) {
-      std::ifstream rtcfile = Emulator::platform->fopen(ID::SuperFamicom, "time.rtc");
-      if (rtcfile.is_open()) {
-        uint8_t data[16] = {0};
-        for(auto& byte : data) byte = rtcfile.get();
-        sharprtc.load(data);
-        rtcfile.close();
-      }
+  std::string memory = BML::searchnode(node, {"rtc", "memory"});
+  if(auto file = game.memory(memory)) {
+    std::ifstream rtcfile = Emulator::platform->fopen(ID::SuperFamicom, "time.rtc");
+    if (rtcfile.is_open()) {
+      uint8_t data[16] = {0};
+      for(auto& byte : data) byte = rtcfile.get();
+      epsonrtc.load(data);
+      rtcfile.close();
     }
   }
 }
