@@ -50,21 +50,6 @@ struct serializer {
     return _capacity;
   }
 
-  template<typename T> serializer& real(T& value) {
-    enum : unsigned { size = sizeof(T) };
-    //this is rather dangerous, and not cross-platform safe;
-    //but there is no standardized way to export FP-values
-    auto p = (uint8_t*)&value;
-    if(_mode == Save) {
-      for(unsigned n : nall::range(size)) _data[_size++] = p[n];
-    } else if(_mode == Load) {
-      for(unsigned n : nall::range(size)) p[n] = _data[_size++];
-    } else {
-      _size += size;
-    }
-    return *this;
-  }
-
   template<typename T> serializer& boolean(T& value) {
     if(_mode == Save) {
       _data[_size++] = (bool)value;
