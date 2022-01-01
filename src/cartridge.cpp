@@ -98,7 +98,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
     if (arch == "ARM6") loadARMDSP(p);
     if (arch == "uPD7725") loaduPD7725(p);
     if (arch == "uPD96050") loaduPD96050(p);
-
+    if (id == "SPC7110") loadSPC7110(p);
     if (id == "SDD1") loadSDD1(p);
     if (id == "OBC1") loadOBC1(p);
   }
@@ -130,7 +130,7 @@ void Cartridge::loadCartridge(Markup::Node node) {
   //if(auto node = board["processor(architecture=uPD96050)"]) loaduPD96050(node);
   if(auto node = board["rtc(manufacturer=Epson)"]) loadEpsonRTC(node);
   if(auto node = board["rtc(manufacturer=Sharp)"]) loadSharpRTC(node);
-  if(auto node = board["processor(identifier=SPC7110)"]) loadSPC7110(node);
+  //if(auto node = board["processor(identifier=SPC7110)"]) loadSPC7110(node);
   //if(auto node = board["processor(identifier=SDD1)"]) loadSDD1(node);
   //if(auto node = board["processor(identifier=OBC1)"]) loadOBC1(node);
   if(auto node = board["processor(architecture=HG51BS169)"]) {
@@ -1058,6 +1058,49 @@ void Cartridge::loadSharpRTC(Markup::Node node) {
 }
 
 //processor(identifier=SPC7110)
+void Cartridge::loadSPC7110(std::string node) {
+  has.SPC7110 = true;
+
+  std::vector<std::string> pmaps = BML::searchListShallow(node, "processor", "map");
+  for (std::string& m : pmaps) {
+    loadMap(m, {&SPC7110::read, &spc7110}, {&SPC7110::write, &spc7110});
+  }
+
+  std::string mcu = BML::searchnode(node, {"processor", "mcu"});
+
+  if (!mcu.empty()) {
+    std::vector<std::string> mcumaps = BML::searchList(mcu, "map");
+    for (std::string& m : mcumaps) {
+      loadMap(m, {&SPC7110::mcuromRead, &spc7110}, {&SPC7110::mcuromWrite, &spc7110});
+    }
+
+    std::vector<std::string> memlist = BML::searchList(mcu, "memory");
+    for (std::string& m : memlist) {
+      std::string type = BML::search(m, {"memory", "type"});
+      std::string content = BML::search(m, {"memory", "content"});
+      if (type == "ROM" && content == "Program") {
+        loadMemory(spc7110.prom, m);
+      }
+      else if (type == "ROM" && content == "Data") {
+        loadMemory(spc7110.drom, m);
+      }
+    }
+  }
+
+  std::string sram = BML::searchnode(node, {"processor", "memory"});
+  if (!sram.empty()) {
+    std::string type = BML::search(sram, {"memory", "type"});
+    std::string content = BML::search(sram, {"memory", "content"});
+    if (type == "RAM" && content == "Save") {
+      loadMemory(spc7110.ram, sram);
+      std::vector<std::string> maps = BML::searchList(sram, "map");
+      for (std::string& m : maps) {
+        loadMap(m, {&SPC7110::mcuramRead, &spc7110}, {&SPC7110::mcuramWrite, &spc7110});
+      }
+    }
+  }
+}
+
 void Cartridge::loadSPC7110(Markup::Node node) {
   has.SPC7110 = true;
 

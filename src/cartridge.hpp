@@ -96,6 +96,7 @@ private:
   void loaduPD7725(std::string);
   void loaduPD96050(std::string);
 
+  void loadSPC7110(std::string);
   void loadSDD1(std::string);
   void loadOBC1(std::string);
 
