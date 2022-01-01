@@ -27,8 +27,8 @@ std::string Cartridge::loadBoard(std::string board) {
 }
 
 void Cartridge::loadCartridge(std::string node) {
-  stdboard = BML::searchnode(node, {"board"});
-  if (stdboard.empty()) stdboard = loadBoard(game.board);
+  board = BML::searchnode(node, {"board"});
+  if (board.empty()) board = loadBoard(game.board);
 
   if(region() == "Auto") {
     std::string regstr = game.region.substr(game.region.length() - 3, game.region.length());
@@ -47,7 +47,7 @@ void Cartridge::loadCartridge(std::string node) {
      it is loaded elsewhere. Loading it twice will break things, so a shallow
      search is necessary here.
   */
-  std::vector<std::string> boardmem = BML::searchListShallow(stdboard, "board", "memory");
+  std::vector<std::string> boardmem = BML::searchListShallow(board, "board", "memory");
   for (std::string& m : boardmem) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
@@ -56,7 +56,7 @@ void Cartridge::loadCartridge(std::string node) {
     if (type == "RAM" && content == "Save") loadRAM(m);
   }
 
-  std::vector<std::string> processors = BML::searchList(stdboard, "processor");
+  std::vector<std::string> processors = BML::searchList(board, "processor");
   for (std::string& p : processors) {
     std::string arch = BML::search(p, {"processor", "architecture"});
     std::string id = BML::search(p, {"processor", "identifier"});
@@ -75,7 +75,7 @@ void Cartridge::loadCartridge(std::string node) {
     if (id == "OBC1") loadOBC1(p);
   }
 
-  std::vector<std::string> slots = BML::searchList(stdboard, "slot");
+  std::vector<std::string> slots = BML::searchList(board, "slot");
   for (int i = 0; i < slots.size(); ++i) {
     std::string type = BML::search(slots[i], {"slot", "type"});
     if (type == "BSMemory") loadBSMemory(slots[i]);
@@ -83,9 +83,9 @@ void Cartridge::loadCartridge(std::string node) {
     if (type == "SufamiTurbo" && i == 1) loadSufamiTurboB(slots[i]);
   }
 
-  if (BML::exists(stdboard, {"board", "processor", "dip"})) loadDIP(stdboard);
+  if (BML::exists(board, {"board", "processor", "dip"})) loadDIP(board);
 
-  std::vector<std::string> rtclist = BML::searchList(stdboard, "rtc");
+  std::vector<std::string> rtclist = BML::searchList(board, "rtc");
   for (std::string& rtc : rtclist) {
     std::string manufacturer = BML::search(rtc, {"rtc", "manufacturer"});
     if (manufacturer == "Epson") loadEpsonRTC(rtc);
@@ -632,7 +632,7 @@ void Cartridge::loaduPD7725(std::string node) {
     necdsp.Frequency = 7'600'000;
   }
 
-  std::vector<std::string> identifiers = BML::searchList(game.stddocument, "identifier");
+  std::vector<std::string> identifiers = BML::searchList(game.document, "identifier");
   std::string ident = identifiers[0].erase(0, identifiers[0].find_first_of(' ') + 1);
   ident.pop_back();
 
@@ -670,7 +670,7 @@ void Cartridge::loaduPD96050(std::string node) {
     necdsp.Frequency = 11'000'000;
   }
 
-  std::vector<std::string> identifiers = BML::searchList(game.stddocument, "identifier");
+  std::vector<std::string> identifiers = BML::searchList(game.document, "identifier");
   std::string ident = identifiers[0].erase(0, identifiers[0].find_first_of(' ') + 1);
   ident.pop_back();
 
@@ -824,14 +824,14 @@ void Cartridge::loadMSU1() {
 }
 
 void Cartridge::saveCartridge(std::string node) {
-  std::vector<std::string> boardmem = BML::searchListShallow(stdboard, "board", "memory");
+  std::vector<std::string> boardmem = BML::searchListShallow(board, "board", "memory");
   for (std::string& m : boardmem) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM" && content == "Save") saveRAM(m);
   }
 
-  std::vector<std::string> processors = BML::searchList(stdboard, "processor");
+  std::vector<std::string> processors = BML::searchList(board, "processor");
   for (std::string& p : processors) {
     std::string arch = BML::search(p, {"processor", "architecture"});
     std::string id = BML::search(p, {"processor", "identifier"});
@@ -846,7 +846,7 @@ void Cartridge::saveCartridge(std::string node) {
     if (arch == "uPD96050") saveuPD96050(p);
   }
 
-  std::vector<std::string> rtclist = BML::searchList(stdboard, "rtc");
+  std::vector<std::string> rtclist = BML::searchList(board, "rtc");
   for (std::string& rtc : rtclist) {
     std::string manufacturer = BML::search(rtc, {"rtc", "manufacturer"});
     if (manufacturer == "Epson") saveEpsonRTC(rtc);
@@ -1079,12 +1079,12 @@ std::vector<std::string> Cartridge::hashes() const {
 std::vector<std::string> Cartridge::manifests() const {
   std::vector<std::string> manifests;
 
-  manifests.push_back({game.stddocument + "\n" + stdboard});
+  manifests.push_back({game.document + "\n" + board});
 
-  if(!slotGameBoy.stddocument.empty()) manifests.push_back(slotGameBoy.stddocument);
-  if(!slotBSMemory.stddocument.empty()) manifests.push_back(slotBSMemory.stddocument);
-  if(!slotSufamiTurboA.stddocument.empty()) manifests.push_back(slotSufamiTurboA.stddocument);
-  if(!slotSufamiTurboB.stddocument.empty()) manifests.push_back(slotSufamiTurboB.stddocument);
+  if(!slotGameBoy.document.empty()) manifests.push_back(slotGameBoy.document);
+  if(!slotBSMemory.document.empty()) manifests.push_back(slotBSMemory.document);
+  if(!slotSufamiTurboA.document.empty()) manifests.push_back(slotSufamiTurboA.document);
+  if(!slotSufamiTurboB.document.empty()) manifests.push_back(slotSufamiTurboB.document);
   return manifests;
 }
 
@@ -1135,7 +1135,7 @@ bool Cartridge::load() {
       return false;
   }
 
-  loadCartridge(game.stddocument);
+  loadCartridge(game.document);
 
   //Game Boy
   if(cartridge.has.ICD) {
@@ -1202,7 +1202,7 @@ bool Cartridge::loadBSMemory() {
 
   if (!manifest.empty()) {
     slotBSMemory.load(manifest);
-    loadCartridgeBSMemory(slotBSMemory.stddocument);
+    loadCartridgeBSMemory(slotBSMemory.document);
     return true;
   }
 
@@ -1214,7 +1214,7 @@ bool Cartridge::loadSufamiTurboA() {
 
   if (!manifest.empty()) {
     slotSufamiTurboA.load(manifest);
-    loadCartridgeSufamiTurboA(slotSufamiTurboA.stddocument);
+    loadCartridgeSufamiTurboA(slotSufamiTurboA.document);
     return true;
   }
 
@@ -1226,7 +1226,7 @@ bool Cartridge::loadSufamiTurboB() {
 
   if (!manifest.empty()) {
     slotSufamiTurboB.load(manifest);
-    loadCartridgeSufamiTurboB(slotSufamiTurboB.stddocument);
+    loadCartridgeSufamiTurboB(slotSufamiTurboB.document);
     return true;
   }
 
@@ -1234,18 +1234,18 @@ bool Cartridge::loadSufamiTurboB() {
 }
 
 void Cartridge::save() {
-  saveCartridge(game.stddocument);
+  saveCartridge(game.document);
   if(has.GameBoySlot) {
     icd.save();
   }
   if(has.BSMemorySlot) {
-    saveCartridgeBSMemory(slotBSMemory.stddocument);
+    saveCartridgeBSMemory(slotBSMemory.document);
   }
   if(has.SufamiTurboSlotA) {
-    saveCartridgeSufamiTurboA(slotSufamiTurboA.stddocument);
+    saveCartridgeSufamiTurboA(slotSufamiTurboA.document);
   }
   if(has.SufamiTurboSlotB) {
-    saveCartridgeSufamiTurboB(slotSufamiTurboB.stddocument);
+    saveCartridgeSufamiTurboB(slotSufamiTurboB.document);
   }
 }
 

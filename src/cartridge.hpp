@@ -58,7 +58,7 @@ private:
   Emulator::Game slotBSMemory;
   Emulator::Game slotSufamiTurboA;
   Emulator::Game slotSufamiTurboB;
-  std::string stdboard;
+  std::string board;
 
   //cartridge.cpp
   bool loadBSMemory();
