@@ -128,7 +128,7 @@ struct Game {
 
   void load(std::string);
   std::optional<Game::Memory> memory(std::string);
-  nall::maybe<Game::Oscillator> oscillator(unsigned = 0);
+  std::optional<Game::Oscillator> oscillator(unsigned = 0);
 
   struct Memory {
     Memory() = default;

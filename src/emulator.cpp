@@ -48,9 +48,9 @@ std::optional<Game::Memory> Game::memory(std::string node) {
   return std::nullopt;
 }
 
-nall::maybe<Game::Oscillator> Game::oscillator(unsigned index) {
+std::optional<Game::Oscillator> Game::oscillator(unsigned index) {
   if(index < oscillatorList.size()) return oscillatorList[index];
-  return nall::nothing;
+  return std::nullopt;
 }
 
 Game::Oscillator::Oscillator(std::string node) {
