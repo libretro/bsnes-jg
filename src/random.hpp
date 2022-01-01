@@ -50,7 +50,7 @@ struct Random {
     }
 
     if(_entropy == Entropy::High) {
-      for(uint32_t address : nall::range(size)) {
+      for(uint32_t address = 0; address < size; ++address) {
         data[address] = random();
       }
       return;
@@ -64,7 +64,7 @@ struct Random {
     if((random() & 3) == 0) lovalue = 0;
     if((random() & 1) == 0) hivalue = ~lovalue;
 
-    for(uint32_t address : nall::range(size)) {
+    for(uint32_t address = 0; address < size; ++address) {
       uint8_t value = (address & 1ull << lobit) ? lovalue : hivalue;
       if((address & 1ull << hibit)) value = ~value;
       if((random() &  511) == 0) value ^= 1 << (random() & 7);
