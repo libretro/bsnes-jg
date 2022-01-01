@@ -114,15 +114,14 @@ private:
   void saveSA1(std::string);
   void saveSuperFX(std::string);
   void saveARMDSP(std::string);
+  void saveHitachiDSP(std::string);
   void saveSPC7110(std::string);
-
+  void saveOBC1(std::string);
   void saveEpsonRTC(std::string);
   void saveSharpRTC(std::string);
 
-  void saveHitachiDSP(Markup::Node);
   void saveuPD7725(Markup::Node);
   void saveuPD96050(Markup::Node);
-  void saveOBC1(Markup::Node);
 
   friend class Interface;
   friend class ICD;

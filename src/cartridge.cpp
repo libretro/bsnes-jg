@@ -868,9 +868,11 @@ void Cartridge::saveCartridge(std::string node) {
     std::string id = BML::search(p, {"processor", "identifier"});
     if (id == "MCC") saveMCC(p);
     if (id == "SPC7110") saveSPC7110(p);
+    if (id == "OBC1") saveOBC1(p);
     if (arch == "W65C816S") saveSA1(p);
     if (arch == "GSU") saveSuperFX(p);
     if (arch == "ARM6") saveARMDSP(p);
+    if (arch == "HG51BS169") saveHitachiDSP(p);
   }
 
   std::vector<std::string> rtclist = BML::searchList(stdboard, "rtc");
@@ -882,10 +884,8 @@ void Cartridge::saveCartridge(std::string node) {
 }
 
 void Cartridge::saveCartridge(Markup::Node node) {
-  if(auto node = board["processor(architecture=HG51BS169)"]) saveHitachiDSP(node);
   if(auto node = board["processor(architecture=uPD7725)"]) saveuPD7725(node);
   if(auto node = board["processor(architecture=uPD96050)"]) saveuPD96050(node);
-  if(auto node = board["processor(identifier=OBC1)"]) saveOBC1(node);
 }
 
 void Cartridge::saveCartridgeBSMemory(std::string node) {
@@ -1006,17 +1006,17 @@ void Cartridge::saveARMDSP(std::string node) {
 }
 
 //processor(architecture=HG51BS169)
-void Cartridge::saveHitachiDSP(Markup::Node node) {
-  saveMemory(hitachidsp.ram, node["ram"]);
-
-  if(auto memory = node["memory(type=RAM,content=Save)"]) {
-    saveMemory(hitachidsp.ram, memory);
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Data,architecture=HG51BS169)"]) {
-    if(auto file = game.memory(memory)) {
-      if(file->nonVolatile) {
-        Emulator::platform->write(ID::SuperFamicom, "save.ram", hitachidsp.dataRAM, (3 * 1024));
+void Cartridge::saveHitachiDSP(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    std::string arch = BML::search(m, {"memory", "architecture"});
+    if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
+      if(auto file = game.memory(m)) {
+        if(file->nonVolatile) {
+          Emulator::platform->write(ID::SuperFamicom, "save.ram", hitachidsp.dataRAM, (3 * 1024));
+        }
       }
     }
   }
@@ -1081,9 +1081,12 @@ void Cartridge::saveSPC7110(std::string node) {
 }
 
 //processor(identifier=OBC1)
-void Cartridge::saveOBC1(Markup::Node node) {
-  if(auto memory = node["memory(type=RAM,content=Save)"]) {
-    saveMemory(obc1.ram, memory);
+void Cartridge::saveOBC1(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "RAM" && content == "Save") saveMemory(obc1.ram, m);
   }
 }
 
