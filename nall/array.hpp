@@ -115,10 +115,6 @@ template<> inline auto array_span<uint8_t>::write(uint8_t value) -> void {
   _size--;
 }
 
-template<> template<typename U> inline auto array_span<uint8_t>::writel(U value, unsigned size) -> void {
-  for(unsigned byte : range(size)) write(value >> byte * 8);
-}
-
 template<typename T> struct array;
 
 //usage: int x[256] => array<int[256]> x
