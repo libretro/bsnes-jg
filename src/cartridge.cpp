@@ -114,31 +114,10 @@ void Cartridge::loadCartridge(Markup::Node node) {
     if (type == "SufamiTurbo" && i == 1) loadSufamiTurboB(slots[i]);
   }
 
-  if (BML::exists(stdboard, {"board", "processor", "dip"})) loadDIP(node);
+  if (BML::exists(stdboard, {"board", "processor", "dip"})) loadDIP(stdboard);
 
-  //if(auto node = board["memory(type=ROM,content=Program)"]) loadROM(node);
-  //if(auto node = board["memory(type=ROM,content=Expansion)"]) loadROM(node); //todo: handle this better
-  //if(auto node = board["memory(type=RAM,content=Save)"]) loadRAM(node);
-  //if(auto node = board["processor(identifier=ICD)"]) loadICD(node);
-  //if(auto node = board["processor(identifier=MCC)"]) loadMCC(node);
-  //if(auto node = board["slot(type=BSMemory)"]) loadBSMemory(node);
-  //if(auto node = board["slot(type=SufamiTurbo)[0]"]) loadSufamiTurboA(node);
-  //if(auto node = board["slot(type=SufamiTurbo)[1]"]) loadSufamiTurboB(node);
-  //if(auto node = board["dip"]) loadDIP(node);
-  //if(auto node = board["processor(architecture=uPD78214)"]) loadEvent(node);
-  //if(auto node = board["processor(architecture=W65C816S)"]) loadSA1(node);
-  //if(auto node = board["processor(architecture=GSU)"]) loadSuperFX(node);
-  //if(auto node = board["processor(architecture=ARM6)"]) loadARMDSP(node);
-  //if(auto node = board["processor(architecture=uPD7725)"]) loaduPD7725(node);
-  //if(auto node = board["processor(architecture=uPD96050)"]) loaduPD96050(node);
   if(auto node = board["rtc(manufacturer=Epson)"]) loadEpsonRTC(node);
   if(auto node = board["rtc(manufacturer=Sharp)"]) loadSharpRTC(node);
-  //if(auto node = board["processor(identifier=SPC7110)"]) loadSPC7110(node);
-  //if(auto node = board["processor(identifier=SDD1)"]) loadSDD1(node);
-  //if(auto node = board["processor(identifier=OBC1)"]) loadOBC1(node);
-  /*if(auto node = board["processor(architecture=HG51BS169)"]) {
-    loadHitachiDSP(node, game.board.find("2DC") != std::string::npos ? 2 : 1);
-  }*/
 
   std::ifstream msu1file =
     Emulator::platform->fopen(ID::SuperFamicom, "msu1/data.rom");
@@ -196,32 +175,6 @@ void Cartridge::loadCartridgeSufamiTurboB(Markup::Node node) {
     if (sramfile.is_open()) {
       sramfile.read((char*)sufamiturboB.ram.data(), memory.size);
       sramfile.close();
-    }
-  }
-}
-
-void Cartridge::loadMemory(Memory& mem, Markup::Node node) {
-  if(auto memory = game.memory(node)) {
-    mem.allocate(memory->size);
-    if(memory->type == "RAM" && !memory->nonVolatile) return;
-    if(memory->type == "RTC" && !memory->nonVolatile) return;
-
-    if (memory->name() == "program.rom" || memory->name() == "data.rom" || memory->name() == "expansion.rom") {
-      std::vector<uint8_t> buf = Emulator::platform->mopen(pathID(), std::string(memory->name()));
-      if (!buf.empty()) {
-      for (int i = 0; i < memory->size; ++i)
-        mem.data()[i] = buf[i];
-      }
-      return;
-    }
-
-    std::ifstream memfile = Emulator::platform->fopen(pathID(), std::string(memory->name()));
-    if (memfile.is_open()) {
-      memfile.seekg(0, memfile.end);
-      unsigned fsize = memfile.tellg();
-      memfile.seekg(0, memfile.beg);
-      memfile.read((char*)mem.data(), std::min(fsize, mem.size()));
-      memfile.close();
     }
   }
 }
@@ -317,17 +270,6 @@ void Cartridge::loadRAM(std::string node) {
   for (auto map : maps) loadMap(map, ram);
 }
 
-void Cartridge::loadROM(Markup::Node node) {
-  loadMemory(rom, node);
-  for(auto leaf : node.find("map")) loadMap(leaf, rom);
-}
-
-//memory(type=RAM,content=Save)
-void Cartridge::loadRAM(Markup::Node node) {
-  loadMemory(ram, node);
-  for(auto leaf : node.find("map")) loadMap(leaf, ram);
-}
-
 //processor(identifier=ICD)
 void Cartridge::loadICD(std::string node) {
   has.GameBoySlot = true;
@@ -345,23 +287,6 @@ void Cartridge::loadICD(std::string node) {
   //Game Boy core loads data through ICD interface
   std::vector<std::string> maps = BML::searchList(node, "map");
   for (auto map : maps) {
-    loadMap(map, {&ICD::readIO, &icd}, {&ICD::writeIO, &icd});
-  }
-}
-
-void Cartridge::loadICD(Markup::Node node) {
-  has.GameBoySlot = true;
-  has.ICD = true;
-
-  icd.Revision = node["revision"].natural();
-  if(auto oscillator = game.oscillator()) {
-    icd.Frequency = oscillator->frequency;
-  } else {
-    icd.Frequency = 0;
-  }
-
-  //Game Boy core loads data through ICD interface
-  for(auto map : node.find("map")) {
     loadMap(map, {&ICD::readIO, &icd}, {&ICD::writeIO, &icd});
   }
 }
@@ -396,29 +321,6 @@ void Cartridge::loadMCC(std::string node) {
   }
 }
 
-void Cartridge::loadMCC(Markup::Node node) {
-  has.MCC = true;
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&MCC::read, &mcc}, {&MCC::write, &mcc});
-  }
-
-  if(auto mcu = node["mcu"]) {
-    for(auto map : mcu.find("map")) {
-      loadMap(map, {&MCC::mcuRead, &mcc}, {&MCC::mcuWrite, &mcc});
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Program)"]) {
-      loadMemory(mcc.rom, memory);
-    }
-    if(auto memory = mcu["memory(type=RAM,content=Download)"]) {
-      loadMemory(mcc.psram, memory);
-    }
-    if(auto slot = mcu["slot(type=BSMemory)"]) {
-      loadBSMemory(slot);
-    }
-  }
-}
-
 //slot(type=BSMemory)
 void Cartridge::loadBSMemory(std::string node) {
   has.BSMemorySlot = true;
@@ -429,19 +331,6 @@ void Cartridge::loadBSMemory(std::string node) {
 
     std::vector<std::string> maps = BML::searchList(node, "map");
     for (auto map : maps) {
-      loadMap(map, bsmemory);
-    }
-  }
-}
-
-void Cartridge::loadBSMemory(Markup::Node node) {
-  has.BSMemorySlot = true;
-
-  if(auto loaded = Emulator::platform->load(ID::BSMemory, "BS Memory", "bs")) {
-    bsmemory.pathID = loaded.pathID;
-    loadBSMemory();
-
-    for(auto map : node.find("map")) {
       loadMap(map, bsmemory);
     }
   }
@@ -475,42 +364,6 @@ void Cartridge::loadSufamiTurboB(std::string node) {
   }
 }
 
-//slot(type=SufamiTurbo)[0]
-void Cartridge::loadSufamiTurboA(Markup::Node node) {
-  has.SufamiTurboSlotA = true;
-
-  if(auto loaded = Emulator::platform->load(ID::SufamiTurboA, "Sufami Turbo", "st")) {
-    sufamiturboA.pathID = loaded.pathID;
-    loadSufamiTurboA();
-
-    for(auto map : node.find("rom/map")) {
-      loadMap(map, sufamiturboA.rom);
-    }
-
-    for(auto map : node.find("ram/map")) {
-      loadMap(map, sufamiturboA.ram);
-    }
-  }
-}
-
-//slot(type=SufamiTurbo)[1]
-void Cartridge::loadSufamiTurboB(Markup::Node node) {
-  has.SufamiTurboSlotB = true;
-
-  if(auto loaded = Emulator::platform->load(ID::SufamiTurboB, "Sufami Turbo", "st")) {
-    sufamiturboB.pathID = loaded.pathID;
-    loadSufamiTurboB();
-
-    for(auto map : node.find("rom/map")) {
-      loadMap(map, sufamiturboB.rom);
-    }
-
-    for(auto map : node.find("ram/map")) {
-      loadMap(map, sufamiturboB.ram);
-    }
-  }
-}
-
 //dip
 void Cartridge::loadDIP(std::string node) {
   has.DIP = true;
@@ -521,18 +374,6 @@ void Cartridge::loadDIP(std::string node) {
 
   std::vector<std::string> maps = BML::searchList(node, "map");
   for (auto map : maps) {
-    loadMap(map, {&DIP::read, &dip}, {&DIP::write, &dip});
-  }
-}
-
-void Cartridge::loadDIP(Markup::Node node) {
-  has.DIP = true;
-  // Multi-game carts (Campus Challenge '92, PowerFest '94) were no longer
-  // supported after higan v106, and in bsnes standalone this always returns 0.
-  //dip.value = Emulator::platform->dipSettings(node);
-  dip.value = 0;
-
-  for(auto map : node.find("map")) {
     loadMap(map, {&DIP::read, &dip}, {&DIP::write, &dip});
   }
 }
@@ -620,40 +461,6 @@ void Cartridge::loadSA1(std::string node) {
   }
 }
 
-void Cartridge::loadSA1(Markup::Node node) {
-  has.SA1 = true;
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&SA1::readIOCPU, &sa1}, {&SA1::writeIOCPU, &sa1});
-  }
-
-  if(auto mcu = node["mcu"]) {
-    for(auto map : mcu.find("map")) {
-      loadMap(map, {&SA1::ROM::readCPU, &sa1.rom}, {&SA1::ROM::writeCPU, &sa1.rom});
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Program)"]) {
-      loadMemory(sa1.rom, memory);
-    }
-    if(auto slot = mcu["slot(type=BSMemory)"]) {
-      loadBSMemory(slot);
-    }
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Save)"]) {
-    loadMemory(sa1.bwram, memory);
-    for(auto map : memory.find("map")) {
-      loadMap(map, {&SA1::BWRAM::readCPU, &sa1.bwram}, {&SA1::BWRAM::writeCPU, &sa1.bwram});
-    }
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Internal)"]) {
-    loadMemory(sa1.iram, memory);
-    for(auto map : memory.find("map")) {
-      loadMap(map, {&SA1::IRAM::readCPU, &sa1.iram}, {&SA1::IRAM::writeCPU, &sa1.iram});
-    }
-  }
-}
-
 //processor(architecture=GSU)
 void Cartridge::loadSuperFX(std::string node) {
   has.SuperFX = true;
@@ -686,34 +493,6 @@ void Cartridge::loadSuperFX(std::string node) {
       for (std::string& c : cpumaps) {
         loadMap(c, superfx.cpuram);
       }
-    }
-  }
-}
-
-void Cartridge::loadSuperFX(Markup::Node node) {
-  has.SuperFX = true;
-
-  if(auto oscillator = game.oscillator()) {
-    superfx.Frequency = oscillator->frequency;  //GSU-1, GSU-2
-  } else {
-    superfx.Frequency = system.cpuFrequency();  //MARIO CHIP 1
-  }
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&SuperFX::readIO, &superfx}, {&SuperFX::writeIO, &superfx});
-  }
-
-  if(auto memory = node["memory(type=ROM,content=Program)"]) {
-    loadMemory(superfx.rom, memory);
-    for(auto map : memory.find("map")) {
-      loadMap(map, superfx.cpurom);
-    }
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Save)"]) {
-    loadMemory(superfx.ram, memory);
-    for(auto map : memory.find("map")) {
-      loadMap(map, superfx.cpuram);
     }
   }
 }
@@ -771,54 +550,6 @@ void Cartridge::loadARMDSP(std::string node) {
       }
     }
 
-  }
-}
-
-void Cartridge::loadARMDSP(Markup::Node node) {
-  has.ARMDSP = true;
-
-  for(auto& word : armdsp.programROM) word = 0x00;
-  for(auto& word : armdsp.dataROM) word = 0x00;
-  for(auto& word : armdsp.programRAM) word = 0x00;
-
-  if(auto oscillator = game.oscillator()) {
-    armdsp.Frequency = oscillator->frequency;
-  } else {
-    armdsp.Frequency = 21'440'000;
-  }
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&ArmDSP::read, &armdsp}, {&ArmDSP::write, &armdsp});
-  }
-
-  if(auto memory = node["memory(type=ROM,content=Program,architecture=ARM6)"]) {
-    if(auto file = game.memory(memory)) {
-      std::ifstream firmfile = Emulator::platform->fopen(ID::SuperFamicom, std::string(file->name()));
-      if (firmfile.is_open()) {
-        firmfile.read((char*)armdsp.programROM, (128 * 1024));
-        firmfile.close();
-      }
-    }
-  }
-
-  if(auto memory = node["memory(type=ROM,content=Data,architecture=ARM6)"]) {
-    if(auto file = game.memory(memory)) {
-      std::ifstream firmfile = Emulator::platform->fopen(ID::SuperFamicom, std::string(file->name()));
-      if (firmfile.is_open()) {
-        firmfile.read((char*)armdsp.dataROM, (32 * 1024));
-        firmfile.close();
-      }
-    }
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Data,architecture=ARM6)"]) {
-    if(auto file = game.memory(memory)) {
-      std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
-      if (sramfile.is_open()) {
-        sramfile.read((char*)armdsp.programRAM, (16 * 1024));
-        sramfile.close();
-      }
-    }
   }
 }
 
@@ -919,75 +650,6 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
   }
 }
 
-void Cartridge::loadHitachiDSP(Markup::Node node, unsigned roms) {
-  for(auto& word : hitachidsp.dataROM) word = 0x000000;
-  for(auto& word : hitachidsp.dataRAM) word = 0x00;
-
-  if(auto oscillator = game.oscillator()) {
-    hitachidsp.Frequency = oscillator->frequency;
-  } else {
-    hitachidsp.Frequency = 20'000'000;
-  }
-  hitachidsp.Roms = roms;  //1 or 2
-  hitachidsp.Mapping = 0;  //0 or 1
-
-  if(auto memory = node["memory(type=ROM,content=Program)"]) {
-    loadMemory(hitachidsp.rom, memory);
-    for(auto map : memory.find("map")) {
-      loadMap(map, {&HitachiDSP::readROM, &hitachidsp}, {&HitachiDSP::writeROM, &hitachidsp});
-    }
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Save)"]) {
-    loadMemory(hitachidsp.ram, memory);
-    for(auto map : memory.find("map")) {
-      loadMap(map, {&HitachiDSP::readRAM, &hitachidsp}, {&HitachiDSP::writeRAM, &hitachidsp});
-    }
-  }
-
-  if(configuration.coprocessor.preferHLE) {
-    has.Cx4 = true;
-    for(auto map : node.find("map")) {
-      loadMap(map, {&Cx4::read, &cx4}, {&Cx4::write, &cx4});
-    }
-    if(auto memory = node["memory(type=RAM,content=Data,architecture=HG51BS169)"]) {
-      for(auto map : memory.find("map")) {
-        loadMap(map, {&Cx4::read, &cx4}, {&Cx4::write, &cx4});
-      }
-    }
-    return;
-  }
-
-  if(auto memory = node["memory(type=ROM,content=Data,architecture=HG51BS169)"]) {
-    if(auto file = game.memory(memory)) {
-      for(auto n : nall::range(1 * 1024)) {
-        hitachidsp.dataROM[n]  = hitachidsp.staticDataROM[n * 3 + 0] <<  0;
-        hitachidsp.dataROM[n] |= hitachidsp.staticDataROM[n * 3 + 1] <<  8;
-        hitachidsp.dataROM[n] |= hitachidsp.staticDataROM[n * 3 + 2] << 16;
-      }
-    }
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Data,architecture=HG51BS169)"]) {
-    if(auto file = game.memory(memory)) {
-      std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
-      if (sramfile.is_open()) {
-        sramfile.read((char*)hitachidsp.dataRAM, (3 * 1024));
-        sramfile.close();
-      }
-    }
-    for(auto map : memory.find("map")) {
-      loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
-    }
-  }
-
-  has.HitachiDSP = true;
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&HitachiDSP::readIO, &hitachidsp}, {&HitachiDSP::writeIO, &hitachidsp});
-  }
-}
-
 //processor(architecture=uPD7725)
 void Cartridge::loaduPD7725(std::string node) {
   for(auto& word : necdsp.programROM) word = 0x000000;
@@ -1026,38 +688,6 @@ void Cartridge::loaduPD7725(std::string node) {
   }
 }
 
-void Cartridge::loaduPD7725(Markup::Node node) {
-  for(auto& word : necdsp.programROM) word = 0x000000;
-  for(auto& word : necdsp.dataROM) word = 0x0000;
-  for(auto& word : necdsp.dataRAM) word = 0x0000;
-
-  if(auto oscillator = game.oscillator()) {
-    necdsp.Frequency = oscillator->frequency;
-  } else {
-    necdsp.Frequency = 7'600'000;
-  }
-
-  auto manifest = BML::serialize(game.document);
-  if(manifest.find("identifier: DSP1")) {  //also matches DSP1B
-    has.DSP1 = true;
-    for(auto map : node.find("map")) {
-      loadMap(map, {&DSP1::read, &dsp1}, {&DSP1::write, &dsp1});
-    }
-  }
-  if(manifest.find("identifier: DSP2")) {
-    has.DSP2 = true;
-    for(auto map : node.find("map")) {
-      loadMap(map, {&DSP2::read, &dsp2}, {&DSP2::write, &dsp2});
-    }
-  }
-  if(manifest.find("identifier: DSP4")) {
-    has.DSP4 = true;
-    for(auto map : node.find("map")) {
-      loadMap(map, {&DSP4::read, &dsp4}, {&DSP4::write, &dsp4});
-    }
-  }
-}
-
 //processor(architecture=uPD96050)
 void Cartridge::loaduPD96050(std::string node) {
   for(auto& word : necdsp.programROM) word = 0x000000;
@@ -1083,28 +713,6 @@ void Cartridge::loaduPD96050(std::string node) {
       if (type == "RAM" && content == "Data") {
         std::string mem = BML::searchnode(m, {"memory", "map"});
         loadMap(mem, {&ST0010::read, &st0010}, {&ST0010::write, &st0010});
-      }
-    }
-  }
-}
-
-void Cartridge::loaduPD96050(Markup::Node node) {
-  for(auto& word : necdsp.programROM) word = 0x000000;
-  for(auto& word : necdsp.dataROM) word = 0x0000;
-  for(auto& word : necdsp.dataRAM) word = 0x0000;
-
-  if(auto oscillator = game.oscillator()) {
-    necdsp.Frequency = oscillator->frequency;
-  } else {
-    necdsp.Frequency = 11'000'000;
-  }
-
-  auto manifest = BML::serialize(game.document);
-  if(manifest.find("identifier: ST010")) {
-    has.ST0010 = true;
-    if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD96050)"]) {
-      for(auto map : memory.find("map")) {
-        loadMap(map, {&ST0010::read, &st0010}, {&ST0010::write, &st0010});
       }
     }
   }
@@ -1200,33 +808,6 @@ void Cartridge::loadSPC7110(std::string node) {
   }
 }
 
-void Cartridge::loadSPC7110(Markup::Node node) {
-  has.SPC7110 = true;
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&SPC7110::read, &spc7110}, {&SPC7110::write, &spc7110});
-  }
-
-  if(auto mcu = node["mcu"]) {
-    for(auto map : mcu.find("map")) {
-      loadMap(map, {&SPC7110::mcuromRead, &spc7110}, {&SPC7110::mcuromWrite, &spc7110});
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Program)"]) {
-      loadMemory(spc7110.prom, memory);
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Data)"]) {
-      loadMemory(spc7110.drom, memory);
-    }
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Save)"]) {
-    loadMemory(spc7110.ram, memory);
-    for(auto map : memory.find("map")) {
-      loadMap(map, {&SPC7110::mcuramRead, &spc7110}, {&SPC7110::mcuramWrite, &spc7110});
-    }
-  }
-}
-
 //processor(identifier=SDD1)
 void Cartridge::loadSDD1(std::string node) {
   has.SDD1 = true;
@@ -1251,23 +832,6 @@ void Cartridge::loadSDD1(std::string node) {
   }
 }
 
-void Cartridge::loadSDD1(Markup::Node node) {
-  has.SDD1 = true;
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&SDD1::ioRead, &sdd1}, {&SDD1::ioWrite, &sdd1});
-  }
-
-  if(auto mcu = node["mcu"]) {
-    for(auto map : mcu.find("map")) {
-      loadMap(map, {&SDD1::mcuRead, &sdd1}, {&SDD1::mcuWrite, &sdd1});
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Program)"]) {
-      loadMemory(sdd1.rom, memory);
-    }
-  }
-}
-
 //processor(identifier=OBC1)
 void Cartridge::loadOBC1(std::string node) {
   has.OBC1 = true;
@@ -1283,18 +847,6 @@ void Cartridge::loadOBC1(std::string node) {
         BML::search(m, {"memory", "content"}) == "Save") {
       loadMemory(obc1.ram, m);
     }
-  }
-}
-
-void Cartridge::loadOBC1(Markup::Node node) {
-  has.OBC1 = true;
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&OBC1::read, &obc1}, {&OBC1::write, &obc1});
-  }
-
-  if(auto memory = node["memory(type=RAM,content=Save)"]) {
-    loadMemory(obc1.ram, memory);
   }
 }
 

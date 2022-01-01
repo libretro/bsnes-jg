@@ -78,7 +78,6 @@ private:
   template<typename T> unsigned loadMap(std::string, T&);
   unsigned loadMap(std::string, const nall::function<uint8_t (unsigned, uint8_t)>&, const nall::function<void (unsigned, uint8_t)>&);
 
-  void loadMemory(Memory&, Markup::Node);
   template<typename T> unsigned loadMap(Markup::Node, T&);
   unsigned loadMap(Markup::Node, const nall::function<uint8_t (unsigned, uint8_t)>&, const nall::function<void (unsigned, uint8_t)>&);
 
@@ -96,30 +95,11 @@ private:
   void loadHitachiDSP(std::string, unsigned roms);
   void loaduPD7725(std::string);
   void loaduPD96050(std::string);
-
   void loadSPC7110(std::string);
   void loadSDD1(std::string);
   void loadOBC1(std::string);
-
-  void loadROM(Markup::Node);
-  void loadRAM(Markup::Node);
-  void loadICD(Markup::Node);
-  void loadMCC(Markup::Node);
-  void loadBSMemory(Markup::Node);
-  void loadSufamiTurboA(Markup::Node);
-  void loadSufamiTurboB(Markup::Node);
-  void loadDIP(Markup::Node);
-  void loadSA1(Markup::Node);
-  void loadSuperFX(Markup::Node);
-  void loadARMDSP(Markup::Node);
-  void loadHitachiDSP(Markup::Node, unsigned roms);
-  void loaduPD7725(Markup::Node);
-  void loaduPD96050(Markup::Node);
   void loadEpsonRTC(Markup::Node);
   void loadSharpRTC(Markup::Node);
-  void loadSPC7110(Markup::Node);
-  void loadSDD1(Markup::Node);
-  void loadOBC1(Markup::Node);
   void loadMSU1();
 
   //save.cpp
