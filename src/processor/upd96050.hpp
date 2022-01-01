@@ -6,25 +6,25 @@
 namespace Processor {
 
 struct uPD96050 {
-  auto power() -> void;
-  auto exec() -> void;
-  auto serialize(serializer&) -> void;
+  void power();
+  void exec();
+  void serialize(serializer&);
 
-  auto execOP(nall::Natural<24> opcode) -> void;
-  auto execRT(nall::Natural<24> opcode) -> void;
-  auto execJP(nall::Natural<24> opcode) -> void;
-  auto execLD(nall::Natural<24> opcode) -> void;
+  void execOP(nall::Natural<24> opcode);
+  void execRT(nall::Natural<24> opcode);
+  void execJP(nall::Natural<24> opcode);
+  void execLD(nall::Natural<24> opcode);
 
-  auto readSR() -> uint8_t;
-  auto writeSR(uint8_t data) -> void;
+  uint8_t readSR();
+  void writeSR(uint8_t data);
 
-  auto readDR() -> uint8_t;
-  auto writeDR(uint8_t data) -> void;
+  uint8_t readDR();
+  void writeDR(uint8_t data);
 
-  auto readDP(nall::Natural<12> addr) -> uint8_t;
-  auto writeDP(nall::Natural<12> addr, uint8_t data) -> void;
+  uint8_t readDP(nall::Natural<12> addr);
+  void writeDP(nall::Natural<12> addr, uint8_t data);
 
-  //auto disassemble(nall::Natural<14> ip) -> nall::string;
+  //nall::string disassemble(nall::Natural<14> ip);
 
   enum class Revision : unsigned { uPD7725, uPD96050 } revision;
   nall::Natural<24> programROM[16384];
@@ -36,7 +36,7 @@ struct uPD96050 {
       return ov0 << 0 | ov1 << 1 | z << 2 | c << 3 | s0 << 4 | s1 << 5;
     }
 
-    inline auto operator=(uint16_t data) -> Flag& {
+    inline Flag& operator=(uint16_t data) {
       ov0 = data >> 0 & 1;
       ov1 = data >> 1 & 1;
       z   = data >> 2 & 1;
@@ -46,7 +46,7 @@ struct uPD96050 {
       return *this;
     }
 
-    auto serialize(serializer&) -> void;
+    void serialize(serializer&);
 
     bool ov0;  //overflow 0
     bool ov1;  //overflow 1
@@ -63,7 +63,7 @@ struct uPD96050 {
            | dma << 11 | _drs << 12 | usf0 << 13 | usf1 << 14 | rqm << 15;
     }
 
-    inline auto operator=(uint16_t data) -> Status& {
+    inline Status& operator=(uint16_t data) {
       p0   = data >>  0 & 1;
       p1   = data >>  1 & 1;
       ei   = data >>  7 & 1;
@@ -78,7 +78,7 @@ struct uPD96050 {
       return *this;
     }
 
-    auto serialize(serializer&) -> void;
+    void serialize(serializer&);
 
     bool p0;    //output port 0
     bool p1;    //output port 1
@@ -98,25 +98,25 @@ struct uPD96050 {
   };
 
   struct Registers {
-    auto serialize(serializer&) -> void;
+    void serialize(serializer&);
 
-    uint16_t stack[16];    //LIFO
-    nall::VariadicNatural pc;    //program counter
-    nall::VariadicNatural rp;    //ROM pointer
-    nall::VariadicNatural dp;    //data pointer
-    nall::Natural< 4> sp;              //stack pointer
-    uint16_t si;           //serial input
-    uint16_t so;           //serial output
+    uint16_t stack[16];        //LIFO
+    nall::VariadicNatural pc;  //program counter
+    nall::VariadicNatural rp;  //ROM pointer
+    nall::VariadicNatural dp;  //data pointer
+    nall::Natural< 4> sp;      //stack pointer
+    uint16_t si;               //serial input
+    uint16_t so;               //serial output
     int16_t k;
     int16_t l;
     int16_t m;
     int16_t n;
-    int16_t a;             //accumulator
-    int16_t b;             //accumulator
-    uint16_t tr;           //temporary register
-    uint16_t trb;          //temporary register
-    uint16_t dr;           //data register
-    Status sr;             //status register
+    int16_t a;                 //accumulator
+    int16_t b;                 //accumulator
+    uint16_t tr;               //temporary register
+    uint16_t trb;              //temporary register
+    uint16_t dr;               //data register
+    Status sr;                 //status register
   } regs;
 
   struct Flags {

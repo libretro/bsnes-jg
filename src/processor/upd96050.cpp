@@ -3,7 +3,7 @@
 
 namespace Processor {
 
-auto uPD96050::exec() -> void {
+void uPD96050::exec() {
   nall::Natural<24> opcode = programROM[regs.pc++];
   switch(opcode >> 22) {
   case 0: execOP(opcode); break;
@@ -17,7 +17,7 @@ auto uPD96050::exec() -> void {
   regs.n = result <<  1;  //store low 15-bits + zero
 }
 
-auto uPD96050::execOP(nall::Natural<24> opcode) -> void {
+void uPD96050::execOP(nall::Natural<24> opcode) {
   nall::Natural< 2> pselect = opcode >> 20;  //P select
   nall::Natural< 4> alu     = opcode >> 16;  //ALU operation mode
   nall::Natural< 1> asl     = opcode >> 15;  //accumulator select
@@ -158,12 +158,12 @@ auto uPD96050::execOP(nall::Natural<24> opcode) -> void {
   }
 }
 
-auto uPD96050::execRT(nall::Natural<24> opcode) -> void {
+void uPD96050::execRT(nall::Natural<24> opcode) {
   execOP(opcode);
   regs.pc = regs.stack[--regs.sp];
 }
 
-auto uPD96050::execJP(nall::Natural<24> opcode) -> void {
+void uPD96050::execJP(nall::Natural<24> opcode) {
   nall::Natural< 9> brch = opcode >> 13;  //branch
   nall::Natural<11> na  = opcode >>  2;  //next address
   nall::Natural< 2> bank = opcode >>  0;  //bank address
@@ -225,7 +225,7 @@ auto uPD96050::execJP(nall::Natural<24> opcode) -> void {
   }
 }
 
-auto uPD96050::execLD(nall::Natural<24> opcode) -> void {
+void uPD96050::execLD(nall::Natural<24> opcode) {
   uint16_t id = opcode >> 6;  //immediate data
   nall::Natural< 4> dst = opcode >> 0;  //destination
 
@@ -249,14 +249,14 @@ auto uPD96050::execLD(nall::Natural<24> opcode) -> void {
   }
 }
 
-auto uPD96050::readSR() -> uint8_t {
+uint8_t uPD96050::readSR() {
   return regs.sr >> 8;
 }
 
-auto uPD96050::writeSR(uint8_t data) -> void {
+void uPD96050::writeSR(uint8_t data) {
 }
 
-auto uPD96050::readDR() -> uint8_t {
+uint8_t uPD96050::readDR() {
   if(regs.sr.drc == 0) {
     //16-bit
     if(regs.sr.drs == 0) {
@@ -274,7 +274,7 @@ auto uPD96050::readDR() -> uint8_t {
   }
 }
 
-auto uPD96050::writeDR(uint8_t data) -> void {
+void uPD96050::writeDR(uint8_t data) {
   if(regs.sr.drc == 0) {
     //16-bit
     if(regs.sr.drs == 0) {
@@ -292,7 +292,7 @@ auto uPD96050::writeDR(uint8_t data) -> void {
   }
 }
 
-auto uPD96050::readDP(nall::Natural<12> addr) -> uint8_t {
+uint8_t uPD96050::readDP(nall::Natural<12> addr) {
   bool hi = addr & 1;
   addr = (addr >> 1) & 2047;
 
@@ -303,7 +303,7 @@ auto uPD96050::readDP(nall::Natural<12> addr) -> uint8_t {
   }
 }
 
-auto uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) -> void {
+void uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) {
   bool hi = addr & 1;
   addr = (addr >> 1) & 2047;
 
@@ -314,7 +314,7 @@ auto uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) -> void {
   }
 }
 
-/*auto uPD96050::disassemble(nall::Natural<14> ip) -> nall::string {
+/*nall::string uPD96050::disassemble(nall::Natural<14> ip) {
   nall::string output = {nall::hex(ip, 4L), "  "};
   nall::Natural<24> opcode = programROM[ip];
   nall::Natural< 2> type = opcode >> 22;
@@ -507,14 +507,14 @@ auto uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) -> void {
   return output;
 }*/
 
-auto uPD96050::serialize(serializer& s) -> void {
+void uPD96050::serialize(serializer& s) {
   s.array(dataRAM);
   regs.serialize(s);
   flags.a.serialize(s);
   flags.b.serialize(s);
 }
 
-auto uPD96050::Flag::serialize(serializer& s) -> void {
+void uPD96050::Flag::serialize(serializer& s) {
   s.boolean(ov0);
   s.boolean(ov1);
   s.boolean(z);
@@ -523,7 +523,7 @@ auto uPD96050::Flag::serialize(serializer& s) -> void {
   s.boolean(s1);
 }
 
-auto uPD96050::Status::serialize(serializer& s) -> void {
+void uPD96050::Status::serialize(serializer& s) {
   s.boolean(p0);
   s.boolean(p1);
   s.boolean(ei);
@@ -539,7 +539,7 @@ auto uPD96050::Status::serialize(serializer& s) -> void {
   s.boolean(soack);
 }
 
-auto uPD96050::Registers::serialize(serializer& s) -> void {
+void uPD96050::Registers::serialize(serializer& s) {
   s.array(stack);
   s.integer(pc);
   s.integer(rp);
@@ -559,7 +559,7 @@ auto uPD96050::Registers::serialize(serializer& s) -> void {
   sr.serialize(s);
 }
 
-auto uPD96050::power() -> void {
+void uPD96050::power() {
   if(revision == Revision::uPD7725) {
     regs.pc.resize(11);
     regs.rp.resize(10);
