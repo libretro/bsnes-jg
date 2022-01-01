@@ -197,17 +197,6 @@ unsigned Cartridge::loadMap(std::string map, T& memory) {
   return bus.map({&T::read, &memory}, {&T::write, &memory}, addr, size, base, mask);
 }
 
-template<typename T>  //T = ReadableMemory, WritableMemory, ProtectableMemory
-unsigned Cartridge::loadMap(Markup::Node map, T& memory) {
-  auto addr = map["address"].text();
-  auto size = map["size"].natural();
-  auto base = map["base"].natural();
-  auto mask = map["mask"].natural();
-  if(size == 0) size = memory.size();
-  if(size == 0) return 0; //does this ever actually occur? - Yes! Sufami Turbo.
-  return bus.map({&T::read, &memory}, {&T::write, &memory}, std::string(addr), size, base, mask);
-}
-
 unsigned Cartridge::loadMap(
   std::string map,
   const nall::function<uint8_t (unsigned, uint8_t)>& reader,
@@ -221,18 +210,6 @@ unsigned Cartridge::loadMap(
   unsigned base = strbase.empty() ? 0 : std::stoi(strbase, nullptr, 16);
   unsigned mask = strmask.empty() ? 0 : std::stoi(strmask, nullptr, 16);
   return bus.map(reader, writer, addr, size, base, mask);
-}
-
-unsigned Cartridge::loadMap(
-  Markup::Node map,
-  const nall::function<uint8_t (unsigned, uint8_t)>& reader,
-  const nall::function<void  (unsigned, uint8_t)>& writer
-) {
-  auto addr = map["address"].text();
-  auto size = map["size"].natural();
-  auto base = map["base"].natural();
-  auto mask = map["mask"].natural();
-  return bus.map(reader, writer, std::string(addr), size, base, mask);
 }
 
 void Cartridge::loadMemory(Memory& mem, std::string node) {
