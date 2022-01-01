@@ -18,9 +18,6 @@
 #include "serializer.hpp"
 #include "../nall/primitives.hpp"
 #include "../nall/varint.hpp"
-#include "../nall/shared-pointer.hpp"
-#include "../nall/vector.hpp"
-#include "../nall/string.hpp"
 
 #include "byuuML/byuuML.hpp"
 #include "byuuML/byuuML_query.hpp"
