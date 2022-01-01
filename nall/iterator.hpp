@@ -72,7 +72,17 @@ struct range_t {
     iterator(int64_t position, int64_t step = 0) : position(position), step(step) {}
     auto operator*() const -> int64_t { return position; }
     auto operator!=(const iterator& source) const -> bool { return step > 0 ? position < source.position : position > source.position; }
+
+// Workaround a hang when starting Tengai Makyo Zero
+#if defined(__clang__)
+#pragma clang optimize off
+#endif
+
     auto operator++() -> iterator& { position += step; return *this; }
+
+#if defined(__clang__)
+#pragma clang optimize on
+#endif
 
   private:
     int64_t position;
