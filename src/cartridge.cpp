@@ -203,7 +203,7 @@ void Cartridge::loadMemory(Memory& mem, Markup::Node node) {
     if(memory->type == "RAM" && !memory->nonVolatile) return;
     if(memory->type == "RTC" && !memory->nonVolatile) return;
 
-    if (memory->name() == "program.rom" || memory->name() == "data.rom") {
+    if (memory->name() == "program.rom" || memory->name() == "data.rom" || memory->name() == "expansion.rom") {
       std::vector<uint8_t> buf = Emulator::platform->mopen(pathID(), std::string(memory->name()));
       if (!buf.empty()) {
       for (int i = 0; i < memory->size; ++i)
@@ -281,7 +281,7 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
     if(memory->type == "RAM" && !memory->nonVolatile) return;
     if(memory->type == "RTC" && !memory->nonVolatile) return;
 
-    if (memory->name() == "program.rom" || memory->name() == "data.rom") {
+    if (memory->name() == "program.rom" || memory->name() == "data.rom" || memory->name() == "expansion.rom") {
       std::vector<uint8_t> buf = Emulator::platform->mopen(pathID(), std::string(memory->name()));
       if (!buf.empty()) {
       for (int i = 0; i < memory->size; ++i)
