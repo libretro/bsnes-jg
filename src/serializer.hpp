@@ -85,23 +85,7 @@ struct serializer {
     return *this;
   }
 
-  template<typename T, unsigned Size> serializer& array(nall::array<T[Size]>& array) {
-    for(auto& value : array) operator()(value);
-    return *this;
-  }
-
   //optimized specializations
-
-  serializer& array(uint8_t* data, unsigned size) {
-    if(_mode == Save) {
-      nall::memory::copy(_data + _size, data, size);
-    } else if(_mode == Load) {
-      nall::memory::copy(data, _data + _size, size);
-    } else {
-    }
-    _size += size;
-    return *this;
-  }
 
   template<int N> serializer& array(uint8_t (&data)[N]) {
     return array(data, N);
