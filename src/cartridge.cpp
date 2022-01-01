@@ -104,7 +104,7 @@ void Cartridge::loadCartridgeBSMemory(std::string node) {
   if (auto memory = Emulator::Game::Memory(BML::searchnode(node, {"game", "board", "memory"}))) {
     bsmemory.ROM = memory.type == "ROM";
     bsmemory.memory.allocate(memory.size);
-    std::vector<uint8_t> buf = Emulator::platform->mopen(bsmemory.pathID, std::string(memory.name()));
+    std::vector<uint8_t> buf = Emulator::platform->mopen(bsmemory.pathID, memory.name());
     if (!buf.empty()) {
       for (int i = 0; i < memory.size; ++i)
         bsmemory.memory.data()[i] = buf[i];
@@ -121,7 +121,7 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
       if(auto memory = Emulator::Game::Memory(m)) {
         sufamiturboA.rom.allocate(memory.size);
         std::vector<uint8_t> buf =
-          Emulator::platform->mopen(sufamiturboA.pathID, std::string(memory.name()));
+          Emulator::platform->mopen(sufamiturboA.pathID, memory.name());
         if (!buf.empty()) {
           for (int i = 0; i < memory.size; ++i)
             sufamiturboA.rom.data()[i] = buf[i];
@@ -151,7 +151,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
       if(auto memory = Emulator::Game::Memory(m)) {
         sufamiturboB.rom.allocate(memory.size);
         std::vector<uint8_t> buf =
-          Emulator::platform->mopen(sufamiturboB.pathID, std::string(memory.name()));
+          Emulator::platform->mopen(sufamiturboB.pathID, memory.name());
         if (!buf.empty()) {
           for (int i = 0; i < memory.size; ++i)
             sufamiturboB.rom.data()[i] = buf[i];
@@ -208,7 +208,7 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
     if(memory->type == "RTC" && !memory->nonVolatile) return;
 
     if (memory->name() == "program.rom" || memory->name() == "data.rom" || memory->name() == "expansion.rom") {
-      std::vector<uint8_t> buf = Emulator::platform->mopen(pathID(), std::string(memory->name()));
+      std::vector<uint8_t> buf = Emulator::platform->mopen(pathID(), memory->name());
       if (!buf.empty()) {
       for (int i = 0; i < memory->size; ++i)
         mem.data()[i] = buf[i];
@@ -216,7 +216,7 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
       return;
     }
 
-    std::ifstream memfile = Emulator::platform->fopen(pathID(), std::string(memory->name()));
+    std::ifstream memfile = Emulator::platform->fopen(pathID(), memory->name());
     if (memfile.is_open()) {
       memfile.seekg(0, memfile.end);
       unsigned fsize = memfile.tellg();
@@ -492,7 +492,7 @@ void Cartridge::loadARMDSP(std::string node) {
 
     if (type == "ROM" && content == "Program" && arch == "ARM6") {
       if(auto file = game.memory(m)) {
-        std::ifstream firmfile = Emulator::platform->fopen(ID::SuperFamicom, std::string(file->name()));
+        std::ifstream firmfile = Emulator::platform->fopen(ID::SuperFamicom, file->name());
         if (firmfile.is_open()) {
           firmfile.read((char*)armdsp.programROM, (128 * 1024));
           firmfile.close();
@@ -502,7 +502,7 @@ void Cartridge::loadARMDSP(std::string node) {
 
     if (type == "ROM" && content == "Data" && arch == "ARM6") {
       if(auto file = game.memory(m)) {
-        std::ifstream firmfile = Emulator::platform->fopen(ID::SuperFamicom, std::string(file->name()));
+        std::ifstream firmfile = Emulator::platform->fopen(ID::SuperFamicom, file->name());
         if (firmfile.is_open()) {
           firmfile.read((char*)armdsp.dataROM, (32 * 1024));
           firmfile.close();
