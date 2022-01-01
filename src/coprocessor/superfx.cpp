@@ -107,7 +107,7 @@ uint8_t SuperFX::rpix(uint8_t x, uint8_t y) {
   uint8_t data = 0x00;
   x = (x & 7) ^ 7;
 
-  for(unsigned n : nall::range(bpp)) {
+  for(unsigned n = 0; n < bpp; ++n) {
     unsigned byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
     step(regs.clsr ? 5 : 6);
     data |= ((read(addr + byte) >> x) & 1) << n;
@@ -132,10 +132,10 @@ void SuperFX::flushPixelCache(PixelCache& cache) {
   unsigned bpp = 2 << (regs.scmr.md - (regs.scmr.md >> 1));  // = [regs.scmr.md]{ 2, 4, 4, 8 };
   unsigned addr = 0x700000 + (cn * (bpp << 3)) + (regs.scbr << 10) + ((y & 0x07) * 2);
 
-  for(unsigned n : nall::range(bpp)) {
+  for(unsigned n = 0; n < bpp; ++n) {
     unsigned byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
     uint8_t data = 0x00;
-    for(unsigned x : nall::range(8)) data |= ((cache.data[x] >> n) & 1) << x;
+    for(unsigned x = 0; x < 8; ++x) data |= ((cache.data[x] >> n) & 1) << x;
     if(cache.bitpend != 0xff) {
       step(regs.clsr ? 5 : 6);
       data &= cache.bitpend;
@@ -196,7 +196,7 @@ uint8_t SuperFX::readOpcode(uint16_t addr) {
     if(cache.valid[offset >> 4] == false) {
       unsigned dp = offset & 0xfff0;
       unsigned sp = (regs.pbr << 16) + ((regs.cbr + dp) & 0xfff0);
-      for(unsigned n : nall::range(16)) {
+      for(unsigned n = 0; n < 16; ++n) {
         step(regs.clsr ? 5 : 6);
         cache.buffer[dp++] = read(sp++);
       }
@@ -235,7 +235,7 @@ uint8_t SuperFX::pipe() {
 }
 
 void SuperFX::flushCache() {
-  for(unsigned n : nall::range(32)) cache.valid[n] = false;
+  for(unsigned n = 0; n < 32; ++n) cache.valid[n] = false;
 }
 
 uint8_t SuperFX::readCache(uint16_t addr) {
@@ -464,9 +464,9 @@ void SuperFX::power() {
   romMask = rom.size() - 1;
   ramMask = ram.size() - 1;
 
-  for(unsigned n : nall::range(512)) cache.buffer[n] = 0x00;
-  for(unsigned n : nall::range(32)) cache.valid[n] = false;
-  for(unsigned n : nall::range(2)) {
+  for(unsigned n = 0; n < 512; ++n) cache.buffer[n] = 0x00;
+  for(unsigned n = 0; n < 32; ++n) cache.valid[n] = false;
+  for(unsigned n = 0; n < 2; ++n) {
     pixelcache[n].offset = ~0;
     pixelcache[n].bitpend = 0x00;
   }
