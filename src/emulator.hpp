@@ -3,6 +3,7 @@
 #include <libco/libco.h>
 
 #include <algorithm>
+#include <cassert>
 #include <iostream>
 #include <fstream>
 #include <optional>
@@ -12,7 +13,6 @@
 #include "../nall/bit.hpp"
 #include "../nall/function.hpp"
 #include "../nall/iterator.hpp"
-#include "../nall/maybe.hpp"
 #include "../nall/memory.hpp"
 #include "serializer.hpp"
 #include "../nall/primitives.hpp"
