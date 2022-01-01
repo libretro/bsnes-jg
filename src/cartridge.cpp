@@ -873,6 +873,8 @@ void Cartridge::saveCartridge(std::string node) {
     if (arch == "GSU") saveSuperFX(p);
     if (arch == "ARM6") saveARMDSP(p);
     if (arch == "HG51BS169") saveHitachiDSP(p);
+    if (arch == "uPD7725") saveuPD7725(p);
+    if (arch == "uPD96050") saveuPD96050(p);
   }
 
   std::vector<std::string> rtclist = BML::searchList(stdboard, "rtc");
@@ -884,8 +886,6 @@ void Cartridge::saveCartridge(std::string node) {
 }
 
 void Cartridge::saveCartridge(Markup::Node node) {
-  if(auto node = board["processor(architecture=uPD7725)"]) saveuPD7725(node);
-  if(auto node = board["processor(architecture=uPD96050)"]) saveuPD96050(node);
 }
 
 void Cartridge::saveCartridgeBSMemory(std::string node) {
@@ -1023,22 +1023,34 @@ void Cartridge::saveHitachiDSP(std::string node) {
 }
 
 //processor(architecture=uPD7725)
-void Cartridge::saveuPD7725(Markup::Node node) {
-  if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD7725)"]) {
-    if(auto file = game.memory(memory)) {
-      if(file->nonVolatile) {
-        Emulator::platform->write(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, 2 * 256);
+void Cartridge::saveuPD7725(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    std::string arch = BML::search(m, {"memory", "architecture"});
+    if (type == "RAM" && content == "Data" && arch == "uPD7725") {
+      if(auto file = game.memory(m)) {
+        if(file->nonVolatile) {
+          Emulator::platform->write(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, 2 * 256);
+        }
       }
     }
   }
 }
 
 //processor(architecture=uPD96050)
-void Cartridge::saveuPD96050(Markup::Node node) {
-  if(auto memory = node["memory(type=RAM,content=Data,architecture=uPD96050)"]) {
-    if(auto file = game.memory(memory)) {
-      if(file->nonVolatile) {
-        Emulator::platform->write(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, (4 * 1024));
+void Cartridge::saveuPD96050(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    std::string arch = BML::search(m, {"memory", "architecture"});
+    if (type == "RAM" && content == "Data" && arch == "uPD96050") {
+      if(auto file = game.memory(m)) {
+        if(file->nonVolatile) {
+          Emulator::platform->write(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, (4 * 1024));
+        }
       }
     }
   }
