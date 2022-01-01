@@ -138,12 +138,13 @@ void System::runToSave() {
 
   //these games will periodically deadlock when using "Fast" synchronization
   if(cartridge.headerTitle() == "MEGAMAN X3") method = "Strict";
+  if(cartridge.headerTitle() == "STAR FOX") method = "Strict";
   if(cartridge.headerTitle() == "Star Ocean") method = "Strict";
   if(cartridge.headerTitle() == "SUPER MARIO RPG") method = "Strict";
   if(cartridge.headerTitle() == "TALES OF PHANTASIA") method = "Strict";
 
   //fallback in case of unrecognized method specified
-  if(method != "Fast" && method != "Strict") method = "Fast";
+  if(method != "Fast" && method != "Strict") method = "Strict";
 
   scheduler.mode = Scheduler::Mode::Synchronize;
   if(method == "Fast") runToSaveFast();

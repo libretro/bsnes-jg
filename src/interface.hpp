@@ -78,7 +78,7 @@ struct Configuration {
       unsigned version = 3;
     } ppu2;
     struct Serialization {
-      std::string method = "Fast";
+      std::string method = "Strict";
     } serialization;
   } system;
 
