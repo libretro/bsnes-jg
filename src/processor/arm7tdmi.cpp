@@ -1362,7 +1362,7 @@ static const nall::string _conditions[] = {
 #define _comp(mode) (mode >=  8 && mode <= 11)
 #define _math(mode) (mode <=  7 || mode == 12 || mode == 14)
 
-nall::string ARM7TDMI::disassemble(nall::maybe<uint32_t> pc, nall::maybe<bool> thumb) {
+nall::string ARM7TDMI::disassemble(std::optional<uint32_t> pc, std::optional<bool> thumb) {
   if(!pc) pc = pipeline.execute.address;
   if(!thumb) thumb = cpsr().t;
 
