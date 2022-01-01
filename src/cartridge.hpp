@@ -71,8 +71,8 @@ private:
   Markup::Node loadBoard(nall::string);
   void loadCartridge(Markup::Node);
   void loadCartridgeBSMemory(std::string);
-  void loadCartridgeSufamiTurboA(Markup::Node);
-  void loadCartridgeSufamiTurboB(Markup::Node);
+  void loadCartridgeSufamiTurboA(std::string);
+  void loadCartridgeSufamiTurboB(std::string);
 
   void loadMemory(Memory&, std::string);
   template<typename T> unsigned loadMap(std::string, T&);

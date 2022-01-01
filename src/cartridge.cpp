@@ -143,42 +143,62 @@ void Cartridge::loadCartridgeBSMemory(std::string node) {
   }
 }
 
-void Cartridge::loadCartridgeSufamiTurboA(Markup::Node node) {
-  if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=ROM,content=Program)"]}) {
-    sufamiturboA.rom.allocate(memory.size);
-    std::vector<uint8_t> buf = Emulator::platform->mopen(sufamiturboA.pathID, std::string(memory.name()));
-    if (!buf.empty()) {
-      for (int i = 0; i < memory.size; ++i)
-        sufamiturboA.rom.data()[i] = buf[i];
+void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "ROM" && content == "Program") {
+      if(auto memory = Emulator::Game::Memory(m)) {
+        sufamiturboA.rom.allocate(memory.size);
+        std::vector<uint8_t> buf =
+          Emulator::platform->mopen(sufamiturboA.pathID, std::string(memory.name()));
+        if (!buf.empty()) {
+          for (int i = 0; i < memory.size; ++i)
+            sufamiturboA.rom.data()[i] = buf[i];
+        }
+      }
     }
-  }
-
-  if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
-    sufamiturboA.ram.allocate(memory.size);
-    std::ifstream sramfile = Emulator::platform->fopen(sufamiturboA.pathID, "save.ram");
-    if (sramfile.is_open()) {
-      sramfile.read((char*)sufamiturboA.ram.data(), memory.size);
-      sramfile.close();
+    else if (type == "RAM" && content == "Save") {
+      if(auto memory = Emulator::Game::Memory(m)) {
+        sufamiturboA.ram.allocate(memory.size);
+        std::ifstream sramfile =
+          Emulator::platform->fopen(sufamiturboA.pathID, "save.ram");
+        if (sramfile.is_open()) {
+          sramfile.read((char*)sufamiturboA.ram.data(), memory.size);
+          sramfile.close();
+        }
+      }
     }
   }
 }
 
-void Cartridge::loadCartridgeSufamiTurboB(Markup::Node node) {
-  if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=ROM,content=Program)"]}) {
-    sufamiturboB.rom.allocate(memory.size);
-    std::vector<uint8_t> buf = Emulator::platform->mopen(sufamiturboB.pathID, std::string(memory.name()));
-    if (!buf.empty()) {
-      for (int i = 0; i < memory.size; ++i)
-        sufamiturboB.rom.data()[i] = buf[i];
+void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    if (type == "ROM" && content == "Program") {
+      if(auto memory = Emulator::Game::Memory(m)) {
+        sufamiturboB.rom.allocate(memory.size);
+        std::vector<uint8_t> buf =
+          Emulator::platform->mopen(sufamiturboB.pathID, std::string(memory.name()));
+        if (!buf.empty()) {
+          for (int i = 0; i < memory.size; ++i)
+            sufamiturboB.rom.data()[i] = buf[i];
+        }
+      }
     }
-  }
-
-  if(auto memory = Emulator::Game::Memory{node["game/board/memory(type=RAM,content=Save)"]}) {
-    sufamiturboB.ram.allocate(memory.size);
-    std::ifstream sramfile = Emulator::platform->fopen(sufamiturboB.pathID, "save.ram");
-    if (sramfile.is_open()) {
-      sramfile.read((char*)sufamiturboB.ram.data(), memory.size);
-      sramfile.close();
+    else if (type == "RAM" && content == "Save") {
+      if(auto memory = Emulator::Game::Memory(m)) {
+        sufamiturboB.ram.allocate(memory.size);
+        std::ifstream sramfile =
+          Emulator::platform->fopen(sufamiturboB.pathID, "save.ram");
+        if (sramfile.is_open()) {
+          sramfile.read((char*)sufamiturboB.ram.data(), memory.size);
+          sramfile.close();
+        }
+      }
     }
   }
 }
@@ -1159,13 +1179,11 @@ bool Cartridge::loadSufamiTurboA() {
 
   if (!manifest.empty()) {
     slotSufamiTurboA.load(manifest);
-  }
-  else {
-      return false;
+    loadCartridgeSufamiTurboA(slotSufamiTurboA.stddocument);
+    return true;
   }
 
-  loadCartridgeSufamiTurboA(slotSufamiTurboA.document);
-  return true;
+  return false;
 }
 
 bool Cartridge::loadSufamiTurboB() {
@@ -1173,13 +1191,11 @@ bool Cartridge::loadSufamiTurboB() {
 
   if (!manifest.empty()) {
     slotSufamiTurboB.load(manifest);
-  }
-  else {
-      return false;
+    loadCartridgeSufamiTurboB(slotSufamiTurboB.stddocument);
+    return true;
   }
 
-  loadCartridgeSufamiTurboB(slotSufamiTurboB.document);
-  return true;
+  return false;
 }
 
 void Cartridge::save() {
