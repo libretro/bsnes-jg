@@ -249,7 +249,7 @@ void SMP::writeIO(uint16_t address, uint8_t data) {
 //sometimes the SMP will run far slower than expected
 //other times (and more likely), the SMP will deadlock until the system is reset
 //the timers are not affected by this and advance by their expected values
-void SMP::wait(nall::maybe<uint16_t> addr, bool half) {
+void SMP::wait(std::optional<uint16_t> addr, bool half) {
   static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
   static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
 
@@ -262,7 +262,7 @@ void SMP::wait(nall::maybe<uint16_t> addr, bool half) {
   stepTimers(timerWaitStates[waitStates] >> half);
 }
 
-void SMP::waitIdle(nall::maybe<uint16_t> addr, bool half) {
+void SMP::waitIdle(std::optional<uint16_t> addr, bool half) {
   static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
   static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
 
