@@ -70,7 +70,7 @@ private:
   std::string loadBoard(std::string board);
   Markup::Node loadBoard(nall::string);
   void loadCartridge(Markup::Node);
-  void loadCartridgeBSMemory(Markup::Node);
+  void loadCartridgeBSMemory(std::string);
   void loadCartridgeSufamiTurboA(Markup::Node);
   void loadCartridgeSufamiTurboB(Markup::Node);
 

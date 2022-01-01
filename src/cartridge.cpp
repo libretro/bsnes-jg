@@ -131,8 +131,8 @@ void Cartridge::loadCartridge(Markup::Node node) {
   }
 }
 
-void Cartridge::loadCartridgeBSMemory(Markup::Node node) {
-  if(auto memory = Emulator::Game::Memory{node["game/board/memory(content=Program)"]}) {
+void Cartridge::loadCartridgeBSMemory(std::string node) {
+  if (auto memory = Emulator::Game::Memory(BML::searchnode(node, {"game", "board", "memory"}))) {
     bsmemory.ROM = memory.type == "ROM";
     bsmemory.memory.allocate(memory.size);
     std::vector<uint8_t> buf = Emulator::platform->mopen(bsmemory.pathID, std::string(memory.name()));
@@ -1147,13 +1147,11 @@ bool Cartridge::loadBSMemory() {
 
   if (!manifest.empty()) {
     slotBSMemory.load(manifest);
-  }
-  else {
-      return false;
+    loadCartridgeBSMemory(slotBSMemory.stddocument);
+    return true;
   }
 
-  loadCartridgeBSMemory(slotBSMemory.document);
-  return true;
+  return false;
 }
 
 bool Cartridge::loadSufamiTurboA() {
