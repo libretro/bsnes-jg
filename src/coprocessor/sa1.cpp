@@ -319,16 +319,16 @@ uint8_t SA1::dmaCC1Read(unsigned addr) {
 
       uint8_t out[] = {0, 0, 0, 0, 0, 0, 0, 0};
       for(unsigned x = 0; x < 8; ++x) {
-        out[0] |= (data & 1) << 7 - x; data >>= 1;
-        out[1] |= (data & 1) << 7 - x; data >>= 1;
+        out[0] |= (data & 1) << (7 - x); data >>= 1;
+        out[1] |= (data & 1) << (7 - x); data >>= 1;
         if(mmio.dmacb == 2) continue;
-        out[2] |= (data & 1) << 7 - x; data >>= 1;
-        out[3] |= (data & 1) << 7 - x; data >>= 1;
+        out[2] |= (data & 1) << (7 - x); data >>= 1;
+        out[3] |= (data & 1) << (7 - x); data >>= 1;
         if(mmio.dmacb == 1) continue;
-        out[4] |= (data & 1) << 7 - x; data >>= 1;
-        out[5] |= (data & 1) << 7 - x; data >>= 1;
-        out[6] |= (data & 1) << 7 - x; data >>= 1;
-        out[7] |= (data & 1) << 7 - x; data >>= 1;
+        out[4] |= (data & 1) << (7 - x); data >>= 1;
+        out[5] |= (data & 1) << (7 - x); data >>= 1;
+        out[6] |= (data & 1) << (7 - x); data >>= 1;
+        out[7] |= (data & 1) << (7 - x); data >>= 1;
       }
 
       for(unsigned byte = 0; byte < bpp; ++bpp) {
