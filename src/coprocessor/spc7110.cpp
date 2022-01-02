@@ -222,7 +222,7 @@ uint8_t SPC7110::dcuRead() {
   if((r480c & 0x80) == 0) return 0x00;
 
   if(dcuOffset == 0) {
-    for(auto row : nall::range(8)) {
+    for(unsigned row = 0; row < 8; ++row) {
       switch(decompressor->bpp) {
       case 1:
         dcuTile[row] = decompressor->result;
