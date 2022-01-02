@@ -560,7 +560,8 @@ void uPD96050::Registers::serialize(serializer& s) {
 }
 
 void uPD96050::power() {
-  if(revision == Revision::uPD7725) {
+  // Take a very close look at this when fixing NEC DSP LLE support
+  /*if(revision == Revision::uPD7725) {
     regs.pc.resize(11);
     regs.rp.resize(10);
     regs.dp.resize( 8);
@@ -570,7 +571,7 @@ void uPD96050::power() {
     regs.pc.resize(14);
     regs.rp.resize(11);
     regs.dp.resize(11);
-  }
+  }*/
 
   for(auto n : nall::range(16)) regs.stack[n] = 0x0000;
   regs.pc = 0x0000;
