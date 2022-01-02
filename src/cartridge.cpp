@@ -675,6 +675,20 @@ void Cartridge::loaduPD7725(std::string node) {
     if (!pmap.empty()) {
       loadMap(pmap, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
     }
+
+    std::vector<std::string> memlist = BML::searchList(node, "memory");
+    for (std::string& m : memlist) {
+      std::string type = BML::search(m, {"memory", "type"});
+      std::string content = BML::search(m, {"memory", "content"});
+      std::string arch = BML::search(m, {"memory", "architecture"});
+      if (type == "RAM" && content == "Data" && arch == "uPD7725") {
+        std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
+        if (sramfile.is_open()) {
+          sramfile.read((char*)necdsp.dataRAM, 2 * 256);
+          sramfile.close();
+        }
+      }
+    }
   }
   else if (ident == "DSP4") {
     has.DSP4 = true;
