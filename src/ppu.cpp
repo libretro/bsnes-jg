@@ -1008,8 +1008,8 @@ void PPU::Background::runMode7() {
   int originX = (a * clip(hoffset - hcenter) & ~63) + (b * clip(voffset - vcenter) & ~63) + (b * y & ~63) + (hcenter << 8);
   int originY = (c * clip(hoffset - hcenter) & ~63) + (d * clip(voffset - vcenter) & ~63) + (d * y & ~63) + (vcenter << 8);
 
-  int pixelX = originX + a * x >> 8;
-  int pixelY = originY + c * x >> 8;
+  int pixelX = (originX + a * x) >> 8;
+  int pixelY = (originY + c * x) >> 8;
   uint16_t paletteAddress = (nall::Natural< 3>)pixelY << 3 | (nall::Natural< 3>)pixelX;
 
   nall::Natural< 7> tileX = pixelX >> 3;
@@ -1098,7 +1098,7 @@ void PPU::Background::fetchNameTable() {
   if(ppu.io.bgMode == 2 || ppu.io.bgMode == 4 || ppu.io.bgMode == 6) {
     auto hlookup = ppu.bg3.opt.hoffset;
     auto vlookup = ppu.bg3.opt.voffset;
-    unsigned valid = 1 << 13 + id;
+    unsigned valid = 1 << (13 + id);
 
     if(ppu.io.bgMode == 4) {
       if(hlookup & valid) {
@@ -1128,7 +1128,7 @@ void PPU::Background::fetchNameTable() {
   unsigned vtile = voffset >> vtiles;
 
   unsigned hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
-  unsigned vscreen = io.screenSize.bit(1) ? 32 << 5 + io.screenSize.bit(0) : 0;
+  unsigned vscreen = io.screenSize.bit(1) ? 32 << (5 + io.screenSize.bit(0)) : 0;
 
   uint16_t offset = (nall::Natural< 5>)htile << 0 | (nall::Natural< 5>)vtile << 5;
   if(htile & 0x20) offset += hscreen;
@@ -1147,12 +1147,12 @@ void PPU::Background::fetchNameTable() {
   if(htiles == 4 && bool(hoffset & 8) != tile.hmirror) tile.character +=  1;
   if(vtiles == 4 && bool(voffset & 8) != tile.vmirror) tile.character += 16;
 
-  unsigned characterMask = ppu.vram.mask >> 3 + io.mode;
-  unsigned characterIndex = io.tiledataAddress >> 3 + io.mode;
+  unsigned characterMask = ppu.vram.mask >> (3 + io.mode);
+  unsigned characterIndex = io.tiledataAddress >> (3 + io.mode);
   uint16_t origin = tile.character + characterIndex & characterMask;
 
   if(tile.vmirror) voffset ^= 7;
-  tile.address = (origin << 3 + io.mode) + (voffset & 7);
+  tile.address = (origin << (3 + io.mode)) + (voffset & 7);
 
   unsigned paletteOffset = ppu.io.bgMode == 0 ? id << 5 : 0;
   unsigned paletteSize = 2 << io.mode;
@@ -1182,7 +1182,7 @@ void PPU::Background::fetchOffset(unsigned y) {
   unsigned vtile = voffset >> vtiles;
 
   unsigned hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
-  unsigned vscreen = io.screenSize.bit(1) ? 32 << 5 + io.screenSize.bit(0) : 0;
+  unsigned vscreen = io.screenSize.bit(1) ? 32 << (5 + io.screenSize.bit(0)) : 0;
 
   uint16_t offset = (nall::Natural< 5>)htile << 0 | (nall::Natural< 5>)vtile << 5;
   if(htile & 0x20) offset += hscreen;
@@ -1239,7 +1239,7 @@ inline void PPU::Background::run(bool screen) {
   pixel.paletteGroup = tile.paletteGroup;
   if(++pixelCounter == 0) ++renderingIndex;
 
-  unsigned x = ppu.hcounter() - 56 >> 2;
+  unsigned x = (ppu.hcounter() - 56) >> 2;
 
   if(x == 0 && (!hires() || screen == Screen::Below)) {
     mosaic.hcounter = ppu.mosaic.size;
@@ -1422,10 +1422,10 @@ void PPU::Object::run() {
     if(px & ~7) continue;
 
     unsigned color = 0, shift = tile.hflip ? px : 7 - px;
-    color += tile.data >> shift +  0 & 1;
-    color += tile.data >> shift +  7 & 2;
-    color += tile.data >> shift + 14 & 4;
-    color += tile.data >> shift + 21 & 8;
+    color += tile.data >> (shift +  0) & 1;
+    color += tile.data >> (shift +  7) & 2;
+    color += tile.data >> (shift + 14) & 4;
+    color += tile.data >> (shift + 21) & 8;
 
     if(color) {
       if(io.aboveEnable) {
@@ -1479,7 +1479,7 @@ void PPU::Object::fetch() {
     y &= 255;
 
     uint16_t tiledataAddress = io.tiledataAddress;
-    if(sprite.nameselect) tiledataAddress += 1 + io.nameselect << 12;
+    if(sprite.nameselect) tiledataAddress += (1 + io.nameselect) << 12;
     uint16_t chrx =  (sprite.character & 15);
     uint16_t chry = ((sprite.character >> 4) + (y >> 3) & 15) << 4;
 
@@ -1737,7 +1737,7 @@ uint16_t PPU::Screen::below(bool hires) {
     priority = ppu.obj.output.below.priority;
     math.below.color = paletteColor(ppu.obj.output.below.palette);
   }
-  if(math.transparent = (priority == 0)) math.below.color = paletteColor(0);
+  if((math.transparent = (priority == 0))) math.below.color = paletteColor(0);
 
   if(!hires) return 0;
   if(!math.below.colorEnable) return math.above.colorEnable ? math.below.color : (nall::Natural<15>)0;
