@@ -47,7 +47,7 @@ void SharpRTC::load(const uint8_t* data) {
 
   uint64_t timestamp = 0;
   for(unsigned byte = 0; byte < 8; ++byte) {
-    timestamp |= data[8 + byte] << (byte * 8);
+    timestamp |= (uint64_t)data[8 + byte] << (byte * 8);
   }
 
   uint64_t diff = (uint64_t)time(0) - timestamp;
