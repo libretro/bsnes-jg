@@ -116,7 +116,7 @@ void uPD96050::execOP(nall::Natural<24> opcode) {
         flag.ov0 = (q ^ r) &  (q ^ p) & 0x8000;
         flag.c = r > q;
       }
-      flag.ov1 = flag.ov0 & flag.ov1 ? flag.s0 == flag.s1 : flag.ov0 | flag.ov1;
+      flag.ov1 = (flag.ov0 & flag.ov1) ? flag.s0 == flag.s1 : flag.ov0 | flag.ov1;
       break;
     }
 
