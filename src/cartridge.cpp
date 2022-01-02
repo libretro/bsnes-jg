@@ -650,6 +650,32 @@ void Cartridge::loaduPD7725(std::string node) {
       loadMap(pmap, {&DSP2::read, &dsp2}, {&DSP2::write, &dsp2});
     }
   }
+  else if (ident == "DSP3") {
+    std::ifstream prgfile = Emulator::platform->fopen(ID::SuperFamicom, "dsp3.program.rom");
+    if (prgfile.is_open()) {
+      for (unsigned i = 0; i < 2048; ++i) {
+        uint8_t a = prgfile.get();
+        uint8_t b = prgfile.get();
+        uint8_t c = prgfile.get();
+        necdsp.programROM[i] = a | (b << 8) | (c << 16);
+      }
+      prgfile.close();
+    }
+    std::ifstream datafile = Emulator::platform->fopen(ID::SuperFamicom, "dsp3.data.rom");
+    if (datafile.is_open()) {
+      for (unsigned i = 0; i < 1024; ++i) {
+        uint8_t a = datafile.get();
+        uint8_t b = datafile.get();
+        necdsp.dataROM[i] = a | (b << 8);
+      }
+      prgfile.close();
+    }
+    has.NECDSP = true;
+    necdsp.revision = NECDSP::Revision::uPD7725;
+    if (!pmap.empty()) {
+      loadMap(pmap, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
+    }
+  }
   else if (ident == "DSP4") {
     has.DSP4 = true;
     if (!pmap.empty()) {

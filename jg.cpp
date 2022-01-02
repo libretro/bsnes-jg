@@ -249,6 +249,14 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
             path = path.substr(0, path.find_last_of(".")) +
                 name.substr(name.find_first_of("track") + 5);
         }
+        else if (name == "dsp3.program.rom") {
+            path = std::string(pathinfo.bios) + "/dsp3.program.rom";
+            required = true;
+        }
+        else if (name == "dsp3.data.rom") {
+            path = std::string(pathinfo.bios) + "/dsp3.data.rom";
+            required = true;
+        }
         else if (name == "arm6.program.rom") {
             path = std::string(pathinfo.bios) + "/st018.program.rom";
             required = true;
