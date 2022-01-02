@@ -59,7 +59,8 @@ void ICD::joypWrite(bool p14, bool p15) {
 
   GB_icd_set_joyp(&sameboy, input);
 
-  if(p14 == 0 && p15 == 1);
+  //if(p14 == 0 && p15 == 1); // Does nothing?
+
   if(p14 == 1 && p15 == 0) joypLock ^= 1;
 
   //packet handling
