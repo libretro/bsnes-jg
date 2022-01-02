@@ -52,7 +52,7 @@ ifeq ($(UNAME), Linux)
 endif
 
 ifeq ($(shell $(CXX) -v 2>&1 | grep -c "clang"),1)
-	WARNINGS += -Wno-parentheses -Wno-shift-count-overflow
+	WARNINGS += -Wno-shift-count-overflow
 endif
 
 CSRCS := deps/gb/apu.c \
