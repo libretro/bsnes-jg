@@ -281,6 +281,20 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
         else if (name == "dsp4.data.rom") {
             path = std::string(pathinfo.bios) + "/dsp4.data.rom";
         }
+        else if (name == "st010.program.rom") {
+            path = std::string(pathinfo.bios) + "/st010.program.rom";
+        }
+        else if (name == "st010.data.rom") {
+            path = std::string(pathinfo.bios) + "/st010.data.rom";
+        }
+        else if (name == "st011.program.rom") {
+            path = std::string(pathinfo.bios) + "/st011.program.rom";
+            required = true;
+        }
+        else if (name == "st011.data.rom") {
+            path = std::string(pathinfo.bios) + "/st011.data.rom";
+            required = true;
+        }
         else if (name == "arm6.program.rom") {
             path = std::string(pathinfo.bios) + "/st018.program.rom";
             required = true;

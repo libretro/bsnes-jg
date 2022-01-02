@@ -728,18 +728,80 @@ void Cartridge::loaduPD96050(std::string node) {
   std::vector<std::string> identifiers = BML::searchList(game.document, "identifier");
   std::string ident = identifiers[0].erase(0, identifiers[0].find_first_of(' ') + 1);
   ident.pop_back();
+  std::transform(ident.begin(), ident.end(), ident.begin(), ::tolower);
 
-  if (ident == "ST010") {
-    has.ST0010 = true;
-    std::vector<std::string> memlist = BML::searchList(node, "memory");
-    for (std::string& m : memlist) {
-      std::string type = BML::search(m, {"memory", "type"});
-      std::string content = BML::search(m, {"memory", "content"});
-      if (type == "RAM" && content == "Data") {
-        std::string mem = BML::searchnode(m, {"memory", "map"});
-        loadMap(mem, {&ST0010::read, &st0010}, {&ST0010::write, &st0010});
+  std::string pname = ident + ".program.rom";
+  std::string dname = ident + ".data.rom";
+
+  bool failed = false;
+
+  std::ifstream prgfile = Emulator::platform->fopen(ID::SuperFamicom, pname);
+  if (prgfile.is_open()) {
+    for (unsigned i = 0; i < 16384; ++i) {
+      uint8_t a = prgfile.get(); uint8_t b = prgfile.get(); uint8_t c = prgfile.get();
+      necdsp.programROM[i] = a | (b << 8) | (c << 16);
+    }
+    prgfile.close();
+  }
+  else {
+    failed = true;
+  }
+
+  std::ifstream datafile = Emulator::platform->fopen(ID::SuperFamicom, dname);
+  if (datafile.is_open()) {
+    for (unsigned i = 0; i < 2048; ++i) {
+      uint8_t a = datafile.get(); uint8_t b = datafile.get();
+      necdsp.dataROM[i] = a | (b << 8);
+    }
+    datafile.close();
+  }
+  else {
+    failed = true;
+  }
+
+  if(failed || configuration.coprocessor.preferHLE) {
+    if (ident == "st010") {
+      has.ST0010 = true;
+      std::vector<std::string> memlist = BML::searchList(node, "memory");
+      for (std::string& m : memlist) {
+        std::string type = BML::search(m, {"memory", "type"});
+        std::string content = BML::search(m, {"memory", "content"});
+        if (type == "RAM" && content == "Data") {
+          std::string mem = BML::searchnode(m, {"memory", "map"});
+          loadMap(mem, {&ST0010::read, &st0010}, {&ST0010::write, &st0010});
+        }
       }
     }
+    return;
+  }
+
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    std::string arch = BML::search(m, {"memory", "architecture"});
+    if (type == "RAM" && content == "Data" && arch == "uPD96050") {
+      std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
+      if (sramfile.is_open()) {
+        for (unsigned i = 0; i < 2048; ++i) {
+          uint8_t a = sramfile.get(); uint8_t b = sramfile.get();
+          necdsp.dataRAM[i] = a | (b << 8);
+        }
+        sramfile.close();
+      }
+      std::vector<std::string> maps = BML::searchList(m, "map");
+      for (std::string map : maps) {
+        loadMap(map, {&NECDSP::readRAM, &necdsp}, {&NECDSP::writeRAM, &necdsp});
+      }
+    }
+  }
+
+  has.NECDSP = true;
+  necdsp.revision = NECDSP::Revision::uPD96050;
+
+  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  if (!pmap.empty()) {
+    loadMap(pmap, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
   }
 }
 
