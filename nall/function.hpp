@@ -8,17 +8,12 @@ template<typename R, typename... P> struct function<auto (P...) -> R> {
   //value = true if auto L::operator()(P...) -> R exists
   template<typename L> struct is_compatible {
     template<typename T> static auto exists(T*) -> const typename std::is_same<R, decltype(std::declval<T>().operator()(std::declval<P>()...))>::type;
-    template<typename T> static auto exists(...) -> const std::false_type;
     static constexpr bool value = decltype(exists<L>(0))::value;
   };
 
   function() {}
-  function(const function& source) { operator=(source); }
-  function(auto (*function)(P...) -> R) { callback = new global(function); }
   template<typename C> function(auto (C::*function)(P...) -> R, C* object) { callback = new member<C>(function, object); }
-  template<typename C> function(auto (C::*function)(P...) const -> R, C* object) { callback = new member<C>((auto (C::*)(P...) -> R)function, object); }
   template<typename L, typename = std::enable_if_t<is_compatible<L>::value>> function(const L& object) { callback = new lambda<L>(object); }
-  explicit function(void* function) { if(function) callback = new global((auto (*)(P...) -> R)function); }
   ~function() { if(callback) delete callback; }
 
   explicit operator bool() const { return callback; }
@@ -33,12 +28,6 @@ template<typename R, typename... P> struct function<auto (P...) -> R> {
     return *this;
   }
 
-  auto operator=(void* source) -> function& {
-    if(callback) { delete callback; callback = nullptr; }
-    callback = new global((auto (*)(P...) -> R)source);
-    return *this;
-  }
-
 private:
   struct container {
     virtual auto operator()(P... p) const -> R = 0;
@@ -47,13 +36,6 @@ private:
   };
 
   container* callback = nullptr;
-
-  struct global : container {
-    auto (*function)(P...) -> R;
-    auto operator()(P... p) const -> R { return function(std::forward<P>(p)...); }
-    auto copy() const -> container* { return new global(function); }
-    global(auto (*function)(P...) -> R) : function(function) {}
-  };
 
   template<typename C> struct member : container {
     auto (C::*function)(P...) -> R;
