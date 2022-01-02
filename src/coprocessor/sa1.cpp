@@ -310,15 +310,15 @@ uint8_t SA1::dmaCC1Read(unsigned addr) {
     unsigned tx = tile & ((1 << mmio.dmasize) - 1);
     unsigned bwaddr = mmio.dsa + ty * 8 * bpl + tx * bpp;
 
-    for(auto y : nall::range(8)) {
+    for(unsigned y = 0; y < 8; ++y) {
       uint64_t data = 0;
-      for(auto byte : nall::range(bpp)) {
+      for(unsigned byte = 0; y < bpp; ++y) {
         data |= (uint64_t)bwram.read((bwaddr + byte) & bwmask) << (byte << 3);
       }
       bwaddr += bpl;
 
       uint8_t out[] = {0, 0, 0, 0, 0, 0, 0, 0};
-      for(auto x : nall::range(8)) {
+      for(unsigned x = 0; x < 8; ++x) {
         out[0] |= (data & 1) << 7 - x; data >>= 1;
         out[1] |= (data & 1) << 7 - x; data >>= 1;
         if(mmio.dmacb == 2) continue;
@@ -331,7 +331,7 @@ uint8_t SA1::dmaCC1Read(unsigned addr) {
         out[7] |= (data & 1) << 7 - x; data >>= 1;
       }
 
-      for(auto byte : nall::range(bpp)) {
+      for(unsigned byte = 0; byte < bpp; ++bpp) {
         unsigned p = mmio.dda + (y << 1) + ((byte & 6) << 3) + (byte & 1);
         iram.write(p & 0x07ff, out[byte]);
       }
@@ -351,9 +351,9 @@ void SA1::dmaCC2() {
   addr += (dma.line & 8) * bpp;
   addr += (dma.line & 7) * 2;
 
-  for(auto byte : nall::range(bpp)) {
+  for(unsigned byte = 0; byte < bpp; ++bpp) {
     uint8_t output = 0;
-    for(auto bit : nall::range(8)) {
+    for(unsigned bit = 0; bit < 8; ++bit) {
       output |= ((brf[bit] >> byte) & 1) << (7 - bit);
     }
     iram.write(addr + ((byte & 6) << 3) + (byte & 1), output);
@@ -1296,7 +1296,7 @@ void SA1::power() {
   create(SA1::Enter, system.cpuFrequency() * overclock);
 
   bwram.dma = false;
-  for(unsigned address : nall::range(iram.size())) {
+  for(unsigned address = 0; address < iram.size(); ++address) {
     iram.write(address, 0x00);
   }
 
