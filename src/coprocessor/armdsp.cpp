@@ -154,7 +154,7 @@ void ArmDSP::main() {
 }
 
 void ArmDSP::step(unsigned clocks) {
-  if(bridge.timer && --bridge.timer == 0);
+  if(bridge.timer) --bridge.timer;
   clock += clocks * (uint64_t)cpu.frequency;
   synchronizeCPU();
 }
