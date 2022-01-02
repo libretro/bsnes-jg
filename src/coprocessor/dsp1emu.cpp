@@ -1154,10 +1154,12 @@ void Dsp1::target(int16_t *input, int16_t *output)
    Py=shiftR(Py,E-refE);
    Pz=shiftR(Pz,E3-refE);
 
-   C11=- (Px*shared.Nx>>15);
-   C8=- (Py*shared.Ny>>15);
-   C9=- (Pz*shared.Nz>>15);
-   C12=C11+C8+C9;   // this cannot overflow!
+   // TODO: This used to be '=-', ensure its correct for hardware
+   // clang warning: use of unary operator that may be intended as compound assignment (-=)
+   C11 = -(Px*shared.Nx>>15);
+   C8 = -(Py*shared.Ny>>15);
+   C9 = -(Pz*shared.Nz>>15);
+   C12 = C11+C8+C9;   // this cannot overflow!
 
    aux4=C12;   // de-normalization with 32-bits arithmetic
    refE = 16-refE;    // refE can be up to 3
