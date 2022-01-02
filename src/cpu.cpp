@@ -498,12 +498,12 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
     return;
 
   case 0x420b:  //DMAEN
-    for(auto n : nall::range(8)) channels[n].dmaEnable = bool(data & 1 << n);
+    for(unsigned n = 0; n < 8; ++n) channels[n].dmaEnable = bool(data & 1 << n);
     if(data) status.dmaPending = true;
     return;
 
   case 0x420c:  //HDMAEN
-    for(auto n : nall::range(8)) channels[n].hdmaEnable = bool(data & 1 << n);
+    for(unsigned n = 0; n < 8; ++n) channels[n].hdmaEnable = bool(data & 1 << n);
     return;
 
   case 0x420d:  //MEMSEL
@@ -1061,7 +1061,7 @@ void CPU::main() {
 
   if(status.resetPending) {
     status.resetPending = 0;
-    for(unsigned repeat : nall::range(22)) step<6,0>();  //step(132);
+    for(unsigned repeat = 0; repeat < 22; ++repeat) step<6,0>(); //step(132);
     r.vector = 0xfffc;
     return interrupt();
   }
