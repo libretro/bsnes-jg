@@ -16,7 +16,6 @@
 #include "../nall/memory.hpp"
 #include "serializer.hpp"
 #include "../nall/primitives.hpp"
-#include "../nall/varint.hpp"
 
 #include "byuuML/byuuML.hpp"
 #include "byuuML/byuuML_query.hpp"
