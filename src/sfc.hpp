@@ -316,7 +316,7 @@ namespace SuperFamicom {
     if(hperiod() == 1360) {
       return hcounter() >> 2;
     } else {
-      return hcounter() - ((hcounter() > 1292) << 1) - ((hcounter() > 1310) << 1) >> 2;
+      return (hcounter() - ((hcounter() > 1292) << 1) - ((hcounter() > 1310) << 1)) >> 2;
     }
   }
 
