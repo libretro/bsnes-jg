@@ -2,6 +2,11 @@
 
 namespace nall {
 
+#if defined(__clang__)
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wparentheses"
+#endif
+
 struct Boolean;
 template<unsigned Precision = 64> struct Natural;
 template<unsigned Precision = 64> struct Integer;
@@ -205,5 +210,9 @@ private:
 
   stype data;
 };
+
+#if defined(__clang__)
+  #pragma clang diagnostic pop
+#endif
 
 }
