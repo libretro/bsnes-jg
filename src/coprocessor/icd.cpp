@@ -126,9 +126,9 @@ uint8_t ICD::readIO(unsigned addr, uint8_t data) {
   if(addr == 0x6002) {
     data = packetSize > 0;
     if(data) {
-      for(auto n : nall::range(16)) r7000[n] = packet[0][n];
+      for(unsigned n = 0; n < 16; ++n) r7000[n] = packet[0][n];
       packetSize--;
-      for(auto n : nall::range(packetSize)) packet[n] = packet[n + 1];
+      for(unsigned n = 0; n < packetSize; ++n) packet[n] = packet[n + 1];
     }
     return data;
   }
@@ -236,7 +236,7 @@ void ICD::serialize(serializer& s) {
 
   delete[] data;
 
-  for(auto n : nall::range(64)) s.array(packet[n].data);
+  for(unsigned n = 0; n < 64; ++n) s.array(packet[n].data);
   s.integer(packetSize);
 
   s.integer(joypID);

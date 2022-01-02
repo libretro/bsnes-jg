@@ -155,7 +155,7 @@ void EpsonRTC::load(const uint8_t* data) {
   test = data[7] >> 7;
 
   uint64_t timestamp = 0;
-  for(auto byte : nall::range(8)) {
+  for(unsigned byte = 0; byte < 8; ++byte) {
     timestamp |= data[8 + byte] << (byte * 8);
   }
 
@@ -177,7 +177,7 @@ void EpsonRTC::save(uint8_t* data) {
   data[7] = irqmask << 0 | irqduty << 1 | irqperiod << 2 | pause << 4 | stop << 5 | atime << 6 | test << 7;
 
   uint64_t timestamp = (uint64_t)time(0);
-  for(auto byte : nall::range(8)) {
+  for(unsigned byte = 0; byte < 8; ++byte) {
     data[8 + byte] = timestamp;
     timestamp >>= 8;
   }

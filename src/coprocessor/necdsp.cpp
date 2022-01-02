@@ -9,13 +9,13 @@ std::vector<uint8_t> NECDSP::firmware() const {
   if(revision == Revision::uPD96050) plength = 16384, dlength = 2048;
   buffer.reserve(plength * 3 + dlength * 2);
 
-  for(auto n : nall::range(plength)) {
+  for(unsigned n = 0; n < plength; ++n) {
     buffer.push_back(programROM[n] >>  0);
     buffer.push_back(programROM[n] >>  8);
     buffer.push_back(programROM[n] >> 16);
   }
 
-  for(auto n : nall::range(dlength)) {
+  for(unsigned n = 0; n < dlength; ++n) {
     buffer.push_back(dataROM[n] >> 0);
     buffer.push_back(dataROM[n] >> 8);
   }
