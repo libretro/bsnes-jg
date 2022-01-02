@@ -1,6 +1,9 @@
 #include <iostream>
 #include <sstream>
 
+#include "byuuML/byuuML.hpp"
+#include "byuuML/byuuML_query.hpp"
+
 #include "emulator.hpp"
 #include "markup.hpp"
 

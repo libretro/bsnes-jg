@@ -17,9 +17,6 @@
 #include "serializer.hpp"
 #include "../nall/primitives.hpp"
 
-#include "byuuML/byuuML.hpp"
-#include "byuuML/byuuML_query.hpp"
-
 #include "audio.hpp"
 #include "markup.hpp"
 
