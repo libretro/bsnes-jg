@@ -95,7 +95,7 @@ void BSMemory::Enter() {
 void BSMemory::main() {
   if(ROM) return step(1'000'000);  //1 second
 
-  for(nall::Natural< 6> id : nall::range(block.count())) {
+  for(unsigned id = 0; id < block.count(); ++id) {
     if(block(id).erasing) return block(id).erase();
     block(id).status.ready = 1;
   }
@@ -297,7 +297,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //clear status register
   if(queue.data(0) == 0x50) {
-    for(nall::Natural< 6> id : nall::range(block.count())) {
+    for(unsigned id = 0; id < block.count(); ++id) {
       block(id).status.vppLow = 0;
       block(id).status.failed = 0;
     }
@@ -375,7 +375,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
   if(queue.data(0) == 0x97) {
   if(queue.size() < 2) return;
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
-    for(nall::Natural< 6> id : nall::range(block.count())) block(id).update();
+    for(unsigned id = 0; id < block.count(); ++id) block(id).update();
     return queue.flush();
   }
 
