@@ -838,7 +838,7 @@ void CPU::nmiPoll() {
 
   //NMI test
   if(status.nmiValid.flip(vcounter(2) >= ppu.vdisp())) {
-    if(status.nmiLine = status.nmiValid) status.nmiHold = 1;  //hold /NMI for four cycles
+    if((status.nmiLine = status.nmiValid)) status.nmiHold = 1;  //hold /NMI for four cycles
   }
 }
 

@@ -144,7 +144,7 @@ private:
     uint8_t wrdivb = 0xff;
 
     //$4207-$420a
-    nall::Natural<12> htime = 0x1ff + 1 << 2;
+    nall::Natural<12> htime = (0x1ff + 1) << 2;
     nall::Natural< 9>  vtime = 0x1ff;
 
     //$420d
