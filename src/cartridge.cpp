@@ -724,7 +724,7 @@ void Cartridge::loadSharpRTC(std::string node) {
     if (rtcfile.is_open()) {
       uint8_t data[16] = {0};
       for(auto& byte : data) byte = rtcfile.get();
-      epsonrtc.load(data);
+      sharprtc.load(data);
       rtcfile.close();
     }
   }
