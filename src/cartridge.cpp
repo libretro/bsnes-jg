@@ -635,66 +635,81 @@ void Cartridge::loaduPD7725(std::string node) {
   std::vector<std::string> identifiers = BML::searchList(game.document, "identifier");
   std::string ident = identifiers[0].erase(0, identifiers[0].find_first_of(' ') + 1);
   ident.pop_back();
+  std::transform(ident.begin(), ident.end(), ident.begin(), ::tolower);
+
+  std::string pname = ident + ".program.rom";
+  std::string dname = ident + ".data.rom";
+
+  bool failed = false;
+
+  std::ifstream prgfile = Emulator::platform->fopen(ID::SuperFamicom, pname);
+  if (prgfile.is_open()) {
+    for (unsigned i = 0; i < 2048; ++i) {
+      uint8_t a = prgfile.get(); uint8_t b = prgfile.get(); uint8_t c = prgfile.get();
+      necdsp.programROM[i] = a | (b << 8) | (c << 16);
+    }
+    prgfile.close();
+  }
+  else {
+    failed = true;
+  }
+
+  std::ifstream datafile = Emulator::platform->fopen(ID::SuperFamicom, dname);
+  if (datafile.is_open()) {
+    for (unsigned i = 0; i < 1024; ++i) {
+      uint8_t a = datafile.get(); uint8_t b = datafile.get();
+      necdsp.dataROM[i] = a | (b << 8);
+    }
+    datafile.close();
+  }
+  else {
+    failed = true;
+  }
 
   std::string pmap = BML::searchnode(node, {"processor", "map"});
 
-  if (ident == "DSP1" || ident == "DSP1B") {
-    has.DSP1 = true;
-    if (!pmap.empty()) {
-      loadMap(pmap, {&DSP1::read, &dsp1}, {&DSP1::write, &dsp1});
+  if (failed || configuration.coprocessor.preferHLE) {
+    if (ident == "dsp1" || ident == "dsp1b") {
+      has.DSP1 = true;
+      if (!pmap.empty()) {
+        loadMap(pmap, {&DSP1::read, &dsp1}, {&DSP1::write, &dsp1});
+      }
+      return;
+    }
+    else if (ident == "dsp2") {
+      has.DSP2 = true;
+      if (!pmap.empty()) {
+        loadMap(pmap, {&DSP2::read, &dsp2}, {&DSP2::write, &dsp2});
+      }
+      return;
+    }
+    else if (ident == "dsp4") {
+      has.DSP4 = true;
+      if (!pmap.empty()) {
+        loadMap(pmap, {&DSP4::read, &dsp4}, {&DSP4::write, &dsp4});
+      }
+      return;
     }
   }
-  else if (ident == "DSP2") {
-    has.DSP2 = true;
-    if (!pmap.empty()) {
-      loadMap(pmap, {&DSP2::read, &dsp2}, {&DSP2::write, &dsp2});
-    }
-  }
-  else if (ident == "DSP3") {
-    std::ifstream prgfile = Emulator::platform->fopen(ID::SuperFamicom, "dsp3.program.rom");
-    if (prgfile.is_open()) {
-      for (unsigned i = 0; i < 2048; ++i) {
-        uint8_t a = prgfile.get();
-        uint8_t b = prgfile.get();
-        uint8_t c = prgfile.get();
-        necdsp.programROM[i] = a | (b << 8) | (c << 16);
-      }
-      prgfile.close();
-    }
-    std::ifstream datafile = Emulator::platform->fopen(ID::SuperFamicom, "dsp3.data.rom");
-    if (datafile.is_open()) {
-      for (unsigned i = 0; i < 1024; ++i) {
-        uint8_t a = datafile.get();
-        uint8_t b = datafile.get();
-        necdsp.dataROM[i] = a | (b << 8);
-      }
-      prgfile.close();
-    }
-    has.NECDSP = true;
-    necdsp.revision = NECDSP::Revision::uPD7725;
-    if (!pmap.empty()) {
-      loadMap(pmap, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
-    }
 
-    std::vector<std::string> memlist = BML::searchList(node, "memory");
-    for (std::string& m : memlist) {
-      std::string type = BML::search(m, {"memory", "type"});
-      std::string content = BML::search(m, {"memory", "content"});
-      std::string arch = BML::search(m, {"memory", "architecture"});
-      if (type == "RAM" && content == "Data" && arch == "uPD7725") {
-        std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
-        if (sramfile.is_open()) {
-          sramfile.read((char*)necdsp.dataRAM, 2 * 256);
-          sramfile.close();
-        }
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+  for (std::string& m : memlist) {
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
+    std::string arch = BML::search(m, {"memory", "architecture"});
+    if (type == "RAM" && content == "Data" && arch == "uPD7725") {
+      std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
+      if (sramfile.is_open()) {
+        sramfile.read((char*)necdsp.dataRAM, 2 * 256);
+        sramfile.close();
       }
     }
   }
-  else if (ident == "DSP4") {
-    has.DSP4 = true;
-    if (!pmap.empty()) {
-      loadMap(pmap, {&DSP4::read, &dsp4}, {&DSP4::write, &dsp4});
-    }
+
+  has.NECDSP = true;
+  necdsp.revision = NECDSP::Revision::uPD7725;
+  if (!pmap.empty()) {
+    loadMap(pmap, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
   }
 }
 
