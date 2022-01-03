@@ -1248,10 +1248,26 @@ inline void PPU::Background::run(bool screen) {
 
   auto& tile = tiles[renderingIndex];
   uint8_t color = 0;
-  if(io.mode >= Mode::BPP2) color |= (tile.data[0] & 3) << 0; tile.data[0] >>= 2;
-  if(io.mode >= Mode::BPP4) color |= (tile.data[1] & 3) << 2; tile.data[1] >>= 2;
-  if(io.mode >= Mode::BPP8) color |= (tile.data[2] & 3) << 4; tile.data[2] >>= 2;
-  if(io.mode >= Mode::BPP8) color |= (tile.data[3] & 3) << 6; tile.data[3] >>= 2;
+
+  if(io.mode >= Mode::BPP2)
+    color |= (tile.data[0] & 3) << 0;
+
+  tile.data[0] >>= 2;
+
+  if(io.mode >= Mode::BPP4)
+    color |= (tile.data[1] & 3) << 2;
+
+  tile.data[1] >>= 2;
+
+  if(io.mode >= Mode::BPP8)
+    color |= (tile.data[2] & 3) << 4;
+
+  tile.data[2] >>= 2;
+
+  if(io.mode >= Mode::BPP8)
+    color |= (tile.data[3] & 3) << 6;
+
+  tile.data[3] >>= 2;
 
   Pixel pixel;
   pixel.priority = tile.priority;
