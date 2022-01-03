@@ -386,7 +386,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
     page.write(0x06, 0x06);  //unknown constant
     page.write(0x07, 0x00);  //unknown constant
     for(nall::Natural< 6> id : nall::range(block.count())) {
-      uint8_t address;
+      uint8_t address = 0;
       address += (id >> 0 & 3) * 0x08;  //verified for LH28F800SUT-ZI
       address += (id >> 2 & 3) * 0x40;  //verified for LH28F800SUT-ZI
       address += (id >> 4 & 1) * 0x20;  //guessed for LH28F016SU
