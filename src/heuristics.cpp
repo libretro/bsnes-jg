@@ -14,14 +14,14 @@ std::string Memory::text() const {
   output << "      type: " << _type << "\n";
   output << "      size: 0x" << std::hex << _size << "\n";
   output << "      content: " << _content << "\n";
-if(!_manufacturer.empty())
-  output << "      manufacturer: " << _manufacturer << "\n";
-if(!_architecture.empty())
-  output << "      architecture: " << _architecture << "\n";
-if(!_identifier.empty())
-  output << "      identifier: " << _identifier << "\n";
-if(_volatile)
-  output << "      volatile\n";
+  if(!_manufacturer.empty())
+    output << "      manufacturer: " << _manufacturer << "\n";
+  if(!_architecture.empty())
+    output << "      architecture: " << _architecture << "\n";
+  if(!_identifier.empty())
+    output << "      identifier: " << _identifier << "\n";
+  if(_volatile)
+    output << "      volatile\n";
   return output.str();
 }
 
@@ -332,24 +332,24 @@ std::string GameBoy::manifest() const {
   output += "  label:  " + gamename + "\n";
   output += "  name:   " + gamename + "\n";
   output += "  title:  " + title + "\n";
-if(!serial.empty())
-  output += "  serial: " + serial + "\n";
+  if(!serial.empty())
+    output += "  serial: " + serial + "\n";
   output += "  board:  " + mapper + "\n";
   output += Memory{}.type("ROM").size(data.size()).content("Program").text();
-if(ram && ramSize && battery)
-  output += Memory{}.type("RAM").size(ramSize).content("Save").text();
-if(ram && ramSize && !battery)
-  output += Memory{}.type("RAM").size(ramSize).content("Save").isVolatile().text();
-if(eeprom && eepromSize)
-  output += Memory{}.type("EEPROM").size(eepromSize).content("Save").text();
-if(flash && flashSize)
-  output += Memory{}.type("Flash").size(flashSize).content("Download").text();
-if(rtc && rtcSize)
-  output += Memory{}.type("RTC").size(rtcSize).content("Time").text();
-if(accelerometer)
-  output += "    accelerometer\n";
-if(rumble)
-  output += "    rumble\n";
+  if(ram && ramSize && battery)
+    output += Memory{}.type("RAM").size(ramSize).content("Save").text();
+  if(ram && ramSize && !battery)
+    output += Memory{}.type("RAM").size(ramSize).content("Save").isVolatile().text();
+  if(eeprom && eepromSize)
+    output += Memory{}.type("EEPROM").size(eepromSize).content("Save").text();
+  if(flash && flashSize)
+    output += Memory{}.type("Flash").size(flashSize).content("Download").text();
+  if(rtc && rtcSize)
+    output += Memory{}.type("RTC").size(rtcSize).content("Time").text();
+  if(accelerometer)
+    output += "    accelerometer\n";
+  if(rumble)
+    output += "    rumble\n";
   return output;
 }
 
