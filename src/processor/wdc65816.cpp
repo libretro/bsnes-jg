@@ -49,8 +49,6 @@ namespace Processor {
 #define V r.v
 #define W r.w
 
-#define E if(r.e)
-#define N if(!r.e)
 #define L lastCycle();
 
 #define alu(...) (this->*op)(__VA_ARGS__)
@@ -1076,7 +1074,7 @@ void WDC65816::instructionCallLong() {
   pushN(PC.h);
 L pushN(PC.l);
   PC.d = V.d;
-E S.h = 0x01;
+  if(r.e) S.h = 0x01;
   idleJump();
 }
 
@@ -1089,7 +1087,7 @@ void WDC65816::instructionCallIndexedIndirect() {
   W.l = read(PC.b << 16 | uint16_t(V.w + X.w + 0));
 L W.h = read(PC.b << 16 | uint16_t(V.w + X.w + 1));
   PC.w = W.w;
-E S.h = 0x01;
+  if(r.e) S.h = 0x01;
   idleJump();
 }
 
@@ -1097,7 +1095,7 @@ void WDC65816::instructionReturnInterrupt() {
   idle();
   idle();
   P = pull();
-E XF = 1, MF = 1;
+  if(r.e) XF = 1, MF = 1;
   if(XF) X.h = 0x00, Y.h = 0x00;
   PC.l = pull();
   if(EF) {
@@ -1128,7 +1126,7 @@ void WDC65816::instructionReturnLong() {
 L V.b = pullN();
   PC.d = V.d;
   PC.w++;
-E S.h = 0x01;
+  if(r.e) S.h = 0x01;
   idleJump();
 }
 
@@ -1187,7 +1185,7 @@ L idle();
 
 void WDC65816::instructionInterrupt(r16 vector) {
   fetch();
-N push(PC.b);
+  if(!r.e) push(PC.b);
   push(PC.h);
   push(PC.l);
   push(P);
@@ -1239,7 +1237,7 @@ void WDC65816::instructionResetP() {
   W.l = fetch();
 L idle();
   P = P & ~W.l;
-E XF = 1, MF = 1;
+  if(r.e) XF = 1, MF = 1;
   if(XF) X.h = 0x00, Y.h = 0x00;
 }
 
@@ -1247,7 +1245,7 @@ void WDC65816::instructionSetP() {
   W.l = fetch();
 L idle();
   P = P | W.l;
-E XF = 1, MF = 1;
+  if(r.e) XF = 1, MF = 1;
   if(XF) X.h = 0x00, Y.h = 0x00;
 }
 
@@ -1268,7 +1266,7 @@ L idleIRQ();
 void WDC65816::instructionTransferCS() {
 L idleIRQ();
   S.w = A.w;
-E S.h = 0x01;
+  if(r.e) S.h = 0x01;
 }
 
 void WDC65816::instructionTransferSX8() {
@@ -1287,8 +1285,8 @@ L idleIRQ();
 
 void WDC65816::instructionTransferXS() {
 L idleIRQ();
-E S.l = X.l;
-N S.w = X.w;
+  if(r.e) S.l = X.l;
+  if(!r.e) S.w = X.w;
 }
 
 void WDC65816::instructionPush8(r16 F) {
@@ -1306,7 +1304,7 @@ void WDC65816::instructionPushD() {
   idle();
   pushN(D.h);
 L pushN(D.l);
-E S.h = 0x01;
+  if(r.e) S.h = 0x01;
 }
 
 void WDC65816::instructionPull8(r16& T) {
@@ -1333,7 +1331,7 @@ void WDC65816::instructionPullD() {
 L D.h = pullN();
   ZF = D.w == 0;
   NF = D.w & 0x8000;
-E S.h = 0x01;
+  if(r.e) S.h = 0x01;
 }
 
 void WDC65816::instructionPullB() {
@@ -1348,7 +1346,7 @@ void WDC65816::instructionPullP() {
   idle();
   idle();
 L P = pull();
-E XF = 1, MF = 1;
+  if(r.e) XF = 1, MF = 1;
   if(XF) X.h = 0x00, Y.h = 0x00;
 }
 
@@ -1357,7 +1355,7 @@ void WDC65816::instructionPushEffectiveAddress() {
   W.h = fetch();
   pushN(W.h);
 L pushN(W.l);
-E S.h = 0x01;
+  if(r.e) S.h = 0x01;
 }
 
 void WDC65816::instructionPushEffectiveIndirectAddress() {
@@ -1367,7 +1365,7 @@ void WDC65816::instructionPushEffectiveIndirectAddress() {
   W.h = readDirectN(U.l + 1);
   pushN(W.h);
 L pushN(W.l);
-E S.h = 0x01;
+  if(r.e) S.h = 0x01;
 }
 
 void WDC65816::instructionPushEffectiveRelativeAddress() {
@@ -1377,13 +1375,13 @@ void WDC65816::instructionPushEffectiveRelativeAddress() {
   W.w = PC.d + (int16_t)V.w;
   pushN(W.h);
 L pushN(W.l);
-E S.h = 0x01;
+  if(r.e) S.h = 0x01;
 }
 
 void WDC65816::interrupt() {
   read(PC.d);
   idle();
-N push(PC.b);
+  if(!r.e) push(PC.b);
   push(PC.h);
   push(PC.l);
   push(EF ? P & ~0x10 : P);
