@@ -65,21 +65,21 @@ void uPD96050::execOP(nall::Natural<24> opcode) {
     }
 
     switch(alu) {
-    case  1: r = q | p; break;                //OR
-    case  2: r = q & p; break;                //AND
-    case  3: r = q ^ p; break;                //XOR
-    case  4: r = q - p; break;                //SUB
-    case  5: r = q + p; break;                //ADD
-    case  6: r = q - p - c; break;            //SBB
-    case  7: r = q + p + c; break;            //ADC
-    case  8: r = q - 1; p = 1; break;         //DEC
-    case  9: r = q + 1; p = 1; break;         //INC
-    case 10: r = ~q; break;                   //CMP
-    case 11: r = q >> 1 | q & 0x8000; break;  //SHR1 (ASR)
-    case 12: r = q << 1 | c; break;           //SHL1 (ROL)
-    case 13: r = q << 2 | 3; break;           //SHL2
-    case 14: r = q << 4 | 15; break;          //SHL4
-    case 15: r = q << 8 | q >> 8; break;      //XCHG
+    case  1: r = q | p; break;                  //OR
+    case  2: r = q & p; break;                  //AND
+    case  3: r = q ^ p; break;                  //XOR
+    case  4: r = q - p; break;                  //SUB
+    case  5: r = q + p; break;                  //ADD
+    case  6: r = q - p - c; break;              //SBB
+    case  7: r = q + p + c; break;              //ADC
+    case  8: r = q - 1; p = 1; break;           //DEC
+    case  9: r = q + 1; p = 1; break;           //INC
+    case 10: r = ~q; break;                     //CMP
+    case 11: r = q >> 1 | (q & 0x8000); break;  //SHR1 (ASR)
+    case 12: r = q << 1 | c; break;             //SHL1 (ROL)
+    case 13: r = q << 2 | 3; break;             //SHL2
+    case 14: r = q << 4 | 15; break;            //SHL4
+    case 15: r = q << 8 | q >> 8; break;        //XCHG
     }
 
     flag.z = r == 0;
@@ -168,7 +168,7 @@ void uPD96050::execJP(nall::Natural<24> opcode) {
   nall::Natural<11> na  = opcode >>  2;  //next address
   nall::Natural< 2> bank = opcode >>  0;  //bank address
 
-  nall::Natural<14> jp = regs.pc & 0x2000 | bank << 11 | na << 0;
+  nall::Natural<14> jp = (regs.pc & 0x2000) | bank << 11 | na << 0;
 
   switch(brch) {
   case 0x000: regs.pc = regs.so; return;  //JMPSO
@@ -237,7 +237,7 @@ void uPD96050::execLD(nall::Natural<24> opcode) {
   case  4: regs.dp = id; break;
   case  5: regs.rp = id; break;
   case  6: regs.dr = id; regs.sr.rqm = 1; break;
-  case  7: regs.sr = regs.sr & 0x907c | id & ~0x907c; break;
+  case  7: regs.sr = (regs.sr & 0x907c) | (id & ~0x907c); break;
   case  8: regs.so = id; break;  //LSB
   case  9: regs.so = id; break;  //MSB
   case 10: regs.k = id; break;
