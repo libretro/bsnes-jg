@@ -48,8 +48,8 @@ uint8_t HitachiDSP::readROM(unsigned address, uint8_t data) {
     return rom.read(address, data);
   }
   //DSP has the bus acquired: CPU reads from 00:ffc0-ffff return IO registers (including reset vector overrides)
-  if(Mapping == 0 && (address & 0xbfffc0) == 0x007fc0) return readIO(0x7f40 | address & 0x3f);
-  if(Mapping == 1 && (address & 0xbfffc0) == 0x00ffc0) return readIO(0x7f40 | address & 0x3f);
+  if(Mapping == 0 && (address & 0xbfffc0) == 0x007fc0) return readIO(0x7f40 | (address & 0x3f));
+  if(Mapping == 1 && (address & 0xbfffc0) == 0x00ffc0) return readIO(0x7f40 | (address & 0x3f));
   return data;
 }
 
@@ -177,16 +177,16 @@ void HitachiDSP::writeIO(unsigned address, uint8_t data) {
 
   //IO
   switch(address) {
-  case 0x7f40: io.dma.source = io.dma.source & 0xffff00 | data <<  0; return;
-  case 0x7f41: io.dma.source = io.dma.source & 0xff00ff | data <<  8; return;
-  case 0x7f42: io.dma.source = io.dma.source & 0x00ffff | data << 16; return;
+  case 0x7f40: io.dma.source = (io.dma.source & 0xffff00) | data <<  0; return;
+  case 0x7f41: io.dma.source = (io.dma.source & 0xff00ff) | data <<  8; return;
+  case 0x7f42: io.dma.source = (io.dma.source & 0x00ffff) | data << 16; return;
 
-  case 0x7f43: io.dma.length = io.dma.length & 0xff00 | data << 0; return;
-  case 0x7f44: io.dma.length = io.dma.length & 0x00ff | data << 8; return;
+  case 0x7f43: io.dma.length = (io.dma.length & 0xff00) | data << 0; return;
+  case 0x7f44: io.dma.length = (io.dma.length & 0x00ff) | data << 8; return;
 
-  case 0x7f45: io.dma.target = io.dma.target & 0xffff00 | data <<  0; return;
-  case 0x7f46: io.dma.target = io.dma.target & 0xff00ff | data <<  8; return;
-  case 0x7f47: io.dma.target = io.dma.target & 0x00ffff | data << 16;
+  case 0x7f45: io.dma.target = (io.dma.target & 0xffff00) | data <<  0; return;
+  case 0x7f46: io.dma.target = (io.dma.target & 0xff00ff) | data <<  8; return;
+  case 0x7f47: io.dma.target = (io.dma.target & 0x00ffff) | data << 16;
     if(io.halt) io.dma.enable = 1;
     return;
 
@@ -195,17 +195,17 @@ void HitachiDSP::writeIO(unsigned address, uint8_t data) {
     if(io.halt) io.cache.enable = 1;
     return;
 
-  case 0x7f49: io.cache.base = io.cache.base & 0xffff00 | data <<  0; return;
-  case 0x7f4a: io.cache.base = io.cache.base & 0xff00ff | data <<  8; return;
-  case 0x7f4b: io.cache.base = io.cache.base & 0x00ffff | data << 16; return;
+  case 0x7f49: io.cache.base = (io.cache.base & 0xffff00) | data <<  0; return;
+  case 0x7f4a: io.cache.base = (io.cache.base & 0xff00ff) | data <<  8; return;
+  case 0x7f4b: io.cache.base = (io.cache.base & 0x00ffff) | data << 16; return;
 
   case 0x7f4c:
     io.cache.lock[0] = bool(data & 1);
     io.cache.lock[1] = bool(data & 2);
     return;
 
-  case 0x7f4d: io.cache.pb = io.cache.pb & 0xff00 | data << 0; return;
-  case 0x7f4e: io.cache.pb = io.cache.pb & 0x00ff | data << 8; return;
+  case 0x7f4d: io.cache.pb = (io.cache.pb & 0xff00) | data << 0; return;
+  case 0x7f4e: io.cache.pb = (io.cache.pb & 0x00ff) | data << 8; return;
 
   case 0x7f4f:
     io.cache.pc = data;
@@ -260,9 +260,9 @@ void HitachiDSP::writeIO(unsigned address, uint8_t data) {
   if((address >= 0x7f80 && address <= 0x7faf) || (address >= 0x7fc0 && address <= 0x7fef)) {
     address &= 0x3f;
     switch(address % 3) {
-    case 0: r.gpr[address / 3] = r.gpr[address / 3] & 0xffff00 | data <<  0; break;
-    case 1: r.gpr[address / 3] = r.gpr[address / 3] & 0xff00ff | data <<  8; break;
-    case 2: r.gpr[address / 3] = r.gpr[address / 3] & 0x00ffff | data << 16; break;
+    case 0: r.gpr[address / 3] = (r.gpr[address / 3] & 0xffff00) | data <<  0; break;
+    case 1: r.gpr[address / 3] = (r.gpr[address / 3] & 0xff00ff) | data <<  8; break;
+    case 2: r.gpr[address / 3] = (r.gpr[address / 3] & 0x00ffff) | data << 16; break;
     }
     return;
   }
