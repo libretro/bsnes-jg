@@ -115,7 +115,7 @@ static Emulator::Interface *emulator;
 
 struct Program : Emulator::Platform {
     Program();
-    ~Program();
+    ~Program() override;
 
     Emulator::Platform::Load load(unsigned id, std::string name,
         std::string type, std::vector<std::string> options = {}) override;

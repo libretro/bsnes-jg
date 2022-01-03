@@ -42,6 +42,7 @@ struct Platform {
     std::string option;
   };
 
+  virtual ~Platform() {};
   virtual Load load(unsigned id, std::string name, std::string type, std::vector<std::string> options = {}) { return {}; }
   virtual std::ifstream fopen(unsigned id, std::string name) { return {}; }
   virtual std::vector<uint8_t> mopen(unsigned id, std::string name) { return {}; }
@@ -81,6 +82,7 @@ struct Interface {
   };
 
   //game interface
+  virtual ~Interface() {}
   virtual bool loaded() { return false; }
   virtual std::vector<std::string> hashes() { return {}; }
   virtual std::vector<std::string> manifests() { return {}; }
