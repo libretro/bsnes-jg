@@ -482,8 +482,6 @@ void Program::write(unsigned id, std::string name, const uint8_t *data,
 
 void Program::videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
     unsigned height, unsigned scale) {
-
-    //print("p: ", pitch, " w: ", width, " h: ", height, "\n");
     vidmult = height / 240;
     vidinfo.y = 8 * vidmult;
     height -= 2 * vidinfo.y;
@@ -769,6 +767,7 @@ int jg_init() {
         sizeof(settings_bsnes) / sizeof(jg_setting_t));
     emulator = new SuperFamicom::Interface;
     program = new Program;
+
     return 1;
 }
 
