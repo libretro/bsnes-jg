@@ -140,7 +140,7 @@ void SharpRTC::tickYear() {
 //eg 0 = Sunday, 1 = Monday, ... 6 = Saturday
 //usage: calculate_weekday(2008, 1, 1) returns weekday of January 1st, 2008
 unsigned SharpRTC::calculateWeekday(int year, int month, int day) {
-  unsigned y = 1000, m = 1;  //SharpRTC epoch is 1000-01-01
+  int y = 1000, m = 1;  //SharpRTC epoch is 1000-01-01
   unsigned sum = 0;          //number of days passed since epoch
 
   year = std::max(1000, year);
@@ -177,7 +177,8 @@ unsigned SharpRTC::calculateWeekday(int year, int month, int day) {
 void SharpRTC::serialize(serializer& s) {
   Thread::serialize(s);
 
-  s.integer((unsigned&)state);
+  unsigned st = (unsigned)state;
+  s.integer((unsigned&)st);
   s.integer(index);
 
   s.integer(second);
