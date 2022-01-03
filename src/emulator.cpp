@@ -48,14 +48,13 @@ void Game::load(std::string text) {
 std::optional<Game::Memory> Game::memory(std::string node) {
   if (node.empty()) return std::nullopt;
   for (auto& m : memoryList) {
-    auto type = BML::search(node, {"memory", "type"});
-    auto strsize = BML::search(node, {"memory", "size"});
-    auto size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);
-    auto content = BML::search(node, {"memory", "content"});
-    auto manufacturer = BML::search(node, {"memory", "manufacturer"});
-    auto architecture = BML::search(node, {"memory", "architecture"});
-    auto identifier = BML::search(node, {"memory", "identifier"});
-    auto nonVolatile = !BML::exists(node, {"memory", "volatile"});
+    std::string type = BML::search(node, {"memory", "type"});
+    std::string strsize = BML::search(node, {"memory", "size"});
+    unsigned size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);
+    std::string content = BML::search(node, {"memory", "content"});
+    std::string manufacturer = BML::search(node, {"memory", "manufacturer"});
+    std::string architecture = BML::search(node, {"memory", "architecture"});
+    std::string identifier = BML::search(node, {"memory", "identifier"});
     if(!type.empty() && type != m.type) continue;
     if(size && size != m.size) continue;
     if(!content.empty() && content != m.content) continue;
