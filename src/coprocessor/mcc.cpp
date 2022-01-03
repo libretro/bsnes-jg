@@ -94,8 +94,8 @@ void MCC::write(unsigned address, uint8_t data) {
     case  2: w.mapping = data >> 7; break;
     case  3: w.psramEnableLo = data >> 7; break;
     case  4: w.psramEnableHi = data >> 7; break;
-    case  5: w.psramMapping = w.psramMapping & 2 | data >> 7 << 0; break;
-    case  6: w.psramMapping = w.psramMapping & 1 | data >> 7 << 1; break;
+    case  5: w.psramMapping = (w.psramMapping & 2) | data >> 7 << 0; break;
+    case  6: w.psramMapping = (w.psramMapping & 1) | data >> 7 << 1; break;
     case  7: w.romEnableLo = data >> 7; break;
     case  8: w.romEnableHi = data >> 7; break;
     case  9: w.exEnableLo = data >> 7; break;
