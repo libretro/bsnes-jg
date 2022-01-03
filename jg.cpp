@@ -593,7 +593,7 @@ std::vector<uint8_t> Program::loadFile(void *data, size_t size) {
     uint8_t *buf = (uint8_t*)data;
     std::vector<uint8_t> ret;
 
-    for (int i = 0; i < size; ++i)
+    for (size_t i = 0; i < size; ++i)
         ret.push_back(buf[i]);
 
     return ret;
@@ -843,7 +843,7 @@ int jg_game_load() {
 
     // Set up inputs
     int multitap = 0;
-    for (int i = 0; i < db_multitap_games.size(); ++i) {
+    for (size_t i = 0; i < db_multitap_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_multitap_games[i].md5) {
             multitap = db_multitap_games[i].players;
             break;
@@ -851,7 +851,7 @@ int jg_game_load() {
     }
 
     bool mouse = false;
-    for (int i = 0; i < db_mouse_games.size(); ++i) {
+    for (size_t i = 0; i < db_mouse_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_mouse_games[i]) {
             mouse = true;
             break;
@@ -859,7 +859,7 @@ int jg_game_load() {
     }
 
     bool superscope = false;
-    for (int i = 0; i < db_superscope_games.size(); ++i) {
+    for (size_t i = 0; i < db_superscope_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_superscope_games[i].md5) {
             superscope = true;
             ss_offset_x = db_superscope_games[i].x;
@@ -869,7 +869,7 @@ int jg_game_load() {
     }
 
     bool justifier = false;
-    for (int i = 0; i < db_justifier_games.size(); ++i) {
+    for (size_t i = 0; i < db_justifier_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_justifier_games[i]) {
             justifier = true;
             break;
