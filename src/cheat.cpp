@@ -144,7 +144,7 @@ bool snes(std::string& code) {
         code.erase(std::remove(code.begin(), code.end(), '-'), code.end());
 
         std::string ggcipher[2] = { "df4709156bc8a23e", "0123456789abcdef" };
-        for (int c = 0; c < code.size(); ++c) {
+        for (size_t c = 0; c < code.size(); ++c) {
             for (int i = 0; i < 16; ++i) {
                 if (code[c] == ggcipher[0][i]) {
                     code[c] = ggcipher[1][i];
