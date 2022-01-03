@@ -118,8 +118,8 @@ private:
   void saveEpsonRTC(std::string);
   void saveSharpRTC(std::string);
 
-  friend class Interface;
-  friend class ICD;
+  friend struct Interface;
+  friend struct ICD;
 };
 
 extern Cartridge cartridge;
