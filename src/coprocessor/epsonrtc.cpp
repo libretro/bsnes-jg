@@ -393,7 +393,8 @@ void EpsonRTC::serialize(serializer& s) {
   s.integer(seconds);
 
   s.integer(chipselect);
-  s.integer((unsigned&)state);
+  unsigned st = (unsigned)state;
+  s.integer((unsigned&)st);
   s.integer(mdr);
   s.integer(offset);
   s.integer(wait);
