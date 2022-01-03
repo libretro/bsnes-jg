@@ -33,7 +33,7 @@ void Stream::reset(double inputFrequency, double outputFrequency) {
   if (srcstate == nullptr) {
     int err;
     srcstate = src_new(audio._rsqual, 2, &err); // 2 channels
-    srcdata = { 0 }; // end_of_input MUST be zero initialized
+    memset(&srcdata, 0, sizeof(SRC_DATA)); // end_of_input MUST be zero initialized
   }
 
   src_reset(srcstate);
