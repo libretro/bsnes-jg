@@ -17,7 +17,7 @@ PKGCONF ?= pkg-config
 CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
 
 INCLUDES := -I$(SOURCEDIR)/deps
-WARNINGS := -Wreturn-type
+WARNINGS := -Wall
 WARNINGS_BML := -Wall -Wextra -Wshadow -pedantic
 WARNINGS_CO := -Wall -Wextra -Wshadow -Wmissing-prototypes
 WARNINGS_GB := -Wno-multichar
@@ -52,7 +52,7 @@ ifeq ($(UNAME), Linux)
 endif
 
 ifeq ($(shell $(CXX) -v 2>&1 | grep -c "clang"),1)
-	WARNINGS += -Wno-shift-count-overflow
+	WARNINGS += -Wno-shift-count-overflow -Wno-overloaded-virtual
 endif
 
 CSRCS := deps/gb/apu.c \
