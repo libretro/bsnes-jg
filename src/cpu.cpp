@@ -395,15 +395,15 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
     return bus.write(0x7e0000 | io.wramAddress++, data);
 
   case 0x2181:  //WMADDL
-    io.wramAddress = io.wramAddress & 0x1ff00 | data << 0;
+    io.wramAddress = (io.wramAddress & 0x1ff00) | data << 0;
     return;
 
   case 0x2182:  //WMADDM
-    io.wramAddress = io.wramAddress & 0x100ff | data << 8;
+    io.wramAddress = (io.wramAddress & 0x100ff) | data << 8;
     return;
 
   case 0x2183:  //WMADDH
-    io.wramAddress = io.wramAddress & 0x0ffff | (data & 1) << 16;
+    io.wramAddress = (io.wramAddress & 0x0ffff) | (data & 1) << 16;
     return;
 
   //todo: it is not known what happens when writing to this register during auto-joypad polling
@@ -446,11 +446,11 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
     return;
 
   case 0x4204:  //WRDIVL
-    io.wrdiva = io.wrdiva & 0xff00 | data << 0;
+    io.wrdiva = (io.wrdiva & 0xff00) | data << 0;
     return;
 
   case 0x4205:  //WRDIVH
-    io.wrdiva = io.wrdiva & 0x00ff | data << 8;
+    io.wrdiva = (io.wrdiva & 0x00ff) | data << 8;
     return;
 
   case 0x4206:  //WRDIVB
@@ -475,25 +475,25 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
 
   case 0x4207:  //HTIMEL
     io.htime = (io.htime >> 2) - 1;
-    io.htime = io.htime & 0x100 | data << 0;
+    io.htime = (io.htime & 0x100) | data << 0;
     io.htime = (io.htime + 1) << 2;
     irqPoll();  //unverified
     return;
 
   case 0x4208:  //HTIMEH
     io.htime = (io.htime >> 2) - 1;
-    io.htime = io.htime & 0x0ff | (data & 1) << 8;
+    io.htime = (io.htime & 0x0ff) | (data & 1) << 8;
     io.htime = (io.htime + 1) << 2;
     irqPoll();  //unverified
     return;
 
   case 0x4209:  //VTIMEL
-    io.vtime = io.vtime & 0x100 | data << 0;
+    io.vtime = (io.vtime & 0x100) | data << 0;
     irqPoll();  //unverified
     return;
 
   case 0x420a:  //VTIMEH
-    io.vtime = io.vtime & 0x0ff | (data & 1) << 8;
+    io.vtime = (io.vtime & 0x0ff) | (data & 1) << 8;
     irqPoll();  //unverified
     return;
 
@@ -532,11 +532,11 @@ void CPU::writeDMA(unsigned addr, uint8_t data) {
     return;
 
   case 0x4302:  //A1TxL
-    channel.sourceAddress = channel.sourceAddress & 0xff00 | data << 0;
+    channel.sourceAddress = (channel.sourceAddress & 0xff00) | data << 0;
     return;
 
   case 0x4303:  //A1TxH
-    channel.sourceAddress = channel.sourceAddress & 0x00ff | data << 8;
+    channel.sourceAddress = (channel.sourceAddress & 0x00ff) | data << 8;
     return;
 
   case 0x4304:  //A1Bx
@@ -544,11 +544,11 @@ void CPU::writeDMA(unsigned addr, uint8_t data) {
     return;
 
   case 0x4305:  //DASxL
-    channel.transferSize = channel.transferSize & 0xff00 | data << 0;
+    channel.transferSize = (channel.transferSize & 0xff00) | data << 0;
     return;
 
   case 0x4306:  //DASxH
-    channel.transferSize = channel.transferSize & 0x00ff | data << 8;
+    channel.transferSize = (channel.transferSize & 0x00ff) | data << 8;
     return;
 
   case 0x4307:  //DASBx
@@ -556,11 +556,11 @@ void CPU::writeDMA(unsigned addr, uint8_t data) {
     return;
 
   case 0x4308:  //A2AxL
-    channel.hdmaAddress = channel.hdmaAddress & 0xff00 | data << 0;
+    channel.hdmaAddress = (channel.hdmaAddress & 0xff00) | data << 0;
     return;
 
   case 0x4309:  //A2AxH
-    channel.hdmaAddress = channel.hdmaAddress & 0x00ff | data << 8;
+    channel.hdmaAddress = (channel.hdmaAddress & 0x00ff) | data << 8;
     return;
 
   case 0x430a:  //NTRLx
