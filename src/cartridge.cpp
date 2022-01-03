@@ -548,11 +548,6 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
         loadMap(map, {&HitachiDSP::readROM, &hitachidsp}, {&HitachiDSP::writeROM, &hitachidsp});
       }
     }
-  }
-
-  for (std::string& m : memlist) {
-    std::string type = BML::search(m, {"memory", "type"});
-    std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM" && content == "Save") {
       loadMemory(hitachidsp.ram, m);
       std::vector<std::string> maps = BML::searchList(m, "map");
