@@ -94,7 +94,8 @@ struct Random {
   }
 
   void serialize(serializer& s) {
-    s.integer((unsigned&)_entropy);
+    unsigned ent = (unsigned)_entropy;
+    s.integer((unsigned&)ent);
     s.integer(_state);
     s.integer(_increment);
   }
