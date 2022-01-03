@@ -66,7 +66,7 @@ void ICD::joypWrite(bool p14, bool p15) {
     }
   }
 
-  uint8_t joypad;
+  uint8_t joypad = 0;
   if(joypID == 0) joypad = r6004;
   if(joypID == 1) joypad = r6005;
   if(joypID == 2) joypad = r6006;
