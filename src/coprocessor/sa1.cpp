@@ -40,22 +40,22 @@ uint8_t SA1::ROM::readCPU(unsigned address, uint8_t data) {
 
   if(address < 0x100000) {  //00-1f,8000-ffff; c0-cf:0000-ffff
     if(lo && sa1.mmio.cbmode == 0) return read(address);
-    return read(sa1.mmio.cb << 20 | address & 0x0fffff);
+    return read(sa1.mmio.cb << 20 | (address & 0x0fffff));
   }
 
   if(address < 0x200000) {  //20-3f,8000-ffff; d0-df:0000-ffff
     if(lo && sa1.mmio.dbmode == 0) return read(address);
-    return read(sa1.mmio.db << 20 | address & 0x0fffff);
+    return read(sa1.mmio.db << 20 | (address & 0x0fffff));
   }
 
   if(address < 0x300000) {  //80-9f,8000-ffff; e0-ef:0000-ffff
     if(lo && sa1.mmio.ebmode == 0) return read(address);
-    return read(sa1.mmio.eb << 20 | address & 0x0fffff);
+    return read(sa1.mmio.eb << 20 | (address & 0x0fffff));
   }
 
   if(address < 0x400000) {  //a0-bf,8000-ffff; f0-ff:0000-ffff
     if(lo && sa1.mmio.fbmode == 0) return read(address);
-    return read(sa1.mmio.fb << 20 | address & 0x0fffff);
+    return read(sa1.mmio.fb << 20 | (address & 0x0fffff));
   }
 
   return data;  //unreachable
@@ -66,7 +66,7 @@ void SA1::ROM::writeCPU(unsigned address, uint8_t data) {
 
 uint8_t SA1::ROM::readSA1(unsigned address, uint8_t data) {
   if((address & 0x408000) == 0x008000) {
-    address = (address & 0x800000) >> 2 | (address & 0x3f0000) >> 1 | address & 0x007fff;
+    address = (address & 0x800000) >> 2 | (address & 0x3f0000) >> 1 | (address & 0x007fff);
   }
   return readCPU(address, data);
 }
@@ -179,18 +179,18 @@ void SA1::BWRAM::writeBitmap(nall::Natural<20> address, uint8_t data) {
     unsigned shift = address & 1;
     address >>= 1;
     switch(shift) {
-    case 0: data = read(address) & 0xf0 | (data & 0x0f) << 0; break;
-    case 1: data = read(address) & 0x0f | (data & 0x0f) << 4; break;
+    case 0: data = (read(address) & 0xf0) | (data & 0x0f) << 0; break;
+    case 1: data = (read(address) & 0x0f) | (data & 0x0f) << 4; break;
     }
   } else {
     //2bpp
     unsigned shift = address & 3;
     address >>= 2;
     switch(shift) {
-    case 0: data = read(address) & 0xfc | (data & 0x03) << 0; break;
-    case 1: data = read(address) & 0xf3 | (data & 0x03) << 2; break;
-    case 2: data = read(address) & 0xcf | (data & 0x03) << 4; break;
-    case 3: data = read(address) & 0x3f | (data & 0x03) << 6; break;
+    case 0: data = (read(address) & 0xfc) | (data & 0x03) << 0; break;
+    case 1: data = (read(address) & 0xf3) | (data & 0x03) << 2; break;
+    case 2: data = (read(address) & 0xcf) | (data & 0x03) << 4; break;
+    case 3: data = (read(address) & 0x3f) | (data & 0x03) << 6; break;
     }
   }
   write(address, data);
@@ -505,7 +505,7 @@ uint8_t SA1::readDisassembler(unsigned address) {
 uint8_t SA1::readIOCPU(unsigned address, uint8_t data) {
   cpu.synchronizeCoprocessors();
 
-  switch(0x2200 | address & 0x1ff) {
+  switch(0x2200 | (address & 0x1ff)) {
 
   //(SFR) S-CPU flag read
   case 0x2300: {
@@ -531,7 +531,7 @@ uint8_t SA1::readIOCPU(unsigned address, uint8_t data) {
 uint8_t SA1::readIOSA1(unsigned address, uint8_t) {
   synchronizeCPU();
 
-  switch(0x2200 | address & 0x1ff) {
+  switch(0x2200 | (address & 0x1ff)) {
 
   //(CFR) SA-1 flag read
   case 0x2301: {
@@ -607,7 +607,7 @@ uint8_t SA1::readIOSA1(unsigned address, uint8_t) {
 void SA1::writeIOCPU(unsigned address, uint8_t data) {
   cpu.synchronizeCoprocessors();
 
-  switch(0x2200 | address & 0x1ff) {
+  switch(0x2200 | (address & 0x1ff)) {
 
   //(CCNT) SA-1 control
   case 0x2200: {
@@ -742,7 +742,7 @@ void SA1::writeIOCPU(unsigned address, uint8_t data) {
 void SA1::writeIOSA1(unsigned address, uint8_t data) {
   synchronizeCPU();
 
-  switch(0x2200 | address & 0x1ff) {
+  switch(0x2200 | (address & 0x1ff)) {
 
   //(SCNT) S-CPU control
   case 0x2209: {
@@ -907,19 +907,19 @@ void SA1::writeIOSA1(unsigned address, uint8_t data) {
 
   //(MAL) multiplicand / dividend low
   case 0x2251: {
-    mmio.ma = mmio.ma & ~0x00ff | data << 0;
+    mmio.ma = (mmio.ma & ~0x00ff) | data << 0;
     return;
   }
 
   //(MAH) multiplicand / dividend high
   case 0x2252: {
-    mmio.ma = mmio.ma & ~0xff00 | data << 8;
+    mmio.ma = (mmio.ma & ~0xff00) | data << 8;
     return;
   }
 
   //(MBL) multiplier / divisor low
   case 0x2253: {
-    mmio.mb = mmio.mb & ~0x00ff | data << 0;
+    mmio.mb = (mmio.mb & ~0x00ff) | data << 0;
     return;
   }
 
@@ -927,7 +927,7 @@ void SA1::writeIOSA1(unsigned address, uint8_t data) {
   //multiplication / cumulative sum only resets MB
   //division resets both MA and MB
   case 0x2254: {
-    mmio.mb = mmio.mb & ~0xff00 | data << 8;
+    mmio.mb = (mmio.mb & ~0xff00) | data << 8;
 
     if(mmio.acm == 0) {
       if(mmio.md == 0) {
@@ -982,7 +982,7 @@ void SA1::writeIOSA1(unsigned address, uint8_t data) {
 }
 
 void SA1::writeIOShared(unsigned address, uint8_t data) {
-  switch(0x2200 | address & 0x1ff) {
+  switch(0x2200 | (address & 0x1ff)) {
 
   //(CDMA) character conversion DMA parameters
   case 0x2231: {
