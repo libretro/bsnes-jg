@@ -115,7 +115,7 @@ uint8_t SuperFX::rpix(uint8_t x, uint8_t y) {
   flushPixelCache(pixelcache[1]);
   flushPixelCache(pixelcache[0]);
 
-  unsigned cn;  //character number
+  unsigned cn = 0;  //character number
   switch(regs.por.obj ? 3 : regs.scmr.ht) {
   case 0: cn = ((x & 0xf8) << 1) + ((y & 0xf8) >> 3); break;
   case 1: cn = ((x & 0xf8) << 1) + ((x & 0xf8) >> 1) + ((y & 0xf8) >> 3); break;
@@ -142,7 +142,7 @@ void SuperFX::flushPixelCache(PixelCache& cache) {
   uint8_t x = cache.offset << 3;
   uint8_t y = cache.offset >> 5;
 
-  unsigned cn;  //character number
+  unsigned cn = 0;  //character number
   switch(regs.por.obj ? 3 : regs.scmr.ht) {
   case 0: cn = ((x & 0xf8) << 1) + ((y & 0xf8) >> 3); break;
   case 1: cn = ((x & 0xf8) << 1) + ((x & 0xf8) >> 1) + ((y & 0xf8) >> 3); break;
