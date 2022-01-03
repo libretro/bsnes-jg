@@ -244,7 +244,7 @@ struct Background {
   nall::Natural< 7> renderingIndex;
   nall::Natural< 3> pixelCounter;
 
-  friend class PPU;
+  friend struct PPU;
 };
 
 struct OAM {
@@ -336,7 +336,7 @@ struct Object {
     } above, below;
   } output;
 
-  friend class PPU;
+  friend struct PPU;
 };
 
 struct Window {
@@ -384,7 +384,7 @@ struct Window {
     unsigned x;
   };
 
-  friend class PPU;
+  friend struct PPU;
 };
 
 struct Screen {
@@ -432,7 +432,7 @@ struct Screen {
     nall::Natural< 1> colorHalve;
   } math;
 
-  friend class PPU;
+  friend struct PPU;
 };
 
   Mosaic mosaic;
@@ -444,12 +444,11 @@ struct Screen {
   Window window;
   Screen screen;
 
-  friend class PPU::Background;
-  friend class PPU::Object;
-  friend class PPU::Window;
-  friend class PPU::Screen;
-  friend class System;
-  friend class PPUfast;
+  friend struct PPU::Background;
+  friend struct PPU::Object;
+  friend struct PPU::Window;
+  friend struct PPU::Screen;
+  friend struct System;
 };
 
 extern PPU ppu;
