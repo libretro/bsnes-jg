@@ -1276,7 +1276,7 @@ void WDC65816::instructionInterrupt(r16 vector) {
 void WDC65816::instructionStop() {
   r.stp = true;
   while(r.stp && !synchronizing()) {
-  lastCycle();
+    lastCycle();
     idle();
   }
 }
@@ -1284,7 +1284,7 @@ void WDC65816::instructionStop() {
 void WDC65816::instructionWait() {
   r.wai = true;
   while(r.wai && !synchronizing()) {
-  lastCycle();
+    lastCycle();
     idle();
   }
   idle();
