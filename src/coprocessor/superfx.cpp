@@ -251,7 +251,7 @@ void SuperFX::writeCache(uint16_t addr, uint8_t data) {
 
 uint8_t SuperFX::readIO(unsigned addr, uint8_t) {
   cpu.synchronizeCoprocessors();
-  addr = 0x3000 | addr & 0x3ff;
+  addr = 0x3000 | (addr & 0x3ff);
 
   if(addr >= 0x3100 && addr <= 0x32ff) {
     return readCache(addr - 0x3100);
@@ -303,7 +303,7 @@ uint8_t SuperFX::readIO(unsigned addr, uint8_t) {
 
 void SuperFX::writeIO(unsigned addr, uint8_t data) {
   cpu.synchronizeCoprocessors();
-  addr = 0x3000 | addr & 0x3ff;
+  addr = 0x3000 | (addr & 0x3ff);
 
   if(addr >= 0x3100 && addr <= 0x32ff) {
     return writeCache(addr - 0x3100, data);
