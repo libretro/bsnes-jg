@@ -274,7 +274,7 @@ const Dsp1::Command Dsp1::mCommandTable[0x40] = {
 
 void Dsp1::memoryTest(int16_t *input, int16_t *output)
 {
-   int16_t& Size = input[0];
+   //int16_t& Size = input[0]; // Unused... what is this function even for?
    int16_t& Result = output[0];
 
    Result = 0x0000;
