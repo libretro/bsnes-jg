@@ -22,9 +22,12 @@
 
 namespace nall {
 
-#if defined(__clang__)
+#ifdef __clang__
   #pragma clang diagnostic push
   #pragma clang diagnostic ignored "-Wparentheses"
+#elif __GNUC__
+  #pragma GCC push_options
+  #pragma GCC diagnostic ignored "-Wparentheses"
 #endif
 
 struct Boolean;
@@ -231,8 +234,10 @@ private:
   stype data;
 };
 
-#if defined(__clang__)
+#ifdef __clang__
   #pragma clang diagnostic pop
+#elif __GNUC__
+  #pragma GCC pop_options
 #endif
 
 }
