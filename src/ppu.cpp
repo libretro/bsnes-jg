@@ -1445,7 +1445,7 @@ void PPU::Object::fetch() {
   auto oamItem = t.item[t.active];
   auto oamTile = t.tile[t.active];
 
-  for(unsigned i : nall::reverse(nall::range(32))) {
+  for(unsigned i = 32; i--;) {
     if(!oamItem[i].valid) continue;
 
     if(ppu.io.displayDisable || ppu.vcounter() >= ppu.vdisp() - 1) {
