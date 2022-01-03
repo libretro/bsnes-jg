@@ -94,7 +94,7 @@ void Audio::process() {
   }
 
   for (auto& stream : _streams) {
-    for (int i = 0; i < _spf; ++i) {
+    for (unsigned i = 0; i < _spf; ++i) {
       buffer[i] += stream->queue_out[i];
     }
     stream->queue_out.erase(stream->queue_out.begin(), stream->queue_out.begin() + _spf);
