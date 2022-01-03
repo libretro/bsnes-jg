@@ -383,7 +383,7 @@ void SDD1::power() {
 }
 
 uint8_t SDD1::ioRead(unsigned addr, uint8_t data) {
-  addr = 0x4800 | addr & 0xf;
+  addr = 0x4800 | (addr & 0xf);
 
   switch(addr) {
   case 0x4800: return r4800;
@@ -399,7 +399,7 @@ uint8_t SDD1::ioRead(unsigned addr, uint8_t data) {
 }
 
 void SDD1::ioWrite(unsigned addr, uint8_t data) {
-  addr = 0x4800 | addr & 0xf;
+  addr = 0x4800 | (addr & 0xf);
 
   switch(addr) {
   case 0x4800: r4800 = data; break;
@@ -418,21 +418,21 @@ uint8_t SDD1::dmaRead(unsigned addr, uint8_t data) {
 void SDD1::dmaWrite(unsigned addr, uint8_t data) {
   unsigned channel = addr >> 4 & 7;
   switch(addr & 15) {
-  case 2: dma[channel].addr = dma[channel].addr & 0xffff00 | data <<  0; break;
-  case 3: dma[channel].addr = dma[channel].addr & 0xff00ff | data <<  8; break;
-  case 4: dma[channel].addr = dma[channel].addr & 0x00ffff | data << 16; break;
-  case 5: dma[channel].size = dma[channel].size & 0xff00 | data << 0; break;
-  case 6: dma[channel].size = dma[channel].size & 0x00ff | data << 8; break;
+  case 2: dma[channel].addr = (dma[channel].addr & 0xffff00) | data <<  0; break;
+  case 3: dma[channel].addr = (dma[channel].addr & 0xff00ff) | data <<  8; break;
+  case 4: dma[channel].addr = (dma[channel].addr & 0x00ffff) | data << 16; break;
+  case 5: dma[channel].size = (dma[channel].size & 0xff00) | data << 0; break;
+  case 6: dma[channel].size = (dma[channel].size & 0x00ff) | data << 8; break;
   }
   return cpu.writeDMA(addr, data);
 }
 
 uint8_t SDD1::mmcRead(unsigned addr) {
   switch(addr >> 20 & 3) {
-  case 0: return rom.read((r4804 & 0xf) << 20 | addr & 0xfffff);  //c0-cf:0000-ffff
-  case 1: return rom.read((r4805 & 0xf) << 20 | addr & 0xfffff);  //d0-df:0000-ffff
-  case 2: return rom.read((r4806 & 0xf) << 20 | addr & 0xfffff);  //e0-ef:0000-ffff
-  case 3: return rom.read((r4807 & 0xf) << 20 | addr & 0xfffff);  //f0-ff:0000-ffff
+  case 0: return rom.read((r4804 & 0xf) << 20 | (addr & 0xfffff));  //c0-cf:0000-ffff
+  case 1: return rom.read((r4805 & 0xf) << 20 | (addr & 0xfffff));  //d0-df:0000-ffff
+  case 2: return rom.read((r4806 & 0xf) << 20 | (addr & 0xfffff));  //e0-ef:0000-ffff
+  case 3: return rom.read((r4807 & 0xf) << 20 | (addr & 0xfffff));  //f0-ff:0000-ffff
   }
   return 0; // unreachable
 }
@@ -444,7 +444,7 @@ uint8_t SDD1::mcuRead(unsigned addr, uint8_t data) {
   if(!(addr & 1 << 22)) {
     if(!(addr & 1 << 23) && (addr & 1 << 21) && (r4805 & 0x80)) addr &= ~(1 << 21);  //20-3f:8000-ffff
     if( (addr & 1 << 23) && (addr & 1 << 21) && (r4807 & 0x80)) addr &= ~(1 << 21);  //a0-bf:8000-ffff
-    addr = addr >> 1 & 0x1f8000 | addr & 0x7fff;
+    addr = (addr >> 1 & 0x1f8000) | (addr & 0x7fff);
     return rom.read(addr);
   }
 
