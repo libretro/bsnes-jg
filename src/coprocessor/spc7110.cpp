@@ -722,7 +722,8 @@ void SPC7110::write(unsigned addr, uint8_t data) {
 //map address=00-3f,80-bf:8000-ffff mask=0x800000 => 00-3f:8000-ffff
 //map address=c0-ff:0000-ffff mask=0xc00000 => c0-ff:0000-ffff
 uint8_t SPC7110::mcuromRead(unsigned addr, uint8_t data) {
-  unsigned mask = (1 << (r4834 & 3)) - 1;  //8mbit, 16mbit, 32mbit, 64mbit DROM
+  // TODO: Why is this unused?
+  //unsigned mask = (1 << (r4834 & 3)) - 1;  //8mbit, 16mbit, 32mbit, 64mbit DROM
 
   if(addr < 0x100000) {  //$00-0f,80-8f:8000-ffff; $c0-cf:0000-ffff
     addr &= 0x0fffff;
