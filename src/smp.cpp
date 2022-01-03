@@ -74,7 +74,7 @@ void SMP::portWrite(nall::Natural< 2> port, uint8_t data) {
 }
 
 uint8_t SMP::readIO(uint16_t address) {
-  uint8_t data;
+  uint8_t data = 0;
 
   switch(address) {
   case 0xf0:  //TEST (write-only register)
