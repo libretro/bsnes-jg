@@ -87,12 +87,12 @@ void WDC65816::pushN(uint8_t data) {
 }
 
 uint8_t WDC65816::readDirect(unsigned address) {
-  if(EF && !D.l) return read(D.w | address & 0xff);
+  if(EF && !D.l) return read(D.w | (address & 0xff));
   return read(D.w + address & 0xffff);
 }
 
 void WDC65816::writeDirect(unsigned address, uint8_t data) {
-  if(EF && !D.l) return write(D.w | address & 0xff, data);
+  if(EF && !D.l) return write(D.w | (address & 0xff), data);
   write(D.w + address & 0xffff, data);
 }
 
