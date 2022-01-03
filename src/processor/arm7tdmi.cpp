@@ -1259,7 +1259,7 @@ void ARM7TDMI::thumbInstructionSoftwareInterrupt(uint8_t immediate) {
 
 void ARM7TDMI::thumbInstructionStackMultiple
 (uint8_t list, nall::Natural< 1> lrpc, nall::Natural< 1> mode) {
-  uint32_t sp;
+  uint32_t sp = 0;
   switch(mode) {
   case 0: sp = r(13) - (nall::count(list) + lrpc) * 4; break;  //PUSH
   case 1: sp = r(13);  //POP
