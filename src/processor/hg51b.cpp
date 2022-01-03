@@ -70,8 +70,8 @@ nall::Natural<24> HG51B::readRegister(nall::Natural< 7> address) {
 
 void HG51B::writeRegister(nall::Natural< 7> address, nall::Natural<24> data) {
   switch(address) {
-  case 0x01: r.mul = r.mul &  0xffffffull | data << 24; return;
-  case 0x02: r.mul = r.mul & ~0xffffffull | data <<  0; return;
+  case 0x01: r.mul = (r.mul &  0xffffffull) | data << 24; return;
+  case 0x02: r.mul = (r.mul & ~0xffffffull) | data <<  0; return;
   case 0x03: r.mdr = data; return;
   case 0x08: r.rom = data; return;
   case 0x0c: r.ram = data; return;
@@ -952,11 +952,11 @@ void HG51B::instructionLD(nall::Natural<15>& out, uint8_t imm) {
 }
 
 void HG51B::instructionLDL(nall::Natural<15>& out, uint8_t imm) {
-  out = out & 0x7f00 | imm << 0;
+  out = (out & 0x7f00) | imm << 0;
 }
 
 void HG51B::instructionLDH(nall::Natural<15>& out, nall::Natural< 7> imm) {
-  out = out & 0x00ff | (imm & 0x7f) << 8;
+  out = (out & 0x00ff) | (imm & 0x7f) << 8;
 }
 
 void HG51B::instructionMUL(nall::Natural< 7> reg) {
