@@ -217,9 +217,9 @@ uint16_t PPU::addressVRAM() const {
   uint16_t address = io.vramAddress;
   switch(io.vramMapping) {
   case 0: return address;
-  case 1: return address & 0xff00 | address << 3 & 0x00f8 | address >> 5 & 7;
-  case 2: return address & 0xfe00 | address << 3 & 0x01f8 | address >> 6 & 7;
-  case 3: return address & 0xfc00 | address << 3 & 0x03f8 | address >> 7 & 7;
+  case 1: return (address & 0xff00) | (address << 3 & 0x00f8) | (address >> 5 & 7);
+  case 2: return (address & 0xfe00) | (address << 3 & 0x01f8) | (address >> 6 & 7);
+  case 3: return (address & 0xfc00) | (address << 3 & 0x03f8) | (address >> 7 & 7);
   }
   return 0; // unreachable
 }
@@ -233,8 +233,8 @@ uint16_t PPU::readVRAM() {
 void PPU::writeVRAM(bool byte, uint8_t data) {
   if(!io.displayDisable && vcounter() < vdisp()) return;
   auto address = addressVRAM();
-  if(byte == 0) vram[address] = vram[address] & 0xff00 | data << 0;
-  if(byte == 1) vram[address] = vram[address] & 0x00ff | data << 8;
+  if(byte == 0) vram[address] = (vram[address] & 0xff00) | data << 0;
+  if(byte == 1) vram[address] = (vram[address] & 0x00ff) | data << 8;
 }
 
 uint8_t PPU::readOAM(nall::Natural<10> addr) {
@@ -588,14 +588,14 @@ void PPU::writeIO(unsigned addr, uint8_t data) {
 
   //VMADDL
   case 0x2116: {
-    io.vramAddress = io.vramAddress & 0xff00 | data << 0;
+    io.vramAddress = (io.vramAddress & 0xff00) | data << 0;
     latch.vram = readVRAM();
     return;
   }
 
   //VMADDH
   case 0x2117: {
-    io.vramAddress = io.vramAddress & 0x00ff | data << 8;
+    io.vramAddress = (io.vramAddress & 0x00ff) | data << 8;
     latch.vram = readVRAM();
     return;
   }
@@ -1203,15 +1203,15 @@ void PPU::Background::fetchCharacter(unsigned index, bool half) {
 
   //reverse bits so that the lowest bit is the left-most pixel
   if(!tile.hmirror) {
-    data = data >> 4 & 0x0f0f | data << 4 & 0xf0f0;
-    data = data >> 2 & 0x3333 | data << 2 & 0xcccc;
-    data = data >> 1 & 0x5555 | data << 1 & 0xaaaa;
+    data = (data >> 4 & 0x0f0f) | (data << 4 & 0xf0f0);
+    data = (data >> 2 & 0x3333) | (data << 2 & 0xcccc);
+    data = (data >> 1 & 0x5555) | (data << 1 & 0xaaaa);
   }
 
   //interleave two bitplanes for faster planar decoding later
   tile.data[index] = (
-    ((uint8_t(data >> 0) * 0x0101010101010101ull & 0x8040201008040201ull) * 0x0102040810204081ull >> 49) & 0x5555
-  | ((uint8_t(data >> 8) * 0x0101010101010101ull & 0x8040201008040201ull) * 0x0102040810204081ull >> 48) & 0xaaaa
+    (((uint8_t(data >> 0) * 0x0101010101010101ull & 0x8040201008040201ull) * 0x0102040810204081ull >> 49) & 0x5555)
+  | (((uint8_t(data >> 8) * 0x0101010101010101ull & 0x8040201008040201ull) * 0x0102040810204081ull >> 48) & 0xaaaa)
   );
 }
 
@@ -1308,7 +1308,7 @@ void PPU::OAM::write(nall::Natural<10> address, uint8_t data) {
   if(!(address & 0x200)) {
     unsigned n = address >> 2;  //object#
     address &= 3;
-    if(address == 0) { object[n].x = object[n].x & 0x100 | data; return; }
+    if(address == 0) { object[n].x = (object[n].x & 0x100) | data; return; }
     if(address == 1) { object[n].y = data; return; }
     if(address == 2) { object[n].character = data; return; }
     object[n].nameselect = data >> 0 & 1;
@@ -1318,13 +1318,13 @@ void PPU::OAM::write(nall::Natural<10> address, uint8_t data) {
     object[n].vflip      = data >> 7 & 1;
   } else {
     unsigned n = (address & 0x1f) << 2;  //object#
-    object[n + 0].x    = object[n + 0].x & 0xff | bool(data & 0x01) << 8;
+    object[n + 0].x    = (object[n + 0].x & 0xff) | bool(data & 0x01) << 8;
     object[n + 0].size = bool(data & 0x02);
-    object[n + 1].x    = object[n + 1].x & 0xff | bool(data & 0x04) << 8;
+    object[n + 1].x    = (object[n + 1].x & 0xff) | bool(data & 0x04) << 8;
     object[n + 1].size = bool(data & 0x08);
-    object[n + 2].x    = object[n + 2].x & 0xff | bool(data & 0x10) << 8;
+    object[n + 2].x    = (object[n + 2].x & 0xff) | bool(data & 0x10) << 8;
     object[n + 2].size = bool(data & 0x20);
-    object[n + 3].x    = object[n + 3].x & 0xff | bool(data & 0x40) << 8;
+    object[n + 3].x    = (object[n + 3].x & 0xff) | bool(data & 0x40) << 8;
     object[n + 3].size = bool(data & 0x80);
   }
 }
