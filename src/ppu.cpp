@@ -1041,7 +1041,7 @@ void PPU::Background::runMode7() {
   uint8_t tile = ppu.io.repeatMode7 == 3 && outOfBounds ? 0 : ppu.vram[tileAddress] >> 0;
   uint8_t palette = ppu.io.repeatMode7 == 2 && outOfBounds ? 0 : ppu.vram[tile << 6 | paletteAddress] >> 8;
 
-  unsigned priority;
+  unsigned priority = 0;
   if(id == ID::BG1) {
     priority = io.priority[0];
   } else if(id == ID::BG2) {
@@ -1424,7 +1424,6 @@ void PPU::Object::evaluate(nall::Natural< 7> index) {
   if(t.itemCount > 32) return;
 
   auto oamItem = t.item[t.active];
-  auto oamTile = t.tile[t.active];
 
   nall::Natural< 7> sprite = latch.firstSprite + index;
   if(!onScanline(oam.object[sprite])) return;
@@ -1500,7 +1499,7 @@ void PPU::Object::fetch() {
     if(sprite.vflip) {
       if(sprite.width() == sprite.height()) {
         y = sprite.height() - 1 - y;
-      } else if(y < sprite.width()) {
+      } else if(y < (int)sprite.width()) {
         y = sprite.width() - 1 - y;
       } else {
         y = sprite.width() + (sprite.width() - 1) - (y - sprite.width());
