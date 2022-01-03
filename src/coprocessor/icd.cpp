@@ -120,7 +120,7 @@ uint8_t ICD::readIO(unsigned addr, uint8_t data) {
 
   //LY counter
   if(addr == 0x6000) {
-    return vcounter & ~7 | writeBank;
+    return (vcounter & ~7) | writeBank;
   }
 
   //command ready port
