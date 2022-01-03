@@ -41,7 +41,6 @@ void SDD1::Decompressor::IM::init(unsigned offset_) {
 
 uint8_t SDD1::Decompressor::IM::getCodeWord(uint8_t codeLength) {
   uint8_t codeWord;
-  uint8_t compCount;
 
   codeWord = sdd1.mmcRead(offset) << bitCount;
   bitCount++;
@@ -181,8 +180,8 @@ uint8_t SDD1::Decompressor::PEM::getBit(uint8_t context) {
   uint8_t currentMps = info.mps;
   const State& s = SDD1::Decompressor::PEM::evolutionTable[currentStatus];
 
-  uint8_t bit;
-  bool endOfRun;
+  uint8_t bit = 0;
+  bool endOfRun = false;
   switch(s.codeNumber) {
   case 0: bit = self.bg0.getBit(endOfRun); break;
   case 1: bit = self.bg1.getBit(endOfRun); break;
