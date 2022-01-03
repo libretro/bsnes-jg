@@ -1615,7 +1615,7 @@ bool PPU::Window::test(bool oneEnable, bool one, bool twoEnable, bool two, unsig
   if(!twoEnable) return one;
   if(mask == 0) return (one | two);
   if(mask == 1) return (one & two);
-                return (one ^ two) == 3 - mask;
+  return (one ^ two) == 3 - mask;
 }
 
 void PPU::Window::power() {
