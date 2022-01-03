@@ -142,7 +142,7 @@ std::string search(std::string text, std::vector<std::string> terms) {
     for (auto&& node : doc) {
         byuuML::cursor c = node.query(doc, terms[0]);
         if (c) {
-            for (int i = 1; i < terms.size(); ++i) {
+            for (size_t i = 1; i < terms.size(); ++i) {
                 c = c.query(terms[i]);
             }
             if (c) {
@@ -167,7 +167,7 @@ std::string searchnode(std::string text, std::vector<std::string> terms) {
     for (auto&& node : doc) {
         byuuML::cursor c = node.query(doc, terms[0]);
         if (c) {
-            for (int i = 1; i < terms.size(); ++i) {
+            for (size_t i = 1; i < terms.size(); ++i) {
                 c = c.query(terms[i]);
             }
             if (c) {
@@ -237,7 +237,7 @@ bool exists(std::string text, std::vector<std::string> terms) {
     for (auto&& node : doc) {
         byuuML::cursor c = node.query(doc, terms[0]);
         if (c) {
-            for (int i = 1; i < terms.size(); ++i) {
+            for (size_t i = 1; i < terms.size(); ++i) {
                 c = c.query(terms[i]);
             }
             if (c) {
