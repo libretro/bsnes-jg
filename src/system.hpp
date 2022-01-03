@@ -45,7 +45,7 @@ private:
   void serializeAll(serializer&, bool synchronize);
   unsigned serializeInit(bool synchronize);
 
-  friend class Cartridge;
+  friend struct Cartridge;
 };
 
 extern System system;
