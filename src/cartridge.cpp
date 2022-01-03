@@ -96,7 +96,7 @@ void Cartridge::loadCartridge(std::string node) {
   }
 
   std::vector<std::string> slots = BML::searchList(board, "slot");
-  for (int i = 0; i < slots.size(); ++i) {
+  for (size_t i = 0; i < slots.size(); ++i) {
     std::string type = BML::search(slots[i], {"slot", "type"});
     if (type == "BSMemory") loadBSMemory(slots[i]);
     if (type == "SufamiTurbo" && i == 0) loadSufamiTurboA(slots[i]);
@@ -126,7 +126,7 @@ void Cartridge::loadCartridgeBSMemory(std::string node) {
     bsmemory.memory.allocate(memory.size);
     std::vector<uint8_t> buf = Emulator::platform->mopen(bsmemory.pathID, memory.name());
     if (!buf.empty()) {
-      for (int i = 0; i < memory.size; ++i)
+      for (unsigned i = 0; i < memory.size; ++i)
         bsmemory.memory.data()[i] = buf[i];
     }
   }
@@ -143,7 +143,7 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
         std::vector<uint8_t> buf =
           Emulator::platform->mopen(sufamiturboA.pathID, memory.name());
         if (!buf.empty()) {
-          for (int i = 0; i < memory.size; ++i)
+          for (unsigned i = 0; i < memory.size; ++i)
             sufamiturboA.rom.data()[i] = buf[i];
         }
       }
@@ -173,7 +173,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
         std::vector<uint8_t> buf =
           Emulator::platform->mopen(sufamiturboB.pathID, memory.name());
         if (!buf.empty()) {
-          for (int i = 0; i < memory.size; ++i)
+          for (unsigned i = 0; i < memory.size; ++i)
             sufamiturboB.rom.data()[i] = buf[i];
         }
       }
@@ -230,7 +230,7 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
     if (memory->name() == "program.rom" || memory->name() == "data.rom" || memory->name() == "expansion.rom") {
       std::vector<uint8_t> buf = Emulator::platform->mopen(pathID(), memory->name());
       if (!buf.empty()) {
-      for (int i = 0; i < memory->size; ++i)
+      for (unsigned i = 0; i < memory->size; ++i)
         mem.data()[i] = buf[i];
       }
       return;
@@ -264,9 +264,6 @@ void Cartridge::loadRAM(std::string node) {
 void Cartridge::loadICD(std::string node) {
   has.GameBoySlot = true;
   has.ICD = true;
-
-  std::string strrev = BML::search(node, {"processor", "revision"});
-  unsigned rev = strrev.empty() ? 0 : std::stoi(strrev);
 
   if(auto oscillator = game.oscillator()) {
     icd.Frequency = oscillator->frequency;
@@ -1285,11 +1282,11 @@ bool Cartridge::load() {
 
     // Ugly, but works during the nall removal, needs to change when nall is gone
     if(cartridge.has.SufamiTurboSlotA) {
-        for (int i = 0; i < sufamiturboA.rom.size(); ++i)
+        for (size_t i = 0; i < sufamiturboA.rom.size(); ++i)
             carts.push_back(sufamiturboA.rom[i]);
     }
     if(cartridge.has.SufamiTurboSlotB) {
-        for (int i = 0; i < sufamiturboB.rom.size(); ++i)
+        for (size_t i = 0; i < sufamiturboB.rom.size(); ++i)
             carts.push_back(sufamiturboB.rom[i]);
     }
 
@@ -1302,25 +1299,25 @@ bool Cartridge::load() {
     std::vector<uint8_t> buf;
 
     //hash each ROM image that exists; any with size() == 0 is ignored
-    for (int i = 0; i < rom.size(); ++i) buf.push_back(rom[i]);
-    for (int i = 0; i < mcc.rom.size(); ++i) buf.push_back(mcc.rom[i]);
-    for (int i = 0; i < sa1.rom.size(); ++i) buf.push_back(sa1.rom[i]);
-    for (int i = 0; i < superfx.rom.size(); ++i) buf.push_back(superfx.rom[i]);
-    for (int i = 0; i < hitachidsp.rom.size(); ++i) buf.push_back(hitachidsp.rom[i]);
-    for (int i = 0; i < spc7110.prom.size(); ++i) buf.push_back(spc7110.prom[i]);
-    for (int i = 0; i < spc7110.drom.size(); ++i) buf.push_back(spc7110.drom[i]);
-    for (int i = 0; i < sdd1.rom.size(); ++i) buf.push_back(sdd1.rom[i]);
+    for (size_t i = 0; i < rom.size(); ++i) buf.push_back(rom[i]);
+    for (size_t i = 0; i < mcc.rom.size(); ++i) buf.push_back(mcc.rom[i]);
+    for (size_t i = 0; i < sa1.rom.size(); ++i) buf.push_back(sa1.rom[i]);
+    for (size_t i = 0; i < superfx.rom.size(); ++i) buf.push_back(superfx.rom[i]);
+    for (size_t i = 0; i < hitachidsp.rom.size(); ++i) buf.push_back(hitachidsp.rom[i]);
+    for (size_t i = 0; i < spc7110.prom.size(); ++i) buf.push_back(spc7110.prom[i]);
+    for (size_t i = 0; i < spc7110.drom.size(); ++i) buf.push_back(spc7110.drom[i]);
+    for (size_t i = 0; i < sdd1.rom.size(); ++i) buf.push_back(sdd1.rom[i]);
 
     //hash all firmware that exists
     std::vector<uint8_t> firm;
     firm = armdsp.firmware();
-    for (int i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
 
     firm = hitachidsp.firmware();
-    for (int i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
 
     firm = necdsp.firmware();
-    for (int i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
 
     //finalize hash
     information.sha256 = sha256_digest(buf.data(), buf.size());
