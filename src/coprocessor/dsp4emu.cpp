@@ -2099,6 +2099,9 @@ void DSP4SetByte()
         int16_t in3a = DSP4_READ_WORD();
         int16_t out1a, out2a, out3a, out4a;
 
+        // TODO - Reads must be performed but these values are not used?
+        if (in1a || in3a) {}
+
         DSP4_OP0A(in2a, &out2a, &out1a, &out4a, &out3a);
 
         DSP4_CLEAR_OUT();
