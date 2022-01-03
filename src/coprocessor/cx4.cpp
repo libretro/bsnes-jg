@@ -459,7 +459,10 @@ void Cx4::C4DoScaleRotate(int row_padding) {
 //Build OAM
 void Cx4::op00_00() {
   uint32_t oamptr = ram[0x626] << 2;
-  for(int32_t i = 0x1fd; i > oamptr && i >= 0; i -= 4) {
+  /* Note: oamptr cast to int32_t in the for loop to fix -Wsign-compare, safe
+     because the value can only be a maximum of 255.
+  */
+  for(int32_t i = 0x1fd; i > (int32_t)oamptr && i >= 0; i -= 4) {
     //clear oam-to-be
     if(i >= 0) ram[i] = 0xe0;
   }
