@@ -30,7 +30,7 @@ private:
   unsigned _spf = 0;
   float *buffer = nullptr;
 
-  friend class Stream;
+  friend struct Stream;
 };
 
 struct Stream {
@@ -54,7 +54,7 @@ private:
   double inputFrequency;
   double outputFrequency = 48000.0;
 
-  friend class Audio;
+  friend struct Audio;
 };
 
 extern Audio audio;
