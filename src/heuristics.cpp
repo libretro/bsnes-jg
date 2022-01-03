@@ -111,7 +111,7 @@ std::string GameBoy::manifest() const {
   bool accelerometer = false;
   bool rumble = false;
 
-  unsigned romSize = 0;
+  //unsigned romSize = 0; // TODO - why is this set and unused below?
   unsigned ramSize = 0;
   unsigned eepromSize = 0;
   unsigned flashSize = 0;
@@ -301,7 +301,7 @@ std::string GameBoy::manifest() const {
   //remove any excess whitespace from the title
   title.erase(title.find_last_not_of(' ') + 1);
 
-  switch(read(0x0148)) { default:
+  /*switch(read(0x0148)) { default:
   case 0x00: romSize =   2 * 16 * 1024; break;
   case 0x01: romSize =   4 * 16 * 1024; break;
   case 0x02: romSize =   8 * 16 * 1024; break;
@@ -313,7 +313,7 @@ std::string GameBoy::manifest() const {
   case 0x52: romSize =  72 * 16 * 1024; break;
   case 0x53: romSize =  80 * 16 * 1024; break;
   case 0x54: romSize =  96 * 16 * 1024; break;
-  }
+  }*/
 
   switch(read(0x0149)) { default:
   case 0x00: ramSize =  0 * 1024; break;
@@ -383,7 +383,6 @@ SufamiTurbo::operator bool() const {
 std::string SufamiTurbo::manifest() const {
   if(!operator bool()) return {};
 
-  unsigned romSize = data[0x36] * 0x20000;  //128KB
   unsigned ramSize = data[0x37] *   0x800;  //  2KB
 
   std::string gamename(location);
@@ -599,7 +598,7 @@ std::string SuperFamicom::revision() const {
   char B = data[headerAddress + 0x03];  //game code
   char C = data[headerAddress + 0x04];  //game code
   char D = data[headerAddress + 0x05];  //region code (new; sometimes ambiguous)
-  auto E = data[headerAddress + 0x29];  //region code (old)
+  //auto E = data[headerAddress + 0x29];  //region code (old) // TODO - why unused?
   char F = data[headerAddress + 0x2b] + '0';  //revision code
 
   auto valid = [](char n) { return (n >= '0' && n <= '9') || (n >= 'A' && n <= 'Z'); };
