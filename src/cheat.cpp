@@ -35,7 +35,7 @@ void Cheat::reset() {
 }
 
 void Cheat::append(unsigned address, unsigned data, std::optional<unsigned> compare) {
-  codes.push_back({address, data, compare});
+  codes.push_back({address, data, compare, true, 0});
 }
 
 void Cheat::assign(const std::vector<std::string>& list) {
