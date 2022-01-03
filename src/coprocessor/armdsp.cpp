@@ -87,9 +87,9 @@ void ArmDSP::set(unsigned mode, uint32_t addr, uint32_t word) {
 
   if(addr == 0x4000'0010) bridge.signal = true;
 
-  if(addr == 0x4000'0020) bridge.timerlatch = bridge.timerlatch & 0xffff00 | word <<  0;
-  if(addr == 0x4000'0024) bridge.timerlatch = bridge.timerlatch & 0xff00ff | word <<  8;
-  if(addr == 0x4000'0028) bridge.timerlatch = bridge.timerlatch & 0x00ffff | word << 16;
+  if(addr == 0x4000'0020) bridge.timerlatch = (bridge.timerlatch & 0xffff00) | word <<  0;
+  if(addr == 0x4000'0024) bridge.timerlatch = (bridge.timerlatch & 0xff00ff) | word <<  8;
+  if(addr == 0x4000'0028) bridge.timerlatch = (bridge.timerlatch & 0x00ffff) | word << 16;
 
   if(addr == 0x4000'002c) bridge.timer = bridge.timerlatch;
 }
