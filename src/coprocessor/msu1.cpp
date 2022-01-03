@@ -150,7 +150,7 @@ void MSU1::audioOpen() {
 uint8_t MSU1::readIO(unsigned addr, uint8_t) {
   cpu.synchronizeCoprocessors();
 
-  switch(0x2000 | addr & 7) {
+  switch(0x2000 | (addr & 7)) {
   case 0x2000:
     return (
       Revision       << 0
@@ -180,16 +180,16 @@ uint8_t MSU1::readIO(unsigned addr, uint8_t) {
 void MSU1::writeIO(unsigned addr, uint8_t data) {
   cpu.synchronizeCoprocessors();
 
-  switch(0x2000 | addr & 7) {
-  case 0x2000: io.dataSeekOffset = io.dataSeekOffset & 0xffffff00 | data <<  0; break;
-  case 0x2001: io.dataSeekOffset = io.dataSeekOffset & 0xffff00ff | data <<  8; break;
-  case 0x2002: io.dataSeekOffset = io.dataSeekOffset & 0xff00ffff | data << 16; break;
-  case 0x2003: io.dataSeekOffset = io.dataSeekOffset & 0x00ffffff | data << 24;
+  switch(0x2000 | (addr & 7)) {
+  case 0x2000: io.dataSeekOffset = (io.dataSeekOffset & 0xffffff00) | data <<  0; break;
+  case 0x2001: io.dataSeekOffset = (io.dataSeekOffset & 0xffff00ff) | data <<  8; break;
+  case 0x2002: io.dataSeekOffset = (io.dataSeekOffset & 0xff00ffff) | data << 16; break;
+  case 0x2003: io.dataSeekOffset = (io.dataSeekOffset & 0x00ffffff) | data << 24;
     io.dataReadOffset = io.dataSeekOffset;
     if(dataFile.is_open()) dataFile.seekg(io.dataReadOffset, std::ios::beg);
     break;
-  case 0x2004: io.audioTrack = io.audioTrack & 0xff00 | data << 0; break;
-  case 0x2005: io.audioTrack = io.audioTrack & 0x00ff | data << 8;
+  case 0x2004: io.audioTrack = (io.audioTrack & 0xff00) | data << 0; break;
+  case 0x2005: io.audioTrack = (io.audioTrack & 0x00ff) | data << 8;
     io.audioPlay = false;
     io.audioRepeat = false;
     io.audioPlayOffset = 8;
