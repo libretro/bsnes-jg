@@ -31,7 +31,7 @@ void PPU::main() {
       for(unsigned y = 1; y <= 240; y++) {
         if(y >= 8 && y <= 231) continue;
         auto output = ppu.output + y * 1024;
-        nall::memory::fill<uint16_t>(output, 1024);
+        std::memset(output, 0, 1024 * sizeof(uint16_t));
       }
     }
     display.interlace = io.interlace;
@@ -2249,7 +2249,7 @@ bool PPU::load() {
 void PPU::power(bool reset) {
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
-  nall::memory::fill<uint16_t>(output, 512 * 480);
+  std::memset(output, 0, 512 * 480 * sizeof(uint16_t));
 
   nall::function<uint8_t (unsigned, uint8_t)> reader{&PPU::readIO, this};
   nall::function<void  (unsigned, uint8_t)> writer{&PPU::writeIO, this};
