@@ -18,7 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../emulator.hpp"
+#include "../serializer.hpp"
+#include "../../nall/primitives.hpp"
 
 #include "spc700.hpp"
 

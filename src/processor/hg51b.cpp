@@ -18,7 +18,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../emulator.hpp"
+#include "../serializer.hpp"
+#include "../../nall/iterator.hpp"
+#include "../../nall/primitives.hpp"
 
 #include "hg51b.hpp"
 
