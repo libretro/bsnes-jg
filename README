@@ -81,26 +81,27 @@ Notes
 
 Copyright
 ---------
-bsnes
-  Copyright (c) 2004-2020 byuu et al (GPL-3.0-or-later)
-  See COPYING (https://github.com/bsnes-emu/bsnes)
+bsnes-jg (GPL-3.0-or-later)
+  Copyright (c) 2004-2020 byuu et al
+  Copyright (c) 2020-2022 Rupert Carmichael
+  See COPYING
 
-byuuML
-  Copyright (c) 2017 Solra Bizna (Zlib)
+byuuML (Zlib)
+  Copyright (c) 2017 Solra Bizna
   See deps/byuuML/LICENSE (https://github.com/SolraBizna/byuuML)
 
-libco
-  Copyright (c) 2006-2020 byuu et al (ISC)
+libco (ISC)
+  Copyright (c) 2006-2020 byuu et al
   See deps/libco/LICENSE (https://github.com/higan-emu/libco)
 
-libsamplerate
-  Copyright (c) 2002-2021, Erik de Castro Lopo (BSD-2-Clause)
+libsamplerate (BSD-2-Clause)
+  Copyright (c) 2002-2021, Erik de Castro Lopo
   See deps/libsamplerate/COPYING (https://github.com/libsndfile/libsamplerate)
 
-nall
-  Copyright © 2006-2020 byuu et al (ISC)
+nall (ISC)
+  Copyright © 2006-2020 byuu et al
   See nall/LICENSE (https://github.com/higan-emu/nall)
 
-SameBoy
-  Copyright (c) 2015-2021 Lior Halphon (MIT)
+SameBoy (MIT)
+  Copyright (c) 2015-2021 Lior Halphon
   See deps/gb/LICENSE (https://github.com/LIJI32/SameBoy)
