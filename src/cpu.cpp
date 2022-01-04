@@ -863,12 +863,12 @@ void CPU::joypadEdge() {
 
 void CPU::nmiPoll() {
   //NMI hold
-  if(status.nmiHold.lower() && io.nmiEnable) {
+  if(lower(status.nmiHold) && io.nmiEnable) {
     status.nmiTransition = 1;
   }
 
   //NMI test
-  if(status.nmiValid.flip(vcounter(2) >= ppu.vdisp())) {
+  if(flip(status.nmiValid, vcounter(2) >= ppu.vdisp())) {
     if((status.nmiLine = status.nmiValid)) status.nmiHold = 1;  //hold /NMI for four cycles
   }
 }
@@ -881,7 +881,7 @@ void CPU::irqPoll() {
   }
 
   //IRQ test
-  if(status.irqValid.raise(io.irqEnable
+  if(raise(status.irqValid, io.irqEnable
   && (!io.virqEnable || vcounter(10) == io.vtime)
   && (!io.hirqEnable || hcounter(10) == io.htime)
   && (vcounter(6) || hcounter(6))  //IRQs cannot trigger on last dot of fields
@@ -900,7 +900,7 @@ void CPU::nmitimenUpdate(uint8_t data) {
     status.irqTransition = 0;
   }
 
-  if(io.nmiEnable.raise(data & 0x80) && status.nmiLine) {
+  if(raise(io.nmiEnable, data & 0x80) && status.nmiLine) {
     status.nmiTransition = 1;
   }
 

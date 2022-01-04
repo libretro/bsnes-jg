@@ -30,6 +30,10 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline bool refresh() const { return status.dramRefresh == 1; }
   inline bool synchronizing() const override { return scheduler.synchronizing(); }
 
+  inline auto flip(bool& data, bool value) { return data != value ? (data = value, true) : false; }
+  inline auto lower(bool& data) { return data == 1 ? data = 0, true : false; }
+  inline bool raise(bool& data, bool value) { return !data && value ? (data = value, true) : (data = value, false); }
+
   //cpu.cpp
   void synchronizeSMP();
   void synchronizePPU();
@@ -124,13 +128,13 @@ private:
     unsigned hdmaPosition = 0;
     bool hdmaTriggered = 0;
 
-    nall::Boolean nmiValid = 0;
+    bool nmiValid = 0;
     bool nmiLine = 0;
     bool nmiTransition = 0;
     bool nmiPending = 0;
-    nall::Boolean nmiHold = 0;
+    bool nmiHold = 0;
 
-    nall::Boolean irqValid = 0;
+    bool irqValid = 0;
     bool irqLine = 0;
     bool irqTransition = 0;
     bool irqPending = 0;
@@ -155,7 +159,7 @@ private:
     bool hirqEnable = 0;
     bool virqEnable = 0;
     bool irqEnable = 0;
-    nall::Boolean nmiEnable = 0;
+    bool nmiEnable = 0;
     bool autoJoypadPoll = 0;
 
     //$4201
