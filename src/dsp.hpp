@@ -42,9 +42,6 @@ struct DSP {
 private:
   SPC_DSP spc_dsp;
   int16_t samplebuffer[8192];
-
-//unserialized:
-  uint8_t echoram[64 * 1024] = {};
 };
 
 extern DSP dsp;
