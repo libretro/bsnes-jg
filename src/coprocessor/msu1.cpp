@@ -23,6 +23,7 @@
 
 #include "../interface.hpp"
 #include "../cpu.hpp"
+#include "../dsp.hpp"
 
 #include "msu1.hpp"
 

@@ -21,6 +21,9 @@
 #pragma once
 
 #include <memory>
+
+namespace SuperFamicom {
+
 #include "dsp/SPC_DSP.h"
 
 struct DSP {
@@ -45,3 +48,5 @@ private:
 };
 
 extern DSP dsp;
+
+}

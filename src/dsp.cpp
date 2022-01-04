@@ -20,6 +20,7 @@
 
 #include "interface.hpp"
 #include "cartridge.hpp"
+#include "dsp.hpp"
 
 namespace SuperFamicom {
 

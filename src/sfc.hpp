@@ -226,7 +226,6 @@ namespace SuperFamicom {
     } last;
   };
 
-  #include "dsp.hpp"
   #include "ppu.hpp"
 
   void PPUcounter::tick() {

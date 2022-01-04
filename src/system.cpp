@@ -25,6 +25,7 @@
 #include "random.hpp"
 
 #include "cpu.hpp"
+#include "dsp.hpp"
 #include "smp.hpp"
 
 #include "cartridge.hpp"
