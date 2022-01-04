@@ -21,6 +21,7 @@
 #include <algorithm>
 
 #include "emulator.hpp"
+#include "markup.hpp"
 
 namespace Emulator {
 

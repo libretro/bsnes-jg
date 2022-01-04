@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "../audio.hpp"
 #include "../cheat.hpp"
 
 namespace SuperFamicom {

@@ -21,6 +21,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "../audio.hpp"
 #include "../interface.hpp"
 #include "../cpu.hpp"
 #include "../dsp.hpp"

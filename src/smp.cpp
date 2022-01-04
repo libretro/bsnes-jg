@@ -20,6 +20,7 @@
 
 #include "sfc.hpp"
 
+#include "audio.hpp"
 #include "cpu.hpp"
 #include "dsp.hpp"
 #include "smp.hpp"

@@ -25,9 +25,11 @@
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
 
+#include "src/audio.hpp"
 #include "src/cheat.hpp"
 #include "src/heuristics.hpp"
 #include "src/interface.hpp"
+#include "src/markup.hpp"
 #include "src/sha256.hpp"
 
 #include "gamedb.hpp"

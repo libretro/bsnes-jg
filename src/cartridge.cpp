@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "interface.hpp"
+#include "markup.hpp"
 #include "sha256.hpp"
 #include "system.hpp"
 

@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "audio.hpp"
+
 namespace SuperFamicom {
 
 #include "dsp/SPC_DSP.h"
