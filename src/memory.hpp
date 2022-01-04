@@ -139,8 +139,8 @@ struct Bus {
 
   void reset();
   unsigned map(
-    const nall::function<uint8_t (unsigned, uint8_t)>& read,
-    const nall::function<void (unsigned, uint8_t)>& write,
+    const bfunction<uint8_t (unsigned, uint8_t)>& read,
+    const bfunction<void (unsigned, uint8_t)>& write,
     const std::string& address, unsigned size = 0, unsigned base = 0, unsigned mask = 0
   );
   void unmap(const std::string& address);
@@ -149,8 +149,8 @@ private:
   uint8_t *lookup = nullptr;
   uint32_t *target = nullptr;
 
-  nall::function<uint8_t (unsigned, uint8_t)> reader[256];
-  nall::function<void  (unsigned, uint8_t)> writer[256];
+  bfunction<uint8_t (unsigned, uint8_t)> reader[256];
+  bfunction<void  (unsigned, uint8_t)> writer[256];
   unsigned counter[256];
 };
 

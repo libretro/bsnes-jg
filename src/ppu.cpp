@@ -2266,8 +2266,8 @@ void PPU::power(bool reset) {
   PPUcounter::reset();
   std::memset(output, 0, 512 * 480 * sizeof(uint16_t));
 
-  nall::function<uint8_t (unsigned, uint8_t)> reader{&PPU::readIO, this};
-  nall::function<void  (unsigned, uint8_t)> writer{&PPU::writeIO, this};
+  bfunction<uint8_t (unsigned, uint8_t)> reader{&PPU::readIO, this};
+  bfunction<void  (unsigned, uint8_t)> writer{&PPU::writeIO, this};
   bus.map(reader, writer, "00-3f,80-bf:2100-213f");
 
   if(!reset) random.array((uint8_t*)vram.data, sizeof(vram.data));

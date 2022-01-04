@@ -172,7 +172,7 @@ namespace SuperFamicom {
     inline void reset();
     void serialize(serializer&);
 
-    nall::function<void ()> scanline;
+    bfunction<void ()> scanline;
 
   private:
     struct {

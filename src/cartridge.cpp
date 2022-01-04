@@ -231,8 +231,8 @@ unsigned Cartridge::loadMap(std::string map, T& memory) {
 
 unsigned Cartridge::loadMap(
   std::string map,
-  const nall::function<uint8_t (unsigned, uint8_t)>& reader,
-  const nall::function<void  (unsigned, uint8_t)>& writer
+  const bfunction<uint8_t (unsigned, uint8_t)>& reader,
+  const bfunction<void  (unsigned, uint8_t)>& writer
 ) {
   auto addr = BML::search(map, {"map", "address"});
   std::string strsize = BML::search(map, {"map", "size"});

@@ -20,27 +20,25 @@
 
 #pragma once
 
-namespace nall {
+template<typename T> struct bfunction;
 
-template<typename T> struct function;
-
-template<typename R, typename... P> struct function<auto (P...) -> R> {
+template<typename R, typename... P> struct bfunction<auto (P...) -> R> {
   //value = true if auto L::operator()(P...) -> R exists
   template<typename L> struct is_compatible {
     template<typename T> static auto exists(T*) -> const typename std::is_same<R, decltype(std::declval<T>().operator()(std::declval<P>()...))>::type;
     static constexpr bool value = decltype(exists<L>(0))::value;
   };
 
-  function() {}
-  template<typename C> function(auto (C::*function)(P...) -> R, C* object) { callback = new member<C>(function, object); }
-  template<typename L, typename = std::enable_if_t<is_compatible<L>::value>> function(const L& object) { callback = new lambda<L>(object); }
-  ~function() { if(callback) delete callback; }
+  bfunction() {}
+  template<typename C> bfunction(auto (C::*bfunction)(P...) -> R, C* object) { callback = new member<C>(bfunction, object); }
+  template<typename L, typename = std::enable_if_t<is_compatible<L>::value>> bfunction(const L& object) { callback = new lambda<L>(object); }
+  ~bfunction() { if(callback) delete callback; }
 
   explicit operator bool() const { return callback; }
   auto operator()(P... p) const -> R { return (*callback)(std::forward<P>(p)...); }
   auto reset() -> void { if(callback) { delete callback; callback = nullptr; } }
 
-  auto operator=(const function& source) -> function& {
+  auto operator=(const bfunction& source) -> bfunction& {
     if(this != &source) {
       if(callback) { delete callback; callback = nullptr; }
       if(source.callback) callback = source.callback->copy();
@@ -58,11 +56,11 @@ private:
   container* callback = nullptr;
 
   template<typename C> struct member : container {
-    auto (C::*function)(P...) -> R;
+    auto (C::*bfunction)(P...) -> R;
     C* object;
-    auto operator()(P... p) const -> R { return (object->*function)(std::forward<P>(p)...); }
-    auto copy() const -> container* { return new member(function, object); }
-    member(auto (C::*function)(P...) -> R, C* object) : function(function), object(object) {}
+    auto operator()(P... p) const -> R { return (object->*bfunction)(std::forward<P>(p)...); }
+    auto copy() const -> container* { return new member(bfunction, object); }
+    member(auto (C::*bfunction)(P...) -> R, C* object) : bfunction(bfunction), object(object) {}
   };
 
   template<typename L> struct lambda : container {
@@ -72,5 +70,3 @@ private:
     lambda(const L& object) : object(object) {}
   };
 };
-
-}

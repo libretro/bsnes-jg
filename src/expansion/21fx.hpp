@@ -46,15 +46,15 @@ private:
   uint8_t ram[122];
 
   nall::library link;
-  nall::function<void (
-    nall::function<bool ()>,      //quit
-    nall::function<void (unsigned)>,  //usleep
-    nall::function<bool ()>,      //readable
-    nall::function<bool ()>,      //writable
-    nall::function<uint8_t ()>,     //read
-    nall::function<void (uint8_t)>  //write
+  bfunction<void (
+    bfunction<bool ()>,      //quit
+    bfunction<void (unsigned)>,  //usleep
+    bfunction<bool ()>,      //readable
+    bfunction<bool ()>,      //writable
+    bfunction<uint8_t ()>,     //read
+    bfunction<void (uint8_t)>  //write
   )> linkInit;
-  nall::function<void (vector<nall::string>)> linkMain;
+  bfunction<void (vector<nall::string>)> linkMain;
 
   vector<uint8_t> snesBuffer;  //SNES -> Link
   vector<uint8_t> linkBuffer;  //Link -> SNES

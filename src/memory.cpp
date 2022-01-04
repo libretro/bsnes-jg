@@ -52,8 +52,8 @@ void Bus::reset() {
 }
 
 unsigned Bus::map(
-  const nall::function<uint8_t (unsigned, uint8_t)>& read,
-  const nall::function<void  (unsigned, uint8_t)>& write,
+  const bfunction<uint8_t (unsigned, uint8_t)>& read,
+  const bfunction<void  (unsigned, uint8_t)>& write,
   const std::string& addr, unsigned size, unsigned base, unsigned mask
 ) {
   unsigned id = 1;
