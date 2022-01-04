@@ -20,7 +20,8 @@
 
 #include<cstring>
 
-#include "sfc.hpp"
+#include "controller/controller.hpp"
+#include "interface.hpp"
 
 namespace SuperFamicom {
 

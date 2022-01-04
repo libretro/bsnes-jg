@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <vector>
+#include "sfc.hpp"
 
 namespace SuperFamicom {
 

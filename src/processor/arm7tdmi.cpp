@@ -19,6 +19,7 @@
  */
 
 #include <bitset>
+#include <cassert>
 
 #include "../emulator.hpp"
 

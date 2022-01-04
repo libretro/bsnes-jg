@@ -20,7 +20,7 @@
 
 #include <iterator>
 
-#include "../sfc.hpp"
+#include "../interface.hpp"
 #include "../sha256.hpp"
 
 namespace SuperFamicom {

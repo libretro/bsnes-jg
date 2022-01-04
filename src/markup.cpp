@@ -17,13 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#include <fstream>
 #include <sstream>
+#include <vector>
 
 #include "byuuML/byuuML.hpp"
 #include "byuuML/byuuML_query.hpp"
 
-#include "emulator.hpp"
 #include "markup.hpp"
 
 namespace BML {

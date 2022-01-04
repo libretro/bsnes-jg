@@ -18,7 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../sfc.hpp"
+#include "controller.hpp"
+#include "../interface.hpp"
 
 namespace SuperFamicom {
 

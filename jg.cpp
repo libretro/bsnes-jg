@@ -18,20 +18,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <iomanip>
-#include <iostream>
-#include <fstream>
+#include <algorithm>
 #include <sstream>
-#include <cstdio>
-#include <cstring>
-#include <vector>
-#include <stdint.h>
+#include <optional>
 
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
 
-#include "src/emulator.hpp"
-#include "src/cheat.hpp"
 #include "src/heuristics.hpp"
 #include "src/interface.hpp"
 #include "src/sha256.hpp"

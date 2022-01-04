@@ -21,7 +21,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "../sfc.hpp"
+#include "../interface.hpp"
 
 namespace SuperFamicom {
 

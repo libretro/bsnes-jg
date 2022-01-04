@@ -20,6 +20,11 @@
 
 #pragma once
 
+#include "../serializer.hpp"
+#include "../../nall/primitives.hpp"
+
+namespace SuperFamicom {
+
 // SNES controller port pinout:
 //  -------------------------------
 // | (1) (2) (3) (4) | (5) (6) (7) )
@@ -66,3 +71,5 @@ extern ControllerPort controllerPort2;
 #include "mouse.hpp"
 #include "super-multitap.hpp"
 #include "super-scope.hpp"
+
+}

@@ -18,14 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <algorithm>
 #include <iomanip>
+#include <optional>
 #include <regex>
-#include <sstream>
-#include <string>
-#include <vector>
 
-#include "emulator.hpp"
 #include "cheat.hpp"
 
 namespace Emulator {

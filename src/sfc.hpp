@@ -204,7 +204,6 @@ namespace SuperFamicom {
   #include "smp.hpp"
 
   #include "cartridge.hpp"
-  #include "controller/controller.hpp"
   #include "coprocessor/armdsp.hpp"
   #include "coprocessor/cx4.hpp"
   #include "coprocessor/dip.hpp"
@@ -347,5 +346,3 @@ namespace SuperFamicom {
     time.hperiod = last.hperiod = 1364;
   }
 }
-
-#include "interface.hpp"
