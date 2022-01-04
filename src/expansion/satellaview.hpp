@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct Satellaview : Expansion {
   Satellaview();
   ~Satellaview();
@@ -42,3 +44,5 @@ private:
     uint8_t rtcSecond;
   } regs;
 };
+
+}

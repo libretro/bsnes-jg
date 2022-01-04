@@ -22,6 +22,9 @@
 
 #include "expansion.hpp"
 
+//#include "21fx.hpp"
+#include "satellaview.hpp"
+
 namespace SuperFamicom {
 
 ExpansionPort expansionPort;
@@ -39,7 +42,7 @@ void ExpansionPort::connect(unsigned deviceID) {
   switch(deviceID) { default:
   case ID::Device::None: device = new Expansion; break;
   case ID::Device::Satellaview: device = new Satellaview; break;
-//case ID::Device::S21FX: device = new S21FX; break;
+  //case ID::Device::S21FX: device = new S21FX; break;
   }
 }
 

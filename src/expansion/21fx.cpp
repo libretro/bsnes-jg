@@ -20,6 +20,9 @@
 
 #include "../sfc.hpp"
 
+#include "expansion.hpp"
+#include "21fx.hpp"
+
 namespace SuperFamicom {
 
 S21FX::S21FX() {

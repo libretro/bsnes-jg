@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct S21FX : Expansion {
   S21FX();
   ~S21FX();
@@ -57,3 +59,5 @@ private:
   vector<uint8_t> snesBuffer;  //SNES -> Link
   vector<uint8_t> linkBuffer;  //Link -> SNES
 };
+
+}

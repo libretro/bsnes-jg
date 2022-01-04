@@ -39,7 +39,4 @@ struct ExpansionPort {
 
 extern ExpansionPort expansionPort;
 
-#include "satellaview.hpp"
-//#include "21fx.hpp"
-
 }
