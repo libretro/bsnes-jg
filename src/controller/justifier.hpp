@@ -33,7 +33,7 @@ struct Justifier : Controller {
   void latch(bool data) override;
   void latch() override;
 
-//private:
+private:
   const bool chained;  //true if the second justifier is attached to the first
   const unsigned device;
   bool latched;
