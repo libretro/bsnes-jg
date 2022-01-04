@@ -20,6 +20,9 @@
 
 #include "sfc.hpp"
 
+#include "cpu.hpp"
+#include "smp.hpp"
+
 namespace SuperFamicom {
 
 SMP smp;

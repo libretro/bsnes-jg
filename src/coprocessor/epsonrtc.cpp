@@ -19,6 +19,7 @@
  */
 
 #include "../sfc.hpp"
+#include "../cpu.hpp"
 
 #include "epsonrtc.hpp"
 

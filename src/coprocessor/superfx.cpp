@@ -19,6 +19,7 @@
  */
 
 #include "../interface.hpp"
+#include "../cpu.hpp"
 
 #include "superfx.hpp"
 

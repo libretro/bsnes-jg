@@ -20,6 +20,7 @@
 
 #include "../sfc.hpp"
 #include "../cartridge.hpp"
+#include "../cpu.hpp"
 
 #include "armdsp.hpp"
 

@@ -21,6 +21,9 @@
 #include "controller/controller.hpp"
 #include "interface.hpp"
 
+#include "cpu.hpp"
+#include "smp.hpp"
+
 #include "cartridge.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"

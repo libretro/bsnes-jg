@@ -198,10 +198,8 @@ namespace SuperFamicom {
   #include "system.hpp"
   #include "memory.hpp"
 
-  #include "cpu.hpp"
   #include "dsp.hpp"
   #include "ppu.hpp"
-  #include "smp.hpp"
 
   unsigned Bus::mirror(unsigned addr, unsigned size) {
     if(size == 0) return 0;

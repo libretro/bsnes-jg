@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline bool interruptPending() const override { return status.interruptPending; }
   inline uint8_t pio() const { return io.pio; }
@@ -262,3 +264,5 @@ private:
 };
 
 extern CPU cpu;
+
+}

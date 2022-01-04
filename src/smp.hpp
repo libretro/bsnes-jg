@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 //Sony CXP1100Q-1
 
 struct SMP : Processor::SPC700, Thread {
@@ -120,3 +122,5 @@ private:
 };
 
 extern SMP smp;
+
+}

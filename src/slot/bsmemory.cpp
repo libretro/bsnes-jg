@@ -21,6 +21,7 @@
 #include <math.h>
 
 #include "../sfc.hpp"
+#include "../cpu.hpp"
 
 #include "bsmemory.hpp"
 

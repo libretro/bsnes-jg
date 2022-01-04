@@ -23,6 +23,7 @@
 
 #include "cartridge.hpp"
 #include "coprocessor/icd.hpp"
+#include "cpu.hpp"
 #include "expansion/expansion.hpp"
 
 namespace SuperFamicom {

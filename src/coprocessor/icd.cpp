@@ -22,6 +22,7 @@
 
 #include "../interface.hpp"
 #include "../cartridge.hpp"
+#include "../cpu.hpp"
 #include "../sha256.hpp"
 
 #include "icd.hpp"

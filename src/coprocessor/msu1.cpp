@@ -22,6 +22,7 @@
 #include <sstream>
 
 #include "../interface.hpp"
+#include "../cpu.hpp"
 
 #include "msu1.hpp"
 

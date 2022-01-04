@@ -20,6 +20,7 @@
 
 #include "controller/controller.hpp"
 #include "interface.hpp"
+#include "cpu.hpp"
 
 namespace SuperFamicom {
 

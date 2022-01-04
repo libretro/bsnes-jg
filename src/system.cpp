@@ -23,6 +23,9 @@
 #include "controller/controller.hpp"
 #include "interface.hpp"
 
+#include "cpu.hpp"
+#include "smp.hpp"
+
 #include "cartridge.hpp"
 #include "coprocessor/armdsp.hpp"
 #include "coprocessor/cx4.hpp"
