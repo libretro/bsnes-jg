@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../processor/arm7tdmi.hpp"
+
 namespace SuperFamicom {
 
 //ARMv3 (ARM60)

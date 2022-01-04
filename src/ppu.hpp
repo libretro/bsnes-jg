@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "function.hpp"
 #include "system.hpp"
 
 namespace SuperFamicom {

@@ -21,6 +21,7 @@
 #pragma once
 
 #include "ppu.hpp"
+#include "processor/wdc65816.hpp"
 
 namespace SuperFamicom {
 

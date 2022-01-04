@@ -20,7 +20,6 @@
 
 #include "../emulator.hpp"
 
-#include "endian.hpp"
 #include "wdc65816.hpp"
 
 namespace Processor {

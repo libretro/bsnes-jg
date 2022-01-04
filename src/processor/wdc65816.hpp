@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "endian.hpp"
+
 namespace Processor {
 
 struct WDC65816 {

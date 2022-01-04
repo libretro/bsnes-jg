@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "processor/spc700.hpp"
+
 namespace SuperFamicom {
 
 //Sony CXP1100Q-1

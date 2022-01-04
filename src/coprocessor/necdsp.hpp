@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../processor/upd96050.hpp"
+
 namespace SuperFamicom {
 
 struct NECDSP : Processor::uPD96050, Thread {

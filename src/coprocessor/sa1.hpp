@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../processor/wdc65816.hpp"
+
 namespace SuperFamicom {
 
 //Super Accelerator (SA-1)

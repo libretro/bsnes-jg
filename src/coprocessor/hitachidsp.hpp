@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../processor/hg51b.hpp"
+
 namespace SuperFamicom {
 
 struct HitachiDSP : Processor::HG51B, Thread {

@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../processor/gsu.hpp"
+
 namespace SuperFamicom {
 
 struct SuperFX : Processor::GSU, Thread {
