@@ -611,8 +611,7 @@ bool Program::loadSuperFamicom(std::string location) {
     //superFamicom.patched = applyPatchIPS(rom, location);
     if ((rom.size() & 0x7fff) == 512) {
         //remove copier header
-        nall::memory::move(&rom[0], &rom[512], rom.size() - 512);
-        rom.resize(rom.size() - 512);
+        rom.erase(rom.begin(), rom.begin() + 512);
     }
 
     auto heuristics = Heuristics::SuperFamicom(rom, location);
