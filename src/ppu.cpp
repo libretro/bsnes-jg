@@ -21,6 +21,7 @@
 #include "controller/controller.hpp"
 #include "interface.hpp"
 #include "cpu.hpp"
+#include "memory.hpp"
 #include "random.hpp"
 
 namespace SuperFamicom {

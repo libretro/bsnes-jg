@@ -19,6 +19,7 @@
  */
 
 #include "../sfc.hpp"
+#include "../memory.hpp"
 
 #include "obc1.hpp"
 

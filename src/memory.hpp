@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct Memory {
   static bool GlobalWriteEnable;
 
@@ -155,3 +157,38 @@ private:
 };
 
 extern Bus bus;
+
+unsigned Bus::mirror(unsigned addr, unsigned size) {
+  if(size == 0) return 0;
+  unsigned base = 0;
+  unsigned mask = 1 << 23;
+  while(addr >= size) {
+    while(!(addr & mask)) mask >>= 1;
+    addr -= mask;
+    if(size > mask) {
+      size -= mask;
+      base += mask;
+    }
+    mask >>= 1;
+  }
+  return base + addr;
+}
+
+unsigned Bus::reduce(unsigned addr, unsigned mask) {
+  while(mask) {
+    unsigned bits = (mask & -mask) - 1;
+    addr = ((addr >> 1) & ~bits) | (addr & bits);
+    mask = (mask & (mask - 1)) >> 1;
+  }
+  return addr;
+}
+
+uint8_t Bus::read(unsigned addr, uint8_t data) {
+  return reader[lookup[addr]](target[addr], data);
+}
+
+void Bus::write(unsigned addr, uint8_t data) {
+  return writer[lookup[addr]](target[addr], data);
+}
+
+}

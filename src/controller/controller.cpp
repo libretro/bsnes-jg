@@ -21,6 +21,7 @@
 #include "controller.hpp"
 #include "../interface.hpp"
 #include "../cpu.hpp"
+#include "../memory.hpp"
 
 #include "gamepad.hpp"
 #include "justifier.hpp"

@@ -20,6 +20,7 @@
 
 #include "../interface.hpp"
 #include "../cpu.hpp"
+#include "../memory.hpp"
 
 #include "superfx.hpp"
 

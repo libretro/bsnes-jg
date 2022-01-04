@@ -20,6 +20,7 @@
 
 #include "../sfc.hpp"
 #include "../cpu.hpp"
+#include "../memory.hpp"
 
 #include "sdd1.hpp"
 
