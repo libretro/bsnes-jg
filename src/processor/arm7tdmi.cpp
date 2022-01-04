@@ -18,6 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <bitset>
+
 #include "../emulator.hpp"
 
 #include "arm7tdmi.hpp"
@@ -944,14 +946,15 @@ void ARM7TDMI::armInstructionMoveImmediateOffset
 void ARM7TDMI::armInstructionMoveMultiple
 (uint16_t list, nall::Natural< 4> n, nall::Natural< 1> mode, nall::Natural< 1> writeback, nall::Natural< 1> type, nall::Natural< 1> up, nall::Natural< 1> pre) {
   uint32_t rn = r(n);
+  size_t bcount = std::bitset<16>(list).count();
   if(pre == 0 && up == 1) rn = rn + 0;  //IA
   if(pre == 1 && up == 1) rn = rn + 4;  //IB
-  if(pre == 1 && up == 0) rn = rn - nall::count(list) * 4 + 0;  //DB
-  if(pre == 0 && up == 0) rn = rn - nall::count(list) * 4 + 4;  //DA
+  if(pre == 1 && up == 0) rn = rn - bcount * 4 + 0;  //DB
+  if(pre == 0 && up == 0) rn = rn - bcount * 4 + 4;  //DA
 
   if(writeback && mode == 1) {
-    if(up == 1) r(n) = r(n) + nall::count(list) * 4;  //IA,IB
-    if(up == 0) r(n) = r(n) - nall::count(list) * 4;  //DA,DB
+    if(up == 1) r(n) = r(n) + bcount * 4;  //IA,IB
+    if(up == 0) r(n) = r(n) - bcount * 4;  //DA,DB
   }
 
   auto cpsrMode = cpsr().m;
@@ -981,8 +984,8 @@ void ARM7TDMI::armInstructionMoveMultiple
   }
 
   if(writeback && mode == 0) {
-    if(up == 1) r(n) = r(n) + nall::count(list) * 4;  //IA,IB
-    if(up == 0) r(n) = r(n) - nall::count(list) * 4;  //DA,DB
+    if(up == 1) r(n) = r(n) + bcount * 4;  //IA,IB
+    if(up == 0) r(n) = r(n) - bcount * 4;  //DA,DB
   }
 }
 
@@ -1260,8 +1263,9 @@ void ARM7TDMI::thumbInstructionSoftwareInterrupt(uint8_t immediate) {
 void ARM7TDMI::thumbInstructionStackMultiple
 (uint8_t list, nall::Natural< 1> lrpc, nall::Natural< 1> mode) {
   uint32_t sp = 0;
+  size_t bcount = std::bitset<8>(list).count();
   switch(mode) {
-  case 0: sp = r(13) - (nall::count(list) + lrpc) * 4; break;  //PUSH
+  case 0: sp = r(13) - (bcount + lrpc) * 4; break;  //PUSH
   case 1: sp = r(13);  //POP
   }
 
@@ -1286,10 +1290,10 @@ void ARM7TDMI::thumbInstructionStackMultiple
 
   if(mode == 1) {
     idle();
-    r(13) = r(13) + (nall::count(list) + lrpc) * 4;  //POP
+    r(13) = r(13) + (bcount + lrpc) * 4;  //POP
   } else {
     pipeline.nonsequential = true;
-    r(13) = r(13) - (nall::count(list) + lrpc) * 4;  //PUSH
+    r(13) = r(13) - (bcount + lrpc) * 4;  //PUSH
   }
 }
 
