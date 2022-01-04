@@ -34,9 +34,6 @@ namespace nall::memory {
   template<typename T = uint8_t> inline auto icompare(const void* target, unsigned capacity, const void* source, unsigned size) -> int;
   template<typename T = uint8_t> inline auto icompare(const void* target, const void* source, unsigned size) -> int;
 
-  template<typename T = uint8_t> inline auto copy(void* target, unsigned capacity, const void* source, unsigned size) -> T*;
-  template<typename T = uint8_t> inline auto copy(void* target, const void* source, unsigned size) -> T*;
-
   template<typename T = uint8_t> inline auto move(void* target, unsigned capacity, const void* source, unsigned size) -> T*;
   template<typename T = uint8_t> inline auto move(void* target, const void* source, unsigned size) -> T*;
 
@@ -104,18 +101,6 @@ template<typename T> auto icompare(const void* target, unsigned capacity, const 
 
 template<typename T> auto icompare(const void* target, const void* source, unsigned size) -> int {
   return icompare<T>(target, size, source, size);
-}
-
-template<typename T> auto copy(void* target, unsigned capacity, const void* source, unsigned size) -> T* {
-  auto t = (uint8_t*)target;
-  auto s = (uint8_t*)source;
-  auto l = std::min(capacity, size) * sizeof(T);
-  while(l--) *t++ = *s++;
-  return (T*)target;
-}
-
-template<typename T> auto copy(void* target, const void* source, unsigned size) -> T* {
-  return copy<T>(target, size, source, size);
 }
 
 template<typename T> auto move(void* target, unsigned capacity, const void* source, unsigned size) -> T* {
