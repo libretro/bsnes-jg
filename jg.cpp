@@ -23,6 +23,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstdio>
+#include <cstring>
 #include <vector>
 #include <stdint.h>
 
@@ -639,22 +640,22 @@ bool Program::loadSuperFamicom(std::string location) {
     unsigned offset = 0;
     if (auto size = heuristics.programRomSize()) {
         superFamicom.program.resize(size);
-        nall::memory::copy(&superFamicom.program[0], &rom[offset], size);
+        std::memcpy(&superFamicom.program[0], &rom[offset], size);
         offset += size;
     }
     if (auto size = heuristics.dataRomSize()) {
         superFamicom.data.resize(size);
-        nall::memory::copy(&superFamicom.data[0], &rom[offset], size);
+        std::memcpy(&superFamicom.data[0], &rom[offset], size);
         offset += size;
     }
     if (auto size = heuristics.expansionRomSize()) {
         superFamicom.expansion.resize(size);
-        nall::memory::copy(&superFamicom.expansion[0], &rom[offset], size);
+        std::memcpy(&superFamicom.expansion[0], &rom[offset], size);
         offset += size;
     }
     if (auto size = heuristics.firmwareRomSize()) {
         superFamicom.firmware.resize(size);
-        nall::memory::copy(&superFamicom.firmware[0], &rom[offset], size);
+        std::memcpy(&superFamicom.firmware[0], &rom[offset], size);
         offset += size;
     }
     return true;

@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <cstring>
+
 #include "emulator.hpp"
 #include "random.hpp"
 #include "cheat.hpp"
@@ -123,12 +125,12 @@ namespace SuperFamicom {
       if(s.mode() == serializer::Load) {
         s.array(stack, Thread::Size);
         s.boolean(active);
-        nall::memory::copy(thread, stack, Thread::Size);
+        std::memcpy(thread, stack, Thread::Size);
         if(active) scheduler.active = thread;
       }
 
       if(s.mode() == serializer::Save) {
-        nall::memory::copy(stack, thread, Thread::Size);
+        std::memcpy(stack, thread, Thread::Size);
         s.array(stack, Thread::Size);
         s.boolean(active);
       }
