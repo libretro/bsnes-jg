@@ -21,6 +21,7 @@
 #pragma once
 
 #include "function.hpp"
+#include "sfc.hpp"
 #include "system.hpp"
 
 namespace SuperFamicom {

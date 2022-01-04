@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../sfc.hpp"
+
 namespace SuperFamicom {
 
 struct Expansion : Thread {

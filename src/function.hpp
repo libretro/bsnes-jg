@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <utility>
+
 template<typename T> struct bfunction;
 
 template<typename R, typename... P> struct bfunction<auto (P...) -> R> {

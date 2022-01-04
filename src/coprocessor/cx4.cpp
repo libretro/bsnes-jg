@@ -20,7 +20,6 @@
 
 #include <math.h>
 
-#include "../sfc.hpp"
 #include "../cpu.hpp"
 #include "../memory.hpp"
 

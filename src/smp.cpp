@@ -18,8 +18,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "sfc.hpp"
-
 #include "audio.hpp"
 #include "cpu.hpp"
 #include "dsp.hpp"

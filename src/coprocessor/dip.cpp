@@ -21,8 +21,6 @@
 //DIP switch
 //used for Nintendo Super System emulation
 
-#include <cstdint>
-
 #include "../serializer.hpp"
 
 #include "dip.hpp"

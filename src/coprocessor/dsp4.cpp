@@ -18,7 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../sfc.hpp"
+#include "../serializer.hpp"
 
 #include "dsp4.hpp"
 #include "dsp4emu.hpp"

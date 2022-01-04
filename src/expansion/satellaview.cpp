@@ -18,7 +18,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../sfc.hpp"
 #include "../memory.hpp"
 
 #include "expansion.hpp"

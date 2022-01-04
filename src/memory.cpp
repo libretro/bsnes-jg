@@ -22,7 +22,6 @@
 #include <string>
 #include <vector>
 
-#include "sfc.hpp"
 #include "memory.hpp"
 
 namespace SuperFamicom {
