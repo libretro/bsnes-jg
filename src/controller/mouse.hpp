@@ -27,7 +27,7 @@ struct Mouse : Controller {
 
   Mouse(unsigned port);
 
-  nall::Natural< 2> data();
+  uint8_t data();
   void latch(bool data);
 
 private:

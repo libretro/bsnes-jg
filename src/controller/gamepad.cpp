@@ -28,7 +28,7 @@ Gamepad::Gamepad(unsigned port) : Controller(port) {
   counter = 0;
 }
 
-nall::Natural< 2> Gamepad::data() {
+uint8_t Gamepad::data() {
   if(counter >= 16) return 1;
   if(latched == 1) return Emulator::platform->inputPoll(port, ID::Device::Gamepad, B);
 

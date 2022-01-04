@@ -21,7 +21,6 @@
 #pragma once
 
 #include "../serializer.hpp"
-#include "../../nall/primitives.hpp"
 
 namespace SuperFamicom {
 
@@ -44,7 +43,7 @@ struct Controller {
 
   bool iobit();
   void iobit(bool data);
-  virtual nall::Natural< 2> data() { return 0; }
+  virtual uint8_t data() { return 0; }
   virtual void latch(bool data) {}
   virtual void latch() {}  // light guns
   virtual void draw(uint16_t* output, unsigned pitch, unsigned width, unsigned height) {}  // light guns

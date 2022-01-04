@@ -56,7 +56,7 @@ SuperScope::SuperScope(unsigned port) : Controller(port) {
   prev = 0;
 }
 
-nall::Natural< 2> SuperScope::data() {
+uint8_t SuperScope::data() {
   if(counter >= 8) return 1;
 
   if(counter == 0) {

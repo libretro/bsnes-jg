@@ -27,7 +27,7 @@ struct SuperScope : Controller {
 
   SuperScope(unsigned port);
 
-  nall::Natural< 2> data() override;
+  uint8_t data() override;
   void latch(bool data) override;
   void latch() override;
   void draw(uint16_t* data, unsigned pitch, unsigned width, unsigned height) override;

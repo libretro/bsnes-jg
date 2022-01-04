@@ -52,7 +52,7 @@ device(!chained ? ID::Device::Justifier : ID::Device::Justifiers)
   }
 }
 
-nall::Natural< 2> Justifier::data() {
+uint8_t Justifier::data() {
   if(counter >= 32) return 1;
 
   if(counter == 0) {
