@@ -123,16 +123,16 @@ private:
     bool hdmaTriggered = 0;
 
     nall::Boolean nmiValid = 0;
-    nall::Boolean nmiLine = 0;
-    nall::Boolean nmiTransition = 0;
-    nall::Boolean nmiPending = 0;
+    bool nmiLine = 0;
+    bool nmiTransition = 0;
+    bool nmiPending = 0;
     nall::Boolean nmiHold = 0;
 
     nall::Boolean irqValid = 0;
-    nall::Boolean irqLine = 0;
-    nall::Boolean irqTransition = 0;
-    nall::Boolean irqPending = 0;
-    nall::Boolean irqHold = 0;
+    bool irqLine = 0;
+    bool irqTransition = 0;
+    bool irqPending = 0;
+    bool irqHold = 0;
 
     bool resetPending = 0;
     bool interruptPending = 0;
@@ -150,11 +150,11 @@ private:
     nall::Natural<17> wramAddress = 0;
 
     //$4200
-    nall::Boolean hirqEnable = 0;
-    nall::Boolean virqEnable = 0;
-    nall::Boolean irqEnable = 0;
+    bool hirqEnable = 0;
+    bool virqEnable = 0;
+    bool irqEnable = 0;
     nall::Boolean nmiEnable = 0;
-    nall::Boolean autoJoypadPoll = 0;
+    bool autoJoypadPoll = 0;
 
     //$4201
     uint8_t pio = 0xff;
