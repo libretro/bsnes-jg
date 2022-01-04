@@ -20,6 +20,9 @@
 
 #pragma once
 
+#include <vector>
+
+#include "emulator.hpp"
 #include "memory.hpp"
 
 namespace SuperFamicom {

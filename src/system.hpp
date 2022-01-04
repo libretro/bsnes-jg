@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "emulator.hpp"
+
 namespace SuperFamicom {
 
 struct Region {

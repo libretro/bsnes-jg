@@ -22,6 +22,8 @@
 
 #include "../memory.hpp"
 
+#include "../nall/primitives.hpp"
+
 namespace SuperFamicom {
 
 //MaskROMs supported:

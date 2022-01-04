@@ -23,6 +23,8 @@
 
 #include "mcc.hpp"
 
+#include "../../nall/primitives.hpp"
+
 namespace SuperFamicom {
 
 void MCC::serialize(serializer& s) {
