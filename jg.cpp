@@ -25,6 +25,7 @@
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
 
+#include "src/cheat.hpp"
 #include "src/heuristics.hpp"
 #include "src/interface.hpp"
 #include "src/sha256.hpp"

@@ -21,10 +21,13 @@
 #include "../sfc.hpp"
 #include "../cartridge.hpp"
 #include "../cpu.hpp"
+#include "../random.hpp"
 
 #include "armdsp.hpp"
 
 namespace SuperFamicom {
+
+extern Emulator::Random random;
 
 //note: timings are completely unverified
 //due to the ST018 chip design (on-die ROM), testing is nearly impossible

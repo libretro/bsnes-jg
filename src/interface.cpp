@@ -25,8 +25,11 @@
 #include "coprocessor/icd.hpp"
 #include "cpu.hpp"
 #include "expansion/expansion.hpp"
+#include "cheat.hpp"
 
 namespace SuperFamicom {
+
+extern Emulator::Cheat cheat;
 
 Settings settings;
 Configuration configuration;

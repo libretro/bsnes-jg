@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../cheat.hpp"
+
 namespace SuperFamicom {
 
 struct ICD : Emulator::Platform, Thread {

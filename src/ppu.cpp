@@ -21,8 +21,11 @@
 #include "controller/controller.hpp"
 #include "interface.hpp"
 #include "cpu.hpp"
+#include "random.hpp"
 
 namespace SuperFamicom {
+
+extern Emulator::Random random;
 
 PPU ppu;
 

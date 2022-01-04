@@ -20,6 +20,7 @@
 
 #include "controller/controller.hpp"
 #include "interface.hpp"
+#include "random.hpp"
 
 #include "cpu.hpp"
 #include "smp.hpp"
@@ -29,6 +30,8 @@
 #include "coprocessor/msu1.hpp"
 
 namespace SuperFamicom {
+
+extern Emulator::Random random;
 
 CPU cpu;
 

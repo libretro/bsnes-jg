@@ -23,8 +23,6 @@
 #include <cstring>
 
 #include "emulator.hpp"
-#include "random.hpp"
-#include "cheat.hpp"
 
 #include "processor/arm7tdmi.hpp"
 #include "processor/gsu.hpp"
@@ -43,9 +41,6 @@ extern "C" {
 }
 
 namespace SuperFamicom {
-  extern Emulator::Random random;
-  extern Emulator::Cheat cheat;
-
   struct Scheduler {
     enum class Mode : unsigned { Run, Synchronize } mode;
     enum class Event : unsigned { Frame, Synchronized, Desynchronized } event;
