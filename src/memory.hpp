@@ -20,6 +20,10 @@
 
 #pragma once
 
+#include <string>
+
+#include "function.hpp"
+
 namespace SuperFamicom {
 
 struct Memory {
