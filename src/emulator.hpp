@@ -27,9 +27,10 @@
 #include <string>
 #include <vector>
 
-#include "../nall/function.hpp"
-#include "../nall/iterator.hpp"
+#include "function.hpp"
 #include "serializer.hpp"
+
+#include "../nall/iterator.hpp"
 #include "../nall/primitives.hpp"
 
 #include "audio.hpp"
