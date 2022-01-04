@@ -25,6 +25,8 @@
 
 #include "bsmemory.hpp"
 
+#include "../nall/iterator.hpp"
+
 namespace SuperFamicom {
 
 BSMemory bsmemory;

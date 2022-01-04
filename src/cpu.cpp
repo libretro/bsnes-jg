@@ -29,6 +29,8 @@
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"
 
+#include "../nall/iterator.hpp"
+
 namespace SuperFamicom {
 
 extern Emulator::Random random;
