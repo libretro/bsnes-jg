@@ -22,6 +22,12 @@
 #include "../interface.hpp"
 #include "../cpu.hpp"
 
+#include "gamepad.hpp"
+#include "justifier.hpp"
+#include "mouse.hpp"
+#include "super-multitap.hpp"
+#include "super-scope.hpp"
+
 namespace SuperFamicom {
 
 ControllerPort controllerPort1;

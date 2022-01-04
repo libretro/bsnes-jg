@@ -21,6 +21,8 @@
 #include "controller.hpp"
 #include "../interface.hpp"
 
+#include "justifier.hpp"
+
 namespace SuperFamicom {
 
 Justifier::Justifier(unsigned port, bool chained):

@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct Mouse : Controller {
   enum : unsigned {
     X, Y, Left, Right,
@@ -42,3 +44,5 @@ private:
   bool l;      //left button
   bool r;      //right button
 };
+
+}

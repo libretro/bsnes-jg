@@ -21,6 +21,8 @@
 #include "controller.hpp"
 #include "../interface.hpp"
 
+#include "super-multitap.hpp"
+
 namespace SuperFamicom {
 
 SuperMultitap::SuperMultitap(unsigned port) : Controller(port) {

@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct Justifier : Controller {
   enum : unsigned {
     X, Y, Trigger, Start,
@@ -46,3 +48,5 @@ struct Justifier : Controller {
     bool start;
   } player1, player2;
 };
+
+}

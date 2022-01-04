@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct SuperMultitap : Controller {
   enum : unsigned {
     Up, Down, Left, Right, B, A, Y, X, L, R, Select, Start,
@@ -41,3 +43,5 @@ private:
     bool a, x, l, r;
   } gamepads[4];
 };
+
+}

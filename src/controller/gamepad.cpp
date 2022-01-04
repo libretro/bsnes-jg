@@ -21,6 +21,8 @@
 #include "controller.hpp"
 #include "../interface.hpp"
 
+#include "gamepad.hpp"
+
 namespace SuperFamicom {
 
 Gamepad::Gamepad(unsigned port) : Controller(port) {

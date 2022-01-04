@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct SuperScope : Controller {
   enum : unsigned {
     X, Y, Trigger, Cursor, Turbo, Pause,
@@ -51,3 +53,5 @@ private:
 
   unsigned prev;
 };
+
+}

@@ -21,6 +21,8 @@
 #include "controller.hpp"
 #include "../interface.hpp"
 
+#include "mouse.hpp"
+
 namespace SuperFamicom {
 
 Mouse::Mouse(unsigned port) : Controller(port) {

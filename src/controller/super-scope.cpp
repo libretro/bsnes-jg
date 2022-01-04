@@ -33,6 +33,8 @@
 #include "controller.hpp"
 #include "../interface.hpp"
 
+#include "super-scope.hpp"
+
 namespace SuperFamicom {
 
 SuperScope::SuperScope(unsigned port) : Controller(port) {
