@@ -65,7 +65,7 @@ struct Random {
 
   void array(uint8_t* data, uint32_t size) {
     if(_entropy == Entropy::None) {
-      nall::memory::fill(data, size);
+      std::memset(data, 0, size * sizeof(uint8_t));
       return;
     }
 
