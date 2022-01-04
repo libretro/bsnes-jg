@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 //HLE of the NEC uPD78P214GC processor found on SNES-EVENT PCBs, used by:
 //* Campus Challenge '92
 //* PowerFest '94
@@ -71,3 +73,5 @@ private:
 };
 
 extern Event event;
+
+}

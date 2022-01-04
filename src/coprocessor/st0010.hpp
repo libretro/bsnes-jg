@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct ST0010 {
   void power();
 
@@ -59,3 +61,5 @@ struct ST0010 {
 };
 
 extern ST0010 st0010;
+
+}

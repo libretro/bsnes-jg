@@ -28,6 +28,8 @@
 
 #define DSP1_VERSION 0x0102
 
+namespace SuperFamicom {
+
 class Dsp1
 {
    public:
@@ -145,5 +147,6 @@ class Dsp1
       int16_t shiftR(int16_t C, int16_t E);
 };
 
-#endif
+}
 
+#endif

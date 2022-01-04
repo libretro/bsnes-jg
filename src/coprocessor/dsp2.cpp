@@ -20,6 +20,8 @@
 
 #include "../sfc.hpp"
 
+#include "dsp2.hpp"
+
 namespace SuperFamicom {
 
 //convert bitmap to bitplane tile

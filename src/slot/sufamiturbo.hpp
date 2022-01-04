@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct SufamiTurboCartridge {
   void unload();
   void power();
@@ -32,3 +34,5 @@ struct SufamiTurboCartridge {
 
 extern SufamiTurboCartridge sufamiturboA;
 extern SufamiTurboCartridge sufamiturboB;
+
+}

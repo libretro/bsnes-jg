@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct DSP2 {
   void power();
 
@@ -58,3 +60,5 @@ struct DSP2 {
 };
 
 extern DSP2 dsp2;
+
+}

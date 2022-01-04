@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct Expansion : Thread {
   Expansion();
   virtual ~Expansion();
@@ -39,3 +41,5 @@ extern ExpansionPort expansionPort;
 
 #include "satellaview.hpp"
 //#include "21fx.hpp"
+
+}

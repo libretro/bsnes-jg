@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct Cartridge {
   unsigned pathID() const { return information.pathID; }
   std::string region() const { return information.region; }
@@ -145,3 +147,5 @@ private:
 };
 
 extern Cartridge cartridge;
+
+}

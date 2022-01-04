@@ -23,6 +23,31 @@
 #include "controller/controller.hpp"
 #include "interface.hpp"
 
+#include "cartridge.hpp"
+#include "coprocessor/armdsp.hpp"
+#include "coprocessor/cx4.hpp"
+#include "coprocessor/dip.hpp"
+#include "coprocessor/dsp1.hpp"
+#include "coprocessor/dsp2.hpp"
+#include "coprocessor/dsp4.hpp"
+#include "coprocessor/epsonrtc.hpp"
+#include "coprocessor/event.hpp"
+#include "coprocessor/hitachidsp.hpp"
+#include "coprocessor/icd.hpp"
+#include "coprocessor/mcc.hpp"
+#include "coprocessor/msu1.hpp"
+#include "coprocessor/necdsp.hpp"
+#include "coprocessor/obc1.hpp"
+#include "coprocessor/sa1.hpp"
+#include "coprocessor/sdd1.hpp"
+#include "coprocessor/sharprtc.hpp"
+#include "coprocessor/spc7110.hpp"
+#include "coprocessor/st0010.hpp"
+#include "coprocessor/superfx.hpp"
+#include "expansion/expansion.hpp"
+#include "slot/bsmemory.hpp"
+#include "slot/sufamiturbo.hpp"
+
 namespace SuperFamicom {
 
 System system;

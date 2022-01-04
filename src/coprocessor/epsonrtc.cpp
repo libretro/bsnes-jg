@@ -20,6 +20,8 @@
 
 #include "../sfc.hpp"
 
+#include "epsonrtc.hpp"
+
 namespace SuperFamicom {
 
 void EpsonRTC::rtcReset() {

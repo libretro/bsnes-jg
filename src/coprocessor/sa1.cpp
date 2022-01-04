@@ -19,6 +19,9 @@
  */
 
 #include "../interface.hpp"
+#include "../slot/bsmemory.hpp"
+
+#include "sa1.hpp"
 
 namespace SuperFamicom {
 

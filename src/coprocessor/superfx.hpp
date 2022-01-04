@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct SuperFX : Processor::GSU, Thread {
   ReadableMemory rom;
   WritableMemory ram;
@@ -97,3 +99,5 @@ private:
 };
 
 extern SuperFX superfx;
+
+}

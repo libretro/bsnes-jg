@@ -22,6 +22,8 @@
 
 #include "../sfc.hpp"
 
+#include "bsmemory.hpp"
+
 namespace SuperFamicom {
 
 BSMemory bsmemory;

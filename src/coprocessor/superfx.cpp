@@ -20,6 +20,8 @@
 
 #include "../interface.hpp"
 
+#include "superfx.hpp"
+
 namespace SuperFamicom {
 
 //ROM / RAM access from the S-CPU

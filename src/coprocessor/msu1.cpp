@@ -23,6 +23,8 @@
 
 #include "../interface.hpp"
 
+#include "msu1.hpp"
+
 namespace SuperFamicom {
 
 MSU1 msu1;

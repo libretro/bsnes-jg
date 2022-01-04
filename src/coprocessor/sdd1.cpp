@@ -20,6 +20,8 @@
 
 #include "../sfc.hpp"
 
+#include "sdd1.hpp"
+
 namespace SuperFamicom {
 
 SDD1 sdd1;

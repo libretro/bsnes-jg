@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct DIP {
   //dip.cpp
   void power();
@@ -34,3 +36,5 @@ struct DIP {
 };
 
 extern DIP dip;
+
+}

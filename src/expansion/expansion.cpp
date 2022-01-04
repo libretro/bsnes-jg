@@ -20,6 +20,8 @@
 
 #include "../interface.hpp"
 
+#include "expansion.hpp"
+
 namespace SuperFamicom {
 
 ExpansionPort expansionPort;

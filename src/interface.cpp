@@ -21,6 +21,10 @@
 #include "controller/controller.hpp"
 #include "interface.hpp"
 
+#include "cartridge.hpp"
+#include "coprocessor/icd.hpp"
+#include "expansion/expansion.hpp"
+
 namespace SuperFamicom {
 
 Settings settings;

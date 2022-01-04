@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 //Epson RTC-4513 Real-Time Clock
 
 struct EpsonRTC : Thread {
@@ -110,3 +112,5 @@ struct EpsonRTC : Thread {
 };
 
 extern EpsonRTC epsonrtc;
+
+}

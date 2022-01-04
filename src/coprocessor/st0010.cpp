@@ -18,9 +18,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cstdint>
 #include <math.h>
 
-#include "../sfc.hpp"
+#include "../serializer.hpp"
+
+#include "st0010.hpp"
 
 namespace SuperFamicom {
 

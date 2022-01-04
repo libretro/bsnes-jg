@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct OBC1 {
   void unload();
   void power();
@@ -43,3 +45,5 @@ private:
 };
 
 extern OBC1 obc1;
+
+}

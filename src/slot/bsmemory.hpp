@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 //MaskROMs supported:
 //  Sharp LH5S4TNI (MaskROM 512K x 8-bit) [BSMC-CR-01: BSMC-ZS5J-JPN, BSMC-YS5J-JPN]
 //  Sharp LH534VNF (MaskROM 512K x 8-bit) [BSMC-BR-01: BSMC-ZX3J-JPN]
@@ -188,3 +190,5 @@ private:
 };
 
 extern BSMemory bsmemory;
+
+}

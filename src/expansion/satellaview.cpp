@@ -20,6 +20,8 @@
 
 #include "../sfc.hpp"
 
+#include "expansion.hpp"
+
 namespace SuperFamicom {
 
 Satellaview::Satellaview() {

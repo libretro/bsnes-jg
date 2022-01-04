@@ -19,6 +19,9 @@
  */
 
 #include "../sfc.hpp"
+#include "../cartridge.hpp"
+
+#include "hitachidsp.hpp"
 
 namespace SuperFamicom {
 

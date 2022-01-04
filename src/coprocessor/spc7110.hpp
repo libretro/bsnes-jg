@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct Decompressor;
 
 struct SPC7110 : Thread {
@@ -143,3 +145,5 @@ private:
 };
 
 extern SPC7110 spc7110;
+
+}

@@ -19,6 +19,7 @@
  */
 
 #include "interface.hpp"
+#include "cartridge.hpp"
 
 namespace SuperFamicom {
 

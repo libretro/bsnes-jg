@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct SharpRTC : Thread {
   void synchronizeCPU();
   static void Enter();
@@ -66,3 +68,5 @@ struct SharpRTC : Thread {
 };
 
 extern SharpRTC sharprtc;
+
+}

@@ -20,6 +20,9 @@
 
 #include "../sfc.hpp"
 
+#include "dip.hpp"
+#include "event.hpp"
+
 namespace SuperFamicom {
 
 void Event::serialize(serializer& s) {

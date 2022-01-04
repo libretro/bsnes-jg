@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 //Super Accelerator (SA-1)
 
 struct SA1 : Processor::WDC65816, Thread {
@@ -307,3 +309,5 @@ private:
 };
 
 extern SA1 sa1;
+
+}

@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 //ARMv3 (ARM60)
 
 //note: this coprocessor uses the ARMv4 (ARM7TDMI) core as its base
@@ -77,3 +79,5 @@ struct ArmDSP : Processor::ARM7TDMI, Thread {
 };
 
 extern ArmDSP armdsp;
+
+}

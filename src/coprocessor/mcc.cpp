@@ -19,6 +19,9 @@
  */
 
 #include "../sfc.hpp"
+#include "../slot/bsmemory.hpp"
+
+#include "mcc.hpp"
 
 namespace SuperFamicom {
 

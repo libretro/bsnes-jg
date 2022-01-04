@@ -19,7 +19,10 @@
  */
 
 #include <math.h>
+
 #include "../sfc.hpp"
+
+#include "cx4.hpp"
 
 namespace SuperFamicom {
 

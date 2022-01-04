@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct NECDSP : Processor::uPD96050, Thread {
   void synchronizeCPU();
   static void Enter();
@@ -41,3 +43,5 @@ struct NECDSP : Processor::uPD96050, Thread {
 };
 
 extern NECDSP necdsp;
+
+}

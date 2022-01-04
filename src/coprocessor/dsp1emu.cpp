@@ -18,11 +18,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../sfc.hpp"
+#include <cstring>
+#include <cstdint>
 
-namespace SuperFamicom {
+#include "../serializer.hpp"
 
 #include "dsp1emu.hpp"
+
+namespace SuperFamicom {
 
 // DSP-1's emulation code
 //

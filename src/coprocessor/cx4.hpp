@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct Cx4 {
   void power();
 
@@ -110,3 +112,5 @@ public:
 };
 
 extern Cx4 cx4;
+
+}

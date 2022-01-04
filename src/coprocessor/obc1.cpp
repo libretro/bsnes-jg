@@ -20,6 +20,8 @@
 
 #include "../sfc.hpp"
 
+#include "obc1.hpp"
+
 namespace SuperFamicom {
 
 void OBC1::serialize(serializer& s) {

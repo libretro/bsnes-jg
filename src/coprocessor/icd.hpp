@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct ICD : Emulator::Platform, Thread {
   Emulator::Stream *stream;
   Emulator::Cheat cheats;
@@ -105,3 +107,5 @@ public:
 };
 
 extern ICD icd;
+
+}

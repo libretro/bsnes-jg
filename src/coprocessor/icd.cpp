@@ -21,7 +21,10 @@
 #include <iterator>
 
 #include "../interface.hpp"
+#include "../cartridge.hpp"
 #include "../sha256.hpp"
+
+#include "icd.hpp"
 
 namespace SuperFamicom {
 

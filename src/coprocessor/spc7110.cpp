@@ -20,6 +20,8 @@
 
 #include "../sfc.hpp"
 
+#include "spc7110.hpp"
+
 namespace SuperFamicom {
 
 //SPC7110 decompressor

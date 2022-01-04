@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct SDD1 {
   void unload();
   void power();
@@ -154,3 +156,5 @@ public:
 };
 
 extern SDD1 sdd1;
+
+}

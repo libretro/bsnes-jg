@@ -20,6 +20,8 @@
 
 #include "../sfc.hpp"
 
+#include "sufamiturbo.hpp"
+
 namespace SuperFamicom {
 
 void SufamiTurboCartridge::serialize(serializer& s) {

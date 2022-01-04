@@ -20,6 +20,8 @@
 
 #include "../sfc.hpp"
 
+#include "sharprtc.hpp"
+
 namespace SuperFamicom {
 
 nall::Natural< 4> SharpRTC::rtcRead(nall::Natural< 4> addr) {

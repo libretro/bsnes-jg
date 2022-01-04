@@ -20,9 +20,10 @@
 
 #include "../sfc.hpp"
 
-namespace SuperFamicom {
-
+#include "dsp1.hpp"
 #include "dsp1emu.hpp"
+
+namespace SuperFamicom {
 
 Dsp1 dsp1emu;
 DSP1 dsp1;

@@ -23,6 +23,8 @@
 //MCC - Memory Controller Chip
 //Custom logic chip inside the BS-X Satellaview base cartridge
 
+namespace SuperFamicom {
+
 struct MCC {
   ReadableMemory rom;
   WritableMemory psram;
@@ -72,3 +74,5 @@ private:
 };
 
 extern MCC mcc;
+
+}

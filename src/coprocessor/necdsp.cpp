@@ -19,6 +19,9 @@
  */
 
 #include "../sfc.hpp"
+#include "../cartridge.hpp"
+
+#include "necdsp.hpp"
 
 namespace SuperFamicom {
 

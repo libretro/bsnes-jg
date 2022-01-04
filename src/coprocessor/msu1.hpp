@@ -20,6 +20,8 @@
 
 #pragma once
 
+namespace SuperFamicom {
+
 struct MSU1 : Thread {
   Emulator::Stream *stream;
 
@@ -73,3 +75,5 @@ private:
 };
 
 extern MSU1 msu1;
+
+}
