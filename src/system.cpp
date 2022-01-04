@@ -18,6 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include<cstring>
+
 #include "sfc.hpp"
 
 namespace SuperFamicom {
@@ -39,7 +41,7 @@ serializer System::serialize(bool synchronize) {
   char version[16] = {};
   char description[512] = {};
   bool placeholder = false;
-  nall::memory::copy(&version, (const char*)Emulator::SerializerVersion.c_str(), Emulator::SerializerVersion.size());
+  std::memcpy(&version, (const char*)Emulator::SerializerVersion.c_str(), Emulator::SerializerVersion.size());
 
   serializer s(serializeSize);
   s.integer(signature);
