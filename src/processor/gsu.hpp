@@ -74,8 +74,6 @@ struct GSU {
     nall::BitField<16,12> b   {&data};  //with flag
     nall::BitField<16,15> irq {&data};  //interrupt flag
 
-    nall::BitRange<16,8,9> alt{&data};  //composite instruction mode
-
     inline operator unsigned() const { return data & 0x9f7e; }
     inline auto& operator=(const unsigned value) { return data = value, *this; }
   };
