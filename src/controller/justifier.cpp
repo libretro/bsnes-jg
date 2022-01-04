@@ -20,6 +20,7 @@
 
 #include "controller.hpp"
 #include "../interface.hpp"
+#include "../ppu.hpp"
 
 #include "justifier.hpp"
 

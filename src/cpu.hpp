@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "ppu.hpp"
+
 namespace SuperFamicom {
 
 struct CPU : Processor::WDC65816, Thread, PPUcounter {
