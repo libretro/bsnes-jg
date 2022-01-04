@@ -26,6 +26,7 @@ namespace SuperFamicom {
 
 struct SMP : Processor::SPC700, Thread {
   inline bool synchronizing() const override { return scheduler.synchronizing(); }
+  inline bool raise(bool& data, bool value) { return !data && value ? (data = value, true) : (data = value, false); }
 
   //io.cpp
   uint8_t portRead(nall::Natural< 2> port) const;
@@ -98,12 +99,13 @@ private:
   //timing.cpp
   template<unsigned Frequency>
   struct Timer {
+    inline bool lower(bool& data, bool value) { return data && !value ? (data = value, true) : (data = value, false); }
     uint8_t stage0 = 0;
     uint8_t stage1 = 0;
     uint8_t stage2 = 0;
     nall::Natural< 4>   stage3 = 0;
-    nall::Boolean line = 0;
-    nall::Boolean enable = 0;
+    bool line = 0;
+    bool enable = 0;
     uint8_t target = 0;
 
     void step(unsigned clocks);

@@ -179,17 +179,17 @@ void SMP::writeIO(uint16_t address, uint8_t data) {
 
   case 0xf1:  //CONTROL
     //0->1 transistion resets timers
-    if(timer0.enable.raise(data & 0x01)) {
+    if(raise(timer0.enable, data & 0x01)) {
       timer0.stage2 = 0;
       timer0.stage3 = 0;
     }
 
-    if(timer1.enable.raise(data & 0x02)) {
+    if(raise(timer1.enable, data & 0x02)) {
       timer1.stage2 = 0;
       timer1.stage3 = 0;
     }
 
-    if(!timer2.enable.raise(data & 0x04)) {
+    if(raise(timer2.enable, data & 0x04)) {
       timer2.stage2 = 0;
       timer2.stage3 = 0;
     }
@@ -333,7 +333,8 @@ template<unsigned Frequency> void SMP::Timer<Frequency>::synchronizeStage1() {
   bool level = stage1;
   if(!smp.io.timersEnable) level = false;
   if(smp.io.timersDisable) level = false;
-  if(!line.lower(level)) return;  //only pulse on 1->0 transition
+
+  if(!lower(line, level)) return;  //only pulse on 1->0 transition
 
   //stage 2 increment
   if(!enable) return;
