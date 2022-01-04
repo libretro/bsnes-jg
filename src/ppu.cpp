@@ -873,11 +873,12 @@ void PPU::updateVideoMode() {
     bg2.io.mode = Background::Mode::BPP2;
     bg3.io.mode = Background::Mode::BPP2;
     bg4.io.mode = Background::Mode::BPP2;
-    nall::memory::assign(bg1.io.priority, 8, 11);
-    nall::memory::assign(bg2.io.priority, 7, 10);
-    nall::memory::assign(bg3.io.priority, 2,  5);
-    nall::memory::assign(bg4.io.priority, 1,  4);
-    nall::memory::assign(obj.io.priority, 3,  6, 9, 12);
+    bg1.io.priority[0] = 8; bg1.io.priority[1] = 11;
+    bg2.io.priority[0] = 7; bg2.io.priority[1] = 10;
+    bg3.io.priority[0] = 2; bg3.io.priority[1] = 5;
+    bg4.io.priority[0] = 1; bg4.io.priority[1] = 4;
+    obj.io.priority[0] = 3; obj.io.priority[1] = 6;
+    obj.io.priority[2] = 9; obj.io.priority[3] = 12;
     break;
 
   case 1:
@@ -886,15 +887,17 @@ void PPU::updateVideoMode() {
     bg3.io.mode = Background::Mode::BPP2;
     bg4.io.mode = Background::Mode::Inactive;
     if(io.bgPriority) {
-      nall::memory::assign(bg1.io.priority, 5,  8);
-      nall::memory::assign(bg2.io.priority, 4,  7);
-      nall::memory::assign(bg3.io.priority, 1, 10);
-      nall::memory::assign(obj.io.priority, 2,  3, 6,  9);
+      bg1.io.priority[0] = 5; bg1.io.priority[1] = 8;
+      bg2.io.priority[0] = 4; bg2.io.priority[1] = 7;
+      bg3.io.priority[0] = 1; bg3.io.priority[1] = 10;
+      obj.io.priority[0] = 2; obj.io.priority[1] = 3;
+      obj.io.priority[2] = 6; obj.io.priority[3] = 9;
     } else {
-      nall::memory::assign(bg1.io.priority, 6,  9);
-      nall::memory::assign(bg2.io.priority, 5,  8);
-      nall::memory::assign(bg3.io.priority, 1,  3);
-      nall::memory::assign(obj.io.priority, 2,  4, 7, 10);
+      bg1.io.priority[0] = 6; bg1.io.priority[1] = 9;
+      bg2.io.priority[0] = 5; bg2.io.priority[1] = 8;
+      bg3.io.priority[0] = 1; bg3.io.priority[1] = 3;
+      obj.io.priority[0] = 2; obj.io.priority[1] = 4;
+      obj.io.priority[2] = 7; obj.io.priority[3] = 10;
     }
     break;
 
@@ -903,9 +906,10 @@ void PPU::updateVideoMode() {
     bg2.io.mode = Background::Mode::BPP4;
     bg3.io.mode = Background::Mode::Inactive;
     bg4.io.mode = Background::Mode::Inactive;
-    nall::memory::assign(bg1.io.priority, 3, 7);
-    nall::memory::assign(bg2.io.priority, 1, 5);
-    nall::memory::assign(obj.io.priority, 2, 4, 6, 8);
+    bg1.io.priority[0] = 3; bg1.io.priority[1] = 7;
+    bg2.io.priority[0] = 1; bg2.io.priority[1] = 5;
+    obj.io.priority[0] = 2; obj.io.priority[1] = 4;
+    obj.io.priority[2] = 6; obj.io.priority[3] = 8;
     break;
 
   case 3:
@@ -913,9 +917,10 @@ void PPU::updateVideoMode() {
     bg2.io.mode = Background::Mode::BPP4;
     bg3.io.mode = Background::Mode::Inactive;
     bg4.io.mode = Background::Mode::Inactive;
-    nall::memory::assign(bg1.io.priority, 3, 7);
-    nall::memory::assign(bg2.io.priority, 1, 5);
-    nall::memory::assign(obj.io.priority, 2, 4, 6, 8);
+    bg1.io.priority[0] = 3; bg1.io.priority[1] = 7;
+    bg2.io.priority[0] = 1; bg2.io.priority[1] = 5;
+    obj.io.priority[0] = 2; obj.io.priority[1] = 4;
+    obj.io.priority[2] = 6; obj.io.priority[3] = 8;
     break;
 
   case 4:
@@ -923,9 +928,10 @@ void PPU::updateVideoMode() {
     bg2.io.mode = Background::Mode::BPP2;
     bg3.io.mode = Background::Mode::Inactive;
     bg4.io.mode = Background::Mode::Inactive;
-    nall::memory::assign(bg1.io.priority, 3, 7);
-    nall::memory::assign(bg2.io.priority, 1, 5);
-    nall::memory::assign(obj.io.priority, 2, 4, 6, 8);
+    bg1.io.priority[0] = 3; bg1.io.priority[1] = 7;
+    bg2.io.priority[0] = 1; bg2.io.priority[1] = 5;
+    obj.io.priority[0] = 2; obj.io.priority[1] = 4;
+    obj.io.priority[2] = 6; obj.io.priority[3] = 8;
     break;
 
   case 5:
@@ -933,9 +939,10 @@ void PPU::updateVideoMode() {
     bg2.io.mode = Background::Mode::BPP2;
     bg3.io.mode = Background::Mode::Inactive;
     bg4.io.mode = Background::Mode::Inactive;
-    nall::memory::assign(bg1.io.priority, 3, 7);
-    nall::memory::assign(bg2.io.priority, 1, 5);
-    nall::memory::assign(obj.io.priority, 2, 4, 6, 8);
+    bg1.io.priority[0] = 3; bg1.io.priority[1] = 7;
+    bg2.io.priority[0] = 1; bg2.io.priority[1] = 5;
+    obj.io.priority[0] = 2; obj.io.priority[1] = 4;
+    obj.io.priority[2] = 6; obj.io.priority[3] = 8;
     break;
 
   case 6:
@@ -943,8 +950,9 @@ void PPU::updateVideoMode() {
     bg2.io.mode = Background::Mode::Inactive;
     bg3.io.mode = Background::Mode::Inactive;
     bg4.io.mode = Background::Mode::Inactive;
-    nall::memory::assign(bg1.io.priority, 2, 5);
-    nall::memory::assign(obj.io.priority, 1, 3, 4, 6);
+    bg1.io.priority[0] = 2; bg1.io.priority[1] = 5;
+    obj.io.priority[0] = 1; obj.io.priority[1] = 3;
+    obj.io.priority[2] = 4; obj.io.priority[3] = 6;
     break;
 
   case 7:
@@ -953,16 +961,18 @@ void PPU::updateVideoMode() {
       bg2.io.mode = Background::Mode::Inactive;
       bg3.io.mode = Background::Mode::Inactive;
       bg4.io.mode = Background::Mode::Inactive;
-      nall::memory::assign(bg1.io.priority, 2);
-      nall::memory::assign(obj.io.priority, 1, 3, 4, 5);
+      bg1.io.priority[0] = 2;
+      obj.io.priority[0] = 1; obj.io.priority[1] = 3;
+      obj.io.priority[2] = 4; obj.io.priority[3] = 5;
     } else {
       bg1.io.mode = Background::Mode::Mode7;
       bg2.io.mode = Background::Mode::Mode7;
       bg3.io.mode = Background::Mode::Inactive;
       bg4.io.mode = Background::Mode::Inactive;
-      nall::memory::assign(bg1.io.priority, 3);
-      nall::memory::assign(bg2.io.priority, 1, 5);
-      nall::memory::assign(obj.io.priority, 2, 4, 6, 7);
+      bg1.io.priority[0] = 3;
+      bg2.io.priority[0] = 1; bg2.io.priority[1] = 5;
+      obj.io.priority[0] = 2; obj.io.priority[1] = 4;
+      obj.io.priority[2] = 6; obj.io.priority[3] = 7;
     }
     break;
   }
