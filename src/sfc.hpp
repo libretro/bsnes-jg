@@ -23,6 +23,7 @@
 #include <cstring>
 
 #include "emulator.hpp"
+#include "system.hpp"
 
 #include "processor/arm7tdmi.hpp"
 #include "processor/gsu.hpp"
@@ -135,13 +136,6 @@ namespace SuperFamicom {
       uint32_t frequency = 0;
        int64_t clock = 0;
   };
-
-  struct Region {
-    static inline bool NTSC();
-    static inline bool PAL();
-  };
-
-  #include "system.hpp"
 
   //PPUcounter emulates the H/V latch counters of the S-PPU2.
   //

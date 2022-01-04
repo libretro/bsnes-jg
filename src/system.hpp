@@ -18,7 +18,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
+#pragma once
+
+namespace SuperFamicom {
+
+struct Region {
+  static inline bool NTSC();
+  static inline bool PAL();
+};
 
 struct System {
   enum class Region : unsigned { NTSC, PAL };
@@ -74,3 +81,5 @@ extern System system;
 
 bool Region::NTSC() { return system.region() == System::Region::NTSC; }
 bool Region::PAL() { return system.region() == System::Region::PAL; }
+
+}
