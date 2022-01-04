@@ -19,6 +19,7 @@
  */
 
 #include "../interface.hpp"
+#include "../system.hpp"
 
 #include "expansion.hpp"
 

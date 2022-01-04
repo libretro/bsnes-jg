@@ -24,6 +24,7 @@
 
 #include "interface.hpp"
 #include "sha256.hpp"
+#include "system.hpp"
 
 #include "cartridge.hpp"
 #include "coprocessor/armdsp.hpp"

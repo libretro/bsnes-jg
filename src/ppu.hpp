@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "system.hpp"
+
 namespace SuperFamicom {
 
 //PPUcounter emulates the H/V latch counters of the S-PPU2.

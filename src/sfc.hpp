@@ -23,7 +23,6 @@
 #include <cstring>
 
 #include "emulator.hpp"
-#include "system.hpp"
 
 #include "processor/arm7tdmi.hpp"
 #include "processor/gsu.hpp"
