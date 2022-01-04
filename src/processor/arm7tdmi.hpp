@@ -22,6 +22,8 @@
 
 #pragma once
 
+#include "../function.hpp"
+
 namespace Processor {
 
 struct ARM7TDMI {

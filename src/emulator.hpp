@@ -27,7 +27,6 @@
 #include <string>
 #include <vector>
 
-#include "function.hpp"
 #include "serializer.hpp"
 
 #include "../nall/iterator.hpp"

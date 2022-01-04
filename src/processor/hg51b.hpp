@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../function.hpp"
+
 //Hitachi HG51B S169
 
 namespace Processor {
