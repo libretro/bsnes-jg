@@ -1,3 +1,5 @@
+#pragma once
+
 static std::vector<std::string> db_justifier_games {
     "42f3084ce3f529b46090b9e1d781717d", // Lethal Enforcers (Europe)
     "3a33512ae5b1f2047bcd77e1d3e1ce4a", // Lethal Enforcers (Japan)

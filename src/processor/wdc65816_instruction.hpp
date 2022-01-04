@@ -1,4 +1,4 @@
-  switch(fetch()) {
+switch(fetch()) {
   opA(0x00, Interrupt, EF ? (r16)0xfffe : (r16)0xffe6)  //emulation mode lacks BRK vector; uses IRQ vector instead
   opM(0x01, IndexedIndirectRead, m(ORA))
   opA(0x02, Interrupt, EF ? (r16)0xfff4 : (r16)0xffe4)
@@ -255,4 +255,4 @@
   opM(0xfd, BankRead, m(SBC), X)
   opM(0xfe, BankIndexedModify, m(INC))
   opM(0xff, LongRead, m(SBC), X)
-  }
+}
