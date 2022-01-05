@@ -78,7 +78,7 @@ struct Interface : Emulator::Interface {
   serializer serialize(bool synchronize = true) override;
   bool unserialize(serializer&) override;
 
-  uint8_t read(nall::Natural<24> address) override;
+  uint8_t read(uint32_t address) override;
   void cheats(const std::vector<std::string>&) override;
 
   unsigned frameSkip() override;

@@ -107,7 +107,7 @@ bool Interface::unserialize(serializer& s) {
   return system.unserialize(s);
 }
 
-uint8_t Interface::read(nall::Natural<24> address) {
+uint8_t Interface::read(uint32_t address) {
   return cpu.readDisassembler(address);
 }
 

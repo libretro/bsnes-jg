@@ -119,7 +119,7 @@ struct Interface {
   virtual bool unserialize(serializer&) { return false; }
 
   //cheat functions
-  virtual uint8_t read(nall::Natural<24> address) { return 0; }
+  virtual uint8_t read(uint32_t address) { return 0; }
   virtual void cheats(const std::vector<std::string>& = {}) {}
 
   virtual unsigned frameSkip() { return 0; }
