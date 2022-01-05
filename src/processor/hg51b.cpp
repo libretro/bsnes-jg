@@ -910,14 +910,14 @@ nall::Natural<24> HG51B::algorithmAND(nall::Natural<24> x, nall::Natural<24> y) 
 
 nall::Natural<24> HG51B::algorithmASR(nall::Natural<24> a, nall::Natural< 5> s) {
   if(s > 24) s = 0;
-  a = (nall::Integer<24>)a >> s;
+  a = signextend<int32_t,24>(a) >> s;
   r.n = a & 0x800000;
   r.z = a == 0;
   return a;
 }
 
-nall::Natural<48> HG51B::algorithmMUL(nall::Integer<24> x, nall::Integer<24> y) {
-  return (nall::Integer<48>)x * (nall::Integer<48>)y;
+nall::Natural<48> HG51B::algorithmMUL(uint32_t x, uint32_t y) {
+  return signextend<int64_t,24>(x) * signextend<int64_t,24>(y);
 }
 
 nall::Natural<24> HG51B::algorithmOR(nall::Natural<24> x, nall::Natural<24> y) {

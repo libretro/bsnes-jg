@@ -57,7 +57,7 @@ struct HG51B {
   nall::Natural<24> algorithmADD(nall::Natural<24> x, nall::Natural<24> y);
   nall::Natural<24> algorithmAND(nall::Natural<24> x, nall::Natural<24> y);
   nall::Natural<24> algorithmASR(nall::Natural<24> a, nall::Natural< 5> s);
-  nall::Natural<48> algorithmMUL(nall::Integer<24> x, nall::Integer<24> y);
+  nall::Natural<48> algorithmMUL(uint32_t x, uint32_t y);
   nall::Natural<24> algorithmOR(nall::Natural<24> x, nall::Natural<24> y);
   nall::Natural<24> algorithmROR(nall::Natural<24> a, nall::Natural< 5> s);
   nall::Natural<24> algorithmSHL(nall::Natural<24> a, nall::Natural< 5> s);
