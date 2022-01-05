@@ -50,7 +50,7 @@ private:
   uint8_t r4807;  //MMC bank 3
 
   struct DMA {
-    nall::Natural<24> addr;  //$43x2-$43x4 -- DMA transfer address
+    uint32_t addr;  //$43x2-$43x4 -- DMA transfer address
     uint16_t size;  //$43x5-$43x6 -- DMA transfer size
   } dma[8];
   bool dmaReady;  //used to initialize decompression module
