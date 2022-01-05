@@ -22,6 +22,12 @@
 
 #include "../audio.hpp"
 #include "../cheat.hpp"
+#include "../sfc.hpp"
+
+extern "C" {
+  #include <gb/gb.h>
+  #include <gb/random.h>
+}
 
 namespace SuperFamicom {
 

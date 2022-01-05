@@ -30,11 +30,6 @@ inline constexpr auto operator"" _KiB(unsigned long long value) {
   return value * 1024;
 }
 
-extern "C" {
-  #include <gb/gb.h>
-  #include <gb/random.h>
-}
-
 namespace SuperFamicom {
   struct Scheduler {
     enum class Mode : unsigned { Run, Synchronize } mode;

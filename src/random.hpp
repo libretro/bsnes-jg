@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <cstring>
+
 namespace Emulator {
 
 struct Random {

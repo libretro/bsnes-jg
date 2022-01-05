@@ -6,7 +6,6 @@
 #define BLARGG_COMMON_H
 
 #include <stddef.h>
-#include <stdlib.h>
 #include <assert.h>
 #include <limits.h>
 
