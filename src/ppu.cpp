@@ -1024,10 +1024,13 @@ void PPU::Background::runMode7() {
   int c = (int16_t)ppu.io.m7c;
   int d = (int16_t)ppu.io.m7d;
 
-  int hcenter = (nall::Integer<13>)ppu.io.m7x;
-  int vcenter = (nall::Integer<13>)ppu.io.m7y;
-  int hoffset = (nall::Integer<13>)ppu.io.hoffsetMode7;
-  int voffset = (nall::Integer<13>)ppu.io.voffsetMode7;
+  /* Note: These 4 variables were originally cast to nall::Integer<13> before
+    assignment to ints.
+  */
+  int hcenter = ppu.io.m7x;
+  int vcenter = ppu.io.m7y;
+  int hoffset = ppu.io.hoffsetMode7;
+  int voffset = ppu.io.voffsetMode7;
 
   unsigned x = mosaic.hoffset;
   unsigned y = ppu.vcounter();
