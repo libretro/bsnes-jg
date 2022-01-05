@@ -38,9 +38,6 @@ namespace nall {
   #pragma GCC diagnostic ignored "-Wparentheses"
 #endif
 
-template<unsigned Precision = 64> struct Natural;
-template<unsigned Precision = 64> struct Integer;
-
 template<int...> struct BitField;
 
 /* static BitField */
@@ -157,6 +154,8 @@ private:
   type mask;
   unsigned shift;
 };
+
+template<unsigned Precision = 64> struct Natural;
 
 template<unsigned Precision> struct Natural {
   static inline constexpr auto bits() -> unsigned { return Precision; }
