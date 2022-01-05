@@ -1732,7 +1732,7 @@ void PPU::Window::power() {
 void PPU::Screen::scanline() {
   auto y = ppu.vcounter() + (!ppu.display.overscan ? 7 : 0);
 
-  lineA = ppu.output + y * 1024;
+  lineA = ppu.output + y * (ppu.display.interlace ? 1024 : 512);
   lineB = lineA + (ppu.display.interlace ? 0 : 512);
   if(ppu.display.interlace && ppu.field()) lineA += 512, lineB += 512;
 
@@ -2375,7 +2375,7 @@ void PPU::refresh() {
   auto output = this->output;
   auto pitch  = 512;
   auto width  = 512;
-  auto height = 480;
+  auto height = ppu.display.interlace ? 480 : 240;
 
   if(auto device = controllerPort2.device) device->draw(output, pitch * sizeof(uint16_t), width, height);
   Emulator::platform->videoFrame(output, pitch * sizeof(uint16_t), width, height, /* scale = */ 1);
