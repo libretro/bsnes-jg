@@ -64,7 +64,7 @@ std::string Cartridge::loadBoard(std::string board) {
     std::string boards((std::istreambuf_iterator<char>(boardsfile)),
       (std::istreambuf_iterator<char>()));
 
-    std::string bdoc = BML::boardsearch(boards, board);
+    std::string bdoc = BML::searchBoard(boards, board);
     return bdoc;
   }
 
@@ -72,7 +72,7 @@ std::string Cartridge::loadBoard(std::string board) {
 }
 
 void Cartridge::loadCartridge(std::string node) {
-  board = BML::searchnode(node, {"board"});
+  board = BML::searchNode(node, {"board"});
   if (board.empty()) board = loadBoard(game.board);
 
   if(region() == "Auto") {
@@ -146,7 +146,7 @@ void Cartridge::loadCartridge(std::string node) {
 }
 
 void Cartridge::loadCartridgeBSMemory(std::string node) {
-  if (auto memory = Emulator::Game::Memory(BML::searchnode(node, {"game", "board", "memory"}))) {
+  if (auto memory = Emulator::Game::Memory(BML::searchNode(node, {"game", "board", "memory"}))) {
     bsmemory.ROM = memory.type == "ROM";
     bsmemory.memory.allocate(memory.size);
     std::vector<uint8_t> buf = Emulator::platform->mopen(bsmemory.pathID, memory.name());
@@ -307,10 +307,10 @@ void Cartridge::loadICD(std::string node) {
 void Cartridge::loadMCC(std::string node) {
   has.MCC = true;
 
-  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) loadMap(pmap, {&MCC::read, &mcc}, {&MCC::write, &mcc});
 
-  std::string mcu = BML::searchnode(node, {"processor", "mcu"});
+  std::string mcu = BML::searchNode(node, {"processor", "mcu"});
 
   if (!mcu.empty()) {
     std::vector<std::string> maps = BML::searchList(mcu, "map");
@@ -355,8 +355,8 @@ void Cartridge::loadSufamiTurboA(std::string node) {
   if(auto loaded = Emulator::platform->load(ID::SufamiTurboA, "Sufami Turbo", "st")) {
     sufamiturboA.pathID = loaded.pathID;
     loadSufamiTurboA();
-    std::string rommap = BML::searchnode(node, {"slot", "rom", "map"});
-    std::string rammap = BML::searchnode(node, {"slot", "ram", "map"});
+    std::string rommap = BML::searchNode(node, {"slot", "rom", "map"});
+    std::string rammap = BML::searchNode(node, {"slot", "ram", "map"});
     loadMap(rommap, sufamiturboA.rom);
     loadMap(rammap, sufamiturboA.ram);
   }
@@ -369,8 +369,8 @@ void Cartridge::loadSufamiTurboB(std::string node) {
   if(auto loaded = Emulator::platform->load(ID::SufamiTurboB, "Sufami Turbo", "st")) {
     sufamiturboB.pathID = loaded.pathID;
     loadSufamiTurboB();
-    std::string rommap = BML::searchnode(node, {"slot", "rom", "map"});
-    std::string rammap = BML::searchnode(node, {"slot", "ram", "map"});
+    std::string rommap = BML::searchNode(node, {"slot", "rom", "map"});
+    std::string rammap = BML::searchNode(node, {"slot", "ram", "map"});
     loadMap(rommap, sufamiturboB.rom);
     loadMap(rammap, sufamiturboB.ram);
   }
@@ -424,12 +424,12 @@ void Cartridge::loadDIP(std::string node) {
 void Cartridge::loadSA1(std::string node) {
   has.SA1 = true;
 
-  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) {
       loadMap(pmap, {&SA1::readIOCPU, &sa1}, {&SA1::writeIOCPU, &sa1});
   }
 
-  std::string mcu = BML::searchnode(node, {"processor", "mcu"});
+  std::string mcu = BML::searchNode(node, {"processor", "mcu"});
 
   if (!mcu.empty()) {
     std::vector<std::string> maps = BML::searchList(mcu, "map");
@@ -444,7 +444,7 @@ void Cartridge::loadSA1(std::string node) {
       if (type == "ROM" && content == "Program") loadMemory(sa1.rom, m);
     }
 
-    std::string slot = BML::searchnode(mcu, {"slot"});
+    std::string slot = BML::searchNode(mcu, {"slot"});
     if (!slot.empty()) {
       if (BML::search(slot, {"type"}) == "BSMemory") loadBSMemory(slot);
     }
@@ -483,7 +483,7 @@ void Cartridge::loadSuperFX(std::string node) {
     superfx.Frequency = system.cpuFrequency();  //MARIO CHIP 1
   }
 
-  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) {
       loadMap(pmap, {&SuperFX::readIO, &superfx}, {&SuperFX::writeIO, &superfx});
   }
@@ -523,7 +523,7 @@ void Cartridge::loadARMDSP(std::string node) {
     armdsp.Frequency = 21'440'000;
   }
 
-  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) loadMap(pmap, {&ArmDSP::read, &armdsp}, {&ArmDSP::write, &armdsp});
 
   std::vector<std::string> memlist = BML::searchList(node, "memory");
@@ -601,7 +601,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
 
   if(configuration.coprocessor.preferHLE) {
     has.Cx4 = true;
-    std::string pmap = BML::searchnode(node, {"processor", "map"});
+    std::string pmap = BML::searchNode(node, {"processor", "map"});
     if (!pmap.empty()) {
       loadMap(pmap, {&Cx4::read, &cx4}, {&Cx4::write, &cx4});
     }
@@ -651,7 +651,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
 
   has.HitachiDSP = true;
 
-  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) {
       loadMap(pmap, {&HitachiDSP::readIO, &hitachidsp}, {&HitachiDSP::writeIO, &hitachidsp});
   }
@@ -703,7 +703,7 @@ void Cartridge::loaduPD7725(std::string node) {
     failed = true;
   }
 
-  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  std::string pmap = BML::searchNode(node, {"processor", "map"});
 
   if (failed || configuration.coprocessor.preferHLE) {
     if (ident == "dsp1" || ident == "dsp1b") {
@@ -804,7 +804,7 @@ void Cartridge::loaduPD96050(std::string node) {
         std::string type = BML::search(m, {"memory", "type"});
         std::string content = BML::search(m, {"memory", "content"});
         if (type == "RAM" && content == "Data") {
-          std::string mem = BML::searchnode(m, {"memory", "map"});
+          std::string mem = BML::searchNode(m, {"memory", "map"});
           loadMap(mem, {&ST0010::read, &st0010}, {&ST0010::write, &st0010});
         }
       }
@@ -836,7 +836,7 @@ void Cartridge::loaduPD96050(std::string node) {
   has.NECDSP = true;
   necdsp.revision = NECDSP::Revision::uPD96050;
 
-  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) {
     loadMap(pmap, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
   }
@@ -848,10 +848,10 @@ void Cartridge::loadEpsonRTC(std::string node) {
 
   epsonrtc.initialize();
 
-  std::string map = BML::searchnode(node, {"rtc", "map"});
+  std::string map = BML::searchNode(node, {"rtc", "map"});
   loadMap(map, {&EpsonRTC::read, &epsonrtc}, {&EpsonRTC::write, &epsonrtc});
 
-  std::string memory = BML::searchnode(node, {"rtc", "memory"});
+  std::string memory = BML::searchNode(node, {"rtc", "memory"});
   if(auto file = game.memory(memory)) {
     std::ifstream rtcfile = Emulator::platform->fopen(ID::SuperFamicom, "time.rtc");
     if (rtcfile.is_open()) {
@@ -869,10 +869,10 @@ void Cartridge::loadSharpRTC(std::string node) {
 
   sharprtc.initialize();
 
-  std::string map = BML::searchnode(node, {"rtc", "map"});
+  std::string map = BML::searchNode(node, {"rtc", "map"});
   loadMap(map, {&SharpRTC::read, &sharprtc}, {&SharpRTC::write, &sharprtc});
 
-  std::string memory = BML::searchnode(node, {"rtc", "memory"});
+  std::string memory = BML::searchNode(node, {"rtc", "memory"});
   if(auto file = game.memory(memory)) {
     std::ifstream rtcfile = Emulator::platform->fopen(ID::SuperFamicom, "time.rtc");
     if (rtcfile.is_open()) {
@@ -893,7 +893,7 @@ void Cartridge::loadSPC7110(std::string node) {
     loadMap(m, {&SPC7110::read, &spc7110}, {&SPC7110::write, &spc7110});
   }
 
-  std::string mcu = BML::searchnode(node, {"processor", "mcu"});
+  std::string mcu = BML::searchNode(node, {"processor", "mcu"});
 
   if (!mcu.empty()) {
     std::vector<std::string> mcumaps = BML::searchList(mcu, "map");
@@ -914,7 +914,7 @@ void Cartridge::loadSPC7110(std::string node) {
     }
   }
 
-  std::string sram = BML::searchnode(node, {"processor", "memory"});
+  std::string sram = BML::searchNode(node, {"processor", "memory"});
   if (!sram.empty()) {
     std::string type = BML::search(sram, {"memory", "type"});
     std::string content = BML::search(sram, {"memory", "content"});
@@ -932,10 +932,10 @@ void Cartridge::loadSPC7110(std::string node) {
 void Cartridge::loadSDD1(std::string node) {
   has.SDD1 = true;
 
-  std::string pmap = BML::searchnode(node, {"processor", "map"});
+  std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) loadMap(pmap, {&SDD1::ioRead, &sdd1}, {&SDD1::ioWrite, &sdd1});
 
-  std::string mcu = BML::searchnode(node, {"processor", "mcu"});
+  std::string mcu = BML::searchNode(node, {"processor", "mcu"});
 
   if (!mcu.empty()) {
     std::vector<std::string> maps = BML::searchList(mcu, "map");
@@ -1068,7 +1068,7 @@ void Cartridge::saveRAM(std::string node) {
 
 //processor(identifier=MCC)
 void Cartridge::saveMCC(std::string node) {
-  std::string mcu = BML::searchnode(node, {"processor", "mcu"});
+  std::string mcu = BML::searchNode(node, {"processor", "mcu"});
   if (!mcu.empty()) {
     std::vector<std::string> mcumem = BML::searchList(mcu, "memory");
     for (std::string& m : mcumem) {
@@ -1170,7 +1170,7 @@ void Cartridge::saveuPD96050(std::string node) {
 
 //rtc(manufacturer=Epson)
 void Cartridge::saveEpsonRTC(std::string node) {
-  std::string memory = BML::searchnode(node, {"rtc", "memory"});
+  std::string memory = BML::searchNode(node, {"rtc", "memory"});
   if(auto file = game.memory(memory)) {
     if(file->nonVolatile) {
       uint8_t data[16] = {0};
@@ -1182,7 +1182,7 @@ void Cartridge::saveEpsonRTC(std::string node) {
 
 //rtc(manufacturer=Sharp)
 void Cartridge::saveSharpRTC(std::string node) {
-  std::string memory = BML::searchnode(node, {"rtc", "memory"});
+  std::string memory = BML::searchNode(node, {"rtc", "memory"});
   if(auto file = game.memory(memory)) {
     if(file->nonVolatile) {
       uint8_t data[16] = {0};
@@ -1194,7 +1194,7 @@ void Cartridge::saveSharpRTC(std::string node) {
 
 //processor(identifier=SPC7110)
 void Cartridge::saveSPC7110(std::string node) {
-  std::string sram = BML::searchnode(node, {"processor", "memory"});
+  std::string sram = BML::searchNode(node, {"processor", "memory"});
   if (!sram.empty()) {
     std::string type = BML::search(sram, {"memory", "type"});
     std::string content = BML::search(sram, {"memory", "content"});

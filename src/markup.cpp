@@ -44,8 +44,8 @@ public:
     }
 };
 
+// He bought? Dump eet.
 void dumpnode(std::ostream& out, const byuuML::document& document, const byuuML::node& node, int indent_level = 0) {
-
     for (int n = 0; n < indent_level; ++n) out << "  ";
     out << node.get_name();
     if (!node.get_data().empty()) out << ":" << node.get_data();
@@ -85,7 +85,7 @@ std::string gendoc(std::string docpath, std::string parent, std::string child, s
     return {};
 }
 
-std::string boardsearch(std::string text, std::string board) {
+std::string searchBoard(std::string text, std::string board) {
     std::stringstream ss;
     ss << text;
     std::istream& is = ss;
@@ -156,7 +156,7 @@ std::string search(std::string text, std::vector<std::string> terms) {
     return {};
 }
 
-std::string searchnode(std::string text, std::vector<std::string> terms) {
+std::string searchNode(std::string text, std::vector<std::string> terms) {
     std::stringstream ss;
     ss << text;
     std::istream& is = ss;
