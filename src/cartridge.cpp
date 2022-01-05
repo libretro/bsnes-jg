@@ -1220,52 +1220,6 @@ void Cartridge::serialize(serializer& s) {
 
 Cartridge cartridge;
 
-std::vector<std::string> Cartridge::hashes() const {
-  std::vector<std::string> hashes;
-  hashes.push_back(game.sha256);
-  if(!slotGameBoy.sha256.empty()) hashes.push_back(slotGameBoy.sha256);
-  if(!slotBSMemory.sha256.empty()) hashes.push_back(slotBSMemory.sha256);
-  if(!slotSufamiTurboA.sha256.empty()) hashes.push_back(slotSufamiTurboA.sha256);
-  if(!slotSufamiTurboB.sha256.empty()) hashes.push_back(slotSufamiTurboB.sha256);
-  return hashes;
-}
-
-std::vector<std::string> Cartridge::manifests() const {
-  std::vector<std::string> manifests;
-
-  manifests.push_back({game.document + "\n" + board});
-
-  if(!slotGameBoy.document.empty()) manifests.push_back(slotGameBoy.document);
-  if(!slotBSMemory.document.empty()) manifests.push_back(slotBSMemory.document);
-  if(!slotSufamiTurboA.document.empty()) manifests.push_back(slotSufamiTurboA.document);
-  if(!slotSufamiTurboB.document.empty()) manifests.push_back(slotSufamiTurboB.document);
-  return manifests;
-}
-
-std::vector<std::string> Cartridge::titles() const {
-  std::vector<std::string> titles;
-  titles.push_back(game.label);
-  if(!slotGameBoy.label.empty()) titles.push_back(slotGameBoy.label);
-  if(!slotBSMemory.label.empty()) titles.push_back(slotBSMemory.label);
-  if(!slotSufamiTurboA.label.empty()) titles.push_back(slotSufamiTurboA.label);
-  if(!slotSufamiTurboB.label.empty()) titles.push_back(slotSufamiTurboB.label);
-  return titles;
-}
-
-std::string Cartridge::title() const {
-  if(!slotGameBoy.label.empty()) return slotGameBoy.label;
-  if(has.MCC && !slotBSMemory.label.empty()) return slotBSMemory.label;
-  if(!slotBSMemory.label.empty())
-    return game.label + " + " + slotBSMemory.label;
-  if(!slotSufamiTurboA.label.empty() && !slotSufamiTurboB.label.empty())
-    return slotSufamiTurboA.label + " + " + slotSufamiTurboB.label;
-  if(!slotSufamiTurboA.label.empty()) return slotSufamiTurboA.label;
-  if(!slotSufamiTurboB.label.empty()) return slotSufamiTurboB.label;
-  if(has.Cx4 || has.DSP1 || has.DSP2 || has.DSP4 || has.ST0010)
-    return "[HLE] " + game.label;
-  return game.label;
-}
-
 bool Cartridge::load() {
   information = {};
   has = {};

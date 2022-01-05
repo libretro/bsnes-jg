@@ -32,11 +32,6 @@ struct Cartridge {
   std::string region() const { return information.region; }
   std::string headerTitle() const { return game.title; }
 
-  std::vector<std::string> hashes() const;
-  std::vector<std::string> manifests() const;
-  std::vector<std::string> titles() const;
-  std::string title() const;
-
   bool load();
   void save();
   void unload();

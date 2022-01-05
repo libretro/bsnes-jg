@@ -39,22 +39,6 @@ bool Interface::loaded() {
   return system.loaded();
 }
 
-std::vector<std::string> Interface::hashes() {
-  return cartridge.hashes();
-}
-
-std::vector<std::string> Interface::manifests() {
-  return cartridge.manifests();
-}
-
-std::vector<std::string> Interface::titles() {
-  return cartridge.titles();
-}
-
-std::string Interface::title() {
-  return cartridge.title();
-}
-
 bool Interface::load() {
   return system.load(this);
 }

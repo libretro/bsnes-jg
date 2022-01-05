@@ -59,10 +59,6 @@ struct ID {
 
 struct Interface : Emulator::Interface {
   bool loaded() override;
-  std::vector<std::string> hashes() override;
-  std::vector<std::string> manifests() override;
-  std::vector<std::string> titles() override;
-  std::string title() override;
   bool load() override;
   void save() override;
   void unload() override;
