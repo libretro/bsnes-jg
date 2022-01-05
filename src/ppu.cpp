@@ -20,7 +20,6 @@
 
 #include <iostream>
 
-#include "controller/controller.hpp"
 #include "interface.hpp"
 #include "cpu.hpp"
 #include "memory.hpp"
@@ -2382,7 +2381,6 @@ void PPU::refresh() {
   auto width  = 512;
   auto height = ppu.display.interlace ? 480 : 240;
 
-  if(auto device = controllerPort2.device) device->draw(output, pitch * sizeof(uint16_t), width, height);
   Emulator::platform->videoFrame(output, pitch * sizeof(uint16_t), width, height, /* scale = */ 1);
 }
 

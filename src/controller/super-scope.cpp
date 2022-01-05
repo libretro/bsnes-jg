@@ -130,34 +130,4 @@ void SuperScope::latch() {
   if(!offscreen) ppu.latchCounters(x, y);
 }
 
-void SuperScope::draw(uint16_t* data, unsigned pitch, unsigned width, unsigned height) {
-  /*pitch >>= 1;
-  float scaleX = (float)width  / 256.0;
-  float scaleY = (float)height / (float)ppu.vdisp();
-  int length = (float)width / 256.0 * 4.0;
-
-  int x = this->x * scaleX;
-  int y = this->y * scaleY;
-
-  auto plot = [&](int x, int y, uint16_t color) -> void {
-    if(x >= 0 && y >= 0 && x < (int)width && y < (int)height) {
-      data[y * pitch + x] = color;
-    }
-  };
-
-  uint16_t color = turbo ? 0x7c00 : 0x03e0;
-  uint16_t black = 0x0000;
-
-  for(int px = x - length - 1; px <= x + length + 1; px++) plot(px, y - 1, black);
-  for(int px = x - length - 1; px <= x + length + 1; px++) plot(px, y + 1, black);
-  for(int py = y - length - 1; py <= y + length + 1; py++) plot(x - 1, py, black);
-  for(int py = y - length - 1; py <= y + length + 1; py++) plot(x + 1, py, black);
-  plot(x - length - 1, y, black);
-  plot(x + length + 1, y, black);
-  plot(x, y - length - 1, black);
-  plot(x, y + length + 1, black);
-  for(int px = x - length; px <= x + length; px++) plot(px, y, color);
-  for(int py = y - length; py <= y + length; py++) plot(x, py, color);*/
-}
-
 }

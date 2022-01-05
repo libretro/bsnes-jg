@@ -46,7 +46,6 @@ struct Controller {
   virtual uint8_t data() { return 0; }
   virtual void latch(bool data) {}
   virtual void latch() {}  // light guns
-  virtual void draw(uint16_t* output, unsigned pitch, unsigned width, unsigned height) {}  // light guns
 
   const unsigned port;
 };
