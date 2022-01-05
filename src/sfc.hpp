@@ -31,98 +31,101 @@ inline constexpr auto operator"" _KiB(unsigned long long value) {
 }
 
 namespace SuperFamicom {
-  struct Scheduler {
-    enum class Mode : unsigned { Run, Synchronize } mode;
-    enum class Event : unsigned { Frame, Synchronized, Desynchronized } event;
 
-    cothread_t host = nullptr;
-    cothread_t active = nullptr;
-    bool desynchronized = false;
+struct Scheduler {
+  enum class Mode : unsigned { Run, Synchronize } mode;
+  enum class Event : unsigned { Frame, Synchronized, Desynchronized } event;
 
-    void enter() {
-      host = co_active();
-      co_switch(active);
-    }
+  cothread_t host = nullptr;
+  cothread_t active = nullptr;
+  bool desynchronized = false;
 
-    void leave(Event event_) {
-      event = event_;
-      active = co_active();
-      co_switch(host);
-    }
+  void enter() {
+    host = co_active();
+    co_switch(active);
+  }
 
-    void resume(cothread_t thread) {
-      if(mode == Mode::Synchronize) desynchronized = true;
-      co_switch(thread);
-    }
+  void leave(Event event_) {
+    event = event_;
+    active = co_active();
+    co_switch(host);
+  }
 
-    inline bool synchronizing() const {
-      return mode == Mode::Synchronize;
-    }
+  void resume(cothread_t thread) {
+    if(mode == Mode::Synchronize) desynchronized = true;
+    co_switch(thread);
+  }
 
-    inline void synchronize() {
-      if(mode == Mode::Synchronize) {
-        if(desynchronized) {
-          desynchronized = false;
-          leave(Event::Desynchronized);
-        } else {
-          leave(Event::Synchronized);
-        }
-      }
-    }
+  inline bool synchronizing() const {
+    return mode == Mode::Synchronize;
+  }
 
-    inline void desynchronize() {
-      desynchronized = true;
-    }
-  };
-  extern Scheduler scheduler;
-
-  struct Thread {
-    enum : unsigned { Size = 4_KiB * sizeof(void*) };
-
-    void create(void (*entrypoint)(), unsigned frequency_) {
-      if(!thread) {
-        thread = co_create(Thread::Size, entrypoint);
+  inline void synchronize() {
+    if(mode == Mode::Synchronize) {
+      if(desynchronized) {
+        desynchronized = false;
+        leave(Event::Desynchronized);
       } else {
-        thread = co_derive(thread, Thread::Size, entrypoint);
-      }
-      frequency = frequency_;
-      clock = 0;
-    }
-
-    bool active() const {
-      return thread == co_active();
-    }
-
-    void serialize(serializer& s) {
-      s.integer(frequency);
-      s.integer(clock);
-    }
-
-    void serializeStack(serializer& s) {
-      static uint8_t stack[Thread::Size];
-      bool active = co_active() == thread;
-
-      if(s.mode() == serializer::Size) {
-        s.array(stack, Thread::Size);
-        s.boolean(active);
-      }
-
-      if(s.mode() == serializer::Load) {
-        s.array(stack, Thread::Size);
-        s.boolean(active);
-        std::memcpy(thread, stack, Thread::Size);
-        if(active) scheduler.active = thread;
-      }
-
-      if(s.mode() == serializer::Save) {
-        std::memcpy(stack, thread, Thread::Size);
-        s.array(stack, Thread::Size);
-        s.boolean(active);
+        leave(Event::Synchronized);
       }
     }
+  }
 
-    cothread_t thread = nullptr;
-      uint32_t frequency = 0;
-       int64_t clock = 0;
-  };
+  inline void desynchronize() {
+    desynchronized = true;
+  }
+};
+
+extern Scheduler scheduler;
+
+struct Thread {
+  enum : unsigned { Size = 4_KiB * sizeof(void*) };
+
+  void create(void (*entrypoint)(), unsigned frequency_) {
+    if(!thread) {
+      thread = co_create(Thread::Size, entrypoint);
+    } else {
+      thread = co_derive(thread, Thread::Size, entrypoint);
+    }
+    frequency = frequency_;
+    clock = 0;
+  }
+
+  bool active() const {
+    return thread == co_active();
+  }
+
+  void serialize(serializer& s) {
+    s.integer(frequency);
+    s.integer(clock);
+  }
+
+  void serializeStack(serializer& s) {
+    static uint8_t stack[Thread::Size];
+    bool active = co_active() == thread;
+
+    if(s.mode() == serializer::Size) {
+      s.array(stack, Thread::Size);
+      s.boolean(active);
+    }
+
+    if(s.mode() == serializer::Load) {
+      s.array(stack, Thread::Size);
+      s.boolean(active);
+      std::memcpy(thread, stack, Thread::Size);
+      if(active) scheduler.active = thread;
+    }
+
+    if(s.mode() == serializer::Save) {
+      std::memcpy(stack, thread, Thread::Size);
+      s.array(stack, Thread::Size);
+      s.boolean(active);
+    }
+  }
+
+  cothread_t thread = nullptr;
+    uint32_t frequency = 0;
+     int64_t clock = 0;
+};
+
 }
