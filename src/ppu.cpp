@@ -1025,7 +1025,7 @@ void PPU::Background::runMode7() {
   int d = (int16_t)ppu.io.m7d;
 
   /* Note: These 4 variables were originally cast to nall::Integer<13> before
-    assignment to ints.
+     assignment to ints.
   */
   int hcenter = ppu.io.m7x;
   int vcenter = ppu.io.m7y;
@@ -1051,10 +1051,10 @@ void PPU::Background::runMode7() {
 
   int pixelX = (originX + a * x) >> 8;
   int pixelY = (originY + c * x) >> 8;
-  uint16_t paletteAddress = (nall::Natural< 3>)pixelY << 3 | (nall::Natural< 3>)pixelX;
+  uint16_t paletteAddress = ((pixelY & 0x07) << 3) | (pixelX & 0x07);
 
-  nall::Natural< 7> tileX = pixelX >> 3;
-  nall::Natural< 7> tileY = pixelY >> 3;
+  uint8_t tileX = (pixelX >> 3) & 0x7f;
+  uint8_t tileY = (pixelY >> 3) & 0x7f;
   uint16_t tileAddress = tileY << 7 | tileX;
 
   bool outOfBounds = (pixelX | pixelY) & ~1023;
