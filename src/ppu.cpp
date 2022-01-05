@@ -2381,7 +2381,7 @@ void PPU::refresh() {
   auto width  = 512;
   auto height = ppu.display.interlace ? 480 : 240;
 
-  Emulator::platform->videoFrame(output, pitch * sizeof(uint16_t), width, height, /* scale = */ 1);
+  Emulator::platform->videoFrame(output, pitch * sizeof(uint16_t), width, height);
 }
 
 }

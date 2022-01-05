@@ -124,7 +124,7 @@ struct Program : Emulator::Platform {
     void write(unsigned id, std::string name, const uint8_t *data,
         unsigned size) override;
     void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
-        unsigned height, unsigned scale) override;
+        unsigned height) override;
     void audioFrame(unsigned numsamps) override;
     int16_t inputPoll(unsigned port, unsigned device, unsigned input) override;
 
@@ -480,7 +480,7 @@ void Program::write(unsigned id, std::string name, const uint8_t *data,
 }
 
 void Program::videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
-    unsigned height, unsigned scale) {
+    unsigned height) {
     hmult = width / 256;
     vmult = height / 240;
     vidinfo.y = 8 * vmult;
