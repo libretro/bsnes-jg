@@ -89,7 +89,7 @@ void CPU::Channel::edge() {
   cpu.dmaEdge();
 }
 
-bool CPU::Channel::validA(nall::Natural<24> address) {
+bool CPU::Channel::validA(uint32_t address) {
   //A-bus cannot access the B-bus or CPU I/O registers
   if((address & 0x40ff00) == 0x2100) return false;  //00-3f,80-bf:2100-21ff
   if((address & 0x40fe00) == 0x4000) return false;  //00-3f,80-bf:4000-41ff
@@ -98,7 +98,7 @@ bool CPU::Channel::validA(nall::Natural<24> address) {
   return true;
 }
 
-uint8_t CPU::Channel::readA(nall::Natural<24> address) {
+uint8_t CPU::Channel::readA(uint32_t address) {
   step<4,1>();
   cpu.r.mdr = validA(address) ? bus.read(address, cpu.r.mdr) : (uint8_t)0x00;
   step<4,1>();
@@ -112,7 +112,7 @@ uint8_t CPU::Channel::readB(uint8_t address, bool valid) {
   return cpu.r.mdr;
 }
 
-void CPU::Channel::writeA(nall::Natural<24> address, uint8_t data) {
+void CPU::Channel::writeA(uint32_t address, uint8_t data) {
   if(validA(address)) bus.write(address, data);
 }
 
@@ -120,7 +120,7 @@ void CPU::Channel::writeB(uint8_t address, uint8_t data, bool valid) {
   if(valid) bus.write(0x2100 | address, data);
 }
 
-void CPU::Channel::transfer(nall::Natural<24> addressA, nall::Natural< 2> index) {
+void CPU::Channel::transfer(uint32_t addressA, nall::Natural< 2> index) {
   uint8_t addressB = targetAddress;
   switch(transferMode) {
   case 1: case 5: addressB += index.bit(0); break;
@@ -213,7 +213,7 @@ void CPU::Channel::hdmaTransfer() {
 
   static const unsigned lengths[8] = {1, 2, 2, 4, 4, 4, 2, 4};
   for(nall::Natural< 2> index : nall::range(lengths[transferMode])) {
-    nall::Natural<24> address = !indirect ? sourceBank << 16 | hdmaAddress++ : indirectBank << 16 | indirectAddress++;
+    uint32_t address = !indirect ? sourceBank << 16 | hdmaAddress++ : indirectBank << 16 | indirectAddress++;
     transfer(address, index);
   }
 }

@@ -203,12 +203,12 @@ private:
     template<unsigned Clocks, bool Synchronize> inline void step();
     inline void edge();
 
-    inline bool validA(nall::Natural<24> address);
-    inline uint8_t readA(nall::Natural<24> address);
+    inline bool validA(uint32_t address);
+    inline uint8_t readA(uint32_t address);
     inline uint8_t readB(uint8_t address, bool valid);
-    inline void writeA(nall::Natural<24> address, uint8_t data);
+    inline void writeA(uint32_t address, uint8_t data);
     inline void writeB(uint8_t address, uint8_t data, bool valid);
-    inline void transfer(nall::Natural<24> address, nall::Natural< 2> index);
+    inline void transfer(uint32_t address, nall::Natural< 2> index);
 
     inline void dmaRun();
     inline bool hdmaActive();
