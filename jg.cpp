@@ -103,7 +103,8 @@ enum {
 
 static std::vector<std::string> cheatList;
 
-static int vidmult = 1;
+static int hmult = 2;
+static int vmult = 1;
 static int ss_offset_x = 0;
 static int ss_offset_y = 0;
 
@@ -480,8 +481,9 @@ void Program::write(unsigned id, std::string name, const uint8_t *data,
 
 void Program::videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
     unsigned height, unsigned scale) {
-    vidmult = height / 240;
-    vidinfo.y = 8 * vidmult;
+    hmult = width / 256;
+    vmult = height / 240;
+    vidinfo.y = 8 * vmult;
     height -= 2 * vidinfo.y;
 
     vidinfo.w = width;
@@ -501,10 +503,10 @@ static int16_t pollInputDevices(unsigned port, unsigned device, unsigned input) 
     if (device == SuperFamicom::ID::Device::SuperScope) {
         switch (input) {
             case 0: { // X
-                return (input_device[port]->coord[0] / vidmult) + ss_offset_x;
+                return (input_device[port]->coord[0] / hmult) + ss_offset_x;
             }
             case 1: { // Y
-                return (input_device[port]->coord[1] / vidmult) + ss_offset_y;
+                return (input_device[port]->coord[1] / vmult) + ss_offset_y;
             }
             case 2: { // Trigger
                 int ret = 0;
@@ -553,10 +555,10 @@ static int16_t pollInputDevices(unsigned port, unsigned device, unsigned input) 
     else if (device == SuperFamicom::ID::Device::Justifier) {
         switch (input) {
             case 0: { // X
-                return input_device[port]->coord[0] / vidmult;
+                return input_device[port]->coord[0] / hmult;
             }
             case 1: { // Y
-                return input_device[port]->coord[1] / vidmult;
+                return input_device[port]->coord[1] / vmult;
             }
             case 2: { // Trigger
                 int ret = 0;
