@@ -114,7 +114,7 @@ private:
   inline uint8_t readOAM(nall::Natural<10> address);
   inline void writeOAM(nall::Natural<10> address, uint8_t data);
   inline uint8_t readCGRAM(bool byte, uint8_t address);
-  inline void writeCGRAM(uint8_t address, nall::Natural<15> data);
+  inline void writeCGRAM(uint8_t address, uint16_t data);
   uint8_t readIO(unsigned address, uint8_t data);
   void writeIO(unsigned address, uint8_t data);
   void updateVideoMode();
@@ -474,17 +474,17 @@ struct Screen {
   uint16_t below(bool hires);
   uint16_t above();
 
-  nall::Natural<15> blend(unsigned x, unsigned y) const;
-  inline nall::Natural<15> paletteColor(uint8_t palette) const;
-  inline nall::Natural<15> directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const;
-  inline nall::Natural<15> fixedColor() const;
+  uint16_t blend(unsigned x, unsigned y) const;
+  inline uint16_t paletteColor(uint8_t palette) const;
+  inline uint16_t directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const;
+  inline uint16_t fixedColor() const;
 
   void serialize(serializer&);
 
   uint16_t *lineA;
   uint16_t *lineB;
 
-  nall::Natural<15> cgram[256];
+  uint16_t cgram[256];
 
   struct IO {
     nall::Natural< 1> blendMode;
@@ -503,7 +503,7 @@ struct Screen {
 
   struct Math {
     struct Screen {
-      nall::Natural<15> color;
+      uint16_t color;
        nall::Natural< 1> colorEnable;
     } above, below;
     nall::Natural< 1> transparent;

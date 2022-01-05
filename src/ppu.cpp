@@ -18,6 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
+
 #include "controller/controller.hpp"
 #include "interface.hpp"
 #include "cpu.hpp"
@@ -278,10 +280,10 @@ uint8_t PPU::readCGRAM(bool byte, uint8_t addr) {
   && vcounter() > 0 && vcounter() < vdisp()
   && hcounter() >= 88 && hcounter() < 1096
   ) addr = latch.cgramAddress;
-  return screen.cgram[addr].byte(byte);
+  return byte ? (screen.cgram[addr] & 0x7f00) >> 8 : screen.cgram[addr] & 0xff;
 }
 
-void PPU::writeCGRAM(uint8_t addr, nall::Natural<15> data) {
+void PPU::writeCGRAM(uint8_t addr, uint16_t data) {
   if(!io.displayDisable
   && vcounter() > 0 && vcounter() < vdisp()
   && hcounter() >= 88 && hcounter() < 1096
@@ -1791,10 +1793,10 @@ uint16_t PPU::Screen::below(bool hires) {
   if((math.transparent = (priority == 0))) math.below.color = paletteColor(0);
 
   if(!hires) return 0;
-  if(!math.below.colorEnable) return math.above.colorEnable ? math.below.color : (nall::Natural<15>)0;
+  if(!math.below.colorEnable) return math.above.colorEnable ? math.below.color : (uint16_t)0;
 
   return blend(
-    math.above.colorEnable ? math.below.color : (nall::Natural<15>)0,
+    math.above.colorEnable ? math.below.color : (uint16_t)0,
     math.blendMode ? math.above.color : fixedColor()
   );
 }
@@ -1839,7 +1841,7 @@ uint16_t PPU::Screen::above() {
 
   if(!ppu.window.output.below.colorEnable) math.below.colorEnable = false;
   math.above.colorEnable = ppu.window.output.above.colorEnable;
-  if(!math.below.colorEnable) return math.above.colorEnable ? math.above.color : (nall::Natural<15>)0;
+  if(!math.below.colorEnable) return math.above.colorEnable ? math.above.color : (uint16_t)0;
 
   if(io.blendMode && math.transparent) {
     math.blendMode  = false;
@@ -1850,12 +1852,12 @@ uint16_t PPU::Screen::above() {
   }
 
   return blend(
-    math.above.colorEnable ? math.above.color : (nall::Natural<15>)0,
+    math.above.colorEnable ? math.above.color : (uint16_t)0,
     math.blendMode ? math.below.color : fixedColor()
   );
 }
 
-nall::Natural<15> PPU::Screen::blend(unsigned x, unsigned y) const {
+uint16_t PPU::Screen::blend(unsigned x, unsigned y) const {
   if(!io.colorMode) {  //add
     if(!math.colorHalve) {
       unsigned sum = x + y;
@@ -1875,12 +1877,12 @@ nall::Natural<15> PPU::Screen::blend(unsigned x, unsigned y) const {
   }
 }
 
-nall::Natural<15> PPU::Screen::paletteColor(uint8_t palette) const {
+uint16_t PPU::Screen::paletteColor(uint8_t palette) const {
   ppu.latch.cgramAddress = palette;
   return cgram[palette];
 }
 
-nall::Natural<15> PPU::Screen::directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const {
+uint16_t PPU::Screen::directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const {
   //palette = -------- BBGGGRRR
   //group   = -------- -----bgr
   //output  = 0BBb00GG Gg0RRRr0
@@ -1889,7 +1891,7 @@ nall::Natural<15> PPU::Screen::directColor(uint8_t palette, nall::Natural< 3> pa
        + (palette << 2 & 0x001c) + (paletteGroup <<  1 & 0x0002);
 }
 
-nall::Natural<15> PPU::Screen::fixedColor() const {
+uint16_t PPU::Screen::fixedColor() const {
   return io.colorBlue << 10 | io.colorGreen << 5 | io.colorRed << 0;
 }
 
