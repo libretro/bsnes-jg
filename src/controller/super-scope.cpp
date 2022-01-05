@@ -119,11 +119,6 @@ void SuperScope::latch(bool data) {
 }
 
 void SuperScope::latch() {
-  /*int nx = Emulator::platform->inputPoll(port, ID::Device::SuperScope, X);
-  int ny = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Y);
-  x = max(-16, min(256 + 16, nx + x));
-  y = max(-16, min((int)ppu.vdisp() + 16, ny + y));*/
-  // Changes were made here so that simple coords can be used JOLLYGOOD
   x = Emulator::platform->inputPoll(port, ID::Device::SuperScope, X);
   y = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Y);
   offscreen = (x < 0 || y < 0 || x >= 512 || y >= 480);
