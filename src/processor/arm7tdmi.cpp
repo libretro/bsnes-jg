@@ -21,9 +21,7 @@
 #include <bitset>
 #include <cassert>
 
-#include "../serializer.hpp"
 #include "../../nall/iterator.hpp"
-#include "../../nall/primitives.hpp"
 
 #include "arm7tdmi.hpp"
 

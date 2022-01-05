@@ -27,8 +27,6 @@
 
 #include "serializer.hpp"
 
-#include "../nall/primitives.hpp"
-
 namespace Emulator {
   //incremented only when serialization format changes
   static const std::string SerializerVersion = "115";

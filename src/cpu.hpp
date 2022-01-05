@@ -23,8 +23,6 @@
 #include "ppu.hpp"
 #include "processor/wdc65816.hpp"
 
-#include "../nall/primitives.hpp"
-
 namespace SuperFamicom {
 
 struct CPU : Processor::WDC65816, Thread, PPUcounter {

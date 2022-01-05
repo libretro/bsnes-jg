@@ -29,6 +29,8 @@ extern "C" {
   #include <gb/random.h>
 }
 
+#include "../../nall/primitives.hpp"
+
 namespace SuperFamicom {
 
 struct ICD : Emulator::Platform, Thread {

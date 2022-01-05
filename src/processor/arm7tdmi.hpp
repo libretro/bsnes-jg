@@ -23,6 +23,9 @@
 #pragma once
 
 #include "../function.hpp"
+#include "../serializer.hpp"
+
+#include "../../nall/primitives.hpp"
 
 namespace Processor {
 
