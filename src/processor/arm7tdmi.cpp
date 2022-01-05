@@ -862,9 +862,9 @@ void ARM7TDMI::armMoveToStatus(nall::Natural< 4> field, nall::Natural< 1> mode, 
 }
 
 void ARM7TDMI::armInstructionBranch
-(nall::Integer<24> displacement, nall::Natural< 1> link) {
+(uint32_t displacement, nall::Natural< 1> link) {
   if(link) r(14) = r(15) - 4;
-  r(15) = r(15) + displacement * 4;
+  r(15) = r(15) + signextend<int32_t,24>(displacement) * 4;
 }
 
 void ARM7TDMI::armInstructionBranchExchangeRegister(nall::Natural< 4> m) {
@@ -1193,8 +1193,8 @@ void ARM7TDMI::thumbInstructionBranchExchange(nall::Natural< 4> m) {
 }
 
 void ARM7TDMI::thumbInstructionBranchFarPrefix
-(nall::Integer<11> displacement) {
-  r(14) = r(15) + (displacement * 2 << 11);
+(uint16_t displacement) {
+  r(14) = r(15) + (signextend<int16_t,11>(displacement) * 2 << 11);
 }
 
 void ARM7TDMI::thumbInstructionBranchFarSuffix
@@ -1204,8 +1204,8 @@ void ARM7TDMI::thumbInstructionBranchFarSuffix
 }
 
 void ARM7TDMI::thumbInstructionBranchNear
-(nall::Integer<11> displacement) {
-  r(15) = r(15) + displacement * 2;
+(uint16_t displacement) {
+  r(15) = r(15) + signextend<int16_t,11>(displacement) * 2;
 }
 
 void ARM7TDMI::thumbInstructionBranchTest

@@ -90,7 +90,7 @@ struct ARM7TDMI {
   void armALU(nall::Natural< 4> mode, nall::Natural< 4> target, nall::Natural< 4> source, uint32_t data);
   void armMoveToStatus(nall::Natural< 4> field, nall::Natural< 1> source, uint32_t data);
 
-  void armInstructionBranch(nall::Integer<24>, nall::Natural< 1>);
+  void armInstructionBranch(uint32_t, nall::Natural< 1>);
   void armInstructionBranchExchangeRegister(nall::Natural< 4>);
   void armInstructionDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
   void armInstructionDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
@@ -119,9 +119,9 @@ struct ARM7TDMI {
   void thumbInstructionAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>);
   void thumbInstructionAdjustStack(nall::Natural< 7>, nall::Natural< 1>);
   void thumbInstructionBranchExchange(nall::Natural< 4>);
-  void thumbInstructionBranchFarPrefix(nall::Integer<11>);
+  void thumbInstructionBranchFarPrefix(uint16_t);
   void thumbInstructionBranchFarSuffix(nall::Natural<11>);
-  void thumbInstructionBranchNear(nall::Integer<11>);
+  void thumbInstructionBranchNear(uint16_t);
   void thumbInstructionBranchTest(int8_t, nall::Natural< 4>);
   void thumbInstructionImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>);
   void thumbInstructionLoadLiteral(uint8_t, nall::Natural< 3>);
