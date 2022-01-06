@@ -158,17 +158,17 @@ private:
 
   struct IO {
     //$2100  INIDISP
-    nall::Natural< 1> displayDisable;
+    uint8_t displayDisable;
     nall::Natural< 4> displayBrightness;
 
     //$2102  OAMADDL
     //$2103  OAMADDH
     nall::Natural<10> oamBaseAddress;
     nall::Natural<10> oamAddress;
-    nall::Natural< 1> oamPriority;
+    uint8_t oamPriority;
 
     //$2105  BGMODE
-    nall::Natural< 1> bgPriority;
+    uint8_t bgPriority;
     uint8_t bgMode;
 
     //$210d  BG1HOFS
@@ -178,7 +178,7 @@ private:
     uint16_t voffsetMode7;
 
     //$2115  VMAIN
-    nall::Natural< 1> vramIncrementMode;
+    uint8_t vramIncrementMode;
     nall::Natural< 2> vramMapping;
     uint8_t vramIncrementSize;
 
@@ -188,8 +188,8 @@ private:
 
     //$211a  M7SEL
     nall::Natural< 2> repeatMode7;
-    nall::Natural< 1> vflipMode7;
-    nall::Natural< 1> hflipMode7;
+    uint8_t vflipMode7;
+    uint8_t hflipMode7;
 
     //$211b  M7A
     uint16_t m7a;
@@ -211,13 +211,13 @@ private:
 
     //$2121  CGADD
     uint8_t cgramAddress;
-    nall::Natural< 1> cgramAddressLatch;
+    uint8_t cgramAddressLatch;
 
     //$2133  SETINI
-    nall::Natural< 1> extbg;
-    nall::Natural< 1> pseudoHires;
-    nall::Natural< 1> overscan;
-    nall::Natural< 1> interlace;
+    uint8_t extbg;
+    uint8_t pseudoHires;
+    uint8_t overscan;
+    uint8_t interlace;
 
     //$213c  OPHCT
     uint16_t hcounter;

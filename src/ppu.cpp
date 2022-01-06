@@ -355,12 +355,13 @@ uint8_t PPU::readIO(unsigned addr, uint8_t data) {
 
   //CGDATAREAD
   case 0x213b: {
-    if(io.cgramAddressLatch++ == 0) {
-      ppu2.mdr = readCGRAM(0, io.cgramAddress);
-    } else {
+    if(io.cgramAddressLatch) {
       ppu2.mdr &= 0x80;
       ppu2.mdr |= readCGRAM(1, io.cgramAddress++) & 0x7f;
+    } else {
+      ppu2.mdr = readCGRAM(0, io.cgramAddress);
     }
+    io.cgramAddressLatch ^= 1;
     return ppu2.mdr;
   }
 
@@ -450,7 +451,7 @@ void PPU::writeIO(unsigned addr, uint8_t data) {
   //OAMADDH
   case 0x2103: {
     io.oamBaseAddress = (data & 1) << 9 | (io.oamBaseAddress & 0x01fe);
-    io.oamPriority    = bool(data & 0x80);
+    io.oamPriority    = (data & 0x80) ? 1 : 0;
     obj.addressReset();
     return;
   }
@@ -701,11 +702,12 @@ void PPU::writeIO(unsigned addr, uint8_t data) {
 
   //CGDATA
   case 0x2122: {
-    if(io.cgramAddressLatch++ == 0) {
-      latch.cgram = data;
-    } else {
+    if(io.cgramAddressLatch) {
       writeCGRAM(io.cgramAddress++, (data & 0x7f) << 8 | latch.cgram);
+    } else {
+      latch.cgram = data;
     }
+    io.cgramAddressLatch ^= 1;
     return;
   }
 
@@ -1606,7 +1608,7 @@ void PPU::Object::power() {
 
   io.aboveEnable = random();
   io.belowEnable = random();
-  io.interlace = random();
+  io.interlace = random() & 1;
 
   io.baseSize = random();
   io.nameselect = random();
@@ -2295,17 +2297,17 @@ void PPU::power(bool reset) {
   latch.cgramAddress = 0x00;
 
   //$2100  INIDISP
-  io.displayDisable = true;
+  io.displayDisable = 1;
   io.displayBrightness = 0;
 
   //$2102  OAMADDL
   //$2103  OAMADDH
   io.oamBaseAddress = random() & ~1;
   io.oamAddress = random();
-  io.oamPriority = random();
+  io.oamPriority = random() & 1;
 
   //$2105  BGMODE
-  io.bgPriority = false;
+  io.bgPriority = 0;
   io.bgMode = 0;
 
   //$210d  BG1HOFS
@@ -2315,7 +2317,7 @@ void PPU::power(bool reset) {
   io.voffsetMode7 = random();
 
   //$2115  VMAIN
-  io.vramIncrementMode = random.bias(1);
+  io.vramIncrementMode = random.bias(1) & 1;
   io.vramMapping = random();
   io.vramIncrementSize = 1;
 
@@ -2325,8 +2327,8 @@ void PPU::power(bool reset) {
 
   //$211a  M7SEL
   io.repeatMode7 = random();
-  io.vflipMode7 = random();
-  io.hflipMode7 = random();
+  io.vflipMode7 = random() & 1;
+  io.hflipMode7 = random() & 1;
 
   //$211b  M7A
   io.m7a = random();
@@ -2348,13 +2350,13 @@ void PPU::power(bool reset) {
 
   //$2121  CGADD
   io.cgramAddress = random();
-  io.cgramAddressLatch = random();
+  io.cgramAddressLatch = random() & 1;
 
   //$2133  SETINI
-  io.extbg = random();
-  io.pseudoHires = random();
-  io.overscan = false;
-  io.interlace = false;
+  io.extbg = random() & 1;
+  io.pseudoHires = random() & 1;
+  io.overscan = 0;
+  io.interlace = 0;
 
   //$213c  OPHCT
   io.hcounter = 0;
