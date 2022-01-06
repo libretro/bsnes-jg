@@ -188,18 +188,16 @@ void System::runToSave() {
   auto method = configuration.system.serialization.method;
 
   //these games will periodically deadlock when using "Fast" synchronization
-  if(cartridge.headerTitle() == "MEGAMAN X3") method = "Strict";
-  if(cartridge.headerTitle() == "STAR FOX") method = "Strict";
-  if(cartridge.headerTitle() == "Star Ocean") method = "Strict";
-  if(cartridge.headerTitle() == "SUPER MARIO RPG") method = "Strict";
-  if(cartridge.headerTitle() == "TALES OF PHANTASIA") method = "Strict";
-
-  //fallback in case of unrecognized method specified
-  if(method != "Fast" && method != "Strict") method = "Strict";
+  if(cartridge.headerTitle() == "MEGAMAN X3"
+      || cartridge.headerTitle() == "STAR FOX"
+      || cartridge.headerTitle() == "Star Ocean"
+      || cartridge.headerTitle() == "SUPER MARIO RPG"
+      || cartridge.headerTitle() == "TALES OF PHANTASIA")
+    method = "Strict";
 
   scheduler.mode = Scheduler::Mode::Synchronize;
-  if(method == "Fast") runToSaveFast();
-  if(method == "Strict") runToSaveStrict();
+
+  method == "Fast" ? runToSaveFast() : runToSaveStrict();
 
   scheduler.mode = Scheduler::Mode::Run;
   scheduler.active = cpu.thread;
@@ -351,8 +349,6 @@ void System::power(bool reset) {
 
   if(configuration.entropy == "None")
     random.entropy(Emulator::Random::Entropy::None);
-  else if(configuration.entropy == "Low" )
-    random.entropy(Emulator::Random::Entropy::Low );
   else if(configuration.entropy == "High")
     random.entropy(Emulator::Random::Entropy::High);
   else
