@@ -106,7 +106,7 @@ void PPU::main() {
 //it's a performance penalty of about 25% for the entire(!!) emulator.
 
 void PPU::cycleObjectEvaluate() {
-  obj.evaluate(hcounter() >> 3);
+  obj.evaluate((hcounter() >> 3) & 0x7f);
 }
 
 template<unsigned Cycle>
@@ -1296,7 +1296,8 @@ inline void PPU::Background::run(bool screen) {
   pixel.priority = tile.priority;
   pixel.palette = color ? unsigned(tile.palette + color) : 0;
   pixel.paletteGroup = tile.paletteGroup;
-  if((++pixelCounter & 7) == 0) ++renderingIndex;
+  pixelCounter = (pixelCounter + 1) & 7;
+  if(!pixelCounter) renderingIndex = (renderingIndex + 1) & 0x7f;
 
   unsigned x = (ppu.hcounter() - 56) >> 2;
 
@@ -1415,7 +1416,7 @@ void PPU::Object::addressReset() {
 }
 
 void PPU::Object::setFirstSprite() {
-  io.firstSprite = !ppu.io.oamPriority ? 0 : unsigned(ppu.io.oamAddress >> 2);
+  io.firstSprite = !ppu.io.oamPriority ? 0 : (ppu.io.oamAddress >> 2) & 0x7f;
 }
 
 void PPU::Object::frame() {
@@ -1442,13 +1443,13 @@ void PPU::Object::scanline() {
   if(t.y >= ppu.vdisp() - 1 || ppu.io.displayDisable) return;
 }
 
-void PPU::Object::evaluate(nall::Natural< 7> index) {
+void PPU::Object::evaluate(uint8_t index) {
   if(ppu.io.displayDisable) return;
   if(t.itemCount > 32) return;
 
   auto oamItem = t.item[t.active];
 
-  nall::Natural< 7> sprite = latch.firstSprite + index;
+  uint8_t sprite = (latch.firstSprite + index) & 0x7f;
   if(!onScanline(oam.object[sprite])) return;
   ppu.latch.oamAddress = sprite;
 
