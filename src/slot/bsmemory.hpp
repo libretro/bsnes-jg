@@ -48,8 +48,8 @@ struct BSMemory : Thread, Memory {
   unsigned pathID = 0;
   unsigned ROM = 1;
 
-  auto writable() const { return pin.writable; }
-  auto writable(bool writable) { pin.writable = !ROM && writable; }
+  bool writable() const { return pin.writable; }
+  void writable(bool writable) { pin.writable = !ROM && writable; }
 
   //bsmemory.cpp
   BSMemory();
@@ -74,7 +74,7 @@ struct BSMemory : Thread, Memory {
 
 private:
   struct Pin {
-    nall::Natural< 1> writable;  // => /WP
+    bool writable;  // => /WP
   } pin;
 
   struct Chip {
