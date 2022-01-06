@@ -1101,7 +1101,7 @@ inline void PPU::Background::scanline() {
   mosaic.hoffset = 0;
 
   renderingIndex = 0;
-  pixelCounter = (io.hoffset & 7) << hires();
+  pixelCounter = ((io.hoffset & 7) << hires()) & 7;
 
   opt.hoffset = 0;
   opt.voffset = 0;
@@ -1296,7 +1296,7 @@ inline void PPU::Background::run(bool screen) {
   pixel.priority = tile.priority;
   pixel.palette = color ? unsigned(tile.palette + color) : 0;
   pixel.paletteGroup = tile.paletteGroup;
-  if(++pixelCounter == 0) ++renderingIndex;
+  if((++pixelCounter & 7) == 0) ++renderingIndex;
 
   unsigned x = (ppu.hcounter() - 56) >> 2;
 

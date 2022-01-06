@@ -321,7 +321,7 @@ struct Background {
   } tiles[66];
 
   nall::Natural< 7> renderingIndex;
-  nall::Natural< 3> pixelCounter;
+  uint8_t pixelCounter;
 
   friend struct PPU;
 };
