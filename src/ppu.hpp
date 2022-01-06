@@ -297,7 +297,7 @@ struct Background {
   } output;
 
   struct Mosaic {
-     nall::Natural< 1> enable;
+    uint8_t enable;
     uint16_t hcounter;
     uint16_t hoffset;
     Pixel  pixel;
@@ -315,8 +315,8 @@ struct Background {
     uint8_t palette;
     nall::Natural< 3> paletteGroup;
     uint8_t priority;
-    nall::Natural< 1> hmirror;
-    nall::Natural< 1> vmirror;
+    uint8_t hmirror;
+    uint8_t vmirror;
     uint16_t data[4];
   } tiles[66];
 

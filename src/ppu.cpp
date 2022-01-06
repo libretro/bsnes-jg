@@ -1184,8 +1184,8 @@ void PPU::Background::fetchNameTable() {
   tile.character = attributes & 0x03ff;
   tile.paletteGroup = attributes >> 10 & 7;
   tile.priority = io.priority[attributes >> 13 & 1];
-  tile.hmirror = bool(attributes & 0x4000);
-  tile.vmirror = bool(attributes & 0x8000);
+  tile.hmirror = attributes & 0x4000 ? 1 : 0;
+  tile.vmirror = attributes & 0x8000 ? 1 : 0;
 
   if(htiles == 4 && bool(hoffset & 8) != tile.hmirror) tile.character +=  1;
   if(vtiles == 4 && bool(voffset & 8) != tile.vmirror) tile.character += 16;
@@ -1331,7 +1331,7 @@ void PPU::Background::power() {
   output.below = {};
 
   mosaic = {};
-  mosaic.enable = random();
+  mosaic.enable = random() & 1;
 }
 
 uint8_t PPU::OAM::read(nall::Natural<10> address) {
