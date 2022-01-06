@@ -31,8 +31,8 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline bool refresh() const { return status.dramRefresh == 1; }
   inline bool synchronizing() const override { return scheduler.synchronizing(); }
 
-  inline auto flip(bool& data, bool value) { return data != value ? (data = value, true) : false; }
-  inline auto lower(bool& data) { return data == 1 ? data = 0, true : false; }
+  inline bool flip(bool& data, bool value) { return data != value ? (data = value, true) : false; }
+  inline bool lower(bool& data) { return data == 1 ? data = 0, true : false; }
   inline bool raise(bool& data, bool value) { return !data && value ? (data = value, true) : (data = value, false); }
 
   //cpu.cpp
