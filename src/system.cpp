@@ -187,12 +187,14 @@ void System::run() {
 void System::runToSave() {
   auto method = configuration.system.serialization.method;
 
+  static const std::string headerTitle = cartridge.headerTitle();
+
   //these games will periodically deadlock when using "Fast" synchronization
-  if(cartridge.headerTitle() == "MEGAMAN X3"
-      || cartridge.headerTitle() == "STAR FOX"
-      || cartridge.headerTitle() == "Star Ocean"
-      || cartridge.headerTitle() == "SUPER MARIO RPG"
-      || cartridge.headerTitle() == "TALES OF PHANTASIA")
+  if(headerTitle == "MEGAMAN X3"
+      || headerTitle == "STAR FOX"
+      || headerTitle == "Star Ocean"
+      || headerTitle == "SUPER MARIO RPG"
+      || headerTitle == "TALES OF PHANTASIA")
     method = "Strict";
 
   scheduler.mode = Scheduler::Mode::Synchronize;
@@ -288,11 +290,13 @@ bool System::load(Emulator::Interface* interface) {
   if(!dsp.load()) return false;
   if(!cartridge.load()) return false;
 
-  if(cartridge.region() == "NTSC") {
+  static const std::string region = cartridge.region();
+
+  if(region == "NTSC") {
     information.region = Region::NTSC;
     information.cpuFrequency = NTSC * 6.0;
   }
-  if(cartridge.region() == "PAL") {
+  else if(region == "PAL") {
     information.region = Region::PAL;
     information.cpuFrequency = PAL * 4.8;
   }
