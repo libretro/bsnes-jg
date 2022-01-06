@@ -1378,13 +1378,13 @@ void PPU::OAM::write(nall::Natural<10> address, uint8_t data) {
   } else {
     unsigned n = (address & 0x1f) << 2;  //object#
     object[n + 0].x    = (object[n + 0].x & 0xff) | bool(data & 0x01) << 8;
-    object[n + 0].size = bool(data & 0x02);
+    object[n + 0].size = data & 0x02 ? 1 : 0;
     object[n + 1].x    = (object[n + 1].x & 0xff) | bool(data & 0x04) << 8;
-    object[n + 1].size = bool(data & 0x08);
+    object[n + 1].size = data & 0x08 ? 1 : 0;
     object[n + 2].x    = (object[n + 2].x & 0xff) | bool(data & 0x10) << 8;
-    object[n + 2].size = bool(data & 0x20);
+    object[n + 2].size = data & 0x20 ? 1 : 0;
     object[n + 3].x    = (object[n + 3].x & 0xff) | bool(data & 0x40) << 8;
-    object[n + 3].size = bool(data & 0x80);
+    object[n + 3].size = data & 0x80 ? 1 : 0;
   }
 }
 

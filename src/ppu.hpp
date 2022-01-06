@@ -337,12 +337,12 @@ struct OAM {
     nall::Natural< 9> x;
     uint8_t y;
     uint8_t character;
-    nall::Natural< 1> nameselect;
-    nall::Natural< 1> vflip;
-    nall::Natural< 1> hflip;
+    uint8_t nameselect;
+    uint8_t vflip;
+    uint8_t hflip;
     nall::Natural< 2> priority;
     nall::Natural< 3> palette;
-    nall::Natural< 1> size;
+    uint8_t size;
   } object[128];
 };
 
