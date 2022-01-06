@@ -334,7 +334,7 @@ struct OAM {
     inline unsigned width() const;
     inline unsigned height() const;
 
-    nall::Natural< 9> x;
+    uint16_t x;
     uint8_t y;
     uint8_t character;
     uint8_t nameselect;
@@ -389,7 +389,7 @@ struct Object {
 
   struct Tile {
      uint8_t valid;
-     nall::Natural< 9> x;
+     uint16_t x;
      nall::Natural< 2> priority;
      uint8_t palette;
      uint8_t hflip;
