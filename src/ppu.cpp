@@ -490,10 +490,10 @@ void PPU::writeIO(unsigned addr, uint8_t data) {
     bg2.mosaic.enable = data >> 1 & 1;
     bg3.mosaic.enable = data >> 2 & 1;
     bg4.mosaic.enable = data >> 3 & 1;
-    mosaic.size       = (data >> 4 & 15) + 1;
+    mosaic.size       = ((data >> 4 & 15) + 1) & 0x1f;
     if(!mosaicEnable && mosaic.enable()) {
       //mosaic vcounter is reloaded when mosaic becomes enabled
-      mosaic.vcounter = mosaic.size + 1;
+      mosaic.vcounter = (mosaic.size + 1) & 0x1f;
     }
     return;
   }
@@ -1003,7 +1003,7 @@ unsigned PPU::Mosaic::voffset() const {
 //H = 0
 void PPU::Mosaic::scanline() {
   if(ppu.vcounter() == 1) {
-    vcounter = enable() ? size + 1 : 0;
+    vcounter = enable() ? ((size + 1) & 0x1f) : 0;
   }
   if(vcounter && !--vcounter) {
     vcounter = enable() ? size + 0 : 0;
@@ -1173,7 +1173,7 @@ void PPU::Background::fetchNameTable() {
   unsigned hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
   unsigned vscreen = io.screenSize.bit(1) ? 32 << (5 + io.screenSize.bit(0)) : 0;
 
-  uint16_t offset = (nall::Natural< 5>)htile << 0 | (nall::Natural< 5>)vtile << 5;
+  uint16_t offset = (htile & 0x1f) << 0 | (vtile & 0x1f) << 5;
   if(htile & 0x20) offset += hscreen;
   if(vtile & 0x20) offset += vscreen;
 
@@ -1227,7 +1227,7 @@ void PPU::Background::fetchOffset(unsigned y) {
   unsigned hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
   unsigned vscreen = io.screenSize.bit(1) ? 32 << (5 + io.screenSize.bit(0)) : 0;
 
-  uint16_t offset = (nall::Natural< 5>)htile << 0 | (nall::Natural< 5>)vtile << 5;
+  uint16_t offset = (htile & 0x1f) << 0 | (vtile & 0x1f) << 5;
   if(htile & 0x20) offset += hscreen;
   if(vtile & 0x20) offset += vscreen;
 

@@ -236,8 +236,8 @@ struct Mosaic {
   //serialization.cpp
   void serialize(serializer&);
 
-  nall::Natural< 5> size;
-  nall::Natural< 5> vcounter;
+  uint8_t size;
+  uint8_t vcounter;
 };
 
 struct Background {
