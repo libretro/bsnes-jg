@@ -116,12 +116,12 @@ private:
     struct Status {
       uint8_t operator()();
 
-      nall::Natural< 1> vppLow;
-      nall::Natural< 1> queueFull;
-      nall::Natural< 1> aborted;
-      nall::Natural< 1> failed;
-      nall::Natural< 1> locked = 1;
-      nall::Natural< 1> ready = 1;
+      bool vppLow;
+      bool queueFull;
+      bool aborted;
+      bool failed;
+      bool locked = true;
+      bool ready = true;
     } status;
   } blocks[64];  //8mbit = 16; 16mbit = 32; 32mbit = 64
 
@@ -133,11 +133,11 @@ private:
     struct Status {
       uint8_t operator()();
 
-      nall::Natural< 1> vppLow;
-      nall::Natural< 1> writeFailed;
-      nall::Natural< 1> eraseFailed;
-      nall::Natural< 1> eraseSuspended;
-      nall::Natural< 1> ready = 1;
+      bool vppLow;
+      bool writeFailed;
+      bool eraseFailed;
+      bool eraseSuspended;
+      bool ready = true;
     } status;
   } compatible;
 
@@ -145,14 +145,14 @@ private:
     struct Status {
       uint8_t operator()();
 
-      nall::Natural< 1> page;
-      nall::Natural< 1> pageReady = 1;
-      nall::Natural< 1> pageAvailable = 1;
-      nall::Natural< 1> queueFull;
-      nall::Natural< 1> sleeping;
-      nall::Natural< 1> failed;
-      nall::Natural< 1> suspended;
-      nall::Natural< 1> ready = 1;
+      bool page;
+      bool pageReady = true;
+      bool pageAvailable = true;
+      bool queueFull;
+      bool sleeping;
+      bool failed;
+      bool suspended;
+      bool ready = true;
     } status;
   } global;
 
