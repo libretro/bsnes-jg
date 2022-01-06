@@ -185,9 +185,8 @@ void System::run() {
 }
 
 void System::runToSave() {
-  auto method = configuration.system.serialization.method;
-
   static const std::string headerTitle = cartridge.headerTitle();
+  static std::string method = configuration.system.serialization.method;
 
   //these games will periodically deadlock when using "Fast" synchronization
   if(headerTitle == "MEGAMAN X3"
