@@ -38,7 +38,7 @@ template<typename R, typename... P> struct bfunction<auto (P...) -> R> {
 
   explicit operator bool() const { return callback; }
   auto operator()(P... p) const -> R { return (*callback)(std::forward<P>(p)...); }
-  auto reset() -> void { if(callback) { delete callback; callback = nullptr; } }
+  void reset() { if(callback) { delete callback; callback = nullptr; } }
 
   auto operator=(const bfunction& source) -> bfunction& {
     if(this != &source) {
@@ -51,7 +51,7 @@ template<typename R, typename... P> struct bfunction<auto (P...) -> R> {
 private:
   struct container {
     virtual auto operator()(P... p) const -> R = 0;
-    virtual auto copy() const -> container* = 0;
+    virtual container* copy() const = 0;
     virtual ~container() = default;
   };
 
@@ -61,14 +61,14 @@ private:
     auto (C::*bfunction)(P...) -> R;
     C* object;
     auto operator()(P... p) const -> R { return (object->*bfunction)(std::forward<P>(p)...); }
-    auto copy() const -> container* { return new member(bfunction, object); }
+    container* copy() const { return new member(bfunction, object); }
     member(auto (C::*bfunction)(P...) -> R, C* object) : bfunction(bfunction), object(object) {}
   };
 
   template<typename L> struct lambda : container {
     mutable L object;
     auto operator()(P... p) const -> R { return object(std::forward<P>(p)...); }
-    auto copy() const -> container* { return new lambda(object); }
+    container* copy() const { return new lambda(object); }
     lambda(const L& object) : object(object) {}
   };
 };
