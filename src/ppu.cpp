@@ -1419,8 +1419,8 @@ void PPU::Object::setFirstSprite() {
 }
 
 void PPU::Object::frame() {
-  io.timeOver = false;
-  io.rangeOver = false;
+  io.timeOver = 0;
+  io.rangeOver = 0;
 }
 
 void PPU::Object::scanline() {
@@ -1435,8 +1435,8 @@ void PPU::Object::scanline() {
   auto oamItem = t.item[t.active];
   auto oamTile = t.tile[t.active];
 
-  for(unsigned n = 0; n < 32; ++n) oamItem[n].valid = false;
-  for(unsigned n = 0; n < 34; ++n) oamTile[n].valid = false;
+  for(unsigned n = 0; n < 32; ++n) oamItem[n].valid = 0;
+  for(unsigned n = 0; n < 34; ++n) oamTile[n].valid = 0;
 
   if(t.y == ppu.vdisp() && !ppu.io.displayDisable) addressReset();
   if(t.y >= ppu.vdisp() - 1 || ppu.io.displayDisable) return;
@@ -1547,7 +1547,7 @@ void PPU::Object::fetch() {
       if(t.tileCount++ >= 34) break;
 
       unsigned n = t.tileCount - 1;
-      oamTile[n].valid = true;
+      oamTile[n].valid = 1;
       oamTile[n].x = sx;
       oamTile[n].priority = sprite.priority;
       oamTile[n].palette = 128 + (sprite.palette << 4);
@@ -1567,8 +1567,8 @@ void PPU::Object::fetch() {
     }
   }
 
-  io.timeOver  |= (t.tileCount > 34);
-  io.rangeOver |= (t.itemCount > 32);
+  io.timeOver  |= (t.tileCount > 34) & 1;
+  io.rangeOver |= (t.itemCount > 32) & 1;
 }
 
 void PPU::Object::power() {
@@ -1593,11 +1593,11 @@ void PPU::Object::power() {
   t.active = 0;
   for(unsigned p = 0; p < 2; ++p) {
     for(unsigned n = 0; n < 32; ++n) {
-      t.item[p][n].valid = false;
+      t.item[p][n].valid = 0;
       t.item[p][n].index = 0;
     }
     for(unsigned n = 0; n < 34; ++n) {
-      t.tile[p][n].valid = false;
+      t.tile[p][n].valid = 0;
       t.tile[p][n].x = 0;
       t.tile[p][n].priority = 0;
       t.tile[p][n].palette = 0;
@@ -1617,8 +1617,8 @@ void PPU::Object::power() {
 
   for(auto& p : io.priority) p = 0;
 
-  io.timeOver = false;
-  io.rangeOver = false;
+  io.timeOver = 0;
+  io.rangeOver = 0;
 
   latch = {};
 

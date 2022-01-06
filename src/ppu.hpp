@@ -363,9 +363,9 @@ struct Object {
   OAM oam;
 
   struct IO {
-    nall::Natural< 1> aboveEnable;
-    nall::Natural< 1> belowEnable;
-    nall::Natural< 1> interlace;
+    uint8_t aboveEnable;
+    uint8_t belowEnable;
+    uint8_t interlace;
 
     nall::Natural< 3> baseSize;
     nall::Natural< 2> nameselect;
@@ -374,8 +374,8 @@ struct Object {
 
     uint8_t priority[4];
 
-    nall::Natural< 1> timeOver;
-    nall::Natural< 1> rangeOver;
+    uint8_t timeOver;
+    uint8_t rangeOver;
   } io;
 
   struct Latch {
@@ -383,16 +383,16 @@ struct Object {
   } latch;
 
   struct Item {
-     nall::Natural< 1> valid;
+     uint8_t valid;
      nall::Natural< 7> index;
   };
 
   struct Tile {
-     nall::Natural< 1> valid;
+     uint8_t valid;
      nall::Natural< 9> x;
      nall::Natural< 2> priority;
      uint8_t palette;
-     nall::Natural< 1> hflip;
+     uint8_t hflip;
      uint32_t data;
   };
 
