@@ -146,7 +146,7 @@ private:
     uint8_t oam;
     uint8_t cgram;
     uint8_t bgofsPPU1;
-    nall::Natural< 3> bgofsPPU2;
+    uint8_t bgofsPPU2;
     uint8_t mode7;
     uint8_t counters;
     uint8_t hcounter;

@@ -547,7 +547,7 @@ void PPU::writeIO(unsigned addr, uint8_t data) {
 
     bg1.io.hoffset = data << 8 | (latch.bgofsPPU1 & ~7) | (latch.bgofsPPU2 & 7);
     latch.bgofsPPU1 = data;
-    latch.bgofsPPU2 = data;
+    latch.bgofsPPU2 = data & 7;
     return;
   }
 
@@ -565,7 +565,7 @@ void PPU::writeIO(unsigned addr, uint8_t data) {
   case 0x210f: {
     bg2.io.hoffset = data << 8 | (latch.bgofsPPU1 & ~7) | (latch.bgofsPPU2 & 7);
     latch.bgofsPPU1 = data;
-    latch.bgofsPPU2 = data;
+    latch.bgofsPPU2 = data & 7;
     return;
   }
 
@@ -580,7 +580,7 @@ void PPU::writeIO(unsigned addr, uint8_t data) {
   case 0x2111: {
     bg3.io.hoffset = data << 8 | (latch.bgofsPPU1 & ~7) | (latch.bgofsPPU2 & 7);
     latch.bgofsPPU1 = data;
-    latch.bgofsPPU2 = data;
+    latch.bgofsPPU2 = data & 7;
     return;
   }
 
@@ -595,7 +595,7 @@ void PPU::writeIO(unsigned addr, uint8_t data) {
   case 0x2113: {
     bg4.io.hoffset = data << 8 | (latch.bgofsPPU1 & ~7) | (latch.bgofsPPU2 & 7);
     latch.bgofsPPU1 = data;
-    latch.bgofsPPU2 = data;
+    latch.bgofsPPU2 = data & 7;
     return;
   }
 
@@ -2287,7 +2287,7 @@ void PPU::power(bool reset) {
   latch.oam = random();
   latch.cgram = random();
   latch.bgofsPPU1 = random();
-  latch.bgofsPPU2 = random();
+  latch.bgofsPPU2 = random() & 7;
   latch.mode7 = random();
   latch.counters = 0;
   latch.hcounter = 0;
