@@ -336,7 +336,7 @@ uint8_t SA1::dmaCC1Read(unsigned addr) {
 
     for(unsigned y = 0; y < 8; ++y) {
       uint64_t data = 0;
-      for(unsigned byte = 0; y < bpp; ++y) {
+      for(unsigned byte = 0; byte < bpp; ++byte) {
         data |= (uint64_t)bwram.read((bwaddr + byte) & bwmask) << (byte << 3);
       }
       bwaddr += bpl;
@@ -355,7 +355,7 @@ uint8_t SA1::dmaCC1Read(unsigned addr) {
         out[7] |= (data & 1) << (7 - x); data >>= 1;
       }
 
-      for(unsigned byte = 0; byte < bpp; ++bpp) {
+      for(unsigned byte = 0; byte < bpp; ++byte) {
         unsigned p = mmio.dda + (y << 1) + ((byte & 6) << 3) + (byte & 1);
         iram.write(p & 0x07ff, out[byte]);
       }
