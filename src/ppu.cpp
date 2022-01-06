@@ -304,20 +304,20 @@ uint8_t PPU::readIO(unsigned addr, uint8_t data) {
 
   //MPYL
   case 0x2134: {
-    nall::Natural<24> result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
-    return ppu1.mdr = result.byte(0);
+    uint32_t result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
+    return ppu1.mdr = result & 0xff;
   }
 
   //MPYM
   case 0x2135: {
-    nall::Natural<24> result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
-    return ppu1.mdr = result.byte(1);
+    uint32_t result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
+    return ppu1.mdr = (result >> 8) & 0xff;
   }
 
   //MPYH
   case 0x2136: {
-    nall::Natural<24> result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
-    return ppu1.mdr = result.byte(2);
+    uint32_t result = (int16_t)io.m7a * (int8_t)(io.m7b >> 8);
+    return ppu1.mdr = (result >> 16) & 0xff;
   }
 
   //SLHV
