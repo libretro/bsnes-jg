@@ -496,9 +496,9 @@ struct Screen {
       uint8_t colorEnable;
     } bg1, bg2, bg3, bg4, obj, back;
 
-    nall::Natural< 5> colorBlue;
-    nall::Natural< 5> colorGreen;
-    nall::Natural< 5> colorRed;
+    uint8_t colorBlue;
+    uint8_t colorGreen;
+    uint8_t colorRed;
   } io;
 
   struct Math {

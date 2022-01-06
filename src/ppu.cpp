@@ -1914,9 +1914,9 @@ void PPU::Screen::power() {
   io.bg4.colorEnable = random() & 1;
   io.obj.colorEnable = random() & 1;
   io.back.colorEnable = random() & 1;
-  io.colorBlue = random();
-  io.colorGreen = random();
-  io.colorRed = random();
+  io.colorBlue = random() & 0x1f;
+  io.colorGreen = random() & 0x1f;
+  io.colorRed = random() & 0x1f;
 }
 
 void PPU::serialize(serializer& s) {
