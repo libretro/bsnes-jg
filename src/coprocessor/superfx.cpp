@@ -18,8 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../interface.hpp"
 #include "../cpu.hpp"
+#include "../interface.hpp"
 #include "../memory.hpp"
 
 #include "superfx.hpp"

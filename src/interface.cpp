@@ -18,14 +18,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "controller/controller.hpp"
-#include "interface.hpp"
-
 #include "cartridge.hpp"
+#include "cheat.hpp"
+#include "controller/controller.hpp"
 #include "coprocessor/icd.hpp"
 #include "cpu.hpp"
 #include "expansion/expansion.hpp"
-#include "cheat.hpp"
+
+#include "interface.hpp"
 
 namespace SuperFamicom {
 

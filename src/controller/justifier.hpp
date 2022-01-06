@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "controller.hpp"
+
 namespace SuperFamicom {
 
 struct Justifier : Controller {

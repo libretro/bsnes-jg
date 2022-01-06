@@ -18,9 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "controller.hpp"
-#include "../interface.hpp"
 #include "../cpu.hpp"
+#include "../interface.hpp"
 #include "../memory.hpp"
 
 #include "gamepad.hpp"
@@ -28,6 +27,8 @@
 #include "mouse.hpp"
 #include "super-multitap.hpp"
 #include "super-scope.hpp"
+
+#include "controller.hpp"
 
 namespace SuperFamicom {
 

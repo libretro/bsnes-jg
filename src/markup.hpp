@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <string>
+
 namespace BML {
 std::string gendoc(std::string dbpath, std::string parent, std::string child, std::string match);
 bool exists(std::string text, std::vector<std::string> terms);

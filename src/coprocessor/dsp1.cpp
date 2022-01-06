@@ -20,8 +20,9 @@
 
 #include "../serializer.hpp"
 
-#include "dsp1.hpp"
 #include "dsp1emu.hpp"
+
+#include "dsp1.hpp"
 
 namespace SuperFamicom {
 

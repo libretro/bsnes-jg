@@ -18,16 +18,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "controller/controller.hpp"
-#include "interface.hpp"
-#include "random.hpp"
-
-#include "cpu.hpp"
-#include "smp.hpp"
-
 #include "cartridge.hpp"
+#include "controller/controller.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"
+#include "interface.hpp"
+#include "random.hpp"
+#include "smp.hpp"
+
+#include "cpu.hpp"
 
 #include "../nall/iterator.hpp"
 

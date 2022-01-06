@@ -20,8 +20,8 @@
 
 #include <iostream>
 
-#include "interface.hpp"
 #include "cpu.hpp"
+#include "interface.hpp"
 #include "memory.hpp"
 #include "random.hpp"
 

@@ -22,9 +22,9 @@
 #include <sstream>
 
 #include "../audio.hpp"
-#include "../interface.hpp"
 #include "../cpu.hpp"
 #include "../dsp.hpp"
+#include "../interface.hpp"
 
 #include "msu1.hpp"
 

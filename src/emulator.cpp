@@ -20,8 +20,9 @@
 
 #include <algorithm>
 
-#include "emulator.hpp"
 #include "markup.hpp"
+
+#include "emulator.hpp"
 
 namespace Emulator {
 

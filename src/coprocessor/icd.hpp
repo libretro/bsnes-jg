@@ -22,6 +22,7 @@
 
 #include "../audio.hpp"
 #include "../cheat.hpp"
+#include "../emulator.hpp"
 #include "../sfc.hpp"
 
 extern "C" {

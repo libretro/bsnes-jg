@@ -23,8 +23,9 @@
 #include <sstream>
 #include <vector>
 
-#include "heuristics.hpp"
 #include "sha256.hpp"
+
+#include "heuristics.hpp"
 
 namespace Heuristics {
 

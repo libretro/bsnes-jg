@@ -22,12 +22,6 @@
 #include <iterator>
 #include <vector>
 
-#include "interface.hpp"
-#include "markup.hpp"
-#include "sha256.hpp"
-#include "system.hpp"
-
-#include "cartridge.hpp"
 #include "coprocessor/armdsp.hpp"
 #include "coprocessor/cx4.hpp"
 #include "coprocessor/dip.hpp"
@@ -47,8 +41,14 @@
 #include "coprocessor/spc7110.hpp"
 #include "coprocessor/st0010.hpp"
 #include "coprocessor/superfx.hpp"
+#include "interface.hpp"
+#include "markup.hpp"
+#include "sha256.hpp"
 #include "slot/bsmemory.hpp"
 #include "slot/sufamiturbo.hpp"
+#include "system.hpp"
+
+#include "cartridge.hpp"
 
 namespace SuperFamicom {
 

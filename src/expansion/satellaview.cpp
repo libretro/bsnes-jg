@@ -21,6 +21,7 @@
 #include "../memory.hpp"
 
 #include "expansion.hpp"
+
 #include "satellaview.hpp"
 
 namespace SuperFamicom {

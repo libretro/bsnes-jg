@@ -22,6 +22,7 @@
 #include "../memory.hpp"
 
 #include "dip.hpp"
+
 #include "event.hpp"
 
 namespace SuperFamicom {

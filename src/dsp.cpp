@@ -18,8 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "interface.hpp"
 #include "cartridge.hpp"
+#include "interface.hpp"
 #include "system.hpp"
 
 #include "dsp.hpp"

@@ -19,6 +19,7 @@
  */
 
 #include "expansion.hpp"
+
 #include "21fx.hpp"
 
 namespace SuperFamicom {

@@ -30,7 +30,6 @@
 //require manual polling of PIO ($4201.d6) to determine when iobit was written.
 //Note that no commercial game ever utilizes a Super Scope in port 1.
 
-#include "controller.hpp"
 #include "../interface.hpp"
 #include "../ppu.hpp"
 
