@@ -366,23 +366,25 @@ uint8_t PPU::readIO(unsigned addr, uint8_t data) {
 
   //OPHCT
   case 0x213c: {
-    if(latch.hcounter++ == 0) {
-      ppu2.mdr = io.hcounter >> 0;
-    } else {
+    if(latch.hcounter) {
       ppu2.mdr &= 0xfe;
       ppu2.mdr |= io.hcounter >> 8 & 1;
+    } else {
+      ppu2.mdr = io.hcounter >> 0;
     }
+    latch.hcounter ^= 1;
     return ppu2.mdr;
   }
 
   //OPVCT
   case 0x213d: {
-    if(latch.vcounter++ == 0) {
-      ppu2.mdr = io.vcounter >> 0;
-    } else {
+    if(latch.vcounter) {
       ppu2.mdr &= 0xfe;
       ppu2.mdr |= io.vcounter >> 8 & 1;
+    } else {
+      ppu2.mdr = io.vcounter >> 0;
     }
+    latch.vcounter ^= 1;
     return ppu2.mdr;
   }
 
@@ -2285,7 +2287,7 @@ void PPU::power(bool reset) {
   latch.bgofsPPU1 = random();
   latch.bgofsPPU2 = random();
   latch.mode7 = random();
-  latch.counters = false;
+  latch.counters = 0;
   latch.hcounter = 0;
   latch.vcounter = 0;
 
