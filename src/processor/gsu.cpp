@@ -182,7 +182,7 @@ void GSU::instructionROL() {
 //$0e bvc e
 //$0f bvs e
 void GSU::instructionBranch(bool take) {
-  auto displacement = (int8_t)pipe();
+  int8_t displacement = (int8_t)pipe();
   if(take) regs.r[15] += displacement;
 }
 
@@ -555,7 +555,7 @@ void GSU::serialize(serializer& s) {
   s.integer(regs.pipeline);
   s.integer(regs.ramaddr);
 
-  for(auto n = 0; n < 16; ++n) {
+  for(unsigned n = 0; n < 16; ++n) {
     s.integer(regs.r[n].data);
     s.integer(regs.r[n].modified);
   }
@@ -601,7 +601,7 @@ void GSU::serialize(serializer& s) {
   s.array(cache.buffer);
   s.array(cache.valid);
 
-  for(auto n = 0; n < 2; ++n) {
+  for(unsigned n = 0; n < 2; ++n) {
     s.integer(pixelcache[n].offset);
     s.integer(pixelcache[n].bitpend);
     s.array(pixelcache[n].data);
