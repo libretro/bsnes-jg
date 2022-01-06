@@ -46,8 +46,4 @@ inline auto range(int64_t size) {
   return range_t{0, size, 1};
 }
 
-inline auto range(int64_t offset, int64_t size) {
-  return range_t{offset, size, 1};
-}
-
 }
