@@ -110,8 +110,8 @@ private:
 
     nall::Natural< 4>  id;
     uint32_t erased;
-    nall::Natural< 1>  locked;
-    nall::Natural< 1>  erasing;
+    bool locked;
+    bool erasing;
 
     struct Status {
       uint8_t operator()();
@@ -185,7 +185,7 @@ private:
     void serialize(serializer&);
 
     struct History {
-      nall::Natural< 1>  valid;
+      bool valid;
       nall::Natural<24> address;
       uint8_t  data;
     } history[4];
