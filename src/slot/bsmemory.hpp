@@ -176,9 +176,9 @@ private:
   struct Queue {
     void flush();
     void pop();
-    void push(nall::Natural<24> address, uint8_t data);
+    void push(uint32_t address, uint8_t data);
     unsigned size();
-    nall::Natural<24> address(unsigned index);
+    uint32_t address(unsigned index);
     uint8_t data(unsigned index);
 
     //serialization.cpp
@@ -186,7 +186,7 @@ private:
 
     struct History {
       bool valid;
-      nall::Natural<24> address;
+      uint32_t address;
       uint8_t  data;
     } history[4];
   } queue;

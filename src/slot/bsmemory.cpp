@@ -624,7 +624,7 @@ void BSMemory::Queue::pop() {
   if(history[0].valid) { history[0] = {}; return; }
 }
 
-void BSMemory::Queue::push(nall::Natural<24> address, uint8_t data) {
+void BSMemory::Queue::push(uint32_t address, uint8_t data) {
   if(!history[0].valid) { history[0] = {true, address, data}; return; }
   if(!history[1].valid) { history[1] = {true, address, data}; return; }
   if(!history[2].valid) { history[2] = {true, address, data}; return; }
@@ -639,7 +639,7 @@ unsigned BSMemory::Queue::size() {
   return 0;
 }
 
-nall::Natural<24> BSMemory::Queue::address(unsigned index) {
+uint32_t BSMemory::Queue::address(unsigned index) {
   if(index > 3 || !history[index].valid) return 0;
   return history[index].address;
 }
