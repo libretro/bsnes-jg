@@ -27,6 +27,16 @@
 
 #include "icd.hpp"
 
+extern "C" {
+  #include <gb/gb.h>
+  #include <gb/random.h>
+}
+
+//warning: the size of this object will be too large due to C++ size rules differing from C rules.
+//in practice, this won't pose a problem so long as the struct is never accessed from C++ code,
+//as the offsets of all member variables will be wrong compared to what the C SameBoy code expects.
+static GB_gameboy_t sameboy;
+
 namespace SuperFamicom {
 
 ICD icd;
