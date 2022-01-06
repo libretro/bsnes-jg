@@ -47,15 +47,6 @@ struct has_serialize {
 struct serializer {
   enum Mode : unsigned { Load, Save, Size };
 
-  explicit operator bool() const {
-    return _size;
-  }
-
-  void setMode(Mode mode) {
-    _mode = mode;
-    _size = 0;
-  }
-
   Mode mode() const {
     return _mode;
   }
@@ -66,10 +57,6 @@ struct serializer {
 
   unsigned size() const {
     return _size;
-  }
-
-  unsigned capacity() const {
-    return _capacity;
   }
 
   template<typename T> serializer& boolean(T& value) {
@@ -115,9 +102,6 @@ struct serializer {
 
   template<typename T> serializer& operator()(T& value, typename std::enable_if<has_serialize<T>::value>::type* = 0) { value.serialize(*this); return *this; }
   template<typename T> serializer& operator()(T& value, typename std::enable_if<std::is_integral<T>::value>::type* = 0) { return integer(value); }
-  template<typename T> serializer& operator()(T& value, typename std::enable_if<std::is_floating_point<T>::value>::type* = 0) { return real(value); }
-  template<typename T> serializer& operator()(T& value, typename std::enable_if<std::is_array<T>::value>::type* = 0) { return array(value); }
-  template<typename T> serializer& operator()(T& value, unsigned size, typename std::enable_if<std::is_pointer<T>::value>::type* = 0) { return array(value, size); }
 
   serializer& operator=(const serializer& s) {
     if(_data) delete[] _data;
@@ -131,21 +115,8 @@ struct serializer {
     return *this;
   }
 
-  serializer& operator=(serializer&& s) {
-    if(_data) delete[] _data;
-
-    _mode = s._mode;
-    _data = s._data;
-    _size = s._size;
-    _capacity = s._capacity;
-
-    s._data = nullptr;
-    return *this;
-  }
-
   serializer() = default;
   serializer(const serializer& s) { operator=(s); }
-  serializer(serializer&& s) { operator=(std::move(s)); }
 
   serializer(unsigned capacity) {
     _mode = Save;
