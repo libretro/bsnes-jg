@@ -1321,9 +1321,9 @@ void PPU::Background::power() {
   io.tiledataAddress = (random() & 0x0f) << 12;
   io.screenAddress = (random() & 0xfc) << 8;
   io.screenSize = random();
-  io.tileSize = random();
-  io.aboveEnable = random();
-  io.belowEnable = random();
+  io.tileSize = random() & 1;
+  io.aboveEnable = random() & 1;
+  io.belowEnable = random() & 1;
   io.hoffset = random();
   io.voffset = random();
 
@@ -1606,8 +1606,8 @@ void PPU::Object::power() {
     }
   }
 
-  io.aboveEnable = random();
-  io.belowEnable = random();
+  io.aboveEnable = random() & 1;
+  io.belowEnable = random() & 1;
   io.interlace = random() & 1;
 
   io.baseSize = random();
@@ -1682,40 +1682,40 @@ void PPU::Window::power() {
   io.bg1.twoEnable = random();
   io.bg1.twoInvert = random();
   io.bg1.mask = random();
-  io.bg1.aboveEnable = random();
-  io.bg1.belowEnable = random();
+  io.bg1.aboveEnable = random() & 1;
+  io.bg1.belowEnable = random() & 1;
 
   io.bg2.oneEnable = random();
   io.bg2.oneInvert = random();
   io.bg2.twoEnable = random();
   io.bg2.twoInvert = random();
   io.bg2.mask = random();
-  io.bg2.aboveEnable = random();
-  io.bg2.belowEnable = random();
+  io.bg2.aboveEnable = random() & 1;
+  io.bg2.belowEnable = random() & 1;
 
   io.bg3.oneEnable = random();
   io.bg3.oneInvert = random();
   io.bg3.twoEnable = random();
   io.bg3.twoInvert = random();
   io.bg3.mask = random();
-  io.bg3.aboveEnable = random();
-  io.bg3.belowEnable = random();
+  io.bg3.aboveEnable = random() & 1;
+  io.bg3.belowEnable = random() & 1;
 
   io.bg4.oneEnable = random();
   io.bg4.oneInvert = random();
   io.bg4.twoEnable = random();
   io.bg4.twoInvert = random();
   io.bg4.mask = random();
-  io.bg4.aboveEnable = random();
-  io.bg4.belowEnable = random();
+  io.bg4.aboveEnable = random() & 1;
+  io.bg4.belowEnable = random() & 1;
 
   io.obj.oneEnable = random();
   io.obj.oneInvert = random();
   io.obj.twoEnable = random();
   io.obj.twoInvert = random();
   io.obj.mask = random();
-  io.obj.aboveEnable = random();
-  io.obj.belowEnable = random();
+  io.obj.aboveEnable = random() & 1;
+  io.obj.belowEnable = random() & 1;
 
   io.col.oneEnable = random();
   io.col.oneInvert = random();

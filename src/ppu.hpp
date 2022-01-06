@@ -273,13 +273,13 @@ struct Background {
     uint16_t tiledataAddress;
     uint16_t screenAddress;
     nall::Natural< 2> screenSize;
-    nall::Natural< 1> tileSize;
+    uint8_t tileSize;
 
     uint8_t mode;
     uint8_t priority[2];
 
-    nall::Natural< 1> aboveEnable;
-    nall::Natural< 1> belowEnable;
+    uint8_t aboveEnable;
+    uint8_t belowEnable;
 
     uint16_t hoffset;
     uint16_t voffset;
