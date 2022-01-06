@@ -19,8 +19,8 @@
  */
 
 #include "../cpu.hpp"
-#include "../interface.hpp"
 #include "../memory.hpp"
+#include "../settings.hpp"
 
 #include "superfx.hpp"
 

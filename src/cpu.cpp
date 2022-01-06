@@ -22,8 +22,8 @@
 #include "controller/controller.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"
-#include "interface.hpp"
 #include "random.hpp"
+#include "settings.hpp"
 #include "smp.hpp"
 
 #include "cpu.hpp"

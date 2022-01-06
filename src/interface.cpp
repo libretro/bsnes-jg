@@ -24,6 +24,7 @@
 #include "coprocessor/icd.hpp"
 #include "cpu.hpp"
 #include "expansion/expansion.hpp"
+#include "settings.hpp"
 
 #include "interface.hpp"
 

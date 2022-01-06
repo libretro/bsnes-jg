@@ -19,7 +19,7 @@
  */
 
 #include "cartridge.hpp"
-#include "interface.hpp"
+#include "settings.hpp"
 #include "system.hpp"
 
 #include "dsp.hpp"

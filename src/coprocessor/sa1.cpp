@@ -19,7 +19,7 @@
  */
 
 #include "../cpu.hpp"
-#include "../interface.hpp"
+#include "../settings.hpp"
 #include "../slot/bsmemory.hpp"
 
 #include "sa1.hpp"

@@ -32,6 +32,7 @@
 #include "src/markup.hpp"
 #include "src/sha256.hpp"
 #include "src/sfc.hpp"
+#include "src/settings.hpp"
 
 #include "gamedb.hpp"
 

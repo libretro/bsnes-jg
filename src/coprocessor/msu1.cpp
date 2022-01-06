@@ -24,7 +24,7 @@
 #include "../audio.hpp"
 #include "../cpu.hpp"
 #include "../dsp.hpp"
-#include "../interface.hpp"
+#include "../settings.hpp"
 
 #include "msu1.hpp"
 

@@ -18,7 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../interface.hpp"
+#include "../settings.hpp"
 #include "../system.hpp"
 
 #include "expansion.hpp"
