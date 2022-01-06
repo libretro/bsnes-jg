@@ -108,7 +108,7 @@ private:
     void lock();
     void update();
 
-    nall::Natural< 4>  id;
+    uint8_t id;
     uint32_t erased;
     bool locked;
     bool erasing;
