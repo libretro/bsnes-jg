@@ -137,7 +137,7 @@ private:
   void refresh();
 
   struct {
-    nall::Natural< 4> version;
+    uint8_t version;
     uint8_t mdr;
   } ppu1, ppu2;
 
@@ -159,7 +159,7 @@ private:
   struct IO {
     //$2100  INIDISP
     uint8_t displayDisable;
-    nall::Natural< 4> displayBrightness;
+    uint8_t displayBrightness;
 
     //$2102  OAMADDL
     //$2103  OAMADDH
