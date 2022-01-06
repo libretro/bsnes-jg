@@ -24,6 +24,9 @@
 
 namespace SuperFamicom {
 
+static constexpr double NTSC = 315.0 / 88.0 * 1'000'000.0;
+static constexpr double PAL  = 283.75 * 15'625.0 + 25.0;
+
 struct Region {
   static inline bool NTSC();
   static inline bool PAL();
@@ -64,7 +67,7 @@ private:
   struct Information {
     bool loaded = false;
     Region region = Region::NTSC;
-    double cpuFrequency = Emulator::Constants::Colorburst::NTSC * 6.0;
+    double cpuFrequency = NTSC * 6.0;
     double apuFrequency = 32040.0 * 768.0;
     unsigned serializeSize[2] = {0, 0};
   } information;

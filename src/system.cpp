@@ -292,11 +292,11 @@ bool System::load(Emulator::Interface* interface) {
 
   if(cartridge.region() == "NTSC") {
     information.region = Region::NTSC;
-    information.cpuFrequency = Emulator::Constants::Colorburst::NTSC * 6.0;
+    information.cpuFrequency = NTSC * 6.0;
   }
   if(cartridge.region() == "PAL") {
     information.region = Region::PAL;
-    information.cpuFrequency = Emulator::Constants::Colorburst::PAL * 4.8;
+    information.cpuFrequency = PAL * 4.8;
   }
 
   if(configuration.hotfixes) {

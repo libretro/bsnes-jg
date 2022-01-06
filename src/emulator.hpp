@@ -28,15 +28,9 @@
 #include "serializer.hpp"
 
 namespace Emulator {
-  //incremented only when serialization format changes
-  static const std::string SerializerVersion = "115";
 
-  namespace Constants {
-    namespace Colorburst {
-      static constexpr double NTSC = 315.0 / 88.0 * 1'000'000.0;
-      static constexpr double PAL  = 283.75 * 15'625.0 + 25.0;
-    }
-  }
+//incremented only when serialization format changes
+static const std::string SerializerVersion = "115";
 
 struct Platform {
   struct Load {
