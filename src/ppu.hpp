@@ -288,7 +288,7 @@ struct Background {
   struct Pixel {
     uint8_t priority;  //0 = none (transparent)
     uint8_t palette;
-    nall::Natural< 3> paletteGroup;
+    uint8_t paletteGroup;
   } above, below;
 
   struct Output {
@@ -313,7 +313,7 @@ struct Background {
     uint16_t address;
     nall::Natural<10> character;
     uint8_t palette;
-    nall::Natural< 3> paletteGroup;
+    uint8_t paletteGroup;
     uint8_t priority;
     uint8_t hmirror;
     uint8_t vmirror;
@@ -341,7 +341,7 @@ struct OAM {
     uint8_t vflip;
     uint8_t hflip;
     nall::Natural< 2> priority;
-    nall::Natural< 3> palette;
+    uint8_t palette;
     uint8_t size;
   } object[128];
 };
@@ -367,7 +367,7 @@ struct Object {
     uint8_t belowEnable;
     uint8_t interlace;
 
-    nall::Natural< 3> baseSize;
+    uint8_t baseSize;
     nall::Natural< 2> nameselect;
     uint16_t tiledataAddress;
     nall::Natural< 7> firstSprite;
@@ -476,7 +476,7 @@ struct Screen {
 
   uint16_t blend(unsigned x, unsigned y) const;
   inline uint16_t paletteColor(uint8_t palette) const;
-  inline uint16_t directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const;
+  inline uint16_t directColor(uint8_t palette, uint8_t paletteGroup) const;
   inline uint16_t fixedColor() const;
 
   void serialize(serializer&);

@@ -1610,7 +1610,7 @@ void PPU::Object::power() {
   io.belowEnable = random() & 1;
   io.interlace = random() & 1;
 
-  io.baseSize = random();
+  io.baseSize = random() & 7;
   io.nameselect = random();
   io.tiledataAddress = (random() & 7) << 13;
   io.firstSprite = 0;
@@ -1887,7 +1887,7 @@ uint16_t PPU::Screen::paletteColor(uint8_t palette) const {
   return cgram[palette];
 }
 
-uint16_t PPU::Screen::directColor(uint8_t palette, nall::Natural< 3> paletteGroup) const {
+uint16_t PPU::Screen::directColor(uint8_t palette, uint8_t paletteGroup) const {
   //palette = -------- BBGGGRRR
   //group   = -------- -----bgr
   //output  = 0BBb00GG Gg0RRRr0
