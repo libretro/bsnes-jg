@@ -1748,11 +1748,11 @@ void PPU::Screen::scanline() {
   math.above.color = paletteColor(0);
   math.below.color = math.above.color;
 
-  math.above.colorEnable = false;
-  math.below.colorEnable = false;
+  math.above.colorEnable = 0;
+  math.below.colorEnable = 0;
 
-  math.transparent = true;
-  math.blendMode   = false;
+  math.transparent = 1;
+  math.blendMode   = 0;
   math.colorHalve  = io.colorHalve && !io.blendMode && math.above.colorEnable;
 }
 
@@ -1844,13 +1844,13 @@ uint16_t PPU::Screen::above() {
     math.below.colorEnable = io.back.colorEnable;
   }
 
-  if(!ppu.window.output.below.colorEnable) math.below.colorEnable = false;
+  if(!ppu.window.output.below.colorEnable) math.below.colorEnable = 0;
   math.above.colorEnable = ppu.window.output.above.colorEnable;
   if(!math.below.colorEnable) return math.above.colorEnable ? math.above.color : (uint16_t)0;
 
   if(io.blendMode && math.transparent) {
-    math.blendMode  = false;
-    math.colorHalve = false;
+    math.blendMode  = 0;
+    math.colorHalve = 0;
   } else {
     math.blendMode  = io.blendMode;
     math.colorHalve = io.colorHalve && math.above.colorEnable;
@@ -1904,16 +1904,16 @@ void PPU::Screen::power() {
   random.array((uint8_t*)cgram, sizeof(cgram));
   for(auto& word : cgram) word &= 0x7fff;
 
-  io.blendMode = random();
-  io.directColor = random();
-  io.colorMode = random();
-  io.colorHalve = random();
-  io.bg1.colorEnable = random();
-  io.bg2.colorEnable = random();
-  io.bg3.colorEnable = random();
-  io.bg4.colorEnable = random();
-  io.obj.colorEnable = random();
-  io.back.colorEnable = random();
+  io.blendMode = random() & 1;
+  io.directColor = random() & 1;
+  io.colorMode = random() & 1;
+  io.colorHalve = random() & 1;
+  io.bg1.colorEnable = random() & 1;
+  io.bg2.colorEnable = random() & 1;
+  io.bg3.colorEnable = random() & 1;
+  io.bg4.colorEnable = random() & 1;
+  io.obj.colorEnable = random() & 1;
+  io.back.colorEnable = random() & 1;
   io.colorBlue = random();
   io.colorGreen = random();
   io.colorRed = random();

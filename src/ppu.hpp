@@ -487,13 +487,13 @@ struct Screen {
   uint16_t cgram[256];
 
   struct IO {
-    nall::Natural< 1> blendMode;
-    nall::Natural< 1> directColor;
+    uint8_t blendMode;
+    uint8_t directColor;
 
-    nall::Natural< 1> colorMode;
-    nall::Natural< 1> colorHalve;
+    uint8_t colorMode;
+    uint8_t colorHalve;
     struct Layer {
-      nall::Natural< 1> colorEnable;
+      uint8_t colorEnable;
     } bg1, bg2, bg3, bg4, obj, back;
 
     nall::Natural< 5> colorBlue;
@@ -504,11 +504,11 @@ struct Screen {
   struct Math {
     struct Screen {
       uint16_t color;
-       nall::Natural< 1> colorEnable;
+       uint8_t colorEnable;
     } above, below;
-    nall::Natural< 1> transparent;
-    nall::Natural< 1> blendMode;
-    nall::Natural< 1> colorHalve;
+    uint8_t transparent;
+    uint8_t blendMode;
+    uint8_t colorHalve;
   } math;
 
   friend struct PPU;
