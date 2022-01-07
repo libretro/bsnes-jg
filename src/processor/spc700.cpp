@@ -19,7 +19,6 @@
  */
 
 #include "../serializer.hpp"
-#include "../../nall/primitives.hpp"
 
 #include "spc700.hpp"
 
