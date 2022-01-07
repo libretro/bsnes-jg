@@ -20,6 +20,7 @@
 
 #include <iterator>
 
+#include "../audio.hpp"
 #include "../cartridge.hpp"
 #include "../cpu.hpp"
 #include "../settings.hpp"
@@ -38,6 +39,8 @@ extern "C" {
 static GB_gameboy_t sameboy;
 
 namespace SuperFamicom {
+
+static Emulator::Stream *stream;
 
 ICD icd;
 

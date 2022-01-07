@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../audio.hpp"
+
 namespace SuperFamicom {
 
 struct MSU1 : Thread {

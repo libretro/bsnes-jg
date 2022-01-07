@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "../audio.hpp"
 #include "../cheat.hpp"
 #include "../emulator.hpp"
 #include "../sfc.hpp"
@@ -28,7 +27,6 @@
 namespace SuperFamicom {
 
 struct ICD : Emulator::Platform, Thread {
-  Emulator::Stream *stream;
   Emulator::Cheat cheats;
 
   inline unsigned pathID() const { return information.pathID; }
