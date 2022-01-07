@@ -24,7 +24,6 @@
 #include <cstring>
 #include <optional>
 
-#include "memory.hpp"
 #include "serializer.hpp"
 
 namespace Emulator {
