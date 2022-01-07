@@ -25,8 +25,6 @@
 #include "../emulator.hpp"
 #include "../sfc.hpp"
 
-#include "../../nall/primitives.hpp"
-
 namespace SuperFamicom {
 
 struct ICD : Emulator::Platform, Thread {

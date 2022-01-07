@@ -24,6 +24,7 @@
 #include "coprocessor/msu1.hpp"
 #include "random.hpp"
 #include "settings.hpp"
+#include "../nall/primitives.hpp"
 #include "smp.hpp"
 
 #include "cpu.hpp"
