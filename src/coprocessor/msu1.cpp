@@ -31,6 +31,8 @@
 
 namespace SuperFamicom {
 
+static Emulator::Stream *stream;
+
 MSU1 msu1;
 
 void MSU1::serialize(serializer& s) {

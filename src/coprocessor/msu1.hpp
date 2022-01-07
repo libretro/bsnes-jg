@@ -20,13 +20,9 @@
 
 #pragma once
 
-#include "../audio.hpp"
-
 namespace SuperFamicom {
 
 struct MSU1 : Thread {
-  Emulator::Stream *stream;
-
   void synchronizeCPU();
   static void Enter();
   void main();
