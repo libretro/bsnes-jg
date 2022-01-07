@@ -26,6 +26,8 @@
 
 #include "endian.hpp"
 
+#include "../nall/primitives.hpp"
+
 namespace Processor {
 
 struct WDC65816 {

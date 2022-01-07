@@ -24,8 +24,6 @@
 #include "sfc.hpp"
 #include "system.hpp"
 
-#include "../nall/primitives.hpp"
-
 namespace SuperFamicom {
 
 //PPUcounter emulates the H/V latch counters of the S-PPU2.
