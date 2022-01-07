@@ -52,12 +52,12 @@ void ICD::ppuVreset() {
   vcounter = 0;
 }
 
-void ICD::ppuWrite(nall::Natural< 2> color) {
+void ICD::ppuWrite(uint8_t color) {
   auto x = (uint8_t)hcounter++;
-  auto y = (nall::Natural< 3>)vcounter;
+  auto y = vcounter & 0x07;
   if(x >= 160) return;  //unverified behavior
 
-  nall::Natural<11> address = writeBank * 512 + y * 2 + x / 8 * 16;
+  uint16_t address = (writeBank * 512 + y * 2 + x / 8 * 16) & 0x7ff;
   output[address + 0] = (output[address + 0] << 1) | !!(color & 1);
   output[address + 1] = (output[address + 1] << 1) | !!(color & 2);
 }
@@ -311,7 +311,7 @@ namespace SameBoy {
   }
 
   static void icd_pixel(GB_gameboy_t*, uint8_t pixel) {
-    icd.ppuWrite(pixel);
+    icd.ppuWrite(pixel & 0x03);
   }
 
   static void joyp_write(GB_gameboy_t*, uint8_t value) {

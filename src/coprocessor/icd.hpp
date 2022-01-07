@@ -49,7 +49,7 @@ struct ICD : Emulator::Platform, Thread {
   //interface.cpp
   void ppuHreset();
   void ppuVreset();
-  void ppuWrite(nall::Natural< 2> color);
+  void ppuWrite(uint8_t color);
   void apuWrite(int16_t left, int16_t right);
   void joypWrite(bool p14, bool p15);
 
@@ -69,7 +69,7 @@ struct ICD : Emulator::Platform, Thread {
 
 private:
   struct Packet {
-    auto operator[](nall::Natural< 4> address) -> uint8_t& { return data[address]; }
+    auto operator[](uint8_t address) -> uint8_t& { return data[address & 0x0f]; }
     uint8_t data[16];
   };
   Packet packet[64];
