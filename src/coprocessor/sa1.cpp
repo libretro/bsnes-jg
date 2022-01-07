@@ -20,7 +20,7 @@
 
 #include "../cpu.hpp"
 #include "../settings.hpp"
-#include "../slot/bsmemory.hpp"
+#include "../bsmemory.hpp"
 
 #include "sa1.hpp"
 

@@ -41,11 +41,11 @@
 #include "coprocessor/spc7110.hpp"
 #include "coprocessor/st0010.hpp"
 #include "coprocessor/superfx.hpp"
+#include "bsmemory.hpp"
 #include "markup.hpp"
 #include "settings.hpp"
 #include "sha256.hpp"
-#include "slot/bsmemory.hpp"
-#include "slot/sufamiturbo.hpp"
+#include "sufamiturbo.hpp"
 #include "system.hpp"
 
 #include "cartridge.hpp"

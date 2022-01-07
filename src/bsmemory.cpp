@@ -20,7 +20,7 @@
 
 #include <math.h>
 
-#include "../cpu.hpp"
+#include "cpu.hpp"
 
 #include "bsmemory.hpp"
 

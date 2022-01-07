@@ -76,6 +76,7 @@ CSRCS := deps/gb/apu.c \
 
 CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/audio.cpp \
+	src/bsmemory.cpp \
 	src/cartridge.cpp \
 	src/cheat.cpp \
 	src/controller/controller.cpp \
@@ -124,8 +125,7 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/processor/upd96050.cpp \
 	src/processor/wdc65816.cpp \
 	src/sha256.cpp \
-	src/slot/bsmemory.cpp \
-	src/slot/sufamiturbo.cpp \
+	src/sufamiturbo.cpp \
 	src/smp.cpp \
 	src/system.cpp \
 	jg.cpp

@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "../memory.hpp"
-#include "../sfc.hpp"
+#include "memory.hpp"
+#include "sfc.hpp"
 
 #include "../nall/primitives.hpp"
 

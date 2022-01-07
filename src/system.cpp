@@ -42,13 +42,13 @@
 #include "coprocessor/spc7110.hpp"
 #include "coprocessor/st0010.hpp"
 #include "coprocessor/superfx.hpp"
+#include "bsmemory.hpp"
 #include "cpu.hpp"
 #include "dsp.hpp"
 #include "expansion/expansion.hpp"
 #include "random.hpp"
 #include "settings.hpp"
-#include "slot/bsmemory.hpp"
-#include "slot/sufamiturbo.hpp"
+#include "sufamiturbo.hpp"
 #include "smp.hpp"
 
 namespace SuperFamicom {
