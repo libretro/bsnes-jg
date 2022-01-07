@@ -23,8 +23,6 @@
 //MCC - Memory Controller Chip
 //Custom logic chip inside the BS-X Satellaview base cartridge
 
-#include "../nall/primitives.hpp"
-
 namespace SuperFamicom {
 
 struct MCC {
@@ -53,22 +51,22 @@ struct MCC {
 
 private:
   struct IRQ {
-    nall::Natural< 1> flag;    //bit 0
-    nall::Natural< 1> enable;  //bit 1
+    uint8_t flag;    //bit 0
+    uint8_t enable;  //bit 1
   } irq;
 
   struct Registers {
-    nall::Natural< 1> mapping;             //bit  2 (0 = ignore A15; 1 = use A15)
-    nall::Natural< 1> psramEnableLo;       //bit  3
-    nall::Natural< 1> psramEnableHi;       //bit  4
-    nall::Natural< 2> psramMapping;        //bits 5-6
-    nall::Natural< 1> romEnableLo;         //bit  7
-    nall::Natural< 1> romEnableHi;         //bit  8
-    nall::Natural< 1> exEnableLo;          //bit  9
-    nall::Natural< 1> exEnableHi;          //bit 10
-    nall::Natural< 1> exMapping;           //bit 11
-    nall::Natural< 1> internallyWritable;  //bit 12 (1 = MCC allows writes to BS Memory Cassette)
-    nall::Natural< 1> externallyWritable;  //bit 13 (1 = BS Memory Cassette allows writes to flash memory)
+    uint8_t mapping;             //bit  2 (0 = ignore A15; 1 = use A15)
+    uint8_t psramEnableLo;       //bit  3
+    uint8_t psramEnableHi;       //bit  4
+    uint8_t psramMapping;        //bits 5-6
+    uint8_t romEnableLo;         //bit  7
+    uint8_t romEnableHi;         //bit  8
+    uint8_t exEnableLo;          //bit  9
+    uint8_t exEnableHi;          //bit 10
+    uint8_t exMapping;           //bit 11
+    uint8_t internallyWritable;  //bit 12 (1 = MCC allows writes to BS Memory Cassette)
+    uint8_t externallyWritable;  //bit 13 (1 = BS Memory Cassette allows writes to flash memory)
   } r, w;
 
   //bit 14 = commit
