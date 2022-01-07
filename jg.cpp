@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <sstream>
 #include <optional>
+#include <vector>
 
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
