@@ -237,7 +237,7 @@ uint8_t BSMemory::read(unsigned address, uint8_t data) {
   if(mode == Mode::Chip) {
     if(address == 0) return chip.vendor;  //only appears once
     if(address == 1) return chip.device;  //only appears once
-    if((nall::Natural< 3>)address == 2) return 0x63;  //unknown constant: repeats every eight bytes
+    if((address & 0x07) == 2) return 0x63;  //unknown constant: repeats every eight bytes
     return 0x20;  //unknown constant: fills in all remaining bytes
   }
 
@@ -303,7 +303,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
     page.write(0x00, 0x4d);  //'M' (memory)
     page.write(0x02, 0x50);  //'P' (pack)
     page.write(0x04, 0x04);  //unknown constant (maybe block count? eg 1<<4 = 16 blocks)
-    page.write(0x06, 0x10 | (nall::Natural< 4>)log2(size() >> 10));  //d0-d3 = size; d4-d7 = type (1)
+    page.write(0x06, 0x10 | (uint8_t(log2(size() >> 10) + 0.5) & 0x0f));  //d0-d3 = size; d4-d7 = type (1)
     page.write(0x08, (chip.serial >> 40) & 0xff);  //serial# (big endian; BCD format)
     page.write(0x0a, (chip.serial >> 32) & 0xff);  //smallest observed value:
     page.write(0x0c, (chip.serial >> 24) & 0xff);  //  0x00'00'10'62'62'39
@@ -412,7 +412,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
     page.write(0x06, 0x06);  //unknown constant
     page.write(0x07, 0x00);  //unknown constant
-    for(nall::Natural< 6> id : nall::range(block.count())) {
+    for(uint8_t id = 0; id < block.count(); ++id) {
       uint8_t address = 0;
       address += (id >> 0 & 3) * 0x08;  //verified for LH28F800SUT-ZI
       address += (id >> 2 & 3) * 0x40;  //verified for LH28F800SUT-ZI
