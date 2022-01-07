@@ -323,8 +323,11 @@ uint8_t CPU::readAPU(unsigned addr, uint8_t data) {
 
 uint8_t CPU::readCPU(unsigned addr, uint8_t data) {
   switch(addr & 0xffff) {
-  case 0x2180:  //WMDATA
-    return bus.read(0x7e0000 | io.wramAddress++, data);
+  case 0x2180: {  //WMDATA
+    uint8_t temp = bus.read(0x7e0000 | io.wramAddress, data);
+    io.wramAddress = (io.wramAddress + 1) & 0x1ffff;
+    return temp;
+  }
 
   //todo: it is not known what happens when reading from this register during auto-joypad polling
   case 0x4016:  //JOYSER0
@@ -507,16 +510,16 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
     return;
 
   case 0x4207:  //HTIMEL
-    io.htime = (io.htime >> 2) - 1;
+    io.htime = ((io.htime >> 2) - 1) & 0xfff;
     io.htime = (io.htime & 0x100) | data << 0;
-    io.htime = (io.htime + 1) << 2;
+    io.htime = ((io.htime + 1) << 2) & 0xfff;
     irqPoll();  //unverified
     return;
 
   case 0x4208:  //HTIMEH
-    io.htime = (io.htime >> 2) - 1;
+    io.htime = ((io.htime >> 2) - 1) & 0xfff;
     io.htime = (io.htime & 0x0ff) | (data & 1) << 8;
-    io.htime = (io.htime + 1) << 2;
+    io.htime = ((io.htime + 1) << 2) & 0xfff;
     irqPoll();  //unverified
     return;
 

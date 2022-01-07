@@ -154,7 +154,7 @@ private:
 
   struct IO {
     //$2181-$2183
-    nall::Natural<17> wramAddress = 0;
+    uint32_t wramAddress = 0;
 
     //$4200
     bool hirqEnable = 0;
@@ -175,11 +175,11 @@ private:
     uint8_t wrdivb = 0xff;
 
     //$4207-$420a
-    nall::Natural<12> htime = (0x1ff + 1) << 2;
-    nall::Natural< 9>  vtime = 0x1ff;
+    uint16_t htime = (0x1ff + 1) << 2;
+    uint16_t vtime = 0x1ff;
 
     //$420d
-    nall::Natural< 1> fastROM = 0;
+    uint8_t fastROM = 0;
 
     //$4214-$4217
     uint16_t rddiv = 0;
