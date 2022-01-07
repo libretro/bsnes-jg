@@ -139,10 +139,6 @@ struct ARM7TDMI {
   //serialization.cpp
   void serialize(serializer&);
 
-  //disassembler.cpp
-  /*nall::string disassemble(std::optional<uint32_t> pc = std::nullopt, std::optional<bool> thumb = std::nullopt);
-  nall::string disassembleRegisters();*/
-
   struct GPR {
     inline operator uint32_t() const { return data; }
     inline GPR& operator=(const GPR& value) { return operator=(value.data); }
@@ -254,57 +250,7 @@ struct ARM7TDMI {
   bfunction<void (uint32_t opcode)> armInstruction[4096];
   bfunction<void ()> thumbInstruction[65536];
 
-  //disassembler.cpp
-  /*nall::string armDisassembleBranch(nall::Integer<24>, nall::Natural< 1>);
-  nall::string armDisassembleBranchExchangeRegister(nall::Natural< 4>);
-  nall::string armDisassembleDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
-  nall::string armDisassembleDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
-  nall::string armDisassembleDataRegisterShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
-  nall::string armDisassembleLoadImmediate(uint8_t, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  nall::string armDisassembleLoadRegister(nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  nall::string armDisassembleMemorySwap(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
-  nall::string armDisassembleMoveHalfImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  nall::string armDisassembleMoveHalfRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  nall::string armDisassembleMoveImmediateOffset(nall::Natural<12>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  nall::string armDisassembleMoveMultiple(uint16_t, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  nall::string armDisassembleMoveRegisterOffset(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  nall::string armDisassembleMoveToRegisterFromStatus(nall::Natural< 4>, nall::Natural< 1>);
-  nall::string armDisassembleMoveToStatusFromImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
-  nall::string armDisassembleMoveToStatusFromRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
-  nall::string armDisassembleMultiply(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>);
-  nall::string armDisassembleMultiplyLong(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  nall::string armDisassembleSoftwareInterrupt(nall::Natural<24>);
-  nall::string armDisassembleUndefined();
-
-  nall::string thumbDisassembleALU(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 4>);
-  nall::string thumbDisassembleALUExtended(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 2>);
-  nall::string thumbDisassembleAddRegister(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
-  nall::string thumbDisassembleAdjustImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>);
-  nall::string thumbDisassembleAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>);
-  nall::string thumbDisassembleAdjustStack(nall::Natural< 7>, nall::Natural< 1>);
-  nall::string thumbDisassembleBranchExchange(nall::Natural< 4>);
-  nall::string thumbDisassembleBranchFarPrefix(nall::Integer<11>);
-  nall::string thumbDisassembleBranchFarSuffix(nall::Natural<11>);
-  nall::string thumbDisassembleBranchNear(nall::Integer<11>);
-  nall::string thumbDisassembleBranchTest(int8_t, nall::Natural< 4>);
-  nall::string thumbDisassembleImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>);
-  nall::string thumbDisassembleLoadLiteral(uint8_t, nall::Natural< 3>);
-  nall::string thumbDisassembleMoveByteImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
-  nall::string thumbDisassembleMoveHalfImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
-  nall::string thumbDisassembleMoveMultiple(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
-  nall::string thumbDisassembleMoveRegisterOffset(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>);
-  nall::string thumbDisassembleMoveStack(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
-  nall::string thumbDisassembleMoveWordImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
-  nall::string thumbDisassembleShiftImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 2>);
-  nall::string thumbDisassembleSoftwareInterrupt(uint8_t);
-  nall::string thumbDisassembleStackMultiple(uint8_t, nall::Natural< 1>, nall::Natural< 1>);
-  nall::string thumbDisassembleUndefined();
-
-  bfunction<nall::string (uint32_t opcode)> armDisassemble[4096];
-  bfunction<nall::string ()> thumbDisassemble[65536];*/
-
   uint32_t _pc;
-  //nall::string _c;
 };
 
 }

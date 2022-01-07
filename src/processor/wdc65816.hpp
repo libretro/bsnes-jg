@@ -250,10 +250,6 @@ struct WDC65816 {
   //serialization.cpp
   void serialize(serializer&);
 
-  //disassembler.cpp
-  /*nall::string disassemble();
-  nall::string disassemble(nall::Natural<24> addr, bool e, bool m, bool x);*/
-
   struct f8 {
     bool c = 0;  //carry
     bool z = 0;  //zero

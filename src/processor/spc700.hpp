@@ -138,9 +138,6 @@ struct SPC700 {
   //serialization.cpp
   void serialize(serializer&);
 
-  //disassembler.cpp
-  //nall::string disassemble(uint16_t address, bool p);
-
   struct Flags {
     bool c = 0;  //carry
     bool z = 0;  //zero
