@@ -22,6 +22,7 @@
 
 #include "cpu.hpp"
 
+#include "random.hpp"
 #include "bsmemory.hpp"
 
 #include "../nall/iterator.hpp"
