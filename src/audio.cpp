@@ -18,9 +18,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "emulator.hpp"
+#include <cstdint>
+#include <vector>
 
 #include "audio.hpp"
+#include "emulator.hpp"
 
 namespace Emulator {
 

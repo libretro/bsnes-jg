@@ -20,6 +20,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #include "../audio.hpp"
 #include "../cpu.hpp"
