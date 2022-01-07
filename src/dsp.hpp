@@ -20,14 +20,11 @@
 
 #pragma once
 
-#include "audio.hpp"
-
 namespace SuperFamicom {
 
 #include "dsp/SPC_DSP.h"
 
 struct DSP {
-  Emulator::Stream *stream;
   uint8_t apuram[64 * 1024] = {};
 
   void main();

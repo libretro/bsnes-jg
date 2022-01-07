@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "audio.hpp"
 #include "cartridge.hpp"
 #include "settings.hpp"
 #include "system.hpp"
@@ -25,6 +26,8 @@
 #include "dsp.hpp"
 
 namespace SuperFamicom {
+
+static Emulator::Stream *stream;
 
 DSP dsp;
 

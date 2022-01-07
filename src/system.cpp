@@ -20,6 +20,7 @@
 
 #include <cstring>
 
+#include "audio.hpp"
 #include "cartridge.hpp"
 #include "controller/controller.hpp"
 #include "coprocessor/armdsp.hpp"
