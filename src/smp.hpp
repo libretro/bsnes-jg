@@ -31,8 +31,8 @@ struct SMP : Processor::SPC700, Thread {
   inline bool raise(bool& data, bool value) { return !data && value ? (data = value, true) : (data = value, false); }
 
   //io.cpp
-  uint8_t portRead(nall::Natural< 2> port) const;
-  void portWrite(nall::Natural< 2> port, uint8_t data);
+  uint8_t portRead(uint8_t port) const;
+  void portWrite(uint8_t port, uint8_t data);
 
   //smp.cpp
   void synchronizeCPU();
@@ -60,15 +60,15 @@ private:
     uint8_t apu3 = 0;
 
     //$00f0
-    nall::Natural< 1> timersDisable = 0;
-    nall::Natural< 1> ramWritable = 1;
-    nall::Natural< 1> ramDisable = 0;
-    nall::Natural< 1> timersEnable = 1;
-    nall::Natural< 2> externalWaitStates = 0;
-    nall::Natural< 2> internalWaitStates = 0;
+    uint8_t timersDisable = 0;
+    uint8_t ramWritable = 1;
+    uint8_t ramDisable = 0;
+    uint8_t timersEnable = 1;
+    uint8_t externalWaitStates = 0;
+    uint8_t internalWaitStates = 0;
 
     //$00f1
-    nall::Natural< 1> iplromEnable = 1;
+    bool iplromEnable = true;
 
     //$00f2
     uint8_t dspAddr = 0;
@@ -105,7 +105,7 @@ private:
     uint8_t stage0 = 0;
     uint8_t stage1 = 0;
     uint8_t stage2 = 0;
-    nall::Natural< 4>   stage3 = 0;
+    uint8_t stage3 = 0;
     bool line = 0;
     bool enable = 0;
     uint8_t target = 0;

@@ -85,7 +85,7 @@ uint8_t SMP::readDisassembler(uint16_t address) {
   return readRAM(address);
 }
 
-uint8_t SMP::portRead(nall::Natural< 2> port) const {
+uint8_t SMP::portRead(uint8_t port) const {
   if(port == 0) return io.cpu0;
   if(port == 1) return io.cpu1;
   if(port == 2) return io.cpu2;
@@ -93,7 +93,7 @@ uint8_t SMP::portRead(nall::Natural< 2> port) const {
   return 0; // unreachable
 }
 
-void SMP::portWrite(nall::Natural< 2> port, uint8_t data) {
+void SMP::portWrite(uint8_t port, uint8_t data) {
   if(port == 0) io.apu0 = data;
   if(port == 1) io.apu1 = data;
   if(port == 2) io.apu2 = data;
@@ -345,7 +345,7 @@ template<unsigned Frequency> void SMP::Timer<Frequency>::synchronizeStage1() {
 
   //stage 3 increment
   stage2 = 0;
-  stage3++;
+  stage3 = (stage3 + 1) & 0x0f;
 }
 
 void SMP::serialize(serializer& s) {
