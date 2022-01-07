@@ -18,7 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include<cstring>
+#include <cstring>
 
 #include "cartridge.hpp"
 #include "controller/controller.hpp"
