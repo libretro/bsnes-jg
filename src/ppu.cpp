@@ -1160,8 +1160,8 @@ void PPU::Background::fetchNameTable() {
   }
 
   unsigned width = 256 << hires();
-  unsigned hsize = width << io.tileSize << io.screenSize.bit(0);
-  unsigned vsize = width << io.tileSize << io.screenSize.bit(1);
+  unsigned hsize = width << io.tileSize << (io.screenSize & 1);
+  unsigned vsize = width << io.tileSize << ((io.screenSize & 2) >> 1);
 
   hoffset &= hsize - 1;
   voffset &= vsize - 1;
@@ -1172,8 +1172,8 @@ void PPU::Background::fetchNameTable() {
   unsigned htile = hoffset >> htiles;
   unsigned vtile = voffset >> vtiles;
 
-  unsigned hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
-  unsigned vscreen = io.screenSize.bit(1) ? 32 << (5 + io.screenSize.bit(0)) : 0;
+  unsigned hscreen = (io.screenSize & 1) ? 32 << 5 : 0;
+  unsigned vscreen = (io.screenSize & 2) ? 32 << (5 + (io.screenSize & 1)) : 0;
 
   uint16_t offset = (htile & 0x1f) << 0 | (vtile & 0x1f) << 5;
   if(htile & 0x20) offset += hscreen;
@@ -1226,8 +1226,8 @@ void PPU::Background::fetchOffset(unsigned y) {
   unsigned htile = hoffset >> htiles;
   unsigned vtile = voffset >> vtiles;
 
-  unsigned hscreen = io.screenSize.bit(0) ? 32 << 5 : 0;
-  unsigned vscreen = io.screenSize.bit(1) ? 32 << (5 + io.screenSize.bit(0)) : 0;
+  unsigned hscreen = (io.screenSize & 1) ? 32 << 5 : 0;
+  unsigned vscreen = (io.screenSize & 2) ? 32 << (5 + (io.screenSize & 1)) : 0;
 
   uint16_t offset = (htile & 0x1f) << 0 | (vtile & 0x1f) << 5;
   if(htile & 0x20) offset += hscreen;
@@ -1323,7 +1323,7 @@ void PPU::Background::power() {
   io = {};
   io.tiledataAddress = (random() & 0x0f) << 12;
   io.screenAddress = (random() & 0xfc) << 8;
-  io.screenSize = random();
+  io.screenSize = random() & 3;
   io.tileSize = random() & 1;
   io.aboveEnable = random() & 1;
   io.belowEnable = random() & 1;
@@ -1614,7 +1614,7 @@ void PPU::Object::power() {
   io.interlace = random() & 1;
 
   io.baseSize = random() & 7;
-  io.nameselect = random();
+  io.nameselect = random() & 3;
   io.tiledataAddress = (random() & 7) << 13;
   io.firstSprite = 0;
 
@@ -1684,7 +1684,7 @@ void PPU::Window::power() {
   io.bg1.oneInvert = random();
   io.bg1.twoEnable = random();
   io.bg1.twoInvert = random();
-  io.bg1.mask = random();
+  io.bg1.mask = random() & 3;
   io.bg1.aboveEnable = random() & 1;
   io.bg1.belowEnable = random() & 1;
 
@@ -1692,7 +1692,7 @@ void PPU::Window::power() {
   io.bg2.oneInvert = random();
   io.bg2.twoEnable = random();
   io.bg2.twoInvert = random();
-  io.bg2.mask = random();
+  io.bg2.mask = random() & 3;
   io.bg2.aboveEnable = random() & 1;
   io.bg2.belowEnable = random() & 1;
 
@@ -1700,7 +1700,7 @@ void PPU::Window::power() {
   io.bg3.oneInvert = random();
   io.bg3.twoEnable = random();
   io.bg3.twoInvert = random();
-  io.bg3.mask = random();
+  io.bg3.mask = random() & 3;
   io.bg3.aboveEnable = random() & 1;
   io.bg3.belowEnable = random() & 1;
 
@@ -1708,7 +1708,7 @@ void PPU::Window::power() {
   io.bg4.oneInvert = random();
   io.bg4.twoEnable = random();
   io.bg4.twoInvert = random();
-  io.bg4.mask = random();
+  io.bg4.mask = random() & 3;
   io.bg4.aboveEnable = random() & 1;
   io.bg4.belowEnable = random() & 1;
 
@@ -1716,7 +1716,7 @@ void PPU::Window::power() {
   io.obj.oneInvert = random();
   io.obj.twoEnable = random();
   io.obj.twoInvert = random();
-  io.obj.mask = random();
+  io.obj.mask = random() & 3;
   io.obj.aboveEnable = random() & 1;
   io.obj.belowEnable = random() & 1;
 
@@ -1724,9 +1724,9 @@ void PPU::Window::power() {
   io.col.oneInvert = random();
   io.col.twoEnable = random();
   io.col.twoInvert = random();
-  io.col.mask = random();
-  io.col.aboveMask = random();
-  io.col.belowMask = random();
+  io.col.mask = random() & 3;
+  io.col.aboveMask = random() & 3;
+  io.col.belowMask = random() & 3;
 
   io.oneLeft = random();
   io.oneRight = random();
@@ -2321,7 +2321,7 @@ void PPU::power(bool reset) {
 
   //$2115  VMAIN
   io.vramIncrementMode = random.bias(1) & 1;
-  io.vramMapping = random();
+  io.vramMapping = random() & 3;
   io.vramIncrementSize = 1;
 
   //$2116  VMADDL
@@ -2329,7 +2329,7 @@ void PPU::power(bool reset) {
   io.vramAddress = random();
 
   //$211a  M7SEL
-  io.repeatMode7 = random();
+  io.repeatMode7 = random() & 3;
   io.vflipMode7 = random() & 1;
   io.hflipMode7 = random() & 1;
 

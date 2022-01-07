@@ -179,7 +179,7 @@ private:
 
     //$2115  VMAIN
     uint8_t vramIncrementMode;
-    nall::Natural< 2> vramMapping;
+    uint8_t vramMapping;
     uint8_t vramIncrementSize;
 
     //$2116  VMADDL
@@ -187,7 +187,7 @@ private:
     uint16_t vramAddress;
 
     //$211a  M7SEL
-    nall::Natural< 2> repeatMode7;
+    uint8_t repeatMode7;
     uint8_t vflipMode7;
     uint8_t hflipMode7;
 
@@ -272,7 +272,7 @@ struct Background {
   struct IO {
     uint16_t tiledataAddress;
     uint16_t screenAddress;
-    nall::Natural< 2> screenSize;
+    uint8_t screenSize;
     uint8_t tileSize;
 
     uint8_t mode;
@@ -340,7 +340,7 @@ struct OAM {
     uint8_t nameselect;
     uint8_t vflip;
     uint8_t hflip;
-    nall::Natural< 2> priority;
+    uint8_t priority;
     uint8_t palette;
     uint8_t size;
   } object[128];
@@ -368,7 +368,7 @@ struct Object {
     uint8_t interlace;
 
     uint8_t baseSize;
-    nall::Natural< 2> nameselect;
+    uint8_t nameselect;
     uint16_t tiledataAddress;
     uint8_t firstSprite;
 
@@ -390,7 +390,7 @@ struct Object {
   struct Tile {
      uint8_t valid;
      uint16_t x;
-     nall::Natural< 2> priority;
+     uint8_t priority;
      uint8_t palette;
      uint8_t hflip;
      uint32_t data;
@@ -432,7 +432,7 @@ struct Window {
       bool oneInvert;
       bool twoEnable;
       bool twoInvert;
-      nall::Natural< 2> mask;
+      uint8_t mask;
       bool aboveEnable;
       bool belowEnable;
     } bg1, bg2, bg3, bg4, obj;
@@ -442,9 +442,9 @@ struct Window {
       bool oneInvert;
       bool twoEnable;
       bool twoInvert;
-      nall::Natural< 2> mask;
-      nall::Natural< 2> aboveMask;
-      nall::Natural< 2> belowMask;
+      uint8_t mask;
+      uint8_t aboveMask;
+      uint8_t belowMask;
     } col;
 
     uint8_t oneLeft;
