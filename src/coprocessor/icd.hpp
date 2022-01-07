@@ -73,22 +73,22 @@ private:
     uint8_t data[16];
   };
   Packet packet[64];
-  nall::Natural< 7> packetSize;
+  uint8_t packetSize;
 
-  nall::Natural< 2> joypID;
-  nall::Natural< 1> joypLock;
-  nall::Natural< 1> pulseLock;
-  nall::Natural< 1> strobeLock;
-  nall::Natural< 1> packetLock;
+  uint8_t joypID;
+  uint8_t joypLock;
+  uint8_t pulseLock;
+  uint8_t strobeLock;
+  uint8_t packetLock;
   Packet joypPacket;
-  nall::Natural< 4> packetOffset;
+  uint8_t packetOffset;
   uint8_t bitData;
-  nall::Natural< 3> bitOffset;
+  uint8_t bitOffset;
 
   uint8_t output[4 * 512];
-  nall::Natural< 2> readBank;
-  nall::Natural< 9> readAddress;
-  nall::Natural< 2> writeBank;
+  uint8_t readBank;
+  uint16_t readAddress;
+  uint8_t writeBank;
 
   uint8_t r6003;      //control port
   uint8_t r6004;      //joypad 1

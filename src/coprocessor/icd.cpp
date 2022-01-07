@@ -44,7 +44,7 @@ ICD icd;
 void ICD::ppuHreset() {
   hcounter = 0;
   vcounter++;
-  if((nall::Natural< 3>)vcounter == 0) writeBank++;
+  if((vcounter & 0x07) == 0) writeBank = (writeBank + 1) & 0x03;
 }
 
 void ICD::ppuVreset() {
@@ -72,7 +72,7 @@ void ICD::joypWrite(bool p14, bool p15) {
   if(p14 == 1 && p15 == 1) {
     if(joypLock == 0) {
       joypLock = 1;
-      joypID++;
+      joypID = (joypID + 1) & 0x03;
       if(mltReq == 0) joypID &= 0;  //1-player mode
       if(mltReq == 1) joypID &= 1;  //2-player mode
       if(mltReq == 2) joypID &= 3;  //4-player mode (unverified; but the most likely behavior)
@@ -86,7 +86,7 @@ void ICD::joypWrite(bool p14, bool p15) {
   if(joypID == 2) joypad = r6006;
   if(joypID == 3) joypad = r6007;
 
-  nall::Natural< 4> input = 0xf;
+  uint8_t input = 0xf;
   if(p14 == 1 && p15 == 1) input = 0xf - joypID;
   if(p14 == 0) input &= (joypad >> 0 & 15);  //d-pad
   if(p15 == 0) input &= (joypad >> 4 & 15);  //buttons
@@ -133,7 +133,10 @@ void ICD::joypWrite(bool p14, bool p15) {
 
   if(packetLock == 1) {
     if(p14 == 0 && p15 == 1) {
-      if(packetSize < 64) packet[packetSize++] = joypPacket;
+      if(packetSize < 64) {
+        packet[packetSize] = joypPacket;
+        packetSize = (packetSize + 1) & 0x7f;
+      }
       packetLock = 0;
       pulseLock = 1;
     }
@@ -141,10 +144,12 @@ void ICD::joypWrite(bool p14, bool p15) {
   }
 
   bitData = bit << 7 | bitData >> 1;
-  if(++bitOffset) return;
+  bitOffset = (bitOffset + 1) & 0x07;
+  if(bitOffset) return;
 
   joypPacket[packetOffset] = bitData;
-  if(++packetOffset) return;
+  packetOffset = (packetOffset + 1) & 0x0f;
+  if(packetOffset) return;
 
   packetLock = 1;
 }
@@ -181,7 +186,7 @@ uint8_t ICD::readIO(unsigned addr, uint8_t data) {
   //VRAM port
   if(addr == 0x7800) {
     data = output[readBank * 512 + readAddress];
-    readAddress = (readAddress + 1) & 511;
+    readAddress = (readAddress + 1) & 0x1ff;
     return data;
   }
 
@@ -208,10 +213,10 @@ void ICD::writeIO(unsigned addr, uint8_t data) {
     }
 
     mltReq = data >> 4 & 3;
-    if(mltReq == 0) joypID &= ~0;  //1-player mode
-    if(mltReq == 1) joypID &= ~1;  //2-player mode
-    if(mltReq == 2) joypID &= ~3;  //4-player mode (unverified; but the most likely behavior)
-    if(mltReq == 3) joypID &= ~3;  //4-player mode
+    if(mltReq == 0) joypID &= 3;  //1-player mode
+    if(mltReq == 1) joypID &= 1;  //2-player mode
+    if(mltReq == 2) joypID &= 0;  //4-player mode (unverified; but the most likely behavior)
+    if(mltReq == 3) joypID &= 0;  //4-player mode
 
     auto frequency = clockFrequency();
     switch(data & 3) {
