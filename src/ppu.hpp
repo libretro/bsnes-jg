@@ -111,8 +111,8 @@ private:
   inline uint16_t addressVRAM() const;
   inline uint16_t readVRAM();
   inline void writeVRAM(bool byte, uint8_t data);
-  inline uint8_t readOAM(nall::Natural<10> address);
-  inline void writeOAM(nall::Natural<10> address, uint8_t data);
+  inline uint8_t readOAM(uint16_t address);
+  inline void writeOAM(uint16_t address, uint8_t data);
   inline uint8_t readCGRAM(bool byte, uint8_t address);
   inline void writeCGRAM(uint8_t address, uint16_t data);
   uint8_t readIO(unsigned address, uint8_t data);
@@ -152,7 +152,7 @@ private:
     uint8_t hcounter;
     uint8_t vcounter;
 
-    nall::Natural<10> oamAddress;
+    uint16_t oamAddress;
     uint8_t cgramAddress;
   } latch;
 
@@ -163,8 +163,8 @@ private:
 
     //$2102  OAMADDL
     //$2103  OAMADDH
-    nall::Natural<10> oamBaseAddress;
-    nall::Natural<10> oamAddress;
+    uint16_t oamBaseAddress;
+    uint16_t oamAddress;
     uint8_t oamPriority;
 
     //$2105  BGMODE
@@ -311,7 +311,7 @@ struct Background {
 
   struct Tile {
     uint16_t address;
-    nall::Natural<10> character;
+    uint16_t character;
     uint8_t palette;
     uint8_t paletteGroup;
     uint8_t priority;
@@ -327,8 +327,8 @@ struct Background {
 };
 
 struct OAM {
-  uint8_t read(nall::Natural<10> address);
-  void write(nall::Natural<10> address, uint8_t data);
+  uint8_t read(uint16_t address);
+  void write(uint16_t address, uint8_t data);
 
   struct Object {
     inline unsigned width() const;

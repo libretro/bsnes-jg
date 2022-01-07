@@ -263,12 +263,12 @@ void PPU::writeVRAM(bool byte, uint8_t data) {
   if(byte == 1) vram[address] = (vram[address] & 0x00ff) | data << 8;
 }
 
-uint8_t PPU::readOAM(nall::Natural<10> addr) {
+uint8_t PPU::readOAM(uint16_t addr) {
   if(!io.displayDisable && vcounter() < vdisp()) addr = latch.oamAddress;
   return obj.oam.read(addr);
 }
 
-void PPU::writeOAM(nall::Natural<10> addr, uint8_t data) {
+void PPU::writeOAM(uint16_t addr, uint8_t data) {
   if(!io.displayDisable && vcounter() < vdisp()) addr = latch.oamAddress;
   obj.oam.write(addr, data);
 }
@@ -328,7 +328,8 @@ uint8_t PPU::readIO(unsigned addr, uint8_t data) {
 
   //OAMDATAREAD
   case 0x2138: {
-    ppu1.mdr = readOAM(io.oamAddress++);
+    ppu1.mdr = readOAM(io.oamAddress);
+    io.oamAddress = (io.oamAddress + 1) & 0x3ff;
     obj.setFirstSprite();
     return ppu1.mdr;
   }
@@ -459,7 +460,8 @@ void PPU::writeIO(unsigned addr, uint8_t data) {
   //OAMDATA
   case 0x2104: {
     uint8_t latchBit = io.oamAddress & 1;
-    nall::Natural<10> address = io.oamAddress++;
+    uint16_t address = io.oamAddress;
+    io.oamAddress = (io.oamAddress + 1) & 0x3ff;
     if(latchBit == 0) latch.oam = data;
     if(address & 0x200) {
       writeOAM(address, data);
@@ -1187,8 +1189,8 @@ void PPU::Background::fetchNameTable() {
   tile.hmirror = attributes & 0x4000 ? 1 : 0;
   tile.vmirror = attributes & 0x8000 ? 1 : 0;
 
-  if(htiles == 4 && bool(hoffset & 8) != tile.hmirror) tile.character +=  1;
-  if(vtiles == 4 && bool(voffset & 8) != tile.vmirror) tile.character += 16;
+  if(htiles == 4 && bool(hoffset & 8) != tile.hmirror) tile.character = (tile.character + 1) & 0x3ff;
+  if(vtiles == 4 && bool(voffset & 8) != tile.vmirror) tile.character = (tile.character + 16) & 0x3ff;
 
   unsigned characterMask = ppu.vram.mask >> (3 + io.mode);
   unsigned characterIndex = io.tiledataAddress >> (3 + io.mode);
@@ -1335,7 +1337,7 @@ void PPU::Background::power() {
   mosaic.enable = random() & 1;
 }
 
-uint8_t PPU::OAM::read(nall::Natural<10> address) {
+uint8_t PPU::OAM::read(uint16_t address) {
   if(!(address & 0x200)) {
     unsigned n = address >> 2;  //object#
     address &= 3;
@@ -1364,7 +1366,7 @@ uint8_t PPU::OAM::read(nall::Natural<10> address) {
   }
 }
 
-void PPU::OAM::write(nall::Natural<10> address, uint8_t data) {
+void PPU::OAM::write(uint16_t address, uint8_t data) {
   if(!(address & 0x200)) {
     unsigned n = address >> 2;  //object#
     address &= 3;
@@ -2303,8 +2305,8 @@ void PPU::power(bool reset) {
 
   //$2102  OAMADDL
   //$2103  OAMADDH
-  io.oamBaseAddress = random() & ~1;
-  io.oamAddress = random();
+  io.oamBaseAddress = random() & 0x3fe;
+  io.oamAddress = random() & 0x3ff;
   io.oamPriority = random() & 1;
 
   //$2105  BGMODE
