@@ -208,7 +208,7 @@ private:
     inline uint8_t readB(uint8_t address, bool valid);
     inline void writeA(uint32_t address, uint8_t data);
     inline void writeB(uint8_t address, uint8_t data, bool valid);
-    inline void transfer(uint32_t address, nall::Natural< 2> index);
+    inline void transfer(uint32_t address, uint8_t index);
 
     inline void dmaRun();
     inline bool hdmaActive();
@@ -220,18 +220,18 @@ private:
     inline void hdmaAdvance();
 
     //$420b
-    nall::Natural< 1> dmaEnable = 0;
+    bool dmaEnable = 0;
 
     //$420c
-    nall::Natural< 1> hdmaEnable = 0;
+    bool hdmaEnable = 0;
 
     //$43x0
-    nall::Natural< 3> transferMode = 7;
-    nall::Natural< 1> fixedTransfer = 1;
-    nall::Natural< 1> reverseTransfer = 1;
-    nall::Natural< 1> unused = 1;
-    nall::Natural< 1> indirect = 1;
-    nall::Natural< 1> direction = 1;
+    uint8_t transferMode = 7;
+    uint8_t fixedTransfer = 1;
+    uint8_t reverseTransfer = 1;
+    uint8_t unused = 1;
+    uint8_t indirect = 1;
+    uint8_t direction = 1;
 
     //$43x1
     uint8_t targetAddress = 0xff;
@@ -261,8 +261,8 @@ private:
     uint8_t unknown = 0xff;
 
     //internal state
-    nall::Natural< 1> hdmaCompleted = 0;
-    nall::Natural< 1> hdmaDoTransfer = 0;
+    bool hdmaCompleted = 0;
+    bool hdmaDoTransfer = 0;
 
     Channel *next;
 

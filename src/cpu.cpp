@@ -120,11 +120,11 @@ void CPU::Channel::writeB(uint8_t address, uint8_t data, bool valid) {
   if(valid) bus.write(0x2100 | address, data);
 }
 
-void CPU::Channel::transfer(uint32_t addressA, nall::Natural< 2> index) {
+void CPU::Channel::transfer(uint32_t addressA, uint8_t index) {
   uint8_t addressB = targetAddress;
   switch(transferMode) {
-  case 1: case 5: addressB += index.bit(0); break;
-  case 3: case 7: addressB += index.bit(1); break;
+  case 1: case 5: addressB += (index & 1); break;
+  case 3: case 7: addressB += ((index & 2) >> 1); break;
   case 4: addressB += index; break;
   }
 
@@ -147,9 +147,10 @@ void CPU::Channel::dmaRun() {
   step<8,0>();
   edge();
 
-  nall::Natural< 2> index = 0;
+  uint8_t index = 0;
   do {
-    transfer(sourceBank << 16 | sourceAddress, index++);
+    transfer(sourceBank << 16 | sourceAddress, index);
+    index = (index + 1) & 0x03;
     if(!fixedTransfer) !reverseTransfer ? sourceAddress++ : sourceAddress--;
     edge();
   } while(dmaEnable && --transferSize);
@@ -188,7 +189,7 @@ void CPU::Channel::hdmaSetup() {
 void CPU::Channel::hdmaReload() {
   auto data = readA(cpu.r.mar = sourceBank << 16 | hdmaAddress);
 
-  if((nall::Natural< 7>)lineCounter == 0) {
+  if((lineCounter & 0x7f) == 0) {
     lineCounter = data;
     hdmaAddress++;
 
@@ -212,7 +213,7 @@ void CPU::Channel::hdmaTransfer() {
   if(!hdmaDoTransfer) return;
 
   static const unsigned lengths[8] = {1, 2, 2, 4, 4, 4, 2, 4};
-  for(nall::Natural< 2> index : nall::range(lengths[transferMode])) {
+  for(uint8_t index = 0; index < lengths[transferMode]; ++index) {
     uint32_t address = !indirect ? sourceBank << 16 | hdmaAddress++ : indirectBank << 16 | indirectAddress++;
     transfer(address, index);
   }
@@ -342,7 +343,7 @@ uint8_t CPU::readCPU(unsigned addr, uint8_t data) {
   case 0x4210:  //RDNMI
     data &= 0x70;
     data |= rdnmi() << 7;
-    data |= (nall::Natural< 4>)version;
+    data |= version & 0x0f;
     return data;
 
   case 0x4211:  //TIMEUP
@@ -845,13 +846,13 @@ void CPU::joypadEdge() {
 
   if(status.autoJoypadCounter >= 2 && !(status.autoJoypadCounter & 1)) {
     //sixteen bits are shifted into joy{1-4}, one bit per 256 clocks
-    nall::Natural< 2> port0 = controllerPort1.device->data();
-    nall::Natural< 2> port1 = controllerPort2.device->data();
+    uint8_t port0 = controllerPort1.device->data();
+    uint8_t port1 = controllerPort2.device->data();
 
-    io.joy1 = io.joy1 << 1 | port0.bit(0);
-    io.joy2 = io.joy2 << 1 | port1.bit(0);
-    io.joy3 = io.joy3 << 1 | port0.bit(1);
-    io.joy4 = io.joy4 << 1 | port1.bit(1);
+    io.joy1 = io.joy1 << 1 | (port0 & 1);
+    io.joy2 = io.joy2 << 1 | (port1 & 1);
+    io.joy3 = io.joy3 << 1 | ((port0 & 2) >> 1);
+    io.joy4 = io.joy4 << 1 | ((port1 & 2) >> 1);
   }
 
   status.autoJoypadCounter++;
