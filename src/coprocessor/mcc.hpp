@@ -23,6 +23,8 @@
 //MCC - Memory Controller Chip
 //Custom logic chip inside the BS-X Satellaview base cartridge
 
+#include "../nall/primitives.hpp"
+
 namespace SuperFamicom {
 
 struct MCC {
