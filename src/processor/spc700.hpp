@@ -70,15 +70,15 @@ struct SPC700 {
   using fpb = uint8_t (SPC700::*)(uint8_t, uint8_t);
   using fpw = uint16_t (SPC700::*)(uint16_t, uint16_t);
 
-  void instructionAbsoluteBitModify(nall::Natural< 3>);
-  void instructionAbsoluteBitSet(nall::Natural< 3>, bool);
+  void instructionAbsoluteBitModify(uint8_t);
+  void instructionAbsoluteBitSet(uint8_t, bool);
   void instructionAbsoluteRead(fpb, uint8_t&);
   void instructionAbsoluteModify(fps);
   void instructionAbsoluteWrite(uint8_t&);
   void instructionAbsoluteIndexedRead(fpb, uint8_t&);
   void instructionAbsoluteIndexedWrite(uint8_t&);
   void instructionBranch(bool);
-  void instructionBranchBit(nall::Natural< 3>, bool);
+  void instructionBranchBit(uint8_t, bool);
   void instructionBranchNotDirect();
   void instructionBranchNotDirectDecrement();
   void instructionBranchNotDirectIndexed(uint8_t&);
@@ -86,7 +86,7 @@ struct SPC700 {
   void instructionBreak();
   void instructionCallAbsolute();
   void instructionCallPage();
-  void instructionCallTable(nall::Natural< 4>);
+  void instructionCallTable(uint8_t);
   void instructionComplementCarry();
   void instructionDecimalAdjustAdd();
   void instructionDecimalAdjustSub();

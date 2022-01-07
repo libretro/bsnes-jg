@@ -192,10 +192,11 @@ uint16_t SPC700::algorithmSBW(uint16_t x, uint16_t y) {
   return z;
 }
 
-void SPC700::instructionAbsoluteBitModify(nall::Natural< 3> mode) {
+void SPC700::instructionAbsoluteBitModify(uint8_t mode) {
+  mode &= 0x07;
   uint16_t address = fetch();
   address |= fetch() << 8;
-  nall::Natural< 3> bit = address >> 13;
+  uint8_t bit = address >> 13;
   address &= 0x1fff;
   uint8_t data = read(address);
   switch(mode) {
@@ -233,7 +234,8 @@ void SPC700::instructionAbsoluteBitModify(nall::Natural< 3> mode) {
   }
 }
 
-void SPC700::instructionAbsoluteBitSet(nall::Natural< 3> bit, bool value) {
+void SPC700::instructionAbsoluteBitSet(uint8_t bit, bool value) {
+  bit &= 0x07;
   uint8_t address = fetch();
   uint8_t data = load(address);
   data &= ~(1 << bit);
@@ -286,7 +288,8 @@ void SPC700::instructionBranch(bool take) {
   PC += (int8_t)data;
 }
 
-void SPC700::instructionBranchBit(nall::Natural< 3> bit, bool match) {
+void SPC700::instructionBranchBit(uint8_t bit, bool match) {
+  bit &= 0x07;
   uint8_t address = fetch();
   uint8_t data = load(address);
   idle();
@@ -374,7 +377,8 @@ void SPC700::instructionCallPage() {
   PC = 0xff00 | address;
 }
 
-void SPC700::instructionCallTable(nall::Natural< 4> vector) {
+void SPC700::instructionCallTable(uint8_t vector) {
+  vector &= 0x0f;
   read(PC);
   idle();
   push(PC >> 8);
