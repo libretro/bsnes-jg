@@ -301,12 +301,12 @@ void BSMemory::write(unsigned address, uint8_t data) {
     page.write(0x02, 0x50);  //'P' (pack)
     page.write(0x04, 0x04);  //unknown constant (maybe block count? eg 1<<4 = 16 blocks)
     page.write(0x06, 0x10 | (nall::Natural< 4>)log2(size() >> 10));  //d0-d3 = size; d4-d7 = type (1)
-    page.write(0x08, chip.serial.byte(5));  //serial# (big endian; BCD format)
-    page.write(0x0a, chip.serial.byte(4));  //smallest observed value:
-    page.write(0x0c, chip.serial.byte(3));  //  0x00'00'10'62'62'39
-    page.write(0x0e, chip.serial.byte(2));  //largest observed value:
-    page.write(0x10, chip.serial.byte(1));  //  0x00'91'90'70'31'03
-    page.write(0x12, chip.serial.byte(0));  //most values are: 0x00'0x'xx'xx'xx'xx
+    page.write(0x08, (chip.serial >> 40) & 0xff);  //serial# (big endian; BCD format)
+    page.write(0x0a, (chip.serial >> 32) & 0xff);  //smallest observed value:
+    page.write(0x0c, (chip.serial >> 24) & 0xff);  //  0x00'00'10'62'62'39
+    page.write(0x0e, (chip.serial >> 16) & 0xff);  //largest observed value:
+    page.write(0x10, (chip.serial >> 8) & 0xff);  //  0x00'91'90'70'31'03
+    page.write(0x12, chip.serial & 0xff);  //most values are: 0x00'0x'xx'xx'xx'xx
     page.swap();
     return queue.flush();
   }
@@ -416,7 +416,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
       address += (id >> 4 & 1) * 0x20;  //guessed for LH28F016SU
       address += (id >> 5 & 1) * 0x04;  //guessed for LH28F032SU; will overwrite unknown constants
       uint32_t erased = 1 << 31 | block(id).erased;  //unknown if d31 is set when erased == 0
-      for(nall::Natural< 2> byte : nall::range(4)) {
+      for(unsigned byte = 0; byte < 4; ++byte) {
         page.write(address + byte, erased >> byte * 8);  //little endian
       }
     }
@@ -428,7 +428,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
   if(queue.data(0) == 0xa7) {
   if(queue.size() < 2) return;
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
-    for(nall::Natural< 6> id : nall::range(block.count())) block(id).erase();
+    for(unsigned id = 0; id < block.count(); ++id) block(id & 0x3f).erase();
     mode = Mode::CompatibleStatus;
     return queue.flush();
   }
@@ -572,7 +572,7 @@ void BSMemory::Block::update() {
   status.locked = locked;
 }
 
-auto BSMemory::Blocks::operator()(nall::Natural< 6> id) -> Block& {
+auto BSMemory::Blocks::operator()(uint8_t id) -> Block& {
   return self->blocks[id & count() - 1];
 }
 

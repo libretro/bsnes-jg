@@ -80,7 +80,7 @@ private:
   struct Chip {
     uint16_t vendor;
     uint16_t device;
-    nall::Natural<48> serial;
+    uint64_t serial;
   } chip;
 
   struct Page {
@@ -126,7 +126,7 @@ private:
   } blocks[64];  //8mbit = 16; 16mbit = 32; 32mbit = 64
 
   struct Blocks : BlockInformation {
-    auto operator()(nall::Natural< 6> id) -> Block&;
+    auto operator()(uint8_t id) -> Block&;
   } block;
 
   struct Compatible {
