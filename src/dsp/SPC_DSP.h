@@ -237,19 +237,19 @@ public:
     bool mute() { return m.regs[r_flg] & 0x40; }
 };
 
-#include <assert.h>
+//#include <assert.h>
 
 inline int SPC_DSP::sample_count() const { return m.out - m.out_begin; }
 
 inline int SPC_DSP::read( int addr ) const
 {
-	assert( (unsigned) addr < register_count );
+	//assert( (unsigned) addr < register_count );
 	return m.regs [addr];
 }
 
 inline void SPC_DSP::write( int addr, int data )
 {
-	assert( (unsigned) addr < register_count );
+	//assert( (unsigned) addr < register_count );
 	
 	m.regs [addr] = (uint8_t) data;
 	switch ( addr & 0x0F )
