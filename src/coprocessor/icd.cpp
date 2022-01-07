@@ -19,6 +19,7 @@
  */
 
 #include <iterator>
+#include <vector>
 
 #include "../audio.hpp"
 #include "../cartridge.hpp"
