@@ -21,6 +21,7 @@
 #include <iomanip>
 #include <optional>
 #include <regex>
+#include <sstream>
 
 #include "cheat.hpp"
 
