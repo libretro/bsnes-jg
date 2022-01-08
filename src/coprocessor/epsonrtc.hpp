@@ -50,30 +50,30 @@ struct EpsonRTC : Thread {
   uint8_t ready;
   uint8_t holdtick;
 
-  nall::Natural< 4> secondlo;
-  nall::Natural< 3> secondhi;
+  uint8_t secondlo;
+  uint8_t secondhi;
   uint8_t batteryfailure;
 
-  nall::Natural< 4> minutelo;
-  nall::Natural< 3> minutehi;
+  uint8_t minutelo;
+  uint8_t minutehi;
   uint8_t resync;
 
-  nall::Natural< 4> hourlo;
-  nall::Natural< 2> hourhi;
+  uint8_t hourlo;
+  uint8_t hourhi;
   uint8_t meridian;
 
-  nall::Natural< 4> daylo;
-  nall::Natural< 2> dayhi;
+  uint8_t daylo;
+  uint8_t dayhi;
   uint8_t dayram;
 
-  nall::Natural< 4> monthlo;
+  uint8_t monthlo;
   uint8_t monthhi;
-  nall::Natural< 2> monthram;
+  uint8_t monthram;
 
-  nall::Natural< 4> yearlo;
-  nall::Natural< 4> yearhi;
+  uint8_t yearlo;
+  uint8_t yearhi;
 
-  nall::Natural< 3> weekday;
+  uint8_t weekday;
 
   uint8_t hold;
   uint8_t calendar;
@@ -82,7 +82,7 @@ struct EpsonRTC : Thread {
 
   uint8_t irqmask;
   uint8_t irqduty;
-  nall::Natural< 2> irqperiod;
+  uint8_t irqperiod;
 
   uint8_t pause;
   uint8_t stop;
@@ -91,14 +91,14 @@ struct EpsonRTC : Thread {
 
   //memory.cpp
   void rtcReset();
-  nall::Natural< 4> rtcRead(nall::Natural< 4> addr);
-  void rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data);
+  uint8_t rtcRead(uint8_t addr);
+  void rtcWrite(uint8_t addr, uint8_t data);
 
   void load(const uint8_t* data);
   void save(uint8_t* data);
 
   //time.cpp
-  void irq(nall::Natural< 2> period);
+  void irq(uint8_t period);
   void duty();
   void roundSeconds();
   void tick();

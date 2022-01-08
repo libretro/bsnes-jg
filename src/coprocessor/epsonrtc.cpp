@@ -33,8 +33,8 @@ void EpsonRTC::rtcReset() {
   test = 0;
 }
 
-nall::Natural< 4> EpsonRTC::rtcRead(nall::Natural< 4> addr) {
-  switch(addr) { default:
+uint8_t EpsonRTC::rtcRead(uint8_t addr) {
+  switch(addr & 0x0f) { default:
   case  0: return secondlo;
   case  1: return secondhi | batteryfailure << 3;
   case  2: return minutelo;
@@ -49,7 +49,7 @@ nall::Natural< 4> EpsonRTC::rtcRead(nall::Natural< 4> addr) {
   case 11: return yearhi;
   case 12: return weekday | resync << 3;
   case 13: {
-    nall::Natural< 1> readflag = irqflag & !irqmask;
+    uint8_t readflag = irqflag & !irqmask;
     irqflag = 0;
     return hold | calendar << 1 | readflag << 2 | roundseconds << 3;
   }
@@ -58,52 +58,52 @@ nall::Natural< 4> EpsonRTC::rtcRead(nall::Natural< 4> addr) {
   }
 }
 
-void EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
-  switch(addr) {
+void EpsonRTC::rtcWrite(uint8_t addr, uint8_t data) {
+  switch(addr & 0x0f) {
   case 0:
-    secondlo = data;
+    secondlo = data & 0x0f;
     break;
   case 1:
-    secondhi = data;
+    secondhi = data & 0x07;
     batteryfailure = (data >> 3) & 0x01;
     break;
   case 2:
-    minutelo = data;
+    minutelo = data & 0x0f;
     break;
   case 3:
-    minutehi = data;
+    minutehi = data & 0x07;
     break;
   case 4:
-    hourlo = data;
+    hourlo = data & 0x0f;
     break;
   case 5:
-    hourhi = data;
+    hourhi = data & 0x03;
     meridian = (data >> 2) & 0x01;
     if(atime == 1) meridian = 0;
     if(atime == 0) hourhi &= 1;
     break;
   case 6:
-    daylo = data;
+    daylo = data & 0x0f;
     break;
   case 7:
-    dayhi = data;
+    dayhi = data & 0x03;
     dayram = (data >> 2) & 0x01;
     break;
   case 8:
-    monthlo = data;
+    monthlo = data & 0x0f;
     break;
   case 9:
     monthhi = data & 0x01;
-    monthram = data >> 1;
+    monthram = (data >> 1) & 0x03;
     break;
   case 10:
-    yearlo = data;
+    yearlo = data & 0x0f;
     break;
   case 11:
-    yearhi = data;
+    yearhi = data & 0x0f;
     break;
   case 12:
-    weekday = data;
+    weekday = data & 0x07;
     break;
   case 13: {
     bool held = hold;
@@ -119,7 +119,7 @@ void EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
   case 14:
     irqmask = data & 0x01;
     irqduty = (data >> 1) & 0x01;
-    irqperiod = data >> 2;
+    irqperiod = (data >> 2) & 0x03;
     break;
   case 15:
     pause = data & 0x01;
@@ -137,30 +137,30 @@ void EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
 }
 
 void EpsonRTC::load(const uint8_t* data) {
-  secondlo = data[0] >> 0;
-  secondhi = data[0] >> 4;
+  secondlo = data[0] & 0x0f;
+  secondhi = (data[0] >> 4) & 0x07;
   batteryfailure = (data[0] >> 7) & 0x01;
 
-  minutelo = data[1] >> 0;
-  minutehi = data[1] >> 4;
+  minutelo = data[1] & 0x0f;
+  minutehi = (data[1] >> 4) & 0x07;
   resync = data[1] >> 7;
 
-  hourlo = data[2] >> 0;
-  hourhi = data[2] >> 4;
+  hourlo = data[2] & 0x0f;
+  hourhi = (data[2] >> 4) & 0x03;
   meridian = (data[2] >> 6) & 0x01;
 
-  daylo = data[3] >> 0;
-  dayhi = data[3] >> 4;
+  daylo = data[3] & 0x0f;
+  dayhi = (data[3] >> 4) & 0x03;
   dayram = (data[3] >> 6) & 0x01;
 
-  monthlo = data[4] >> 0;
+  monthlo = data[4] & 0x0f;
   monthhi = (data[4] >> 4) & 0x01;
   monthram = data[4] >> 5;
 
-  yearlo = data[5] >> 0;
-  yearhi = data[5] >> 4;
+  yearlo = data[5] & 0x0f;
+  yearhi = (data[5] >> 4) & 0x0f;
 
-  weekday = data[6] >> 0;
+  weekday = data[6] & 0x07;
 
   hold = (data[6] >> 4) & 0x01;
   calendar = (data[6] >> 5) & 0x01;
@@ -169,7 +169,7 @@ void EpsonRTC::load(const uint8_t* data) {
 
   irqmask = data[7] >> 0;
   irqduty = (data[7] >> 1) & 0x01;
-  irqperiod = data[7] >> 2;
+  irqperiod = (data[7] >> 2) & 0x03;
 
   pause = (data[7] >> 4) & 0x01;
   stop = (data[7] >> 5) & 0x01;
@@ -205,7 +205,7 @@ void EpsonRTC::save(uint8_t* data) {
   }
 }
 
-void EpsonRTC::irq(nall::Natural< 2> period) {
+void EpsonRTC::irq(uint8_t period) {
   if(stop || pause) return;
 
   if(period == irqperiod) irqflag = 1;
@@ -313,7 +313,7 @@ void EpsonRTC::tickHour() {
 
 void EpsonRTC::tickDay() {
   if(calendar == 0) return;
-  weekday = (weekday + 1) + (weekday == 6);
+  weekday = ((weekday + 1) + (weekday == 6)) & 0x07;
 
   //January - December = 0x01 - 0x09; 0x10 - 0x12
   static const unsigned daysinmonth[32] = {
@@ -356,7 +356,7 @@ void EpsonRTC::tickDay() {
     daylo++;
   } else {
     daylo = !(daylo & 1);
-    dayhi++;
+    dayhi = (dayhi + 1) & 0x03;
   }
 }
 
@@ -539,38 +539,38 @@ void EpsonRTC::synchronize(uint64_t timestamp) {
   tm* timeinfo = localtime(&systime);
 
   unsigned second = std::min(59, timeinfo->tm_sec);
-  secondlo = second % 10;
-  secondhi = second / 10;
+  secondlo = (second % 10) & 0x0f;
+  secondhi = (second / 10) & 0x07;
 
   unsigned minute = timeinfo->tm_min;
-  minutelo = minute % 10;
-  minutehi = minute / 10;
+  minutelo = (minute % 10) & 0x0f;
+  minutehi = (minute / 10) & 0x07;
 
   unsigned hour = timeinfo->tm_hour;
   if(atime) {
-    hourlo = hour % 10;
-    hourhi = hour / 10;
+    hourlo = (hour % 10) & 0x0f;
+    hourhi = (hour / 10) & 0x03;
   } else {
     meridian = hour >= 12;
     hour %= 12;
     if(hour == 0) hour = 12;
-    hourlo = hour % 10;
-    hourhi = hour / 10;
+    hourlo = (hour % 10) & 0x0f;
+    hourhi = (hour / 10) & 0x03;
   }
 
   unsigned day = timeinfo->tm_mday;
-  daylo = day % 10;
-  dayhi = day / 10;
+  daylo = (day % 10) & 0x0f;
+  dayhi = (day / 10) & 0x03;
 
   unsigned month = 1 + timeinfo->tm_mon;
-  monthlo = month % 10;
+  monthlo = (month % 10) & 0x0f;
   monthhi = (month / 10) & 0x01;
 
   unsigned year = timeinfo->tm_year % 100;
-  yearlo = year % 10;
-  yearhi = year / 10;
+  yearlo = (year % 10) & 0x0f;
+  yearhi = (year / 10) & 0x0f;
 
-  weekday = timeinfo->tm_wday;
+  weekday = (timeinfo->tm_wday) & 0x07;
 
   resync = 1;  //alert program that time has changed
 }
@@ -590,7 +590,9 @@ uint8_t EpsonRTC::read(unsigned addr, uint8_t data) {
     if(state != State::Read) return 0;
     ready = 0;
     wait = 8;
-    return rtcRead(offset++);
+    uint8_t temp = rtcRead(offset);
+    offset = (offset + 1) & 0x0f;
+    return temp;
   }
 
   if(addr == 2) {
@@ -625,7 +627,7 @@ void EpsonRTC::write(unsigned addr, uint8_t data) {
     else if(state == State::Seek) {
       if(mdr == 0x03) state = State::Write;
       if(mdr == 0x0c) state = State::Read;
-      offset = data;
+      offset = data & 0x0f;
       ready = 0;
       wait = 8;
       mdr = data & 0x0f;
