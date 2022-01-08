@@ -60,7 +60,7 @@ struct WDC65816 {
     inline r24(unsigned data) : d(data) {}
     inline auto& operator=(unsigned data) { d = data; return *this; }
 
-    nall::Natural<24> d;
+    uint32_t d;
     struct { uint16_t order_lsb2(w, x); };
     struct {  uint8_t order_lsb4(l, h, b, y); };
   };
@@ -295,7 +295,7 @@ struct WDC65816 {
     bool stp = 0;  //raised during stp, never cleared
 
     uint16_t vector;  //interrupt vector address
-    nall::Natural<24> mar;     //memory address register
+    uint32_t mar;     //memory address register
     uint8_t mdr;      //memory data register
 
     r24 u;  //temporary register
