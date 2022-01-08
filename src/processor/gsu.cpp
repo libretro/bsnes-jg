@@ -21,7 +21,6 @@
 #include <string>
 
 #include "../serializer.hpp"
-#include "../../nall/primitives.hpp"
 
 #include "gsu.hpp"
 

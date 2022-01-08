@@ -22,6 +22,8 @@
 
 #include "../function.hpp"
 
+#include "../../nall/primitives.hpp"
+
 //Hitachi HG51B S169
 
 namespace Processor {

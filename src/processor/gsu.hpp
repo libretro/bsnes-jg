@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../../nall/primitives.hpp"
+
 namespace Processor {
 
 struct GSU {

@@ -19,7 +19,6 @@
  */
 
 #include "../serializer.hpp"
-#include "../../nall/primitives.hpp"
 
 #include "wdc65816.hpp"
 

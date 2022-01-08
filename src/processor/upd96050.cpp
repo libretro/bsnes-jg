@@ -20,7 +20,6 @@
 
 #include "../serializer.hpp"
 #include "../../nall/iterator.hpp"
-#include "../../nall/primitives.hpp"
 
 #include "upd96050.hpp"
 
