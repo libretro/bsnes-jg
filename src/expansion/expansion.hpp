@@ -20,11 +20,11 @@
 
 #pragma once
 
-#include "../sfc.hpp"
+#include "../serializer.hpp"
 
 namespace SuperFamicom {
 
-struct Expansion : Thread {
+struct Expansion {
   Expansion();
   virtual ~Expansion();
 };
