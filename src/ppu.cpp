@@ -33,7 +33,7 @@ void PPU::main() {
   if(vcounter() == 0) {
     if(display.overscan && !io.overscan) {
       //when disabling overscan, clear the overscan area that won't be rendered to:
-      for(unsigned y = 1; y <= 240; y++) {
+      for(unsigned y = 1; y <= 240; ++y) {
         if(y >= 8 && y <= 231) continue;
         auto output = ppu.output + y * 1024;
         std::memset(output, 0, 1024 * sizeof(uint16_t));
@@ -1202,7 +1202,7 @@ void PPU::Background::fetchNameTable() {
   unsigned paletteSize = 2 << io.mode;
   tile.palette = paletteOffset + (tile.paletteGroup << paletteSize);
 
-  nameTableIndex++;
+  ++nameTableIndex;
   if(hires() && !repeated) {
     repeated = true;
     hpixel += 8;
@@ -1637,7 +1637,7 @@ void PPU::Window::scanline() {
 void PPU::Window::run() {
   bool one = (x >= io.oneLeft && x <= io.oneRight);
   bool two = (x >= io.twoLeft && x <= io.twoRight);
-  x++;
+  ++x;
 
   if(test(io.bg1.oneEnable, one ^ io.bg1.oneInvert, io.bg1.twoEnable, two ^ io.bg1.twoInvert, io.bg1.mask)) {
     if(io.bg1.aboveEnable) ppu.bg1.output.above.priority = 0;
@@ -2219,10 +2219,10 @@ bg4(Background::ID::BG4) {
   ppu1.version = 1;  //allowed values: 1
   ppu2.version = 3;  //allowed values: 1, 2, 3
 
-  for(unsigned l = 0; l < 16; l++) {
-    for(unsigned r = 0; r < 32; r++) {
-      for(unsigned g = 0; g < 32; g++) {
-        for(unsigned b = 0; b < 32; b++) {
+  for(unsigned l = 0; l < 16; ++l) {
+    for(unsigned r = 0; r < 32; ++r) {
+      for(unsigned g = 0; g < 32; ++g) {
+        for(unsigned b = 0; b < 32; ++b) {
           double luma = (double)l / 15.0;
           unsigned ar = (luma * r + 0.5);
           unsigned ag = (luma * g + 0.5);
