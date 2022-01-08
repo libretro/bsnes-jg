@@ -86,7 +86,7 @@ private:
   //decompression unit
   uint8_t r4801;  //compression table B0
   uint8_t r4802;  //compression table B1
-  nall::Natural< 7> r4803;  //compression table B2
+  uint8_t r4803;  //compression table B2
   uint8_t r4804;  //compression table index
   uint8_t r4805;  //adjust length B0
   uint8_t r4806;  //adjust length B1
@@ -97,8 +97,8 @@ private:
   uint8_t r480c;  //decompression status
 
   bool dcuPending;
-  nall::Natural< 2> dcuMode;
-  nall::Natural<23> dcuAddress;
+  uint8_t dcuMode;
+  uint32_t dcuAddress;
   unsigned dcuOffset;
   uint8_t dcuTile[32];
   Decompressor* decompressor;
@@ -107,7 +107,7 @@ private:
   uint8_t r4810;  //data port read + seek
   uint8_t r4811;  //data offset B0
   uint8_t r4812;  //data offset B1
-  nall::Natural< 7> r4813;  //data offset B2
+  uint8_t r4813;  //data offset B2
   uint8_t r4814;  //data adjust B0
   uint8_t r4815;  //data adjust B1
   uint8_t r4816;  //data stride B0

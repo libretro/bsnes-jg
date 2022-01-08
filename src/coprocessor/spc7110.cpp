@@ -221,8 +221,8 @@ void SPC7110::dcuLoadAddress() {
   unsigned index = r4804 << 2;
 
   unsigned address = table + index;
-  dcuMode     = dataromRead(address + 0);
-  dcuAddress  = dataromRead(address + 1) << 16;
+  dcuMode     = dataromRead(address + 0) & 0x03;
+  dcuAddress  = (dataromRead(address + 1) << 16) & 0x7fffff;
   dcuAddress |= dataromRead(address + 2) <<  8;
   dcuAddress |= dataromRead(address + 3) <<  0;
 }
@@ -283,7 +283,7 @@ uint8_t SPC7110::dataromRead(unsigned addr) {
 unsigned SPC7110::dataOffset() { return r4811 | r4812 << 8 | r4813 << 16; }
 unsigned SPC7110::dataAdjust() { return r4814 | r4815 << 8; }
 unsigned SPC7110::dataStride() { return r4816 | r4817 << 8; }
-void SPC7110::setDataOffset(unsigned addr) { r4811 = addr; r4812 = addr >> 8; r4813 = addr >> 16; }
+void SPC7110::setDataOffset(unsigned addr) { r4811 = addr; r4812 = addr >> 8; r4813 = (addr >> 16) & 0x7f; }
 void SPC7110::setDataAdjust(unsigned addr) { r4814 = addr; r4815 = addr >> 8; }
 
 void SPC7110::dataPortRead() {
@@ -672,7 +672,7 @@ void SPC7110::write(unsigned addr, uint8_t data) {
   //==================
   case 0x4801: r4801 = data; break;
   case 0x4802: r4802 = data; break;
-  case 0x4803: r4803 = data; break;
+  case 0x4803: r4803 = data & 0x7f; break;
   case 0x4804: r4804 = data; dcuLoadAddress(); break;
   case 0x4805: r4805 = data; break;
   case 0x4806: r4806 = data; r480c &= 0x7f; dcuPending = 1; break;
@@ -687,7 +687,7 @@ void SPC7110::write(unsigned addr, uint8_t data) {
   //==============
   case 0x4811: r4811 = data; break;
   case 0x4812: r4812 = data; break;
-  case 0x4813: r4813 = data; dataPortRead(); break;
+  case 0x4813: r4813 = data & 0x7f; dataPortRead(); break;
   case 0x4814: r4814 = data; dataPortIncrement4814(); break;
   case 0x4815: r4815 = data; if(r4818 & 2) dataPortRead(); dataPortIncrement4815(); break;
   case 0x4816: r4816 = data; break;
