@@ -65,7 +65,7 @@ void EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
     break;
   case 1:
     secondhi = data;
-    batteryfailure = data >> 3;
+    batteryfailure = (data >> 3) & 0x01;
     break;
   case 2:
     minutelo = data;
@@ -78,7 +78,7 @@ void EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
     break;
   case 5:
     hourhi = data;
-    meridian = data >> 2;
+    meridian = (data >> 2) & 0x01;
     if(atime == 1) meridian = 0;
     if(atime == 0) hourhi &= 1;
     break;
@@ -87,13 +87,13 @@ void EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
     break;
   case 7:
     dayhi = data;
-    dayram = data >> 2;
+    dayram = (data >> 2) & 0x01;
     break;
   case 8:
     monthlo = data;
     break;
   case 9:
-    monthhi = data;
+    monthhi = data & 0x01;
     monthram = data >> 1;
     break;
   case 10:
@@ -108,8 +108,8 @@ void EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
   case 13: {
     bool held = hold;
     hold = data;
-    calendar = data >> 1;
-    roundseconds = data >> 3;
+    calendar = (data >> 1) & 0x01;
+    roundseconds = (data >> 3) & 0x01;
     if(held == 1 && hold == 0 && holdtick == 1) {
       //if a second has passed during hold, increment one second upon resuming
       holdtick = 0;
@@ -117,15 +117,15 @@ void EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
     }
   } break;
   case 14:
-    irqmask = data;
-    irqduty = data >> 1;
+    irqmask = data & 0x01;
+    irqduty = (data >> 1) & 0x01;
     irqperiod = data >> 2;
     break;
   case 15:
-    pause = data;
-    stop = data >> 1;
-    atime = data >> 2;
-    test = data >> 3;
+    pause = data & 0x01;
+    stop = (data >> 1) & 0x01;
+    atime = (data >> 2) & 0x01;
+    test = (data >> 3) & 0x01;
     if(atime == 1) meridian = 0;
     if(atime == 0) hourhi &= 1;
     if(pause) {
@@ -139,7 +139,7 @@ void EpsonRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
 void EpsonRTC::load(const uint8_t* data) {
   secondlo = data[0] >> 0;
   secondhi = data[0] >> 4;
-  batteryfailure = data[0] >> 7;
+  batteryfailure = (data[0] >> 7) & 0x01;
 
   minutelo = data[1] >> 0;
   minutehi = data[1] >> 4;
@@ -147,14 +147,14 @@ void EpsonRTC::load(const uint8_t* data) {
 
   hourlo = data[2] >> 0;
   hourhi = data[2] >> 4;
-  meridian = data[2] >> 6;
+  meridian = (data[2] >> 6) & 0x01;
 
   daylo = data[3] >> 0;
   dayhi = data[3] >> 4;
-  dayram = data[3] >> 6;
+  dayram = (data[3] >> 6) & 0x01;
 
   monthlo = data[4] >> 0;
-  monthhi = data[4] >> 4;
+  monthhi = (data[4] >> 4) & 0x01;
   monthram = data[4] >> 5;
 
   yearlo = data[5] >> 0;
@@ -162,19 +162,19 @@ void EpsonRTC::load(const uint8_t* data) {
 
   weekday = data[6] >> 0;
 
-  hold = data[6] >> 4;
-  calendar = data[6] >> 5;
-  irqflag = data[6] >> 6;
-  roundseconds = data[6] >> 7;
+  hold = (data[6] >> 4) & 0x01;
+  calendar = (data[6] >> 5) & 0x01;
+  irqflag = (data[6] >> 6) & 0x01;
+  roundseconds = (data[6] >> 7) & 0x01;
 
   irqmask = data[7] >> 0;
-  irqduty = data[7] >> 1;
+  irqduty = (data[7] >> 1) & 0x01;
   irqperiod = data[7] >> 2;
 
-  pause = data[7] >> 4;
-  stop = data[7] >> 5;
-  atime = data[7] >> 6;
-  test = data[7] >> 7;
+  pause = (data[7] >> 4) & 0x01;
+  stop = (data[7] >> 5) & 0x01;
+  atime = (data[7] >> 6) & 0x01;
+  test = (data[7] >> 7) & 0x01;
 
   uint64_t timestamp = 0;
   for(unsigned byte = 0; byte < 8; ++byte) {
@@ -459,7 +459,7 @@ void EpsonRTC::Enter() {
 void EpsonRTC::main() {
   if(wait) { if(--wait == 0) ready = 1; }
 
-  clocks++;
+  clocks = (clocks + 1) & 0x1fffff;
   if((clocks & ~0x00ff) == 0) roundSeconds();  //125 microseconds
   if((clocks & ~0x3fff) == 0) duty();  //1/128th second
   if((clocks & ~0x7fff) == 0) irq(0);  //1/64th second
@@ -564,7 +564,7 @@ void EpsonRTC::synchronize(uint64_t timestamp) {
 
   unsigned month = 1 + timeinfo->tm_mon;
   monthlo = month % 10;
-  monthhi = month / 10;
+  monthhi = (month / 10) & 0x01;
 
   unsigned year = timeinfo->tm_year % 100;
   yearlo = year % 10;
@@ -572,7 +572,7 @@ void EpsonRTC::synchronize(uint64_t timestamp) {
 
   weekday = timeinfo->tm_wday;
 
-  resync = true;  //alert program that time has changed
+  resync = 1;  //alert program that time has changed
 }
 
 uint8_t EpsonRTC::read(unsigned addr, uint8_t data) {
@@ -605,7 +605,7 @@ void EpsonRTC::write(unsigned addr, uint8_t data) {
   addr &= 3, data &= 15;
 
   if(addr == 0) {
-    chipselect = data;
+    chipselect = data & 0x03;
     if(chipselect != 1) rtcReset();
     ready = 1;
   }
@@ -619,7 +619,7 @@ void EpsonRTC::write(unsigned addr, uint8_t data) {
       state = State::Seek;
       ready = 0;
       wait = 8;
-      mdr = data;
+      mdr = data & 0x0f;
     }
 
     else if(state == State::Seek) {
@@ -628,14 +628,15 @@ void EpsonRTC::write(unsigned addr, uint8_t data) {
       offset = data;
       ready = 0;
       wait = 8;
-      mdr = data;
+      mdr = data & 0x0f;
     }
 
     else if(state == State::Write) {
-      rtcWrite(offset++, data);
+      rtcWrite(offset, data);
+      offset = (offset + 1) & 0x0f;
       ready = 0;
       wait = 8;
-      mdr = data;
+      mdr = data & 0x0f;
     }
   }
 }

@@ -39,35 +39,35 @@ struct EpsonRTC : Thread {
 
   void serialize(serializer&);
 
-  nall::Natural<21> clocks;
+  uint32_t clocks;
   unsigned seconds;
 
-  nall::Natural< 2> chipselect;
+  uint8_t chipselect;
   enum class State : unsigned { Mode, Seek, Read, Write } state;
-  nall::Natural< 4> mdr;
-  nall::Natural< 4> offset;
+  uint8_t mdr;
+  uint8_t offset;
   unsigned wait;
-  nall::Natural< 1> ready;
-  nall::Natural< 1> holdtick;
+  uint8_t ready;
+  uint8_t holdtick;
 
   nall::Natural< 4> secondlo;
   nall::Natural< 3> secondhi;
-  nall::Natural< 1> batteryfailure;
+  uint8_t batteryfailure;
 
   nall::Natural< 4> minutelo;
   nall::Natural< 3> minutehi;
-  nall::Natural< 1> resync;
+  uint8_t resync;
 
   nall::Natural< 4> hourlo;
   nall::Natural< 2> hourhi;
-  nall::Natural< 1> meridian;
+  uint8_t meridian;
 
   nall::Natural< 4> daylo;
   nall::Natural< 2> dayhi;
-  nall::Natural< 1> dayram;
+  uint8_t dayram;
 
   nall::Natural< 4> monthlo;
-  nall::Natural< 1> monthhi;
+  uint8_t monthhi;
   nall::Natural< 2> monthram;
 
   nall::Natural< 4> yearlo;
@@ -75,19 +75,19 @@ struct EpsonRTC : Thread {
 
   nall::Natural< 3> weekday;
 
-  nall::Natural< 1> hold;
-  nall::Natural< 1> calendar;
-  nall::Natural< 1> irqflag;
-  nall::Natural< 1> roundseconds;
+  uint8_t hold;
+  uint8_t calendar;
+  uint8_t irqflag;
+  uint8_t roundseconds;
 
-  nall::Natural< 1> irqmask;
-  nall::Natural< 1> irqduty;
+  uint8_t irqmask;
+  uint8_t irqduty;
   nall::Natural< 2> irqperiod;
 
-  nall::Natural< 1> pause;
-  nall::Natural< 1> stop;
-  nall::Natural< 1> atime;  //astronomical time (24-hour mode)
-  nall::Natural< 1> test;
+  uint8_t pause;
+  uint8_t stop;
+  uint8_t atime;  //astronomical time (24-hour mode)
+  uint8_t test;
 
   //memory.cpp
   void rtcReset();
