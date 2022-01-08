@@ -26,7 +26,7 @@
 namespace Processor {
 
 void uPD96050::exec() {
-  nall::Natural<24> opcode = programROM[regs.pc++];
+  uint32_t opcode = programROM[regs.pc++] & 0xffffff;
   switch(opcode >> 22) {
   case 0: execOP(opcode); break;
   case 1: execRT(opcode); break;
@@ -39,15 +39,15 @@ void uPD96050::exec() {
   regs.n = result <<  1;  //store low 15-bits + zero
 }
 
-void uPD96050::execOP(nall::Natural<24> opcode) {
-  nall::Natural< 2> pselect = opcode >> 20;  //P select
-  nall::Natural< 4> alu     = opcode >> 16;  //ALU operation mode
-  nall::Natural< 1> asl     = opcode >> 15;  //accumulator select
-  nall::Natural< 2> dpl     = opcode >> 13;  //DP low modify
-  nall::Natural< 4> dphm    = opcode >>  9;  //DP high XOR modify
-  nall::Natural< 1> rpdcr   = opcode >>  8;  //RP decrement
-  nall::Natural< 4> src     = opcode >>  4;  //move source
-  nall::Natural< 4> dst     = opcode >>  0;  //move destination
+void uPD96050::execOP(uint32_t opcode) {
+  uint8_t pselect = (opcode >> 20) & 0x03;  //P select
+  uint8_t alu     = (opcode >> 16) & 0x0f;  //ALU operation mode
+  uint8_t asl     = (opcode >> 15) & 0x01;  //accumulator select
+  uint8_t dpl     = (opcode >> 13) & 0x03;  //DP low modify
+  uint8_t dphm    = (opcode >>  9) & 0x0f;  //DP high XOR modify
+  uint8_t rpdcr   = (opcode >>  8) & 0x01;  //RP decrement
+  uint8_t src     = (opcode >>  4) & 0x0f;  //move source
+  uint8_t dst     = (opcode >>  0) & 0x0f;  //move destination
 
   uint16_t idb;
   switch(src) {
@@ -180,17 +180,18 @@ void uPD96050::execOP(nall::Natural<24> opcode) {
   }
 }
 
-void uPD96050::execRT(nall::Natural<24> opcode) {
+void uPD96050::execRT(uint32_t opcode) {
   execOP(opcode);
-  regs.pc = regs.stack[--regs.sp];
+  regs.sp = (regs.sp - 1) & 0x0f;
+  regs.pc = regs.stack[regs.sp];
 }
 
-void uPD96050::execJP(nall::Natural<24> opcode) {
-  nall::Natural< 9> brch = opcode >> 13;  //branch
-  nall::Natural<11> na  = opcode >>  2;  //next address
-  nall::Natural< 2> bank = opcode >>  0;  //bank address
+void uPD96050::execJP(uint32_t opcode) {
+  uint16_t brch = (opcode >> 13) & 0x1ff; //branch
+  uint16_t na   = (opcode >> 2) & 0x7ff;  //next address
+  uint8_t bank  = opcode & 0x03;         //bank address
 
-  nall::Natural<14> jp = (regs.pc & 0x2000) | bank << 11 | na << 0;
+  uint16_t jp = ((regs.pc & 0x2000) | bank << 11 | na) & 0x3fff;
 
   switch(brch) {
   case 0x000: regs.pc = regs.so; return;  //JMPSO
@@ -242,14 +243,24 @@ void uPD96050::execJP(nall::Natural<24> opcode) {
   case 0x100: regs.pc = jp & ~0x2000; return;  //LJMP
   case 0x101: regs.pc = jp |  0x2000; return;  //HJMP
 
-  case 0x140: regs.stack[regs.sp++] = regs.pc; regs.pc = jp & ~0x2000; return;  //LCALL
-  case 0x141: regs.stack[regs.sp++] = regs.pc; regs.pc = jp |  0x2000; return;  //HCALL
+  case 0x140: {  //LCALL
+    regs.stack[regs.sp] = regs.pc;
+    regs.sp = (regs.sp + 1) & 0x0f;
+    regs.pc = jp & ~0x2000;
+    return;
+  }
+  case 0x141: {  //HCALL
+    regs.stack[regs.sp] = regs.pc;
+    regs.sp = (regs.sp + 1) & 0x0f;
+    regs.pc = jp |  0x2000;
+    return;
+  }
   }
 }
 
-void uPD96050::execLD(nall::Natural<24> opcode) {
+void uPD96050::execLD(uint32_t opcode) {
   uint16_t id = opcode >> 6;  //immediate data
-  nall::Natural< 4> dst = opcode >> 0;  //destination
+  uint8_t dst = opcode & 0x0f;  //destination
 
   switch(dst) {
   case  0: break;
@@ -314,9 +325,9 @@ void uPD96050::writeDR(uint8_t data) {
   }
 }
 
-uint8_t uPD96050::readDP(nall::Natural<12> addr) {
+uint8_t uPD96050::readDP(uint16_t addr) {
   bool hi = addr & 1;
-  addr = (addr >> 1) & 2047;
+  addr = (addr >> 1) & 0x7ff;
 
   if(hi == false) {
     return dataRAM[addr] >> 0;
@@ -325,9 +336,9 @@ uint8_t uPD96050::readDP(nall::Natural<12> addr) {
   }
 }
 
-void uPD96050::writeDP(nall::Natural<12> addr, uint8_t data) {
+void uPD96050::writeDP(uint16_t addr, uint8_t data) {
   bool hi = addr & 1;
-  addr = (addr >> 1) & 2047;
+  addr = (addr >> 1) & 0x7ff;
 
   if(hi == false) {
     dataRAM[addr] = (dataRAM[addr] & 0xff00) | (data << 0);
@@ -402,7 +413,7 @@ void uPD96050::power() {
     regs.dp.resize(11);
   }*/
 
-  for(auto n : nall::range(16)) regs.stack[n] = 0x0000;
+  for(unsigned n = 0; n < 16; ++n) regs.stack[n] = 0x0000;
   regs.pc = 0x0000;
   regs.rp = 0x0000;
   regs.dp = 0x0000;

@@ -32,10 +32,10 @@ struct uPD96050 {
   void exec();
   void serialize(serializer&);
 
-  void execOP(nall::Natural<24> opcode);
-  void execRT(nall::Natural<24> opcode);
-  void execJP(nall::Natural<24> opcode);
-  void execLD(nall::Natural<24> opcode);
+  void execOP(uint32_t opcode);
+  void execRT(uint32_t opcode);
+  void execJP(uint32_t opcode);
+  void execLD(uint32_t opcode);
 
   uint8_t readSR();
   void writeSR(uint8_t data);
@@ -43,13 +43,11 @@ struct uPD96050 {
   uint8_t readDR();
   void writeDR(uint8_t data);
 
-  uint8_t readDP(nall::Natural<12> addr);
-  void writeDP(nall::Natural<12> addr, uint8_t data);
-
-  //nall::string disassemble(nall::Natural<14> ip);
+  uint8_t readDP(uint16_t addr);
+  void writeDP(uint16_t addr, uint8_t data);
 
   enum class Revision : unsigned { uPD7725, uPD96050 } revision;
-  nall::Natural<24> programROM[16384];
+  uint32_t programROM[16384];
   uint16_t dataROM[2048];
   uint16_t dataRAM[2048];
 
@@ -126,7 +124,7 @@ struct uPD96050 {
     uint16_t pc;               //program counter // used to be VariadicNatural
     uint16_t rp;               //ROM pointer // used to be VariadicNatural
     uint16_t dp;               //data pointer // used to be VariadicNatural
-    nall::Natural< 4> sp;      //stack pointer
+    uint8_t sp;                //stack pointer
     uint16_t si;               //serial input
     uint16_t so;               //serial output
     int16_t k;
