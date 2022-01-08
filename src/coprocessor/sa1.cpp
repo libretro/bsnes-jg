@@ -150,7 +150,7 @@ uint8_t SA1::BWRAM::readSA1(unsigned address, uint8_t data) {
   } else {
     //$60-6f:0000-ffff x 128 projection
     address = sa1.mmio.cbm * 0x2000 + (address & 0x1fff);
-    return readBitmap(address, data);
+    return readBitmap(address & 0xfffff, data);
   }
 }
 
@@ -162,7 +162,7 @@ void SA1::BWRAM::writeSA1(unsigned address, uint8_t data) {
   } else {
     //$60-6f:0000-ffff x 128 projection
     address = sa1.mmio.cbm * 0x2000 + (address & 0x1fff);
-    return writeBitmap(address, data);
+    return writeBitmap(address & 0xfffff, data);
   }
 }
 
@@ -174,7 +174,7 @@ void SA1::BWRAM::writeLinear(unsigned address, uint8_t data) {
   return write(address, data);
 }
 
-uint8_t SA1::BWRAM::readBitmap(nall::Natural<20> address, uint8_t data) {
+uint8_t SA1::BWRAM::readBitmap(uint32_t address, uint8_t data) {
   if(sa1.mmio.bbf == 0) {
     //4bpp
     unsigned shift = address & 1;
@@ -197,7 +197,7 @@ uint8_t SA1::BWRAM::readBitmap(nall::Natural<20> address, uint8_t data) {
   return 0; // unreachable
 }
 
-void SA1::BWRAM::writeBitmap(nall::Natural<20> address, uint8_t data) {
+void SA1::BWRAM::writeBitmap(uint32_t address, uint8_t data) {
   if(sa1.mmio.bbf == 0) {
     //4bpp
     unsigned shift = address & 1;
@@ -261,7 +261,8 @@ void SA1::IRAM::writeSA1(unsigned address, uint8_t data) {
 void SA1::dmaNormal() {
   while(mmio.dtc--) {
     uint8_t data = r.mdr;
-    nall::Natural<24> source = mmio.dsa++;
+    uint32_t source = mmio.dsa;
+    mmio.dsa = (mmio.dsa + 1) & 0xffffff;
     uint16_t target = mmio.dda++;
 
     if(mmio.sd == DMA::SourceROM && mmio.dd == DMA::DestBWRAM) {
@@ -407,7 +408,7 @@ void SA1::idleBranch() {
 }
 
 uint8_t SA1::read(unsigned address) {
-  r.mar = address;
+  r.mar = address & 0xffffff;
   uint8_t data = r.mdr;
 
   if((address & 0x40fe00) == 0x002200  //00-3f,80-bf:2200-23ff
@@ -432,7 +433,7 @@ uint8_t SA1::read(unsigned address) {
     step();
     if(bwram.conflict()) step();
     if(bwram.conflict()) step();
-    if((address & 1 << 22) && (address & 1 << 21)) return r.mdr = bwram.readBitmap(address, data);
+    if((address & 1 << 22) && (address & 1 << 21)) return r.mdr = bwram.readBitmap(address & 0xfffff, data);
     if((address & 1 << 22)) return r.mdr = bwram.readLinear(address, data);
     return r.mdr = bwram.readSA1(address, data);
   }
@@ -451,7 +452,7 @@ uint8_t SA1::read(unsigned address) {
 }
 
 void SA1::write(unsigned address, uint8_t data) {
-  r.mar = address;
+  r.mar = address & 0xffffff;
   r.mdr = data;
 
   if((address & 0x40fe00) == 0x002200  //00-3f,80-bf:2200-23ff
@@ -476,7 +477,7 @@ void SA1::write(unsigned address, uint8_t data) {
     step();
     if(bwram.conflict()) step();
     if(bwram.conflict()) step();
-    if((address & 1 << 22) && (address & 1 << 21)) return bwram.writeBitmap(address, data);
+    if((address & 1 << 22) && (address & 1 << 21)) return bwram.writeBitmap(address & 0xfffff, data);
     if((address & 1 << 22)) return bwram.writeLinear(address, data);
     return bwram.writeSA1(address, data);
   }
@@ -596,10 +597,9 @@ uint8_t SA1::readIOSA1(unsigned address, uint8_t) {
 
   //(VDPL) variable-length data read port low
   case 0x230c: {
-    nall::Natural<24> data;
-    data.byte(0) = readVBR(mmio.va + 0);
-    data.byte(1) = readVBR(mmio.va + 1);
-    data.byte(2) = readVBR(mmio.va + 2);
+    uint32_t data = readVBR(mmio.va + 0);
+    data |= (readVBR(mmio.va + 1) << 8);
+    data |= (readVBR(mmio.va + 2) << 16);
     data >>= mmio.vbit;
 
     return data >> 0;
@@ -607,10 +607,9 @@ uint8_t SA1::readIOSA1(unsigned address, uint8_t) {
 
   //(VDPH) variable-length data read port high
   case 0x230d: {
-    nall::Natural<24> data;
-    data.byte(0) = readVBR(mmio.va + 0);
-    data.byte(1) = readVBR(mmio.va + 1);
-    data.byte(2) = readVBR(mmio.va + 2);
+    uint32_t data = readVBR(mmio.va + 0);
+    data |= (readVBR(mmio.va + 1) << 8);
+    data |= (readVBR(mmio.va + 2) << 16);
     data >>= mmio.vbit;
 
     if(mmio.hl == 1) {
@@ -976,7 +975,7 @@ void SA1::writeIOSA1(unsigned address, uint8_t data) {
       //sigma (accumulative multiplication)
       mmio.mr += (int16_t)mmio.ma * (int16_t)mmio.mb;
       mmio.overflow = mmio.mr >> 40;
-      mmio.mr = (nall::Natural<40>)mmio.mr;
+      mmio.mr &= 0xffffffffff;
       mmio.mb = 0;
     }
     return;

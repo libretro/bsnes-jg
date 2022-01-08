@@ -109,8 +109,8 @@ struct SA1 : Processor::WDC65816, Thread {
     uint8_t readLinear(unsigned address, uint8_t data = 0);
     void writeLinear(unsigned address, uint8_t data);
 
-    uint8_t readBitmap(nall::Natural<20> address, uint8_t data = 0);
-    void writeBitmap(nall::Natural<20> address, uint8_t data);
+    uint8_t readBitmap(uint32_t address, uint8_t data = 0);
+    void writeBitmap(uint32_t address, uint8_t data);
 
     bool dma;
   } bwram;
