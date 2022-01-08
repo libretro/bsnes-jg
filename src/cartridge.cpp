@@ -52,6 +52,14 @@
 
 namespace SuperFamicom {
 
+static Emulator::Game game;
+static Emulator::Game slotGameBoy;
+static Emulator::Game slotBSMemory;
+static Emulator::Game slotSufamiTurboA;
+static Emulator::Game slotSufamiTurboB;
+
+std::string Cartridge::headerTitle() const { return game.title; }
+
 std::string Cartridge::loadBoard(std::string board) {
   if (board.find("SNSP-") == 0) board.replace(0, 5, "SHVC-");
   if (board.find("MAXI-") == 0) board.replace(0, 5, "SHVC-");

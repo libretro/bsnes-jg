@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <optional>
+
 namespace Emulator {
 
 struct Cheat {

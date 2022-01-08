@@ -22,15 +22,15 @@
 
 #include <vector>
 
-#include "emulator.hpp"
 #include "memory.hpp"
+#include "serializer.hpp"
 
 namespace SuperFamicom {
 
 struct Cartridge {
   unsigned pathID() const { return information.pathID; }
   std::string region() const { return information.region; }
-  std::string headerTitle() const { return game.title; }
+  std::string headerTitle() const;
 
   bool load();
   void save();
@@ -77,11 +77,6 @@ struct Cartridge {
   } has;
 
 private:
-  Emulator::Game game;
-  Emulator::Game slotGameBoy;
-  Emulator::Game slotBSMemory;
-  Emulator::Game slotSufamiTurboA;
-  Emulator::Game slotSufamiTurboB;
   std::string board;
 
   //cartridge.cpp
