@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <fstream>
+
 namespace SuperFamicom {
 
 struct MSU1 : Thread {

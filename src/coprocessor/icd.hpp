@@ -21,12 +21,11 @@
 #pragma once
 
 #include "../cheat.hpp"
-#include "../emulator.hpp"
 #include "../sfc.hpp"
 
 namespace SuperFamicom {
 
-struct ICD : Emulator::Platform, Thread {
+struct ICD : Thread {
   Emulator::Cheat cheats;
 
   inline unsigned pathID() const { return information.pathID; }
