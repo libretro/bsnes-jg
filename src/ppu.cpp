@@ -1196,7 +1196,7 @@ void PPU::Background::fetchNameTable() {
 
   unsigned characterMask = ppu.vram.mask >> (3 + io.mode);
   unsigned characterIndex = io.tiledataAddress >> (3 + io.mode);
-  uint16_t origin = tile.character + characterIndex & characterMask;
+  uint16_t origin = (tile.character + characterIndex) & characterMask;
 
   if(tile.vmirror) voffset ^= 7;
   tile.address = (origin << (3 + io.mode)) + (voffset & 7);
@@ -1466,7 +1466,7 @@ bool PPU::Object::onScanline(PPU::OAM::Object& sprite) {
   if(sprite.x > 256 && sprite.x + sprite.width() - 1 < 512) return false;
   unsigned height = sprite.height() >> io.interlace;
   if(t.y >= sprite.y && t.y < sprite.y + height) return true;
-  if(sprite.y + height >= 256 && t.y < (sprite.y + height & 255)) return true;
+  if(sprite.y + height >= 256 && t.y < ((sprite.y + height) & 255)) return true;
   return false;
 }
 
@@ -1521,7 +1521,7 @@ void PPU::Object::fetch() {
 
     unsigned tileWidth = sprite.width() >> 3;
     int x = sprite.x;
-    int y = t.y - sprite.y & 0xff;
+    int y = (t.y - sprite.y) & 0xff;
     if(io.interlace) y <<= 1;
 
     if(sprite.vflip) {
@@ -1544,10 +1544,10 @@ void PPU::Object::fetch() {
     uint16_t tiledataAddress = io.tiledataAddress;
     if(sprite.nameselect) tiledataAddress += (1 + io.nameselect) << 12;
     uint16_t chrx =  (sprite.character & 15);
-    uint16_t chry = ((sprite.character >> 4) + (y >> 3) & 15) << 4;
+    uint16_t chry = (((sprite.character >> 4) + (y >> 3)) & 15) << 4;
 
     for(unsigned tx = 0; tx < tileWidth; ++tx) {
-      unsigned sx = x + (tx << 3) & 511;
+      unsigned sx = (x + (tx << 3)) & 511;
       if(x != 256 && sx >= 256 && sx + 7 < 512) continue;
       if(t.tileCount++ >= 34) break;
 
@@ -1559,7 +1559,7 @@ void PPU::Object::fetch() {
       oamTile[n].hflip = sprite.hflip;
 
       unsigned mx = !sprite.hflip ? tx : tileWidth - 1 - tx;
-      unsigned pos = tiledataAddress + ((chry + (chrx + mx & 15)) << 4);
+      unsigned pos = tiledataAddress + ((chry + ((chrx + mx) & 15)) << 4);
       uint16_t address = (pos & 0xfff0) + (y & 7);
 
       if(!ppu.io.displayDisable)
