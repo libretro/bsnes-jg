@@ -103,24 +103,24 @@ void WDC65816::pushN(uint8_t data) {
 
 uint8_t WDC65816::readDirect(unsigned address) {
   if(EF && !D.l) return read(D.w | (address & 0xff));
-  return read(D.w + address & 0xffff);
+  return read((D.w + address) & 0xffff);
 }
 
 void WDC65816::writeDirect(unsigned address, uint8_t data) {
   if(EF && !D.l) return write(D.w | (address & 0xff), data);
-  write(D.w + address & 0xffff, data);
+  write((D.w + address) & 0xffff, data);
 }
 
 uint8_t WDC65816::readDirectN(unsigned address) {
-  return read(D.w + address & 0xffff);
+  return read((D.w + address) & 0xffff);
 }
 
 uint8_t WDC65816::readBank(unsigned address) {
-  return read((B << 16) + address & 0xffffff);
+  return read(((B << 16) + address) & 0xffffff);
 }
 
 void WDC65816::writeBank(unsigned address, uint8_t data) {
-  write((B << 16) + address & 0xffffff, data);
+  write(((B << 16) + address) & 0xffffff, data);
 }
 
 uint8_t WDC65816::readLong(unsigned address) {
@@ -132,11 +132,11 @@ void WDC65816::writeLong(unsigned address, uint8_t data) {
 }
 
 uint8_t WDC65816::readStack(unsigned address) {
-  return read(S.w + address & 0xffff);
+  return read((S.w + address) & 0xffff);
 }
 
 void WDC65816::writeStack(unsigned address, uint8_t data) {
-  write(S.w + address & 0xffff, data);
+  write((S.w + address) & 0xffff, data);
 }
 
 uint8_t WDC65816::algorithmADC8(uint8_t data) {
