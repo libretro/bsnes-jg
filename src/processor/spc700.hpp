@@ -22,6 +22,12 @@
 
 #include "endian.hpp"
 
+#if defined(__clang__) || defined(__GNUC__)
+  #define alwaysinline inline __attribute__((always_inline))
+#else
+  #define alwaysinline inline
+#endif
+
 namespace Processor {
 
 struct SPC700 {
@@ -36,11 +42,11 @@ struct SPC700 {
   void power();
 
   //memory.cpp
-  inline uint8_t fetch();
-  inline uint8_t load(uint8_t address);
-  inline void store(uint8_t address, uint8_t data);
-  inline uint8_t pull();
-  inline void push(uint8_t data);
+  alwaysinline uint8_t fetch();
+  alwaysinline uint8_t load(uint8_t address);
+  alwaysinline void store(uint8_t address, uint8_t data);
+  alwaysinline uint8_t pull();
+  alwaysinline void push(uint8_t data);
 
   //instruction.cpp
   void instruction();
@@ -181,3 +187,5 @@ struct SPC700 {
 };
 
 }
+
+#undef alwaysinline
