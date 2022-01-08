@@ -24,6 +24,12 @@
 #include "sfc.hpp"
 #include "system.hpp"
 
+#if defined(__clang__) || defined(__GNUC__)
+  #define alwaysinline inline __attribute__((always_inline))
+#else
+  #define alwaysinline inline
+#endif
+
 namespace SuperFamicom {
 
 //PPUcounter emulates the H/V latch counters of the S-PPU2.
@@ -250,7 +256,7 @@ struct Background {
   void fetchNameTable();
   void fetchOffset(unsigned y);
   void fetchCharacter(unsigned index, bool half = 0);
-  inline void run(bool screen);
+  alwaysinline void run(bool screen);
   void power();
 
   //mode7.cpp
@@ -616,3 +622,5 @@ void PPUcounter::reset() {
 }
 
 }
+
+#undef alwaysinline

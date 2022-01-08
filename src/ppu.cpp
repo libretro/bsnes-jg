@@ -1259,7 +1259,7 @@ void PPU::Background::fetchCharacter(unsigned index, bool half) {
   );
 }
 
-inline void PPU::Background::run(bool screen) {
+void PPU::Background::run(bool screen) {
   if(ppu.vcounter() == 0) return;
 
   if(screen == Screen::Below) {

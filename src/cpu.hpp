@@ -23,6 +23,12 @@
 #include "ppu.hpp"
 #include "processor/wdc65816.hpp"
 
+#if defined(__clang__) || defined(__GNUC__)
+  #define alwaysinline inline __attribute__((always_inline))
+#else
+  #define alwaysinline inline
+#endif
+
 namespace SuperFamicom {
 
 struct CPU : Processor::WDC65816, Thread, PPUcounter {
@@ -74,7 +80,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline unsigned dmaCounter() const;
   inline unsigned joypadCounter() const;
 
-  inline void stepOnce();
+  alwaysinline void stepOnce();
   inline void step(unsigned clocks);
   template<unsigned Clocks, bool Synchronize> void step();
   void scanline();
@@ -273,3 +279,5 @@ private:
 extern CPU cpu;
 
 }
+
+#undef alwaysinline
