@@ -25,8 +25,6 @@
 #include "random.hpp"
 #include "bsmemory.hpp"
 
-#include "../nall/iterator.hpp"
-
 namespace SuperFamicom {
 
 extern Emulator::Random random;
@@ -549,7 +547,7 @@ void BSMemory::Block::erase() {
     return;
   }
 
-  for(unsigned address : nall::range(byteCount())) {
+  for(unsigned address = 0; address < byteCount(); ++address) {
     self->memory.write(id << bitCount() | address, 0xff);
   }
 
