@@ -168,8 +168,8 @@ void uPD96050::execOP(uint32_t opcode) {
 
   if(dst != 4) {  //if LD does not write to DP
     switch(dpl) {
-    case 1: regs.dp = (regs.dp & 0xf0) + (regs.dp + 1 & 0x0f); break;  //DPINC
-    case 2: regs.dp = (regs.dp & 0xf0) + (regs.dp - 1 & 0x0f); break;  //DPDEC
+    case 1: regs.dp = (regs.dp & 0xf0) + ((regs.dp + 1) & 0x0f); break;  //DPINC
+    case 2: regs.dp = (regs.dp & 0xf0) + ((regs.dp - 1) & 0x0f); break;  //DPDEC
     case 3: regs.dp = (regs.dp & 0xf0); break;  //DPCLR
     }
     regs.dp ^= dphm << 4;
