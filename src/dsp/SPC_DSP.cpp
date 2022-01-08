@@ -14,8 +14,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #include <cstdlib>
 #include <cstring>
 
-namespace SuperFamicom {
-
 #include "SPC_DSP.h"
 #include "blargg_endian.h"
 #include "blargg_source.h"
@@ -1032,5 +1030,3 @@ void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
 	copier.extra();
 }
 #endif
-
-}

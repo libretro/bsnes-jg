@@ -28,8 +28,11 @@
 
 #include "dsp.hpp"
 
+#include "dsp/SPC_DSP.h"
+
 namespace SuperFamicom {
 
+static SPC_DSP spc_dsp;
 static Emulator::Stream *stream;
 
 DSP dsp;
