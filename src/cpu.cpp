@@ -28,8 +28,6 @@
 
 #include "cpu.hpp"
 
-#include "../nall/iterator.hpp"
-
 namespace SuperFamicom {
 
 extern Emulator::Random random;

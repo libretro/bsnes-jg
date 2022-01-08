@@ -19,7 +19,6 @@
  */
 
 #include "../serializer.hpp"
-#include "../../nall/iterator.hpp"
 
 #include "upd96050.hpp"
 
