@@ -6,7 +6,8 @@
 #define BLARGG_COMMON_H
 
 #include <stddef.h>
-//#include <assert.h>
+#include <stdlib.h>
+#include <assert.h>
 #include <limits.h>
 
 #include "blargg_config.h"
@@ -53,7 +54,7 @@ public:
 	void clear() { void* p = begin_; begin_ = 0; size_ = 0; free( p ); }
 	T& operator [] ( size_t n ) const
 	{
-		//assert( n <= size_ ); // <= to allow past-the-end value
+		assert( n <= size_ ); // <= to allow past-the-end value
 		return begin_ [n];
 	}
 };
