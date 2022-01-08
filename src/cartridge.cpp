@@ -58,6 +58,8 @@ static Emulator::Game slotBSMemory;
 static Emulator::Game slotSufamiTurboA;
 static Emulator::Game slotSufamiTurboB;
 
+unsigned Cartridge::pathID() const { return information.pathID; }
+std::string Cartridge::region() const { return information.region; }
 std::string Cartridge::headerTitle() const { return game.title; }
 
 std::string Cartridge::loadBoard(std::string board) {

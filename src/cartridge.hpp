@@ -28,8 +28,8 @@
 namespace SuperFamicom {
 
 struct Cartridge {
-  unsigned pathID() const { return information.pathID; }
-  std::string region() const { return information.region; }
+  unsigned pathID() const;
+  std::string region() const;
   std::string headerTitle() const;
 
   bool load();
