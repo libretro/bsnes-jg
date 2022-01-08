@@ -246,12 +246,12 @@ uint8_t CPU::read(unsigned address) {
       r.mar = address;
       step<4,1>();
     }
-  } else if(address + 0x6000 & 0x4000) {
+  } else if((address + 0x6000) & 0x4000) {
     status.clockCount = 8;
     dmaEdge();
     r.mar = address;
     step<4,1>();
-  } else if(address - 0x4000 & 0x7e00) {
+  } else if((address - 0x4000) & 0x7e00) {
     status.clockCount = 6;
     dmaEdge();
     r.mar = address;
@@ -287,12 +287,12 @@ void CPU::write(unsigned address, uint8_t data) {
       r.mar = address;
       step<8,1>();
     }
-  } else if(address + 0x6000 & 0x4000) {
+  } else if((address + 0x6000) & 0x4000) {
     status.clockCount = 8;
     dmaEdge();
     r.mar = address;
     step<8,1>();
-  } else if(address - 0x4000 & 0x7e00) {
+  } else if((address - 0x4000) & 0x7e00) {
     status.clockCount = 6;
     dmaEdge();
     r.mar = address;
