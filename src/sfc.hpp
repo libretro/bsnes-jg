@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <cstring>
-
 #include <libco/libco.h>
 
 #include "serializer.hpp"
@@ -40,21 +38,9 @@ struct Scheduler {
   cothread_t active = nullptr;
   bool desynchronized = false;
 
-  void enter() {
-    host = co_active();
-    co_switch(active);
-  }
-
-  void leave(Event event_) {
-    event = event_;
-    active = co_active();
-    co_switch(host);
-  }
-
-  void resume(cothread_t thread) {
-    if(mode == Mode::Synchronize) desynchronized = true;
-    co_switch(thread);
-  }
+  void enter();
+  void leave(Event);
+  void resume(cothread_t);
 
   inline bool synchronizing() const {
     return mode == Mode::Synchronize;
@@ -81,51 +67,14 @@ extern Scheduler scheduler;
 struct Thread {
   enum : unsigned { Size = 4_KiB * sizeof(void*) };
 
-  void create(void (*entrypoint)(), unsigned frequency_) {
-    if(!thread) {
-      thread = co_create(Thread::Size, entrypoint);
-    } else {
-      thread = co_derive(thread, Thread::Size, entrypoint);
-    }
-    frequency = frequency_;
-    clock = 0;
-  }
-
-  bool active() const {
-    return thread == co_active();
-  }
-
-  void serialize(serializer& s) {
-    s.integer(frequency);
-    s.integer(clock);
-  }
-
-  void serializeStack(serializer& s) {
-    static uint8_t stack[Thread::Size];
-    bool active = co_active() == thread;
-
-    if(s.mode() == serializer::Size) {
-      s.array(stack, Thread::Size);
-      s.boolean(active);
-    }
-
-    if(s.mode() == serializer::Load) {
-      s.array(stack, Thread::Size);
-      s.boolean(active);
-      std::memcpy(thread, stack, Thread::Size);
-      if(active) scheduler.active = thread;
-    }
-
-    if(s.mode() == serializer::Save) {
-      std::memcpy(stack, thread, Thread::Size);
-      s.array(stack, Thread::Size);
-      s.boolean(active);
-    }
-  }
+  void create(void (*entrypoint)(), unsigned);
+  bool active() const;
+  void serialize(serializer&);
+  void serializeStack(serializer&);
 
   cothread_t thread = nullptr;
-    uint32_t frequency = 0;
-     int64_t clock = 0;
+  uint32_t frequency = 0;
+  int64_t clock = 0;
 };
 
 }

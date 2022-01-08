@@ -125,9 +125,10 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/processor/upd96050.cpp \
 	src/processor/wdc65816.cpp \
 	src/random.cpp \
+	src/sfc.cpp \
 	src/sha256.cpp \
-	src/sufamiturbo.cpp \
 	src/smp.cpp \
+	src/sufamiturbo.cpp \
 	src/system.cpp \
 	jg.cpp
 

@@ -19,6 +19,7 @@
  */
 
 #include <algorithm>
+#include <cstring>
 #include <sstream>
 #include <optional>
 #include <vector>
