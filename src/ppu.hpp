@@ -45,8 +45,8 @@ namespace SuperFamicom {
 //V=128.
 
 struct PPUcounter {
-  inline void tick();
-  inline void tick(unsigned clocks); private:
+  alwaysinline void tick();
+  alwaysinline void tick(unsigned clocks); private:
   inline void tickScanline(); public:
 
   inline bool interlace() const;
@@ -536,7 +536,7 @@ struct Screen {
 
 extern PPU ppu;
 
-alwaysinline void PPUcounter::tick() {
+void PPUcounter::tick() {
   time.hcounter += 2;  //increment by smallest unit of time.
   if(time.hcounter == hperiod()) {
     last.hperiod = hperiod();
@@ -545,7 +545,7 @@ alwaysinline void PPUcounter::tick() {
   }
 }
 
-alwaysinline void PPUcounter::tick(unsigned clocks) {
+void PPUcounter::tick(unsigned clocks) {
   time.hcounter += clocks;
   if(time.hcounter >= hperiod()) {
     last.hperiod = hperiod();
