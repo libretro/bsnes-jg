@@ -24,46 +24,46 @@
 
 namespace SuperFamicom {
 
-nall::Natural< 4> SharpRTC::rtcRead(nall::Natural< 4> addr) {
-  switch(addr) {
-  case  0: return second % 10;
-  case  1: return second / 10;
-  case  2: return minute % 10;
-  case  3: return minute / 10;
-  case  4: return hour % 10;
-  case  5: return hour / 10;
-  case  6: return day % 10;
-  case  7: return day / 10;
-  case  8: return month;
-  case  9: return year % 10;
-  case 10: return year / 10 % 10;
-  case 11: return year / 100;
-  case 12: return weekday;
+uint8_t SharpRTC::rtcRead(uint8_t addr) {
+  switch(addr & 0x0f) {
+  case  0: return (second % 10) & 0x0f;
+  case  1: return (second / 10) & 0x0f;
+  case  2: return (minute % 10) & 0x0f;
+  case  3: return (minute / 10) & 0x0f;
+  case  4: return (hour % 10) & 0x0f;
+  case  5: return (hour / 10) & 0x0f;
+  case  6: return (day % 10) & 0x0f;
+  case  7: return (day / 10) & 0x0f;
+  case  8: return (month) & 0x0f;
+  case  9: return (year % 10) & 0x0f;
+  case 10: return (year / 10 % 10) & 0x0f;
+  case 11: return (year / 100) & 0x0f;
+  case 12: return (weekday) & 0x0f;
   default: return 0;
   }
 }
 
-void SharpRTC::rtcWrite(nall::Natural< 4> addr, nall::Natural< 4> data) {
-  switch(addr) {
-  case  0: second = second / 10 * 10 + data; break;
-  case  1: second = data * 10 + second % 10; break;
-  case  2: minute = minute / 10 * 10 + data; break;
-  case  3: minute = data * 10 + minute % 10; break;
-  case  4: hour = hour / 10 * 10 + data; break;
-  case  5: hour = data * 10 + hour % 10; break;
-  case  6: day = day / 10 * 10 + data; break;
-  case  7: day = data * 10 + day % 10; break;
-  case  8: month = data; break;
-  case  9: year = year / 10 * 10 + data; break;
-  case 10: year = year / 100 * 100 + data * 10 + year % 10; break;
-  case 11: year = data * 100 + year % 100; break;
-  case 12: weekday = data; break;
+void SharpRTC::rtcWrite(uint8_t addr, uint8_t data) {
+  switch(addr & 0x0f) {
+  case  0: second = second / 10 * 10 + (data & 0x0f); break;
+  case  1: second = (data & 0x0f) * 10 + second % 10; break;
+  case  2: minute = minute / 10 * 10 + (data & 0x0f); break;
+  case  3: minute = (data & 0x0f) * 10 + minute % 10; break;
+  case  4: hour = hour / 10 * 10 + (data & 0x0f); break;
+  case  5: hour = (data & 0x0f) * 10 + hour % 10; break;
+  case  6: day = day / 10 * 10 + (data & 0x0f); break;
+  case  7: day = (data & 0x0f) * 10 + day % 10; break;
+  case  8: month = (data & 0x0f); break;
+  case  9: year = year / 10 * 10 + (data & 0x0f); break;
+  case 10: year = year / 100 * 100 + (data & 0x0f) * 10 + year % 10; break;
+  case 11: year = (data & 0x0f) * 100 + year % 100; break;
+  case 12: weekday = (data & 0x0f); break;
   }
 }
 
 void SharpRTC::load(const uint8_t* data) {
   for(unsigned byte = 0; byte < 8; ++byte) {
-    rtcWrite(byte * 2 + 0, data[byte] >> 0);
+    rtcWrite(byte * 2 + 0, data[byte] & 0x0f);
     rtcWrite(byte * 2 + 1, data[byte] >> 4);
   }
 
@@ -134,8 +134,8 @@ void SharpRTC::tickMonth() {
 }
 
 void SharpRTC::tickYear() {
-  year++;
-  year = (nall::Natural<12>)year;
+  ++year;
+  year = year & 0xfff;
 }
 
 //returns day of week for specified date
@@ -253,7 +253,7 @@ uint8_t SharpRTC::read(unsigned addr, uint8_t data) {
     if(state != State::Read) return 0;
 
     if(index < 0) {
-      index++;
+      ++index;
       return 15;
     } else if(index > 12) {
       index = -1;
@@ -307,7 +307,7 @@ void SharpRTC::write(unsigned addr, uint8_t data) {
 
     if(state == State::Write) {
       if(index >= 0 && index < 12) {
-        rtcWrite(index++, data);
+        rtcWrite(index++, data & 0x0f);
         if(index == 12) {
           //day of week is automatically calculated and written
           weekday = calculateWeekday(1000 + year, month, day);
