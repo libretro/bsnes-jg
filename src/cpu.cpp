@@ -150,7 +150,7 @@ void CPU::Channel::dmaRun() {
   do {
     transfer(sourceBank << 16 | sourceAddress, index);
     index = (index + 1) & 0x03;
-    if(!fixedTransfer) !reverseTransfer ? sourceAddress++ : sourceAddress--;
+    if(!fixedTransfer) !reverseTransfer ? ++sourceAddress : --sourceAddress;
     edge();
   } while(dmaEnable && --transferSize);
 
@@ -190,7 +190,7 @@ void CPU::Channel::hdmaReload() {
 
   if((lineCounter & 0x7f) == 0) {
     lineCounter = data;
-    hdmaAddress++;
+    ++hdmaAddress;
 
     hdmaCompleted = lineCounter == 0;
     hdmaDoTransfer = !hdmaCompleted;
@@ -220,7 +220,7 @@ void CPU::Channel::hdmaTransfer() {
 
 void CPU::Channel::hdmaAdvance() {
   if(!hdmaActive()) return;
-  lineCounter--;
+  --lineCounter;
   hdmaDoTransfer = bool(lineCounter & 0x80);
   hdmaReload();
 }
@@ -427,8 +427,11 @@ void CPU::writeAPU(unsigned addr, uint8_t data) {
 void CPU::writeCPU(unsigned addr, uint8_t data) {
   switch(addr & 0xffff) {
 
-  case 0x2180:  //WMDATA
-    return bus.write(0x7e0000 | io.wramAddress++, data);
+  case 0x2180: { //WMDATA
+    uint32_t temp = io.wramAddress;
+    io.wramAddress = (io.wramAddress + 1) & 0x1ffff;
+    return bus.write(0x7e0000 | temp, data);
+  }
 
   case 0x2181:  //WMADDL
     io.wramAddress = (io.wramAddress & 0x1ff00) | data << 0;
@@ -756,14 +759,14 @@ void CPU::scanline() {
 
 void CPU::aluEdge() {
   if(alu.mpyctr) {
-    alu.mpyctr--;
+    --alu.mpyctr;
     if(io.rddiv & 1) io.rdmpy += alu.shift;
     io.rddiv >>= 1;
     alu.shift <<= 1;
   }
 
   if(alu.divctr) {
-    alu.divctr--;
+    --alu.divctr;
     io.rddiv <<= 1;
     alu.shift >>= 1;
     if(io.rdmpy >= alu.shift) {
@@ -857,7 +860,7 @@ void CPU::joypadEdge() {
     io.joy4 = io.joy4 << 1 | ((port1 & 2) >> 1);
   }
 
-  status.autoJoypadCounter++;
+  ++status.autoJoypadCounter;
 }
 
 //nmiPoll() and irqPoll() are called once every four clock cycles;
