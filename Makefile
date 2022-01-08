@@ -160,8 +160,7 @@ MKDIRS := deps/byuuML \
 	src/coprocessor \
 	src/dsp \
 	src/expansion \
-	src/processor \
-	src/slot
+	src/processor
 
 OBJDIR := objs
 
