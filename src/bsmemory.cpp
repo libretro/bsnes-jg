@@ -576,7 +576,7 @@ void BSMemory::Block::update() {
 }
 
 auto BSMemory::Blocks::operator()(uint8_t id) -> Block& {
-  return self->blocks[id & count() - 1];
+  return self->blocks[id & (count() - 1)];
 }
 
 uint8_t BSMemory::Block::Status::operator()() {
