@@ -295,7 +295,7 @@ void ARM7TDMI::armInitialize() {
     //std::integral_constant<uint32_t, nall::test(s)>::value
 
   #define bit1(value, index) (value >> index & 1)
-  #define bits(value, lo, hi) (value >> lo & (1ull << (hi - lo + 1)) - 1)
+  #define bits(value, lo, hi) (value >> lo & ((1ull << (hi - lo + 1)) - 1))
 
   #define arguments \
     bits(opcode, 0,23),  /* displacement */ \
