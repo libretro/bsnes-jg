@@ -89,12 +89,12 @@ struct PPU : Thread, PPUcounter {
   PPU();
   ~PPU();
 
-  void synchronizeCPU();
+  alwaysinline void synchronizeCPU();
   static void Enter();
   bool load();
   void power(bool reset);
 
-  void main();
+  alwaysinline void main();
   void cycleObjectEvaluate();
   template<unsigned Cycle> void cycleBackgroundFetch();
   void cycleBackgroundBegin();
@@ -536,7 +536,7 @@ struct Screen {
 
 extern PPU ppu;
 
-void PPUcounter::tick() {
+alwaysinline void PPUcounter::tick() {
   time.hcounter += 2;  //increment by smallest unit of time.
   if(time.hcounter == hperiod()) {
     last.hperiod = hperiod();
@@ -545,7 +545,7 @@ void PPUcounter::tick() {
   }
 }
 
-void PPUcounter::tick(unsigned clocks) {
+alwaysinline void PPUcounter::tick(unsigned clocks) {
   time.hcounter += clocks;
   if(time.hcounter >= hperiod()) {
     last.hperiod = hperiod();
