@@ -27,6 +27,18 @@
 
 namespace Emulator {
 
+bool Cheat::Code::operator==(const Code& code) const {
+  if(address != code.address) return false;
+  if(data != code.data) return false;
+  if((bool)compare != (bool)code.compare) return false;
+  if(compare && code.compare && compare != code.compare) return false;
+  return true;
+}
+
+Cheat::operator bool() const {
+  return codes.size() > 0;
+}
+
 void Cheat::reset() {
   codes.clear();
 }

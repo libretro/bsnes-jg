@@ -26,13 +26,7 @@ namespace Emulator {
 
 struct Cheat {
   struct Code {
-    bool operator==(const Code& code) const {
-      if(address != code.address) return false;
-      if(data != code.data) return false;
-      if((bool)compare != (bool)code.compare) return false;
-      if(compare && code.compare && compare != code.compare) return false;
-      return true;
-    }
+    bool operator==(const Code& code) const;
 
     unsigned address;
     unsigned data;
@@ -41,14 +35,12 @@ struct Cheat {
     unsigned restore;
   };
 
-  explicit operator bool() const {
-    return codes.size() > 0;
-  }
+  explicit operator bool() const;
 
   void reset();
-  void append(unsigned address, unsigned data, std::optional<unsigned> compare = {});
-  void assign(const std::vector<std::string>& list);
-  bool find(uint8_t *val, unsigned address, unsigned compare);
+  void append(unsigned, unsigned, std::optional<unsigned> = {});
+  void assign(const std::vector<std::string>&);
+  bool find(uint8_t*, unsigned, unsigned);
 
   std::vector<Code> codes;
 };
@@ -56,6 +48,6 @@ struct Cheat {
 }
 
 namespace CheatDecoder {
-  bool gb(std::string& code);
-  bool snes(std::string& code);
+  bool gb(std::string&);
+  bool snes(std::string&);
 }
