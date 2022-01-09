@@ -32,7 +32,6 @@
 //- floating-point usage is not portable across different implementations
 
 #include <cstdint>
-#include <string.h>
 #include <utility>
 
 struct serializer;
@@ -47,17 +46,9 @@ struct has_serialize {
 struct serializer {
   enum Mode : unsigned { Load, Save, Size };
 
-  Mode mode() const {
-    return _mode;
-  }
-
-  const uint8_t* data() const {
-    return _data;
-  }
-
-  unsigned size() const {
-    return _size;
-  }
+  Mode mode() const;
+  const uint8_t* data() const;
+  unsigned size() const;
 
   template<typename T> serializer& boolean(T& value) {
     if(_mode == Save) {
@@ -100,42 +91,21 @@ struct serializer {
     return array(data, N);
   }
 
-  template<typename T> serializer& operator()(T& value, typename std::enable_if<has_serialize<T>::value>::type* = 0) { value.serialize(*this); return *this; }
-  template<typename T> serializer& operator()(T& value, typename std::enable_if<std::is_integral<T>::value>::type* = 0) { return integer(value); }
-
-  serializer& operator=(const serializer& s) {
-    if(_data) delete[] _data;
-
-    _mode = s._mode;
-    _data = new uint8_t[s._capacity];
-    _size = s._size;
-    _capacity = s._capacity;
-
-    memcpy(_data, s._data, s._capacity);
+  template<typename T> serializer& operator()(T& value, typename std::enable_if<has_serialize<T>::value>::type* = 0) {
+    value.serialize(*this);
     return *this;
   }
 
-  serializer() = default;
-  serializer(const serializer& s) { operator=(s); }
-
-  serializer(unsigned capacity) {
-    _mode = Save;
-    _data = new uint8_t[capacity]();
-    _size = 0;
-    _capacity = capacity;
+  template<typename T> serializer& operator()(T& value, typename std::enable_if<std::is_integral<T>::value>::type* = 0) {
+    return integer(value);
   }
 
-  serializer(const uint8_t* data, unsigned capacity) {
-    _mode = Load;
-    _data = new uint8_t[capacity];
-    _size = 0;
-    _capacity = capacity;
-    memcpy(_data, data, capacity);
-  }
-
-  ~serializer() {
-    if(_data) delete[] _data;
-  }
+  serializer& operator=(const serializer&);
+  serializer();
+  serializer(const serializer&);
+  serializer(unsigned);
+  serializer(const uint8_t*, unsigned);
+  ~serializer();
 
 private:
   Mode _mode = Size;

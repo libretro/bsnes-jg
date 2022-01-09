@@ -128,6 +128,7 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/processor/upd96050.cpp \
 	src/processor/wdc65816.cpp \
 	src/random.cpp \
+	src/serializer.cpp \
 	src/sfc.cpp \
 	src/sha256.cpp \
 	src/smp.cpp \
