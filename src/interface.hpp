@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "serializer.hpp"
+
 namespace SuperFamicom {
 
 struct Interface {

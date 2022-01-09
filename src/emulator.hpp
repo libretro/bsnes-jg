@@ -25,8 +25,6 @@
 #include <string>
 #include <vector>
 
-#include "serializer.hpp"
-
 namespace Emulator {
 
 //incremented only when serialization format changes
