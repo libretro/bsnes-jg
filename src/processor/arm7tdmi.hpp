@@ -54,7 +54,7 @@ struct ARM7TDMI {
   //registers.cpp
   struct GPR;
   struct PSR;
-  inline GPR& r(nall::Natural< 4>);
+  inline GPR& r(uint8_t);
   inline PSR& cpsr();
   inline PSR& spsr();
   inline bool privileged() const;
@@ -77,7 +77,7 @@ struct ARM7TDMI {
   uint32_t ROR(uint32_t, uint8_t);
   uint32_t RRX(uint32_t);
   uint32_t SUB(uint32_t, uint32_t, bool);
-  bool TST(nall::Natural< 4>);
+  bool TST(uint8_t);
 
   //instruction.cpp
   void fetch();
@@ -87,53 +87,53 @@ struct ARM7TDMI {
   void thumbInitialize();
 
   //instructions-arm.cpp
-  void armALU(nall::Natural< 4> mode, nall::Natural< 4> target, nall::Natural< 4> source, uint32_t data);
-  void armMoveToStatus(nall::Natural< 4> field, nall::Natural< 1> source, uint32_t data);
+  void armALU(uint8_t mode, uint8_t target, uint8_t source, uint32_t data);
+  void armMoveToStatus(uint8_t field, uint8_t source, uint32_t data);
 
-  void armInstructionBranch(uint32_t, nall::Natural< 1>);
-  void armInstructionBranchExchangeRegister(nall::Natural< 4>);
-  void armInstructionDataImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
-  void armInstructionDataImmediateShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
-  void armInstructionDataRegisterShift(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>);
-  void armInstructionLoadImmediate(uint8_t, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  void armInstructionLoadRegister(nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  void armInstructionMemorySwap(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
-  void armInstructionMoveHalfImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  void armInstructionMoveHalfRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  void armInstructionMoveImmediateOffset(nall::Natural<12>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  void armInstructionMoveMultiple(uint16_t, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  void armInstructionMoveRegisterOffset(nall::Natural< 4>, nall::Natural< 2>, nall::Natural< 5>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
-  void armInstructionMoveToRegisterFromStatus(nall::Natural< 4>, nall::Natural< 1>);
-  void armInstructionMoveToStatusFromImmediate(uint8_t, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
-  void armInstructionMoveToStatusFromRegister(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>);
-  void armInstructionMultiply(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>);
-  void armInstructionMultiplyLong(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 1>, nall::Natural< 1>, nall::Natural< 1>);
+  void armInstructionBranch(uint32_t, uint8_t);
+  void armInstructionBranchExchangeRegister(uint8_t);
+  void armInstructionDataImmediate(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionDataImmediateShift(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionDataRegisterShift(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionLoadImmediate(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionLoadRegister(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionMemorySwap(uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionMoveHalfImmediate(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionMoveHalfRegister(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionMoveImmediateOffset(nall::Natural<12>, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionMoveMultiple(uint16_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionMoveRegisterOffset(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionMoveToRegisterFromStatus(uint8_t, uint8_t);
+  void armInstructionMoveToStatusFromImmediate(uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionMoveToStatusFromRegister(uint8_t, uint8_t, uint8_t);
+  void armInstructionMultiply(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionMultiplyLong(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
   void armInstructionSoftwareInterrupt(nall::Natural<24> immediate);
   void armInstructionUndefined();
 
   //instructions-thumb.cpp
-  void thumbInstructionALU(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 4>);
-  void thumbInstructionALUExtended(nall::Natural< 4>, nall::Natural< 4>, nall::Natural< 2>);
-  void thumbInstructionAddRegister(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
-  void thumbInstructionAdjustImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>);
-  void thumbInstructionAdjustRegister(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 1>);
-  void thumbInstructionAdjustStack(nall::Natural< 7>, nall::Natural< 1>);
-  void thumbInstructionBranchExchange(nall::Natural< 4>);
+  void thumbInstructionALU(uint8_t, uint8_t, uint8_t);
+  void thumbInstructionALUExtended(uint8_t, uint8_t, uint8_t);
+  void thumbInstructionAddRegister(uint8_t, uint8_t, uint8_t);
+  void thumbInstructionAdjustImmediate(uint8_t, uint8_t, uint8_t, uint8_t);
+  void thumbInstructionAdjustRegister(uint8_t, uint8_t, uint8_t, uint8_t);
+  void thumbInstructionAdjustStack(uint8_t, uint8_t);
+  void thumbInstructionBranchExchange(uint8_t);
   void thumbInstructionBranchFarPrefix(uint16_t);
   void thumbInstructionBranchFarSuffix(nall::Natural<11>);
   void thumbInstructionBranchNear(uint16_t);
-  void thumbInstructionBranchTest(int8_t, nall::Natural< 4>);
-  void thumbInstructionImmediate(uint8_t, nall::Natural< 3>, nall::Natural< 2>);
-  void thumbInstructionLoadLiteral(uint8_t, nall::Natural< 3>);
-  void thumbInstructionMoveByteImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
-  void thumbInstructionMoveHalfImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
-  void thumbInstructionMoveMultiple(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
-  void thumbInstructionMoveRegisterOffset(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 3>);
-  void thumbInstructionMoveStack(uint8_t, nall::Natural< 3>, nall::Natural< 1>);
-  void thumbInstructionMoveWordImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 1>);
-  void thumbInstructionShiftImmediate(nall::Natural< 3>, nall::Natural< 3>, nall::Natural< 5>, nall::Natural< 2>);
+  void thumbInstructionBranchTest(int8_t, uint8_t);
+  void thumbInstructionImmediate(uint8_t, uint8_t, uint8_t);
+  void thumbInstructionLoadLiteral(uint8_t, uint8_t);
+  void thumbInstructionMoveByteImmediate(uint8_t, uint8_t, uint8_t, uint8_t);
+  void thumbInstructionMoveHalfImmediate(uint8_t, uint8_t, uint8_t, uint8_t);
+  void thumbInstructionMoveMultiple(uint8_t, uint8_t, uint8_t);
+  void thumbInstructionMoveRegisterOffset(uint8_t, uint8_t, uint8_t, uint8_t);
+  void thumbInstructionMoveStack(uint8_t, uint8_t, uint8_t);
+  void thumbInstructionMoveWordImmediate(uint8_t, uint8_t, uint8_t, uint8_t);
+  void thumbInstructionShiftImmediate(uint8_t, uint8_t, uint8_t, uint8_t);
   void thumbInstructionSoftwareInterrupt(uint8_t);
-  void thumbInstructionStackMultiple(uint8_t, nall::Natural< 1>, nall::Natural< 1>);
+  void thumbInstructionStackMultiple(uint8_t, uint8_t, uint8_t);
   void thumbInstructionUndefined();
 
   //serialization.cpp
@@ -183,7 +183,7 @@ struct ARM7TDMI {
     //serialization.cpp
     void serialize(serializer&);
 
-    nall::Natural< 5> m;    //mode
+    uint8_t m;    //mode
     bool t;  //thumb
     bool f;  //fiq
     bool i;  //irq
@@ -236,8 +236,8 @@ struct ARM7TDMI {
       bool thumb;  //not used by fetch stage
     };
 
-    nall::Natural< 1> reload = 1;
-    nall::Natural< 1> nonsequential = 1;
+    uint8_t reload = 1;
+    uint8_t nonsequential = 1;
     Instruction fetch;
     Instruction decode;
     Instruction execute;
