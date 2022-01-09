@@ -23,8 +23,6 @@
 
 #include "arm7tdmi.hpp"
 
-#include "../../nall/primitives.hpp"
-
 namespace Processor {
 
 ARM7TDMI::GPR& ARM7TDMI::r(uint8_t index) {

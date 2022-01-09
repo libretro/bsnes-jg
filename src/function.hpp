@@ -22,6 +22,12 @@
 
 #include <utility>
 
+template <typename T, unsigned B>
+inline T signextend(const T x) {
+  struct { T x:B; } s;
+  return s.x = x;
+}
+
 template<typename T> struct bfunction;
 
 template<typename R, typename... P> struct bfunction<auto (P...) -> R> {

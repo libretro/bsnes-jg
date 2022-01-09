@@ -24,9 +24,6 @@
 #include "random.hpp"
 #include "settings.hpp"
 
-// TODO: Find a better place for signextend
-#include "../nall/primitives.hpp"
-
 namespace SuperFamicom {
 
 extern Emulator::Random random;
