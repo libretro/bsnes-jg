@@ -40,7 +40,7 @@ struct HG51B {
   virtual void write(unsigned address, uint8_t data) = 0;
   virtual void lock();
   virtual void halt();
-  unsigned wait(nall::Natural<24> address);
+  unsigned wait(uint32_t address);
   void main();
   void execute();
   void advance();
@@ -81,23 +81,23 @@ struct HG51B {
   void instructionCMPR(nall::Natural< 7> reg, uint8_t shift);
   void instructionCMPR(uint8_t imm, uint8_t shift);
   void instructionHALT();
-  void instructionINC(nall::Natural<24>& reg);
+  void instructionINC(uint32_t& reg);
   void instructionJMP(uint8_t data, uint8_t far, const uint8_t& take);
   void instructionJSR(uint8_t data, uint8_t far, const uint8_t& take);
-  void instructionLD(nall::Natural<24>& out, nall::Natural< 7> reg);
-  void instructionLD(nall::Natural<15>& out, nall::Natural< 4> reg);
-  void instructionLD(nall::Natural<24>& out, uint8_t imm);
-  void instructionLD(nall::Natural<15>& out, uint8_t imm);
-  void instructionLDL(nall::Natural<15>& out, uint8_t imm);
-  void instructionLDH(nall::Natural<15>& out, nall::Natural< 7> imm);
+  void instructionLD(uint32_t& out, nall::Natural< 7> reg);
+  void instructionLD(uint16_t& out, nall::Natural< 4> reg);
+  void instructionLD(uint32_t& out, uint8_t imm);
+  void instructionLD(uint16_t& out, uint8_t imm);
+  void instructionLDL(uint16_t& out, uint8_t imm);
+  void instructionLDH(uint16_t& out, nall::Natural< 7> imm);
   void instructionMUL(nall::Natural< 7> reg);
   void instructionMUL(uint8_t imm);
   void instructionNOP();
   void instructionOR(nall::Natural< 7> reg, uint8_t shift);
   void instructionOR(uint8_t imm, uint8_t shift);
-  void instructionRDRAM(uint8_t byte, nall::Natural<24>& a);
+  void instructionRDRAM(uint8_t byte, uint32_t& a);
   void instructionRDRAM(uint8_t byte, uint8_t imm);
-  void instructionRDROM(nall::Natural<24>& reg);
+  void instructionRDROM(uint32_t& reg);
   void instructionRDROM(uint16_t imm);
   void instructionROR(nall::Natural< 7> reg);
   void instructionROR(uint8_t imm);
@@ -107,16 +107,16 @@ struct HG51B {
   void instructionSHR(nall::Natural< 7> reg);
   void instructionSHR(uint8_t imm);
   void instructionSKIP(uint8_t take, const uint8_t& flag);
-  void instructionST(nall::Natural< 7> reg, nall::Natural<24>& in);
+  void instructionST(nall::Natural< 7> reg, uint32_t& in);
   void instructionSUB(nall::Natural< 7> reg, uint8_t shift);
   void instructionSUB(uint8_t imm, uint8_t shift);
   void instructionSUBR(nall::Natural< 7> reg, uint8_t shift);
   void instructionSUBR(uint8_t imm, uint8_t shift);
-  void instructionSWAP(nall::Natural<24>& a, nall::Natural< 4> reg);
+  void instructionSWAP(uint32_t& a, nall::Natural< 4> reg);
   void instructionSXB();
   void instructionSXW();
   void instructionWAIT();
-  void instructionWRRAM(uint8_t byte, nall::Natural<24>& a);
+  void instructionWRRAM(uint8_t byte, uint32_t& a);
   void instructionWRRAM(uint8_t byte, uint8_t imm);
   void instructionXNOR(nall::Natural< 7> reg, uint8_t shift);
   void instructionXNOR(uint8_t imm, uint8_t shift);
@@ -145,15 +145,15 @@ protected:
     bool v;  //overflow
     bool i;  //interrupt
 
-    nall::Natural<24> a;              //accumulator
-    nall::Natural<15> p;              //page register
+    uint32_t a;              //accumulator
+    uint16_t p;              //page register
     uint64_t mul;            //multiplier
-    nall::Natural<24> mdr;            //bus memory data register
-    nall::Natural<24> rom;            //data ROM data buffer
-    nall::Natural<24> ram;            //data RAM data buffer
-    nall::Natural<24> mar;            //bus memory address register
-    nall::Natural<24> dpr;            //data RAM address pointer
-    nall::Natural<24> gpr[16];        //general purpose registers
+    uint32_t mdr;            //bus memory data register
+    uint32_t rom;            //data ROM data buffer
+    uint32_t ram;            //data RAM data buffer
+    uint32_t mar;            //bus memory address register
+    uint32_t dpr;            //data RAM address pointer
+    uint32_t gpr[16];        //general purpose registers
   } r;
 
   struct IO {

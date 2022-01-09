@@ -1030,7 +1030,7 @@ void HG51B::instructionHALT() {
   halt();
 }
 
-void HG51B::instructionINC(nall::Natural<24>& reg) {
+void HG51B::instructionINC(uint32_t& reg) {
   reg++;
 }
 
@@ -1049,27 +1049,27 @@ void HG51B::instructionJSR(uint8_t data, uint8_t far, const uint8_t& take) {
   step(2);
 }
 
-void HG51B::instructionLD(nall::Natural<24>& out, nall::Natural< 7> reg) {
+void HG51B::instructionLD(uint32_t& out, nall::Natural< 7> reg) {
   out = readRegister(reg);
 }
 
-void HG51B::instructionLD(nall::Natural<15>& out, nall::Natural< 4> reg) {
+void HG51B::instructionLD(uint16_t& out, nall::Natural< 4> reg) {
   out = r.gpr[reg];
 }
 
-void HG51B::instructionLD(nall::Natural<24>& out, uint8_t imm) {
+void HG51B::instructionLD(uint32_t& out, uint8_t imm) {
   out = imm;
 }
 
-void HG51B::instructionLD(nall::Natural<15>& out, uint8_t imm) {
+void HG51B::instructionLD(uint16_t& out, uint8_t imm) {
   out = imm;
 }
 
-void HG51B::instructionLDL(nall::Natural<15>& out, uint8_t imm) {
+void HG51B::instructionLDL(uint16_t& out, uint8_t imm) {
   out = (out & 0x7f00) | imm << 0;
 }
 
-void HG51B::instructionLDH(nall::Natural<15>& out, nall::Natural< 7> imm) {
+void HG51B::instructionLDH(uint16_t& out, nall::Natural< 7> imm) {
   out = (out & 0x00ff) | (imm & 0x7f) << 8;
 }
 
@@ -1092,7 +1092,7 @@ void HG51B::instructionOR(uint8_t imm, uint8_t shift) {
   r.a = algorithmOR(r.a << shift, imm);
 }
 
-void HG51B::instructionRDRAM(uint8_t byte, nall::Natural<24>& a) {
+void HG51B::instructionRDRAM(uint8_t byte, uint32_t& a) {
   nall::Natural<12> address = a;
   if(address >= 0xc00) address -= 0x400;
   uint8_t shift = byte << 3;
@@ -1110,7 +1110,7 @@ void HG51B::instructionRDRAM(uint8_t byte, uint8_t imm) {
   r.ram |= (dataRAM[address] << shift);
 }
 
-void HG51B::instructionRDROM(nall::Natural<24>& reg) {
+void HG51B::instructionRDROM(uint32_t& reg) {
   r.rom = dataROM[reg & 0x3ff];
 }
 
@@ -1153,7 +1153,7 @@ void HG51B::instructionSHR(uint8_t imm) {
   r.a = algorithmSHR(r.a, imm);
 }
 
-void HG51B::instructionST(nall::Natural< 7> reg, nall::Natural<24>& in) {
+void HG51B::instructionST(nall::Natural< 7> reg, uint32_t& in) {
   writeRegister(reg, in);
 }
 
@@ -1173,7 +1173,7 @@ void HG51B::instructionSUBR(uint8_t imm, uint8_t shift) {
   r.a = algorithmSUB(imm, r.a << shift);
 }
 
-void HG51B::instructionSWAP(nall::Natural<24>& a, nall::Natural< 4> reg) {
+void HG51B::instructionSWAP(uint32_t& a, nall::Natural< 4> reg) {
   std::swap(a, r.gpr[reg]);
 }
 
@@ -1190,7 +1190,7 @@ void HG51B::instructionWAIT() {
   return step(io.bus.pending);
 }
 
-void HG51B::instructionWRRAM(uint8_t byte, nall::Natural<24>& a) {
+void HG51B::instructionWRRAM(uint8_t byte, uint32_t& a) {
   uint16_t address = a & 0xfff;
   if(address >= 0xc00) address -= 0x400;
   dataRAM[address] = (r.ram >> ((uint32_t)byte << 3)) & 0xff;
@@ -1284,7 +1284,7 @@ void HG51B::halt() {
   io.halt = 1;
 }
 
-unsigned HG51B::wait(nall::Natural<24> address) {
+unsigned HG51B::wait(uint32_t address) {
   if(isROM(address)) return 1 + io.wait.rom;
   if(isRAM(address)) return 1 + io.wait.ram;
   return 1;
