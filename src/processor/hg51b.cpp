@@ -25,8 +25,8 @@
 
 namespace Processor {
 
-nall::Natural<24> HG51B::readRegister(nall::Natural< 7> address) {
-  switch(address) {
+uint32_t HG51B::readRegister(uint8_t address) {
+  switch(address & 0x7f) {
   case 0x01: return r.mul >> 24 & 0xffffff;
   case 0x02: return r.mul >>  0 & 0xffffff;
   case 0x03: return r.mdr;
@@ -39,13 +39,13 @@ nall::Natural<24> HG51B::readRegister(nall::Natural< 7> address) {
   case 0x2e:
     io.bus.enable  = 1;
     io.bus.reading = 1;
-    io.bus.pending = 1 + io.wait.rom;
+    io.bus.pending = (1 + io.wait.rom) & 0x0f;
     io.bus.address = r.mar;
     return 0x000000;
   case 0x2f:
     io.bus.enable  = 1;
     io.bus.reading = 1;
-    io.bus.pending = 1 + io.wait.ram;
+    io.bus.pending = (1 + io.wait.ram) & 0x0f;
     io.bus.address = r.mar;
     return 0x000000;
 
@@ -89,46 +89,46 @@ nall::Natural<24> HG51B::readRegister(nall::Natural< 7> address) {
   return 0x000000;  //verified
 }
 
-void HG51B::writeRegister(nall::Natural< 7> address, nall::Natural<24> data) {
-  switch(address) {
-  case 0x01: r.mul = (r.mul &  0xffffffull) | data << 24; return;
-  case 0x02: r.mul = (r.mul & ~0xffffffull) | data <<  0; return;
-  case 0x03: r.mdr = data; return;
-  case 0x08: r.rom = data; return;
-  case 0x0c: r.ram = data; return;
-  case 0x13: r.mar = data; return;
-  case 0x1c: r.dpr = data; return;
-  case 0x20: r.pc = data; return;
-  case 0x28: r.p = data; return;
+void HG51B::writeRegister(uint8_t address, uint32_t data) {
+  switch(address & 0x7f) {
+  case 0x01: r.mul = (r.mul &  0xffffffull) | (data & 0xffffff) << 24; return;
+  case 0x02: r.mul = (r.mul & ~0xffffffull) | (data & 0xffffff); return;
+  case 0x03: r.mdr = data & 0xffffff; return;
+  case 0x08: r.rom = data & 0xffffff; return;
+  case 0x0c: r.ram = data & 0xffffff; return;
+  case 0x13: r.mar = data & 0xffffff; return;
+  case 0x1c: r.dpr = data & 0xffffff; return;
+  case 0x20: r.pc = data & 0xffffff; return;
+  case 0x28: r.p = data & 0xffffff; return;
   case 0x2e:
     io.bus.enable  = 1;
     io.bus.writing = 1;
-    io.bus.pending = 1 + io.wait.rom;
+    io.bus.pending = (1 + io.wait.rom) & 0x0f;
     io.bus.address = r.mar;
     return;
   case 0x2f:
     io.bus.enable  = 1;
     io.bus.writing = 1;
-    io.bus.pending = 1 + io.wait.ram;
+    io.bus.pending = (1 + io.wait.ram) & 0x0f;
     io.bus.address = r.mar;
     return;
 
-  case 0x60: case 0x70: r.gpr[ 0] = data; return;
-  case 0x61: case 0x71: r.gpr[ 1] = data; return;
-  case 0x62: case 0x72: r.gpr[ 2] = data; return;
-  case 0x63: case 0x73: r.gpr[ 3] = data; return;
-  case 0x64: case 0x74: r.gpr[ 4] = data; return;
-  case 0x65: case 0x75: r.gpr[ 5] = data; return;
-  case 0x66: case 0x76: r.gpr[ 6] = data; return;
-  case 0x67: case 0x77: r.gpr[ 7] = data; return;
-  case 0x68: case 0x78: r.gpr[ 8] = data; return;
-  case 0x69: case 0x79: r.gpr[ 9] = data; return;
-  case 0x6a: case 0x7a: r.gpr[10] = data; return;
-  case 0x6b: case 0x7b: r.gpr[11] = data; return;
-  case 0x6c: case 0x7c: r.gpr[12] = data; return;
-  case 0x6d: case 0x7d: r.gpr[13] = data; return;
-  case 0x6e: case 0x7e: r.gpr[14] = data; return;
-  case 0x6f: case 0x7f: r.gpr[15] = data; return;
+  case 0x60: case 0x70: r.gpr[ 0] = data & 0xffffff; return;
+  case 0x61: case 0x71: r.gpr[ 1] = data & 0xffffff; return;
+  case 0x62: case 0x72: r.gpr[ 2] = data & 0xffffff; return;
+  case 0x63: case 0x73: r.gpr[ 3] = data & 0xffffff; return;
+  case 0x64: case 0x74: r.gpr[ 4] = data & 0xffffff; return;
+  case 0x65: case 0x75: r.gpr[ 5] = data & 0xffffff; return;
+  case 0x66: case 0x76: r.gpr[ 6] = data & 0xffffff; return;
+  case 0x67: case 0x77: r.gpr[ 7] = data & 0xffffff; return;
+  case 0x68: case 0x78: r.gpr[ 8] = data & 0xffffff; return;
+  case 0x69: case 0x79: r.gpr[ 9] = data & 0xffffff; return;
+  case 0x6a: case 0x7a: r.gpr[10] = data & 0xffffff; return;
+  case 0x6b: case 0x7b: r.gpr[11] = data & 0xffffff; return;
+  case 0x6c: case 0x7c: r.gpr[12] = data & 0xffffff; return;
+  case 0x6d: case 0x7d: r.gpr[13] = data & 0xffffff; return;
+  case 0x6e: case 0x7e: r.gpr[14] = data & 0xffffff; return;
+  case 0x6f: case 0x7f: r.gpr[15] = data & 0xffffff; return;
   }
 }
 
@@ -1172,11 +1172,11 @@ void HG51B::instructionSWAP(nall::Natural<24>& a, nall::Natural< 4> reg) {
 }
 
 void HG51B::instructionSXB() {
-  r.a = algorithmSX((int8_t)r.a);
+  r.a = algorithmSX((int8_t)r.a) & 0xffffff;
 }
 
 void HG51B::instructionSXW() {
-  r.a = algorithmSX((int16_t)r.a);
+  r.a = algorithmSX((int16_t)r.a) & 0xffffff;
 }
 
 void HG51B::instructionWAIT() {
@@ -1197,19 +1197,19 @@ void HG51B::instructionWRRAM(nall::Natural< 2> byte, uint8_t imm) {
 }
 
 void HG51B::instructionXNOR(nall::Natural< 7> reg, nall::Natural< 5> shift) {
-  r.a = algorithmXNOR(r.a << shift, readRegister(reg));
+  r.a = algorithmXNOR(r.a << shift, readRegister(reg)) & 0xffffff;
 }
 
 void HG51B::instructionXNOR(uint8_t imm, nall::Natural< 5> shift) {
-  r.a = algorithmXNOR(r.a << shift, imm);
+  r.a = algorithmXNOR(r.a << shift, imm) & 0xffffff;
 }
 
 void HG51B::instructionXOR(nall::Natural< 7> reg, nall::Natural< 5> shift) {
-  r.a = algorithmXOR(r.a << shift, readRegister(reg));
+  r.a = algorithmXOR(r.a << shift, readRegister(reg)) & 0xffffff;
 }
 
 void HG51B::instructionXOR(uint8_t imm, nall::Natural< 5> shift) {
-  r.a = algorithmXOR(r.a << shift, imm);
+  r.a = algorithmXOR(r.a << shift, imm) & 0xffffff;
 }
 
 void HG51B::serialize(serializer& s) {
@@ -1296,7 +1296,7 @@ void HG51B::main() {
 void HG51B::step(unsigned clocks) {
   if(io.bus.enable) {
     if(io.bus.pending > clocks) {
-      io.bus.pending -= clocks;
+      io.bus.pending = (io.bus.pending - clocks) & 0x0f;
     } else {
       io.bus.enable = 0;
       io.bus.pending = 0;
@@ -1332,7 +1332,7 @@ void HG51B::suspend() {
 }
 
 bool HG51B::cache() {
-  nall::Natural<24> address = io.cache.base + r.pb * 512;
+  uint32_t address = (io.cache.base + r.pb * 512) & 0xffffff;
 
   //try to use the current page ...
   if(io.cache.address[io.cache.page] == address) return io.cache.enable = 0, true;
@@ -1355,8 +1355,8 @@ bool HG51B::cache() {
 
 void HG51B::dma() {
   for(unsigned offset : nall::range(io.dma.length)) {
-    nall::Natural<24> source = io.dma.source + offset;
-    nall::Natural<24> target = io.dma.target + offset;
+    uint32_t source = (io.dma.source + offset) & 0xffffff;
+    uint32_t target = (io.dma.target + offset) & 0xffffff;
 
     if(isROM(source) && isROM(target)) return lock();
     if(isRAM(source) && isRAM(target)) return lock();

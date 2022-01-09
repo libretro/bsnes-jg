@@ -127,12 +127,12 @@ struct HG51B {
   void serialize(serializer&);
 
   uint16_t programRAM[2][256];  //instruction cache
-  nall::Natural<24> dataROM[1024];
+  uint32_t dataROM[1024];
   uint8_t dataRAM[3072];
 
   //registers.cpp
-  nall::Natural<24> readRegister(nall::Natural< 7> address);
-  void writeRegister(nall::Natural< 7> address, nall::Natural<24> data);
+  uint32_t readRegister(uint8_t address);
+  void writeRegister(uint8_t address, uint32_t data);
 
 protected:
   struct Registers {
@@ -157,49 +157,49 @@ protected:
   } r;
 
   struct IO {
-    nall::Natural< 1> lock;
-    nall::Natural< 1> halt = 1;
-    nall::Natural< 1> irq;      //0 = enable, 1 = disable
-    nall::Natural< 1> rom = 1;  //0 = 2 ROMs, 1 = 1 ROM
+    uint8_t lock;
+    uint8_t halt = 1;
+    uint8_t irq;      //0 = enable, 1 = disable
+    uint8_t rom = 1;  //0 = 2 ROMs, 1 = 1 ROM
     uint8_t vector[32];
 
     struct Wait {
-      nall::Natural< 3> rom = 3;
-      nall::Natural< 3> ram = 3;
+      uint8_t rom = 3;
+      uint8_t ram = 3;
     } wait;
 
     struct Suspend {
-      nall::Natural< 1> enable;
+      uint8_t enable;
       uint8_t duration;
     } suspend;
 
     struct Cache {
-      nall::Natural< 1>  enable;
-      nall::Natural< 1>  page;
-      nall::Natural< 1>  lock[2];
-      nall::Natural<24> address[2];  //cache address is in bytes; so 24-bit
-      nall::Natural<24> base;        //base address is also in bytes
-      nall::Natural<15> pb;
-      uint8_t  pc;
+      uint8_t enable;
+      uint8_t page;
+      uint8_t lock[2];
+      uint32_t address[2];  //cache address is in bytes; so 24-bit
+      uint32_t base;        //base address is also in bytes
+      uint16_t pb;
+      uint8_t pc;
     } cache;
 
     struct DMA {
-      nall::Natural< 1>  enable;
-      nall::Natural<24> source;
-      nall::Natural<24> target;
+      uint8_t enable;
+      uint32_t source;
+      uint32_t target;
       uint16_t length;
     } dma;
 
     struct Bus {
-      nall::Natural< 1>  enable;
-      nall::Natural< 1>  reading;
-      nall::Natural< 1>  writing;
-      nall::Natural< 4>  pending;
-      nall::Natural<24> address;
+      uint8_t enable;
+      uint8_t reading;
+      uint8_t writing;
+      uint8_t pending;
+      uint32_t address;
     } bus;
   } io;
 
-  nall::Natural<23> stack[8];
+  uint32_t stack[8];
   bfunction<void ()> instructionTable[65536];
 };
 
