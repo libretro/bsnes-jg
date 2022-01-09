@@ -56,18 +56,18 @@ struct HG51B {
   void push();
   void pull();
 
-  nall::Natural<24> algorithmADD(nall::Natural<24> x, nall::Natural<24> y);
-  nall::Natural<24> algorithmAND(nall::Natural<24> x, nall::Natural<24> y);
-  nall::Natural<24> algorithmASR(nall::Natural<24> a, nall::Natural< 5> s);
-  nall::Natural<48> algorithmMUL(uint32_t x, uint32_t y);
-  nall::Natural<24> algorithmOR(nall::Natural<24> x, nall::Natural<24> y);
-  nall::Natural<24> algorithmROR(nall::Natural<24> a, nall::Natural< 5> s);
-  nall::Natural<24> algorithmSHL(nall::Natural<24> a, nall::Natural< 5> s);
-  nall::Natural<24> algorithmSHR(nall::Natural<24> a, nall::Natural< 5> s);
-  nall::Natural<24> algorithmSUB(nall::Natural<24> x, nall::Natural<24> y);
-  nall::Natural<24> algorithmSX(nall::Natural<24> x);
-  nall::Natural<24> algorithmXNOR(nall::Natural<24> x, nall::Natural<24> y);
-  nall::Natural<24> algorithmXOR(nall::Natural<24> x, nall::Natural<24> y);
+  uint32_t algorithmADD(uint32_t x, uint32_t y);
+  uint32_t algorithmAND(uint32_t x, uint32_t y);
+  uint32_t algorithmASR(uint32_t a, nall::Natural< 5> s);
+  uint64_t algorithmMUL(uint32_t x, uint32_t y);
+  uint32_t algorithmOR(uint32_t x, uint32_t y);
+  uint32_t algorithmROR(uint32_t a, nall::Natural< 5> s);
+  uint32_t algorithmSHL(uint32_t a, nall::Natural< 5> s);
+  uint32_t algorithmSHR(uint32_t a, nall::Natural< 5> s);
+  uint32_t algorithmSUB(uint32_t x, uint32_t y);
+  uint32_t algorithmSX(uint32_t x);
+  uint32_t algorithmXNOR(uint32_t x, uint32_t y);
+  uint32_t algorithmXOR(uint32_t x, uint32_t y);
 
   void instructionADD(nall::Natural< 7> reg, uint8_t shift);
   void instructionADD(uint8_t imm, uint8_t shift);
@@ -147,7 +147,7 @@ protected:
 
     nall::Natural<24> a;              //accumulator
     nall::Natural<15> p;              //page register
-    nall::Natural<48> mul;            //multiplier
+    uint64_t mul;            //multiplier
     nall::Natural<24> mdr;            //bus memory data register
     nall::Natural<24> rom;            //data ROM data buffer
     nall::Natural<24> ram;            //data RAM data buffer

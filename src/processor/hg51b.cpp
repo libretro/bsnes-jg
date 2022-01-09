@@ -99,7 +99,7 @@ void HG51B::writeRegister(uint8_t address, uint32_t data) {
   case 0x13: r.mar = data & 0xffffff; return;
   case 0x1c: r.dpr = data & 0xffffff; return;
   case 0x20: r.pc = data & 0xffffff; return;
-  case 0x28: r.p = data & 0xffffff; return;
+  case 0x28: r.p = data & 0x7fff; return;
   case 0x2e:
     io.bus.enable  = 1;
     io.bus.writing = 1;
@@ -891,92 +891,92 @@ void HG51B::pull() {
   r.pc = pc >> 0;
 }
 
-nall::Natural<24> HG51B::algorithmADD(nall::Natural<24> x, nall::Natural<24> y) {
+uint32_t HG51B::algorithmADD(uint32_t x, uint32_t y) {
   int z = x + y;
   r.n = z & 0x800000;
-  r.z = (nall::Natural<24>)z == 0;
+  r.z = (z & 0xffffff) == 0;
   r.c = z > 0xffffff;
   r.v = ~(x ^ y) & (x ^ z) & 0x800000;
-  return z;
+  return z & 0xffffff;
 }
 
-nall::Natural<24> HG51B::algorithmAND(nall::Natural<24> x, nall::Natural<24> y) {
+uint32_t HG51B::algorithmAND(uint32_t x, uint32_t y) {
   x = x & y;
   r.n = x & 0x800000;
   r.z = x == 0;
-  return x;
+  return x & 0xffffff;
 }
 
-nall::Natural<24> HG51B::algorithmASR(nall::Natural<24> a, nall::Natural< 5> s) {
+uint32_t HG51B::algorithmASR(uint32_t a, nall::Natural< 5> s) {
   if(s > 24) s = 0;
   a = signextend<int32_t,24>(a) >> s;
   r.n = a & 0x800000;
   r.z = a == 0;
-  return a;
+  return a & 0xffffff;
 }
 
-nall::Natural<48> HG51B::algorithmMUL(uint32_t x, uint32_t y) {
-  return signextend<int64_t,24>(x) * signextend<int64_t,24>(y);
+uint64_t HG51B::algorithmMUL(uint32_t x, uint32_t y) {
+  return (signextend<int64_t,24>(x) * signextend<int64_t,24>(y)) & 0xffffffffffff;
 }
 
-nall::Natural<24> HG51B::algorithmOR(nall::Natural<24> x, nall::Natural<24> y) {
+uint32_t HG51B::algorithmOR(uint32_t x, uint32_t y) {
   x = x | y;
   r.n = x & 0x800000;
   r.z = x == 0;
-  return x;
+  return x & 0xffffff;
 }
 
-nall::Natural<24> HG51B::algorithmROR(nall::Natural<24> a, nall::Natural< 5> s) {
+uint32_t HG51B::algorithmROR(uint32_t a, nall::Natural< 5> s) {
   if(s > 24) s = 0;
-  a = (a >> s) | (a << 24 - s);
+  a = (a >> s) | (a << (24 - s));
   r.n = a & 0x800000;
   r.z = a == 0;
-  return a;
+  return a & 0xffffff;
 }
 
-nall::Natural<24> HG51B::algorithmSHL(nall::Natural<24> a, nall::Natural< 5> s) {
+uint32_t HG51B::algorithmSHL(uint32_t a, nall::Natural< 5> s) {
   if(s > 24) s = 0;
   a = a << s;
   r.n = a & 0x800000;
   r.z = a == 0;
-  return a;
+  return a & 0xffffff;
 }
 
-nall::Natural<24> HG51B::algorithmSHR(nall::Natural<24> a, nall::Natural< 5> s) {
+uint32_t HG51B::algorithmSHR(uint32_t a, nall::Natural< 5> s) {
   if(s > 24) s = 0;
   a = a >> s;
   r.n = a & 0x800000;
   r.z = a == 0;
-  return a;
+  return a & 0xffffff;
 }
 
-nall::Natural<24> HG51B::algorithmSUB(nall::Natural<24> x, nall::Natural<24> y) {
+uint32_t HG51B::algorithmSUB(uint32_t x, uint32_t y) {
   int z = x - y;
   r.n = z & 0x800000;
-  r.z = (nall::Natural<24>)z == 0;
+  r.z = (z & 0xffffff) == 0;
   r.c = z >= 0;
   r.v = ~(x ^ y) & (x ^ z) & 0x800000;
-  return z;
+  return z & 0xffffff;
 }
 
-nall::Natural<24> HG51B::algorithmSX(nall::Natural<24> x) {
+uint32_t HG51B::algorithmSX(uint32_t x) {
   r.n = x & 0x800000;
   r.z = x == 0;
-  return x;
+  return x & 0xffffff;
 }
 
-nall::Natural<24> HG51B::algorithmXNOR(nall::Natural<24> x, nall::Natural<24> y) {
+uint32_t HG51B::algorithmXNOR(uint32_t x, uint32_t y) {
   x = ~x ^ y;
   r.n = x & 0x800000;
   r.z = x == 0;
-  return x;
+  return x & 0xffffff;
 }
 
-nall::Natural<24> HG51B::algorithmXOR(nall::Natural<24> x, nall::Natural<24> y) {
+uint32_t HG51B::algorithmXOR(uint32_t x, uint32_t y) {
   x = x ^ y;
   r.n = x & 0x800000;
   r.z = x == 0;
-  return x;
+  return x & 0xffffff;
 }
 
 void HG51B::instructionADD(nall::Natural< 7> reg, uint8_t shift) {
@@ -1095,17 +1095,23 @@ void HG51B::instructionOR(uint8_t imm, uint8_t shift) {
 void HG51B::instructionRDRAM(uint8_t byte, nall::Natural<24>& a) {
   nall::Natural<12> address = a;
   if(address >= 0xc00) address -= 0x400;
-  r.ram.byte(byte) = dataRAM[address];
+  uint8_t shift = byte << 3;
+  uint32_t mask = 0xff << shift;
+  r.ram &= ~mask;
+  r.ram |= (dataRAM[address] << shift);
 }
 
 void HG51B::instructionRDRAM(uint8_t byte, uint8_t imm) {
   nall::Natural<12> address = r.dpr + imm;
   if(address >= 0xc00) address -= 0x400;
-  r.ram.byte(byte) = dataRAM[address];
+  uint8_t shift = byte << 3;
+  uint32_t mask = 0xff << shift;
+  r.ram &= ~mask;
+  r.ram |= (dataRAM[address] << shift);
 }
 
 void HG51B::instructionRDROM(nall::Natural<24>& reg) {
-  r.rom = dataROM[(nall::Natural<10>)reg];
+  r.rom = dataROM[reg & 0x3ff];
 }
 
 void HG51B::instructionRDROM(nall::Natural<10> imm) {
@@ -1185,15 +1191,15 @@ void HG51B::instructionWAIT() {
 }
 
 void HG51B::instructionWRRAM(uint8_t byte, nall::Natural<24>& a) {
-  nall::Natural<12> address = a;
+  uint16_t address = a & 0xfff;
   if(address >= 0xc00) address -= 0x400;
-  dataRAM[address] = r.ram.byte(byte);
+  dataRAM[address] = (r.ram >> ((uint32_t)byte << 3)) & 0xff;
 }
 
 void HG51B::instructionWRRAM(uint8_t byte, uint8_t imm) {
-  nall::Natural<12> address = r.dpr + imm;
+  uint16_t address = (r.dpr + imm) & 0xfff;
   if(address >= 0xc00) address -= 0x400;
-  dataRAM[address] = r.ram.byte(byte);
+  dataRAM[address] = (r.ram >> ((uint32_t)byte << 3)) & 0xff;
 }
 
 void HG51B::instructionXNOR(nall::Natural< 7> reg, uint8_t shift) {
