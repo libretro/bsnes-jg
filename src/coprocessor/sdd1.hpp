@@ -58,13 +58,12 @@ private:
 public:
   struct Decompressor {
     struct IM {  //input manager
-      IM(SDD1::Decompressor& self) : self(self) {}
+      IM(SDD1::Decompressor& self) {}
       void init(unsigned offset);
       uint8_t getCodeWord(uint8_t codeLength);
       void serialize(serializer&);
 
     private:
-      Decompressor& self;
       unsigned offset;
       unsigned bitCount;
     };
