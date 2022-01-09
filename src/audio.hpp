@@ -30,12 +30,12 @@ struct Stream;
 
 struct Audio {
   ~Audio();
-  Stream* createStream(double frequency);
-  void reset(Interface* interface);
-  void setFrequency(double frequency) { _frequency = frequency; }
-  void setBuffer(float *buffer) { this->buffer = buffer; }
-  void setSpf(unsigned spf) { _spf = spf; }
-  void setQuality(unsigned rsqual) { _rsqual = 2 - rsqual; } // Low to High
+  Stream* createStream(double);
+  void reset(Interface*);
+  void setFrequency(double);
+  void setBuffer(float*);
+  void setSpf(unsigned);
+  void setQuality(unsigned);
 
 private:
   void process();
@@ -52,8 +52,8 @@ private:
 };
 
 struct Stream {
-  void reset(double inputFrequency, double outputFrequency);
-  void setFrequency(double inputFrequency, double outputFrequency);
+  void reset(double, double);
+  void setFrequency(double, double);
   void write(const int16_t samples[]);
 
   template<typename... P> void sample(P&&... p) {

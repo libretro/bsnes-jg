@@ -27,6 +27,23 @@
 
 namespace Emulator {
 
+void Audio::setFrequency(double frequency) {
+  _frequency = frequency;
+}
+
+void Audio::setBuffer(float *buffer) {
+  this->buffer = buffer;
+}
+
+void Audio::setSpf(unsigned spf) {
+  _spf = spf;
+}
+
+// Low to High
+void Audio::setQuality(unsigned rsqual) {
+  _rsqual = 2 - rsqual;
+}
+
 Stream* Audio::createStream(double frequency) {
   Stream *stream = new Stream;
   stream->reset(frequency, _frequency);
