@@ -39,7 +39,6 @@ extern Emulator::Cheat cheat;
 Settings settings;
 Configuration configuration;
 
-
 bool Interface::loaded() {
   return system.loaded();
 }
@@ -71,6 +70,7 @@ void Interface::connect(unsigned port, unsigned device) {
 }
 
 void Interface::power() {
+  audio.reset(interface);
   system.power(/* reset = */ false);
 }
 
