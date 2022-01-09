@@ -21,9 +21,10 @@
 #include <bitset>
 #include <cassert>
 
-#include "../../nall/iterator.hpp"
-
 #include "arm7tdmi.hpp"
+
+#include "../../nall/iterator.hpp"
+#include "../../nall/primitives.hpp"
 
 namespace Processor {
 
@@ -265,7 +266,7 @@ void ARM7TDMI::instruction() {
   opcode = pipeline.execute.instruction;
   if(!pipeline.execute.thumb) {
     if(!TST(opcode >> 28)) return;
-    nall::Natural<12> index = (opcode & 0x0ff00000) >> 16 | (opcode & 0x000000f0) >> 4;
+    uint16_t index = (opcode & 0x0ff00000) >> 16 | (opcode & 0x000000f0) >> 4;
     armInstruction[index](opcode);
   } else {
     thumbInstruction[(uint16_t)opcode]();
@@ -602,7 +603,7 @@ void ARM7TDMI::armInitialize() {
   #undef arguments
 
   #define arguments
-  for(nall::Natural<12> id : nall::range(4096)) {
+  for(uint16_t id : nall::range(4096)) {
     if(armInstruction[id]) continue;
     //auto opcode = pattern(".... ???? ???? ---- ---- ---- ???? ----") | bits(id,0,3) << 4 | bits(id,4,11) << 20;
     auto opcode = pattern(0x0000000) | bits(id,0,3) << 4 | bits(id,4,11) << 20;
@@ -681,19 +682,19 @@ void ARM7TDMI::thumbInitialize() {
     bind(opcode, BranchExchange, m);
   }
 
-  for(nall::Natural<11> displacement : nall::range(2048)) {
+  for(uint16_t displacement : nall::range(2048)) {
     //auto opcode = pattern("1111 0??? ???? ????") | displacement << 0;
     auto opcode = pattern(0xf000) | displacement << 0;
     bind(opcode, BranchFarPrefix, displacement);
   }
 
-  for(nall::Natural<11> displacement : nall::range(2048)) {
+  for(uint16_t displacement : nall::range(2048)) {
     //auto opcode = pattern("1111 1??? ???? ????") | displacement << 0;
     auto opcode = pattern(0xf800) | displacement << 0;
     bind(opcode, BranchFarSuffix, displacement);
   }
 
-  for(nall::Natural<11> displacement : nall::range(2048)) {
+  for(uint16_t displacement : nall::range(2048)) {
     //auto opcode = pattern("1110 0??? ???? ????") | displacement << 0;
     auto opcode = pattern(0xe000) | displacement << 0;
     bind(opcode, BranchNear, displacement);
@@ -976,7 +977,7 @@ void ARM7TDMI::armInstructionMoveHalfRegister
 }
 
 void ARM7TDMI::armInstructionMoveImmediateOffset
-(nall::Natural<12> immediate, uint8_t d, uint8_t n, uint8_t mode, uint8_t writeback, uint8_t byte, uint8_t up, uint8_t pre) {
+(uint16_t immediate, uint8_t d, uint8_t n, uint8_t mode, uint8_t writeback, uint8_t byte, uint8_t up, uint8_t pre) {
   uint32_t rn = r(n);
   uint32_t rd = r(d);
 
@@ -1115,7 +1116,7 @@ void ARM7TDMI::armInstructionMultiplyLong
   }
 }
 
-void ARM7TDMI::armInstructionSoftwareInterrupt(nall::Natural<24> immediate) {
+void ARM7TDMI::armInstructionSoftwareInterrupt(uint32_t immediate) {
   exception(PSR::SVC, 0x08);
 }
 
@@ -1198,7 +1199,7 @@ void ARM7TDMI::thumbInstructionBranchFarPrefix
 }
 
 void ARM7TDMI::thumbInstructionBranchFarSuffix
-(nall::Natural<11> displacement) {
+(uint16_t displacement) {
   r(15) = r(14) + (displacement * 2);
   r(14) = pipeline.decode.address | 1;
 }

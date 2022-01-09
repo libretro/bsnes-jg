@@ -25,8 +25,6 @@
 #include "../function.hpp"
 #include "../serializer.hpp"
 
-#include "../../nall/primitives.hpp"
-
 namespace Processor {
 
 struct ARM7TDMI {
@@ -100,7 +98,7 @@ struct ARM7TDMI {
   void armInstructionMemorySwap(uint8_t, uint8_t, uint8_t, uint8_t);
   void armInstructionMoveHalfImmediate(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
   void armInstructionMoveHalfRegister(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
-  void armInstructionMoveImmediateOffset(nall::Natural<12>, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+  void armInstructionMoveImmediateOffset(uint16_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
   void armInstructionMoveMultiple(uint16_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
   void armInstructionMoveRegisterOffset(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
   void armInstructionMoveToRegisterFromStatus(uint8_t, uint8_t);
@@ -108,7 +106,7 @@ struct ARM7TDMI {
   void armInstructionMoveToStatusFromRegister(uint8_t, uint8_t, uint8_t);
   void armInstructionMultiply(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
   void armInstructionMultiplyLong(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
-  void armInstructionSoftwareInterrupt(nall::Natural<24> immediate);
+  void armInstructionSoftwareInterrupt(uint32_t immediate);
   void armInstructionUndefined();
 
   //instructions-thumb.cpp
@@ -120,7 +118,7 @@ struct ARM7TDMI {
   void thumbInstructionAdjustStack(uint8_t, uint8_t);
   void thumbInstructionBranchExchange(uint8_t);
   void thumbInstructionBranchFarPrefix(uint16_t);
-  void thumbInstructionBranchFarSuffix(nall::Natural<11>);
+  void thumbInstructionBranchFarSuffix(uint16_t);
   void thumbInstructionBranchNear(uint16_t);
   void thumbInstructionBranchTest(int8_t, uint8_t);
   void thumbInstructionImmediate(uint8_t, uint8_t, uint8_t);
