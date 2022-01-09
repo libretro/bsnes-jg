@@ -58,12 +58,12 @@ struct HG51B {
 
   uint32_t algorithmADD(uint32_t x, uint32_t y);
   uint32_t algorithmAND(uint32_t x, uint32_t y);
-  uint32_t algorithmASR(uint32_t a, nall::Natural< 5> s);
+  uint32_t algorithmASR(uint32_t a, uint8_t s);
   uint64_t algorithmMUL(uint32_t x, uint32_t y);
   uint32_t algorithmOR(uint32_t x, uint32_t y);
-  uint32_t algorithmROR(uint32_t a, nall::Natural< 5> s);
-  uint32_t algorithmSHL(uint32_t a, nall::Natural< 5> s);
-  uint32_t algorithmSHR(uint32_t a, nall::Natural< 5> s);
+  uint32_t algorithmROR(uint32_t a, uint8_t s);
+  uint32_t algorithmSHL(uint32_t a, uint8_t s);
+  uint32_t algorithmSHR(uint32_t a, uint8_t s);
   uint32_t algorithmSUB(uint32_t x, uint32_t y);
   uint32_t algorithmSX(uint32_t x);
   uint32_t algorithmXNOR(uint32_t x, uint32_t y);
@@ -74,7 +74,7 @@ struct HG51B {
   void instructionAND(nall::Natural< 7> reg, uint8_t shift);
   void instructionAND(uint8_t imm, uint8_t shift);
   void instructionASR(nall::Natural< 7> reg);
-  void instructionASR(nall::Natural< 5> imm);
+  void instructionASR(uint8_t imm);
   void instructionCLEAR();
   void instructionCMP(nall::Natural< 7> reg, uint8_t shift);
   void instructionCMP(uint8_t imm, uint8_t shift);
@@ -98,14 +98,14 @@ struct HG51B {
   void instructionRDRAM(uint8_t byte, nall::Natural<24>& a);
   void instructionRDRAM(uint8_t byte, uint8_t imm);
   void instructionRDROM(nall::Natural<24>& reg);
-  void instructionRDROM(nall::Natural<10> imm);
+  void instructionRDROM(uint16_t imm);
   void instructionROR(nall::Natural< 7> reg);
-  void instructionROR(nall::Natural< 5> imm);
+  void instructionROR(uint8_t imm);
   void instructionRTS();
   void instructionSHL(nall::Natural< 7> reg);
-  void instructionSHL(nall::Natural< 5> imm);
+  void instructionSHL(uint8_t imm);
   void instructionSHR(nall::Natural< 7> reg);
-  void instructionSHR(nall::Natural< 5> imm);
+  void instructionSHR(uint8_t imm);
   void instructionSKIP(uint8_t take, const uint8_t& flag);
   void instructionST(nall::Natural< 7> reg, nall::Natural<24>& in);
   void instructionSUB(nall::Natural< 7> reg, uint8_t shift);
