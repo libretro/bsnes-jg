@@ -18,6 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cstdint>
+#include <vector>
+
+#include "audio.hpp"
 #include "cartridge.hpp"
 #include "cheat.hpp"
 #include "controller/controller.hpp"
@@ -41,7 +45,7 @@ bool Interface::loaded() {
 }
 
 bool Interface::load() {
-  return system.load(this);
+  return system.load();
 }
 
 void Interface::save() {
@@ -71,6 +75,7 @@ void Interface::power() {
 }
 
 void Interface::reset() {
+  audio.reset(interface);
   system.power(/* reset = */ true);
 }
 

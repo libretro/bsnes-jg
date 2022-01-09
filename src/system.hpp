@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "interface.hpp"
+#include "serializer.hpp"
 
 namespace SuperFamicom {
 
@@ -48,7 +48,7 @@ struct System {
   void runToSaveStrict();
   void frameEvent();
 
-  bool load(Interface*);
+  bool load();
   void save();
   void unload();
   void power(bool reset);
@@ -62,8 +62,6 @@ struct System {
   bool runAhead = false;
 
 private:
-  Interface* interface = nullptr;
-
   struct Information {
     bool loaded = false;
     Region region = Region::NTSC;

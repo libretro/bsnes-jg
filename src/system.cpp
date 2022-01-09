@@ -283,7 +283,7 @@ void System::frameEvent() {
   Memory::GlobalWriteEnable = false;
 }
 
-bool System::load(Interface* interface) {
+bool System::load() {
   information = {};
 
   bus.reset();
@@ -316,7 +316,6 @@ bool System::load(Interface* interface) {
   }
   if(cartridge.has.BSMemorySlot) bsmemory.load();
 
-  this->interface = interface;
   return information.loaded = true;
 }
 
@@ -352,8 +351,6 @@ void System::unload() {
 }
 
 void System::power(bool reset) {
-  audio.reset(interface);
-
   if(configuration.entropy == "None")
     random.entropy(Emulator::Random::Entropy::None);
   else if(configuration.entropy == "High")
