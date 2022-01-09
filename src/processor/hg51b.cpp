@@ -887,7 +887,7 @@ void HG51B::pull() {
   stack[6] = stack[7];
   stack[7] = 0x0000;
 
-  r.pb = pc >> 8;
+  r.pb = (pc >> 8) & 0x7fff;
   r.pc = pc >> 0;
 }
 

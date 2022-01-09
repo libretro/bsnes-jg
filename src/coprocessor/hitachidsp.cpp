@@ -228,7 +228,7 @@ void HitachiDSP::writeIO(unsigned address, uint8_t data) {
     return;
 
   case 0x7f4d: io.cache.pb = (io.cache.pb & 0xff00) | data << 0; return;
-  case 0x7f4e: io.cache.pb = (io.cache.pb & 0x00ff) | data << 8; return;
+  case 0x7f4e: io.cache.pb = ((io.cache.pb & 0x00ff) | data << 8) & 0x7fff; return;
 
   case 0x7f4f:
     io.cache.pc = data;

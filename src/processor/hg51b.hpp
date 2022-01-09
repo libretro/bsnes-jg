@@ -136,7 +136,7 @@ struct HG51B {
 
 protected:
   struct Registers {
-    nall::Natural<15> pb;    //program bank
+    uint16_t pb;    //program bank
     uint8_t  pc;  //program counter
 
     bool n;  //negative
