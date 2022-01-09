@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "emulator.hpp"
+#include "interface.hpp"
 
 namespace SuperFamicom {
 
@@ -48,7 +48,7 @@ struct System {
   void runToSaveStrict();
   void frameEvent();
 
-  bool load(Emulator::Interface*);
+  bool load(Interface*);
   void save();
   void unload();
   void power(bool reset);
@@ -59,10 +59,10 @@ struct System {
 
   unsigned frameSkip = 0;
   unsigned frameCounter = 0;
-  bool runAhead = 0;
+  bool runAhead = false;
 
 private:
-  Emulator::Interface* interface = nullptr;
+  Interface* interface = nullptr;
 
   struct Information {
     bool loaded = false;

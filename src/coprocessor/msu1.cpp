@@ -30,7 +30,7 @@
 
 namespace SuperFamicom {
 
-static Emulator::Stream *stream;
+static Stream *stream;
 
 MSU1 msu1;
 
@@ -118,7 +118,7 @@ void MSU1::unload() {
 
 void MSU1::power() {
   create(MSU1::Enter, 44100);
-  stream = Emulator::audio.createStream(frequency);
+  stream = audio.createStream(frequency);
 
   io.dataSeekOffset = 0;
   io.dataReadOffset = 0;

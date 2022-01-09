@@ -22,7 +22,7 @@
 
 #include <samplerate.h>
 
-namespace Emulator {
+namespace SuperFamicom {
 
 struct Interface;
 struct Audio;

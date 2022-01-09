@@ -34,7 +34,7 @@
 namespace SuperFamicom {
 
 static SPC_DSP spc_dsp;
-static Emulator::Stream *stream;
+static Stream *stream;
 
 DSP dsp;
 
@@ -97,7 +97,7 @@ bool DSP::load() {
 
 void DSP::power(bool reset) {
   clock = 0;
-  stream = Emulator::audio.createStream(system.apuFrequency() / 768.0);
+  stream = audio.createStream(system.apuFrequency() / 768.0);
 
   if(!reset) {
     spc_dsp.init(apuram);

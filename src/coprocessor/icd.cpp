@@ -41,7 +41,7 @@ static GB_gameboy_t sameboy;
 
 namespace SuperFamicom {
 
-static Emulator::Stream *stream;
+static Stream *stream;
 
 ICD icd;
 
@@ -448,7 +448,7 @@ void ICD::unload() {
 void ICD::power(bool reset) {
   auto frequency = clockFrequency() / 5;
   create(ICD::Enter, frequency);
-  if(!reset) stream = Emulator::audio.createStream(frequency / 128);
+  if(!reset) stream = audio.createStream(frequency / 128);
 
   for(auto& packet : this->packet) packet = {};
   packetSize = 0;

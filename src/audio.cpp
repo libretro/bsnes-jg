@@ -25,7 +25,7 @@
 #include "audio.hpp"
 #include "emulator.hpp"
 
-namespace Emulator {
+namespace SuperFamicom {
 
 void Audio::setFrequency(double frequency) {
   _frequency = frequency;
@@ -122,7 +122,7 @@ void Audio::process() {
     stream->queue_out.erase(stream->queue_out.begin(), stream->queue_out.begin() + _spf);
   }
 
-  platform->audioFrame(_spf);
+  Emulator::platform->audioFrame(_spf);
   memset(&buffer[0], 0.0, _spf * sizeof(float));
 }
 

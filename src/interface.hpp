@@ -27,31 +27,31 @@
 
 namespace SuperFamicom {
 
-struct Interface : Emulator::Interface {
-  bool loaded() override;
-  bool load() override;
-  void save() override;
-  void unload() override;
+struct Interface {
+  bool loaded();
+  bool load();
+  void save();
+  void unload();
 
-  unsigned connected(unsigned port) override;
-  void connect(unsigned port, unsigned device) override;
-  void power() override;
-  void reset() override;
-  void run() override;
+  unsigned connected(unsigned);
+  void connect(unsigned, unsigned);
+  void power();
+  void reset();
+  void run();
 
-  bool rtc() override;
+  bool rtc();
 
-  serializer serialize(bool synchronize = true) override;
-  bool unserialize(serializer&) override;
+  serializer serialize(bool = true);
+  bool unserialize(serializer&);
 
-  uint8_t read(uint32_t address) override;
-  void cheats(const std::vector<std::string>&) override;
+  uint8_t read(uint32_t);
+  void cheats(const std::vector<std::string>&);
 
-  unsigned frameSkip() override;
-  void setFrameSkip(unsigned frameSkip) override;
+  unsigned frameSkip();
+  void setFrameSkip(unsigned);
 
-  bool runAhead() override;
-  void setRunAhead(bool runAhead) override;
+  bool runAhead();
+  void setRunAhead(bool);
 };
 
 }

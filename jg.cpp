@@ -113,7 +113,7 @@ static int ss_offset_y = 0;
 
 static bool addon = false;
 
-static Emulator::Interface *emulator;
+static SuperFamicom::Interface *interface;
 
 struct Program : Emulator::Platform {
     Program();
@@ -178,17 +178,17 @@ Program::Program() {
 }
 
 Program::~Program() {
-    delete emulator;
+    delete interface;
 }
 
 void Program::save() {
-    if (!emulator->loaded()) return;
-    emulator->save();
+    if (!interface->loaded()) return;
+    interface->save();
 }
 
 void Program::load() {
-    emulator->unload();
-    emulator->load();
+    interface->unload();
+    interface->load();
 }
 
 Emulator::Platform::Load Program::load(unsigned id, std::string name,
@@ -767,7 +767,7 @@ void jg_set_cb_settings_read(jg_cb_settings_read_t func) {
 int jg_init() {
     jg_cb_settings_read(settings_bsnes,
         sizeof(settings_bsnes) / sizeof(jg_setting_t));
-    emulator = new SuperFamicom::Interface;
+    interface = new SuperFamicom::Interface;
     program = new Program;
 
     return 1;
@@ -778,11 +778,11 @@ void jg_deinit() {
 }
 
 void jg_reset(int hard) {
-    emulator->reset();
+    interface->reset();
 }
 
 void jg_exec_frame() {
-    emulator->run();
+    interface->run();
 }
 
 int jg_game_load() {
@@ -880,33 +880,33 @@ int jg_game_load() {
 
     // Default input devices are SNES Controllers
     inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_PAD);
-    emulator->connect(SuperFamicom::ID::Port::Controller1,
+    interface->connect(SuperFamicom::ID::Port::Controller1,
         SuperFamicom::ID::Device::Gamepad);
 
     inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_PAD);
-    emulator->connect(SuperFamicom::ID::Port::Controller2,
+    interface->connect(SuperFamicom::ID::Port::Controller2,
         SuperFamicom::ID::Device::Gamepad);
 
     if (multitap) {
         for (int i = 2; (i < multitap) && (i < 5); ++i)
             inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
 
-        emulator->connect(SuperFamicom::ID::Port::Controller2,
+        interface->connect(SuperFamicom::ID::Port::Controller2,
             SuperFamicom::ID::Device::SuperMultitap);
     }
     else if (mouse) { // Plug in a mouse if the game supports it
         inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_MOUSE);
-        emulator->connect(SuperFamicom::ID::Port::Controller1,
+        interface->connect(SuperFamicom::ID::Port::Controller1,
             SuperFamicom::ID::Device::Mouse);
     }
     else if (superscope) { // Plug in a Super Scope if the game supports it
         inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_SUPERSCOPE);
-        emulator->connect(SuperFamicom::ID::Port::Controller2,
+        interface->connect(SuperFamicom::ID::Port::Controller2,
             SuperFamicom::ID::Device::SuperScope);
     }
     else if (justifier) { // Plug in a Justifier if the game supports it
         inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_JUSTIFIER);
-        emulator->connect(SuperFamicom::ID::Port::Controller2,
+        interface->connect(SuperFamicom::ID::Port::Controller2,
             SuperFamicom::ID::Device::Justifier);
     }
 
@@ -931,30 +931,30 @@ int jg_game_load() {
         }
     }
 
-    Emulator::audio.setQuality(settings_bsnes[RSQUAL].value);
+    SuperFamicom::audio.setQuality(settings_bsnes[RSQUAL].value);
 
     // Audio and timing adjustments
     if (program->superFamicom.region == "PAL") {
         audinfo.spf = (SAMPLERATE / FRAMERATE_PAL) * CHANNELS;
-        Emulator::audio.setSpf(audinfo.spf);
+        SuperFamicom::audio.setSpf(audinfo.spf);
         jg_cb_frametime(TIMING_PAL);
     }
     else {
-        Emulator::audio.setSpf(audinfo.spf);
+        SuperFamicom::audio.setSpf(audinfo.spf);
         jg_cb_frametime(TIMING_NTSC);
     }
 
-    emulator->power(); // Power up!
+    interface->power(); // Power up!
 
     return 1;
 }
 
 int jg_game_unload() {
-    /* Save happens on emulator->unload, program->save() is useful for saving
+    /* Save happens on interface->unload, program->save() is useful for saving
        at a time interval to avoid losing SRAM data if something crashes.
     */
     //program->save();
-    emulator->unload();
+    interface->unload();
     return 1;
 }
 
@@ -964,11 +964,11 @@ int jg_state_load(const char *filename) {
         std::istreambuf_iterator<char>());
     stream.close();
     serializer s(state.data(), state.size());
-    return emulator->unserialize(s);
+    return interface->unserialize(s);
 }
 
 int jg_state_save(const char *filename) {
-    serializer s = emulator->serialize();
+    serializer s = interface->serialize();
     std::ofstream stream(filename, std::ios::out | std::ios::binary);
     if (stream.is_open()) {
         stream.write((const char*)s.data(), s.size());
@@ -986,7 +986,7 @@ void jg_media_insert() {
 
 void jg_cheat_clear() {
     cheatList.clear();
-    emulator->cheats(cheatList);
+    interface->cheats(cheatList);
 }
 
 void jg_cheat_set(const char *code) {
@@ -1000,7 +1000,7 @@ void jg_cheat_set(const char *code) {
 
     if (decoded) {
         cheatList.push_back(cht);
-        emulator->cheats(cheatList);
+        interface->cheats(cheatList);
     }
 }
 
@@ -1025,7 +1025,7 @@ void jg_setup_video() {
 }
 
 void jg_setup_audio() {
-    Emulator::audio.setBuffer((float*)audinfo.buf);
+    SuperFamicom::audio.setBuffer((float*)audinfo.buf);
 }
 
 void jg_set_inputstate(jg_inputstate_t *ptr, int port) {

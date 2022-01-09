@@ -282,7 +282,7 @@ void System::frameEvent() {
   Memory::GlobalWriteEnable = false;
 }
 
-bool System::load(Emulator::Interface* interface) {
+bool System::load(Interface* interface) {
   information = {};
 
   bus.reset();
@@ -351,7 +351,7 @@ void System::unload() {
 }
 
 void System::power(bool reset) {
-  Emulator::audio.reset(interface);
+  audio.reset(interface);
 
   if(configuration.entropy == "None")
     random.entropy(Emulator::Random::Entropy::None);
