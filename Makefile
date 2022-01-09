@@ -9,9 +9,11 @@ FLAGS := -std=c++17 -fwrapv
 FLAGS_BML := -std=c++14
 FLAGS_CO := -std=c89
 FLAGS_GB := -std=c11
+FLAGS_SPC := -std=c++98
 FLAGS_SAMPLERATE := -std=c99
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.14.7\"
+CPPFLAGS_SPC := -DNDEBUG
 
 PKGCONF ?= pkg-config
 CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
@@ -22,6 +24,7 @@ WARNINGS_BML := -Wall -Wextra -Wshadow -pedantic
 WARNINGS_CO := -Wall -Wextra -Wshadow -Wmissing-prototypes
 WARNINGS_GB := -Wno-multichar
 WARNINGS_SAMPLERATE := -Wall -Wextra -Wshadow -Wmissing-prototypes
+WARNINGS_SPC := -Wall -pedantic
 LIBS := -lm -lstdc++
 PIC := -fPIC
 SHARED := $(PIC)
@@ -75,6 +78,7 @@ CSRCS := deps/gb/apu.c \
 	deps/libco/libco.c
 
 CXXSRCS := deps/byuuML/byuuML.cpp \
+	deps/snes_spc/SPC_DSP.cpp \
 	src/audio.cpp \
 	src/bsmemory.cpp \
 	src/cartridge.cpp \
@@ -109,7 +113,6 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/coprocessor/superfx.cpp \
 	src/cpu.cpp \
 	src/dsp.cpp \
-	src/dsp/SPC_DSP.cpp \
 	src/emulator.cpp \
 	src/expansion/expansion.cpp \
 	src/expansion/satellaview.cpp \
@@ -158,9 +161,9 @@ MKDIRS := deps/byuuML \
 	deps/gb \
 	deps/libco \
 	deps/libsamplerate \
+	deps/snes_spc \
 	src/controller \
 	src/coprocessor \
-	src/dsp \
 	src/expansion \
 	src/processor
 
@@ -180,10 +183,11 @@ COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
 # Dependency commands
 BUILD_BML = $(call COMPILE_CXX, $(FLAGS_BML) $(WARNINGS_BML))
 BUILD_CO = $(call COMPILE_C, $(FLAGS_CO) $(WARNINGS_CO))
+BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB))
 BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE))
+BUILD_SPC = $(call COMPILE_CXX, $(FLAGS_SPC) $(WARNINGS_SPC) $(CPPFLAGS_SPC))
 
 # Core commands
-BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB))
 BUILD_JG = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES) $(CFLAGS_JG))
 BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
@@ -210,6 +214,11 @@ $(OBJDIR)/deps/libsamplerate/%.o: $(SOURCEDIR)/deps/libsamplerate/%.c $(OBJDIR)/
 $(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag
 	$(call COMPILE_INFO, $(BUILD_GB))
 	@$(BUILD_GB)
+
+# snes_spc rules
+$(OBJDIR)/deps/snes_spc/%.o: $(SOURCEDIR)/deps/snes_spc/%.cpp $(OBJDIR)/.tag
+	$(call COMPILE_INFO, $(BUILD_SPC))
+	@$(BUILD_SPC)
 
 # SNES rules
 $(OBJDIR)/src/%.o: $(SOURCEDIR)/src/%.cpp $(OBJDIR)/.tag
@@ -250,6 +259,7 @@ install: all
 	cp $(SOURCEDIR)/deps/byuuML/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-byuuML
 	cp $(SOURCEDIR)/deps/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
 	cp $(SOURCEDIR)/deps/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
+	cp $(SOURCEDIR)/deps/snes_spc/license.txt $(DESTDIR)$(DOCDIR)/LICENSE-spc
 	$(Q_SAMPLERATE)if test $(USE_VENDORED_SAMPLERATE) != 0; then \
 		cp $(SOURCEDIR)/deps/libsamplerate/COPYING \
 			$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate; \

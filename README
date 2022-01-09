@@ -91,6 +91,10 @@ byuuML (Zlib)
   Copyright (c) 2017 Solra Bizna
   See deps/byuuML/LICENSE (https://github.com/SolraBizna/byuuML)
 
+dsp (LGPL2.1+)
+  Copyright (C) 2007 Shay Green.
+  See deps/dsp/license.txt (https://slack.net/~ant/libs/audio.html)
+
 libco (ISC)
   Copyright (c) 2006-2020 byuu et al
   See deps/libco/LICENSE (https://github.com/higan-emu/libco)

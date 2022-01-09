@@ -28,7 +28,7 @@
 
 #include "dsp.hpp"
 
-#include "dsp/SPC_DSP.h"
+#include "snes_spc/SPC_DSP.h"
 
 namespace SuperFamicom {
 
@@ -99,7 +99,7 @@ void DSP::power(bool reset) {
   stream = Emulator::audio.createStream(system.apuFrequency() / 768.0);
 
   if(!reset) {
-    spc_dsp.init(apuram, apuram);
+    spc_dsp.init(apuram);
     spc_dsp.reset();
     spc_dsp.set_output(samplebuffer, 8192);
   } else {
