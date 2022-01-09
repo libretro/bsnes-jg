@@ -23,7 +23,6 @@
 
 #include "arm7tdmi.hpp"
 
-#include "../../nall/iterator.hpp"
 #include "../../nall/primitives.hpp"
 
 namespace Processor {
