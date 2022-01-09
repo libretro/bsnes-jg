@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "../emulator.hpp"
 #include "../ppu.hpp"
 #include "../settings.hpp"
 

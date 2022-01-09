@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "../audio.hpp"
+#include "../emulator.hpp"
 #include "../cartridge.hpp"
 #include "../cpu.hpp"
 #include "../settings.hpp"

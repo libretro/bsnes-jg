@@ -19,6 +19,7 @@
  */
 
 #include <cstdint>
+#include <optional>
 #include <vector>
 
 #include "audio.hpp"

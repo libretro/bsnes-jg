@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-#include "emulator.hpp"
+#include "serializer.hpp"
 
 namespace SuperFamicom {
 

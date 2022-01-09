@@ -48,6 +48,7 @@
 #include "bsmemory.hpp"
 #include "cpu.hpp"
 #include "dsp.hpp"
+#include "emulator.hpp"
 #include "expansion/expansion.hpp"
 #include "random.hpp"
 #include "settings.hpp"

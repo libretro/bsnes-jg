@@ -42,6 +42,7 @@
 #include "coprocessor/st0010.hpp"
 #include "coprocessor/superfx.hpp"
 #include "bsmemory.hpp"
+#include "emulator.hpp"
 #include "markup.hpp"
 #include "settings.hpp"
 #include "sha256.hpp"

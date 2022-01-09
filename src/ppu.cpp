@@ -19,6 +19,7 @@
  */
 
 #include "cpu.hpp"
+#include "emulator.hpp"
 #include "memory.hpp"
 #include "random.hpp"
 #include "settings.hpp"
