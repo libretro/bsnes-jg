@@ -10,7 +10,7 @@ This is a fork of bsnes v115. Many changes have been made post-fork:
  - Removal of hacks
  - Removal of code not required for emulation
  - Removal of OS-specific code in the emulator core
- - Translation to the C++ Standard Library (ongoing)
+ - Translation to the C++ Standard Library
 
 This repository lives at https://gitlab.com/jgemu/bsnes
 
@@ -100,10 +100,6 @@ libco (ISC)
 libsamplerate (BSD-2-Clause)
   Copyright (c) 2002-2021, Erik de Castro Lopo
   See deps/libsamplerate/COPYING (https://github.com/libsndfile/libsamplerate)
-
-nall (ISC)
-  Copyright © 2006-2020 byuu et al
-  See nall/LICENSE (https://github.com/higan-emu/nall)
 
 SameBoy (MIT)
   Copyright (c) 2015-2021 Lior Halphon
