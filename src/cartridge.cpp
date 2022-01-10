@@ -1245,10 +1245,8 @@ bool Cartridge::load() {
     information.region = loaded.option;
   } else return false;
 
-  std::string manifest = Emulator::platform->stropen(ID::SuperFamicom, "manifest.bml");
-
-  if (!manifest.empty()) {
-    game.load(manifest);
+  if (!game.document.empty()) {
+    game.load(game.document);
   }
   else {
       return false;
@@ -1317,10 +1315,8 @@ bool Cartridge::load() {
 }
 
 bool Cartridge::loadBSMemory() {
-  std::string manifest = Emulator::platform->stropen(bsmemory.pathID, "manifest.bml");
-
-  if (!manifest.empty()) {
-    slotBSMemory.load(manifest);
+  if (!slotBSMemory.document.empty()) {
+    slotBSMemory.load(slotBSMemory.document);
     loadCartridgeBSMemory(slotBSMemory.document);
     return true;
   }
@@ -1329,10 +1325,8 @@ bool Cartridge::loadBSMemory() {
 }
 
 bool Cartridge::loadSufamiTurboA() {
-  std::string manifest = Emulator::platform->stropen(sufamiturboA.pathID, "manifest.bml");
-
-  if (!manifest.empty()) {
-    slotSufamiTurboA.load(manifest);
+  if (!slotSufamiTurboA.document.empty()) {
+    slotSufamiTurboA.load(slotSufamiTurboA.document);
     loadCartridgeSufamiTurboA(slotSufamiTurboA.document);
     return true;
   }
@@ -1341,10 +1335,8 @@ bool Cartridge::loadSufamiTurboA() {
 }
 
 bool Cartridge::loadSufamiTurboB() {
-  std::string manifest = Emulator::platform->stropen(sufamiturboB.pathID, "manifest.bml");
-
-  if (!manifest.empty()) {
-    slotSufamiTurboB.load(manifest);
+  if (!slotSufamiTurboB.document.empty()) {
+    slotSufamiTurboB.load(slotSufamiTurboB.document);
     loadCartridgeSufamiTurboB(slotSufamiTurboB.document);
     return true;
   }
@@ -1365,6 +1357,21 @@ void Cartridge::save() {
   }
   if(has.SufamiTurboSlotB) {
     saveCartridgeSufamiTurboB(slotSufamiTurboB.document);
+  }
+}
+
+void Cartridge::setDocument(unsigned id, std::string doc) {
+  if (id == 1) {
+    game.document = doc;
+  }
+  else if (id == 3) {
+    slotBSMemory.document = doc;
+  }
+  else if (id == 4) {
+    slotSufamiTurboA.document = doc;
+  }
+  else if (id == 5) {
+    slotSufamiTurboB.document = doc;
   }
 }
 

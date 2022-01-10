@@ -106,7 +106,7 @@ private:
   void loadSA1(std::string);
   void loadSuperFX(std::string);
   void loadARMDSP(std::string);
-  void loadHitachiDSP(std::string, unsigned roms);
+  void loadHitachiDSP(std::string, unsigned);
   void loaduPD7725(std::string);
   void loaduPD96050(std::string);
   void loadSPC7110(std::string);
@@ -136,6 +136,8 @@ private:
   void saveOBC1(std::string);
   void saveEpsonRTC(std::string);
   void saveSharpRTC(std::string);
+
+  void setDocument(unsigned, std::string);
 
   friend struct Interface;
   friend struct ICD;

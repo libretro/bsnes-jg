@@ -28,6 +28,7 @@
 #include <jg/jg_snes.h>
 
 #include "src/audio.hpp"
+#include "src/cartridge.hpp"
 #include "src/cheat.hpp"
 #include "src/heuristics.hpp"
 #include "src/emulator.hpp"
@@ -125,7 +126,6 @@ struct Program : Emulator::Platform {
         std::string type, std::vector<std::string> options = {}) override;
     std::ifstream fopen(unsigned id, std::string name) override;
     std::vector<uint8_t> mopen(unsigned id, std::string name) override;
-    std::string stropen(unsigned id, std::string name) override;
     void write(unsigned id, std::string name, const uint8_t *data,
         unsigned size) override;
     void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
@@ -148,7 +148,6 @@ public:
     struct Game {
         std::string option;
         std::string location;
-        std::string manifest;
     };
 
     struct SuperFamicom : Game {
@@ -367,9 +366,6 @@ std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
             if (rom.size() < 0x4000)
                 jg_cb_log(JG_LOG_ERR, "Game Boy ROM size too small\n");
 
-            auto heuristics = Heuristics::GameBoy(rom, gameinfo.path);
-
-            gameBoy.manifest = heuristics.manifest();
             gameBoy.location = gameinfo.path;
             gameBoy.program = rom;
             return gameBoy.program;
@@ -388,30 +384,6 @@ std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
     else if (id == 5) { // Sufami Turbo Slot B
         if (name == "program.rom") {
             return sufamiTurboB.program;
-        }
-    }
-    return {};
-}
-
-std::string Program::stropen(unsigned id, std::string name) {
-    if (id == 1) { // Super Famicom
-        if (name == "manifest.bml") {
-            return superFamicom.manifest;
-        }
-    }
-    if (id == 3) { // BS-X
-        if (name == "manifest.bml") {
-            return bsMemory.manifest;
-        }
-    }
-    if (id == 4) { // Sufami Turbo Slot A
-        if (name == "manifest.bml") {
-            return sufamiTurboA.manifest;
-        }
-    }
-    if (id == 5) { // Sufami Turbo Slot B
-        if (name == "manifest.bml") {
-            return sufamiTurboB.manifest;
         }
     }
     return {};
@@ -628,13 +600,13 @@ bool Program::loadSuperFamicom(std::string location) {
     std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
 
     if (manifest.empty()) {
-        superFamicom.manifest = heuristics.manifest();
+        interface->setDocument(1, heuristics.manifest());
     }
     else {
         //the internal ROM header title is not present in the database, but
         //is needed for internal core overrides
         manifest += "  title: " + superFamicom.title + "\n";
-        superFamicom.manifest = manifest;
+        interface->setDocument(1, manifest);
     }
 
     hackPatchMemory(rom);
@@ -676,7 +648,8 @@ bool Program::loadBSMemory(std::string location) {
     std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
     std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
 
-    bsMemory.manifest = manifest.empty() ? heuristics.manifest() : manifest;
+    interface->setDocument(3,
+        manifest.empty() ? heuristics.manifest() : manifest);
     bsMemory.location = location;
 
     bsMemory.program = rom;
@@ -699,7 +672,8 @@ bool Program::loadSufamiTurboA(std::string location) {
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
     std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
 
-    sufamiTurboA.manifest = manifest.empty() ? heuristics.manifest() : manifest;
+    interface->setDocument(4,
+        manifest.empty() ? heuristics.manifest() : manifest);
     sufamiTurboA.location = std::string(gameinfo.path);
 
     sufamiTurboA.program = rom;
@@ -721,7 +695,8 @@ bool Program::loadSufamiTurboB(std::string location) {
     std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
     std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
 
-    sufamiTurboB.manifest = manifest.empty() ? heuristics.manifest() : manifest;
+    interface->setDocument(5,
+        manifest.empty() ? heuristics.manifest() : manifest);
     sufamiTurboB.location = location;
 
     sufamiTurboB.program = rom;

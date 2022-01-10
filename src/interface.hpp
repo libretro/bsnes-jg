@@ -45,6 +45,8 @@ struct Interface {
 
   bool runAhead();
   void setRunAhead(bool);
+
+  void setDocument(unsigned, std::string);
 };
 
 }

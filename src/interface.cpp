@@ -159,4 +159,8 @@ void Interface::setRunAhead(bool runAhead) {
   system.runAhead = runAhead;
 }
 
+void Interface::setDocument(unsigned id, std::string doc) {
+  cartridge.setDocument(id, doc);
+}
+
 }
