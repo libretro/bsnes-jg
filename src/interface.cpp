@@ -25,9 +25,9 @@
 #include "cheat.hpp"
 #include "controller/controller.hpp"
 #include "coprocessor/icd.hpp"
-#include "cpu.hpp"
 #include "expansion/expansion.hpp"
 #include "settings.hpp"
+#include "system.hpp"
 
 #include "interface.hpp"
 

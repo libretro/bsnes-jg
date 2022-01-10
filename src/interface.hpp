@@ -45,9 +45,6 @@ struct Interface {
 
   bool runAhead();
   void setRunAhead(bool);
-
-private:
-  Interface* interface = nullptr;
 };
 
 }
