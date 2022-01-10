@@ -221,7 +221,6 @@ void DSP4_OP01()
     DSP4_vars.view_xofs2 = DSP4_vars.view_x2;
     DSP4_vars.view_yofs2 = (DSP4_vars.world_yofs * DSP4_vars.distance >> 15) + DSP4_vars.poly_bottom[0][0] - DSP4_vars.view_y2;
 
-
     // 1. World x-location before transformation
     // 2. Viewer x-position at the next
     // 3. World y-location before perspective projection
@@ -794,7 +793,6 @@ void DSP4_OP08()
         x1_final = view_x[poly] + env[1][0];
         x2_final = DSP4_vars.poly_start[poly] + env[1][1];
 
-
         // interpolate between projected points with shaping
         right_inc = (x2_final - x1_final) * DSP4_Inverse(DSP4_vars.segments) << 1;
         if (DSP4_vars.segments == 1)
@@ -839,7 +837,6 @@ void DSP4_OP08()
           DSP4_WRITE_BYTE(x_left & 0xff);
           DSP4_WRITE_BYTE(x_right & 0xff);
 
-
           // update memory pointers
           DSP4_vars.poly_ptr[polygon][0] -= 4;
           DSP4_vars.poly_ptr[polygon][1] -= 4;
@@ -857,7 +854,6 @@ void DSP4_OP08()
   // unknown output
   DSP4_CLEAR_OUT();
   DSP4_WRITE_WORD(0);
-
 
   DSP4.waiting4command = true;
 }

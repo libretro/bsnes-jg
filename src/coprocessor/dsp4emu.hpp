@@ -46,7 +46,6 @@ struct DSP4_vars_t
   // op control
   int8_t DSP4_Logic;            // controls op flow
 
-
   // projection format
   int16_t lcv;                  // loop-control variable
   int16_t distance;             // z-position into virtual world
@@ -77,7 +76,6 @@ struct DSP4_vars_t
   int16_t view_turnoff_x;       // road turnoff data
   int16_t view_turnoff_dx;      // road turnoff delta factor
 
-
   // drawing area
 
   int16_t viewport_cx;          // x-center of viewport window
@@ -86,7 +84,6 @@ struct DSP4_vars_t
   int16_t viewport_right;       // x-right of viewport
   int16_t viewport_top;         // y-top of viewport
   int16_t viewport_bottom;      // y-bottom of viewport
-
 
   // sprite structure
 
@@ -109,7 +106,6 @@ struct DSP4_vars_t
   int16_t poly_cx[2][2];        // center for left/right points
   int16_t poly_start[2];        // current projection points
   int16_t poly_plane[2];        // previous z-plane distance
-
 
   // OAM
   int16_t OAM_attr[16];         // OAM (size,MSB) data

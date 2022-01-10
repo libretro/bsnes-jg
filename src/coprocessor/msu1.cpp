@@ -64,7 +64,6 @@ void MSU1::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-
 void MSU1::Enter() {
   while(true) {
     scheduler.synchronize();
