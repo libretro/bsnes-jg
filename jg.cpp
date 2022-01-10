@@ -147,9 +147,6 @@ public:
     struct Game {
         std::string option;
         std::string location;
-    };
-
-    struct SuperFamicom : Game {
         std::string title;
         std::string region;
         std::vector<uint8_t> program;
