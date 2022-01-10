@@ -160,10 +160,8 @@ void Cartridge::loadCartridgeBSMemory(std::string node) {
   if (auto memory = Emulator::Game::Memory(BML::searchNode(node, {"game", "board", "memory"}))) {
     bsmemory.ROM = memory.type == "ROM";
     bsmemory.memory.allocate(memory.size);
-    std::vector<uint8_t> buf = Emulator::platform->mopen(bsmemory.pathID, memory.name());
-    if (!buf.empty()) {
-      for (unsigned i = 0; i < memory.size; ++i)
-        bsmemory.memory.data()[i] = buf[i];
+    for (unsigned i = 0; i < memory.size; ++i) {
+      bsmemory.memory.data()[i] = romdataBS[i];
     }
   }
 }
@@ -1367,6 +1365,11 @@ void Cartridge::setDocument(unsigned id, std::string doc) {
   else if (id == 5) {
     slotSufamiTurboB.document = doc;
   }
+}
+
+void Cartridge::setRomBSMemory(const uint8_t *data, size_t size) {
+  romdataBS = data;
+  romsizeBS = size;
 }
 
 void Cartridge::setRomSufamiTurboA(const uint8_t *data, size_t size) {

@@ -163,6 +163,10 @@ void Interface::setDocument(unsigned id, std::string doc) {
   cartridge.setDocument(id, doc);
 }
 
+void Interface::setRomBSMemory(const uint8_t *data, size_t size) {
+  cartridge.setRomBSMemory(data, size);
+}
+
 void Interface::setRomGB(const uint8_t *data, size_t size) {
   icd.setRom(data, size);
 }
@@ -173,6 +177,10 @@ void Interface::setRomSufamiTurboA(const uint8_t *data, size_t size) {
 
 void Interface::setRomSufamiTurboB(const uint8_t *data, size_t size) {
   cartridge.setRomSufamiTurboB(data, size);
+}
+
+void Interface::setRomSuperFamicom(const uint8_t *data, size_t size) {
+  //cartridge.setRomSuperFamicom(data, size);
 }
 
 }

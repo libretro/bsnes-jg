@@ -38,6 +38,7 @@ struct Cartridge {
 
   void serialize(serializer&);
 
+  void setRomBSMemory(const uint8_t*, size_t);
   void setRomSufamiTurboA(const uint8_t*, size_t);
   void setRomSufamiTurboB(const uint8_t*, size_t);
 
@@ -142,9 +143,11 @@ private:
 
   void setDocument(unsigned, std::string);
 
+  const uint8_t *romdataBS;
   const uint8_t *romdataSTA;
   const uint8_t *romdataSTB;
 
+  size_t romsizeBS;
   size_t romsizeSTA;
   size_t romsizeSTB;
 

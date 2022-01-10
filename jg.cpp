@@ -156,15 +156,7 @@ public:
         std::vector<uint8_t> data;
         std::vector<uint8_t> expansion;
         std::vector<uint8_t> firmware;
-    } superFamicom;
-
-    struct BSMemory : Game {
-        std::vector<uint8_t> program;
-    } bsMemory;
-
-    struct SufamiTurbo : Game {
-        std::vector<uint8_t> program;
-    } sufamiTurboA, sufamiTurboB;
+    } bsMemory, superFamicom, sufamiTurboA, sufamiTurboB;
 };
 
 static Program *program = nullptr;
@@ -351,11 +343,6 @@ std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
         }
         else if (name == "expansion.rom") {
             return superFamicom.expansion;
-        }
-    }
-    else if (id == 3) { // BS-X
-        if (name == "program.rom" || name == "program.flash") {
-            return bsMemory.program;
         }
     }
     return {};
@@ -617,6 +604,8 @@ bool Program::loadBSMemory(std::string location) {
     auto heuristics = Heuristics::BSMemory(rom, location);
     auto sha256 = sha256_digest(rom.data(), rom.size());
 
+    interface->setRomBSMemory((const uint8_t*)gameinfo.data, gameinfo.size);
+
     std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
     std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
 
@@ -624,7 +613,6 @@ bool Program::loadBSMemory(std::string location) {
         manifest.empty() ? heuristics.manifest() : manifest);
     bsMemory.location = location;
 
-    bsMemory.program = rom;
     return true;
 }
 
