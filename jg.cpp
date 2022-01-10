@@ -34,7 +34,6 @@
 #include "src/emulator.hpp"
 #include "src/interface.hpp"
 #include "src/markup.hpp"
-#include "src/ppu.hpp"
 #include "src/sha256.hpp"
 #include "src/sfc.hpp"
 #include "src/settings.hpp"
@@ -60,7 +59,7 @@ static jg_cb_rumble_t jg_cb_rumble;
 static jg_cb_settings_read_t jg_cb_settings_read;
 
 static jg_coreinfo_t coreinfo = {
-    "bsnes", "bsnes-jg", "1.0.0-pre1", "snes", NUMINPUTS, 0
+    "bsnes", "bsnes-jg", "1.0.0-pre1", "snes", NUMINPUTS, JG_HINT_VIDEO_INTERNAL
 };
 
 static jg_videoinfo_t vidinfo = {
@@ -982,7 +981,6 @@ jg_inputinfo_t* jg_get_inputinfo(int port) {
 }
 
 void jg_setup_video() {
-    SuperFamicom::ppu.setBuffer((uint16_t*)vidinfo.buf);
 }
 
 void jg_setup_audio() {

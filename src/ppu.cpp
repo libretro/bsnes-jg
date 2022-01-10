@@ -2212,10 +2212,6 @@ void PPUcounter::serialize(serializer& s) {
   s.integer(last.hperiod);
 }
 
-void PPU::setBuffer(uint16_t *buffer) {
-  output = buffer;
-}
-
 PPU::PPU() :
 bg1(Background::ID::BG1),
 bg2(Background::ID::BG2),
@@ -2279,6 +2275,7 @@ bool PPU::load() {
 void PPU::power(bool reset) {
   create(Enter, system.cpuFrequency());
   PPUcounter::reset();
+  std::memset(output, 0, 512 * 480 * sizeof(uint16_t));
 
   bfunction<uint8_t (unsigned, uint8_t)> reader{&PPU::readIO, this};
   bfunction<void  (unsigned, uint8_t)> writer{&PPU::writeIO, this};

@@ -108,8 +108,6 @@ struct PPU : Thread, PPUcounter {
 
   void serialize(serializer&);
 
-  void setBuffer(uint16_t*);
-
 private:
   inline void step();
   inline void step(unsigned clocks);
@@ -131,7 +129,7 @@ private:
     uint16_t mask = 0x7fff;
   } vram;
 
-  uint16_t *output;
+  uint16_t output[512 * 480];
   uint16_t lightTable[16][32768];
 
   struct {
