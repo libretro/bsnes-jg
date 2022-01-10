@@ -31,7 +31,7 @@ struct Stream;
 struct Audio {
   ~Audio();
   Stream* createStream(double);
-  void reset(Interface*);
+  void reset();
   void setFrequency(double);
   void setBuffer(float*);
   void setSpf(unsigned);
@@ -40,7 +40,6 @@ struct Audio {
 private:
   void process();
 
-  Interface* _interface = nullptr;
   std::vector<Stream*> _streams;
 
   double _frequency = 48000.0;

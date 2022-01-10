@@ -22,6 +22,7 @@
 #include <cstring>
 #include <vector>
 
+#include "audio.hpp"
 #include "cartridge.hpp"
 #include "controller/controller.hpp"
 #include "coprocessor/armdsp.hpp"
@@ -350,6 +351,8 @@ void System::unload() {
 }
 
 void System::power(bool reset) {
+  audio.reset();
+
   if(configuration.entropy == "None")
     random.entropy(Emulator::Random::Entropy::None);
   else if(configuration.entropy == "High")

@@ -102,11 +102,10 @@ Audio::~Audio() {
     stream->srcstate = src_delete(stream->srcstate);
     stream->srcstate = nullptr;
   }
-  reset(nullptr);
+  reset();
 }
 
-void Audio::reset(Interface* interface) {
-  _interface = interface;
+void Audio::reset() {
   _streams.clear();
 }
 

@@ -70,12 +70,10 @@ void Interface::connect(unsigned port, unsigned device) {
 }
 
 void Interface::power() {
-  audio.reset(interface);
   system.power(/* reset = */ false);
 }
 
 void Interface::reset() {
-  audio.reset(interface);
   system.power(/* reset = */ true);
 }
 
