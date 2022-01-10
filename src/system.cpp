@@ -24,7 +24,7 @@
 
 #include "audio.hpp"
 #include "cartridge.hpp"
-#include "controller/controller.hpp"
+#include "controller.hpp"
 #include "coprocessor/armdsp.hpp"
 #include "coprocessor/cx4.hpp"
 #include "coprocessor/dip.hpp"

@@ -83,12 +83,7 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/bsmemory.cpp \
 	src/cartridge.cpp \
 	src/cheat.cpp \
-	src/controller/controller.cpp \
-	src/controller/gamepad.cpp \
-	src/controller/justifier.cpp \
-	src/controller/mouse.cpp \
-	src/controller/super-multitap.cpp \
-	src/controller/super-scope.cpp \
+	src/controller.cpp \
 	src/coprocessor/armdsp.cpp \
 	src/coprocessor/cx4.cpp \
 	src/coprocessor/dip.cpp \
@@ -163,7 +158,6 @@ MKDIRS := deps/byuuML \
 	deps/libco \
 	deps/libsamplerate \
 	deps/snes_spc \
-	src/controller \
 	src/coprocessor \
 	src/expansion \
 	src/processor

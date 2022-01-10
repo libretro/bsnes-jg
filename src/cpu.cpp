@@ -19,7 +19,7 @@
  */
 
 #include "cartridge.hpp"
-#include "controller/controller.hpp"
+#include "controller.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"
 #include "random.hpp"

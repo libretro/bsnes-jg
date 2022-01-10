@@ -23,7 +23,7 @@
 
 #include "cartridge.hpp"
 #include "cheat.hpp"
-#include "controller/controller.hpp"
+#include "controller.hpp"
 #include "coprocessor/icd.hpp"
 #include "expansion/expansion.hpp"
 #include "settings.hpp"

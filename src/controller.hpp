@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "../serializer.hpp"
+#include "serializer.hpp"
 
 namespace SuperFamicom {
 
