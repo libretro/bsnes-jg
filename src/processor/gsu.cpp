@@ -72,16 +72,16 @@ void GSU::instruction(uint8_t opcode) {
   op  (0x03, LSR)
   op  (0x04, ROL)
   op  (0x05, Branch, 1)  //bra
-  op  (0x06, Branch, (regs.sfr.s ^ regs.sfr.ov) == 0)  //blt
-  op  (0x07, Branch, (regs.sfr.s ^ regs.sfr.ov) == 1)  //bge
-  op  (0x08, Branch, regs.sfr.z == 0)  //bne
-  op  (0x09, Branch, regs.sfr.z == 1)  //beq
-  op  (0x0a, Branch, regs.sfr.s == 0)  //bpl
-  op  (0x0b, Branch, regs.sfr.s == 1)  //bmi
-  op  (0x0c, Branch, regs.sfr.cy == 0)  //bcc
-  op  (0x0d, Branch, regs.sfr.cy == 1)  //bcs
-  op  (0x0e, Branch, regs.sfr.ov == 0)  //bvc
-  op  (0x0f, Branch, regs.sfr.ov == 1)  //bvs
+  op  (0x06, Branch, (regs.sfr.flag.s ^ regs.sfr.flag.ov) == 0)  //blt
+  op  (0x07, Branch, (regs.sfr.flag.s ^ regs.sfr.flag.ov) == 1)  //bge
+  op  (0x08, Branch, regs.sfr.flag.z == 0)  //bne
+  op  (0x09, Branch, regs.sfr.flag.z == 1)  //beq
+  op  (0x0a, Branch, regs.sfr.flag.s == 0)  //bpl
+  op  (0x0b, Branch, regs.sfr.flag.s == 1)  //bmi
+  op  (0x0c, Branch, regs.sfr.flag.cy == 0)  //bcc
+  op  (0x0d, Branch, regs.sfr.flag.cy == 1)  //bcs
+  op  (0x0e, Branch, regs.sfr.flag.ov == 0)  //bvc
+  op  (0x0f, Branch, regs.sfr.flag.ov == 1)  //bvs
   op16(0x10, TO_MOVE)
   op16(0x20, WITH)
   op12(0x30, Store)
@@ -129,10 +129,10 @@ void GSU::instruction(uint8_t opcode) {
 //$00 stop
 void GSU::instructionSTOP() {
   if(regs.cfgr.irq == 0) {
-    regs.sfr.irq = 1;
+    regs.sfr.flag.irq = 1;
     stop();
   }
-  regs.sfr.g = 0;
+  regs.sfr.flag.g = 0;
   regs.pipeline = 0x01;  //nop
   regs.reset();
 }
@@ -153,20 +153,20 @@ void GSU::instructionCACHE() {
 
 //$03 lsr
 void GSU::instructionLSR() {
-  regs.sfr.cy = (regs.sr() & 1);
+  regs.sfr.flag.cy = (bool)(regs.sr() & 1);
   regs.dr() = regs.sr() >> 1;
-  regs.sfr.s = (regs.dr() & 0x8000);
-  regs.sfr.z = (regs.dr() == 0);
+  regs.sfr.flag.s = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
 //$04 rol
 void GSU::instructionROL() {
   bool carry = (regs.sr() & 0x8000);
-  regs.dr() = (regs.sr() << 1) | regs.sfr.cy;
-  regs.sfr.s  = (regs.dr() & 0x8000);
-  regs.sfr.cy = carry;
-  regs.sfr.z  = (regs.dr() == 0);
+  regs.dr() = (regs.sr() << 1) | regs.sfr.flag.cy;
+  regs.sfr.flag.s  = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.cy = carry;
+  regs.sfr.flag.z  = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
@@ -189,7 +189,7 @@ void GSU::instructionBranch(bool take) {
 //$10-1f(b0) to rN
 //$10-1f(b1) move rN
 void GSU::instructionTO_MOVE(unsigned n) {
-  if(!regs.sfr.b) {
+  if(!regs.sfr.flag.b) {
     regs.dreg = n;
   } else {
     regs.r[n] = regs.sr();
@@ -201,7 +201,7 @@ void GSU::instructionTO_MOVE(unsigned n) {
 void GSU::instructionWITH(unsigned n) {
   regs.sreg = n;
   regs.dreg = n;
-  regs.sfr.b = 1;
+  regs.sfr.flag.b = 1;
 }
 
 //$30-3b(alt0) stw (rN)
@@ -209,36 +209,36 @@ void GSU::instructionWITH(unsigned n) {
 void GSU::instructionStore(unsigned n) {
   regs.ramaddr = regs.r[n];
   writeRAMBuffer(regs.ramaddr, regs.sr());
-  if(!regs.sfr.alt1) writeRAMBuffer(regs.ramaddr ^ 1, regs.sr() >> 8);
+  if(!regs.sfr.flag.alt1) writeRAMBuffer(regs.ramaddr ^ 1, regs.sr() >> 8);
   regs.reset();
 }
 
 //$3c loop
 void GSU::instructionLOOP() {
   regs.r[12]--;
-  regs.sfr.s = (regs.r[12] & 0x8000);
-  regs.sfr.z = (regs.r[12] == 0);
-  if(!regs.sfr.z) regs.r[15] = regs.r[13];
+  regs.sfr.flag.s = (bool)(regs.r[12] & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.r[12] == 0);
+  if(!regs.sfr.flag.z) regs.r[15] = regs.r[13];
   regs.reset();
 }
 
 //$3d alt1
 void GSU::instructionALT1() {
-  regs.sfr.b = 0;
-  regs.sfr.alt1 = 1;
+  regs.sfr.flag.b = 0;
+  regs.sfr.flag.alt1 = 1;
 }
 
 //$3e alt2
 void GSU::instructionALT2() {
-  regs.sfr.b = 0;
-  regs.sfr.alt2 = 1;
+  regs.sfr.flag.b = 0;
+  regs.sfr.flag.alt2 = 1;
 }
 
 //$3f alt3
 void GSU::instructionALT3() {
-  regs.sfr.b = 0;
-  regs.sfr.alt1 = 1;
-  regs.sfr.alt2 = 1;
+  regs.sfr.flag.b = 0;
+  regs.sfr.flag.alt1 = 1;
+  regs.sfr.flag.alt2 = 1;
 }
 
 //$40-4b(alt0) ldw (rN)
@@ -246,20 +246,20 @@ void GSU::instructionALT3() {
 void GSU::instructionLoad(unsigned n) {
   regs.ramaddr = regs.r[n];
   regs.dr() = readRAMBuffer(regs.ramaddr);
-  if(!regs.sfr.alt1) regs.dr() |= readRAMBuffer(regs.ramaddr ^ 1) << 8;
+  if(!regs.sfr.flag.alt1) regs.dr() |= readRAMBuffer(regs.ramaddr ^ 1) << 8;
   regs.reset();
 }
 
 //$4c(alt0) plot
 //$4c(alt1) rpix
 void GSU::instructionPLOT_RPIX() {
-  if(!regs.sfr.alt1) {
+  if(!regs.sfr.flag.alt1) {
     plot(regs.r[1], regs.r[2]);
     regs.r[1]++;
   } else {
     regs.dr() = rpix(regs.r[1], regs.r[2]);
-    regs.sfr.s = (regs.dr() & 0x8000);
-    regs.sfr.z = (regs.dr() == 0);
+    regs.sfr.flag.s = (bool)(regs.dr() & 0x8000);
+    regs.sfr.flag.z = (bool)(regs.dr() == 0);
   }
   regs.reset();
 }
@@ -267,15 +267,15 @@ void GSU::instructionPLOT_RPIX() {
 //$4d swap
 void GSU::instructionSWAP() {
   regs.dr() = regs.sr() >> 8 | regs.sr() << 8;
-  regs.sfr.s = (regs.dr() & 0x8000);
-  regs.sfr.z = (regs.dr() == 0);
+  regs.sfr.flag.s = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
 //$4e(alt0) color
 //$4e(alt1) cmode
 void GSU::instructionCOLOR_CMODE() {
-  if(!regs.sfr.alt1) {
+  if(!regs.sfr.flag.alt1) {
     regs.colr = color(regs.sr());
   } else {
     regs.por = regs.sr();
@@ -286,8 +286,8 @@ void GSU::instructionCOLOR_CMODE() {
 //$4f not
 void GSU::instructionNOT() {
   regs.dr() = ~regs.sr();
-  regs.sfr.s = (regs.dr() & 0x8000);
-  regs.sfr.z = (regs.dr() == 0);
+  regs.sfr.flag.s = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
@@ -296,12 +296,12 @@ void GSU::instructionNOT() {
 //$50-5f(alt2) add #N
 //$50-5f(alt3) adc #N
 void GSU::instructionADD_ADC(unsigned n) {
-  if(!regs.sfr.alt2) n = regs.r[n];
-  int r = regs.sr() + n + (regs.sfr.alt1 ? regs.sfr.cy : 0);
-  regs.sfr.ov = ~(regs.sr() ^ n) & (n ^ r) & 0x8000;
-  regs.sfr.s  = (r & 0x8000);
-  regs.sfr.cy = (r >= 0x10000);
-  regs.sfr.z  = ((uint16_t)r == 0);
+  if(!regs.sfr.flag.alt2) n = regs.r[n];
+  int r = regs.sr() + n + (regs.sfr.flag.alt1 ? regs.sfr.flag.cy : 0);
+  regs.sfr.flag.ov = (bool)(~(regs.sr() ^ n) & (n ^ r) & 0x8000);
+  regs.sfr.flag.s  = (bool)(r & 0x8000);
+  regs.sfr.flag.cy = (bool)(r >= 0x10000);
+  regs.sfr.flag.z  = (bool)((uint16_t)r == 0);
   regs.dr() = r;
   regs.reset();
 }
@@ -311,23 +311,23 @@ void GSU::instructionADD_ADC(unsigned n) {
 //$60-6f(alt2) sub #N
 //$60-6f(alt3) cmp rN
 void GSU::instructionSUB_SBC_CMP(unsigned n) {
-  if(!regs.sfr.alt2 || regs.sfr.alt1) n = regs.r[n];
-  int r = regs.sr() - n - (!regs.sfr.alt2 && regs.sfr.alt1 ? !regs.sfr.cy : 0);
-  regs.sfr.ov = (regs.sr() ^ n) & (regs.sr() ^ r) & 0x8000;
-  regs.sfr.s  = (r & 0x8000);
-  regs.sfr.cy = (r >= 0);
-  regs.sfr.z  = ((uint16_t)r == 0);
-  if(!regs.sfr.alt2 || !regs.sfr.alt1) regs.dr() = r;
+  if(!regs.sfr.flag.alt2 || regs.sfr.flag.alt1) n = regs.r[n];
+  int r = regs.sr() - n - (!regs.sfr.flag.alt2 && regs.sfr.flag.alt1 ? !regs.sfr.flag.cy : 0);
+  regs.sfr.flag.ov = (bool)((regs.sr() ^ n) & (regs.sr() ^ r) & 0x8000);
+  regs.sfr.flag.s  = (bool)(r & 0x8000);
+  regs.sfr.flag.cy = (bool)(r >= 0);
+  regs.sfr.flag.z  = (bool)((uint16_t)r == 0);
+  if(!regs.sfr.flag.alt2 || !regs.sfr.flag.alt1) regs.dr() = r;
   regs.reset();
 }
 
 //$70 merge
 void GSU::instructionMERGE() {
   regs.dr() = (regs.r[7] & 0xff00) | (regs.r[8] >> 8);
-  regs.sfr.ov = (regs.dr() & 0xc0c0);
-  regs.sfr.s  = (regs.dr() & 0x8080);
-  regs.sfr.cy = (regs.dr() & 0xe0e0);
-  regs.sfr.z  = (regs.dr() & 0xf0f0);
+  regs.sfr.flag.ov = (bool)(regs.dr() & 0xc0c0);
+  regs.sfr.flag.s  = (bool)(regs.dr() & 0x8080);
+  regs.sfr.flag.cy = (bool)(regs.dr() & 0xe0e0);
+  regs.sfr.flag.z  = (bool)(regs.dr() & 0xf0f0);
   regs.reset();
 }
 
@@ -336,10 +336,10 @@ void GSU::instructionMERGE() {
 //$71-7f(alt2) and #N
 //$71-7f(alt3) bic #N
 void GSU::instructionAND_BIC(unsigned n) {
-  if(!regs.sfr.alt2) n = regs.r[n];
-  regs.dr() = regs.sr() & (regs.sfr.alt1 ? ~n : n);
-  regs.sfr.s = (regs.dr() & 0x8000);
-  regs.sfr.z = (regs.dr() == 0);
+  if(!regs.sfr.flag.alt2) n = regs.r[n];
+  regs.dr() = regs.sr() & (regs.sfr.flag.alt1 ? ~n : n);
+  regs.sfr.flag.s = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
@@ -348,10 +348,10 @@ void GSU::instructionAND_BIC(unsigned n) {
 //$80-8f(alt2) mult #N
 //$80-8f(alt3) umult #N
 void GSU::instructionMULT_UMULT(unsigned n) {
-  if(!regs.sfr.alt2) n = regs.r[n];
-  regs.dr() = (!regs.sfr.alt1 ? uint16_t((int8_t)regs.sr() * (int8_t)n) : uint16_t((uint8_t)regs.sr() * (uint8_t)n));
-  regs.sfr.s = (regs.dr() & 0x8000);
-  regs.sfr.z = (regs.dr() == 0);
+  if(!regs.sfr.flag.alt2) n = regs.r[n];
+  regs.dr() = (!regs.sfr.flag.alt1 ? uint16_t((int8_t)regs.sr() * (int8_t)n) : uint16_t((uint8_t)regs.sr() * (uint8_t)n));
+  regs.sfr.flag.s = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.dr() == 0);
   regs.reset();
   if(!regs.cfgr.ms0) step(regs.clsr ? 1 : 2);
 }
@@ -372,35 +372,35 @@ void GSU::instructionLINK(unsigned n) {
 //$95 sex
 void GSU::instructionSEX() {
   regs.dr() = (int8_t)regs.sr();
-  regs.sfr.s = (regs.dr() & 0x8000);
-  regs.sfr.z = (regs.dr() == 0);
+  regs.sfr.flag.s = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
 //$96(alt0) asr
 //$96(alt1) div2
 void GSU::instructionASR_DIV2() {
-  regs.sfr.cy = (regs.sr() & 1);
-  regs.dr() = ((int16_t)regs.sr() >> 1) + (regs.sfr.alt1 ? ((regs.sr() + 1) >> 16) : 0);
-  regs.sfr.s = (regs.dr() & 0x8000);
-  regs.sfr.z = (regs.dr() == 0);
+  regs.sfr.flag.cy = (bool)(regs.sr() & 1);
+  regs.dr() = ((int16_t)regs.sr() >> 1) + (regs.sfr.flag.alt1 ? ((regs.sr() + 1) >> 16) : 0);
+  regs.sfr.flag.s = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
 //$97 ror
 void GSU::instructionROR() {
   bool carry = (regs.sr() & 1);
-  regs.dr() = (regs.sfr.cy << 15) | (regs.sr() >> 1);
-  regs.sfr.s  = (regs.dr() & 0x8000);
-  regs.sfr.cy = carry;
-  regs.sfr.z  = (regs.dr() == 0);
+  regs.dr() = (regs.sfr.flag.cy << 15) | (regs.sr() >> 1);
+  regs.sfr.flag.s  = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.cy = carry;
+  regs.sfr.flag.z  = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
 //$98-9d(alt0) jmp rN
 //$98-9d(alt1) ljmp rN
 void GSU::instructionJMP_LJMP(unsigned n) {
-  if(!regs.sfr.alt1) {
+  if(!regs.sfr.flag.alt1) {
     regs.r[15] = regs.r[n];
   } else {
     regs.pbr = regs.r[n] & 0x7f;
@@ -414,8 +414,8 @@ void GSU::instructionJMP_LJMP(unsigned n) {
 //$9e lob
 void GSU::instructionLOB() {
   regs.dr() = regs.sr() & 0xff;
-  regs.sfr.s = (regs.dr() & 0x80);
-  regs.sfr.z = (regs.dr() == 0);
+  regs.sfr.flag.s = (bool)(regs.dr() & 0x80);
+  regs.sfr.flag.z = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
@@ -423,11 +423,11 @@ void GSU::instructionLOB() {
 //$9f(alt1) lmult
 void GSU::instructionFMULT_LMULT() {
   uint32_t result = (int16_t)regs.sr() * (int16_t)regs.r[6];
-  if(regs.sfr.alt1) regs.r[4] = result;
+  if(regs.sfr.flag.alt1) regs.r[4] = result;
   regs.dr() = result >> 16;
-  regs.sfr.s  = (regs.dr() & 0x8000);
-  regs.sfr.cy = (result & 0x8000);
-  regs.sfr.z  = (regs.dr() == 0);
+  regs.sfr.flag.s  = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.cy = (bool)(result & 0x8000);
+  regs.sfr.flag.z  = (bool)(regs.dr() == 0);
   regs.reset();
   step((regs.cfgr.ms0 ? 3 : 7) * (regs.clsr ? 1 : 2));
 }
@@ -436,11 +436,11 @@ void GSU::instructionFMULT_LMULT() {
 //$a0-af(alt1) lms rN,(yy)
 //$a0-af(alt2) sms (yy),rN
 void GSU::instructionIBT_LMS_SMS(unsigned n) {
-  if(regs.sfr.alt1) {
+  if(regs.sfr.flag.alt1) {
     regs.ramaddr = pipe() << 1;
     uint8_t lo  = readRAMBuffer(regs.ramaddr ^ 0) << 0;
     regs.r[n] = readRAMBuffer(regs.ramaddr ^ 1) << 8 | lo;
-  } else if(regs.sfr.alt2) {
+  } else if(regs.sfr.flag.alt2) {
     regs.ramaddr = pipe() << 1;
     writeRAMBuffer(regs.ramaddr ^ 0, regs.r[n] >> 0);
     writeRAMBuffer(regs.ramaddr ^ 1, regs.r[n] >> 8);
@@ -453,13 +453,13 @@ void GSU::instructionIBT_LMS_SMS(unsigned n) {
 //$b0-bf(b0) from rN
 //$b0-bf(b1) moves rN
 void GSU::instructionFROM_MOVES(unsigned n) {
-  if(!regs.sfr.b) {
+  if(!regs.sfr.flag.b) {
     regs.sreg = n;
   } else {
     regs.dr() = regs.r[n];
-    regs.sfr.ov = (regs.dr() & 0x80);
-    regs.sfr.s  = (regs.dr() & 0x8000);
-    regs.sfr.z  = (regs.dr() == 0);
+    regs.sfr.flag.ov = (bool)(regs.dr() & 0x80);
+    regs.sfr.flag.s  = (bool)(regs.dr() & 0x8000);
+    regs.sfr.flag.z  = (bool)(regs.dr() == 0);
     regs.reset();
   }
 }
@@ -467,8 +467,8 @@ void GSU::instructionFROM_MOVES(unsigned n) {
 //$c0 hib
 void GSU::instructionHIB() {
   regs.dr() = regs.sr() >> 8;
-  regs.sfr.s = (regs.dr() & 0x80);
-  regs.sfr.z = (regs.dr() == 0);
+  regs.sfr.flag.s = (bool)(regs.dr() & 0x80);
+  regs.sfr.flag.z = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
@@ -477,18 +477,18 @@ void GSU::instructionHIB() {
 //$c1-cf(alt2) or #N
 //$c1-cf(alt3) xor #N
 void GSU::instructionOR_XOR(unsigned n) {
-  if(!regs.sfr.alt2) n = regs.r[n];
-  regs.dr() = (!regs.sfr.alt1 ? (regs.sr() | n) : (regs.sr() ^ n));
-  regs.sfr.s = (regs.dr() & 0x8000);
-  regs.sfr.z = (regs.dr() == 0);
+  if(!regs.sfr.flag.alt2) n = regs.r[n];
+  regs.dr() = (!regs.sfr.flag.alt1 ? (regs.sr() | n) : (regs.sr() ^ n));
+  regs.sfr.flag.s = (bool)(regs.dr() & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.dr() == 0);
   regs.reset();
 }
 
 //$d0-de inc rN
 void GSU::instructionINC(unsigned n) {
   regs.r[n]++;
-  regs.sfr.s = (regs.r[n] & 0x8000);
-  regs.sfr.z = (regs.r[n] == 0);
+  regs.sfr.flag.s = (bool)(regs.r[n] & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.r[n] == 0);
   regs.reset();
 }
 
@@ -496,9 +496,9 @@ void GSU::instructionINC(unsigned n) {
 //$df(alt2) ramb
 //$df(alt3) romb
 void GSU::instructionGETC_RAMB_ROMB() {
-  if(!regs.sfr.alt2) {
+  if(!regs.sfr.flag.alt2) {
     regs.colr = color(readROMBuffer());
-  } else if(!regs.sfr.alt1) {
+  } else if(!regs.sfr.flag.alt1) {
     syncRAMBuffer();
     regs.rambr = regs.sr() & 0x01;
   } else {
@@ -511,8 +511,8 @@ void GSU::instructionGETC_RAMB_ROMB() {
 //$e0-ee dec rN
 void GSU::instructionDEC(unsigned n) {
   regs.r[n]--;
-  regs.sfr.s = (regs.r[n] & 0x8000);
-  regs.sfr.z = (regs.r[n] == 0);
+  regs.sfr.flag.s = (bool)(regs.r[n] & 0x8000);
+  regs.sfr.flag.z = (bool)(regs.r[n] == 0);
   regs.reset();
 }
 
@@ -521,7 +521,7 @@ void GSU::instructionDEC(unsigned n) {
 //$ef(alt2) getbl
 //$ef(alt3) getbs
 void GSU::instructionGETB() {
-  switch(regs.sfr.alt2 << 1 | regs.sfr.alt1 << 0) {
+  switch(regs.sfr.flag.alt2 << 1 | regs.sfr.flag.alt1 << 0) {
   case 0: regs.dr() = readROMBuffer(); break;
   case 1: regs.dr() = readROMBuffer() << 8 | (uint8_t)regs.sr(); break;
   case 2: regs.dr() = (regs.sr() & 0xff00) | readROMBuffer(); break;
@@ -534,12 +534,12 @@ void GSU::instructionGETB() {
 //$f0-ff(alt1) lm rN,(xx)
 //$f0-ff(alt2) sm (xx),rN
 void GSU::instructionIWT_LM_SM(unsigned n) {
-  if(regs.sfr.alt1) {
+  if(regs.sfr.flag.alt1) {
     regs.ramaddr  = pipe() << 0;
     regs.ramaddr |= pipe() << 8;
     uint8_t lo  = readRAMBuffer(regs.ramaddr ^ 0) << 0;
     regs.r[n] = readRAMBuffer(regs.ramaddr ^ 1) << 8 | lo;
-  } else if(regs.sfr.alt2) {
+  } else if(regs.sfr.flag.alt2) {
     regs.ramaddr  = pipe() << 0;
     regs.ramaddr |= pipe() << 8;
     writeRAMBuffer(regs.ramaddr ^ 0, regs.r[n] >> 0);
@@ -611,7 +611,7 @@ void GSU::serialize(serializer& s) {
 void GSU::disassembleOpcode(char* output) {
   *output = 0;
 
-  switch(regs.sfr.alt2 << 1 | regs.sfr.alt1 << 0) {
+  switch(regs.sfr.flag.alt2 << 1 | regs.sfr.flag.alt1 << 0) {
   case 0: disassembleALT0(output); break;
   case 1: disassembleALT1(output); break;
   case 2: disassembleALT2(output); break;
@@ -883,7 +883,7 @@ void GSU::power() {
     r.modified = false;
   }
 
-  regs.sfr      = 0x0000;
+  regs.sfr.data = 0x0000;
   regs.pbr      = 0x00;
   regs.rombr    = 0x00;
   regs.rambr    = 0;

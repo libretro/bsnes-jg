@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include "../../nall/primitives.hpp"
-
 namespace Processor {
 
 struct GSU {
@@ -60,24 +58,12 @@ struct GSU {
     Register(const Register&) = delete;
   };
 
-  struct SFR {
+  union SFR {
     uint16_t data = 0;
-
-    nall::BitField<16, 1> z   {&data};  //zero flag
-    nall::BitField<16, 2> cy  {&data};  //carry flag
-    nall::BitField<16, 3> s   {&data};  //sign flag
-    nall::BitField<16, 4> ov  {&data};  //overflow flag
-    nall::BitField<16, 5> g   {&data};  //go flag
-    nall::BitField<16, 6> r   {&data};  //ROM r14 flag
-    nall::BitField<16, 8> alt1{&data};  //alt1 instruction mode
-    nall::BitField<16, 9> alt2{&data};  //alt2 instruction mode
-    nall::BitField<16,10> il  {&data};  //immediate lower 8-bit flag
-    nall::BitField<16,11> ih  {&data};  //immediate upper 8-bit flag
-    nall::BitField<16,12> b   {&data};  //with flag
-    nall::BitField<16,15> irq {&data};  //interrupt flag
-
-    inline operator unsigned() const { return data & 0x9f7e; }
-    inline auto& operator=(const unsigned value) { return data = value, *this; }
+    struct {
+      uint16_t : 1, z : 1, cy : 1, s : 1, ov : 1, g : 1, r : 1, : 1,
+            alt1 : 1, alt2 : 1, il : 1, ih : 1, b : 1, : 2, irq : 1;
+    } flag;
   };
 
   struct SCMR {
@@ -168,9 +154,9 @@ struct GSU {
     auto& dr() { return r[dreg]; }  //destination register (to)
 
     void reset() {
-      sfr.b    = 0;
-      sfr.alt1 = 0;
-      sfr.alt2 = 0;
+      sfr.flag.b    = 0;
+      sfr.flag.alt1 = 0;
+      sfr.flag.alt2 = 0;
 
       sreg = 0;
       dreg = 0;

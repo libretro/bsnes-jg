@@ -37,7 +37,7 @@ unsigned SuperFX::CPUROM::size() const {
 }
 
 uint8_t SuperFX::CPUROM::read(unsigned addr, uint8_t data) {
-  if(superfx.regs.sfr.g && superfx.regs.scmr.ron) {
+  if(superfx.regs.sfr.flag.g && superfx.regs.scmr.ron) {
     static const uint8_t vector[16] = {
       0x00, 0x01, 0x00, 0x01, 0x04, 0x01, 0x00, 0x01,
       0x00, 0x01, 0x08, 0x01, 0x00, 0x01, 0x0c, 0x01,
@@ -60,7 +60,7 @@ unsigned SuperFX::CPURAM::size() const {
 }
 
 uint8_t SuperFX::CPURAM::read(unsigned addr, uint8_t data) {
-  if(superfx.regs.sfr.g && superfx.regs.scmr.ran) return data;
+  if(superfx.regs.sfr.flag.g && superfx.regs.scmr.ran) return data;
   return superfx.ram.read(addr, data);
 }
 
@@ -287,12 +287,12 @@ uint8_t SuperFX::readIO(unsigned addr, uint8_t) {
 
   switch(addr) {
   case 0x3030: {
-    return regs.sfr >> 0;
+    return regs.sfr.data >> 0;
   }
 
   case 0x3031: {
-    uint8_t r = regs.sfr >> 8;
-    regs.sfr.irq = 0;
+    uint8_t r = regs.sfr.data >> 8;
+    regs.sfr.flag.irq = 0;
     cpu.irq(0);
     return r;
   }
@@ -342,22 +342,22 @@ void SuperFX::writeIO(unsigned addr, uint8_t data) {
     }
     if(n == 14) updateROMBuffer();
 
-    if(addr == 0x301f) regs.sfr.g = 1;
+    if(addr == 0x301f) regs.sfr.flag.g = 1;
     return;
   }
 
   switch(addr) {
   case 0x3030: {
-    bool g = regs.sfr.g;
-    regs.sfr = (regs.sfr & 0xff00) | (data << 0);
-    if(g == 1 && regs.sfr.g == 0) {
+    bool g = regs.sfr.flag.g;
+    regs.sfr.data = (regs.sfr.data & 0x9f00) | (data & 0x7e);
+    if(g == 1 && regs.sfr.flag.g == 0) {
       regs.cbr = 0x0000;
       flushCache();
     }
   } break;
 
   case 0x3031: {
-    regs.sfr = (data << 8) | (regs.sfr & 0x00ff);
+    regs.sfr.data = ((data << 8) & 0x9f00) | (regs.sfr.data & 0x007e);
   } break;
 
   case 0x3033: {
@@ -391,7 +391,7 @@ void SuperFX::step(unsigned clocks) {
   if(regs.romcl) {
     regs.romcl -= std::min(clocks, regs.romcl);
     if(regs.romcl == 0) {
-      regs.sfr.r = 0;
+      regs.sfr.flag.r = 0;
       regs.romdr = read((regs.rombr << 16) + regs.r[14]);
     }
   }
@@ -417,7 +417,7 @@ uint8_t SuperFX::readROMBuffer() {
 }
 
 void SuperFX::updateROMBuffer() {
-  regs.sfr.r = 1;
+  regs.sfr.flag.r = 1;
   regs.romcl = regs.clsr ? 5 : 6;
 }
 
@@ -458,7 +458,7 @@ void SuperFX::Enter() {
 }
 
 void SuperFX::main() {
-  if(regs.sfr.g == 0) return step(6);
+  if(regs.sfr.flag.g == 0) return step(6);
 
   instruction(peekpipe());
 
