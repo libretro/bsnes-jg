@@ -1,0 +1,19 @@
+Version 1.0.0
+-------------
+ - Initial tagged release after fork from bsnes v115
+ - Port to OpenBSD and DragonFly BSD
+ - Remove LZMA SDK
+ - Major build improvements
+ - Update to SameBoy 0.14.7
+ - Fix loading/saving of Sufami Turbo cartridges (single or dual)
+ - Fix Justifier input
+ - Filesystem and include heirarchy simplifications
+ - Use Secret Rabbit Code (libsamplerate) for internal resampling
+ - Fix audio clicks and pops when using Super Game Boy 1
+ - Code quality improvements: warnings fixed, trailing return types reduced
+ - Cheat decoding moved into the emulator core
+ - Fix saving of RTC files
+ - Fix broken state saving in many games
+ - Use byuuML for parsing BML documents
+ - Use upstream blargg snes_spc code and apply useful changes from bsnes
+ - Translate from the "nall" library to the C++ Standard Library
