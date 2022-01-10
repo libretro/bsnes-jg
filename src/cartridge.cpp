@@ -176,11 +176,8 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
     if (type == "ROM" && content == "Program") {
       if(auto memory = Emulator::Game::Memory(m)) {
         sufamiturboA.rom.allocate(memory.size);
-        std::vector<uint8_t> buf =
-          Emulator::platform->mopen(sufamiturboA.pathID, memory.name());
-        if (!buf.empty()) {
-          for (unsigned i = 0; i < memory.size; ++i)
-            sufamiturboA.rom.data()[i] = buf[i];
+        for (unsigned i = 0; i < memory.size; ++i) {
+          sufamiturboA.rom.data()[i] = romdataSTA[i];
         }
       }
     }
@@ -206,11 +203,8 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
     if (type == "ROM" && content == "Program") {
       if(auto memory = Emulator::Game::Memory(m)) {
         sufamiturboB.rom.allocate(memory.size);
-        std::vector<uint8_t> buf =
-          Emulator::platform->mopen(sufamiturboB.pathID, memory.name());
-        if (!buf.empty()) {
-          for (unsigned i = 0; i < memory.size; ++i)
-            sufamiturboB.rom.data()[i] = buf[i];
+        for (unsigned i = 0; i < memory.size; ++i) {
+          sufamiturboB.rom.data()[i] = romdataSTB[i];
         }
       }
     }
@@ -1373,6 +1367,16 @@ void Cartridge::setDocument(unsigned id, std::string doc) {
   else if (id == 5) {
     slotSufamiTurboB.document = doc;
   }
+}
+
+void Cartridge::setRomSufamiTurboA(const uint8_t *data, size_t size) {
+  romdataSTA = data;
+  romsizeSTA = size;
+}
+
+void Cartridge::setRomSufamiTurboB(const uint8_t *data, size_t size) {
+  romdataSTB = data;
+  romsizeSTB = size;
 }
 
 void Cartridge::unload() {

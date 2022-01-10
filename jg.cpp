@@ -358,16 +358,6 @@ std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
             return bsMemory.program;
         }
     }
-    else if (id == 4) { // Sufami Turbo Slot A
-        if (name == "program.rom") {
-            return sufamiTurboA.program;
-        }
-    }
-    else if (id == 5) { // Sufami Turbo Slot B
-        if (name == "program.rom") {
-            return sufamiTurboB.program;
-        }
-    }
     return {};
 }
 
@@ -648,6 +638,13 @@ bool Program::loadSufamiTurboA(std::string location) {
 
     if (rom.size() < 0x20000) return false;
 
+    if (sufamiinfo.size)
+        interface->setRomSufamiTurboA((const uint8_t*)sufamiinfo.data,
+            sufamiinfo.size);
+    else
+        interface->setRomSufamiTurboA((const uint8_t*)gameinfo.data,
+            gameinfo.size);
+
     auto heuristics = Heuristics::SufamiTurbo(rom, location);
     auto sha256 = sha256_digest(rom.data(), rom.size());
 
@@ -658,7 +655,6 @@ bool Program::loadSufamiTurboA(std::string location) {
         manifest.empty() ? heuristics.manifest() : manifest);
     sufamiTurboA.location = std::string(gameinfo.path);
 
-    sufamiTurboA.program = rom;
     return true;
 }
 
@@ -671,6 +667,8 @@ bool Program::loadSufamiTurboB(std::string location) {
 
     if (rom.size() < 0x20000) return false;
 
+    interface->setRomSufamiTurboB((const uint8_t*)gameinfo.data, gameinfo.size);
+
     auto heuristics = Heuristics::SufamiTurbo(rom, location);
     auto sha256 = sha256_digest(rom.data(), rom.size());
 
@@ -681,7 +679,6 @@ bool Program::loadSufamiTurboB(std::string location) {
         manifest.empty() ? heuristics.manifest() : manifest);
     sufamiTurboB.location = location;
 
-    sufamiTurboB.program = rom;
     return true;
 }
 

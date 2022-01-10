@@ -48,6 +48,8 @@ struct Interface {
 
   void setDocument(unsigned, std::string);
   void setRomGB(const uint8_t*, size_t);
+  void setRomSufamiTurboA(const uint8_t*, size_t);
+  void setRomSufamiTurboB(const uint8_t*, size_t);
 };
 
 }

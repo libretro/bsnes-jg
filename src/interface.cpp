@@ -167,4 +167,12 @@ void Interface::setRomGB(const uint8_t *data, size_t size) {
   icd.setRom(data, size);
 }
 
+void Interface::setRomSufamiTurboA(const uint8_t *data, size_t size) {
+  cartridge.setRomSufamiTurboA(data, size);
+}
+
+void Interface::setRomSufamiTurboB(const uint8_t *data, size_t size) {
+  cartridge.setRomSufamiTurboB(data, size);
+}
+
 }

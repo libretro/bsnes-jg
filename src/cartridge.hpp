@@ -38,6 +38,9 @@ struct Cartridge {
 
   void serialize(serializer&);
 
+  void setRomSufamiTurboA(const uint8_t*, size_t);
+  void setRomSufamiTurboB(const uint8_t*, size_t);
+
   ReadableMemory rom;
   WritableMemory ram;
 
@@ -138,6 +141,12 @@ private:
   void saveSharpRTC(std::string);
 
   void setDocument(unsigned, std::string);
+
+  const uint8_t *romdataSTA;
+  const uint8_t *romdataSTB;
+
+  size_t romsizeSTA;
+  size_t romsizeSTB;
 
   friend struct Interface;
   friend struct ICD;
