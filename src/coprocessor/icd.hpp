@@ -59,6 +59,8 @@ struct ICD : Thread {
   //serialization.cpp
   void serialize(serializer&);
 
+  void setRom(const uint8_t*, size_t);
+
   unsigned Revision = 0;
   unsigned Frequency = 0;
 
@@ -95,6 +97,9 @@ private:
 
   uint8_t hcounter;
   uint8_t vcounter;
+
+  const uint8_t *romdata;
+  size_t romsize;
 
   struct Information {
     unsigned pathID = 0;

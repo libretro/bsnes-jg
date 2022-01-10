@@ -47,6 +47,7 @@ struct Interface {
   void setRunAhead(bool);
 
   void setDocument(unsigned, std::string);
+  void setRomGB(const uint8_t*, size_t);
 };
 
 }

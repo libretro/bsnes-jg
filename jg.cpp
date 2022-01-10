@@ -114,7 +114,7 @@ static int vmult = 1;
 static int ss_offset_x = 0;
 static int ss_offset_y = 0;
 
-static bool addon = false;
+static uint8_t addon = 0;
 
 static SuperFamicom::Interface *interface;
 
@@ -158,10 +158,6 @@ public:
         std::vector<uint8_t> expansion;
         std::vector<uint8_t> firmware;
     } superFamicom;
-
-    struct GameBoy : Game {
-        std::vector<uint8_t> program;
-    } gameBoy;
 
     struct BSMemory : Game {
         std::vector<uint8_t> program;
@@ -356,19 +352,6 @@ std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
         }
         else if (name == "expansion.rom") {
             return superFamicom.expansion;
-        }
-    }
-    else if (id == 2) { // GB
-        if (name == "program.rom") {
-            std::vector<uint8_t> rom;
-            rom = loadFile(gameinfo.data, gameinfo.size);
-
-            if (rom.size() < 0x4000)
-                jg_cb_log(JG_LOG_ERR, "Game Boy ROM size too small\n");
-
-            gameBoy.location = gameinfo.path;
-            gameBoy.program = rom;
-            return gameBoy.program;
         }
     }
     else if (id == 3) { // BS-X
@@ -781,8 +764,8 @@ int jg_game_load() {
         }
 
         program->superFamicom.location = std::string(addoninfo.path);
-        program->gameBoy.location = std::string(gameinfo.path);
-        addon = true;
+        interface->setRomGB((const uint8_t*)gameinfo.data, gameinfo.size);
+        addon = 1;
     }
     else if (ext == "bs") {
         if (!addoninfo.size) {
@@ -793,7 +776,7 @@ int jg_game_load() {
 
         program->superFamicom.location = std::string(addoninfo.path);
         program->bsMemory.location = std::string(gameinfo.path);
-        addon = true;
+        addon = 2;
     }
     else if (ext == "st") {
         if (!addoninfo.size) {
@@ -812,7 +795,7 @@ int jg_game_load() {
         else {
             program->sufamiTurboA.location = std::string(gameinfo.path);
         }
-        addon = true;
+        addon = 3;
     }
     else {
         program->superFamicom.location = std::string(gameinfo.path);
@@ -970,7 +953,7 @@ void jg_cheat_set(const char *code) {
     std::string cht = std::string(code);
     bool decoded = false;
 
-    if (!program->gameBoy.program.empty())
+    if (addon == 1)
         decoded = CheatDecoder::gb(cht);
     else
         decoded = CheatDecoder::snes(cht);

@@ -163,4 +163,8 @@ void Interface::setDocument(unsigned id, std::string doc) {
   cartridge.setDocument(id, doc);
 }
 
+void Interface::setRomGB(const uint8_t *data, size_t size) {
+  icd.setRom(data, size);
+}
+
 }

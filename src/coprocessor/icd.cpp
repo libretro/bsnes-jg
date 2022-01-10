@@ -416,11 +416,8 @@ bool ICD::load() {
   }
   else return unload(), false;
 
-  std::vector<uint8_t> rom = Emulator::platform->mopen(pathID(), "program.rom");
-  if(!rom.empty()) {
-    cartridge.information.sha256 = sha256_digest(rom.data(), rom.size()).c_str();
-    GB_load_rom_from_buffer(&sameboy, rom.data(), rom.size());
-  } else return unload(), false;
+  cartridge.information.sha256 = sha256_digest(romdata, romsize).c_str();
+  GB_load_rom_from_buffer(&sameboy, romdata, romsize);
 
   std::ifstream sramfile = Emulator::platform->fopen(pathID(), "save.ram");
   if (sramfile.is_open()) {
@@ -481,6 +478,11 @@ void ICD::power(bool reset) {
   vcounter = 0;
 
   GB_reset(&sameboy);
+}
+
+void ICD::setRom(const uint8_t *data, size_t size) {
+  romdata = data;
+  romsize = size;
 }
 
 }
