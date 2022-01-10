@@ -52,8 +52,6 @@ inline void WRITE_WORD(uint8_t *addr, uint16_t data) {
 struct DSP4_t DSP4;
 struct DSP4_vars_t DSP4_vars;
 
-//////////////////////////////////////////////////////////////
-
 // input protocol
 
 static int16_t DSP4_READ_WORD()
@@ -76,9 +74,6 @@ static int32_t DSP4_READ_DWORD()
   return out;
 }
 
-
-//////////////////////////////////////////////////////////////
-
 // output protocol
 
 #define DSP4_CLEAR_OUT() \
@@ -95,7 +90,7 @@ static int32_t DSP4_READ_DWORD()
 { memcpy(DSP4.output + DSP4.out_count, ( d ), 32); DSP4.out_count += 32; }
 #else
 #define DSP4_WRITE_16_WORD( d )                         \
-{ int16_t *p = ( d ), *end = ( d )+16;                    \
+{ int16_t *p = ( d ), *end = ( d )+16;                  \
   for (; p != end; p++)                                 \
   {                                                     \
     WRITE_WORD( DSP4.output + DSP4.out_count, *p );     \
@@ -114,14 +109,10 @@ static int32_t DSP4_READ_DWORD()
   WRITE_WORD( nop + x, d );
 #endif
 
-//////////////////////////////////////////////////////////////
-
 // used to wait for dsp i/o
 
 #define DSP4_WAIT( x ) \
   DSP4.in_index = 0; DSP4_vars.DSP4_Logic = x; return;
-
-//////////////////////////////////////////////////////////////
 
 // 1.7.8 -> 1.15.16
 #define SEX78( a ) ( ( (int32_t) ( (int16_t) (a) ) ) << 8 )
@@ -137,16 +128,17 @@ static int32_t DSP4_READ_DWORD()
 #define U16( a ) ( (uint16_t) ( a ) )
 #endif
 
-//////////////////////////////////////////////////////////////
-
 // Attention: This lookup table is not verified
-static const uint16_t div_lut[64] = { 0x0000, 0x8000, 0x4000, 0x2aaa, 0x2000, 0x1999, 0x1555, 0x1249, 0x1000, 0x0e38,
-                                    0x0ccc, 0x0ba2, 0x0aaa, 0x09d8, 0x0924, 0x0888, 0x0800, 0x0787, 0x071c, 0x06bc,
-                                    0x0666, 0x0618, 0x05d1, 0x0590, 0x0555, 0x051e, 0x04ec, 0x04bd, 0x0492, 0x0469,
-                                    0x0444, 0x0421, 0x0400, 0x03e0, 0x03c3, 0x03a8, 0x038e, 0x0375, 0x035e, 0x0348,
-                                    0x0333, 0x031f, 0x030c, 0x02fa, 0x02e8, 0x02d8, 0x02c8, 0x02b9, 0x02aa, 0x029c,
-                                    0x028f, 0x0282, 0x0276, 0x026a, 0x025e, 0x0253, 0x0249, 0x023e, 0x0234, 0x022b,
-                                    0x0222, 0x0219, 0x0210, 0x0208,  };
+static const uint16_t div_lut[64] = {
+  0x0000, 0x8000, 0x4000, 0x2aaa, 0x2000, 0x1999, 0x1555, 0x1249, 0x1000, 0x0e38,
+  0x0ccc, 0x0ba2, 0x0aaa, 0x09d8, 0x0924, 0x0888, 0x0800, 0x0787, 0x071c, 0x06bc,
+  0x0666, 0x0618, 0x05d1, 0x0590, 0x0555, 0x051e, 0x04ec, 0x04bd, 0x0492, 0x0469,
+  0x0444, 0x0421, 0x0400, 0x03e0, 0x03c3, 0x03a8, 0x038e, 0x0375, 0x035e, 0x0348,
+  0x0333, 0x031f, 0x030c, 0x02fa, 0x02e8, 0x02d8, 0x02c8, 0x02b9, 0x02aa, 0x029c,
+  0x028f, 0x0282, 0x0276, 0x026a, 0x025e, 0x0253, 0x0249, 0x023e, 0x0234, 0x022b,
+  0x0222, 0x0219, 0x0210, 0x0208,
+};
+
 int16_t DSP4_Inverse(int16_t value)
 {
   // saturate bounds
@@ -162,21 +154,14 @@ int16_t DSP4_Inverse(int16_t value)
   return div_lut[value];
 }
 
-//////////////////////////////////////////////////////////////
-
 // Prototype
 void DSP4_OP0B(uint8_t *draw, int16_t sp_x, int16_t sp_y, int16_t sp_attr, uint8_t size, uint8_t stop);
-
-//////////////////////////////////////////////////////////////
 
 // OP00
 void DSP4_Multiply(int16_t Multiplicand, int16_t Multiplier, int32_t *Product)
 {
   *Product = (Multiplicand * Multiplier << 1) >> 1;
 }
-
-//////////////////////////////////////////////////////////////
-
 
 void DSP4_OP01()
 {
@@ -193,7 +178,6 @@ void DSP4_OP01()
       goto resume3; break;
   }
 
-  ////////////////////////////////////////////////////
   // process initial inputs
 
   // sort inputs
@@ -228,7 +212,6 @@ void DSP4_OP01()
 
   do
   {
-    ////////////////////////////////////////////////////
     // process one iteration of projection
 
     // perspective projection of world (x,y,scroll) points
@@ -250,8 +233,6 @@ void DSP4_OP01()
     DSP4_WRITE_WORD(DSP4_vars.view_x2);
     DSP4_WRITE_WORD((uint16_t)(DSP4_vars.world_y >> 16));
     DSP4_WRITE_WORD(DSP4_vars.view_y2);
-
-    //////////////////////////////////////////////////////
 
     // SR = 0x00
 
@@ -277,8 +258,6 @@ void DSP4_OP01()
     // SR = 0x80
 
     DSP4_WRITE_WORD(DSP4_vars.segments);
-
-    //////////////////////////////////////////////////////
 
     // scan next command if no SR check needed
     if (DSP4_vars.segments)
@@ -309,7 +288,6 @@ void DSP4_OP01()
         DSP4_WRITE_WORD((uint16_t)((y_scroll + 0x8000) >> 16));
         DSP4_WRITE_WORD((uint16_t)((x_scroll + 0x8000) >> 16));
 
-
         // update memory address
         DSP4_vars.poly_ptr[0][0] -= 4;
 
@@ -319,7 +297,6 @@ void DSP4_OP01()
       }
     }
 
-    ////////////////////////////////////////////////////
     // Post-update
 
     // update new viewer (x,y,scroll) to last DSP4_vars.raster line drawn
@@ -339,7 +316,6 @@ void DSP4_OP01()
     // update road turnoff position
     DSP4_vars.view_turnoff_x += DSP4_vars.view_turnoff_dx;
 
-    ////////////////////////////////////////////////////
     // command check
 
     // scan next command
@@ -390,18 +366,11 @@ void DSP4_OP01()
   DSP4.waiting4command = true;
 }
 
-//////////////////////////////////////////////////////////////
-
-
 void DSP4_OP03()
 {
   DSP4_vars.OAM_RowMax = 33;
   memset(DSP4_vars.OAM_Row, 0, 64);
 }
-
-
-//////////////////////////////////////////////////////////////
-
 
 void DSP4_OP05()
 {
@@ -411,17 +380,11 @@ void DSP4_OP05()
   DSP4_vars.sprite_count = 0;
 }
 
-
-//////////////////////////////////////////////////////////////
-
 void DSP4_OP06()
 {
   DSP4_CLEAR_OUT();
   DSP4_WRITE_16_WORD(DSP4_vars.OAM_attr);
 }
-
-//////////////////////////////////////////////////////////////
-
 
 void DSP4_OP07()
 {
@@ -436,7 +399,6 @@ void DSP4_OP07()
       goto resume2; break;
   }
 
-  ////////////////////////////////////////////////////
   // sort inputs
 
   DSP4_vars.world_y = DSP4_READ_DWORD();
@@ -464,10 +426,8 @@ void DSP4_OP07()
   // first DSP4_vars.raster line
   DSP4_vars.poly_raster[0][0] = DSP4_vars.poly_bottom[0][0];
 
-
   do
   {
-    ////////////////////////////////////////////////////
     // process one iteration of projection
 
     // add shaping
@@ -485,8 +445,6 @@ void DSP4_OP07()
     DSP4_CLEAR_OUT();
     DSP4_WRITE_WORD(DSP4_vars.view_x2);
     DSP4_WRITE_WORD(DSP4_vars.view_y2);
-
-    //////////////////////////////////////////////////////
 
     // SR = 0x00
 
@@ -512,8 +470,6 @@ void DSP4_OP07()
     // SR = 0x80
 
     DSP4_WRITE_WORD(DSP4_vars.segments);
-
-    //////////////////////////////////////////////////////
 
     // scan next command if no SR check needed
     if (DSP4_vars.segments)
@@ -553,7 +509,6 @@ void DSP4_OP07()
       }
     }
 
-    /////////////////////////////////////////////////////
     // Post-update
 
     // update new viewer (x,y,scroll) to last DSP4_vars.raster line drawn
@@ -562,7 +517,6 @@ void DSP4_OP07()
     DSP4_vars.view_xofs1 = DSP4_vars.view_xofs2;
     DSP4_vars.view_yofs1 = DSP4_vars.view_yofs2;
 
-    ////////////////////////////////////////////////////
     // command check
 
     // scan next command
@@ -590,8 +544,6 @@ void DSP4_OP07()
   DSP4.waiting4command = true;
 }
 
-//////////////////////////////////////////////////////////////
-
 void DSP4_OP08()
 {
   int16_t win_left, win_right;
@@ -609,7 +561,6 @@ void DSP4_OP08()
       goto resume2; break;
   }
 
-  ////////////////////////////////////////////////////
   // process initial inputs for two polygons
 
   // clip values
@@ -728,11 +679,10 @@ void DSP4_OP08()
   DSP4_WRITE_BYTE(win_left & 0xff);
   DSP4_WRITE_BYTE(win_right & 0xff);
 
-
   do
   {
     int16_t polygon;
-    ////////////////////////////////////////////////////
+
     // command check
 
     // scan next command
@@ -761,14 +711,11 @@ void DSP4_OP08()
     envelope[1][0] = DSP4_READ_WORD();
     envelope[1][1] = DSP4_READ_WORD();
 
-    ////////////////////////////////////////////////////
     // projection begins
 
     // init
     DSP4_CLEAR_OUT();
 
-
-    //////////////////////////////////////////////
     // solid polygon renderer - 2 shapes
 
     for (polygon = 0; polygon < 2; polygon++)
@@ -811,8 +758,6 @@ void DSP4_OP08()
       // normal parameters
       poly = polygon;
 
-      /////////////////////////////////////////////////////
-
       // scan next command if no SR check needed
       if (DSP4_vars.segments)
       {
@@ -824,7 +769,6 @@ void DSP4_OP08()
         else if( envelope[ polygon ][ 1 ] == 0x3fff )
           poly = 1;
 
-        ///////////////////////////////////////////////
         // left side of polygon
 
         // perspective correction on additional shaping parameters
@@ -840,7 +784,6 @@ void DSP4_OP08()
         if (DSP4_vars.segments == 1)
           left_inc = -left_inc;
 
-        ///////////////////////////////////////////////
         // right side of polygon
 
         // perspective correction on additional shaping parameters
@@ -857,7 +800,6 @@ void DSP4_OP08()
         if (DSP4_vars.segments == 1)
           right_inc = -right_inc;
 
-        ///////////////////////////////////////////////
         // update each point on the line
 
         win_left = SEX16(DSP4_vars.poly_cx[polygon][0] - DSP4_vars.poly_start[poly] + env[0][0]);
@@ -904,7 +846,6 @@ void DSP4_OP08()
         } // end rasterize line
       }
 
-      ////////////////////////////////////////////////
       // Post-update
 
       // new projection spot to continue rasterizing from
@@ -920,8 +861,6 @@ void DSP4_OP08()
 
   DSP4.waiting4command = true;
 }
-
-//////////////////////////////////////////////////////////////
 
 void DSP4_OP09()
 {
@@ -944,7 +883,6 @@ void DSP4_OP09()
       goto resume6; break;
   }
 
-  ////////////////////////////////////////////////////
   // process initial inputs
 
   // grab screen information
@@ -962,13 +900,11 @@ void DSP4_OP09()
 
   do
   {
-    ////////////////////////////////////////////////////
     // check for new sprites
 
     DSP4.in_count = 4;
     DSP4_WAIT(1) resume1 :
 
-    ////////////////////////////////////////////////
     // DSP4_vars.raster overdraw check
 
     DSP4_vars.raster = DSP4_READ_WORD();
@@ -980,7 +916,6 @@ void DSP4_OP09()
       DSP4_vars.poly_raster[0][0] = DSP4_vars.raster;
     }
 
-    /////////////////////////////////////////////////
     // identify sprite
 
     // op termination
@@ -988,14 +923,12 @@ void DSP4_OP09()
     if (DSP4_vars.distance == -0x8000)
       goto terminate;
 
-
     // no sprite
     if (DSP4_vars.distance == 0x0000)
     {
       continue;
     }
 
-    ////////////////////////////////////////////////////
     // process projection information
 
     // vehicle sprite
@@ -1079,7 +1012,6 @@ void DSP4_OP09()
     DSP4_vars.sprite_size = 1;
     DSP4_vars.sprite_attr = DSP4_READ_WORD();
 
-    ////////////////////////////////////////////////////
     // convert tile data to SNES OAM format
 
     do
@@ -1131,7 +1063,6 @@ void DSP4_OP09()
 
       draw = true;
 
-      /////////////////////////////////////
       // process tile data
 
       // sprite deltas
@@ -1162,7 +1093,6 @@ void DSP4_OP09()
         DSP4_OP0B(&draw, sp_x, DSP4_vars.sprite_clipy, 0x00EE, DSP4_vars.sprite_size, 0);
       }
 
-
       // normal sprite tile
       if (sp_x >= DSP4_vars.viewport_left - pixels &&
           sp_x <= DSP4_vars.viewport_right &&
@@ -1172,7 +1102,6 @@ void DSP4_OP09()
       {
         DSP4_OP0B(&draw, sp_x, sp_y, sp_attr, DSP4_vars.sprite_size, 0);
       }
-
 
       // no following OAM data
       DSP4_OP0B(&draw, 0, 0x0100, 0, 0, 1);
@@ -1184,10 +1113,10 @@ void DSP4_OP09()
   terminate : DSP4.waiting4command = true;
 }
 
-//////////////////////////////////////////////////////////////
-
-const uint16_t OP0A_Values[16] = { 0x0000, 0x0030, 0x0060, 0x0090, 0x00c0, 0x00f0, 0x0120, 0x0150, 0xfe80,
-                                 0xfeb0, 0xfee0, 0xff10, 0xff40, 0xff70, 0xffa0, 0xffd0 };
+const uint16_t OP0A_Values[16] = {
+  0x0000, 0x0030, 0x0060, 0x0090, 0x00c0, 0x00f0, 0x0120, 0x0150,
+  0xfe80, 0xfeb0, 0xfee0, 0xff10, 0xff40, 0xff70, 0xffa0, 0xffd0
+};
 
 void DSP4_OP0A(int16_t n2, int16_t *o1, int16_t *o2, int16_t *o3, int16_t *o4)
 {
@@ -1196,8 +1125,6 @@ void DSP4_OP0A(int16_t n2, int16_t *o1, int16_t *o2, int16_t *o3, int16_t *o4)
   *o2 = OP0A_Values[(n2 & 0x0f00) >> 8];
   *o1 = OP0A_Values[(n2 & 0xf000) >> 12];
 }
-
-//////////////////////////////////////////////////////////////
 
 void DSP4_OP0B(uint8_t *draw, int16_t sp_x, int16_t sp_y, int16_t sp_attr, uint8_t size, uint8_t stop)
 {
@@ -1282,8 +1209,6 @@ void DSP4_OP0B(uint8_t *draw, int16_t sp_x, int16_t sp_y, int16_t sp_attr, uint8
   }
 }
 
-//////////////////////////////////////////////////////////////
-
 void DSP4_OP0D()
 {
   DSP4.waiting4command = false;
@@ -1297,7 +1222,6 @@ void DSP4_OP0D()
       goto resume2; break;
   }
 
-  ////////////////////////////////////////////////////
   // process initial inputs
 
   // sort inputs
@@ -1328,10 +1252,8 @@ void DSP4_OP0D()
   // first DSP4_vars.raster line
   DSP4_vars.poly_raster[0][0] = DSP4_vars.poly_bottom[0][0];
 
-
   do
   {
-    ////////////////////////////////////////////////////
     // process one iteration of projection
 
     // perspective projection of world (x,y,scroll) points
@@ -1352,8 +1274,6 @@ void DSP4_OP0D()
     DSP4_WRITE_WORD(DSP4_vars.view_x2);
     DSP4_WRITE_WORD((uint16_t)(DSP4_vars.world_y >> 16));
     DSP4_WRITE_WORD(DSP4_vars.view_y2);
-
-    //////////////////////////////////////////////////////////
 
     // SR = 0x00
 
@@ -1379,8 +1299,6 @@ void DSP4_OP0D()
     // SR = 0x80
 
     DSP4_WRITE_WORD(DSP4_vars.segments);
-
-    //////////////////////////////////////////////////////////
 
     // scan next command if no SR check needed
     if (DSP4_vars.segments)
@@ -1411,7 +1329,6 @@ void DSP4_OP0D()
         DSP4_WRITE_WORD((uint16_t)((y_scroll + 0x8000) >> 16));
         DSP4_WRITE_WORD((uint16_t)((x_scroll + 0x8000) >> 16));
 
-
         // update memory address
         DSP4_vars.poly_ptr[0][0] -= 4;
 
@@ -1421,7 +1338,6 @@ void DSP4_OP0D()
       }
     }
 
-    /////////////////////////////////////////////////////
     // Post-update
 
     // update new viewer (x,y,scroll) to last DSP4_vars.raster line drawn
@@ -1438,7 +1354,6 @@ void DSP4_OP0D()
     DSP4_vars.world_x += (DSP4_vars.world_dx + DSP4_vars.world_xenv);
     DSP4_vars.world_y += DSP4_vars.world_dy;
 
-    ////////////////////////////////////////////////////
     // command check
 
     // scan next command
@@ -1469,17 +1384,11 @@ void DSP4_OP0D()
   DSP4.waiting4command = true;
 }
 
-//////////////////////////////////////////////////////////////
-
-
 void DSP4_OP0E()
 {
   DSP4_vars.OAM_RowMax = 16;
   memset(DSP4_vars.OAM_Row, 0, 64);
 }
-
-
-//////////////////////////////////////////////////////////////
 
 void DSP4_OP0F()
 {
@@ -1498,7 +1407,6 @@ void DSP4_OP0F()
       goto resume4; break;
   }
 
-  ////////////////////////////////////////////////////
   // process initial inputs
 
   // sort inputs
@@ -1532,10 +1440,8 @@ void DSP4_OP0F()
   // first DSP4_vars.raster line
   DSP4_vars.poly_raster[0][0] = DSP4_vars.poly_bottom[0][0];
 
-
   do
   {
-    ////////////////////////////////////////////////////
     // process one iteration of projection
 
     // perspective projection of world (x,y,scroll) points
@@ -1556,8 +1462,6 @@ void DSP4_OP0F()
     DSP4_WRITE_WORD(DSP4_vars.view_x2);
     DSP4_WRITE_WORD((uint16_t)(DSP4_vars.world_y >> 16));
     DSP4_WRITE_WORD(DSP4_vars.view_y2);
-
-    //////////////////////////////////////////////////////
 
     // SR = 0x00
 
@@ -1583,8 +1487,6 @@ void DSP4_OP0F()
     // SR = 0x80
 
     DSP4_WRITE_WORD(DSP4_vars.segments);
-
-    //////////////////////////////////////////////////////
 
     // scan next command if no SR check needed
     if (DSP4_vars.segments)
@@ -1623,14 +1525,11 @@ void DSP4_OP0F()
         }
       }
 
-      //////////////////////////////////////////////////////
-
       // SR = 0x00
 
       // linear interpolation (lerp) between projected points
       px_dx = (DSP4_vars.view_xofs2 - DSP4_vars.view_xofs1) * DSP4_Inverse(DSP4_vars.segments) << 1;
       py_dy = (DSP4_vars.view_yofs2 - DSP4_vars.view_yofs1) * DSP4_Inverse(DSP4_vars.segments) << 1;
-
 
       // starting step values
       x_scroll = SEX16(DSP4_vars.poly_cx[0][0] + DSP4_vars.view_xofs1);
@@ -1658,7 +1557,6 @@ void DSP4_OP0F()
       }
     }
 
-    ////////////////////////////////////////////////////
     // Post-update
 
     // update new viewer (x,y,scroll) to last DSP4_vars.raster line drawn
@@ -1678,7 +1576,6 @@ void DSP4_OP0F()
     // update road turnoff position
     DSP4_vars.view_turnoff_x += DSP4_vars.view_turnoff_dx;
 
-    ////////////////////////////////////////////////////
     // command check
 
     // scan next command
@@ -1729,9 +1626,6 @@ void DSP4_OP0F()
   DSP4.waiting4command = true;
 }
 
-//////////////////////////////////////////////////////////////
-
-
 void DSP4_OP10()
 {
   DSP4.waiting4command = false;
@@ -1747,7 +1641,6 @@ void DSP4_OP10()
       goto resume3; break;
   }
 
-  ////////////////////////////////////////////////////
   // sort inputs
 
   DSP4_READ_WORD(); // 0x0000
@@ -1778,7 +1671,6 @@ void DSP4_OP10()
 
   do
   {
-    ////////////////////////////////////////////////////
     // process one iteration of projection
 
     // add shaping
@@ -1796,8 +1688,6 @@ void DSP4_OP10()
     DSP4_CLEAR_OUT();
     DSP4_WRITE_WORD(DSP4_vars.view_x2);
     DSP4_WRITE_WORD(DSP4_vars.view_y2);
-
-    //////////////////////////////////////////////////////
 
     // SR = 0x00
 
@@ -1823,8 +1713,6 @@ void DSP4_OP10()
     // SR = 0x80
 
     DSP4_WRITE_WORD(DSP4_vars.segments);
-
-    //////////////////////////////////////////////////////
 
     // scan next command if no SR check needed
     if (DSP4_vars.segments)
@@ -1860,8 +1748,6 @@ void DSP4_OP10()
         }
       }
     }
-
-    //////////////////////////////////////////////////////
 
     // scan next command if no SR check needed
     if (DSP4_vars.segments)
@@ -1901,7 +1787,6 @@ void DSP4_OP10()
       }
     }
 
-    /////////////////////////////////////////////////////
     // Post-update
 
     // update new viewer (x,y,scroll) to last DSP4_vars.raster line drawn
@@ -1910,7 +1795,6 @@ void DSP4_OP10()
     DSP4_vars.view_xofs1 = DSP4_vars.view_xofs2;
     DSP4_vars.view_yofs1 = DSP4_vars.view_yofs2;
 
-    ////////////////////////////////////////////////////
     // command check
 
     // scan next command
@@ -1926,7 +1810,6 @@ void DSP4_OP10()
     DSP4.in_count = 10;
     DSP4_WAIT(3) resume3 :
 
-
     // inspect inputs
     DSP4_vars.view_y2 = DSP4_READ_WORD();
     DSP4_vars.view_dy = DSP4_READ_WORD() * DSP4_vars.distance >> 15;
@@ -1938,8 +1821,6 @@ void DSP4_OP10()
   DSP4.waiting4command = true;
 }
 
-//////////////////////////////////////////////////////////////
-
 void DSP4_OP11(int16_t A, int16_t B, int16_t C, int16_t D, int16_t *M)
 {
   // 0x155 = 341 = Horizontal Width of the Screen
@@ -1949,13 +1830,8 @@ void DSP4_OP11(int16_t A, int16_t B, int16_t C, int16_t D, int16_t *M)
        ((D * 0x0155 >> 14) & 0x000f);
 }
 
-
-
-
-
-/////////////////////////////////////////////////////////////
 //Processing Code
-/////////////////////////////////////////////////////////////
+
 uint8_t dsp4_byte;
 uint16_t dsp4_address;
 
@@ -1986,7 +1862,6 @@ void DSP4SetByte()
       DSP4.out_index = 0;
 
       DSP4_vars.DSP4_Logic = 0;
-
 
       switch (DSP4.command)
       {
@@ -2146,7 +2021,6 @@ void DSP4SetByte()
       case 0x0011:
       {
         int16_t a, b, c, d, m;
-
 
         d = DSP4_READ_WORD();
         c = DSP4_READ_WORD();
