@@ -57,8 +57,6 @@ struct System {
   serializer serialize(bool synchronize);
   bool unserialize(serializer&);
 
-  unsigned frameSkip = 0;
-  unsigned frameCounter = 0;
   bool runAhead = false;
 
 private:

@@ -41,11 +41,7 @@ struct Interface {
   serializer serialize(bool = true);
   bool unserialize(serializer&);
 
-  uint8_t read(uint32_t);
   void cheats(const std::vector<std::string>&);
-
-  unsigned frameSkip();
-  void setFrameSkip(unsigned);
 
   bool runAhead();
   void setRunAhead(bool);

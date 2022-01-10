@@ -21,7 +21,6 @@
 #include <cstdint>
 #include <vector>
 
-#include "audio.hpp"
 #include "cartridge.hpp"
 #include "cheat.hpp"
 #include "controller/controller.hpp"
@@ -95,10 +94,6 @@ bool Interface::unserialize(serializer& s) {
   return system.unserialize(s);
 }
 
-uint8_t Interface::read(uint32_t address) {
-  return cpu.readDisassembler(address);
-}
-
 void Interface::cheats(const std::vector<std::string>& list) {
   if(cartridge.has.ICD) {
     icd.cheats.assign(list);
@@ -154,15 +149,6 @@ void Interface::cheats(const std::vector<std::string>& list) {
 
   //restore ROM write protection
   Memory::GlobalWriteEnable = false;
-}
-
-unsigned Interface::frameSkip() {
-  return system.frameSkip;
-}
-
-void Interface::setFrameSkip(unsigned frameSkip) {
-  system.frameSkip = frameSkip;
-  system.frameCounter = frameSkip;
 }
 
 bool Interface::runAhead() {
