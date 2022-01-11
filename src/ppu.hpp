@@ -259,7 +259,7 @@ struct Background {
   void fetchNameTable();
   void fetchOffset(unsigned y);
   void fetchCharacter(unsigned index, bool half = 0);
-  alwaysinline void run(bool screen);
+  alwaysinline void run(bool);
   void power();
 
   //mode7.cpp

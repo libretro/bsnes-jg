@@ -39,8 +39,8 @@ void PPU::main() {
       //when disabling overscan, clear the overscan area that won't be rendered to:
       for(unsigned y = 1; y <= 240; ++y) {
         if(y >= 8 && y <= 231) continue;
-        auto output = ppu.output + y * 1024;
-        std::memset(output, 0, 1024 * sizeof(uint16_t));
+        auto out = ppu.output + y * 1024;
+        std::memset(out, 0, 1024 * sizeof(uint16_t));
       }
     }
     display.interlace = io.interlace;
@@ -1263,10 +1263,10 @@ void PPU::Background::fetchCharacter(unsigned index, bool half) {
   );
 }
 
-void PPU::Background::run(bool screen) {
+void PPU::Background::run(bool pos) {
   if(ppu.vcounter() == 0) return;
 
-  if(screen == Screen::Below) {
+  if(pos == Screen::Below) {
     output.above.priority = 0;
     output.below.priority = 0;
     if(!hires()) return;
@@ -1306,20 +1306,20 @@ void PPU::Background::run(bool screen) {
 
   unsigned x = (ppu.hcounter() - 56) >> 2;
 
-  if(x == 0 && (!hires() || screen == Screen::Below)) {
+  if(x == 0 && (!hires() || pos == Screen::Below)) {
     mosaic.hcounter = ppu.mosaic.size;
     mosaic.pixel = pixel;
-  } else if((!hires() || screen == Screen::Below) && --mosaic.hcounter == 0) {
+  } else if((!hires() || pos == Screen::Below) && --mosaic.hcounter == 0) {
     mosaic.hcounter = ppu.mosaic.size;
     mosaic.pixel = pixel;
   } else if(mosaic.enable) {
     pixel = mosaic.pixel;
   }
-  if(screen == Screen::Above) ++x;
+  if(pos == Screen::Above) ++x;
   if(pixel.palette == 0) return;
 
-  if(!hires() || screen == Screen::Above) if(io.aboveEnable) output.above = pixel;
-  if(!hires() || screen == Screen::Below) if(io.belowEnable) output.below = pixel;
+  if(!hires() || pos == Screen::Above) if(io.aboveEnable) output.above = pixel;
+  if(!hires() || pos == Screen::Below) if(io.belowEnable) output.below = pixel;
 }
 
 void PPU::Background::power() {
@@ -2389,12 +2389,12 @@ void PPU::power(bool reset) {
 void PPU::refresh() {
   if(system.runAhead) return;
 
-  auto output = this->output;
+  auto out = this->output;
   auto pitch  = 512;
   auto width  = 512;
   auto height = ppu.display.interlace ? 480 : 240;
 
-  videoFrame(output, pitch * sizeof(uint16_t), width, height);
+  videoFrame(out, pitch * sizeof(uint16_t), width, height);
 }
 
 }
