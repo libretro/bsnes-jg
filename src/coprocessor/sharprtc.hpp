@@ -26,14 +26,14 @@ struct SharpRTC : Thread {
   void synchronizeCPU();
   static void Enter();
   void main();
-  void step(unsigned clocks);
+  void step(unsigned);
 
   void initialize();
   void power();
-  void synchronize(uint64_t timestamp);
+  void synchronize(uint64_t);
 
-  uint8_t read(unsigned addr, uint8_t data);
-  void write(unsigned addr, uint8_t data);
+  uint8_t read(unsigned, uint8_t);
+  void write(unsigned, uint8_t);
 
   void serialize(serializer&);
 
@@ -49,11 +49,11 @@ struct SharpRTC : Thread {
   unsigned weekday;
 
   //memory.cpp
-  uint8_t rtcRead(uint8_t addr);
-  void rtcWrite(uint8_t addr, uint8_t data);
+  uint8_t rtcRead(uint8_t);
+  void rtcWrite(uint8_t, uint8_t);
 
-  void load(const uint8_t* data);
-  void save(uint8_t* data);
+  void load(const uint8_t*);
+  void save(uint8_t*);
 
   //time.cpp
   static const unsigned daysInMonth[12];
@@ -64,7 +64,7 @@ struct SharpRTC : Thread {
   void tickMonth();
   void tickYear();
 
-  unsigned calculateWeekday(int year, int month, int day);
+  unsigned calculateWeekday(int, int, int);
 };
 
 extern SharpRTC sharprtc;
