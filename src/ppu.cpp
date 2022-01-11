@@ -2240,6 +2240,10 @@ bg4(Background::ID::BG4) {
 PPU::~PPU() {
 }
 
+void PPU::setCallback(void (*cb)(const uint16_t*, unsigned, unsigned, unsigned)) {
+  videoFrame = cb;
+}
+
 void PPU::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
@@ -2389,7 +2393,7 @@ void PPU::refresh() {
   auto width  = 512;
   auto height = ppu.display.interlace ? 480 : 240;
 
-  Emulator::platform->videoFrame(output, pitch * sizeof(uint16_t), width, height);
+  videoFrame(output, pitch * sizeof(uint16_t), width, height);
 }
 
 }

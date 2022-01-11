@@ -119,12 +119,9 @@ struct Program : Emulator::Platform {
     std::ifstream fopen(unsigned id, std::string name) override;
     void write(unsigned id, std::string name, const uint8_t *data,
         unsigned size) override;
-    void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
-        unsigned height) override;
     int16_t inputPoll(unsigned port, unsigned device, unsigned input) override;
 
     void load();
-    std::vector<uint8_t> loadFile(void *data, size_t size);
     bool loadSuperFamicom(std::string location);
     bool loadBSMemory(std::string location);
     bool loadSufamiTurboA(std::string location);
@@ -391,7 +388,7 @@ void Program::write(unsigned id, std::string name, const uint8_t *data,
     }
 }
 
-void Program::videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
+void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
     unsigned height) {
     hmult = width / 256;
     vmult = height / 240;
@@ -497,7 +494,7 @@ int16_t Program::inputPoll(unsigned port, unsigned device, unsigned input) {
     return pollInputDevices(port, device, input);
 }
 
-std::vector<uint8_t> Program::loadFile(void *data, size_t size) {
+static std::vector<uint8_t> loadFile(void *data, size_t size) {
     uint8_t *buf = (uint8_t*)data;
     std::vector<uint8_t> ret;
 
@@ -839,6 +836,7 @@ jg_inputinfo_t* jg_get_inputinfo(int port) {
 }
 
 void jg_setup_video() {
+    interface->setVideoCallback(&videoFrame);
 }
 
 void jg_setup_audio() {

@@ -28,6 +28,7 @@
 #include "controller.hpp"
 #include "coprocessor/icd.hpp"
 #include "expansion/expansion.hpp"
+#include "ppu.hpp"
 #include "settings.hpp"
 #include "system.hpp"
 
@@ -198,6 +199,10 @@ void Interface::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
 
 void Interface::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc) {
   cartridge.setRomSuperFamicom(data, loc);
+}
+
+void Interface::setVideoCallback(void (*cb)(const uint16_t*, unsigned, unsigned, unsigned)) {
+  ppu.setCallback(cb);
 }
 
 }
