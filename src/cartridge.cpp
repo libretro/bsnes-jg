@@ -161,7 +161,7 @@ void Cartridge::loadCartridgeBSMemory(std::string node) {
     bsmemory.ROM = memory.type == "ROM";
     bsmemory.memory.allocate(memory.size);
     for (unsigned i = 0; i < memory.size; ++i) {
-      bsmemory.memory.data()[i] = romdataBS[i];
+      bsmemory.memory.data()[i] = romdataBS.data()[i];
     }
   }
 }
@@ -175,7 +175,7 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
       if(auto memory = Emulator::Game::Memory(m)) {
         sufamiturboA.rom.allocate(memory.size);
         for (unsigned i = 0; i < memory.size; ++i) {
-          sufamiturboA.rom.data()[i] = romdataSTA[i];
+          sufamiturboA.rom.data()[i] = romdataSTA.data()[i];
         }
       }
     }
@@ -202,7 +202,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
       if(auto memory = Emulator::Game::Memory(m)) {
         sufamiturboB.rom.allocate(memory.size);
         for (unsigned i = 0; i < memory.size; ++i) {
-          sufamiturboB.rom.data()[i] = romdataSTB[i];
+          sufamiturboB.rom.data()[i] = romdataSTB.data()[i];
         }
       }
     }
@@ -1367,19 +1367,16 @@ void Cartridge::setDocument(unsigned id, std::string doc) {
   }
 }
 
-void Cartridge::setRomBSMemory(const uint8_t *data, size_t size) {
+void Cartridge::setRomBSMemory(std::vector<uint8_t>& data) {
   romdataBS = data;
-  romsizeBS = size;
 }
 
-void Cartridge::setRomSufamiTurboA(const uint8_t *data, size_t size) {
+void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data) {
   romdataSTA = data;
-  romsizeSTA = size;
 }
 
-void Cartridge::setRomSufamiTurboB(const uint8_t *data, size_t size) {
+void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data) {
   romdataSTB = data;
-  romsizeSTB = size;
 }
 
 void Cartridge::unload() {

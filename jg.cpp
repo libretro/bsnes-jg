@@ -601,7 +601,7 @@ bool Program::loadBSMemory(std::string location) {
     auto heuristics = Heuristics::BSMemory(rom, location);
     auto sha256 = sha256_digest(rom.data(), rom.size());
 
-    interface->setRomBSMemory((const uint8_t*)gameinfo.data, gameinfo.size);
+    interface->setRomBSMemory(rom);
 
     std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
     std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
@@ -624,11 +624,9 @@ bool Program::loadSufamiTurboA(std::string location) {
     if (rom.size() < 0x20000) return false;
 
     if (sufamiinfo.size)
-        interface->setRomSufamiTurboA((const uint8_t*)sufamiinfo.data,
-            sufamiinfo.size);
+        interface->setRomSufamiTurboA(rom);
     else
-        interface->setRomSufamiTurboA((const uint8_t*)gameinfo.data,
-            gameinfo.size);
+        interface->setRomSufamiTurboA(rom);
 
     auto heuristics = Heuristics::SufamiTurbo(rom, location);
     auto sha256 = sha256_digest(rom.data(), rom.size());
@@ -652,7 +650,7 @@ bool Program::loadSufamiTurboB(std::string location) {
 
     if (rom.size() < 0x20000) return false;
 
-    interface->setRomSufamiTurboB((const uint8_t*)gameinfo.data, gameinfo.size);
+    interface->setRomSufamiTurboB(rom);
 
     auto heuristics = Heuristics::SufamiTurbo(rom, location);
     auto sha256 = sha256_digest(rom.data(), rom.size());

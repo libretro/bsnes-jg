@@ -38,9 +38,9 @@ struct Cartridge {
 
   void serialize(serializer&);
 
-  void setRomBSMemory(const uint8_t*, size_t);
-  void setRomSufamiTurboA(const uint8_t*, size_t);
-  void setRomSufamiTurboB(const uint8_t*, size_t);
+  void setRomBSMemory(std::vector<uint8_t>&);
+  void setRomSufamiTurboA(std::vector<uint8_t>&);
+  void setRomSufamiTurboB(std::vector<uint8_t>&);
 
   ReadableMemory rom;
   WritableMemory ram;
@@ -143,13 +143,9 @@ private:
 
   void setDocument(unsigned, std::string);
 
-  const uint8_t *romdataBS;
-  const uint8_t *romdataSTA;
-  const uint8_t *romdataSTB;
-
-  size_t romsizeBS;
-  size_t romsizeSTA;
-  size_t romsizeSTB;
+  std::vector<uint8_t> romdataBS;
+  std::vector<uint8_t> romdataSTA;
+  std::vector<uint8_t> romdataSTB;
 
   friend struct Interface;
   friend struct ICD;
