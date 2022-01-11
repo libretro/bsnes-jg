@@ -19,7 +19,6 @@
  */
 
 #include <algorithm>
-#include <cstring>
 #include <sstream>
 #include <optional>
 #include <vector>
@@ -33,8 +32,6 @@
 #include "src/heuristics.hpp"
 #include "src/emulator.hpp"
 #include "src/interface.hpp"
-#include "src/markup.hpp"
-#include "src/sha256.hpp"
 #include "src/sfc.hpp"
 #include "src/settings.hpp"
 
@@ -140,8 +137,6 @@ struct Program : Emulator::Platform {
 
     void save();
 
-    void hackPatchMemory(std::vector<uint8_t>& data);
-
 public:
     struct Game {
         std::string option;
@@ -218,6 +213,10 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
         }
         else if (name == "Sufami Turbo.bml") {
             path = std::string(pathinfo.core) + "/Sufami Turbo.bml";
+            required = true;
+        }
+        else if (name == "Super Famicom.bml") {
+            path = std::string(pathinfo.core) + "/Super Famicom.bml";
             required = true;
         }
     }
@@ -549,49 +548,10 @@ bool Program::loadSuperFamicom(std::string location) {
         rom.erase(rom.begin(), rom.begin() + 512);
     }
 
+    interface->setRomSuperFamicom(rom, location);
+
     auto heuristics = Heuristics::SuperFamicom(rom, location);
-    auto sha256 = sha256_digest(rom.data(), rom.size());
-
-    superFamicom.title = heuristics.title();
     superFamicom.region = heuristics.videoRegion();
-
-    std::string dbpath = std::string(pathinfo.core) + "/Super Famicom.bml";
-    std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
-
-    if (manifest.empty()) {
-        interface->setDocument(1, heuristics.manifest());
-    }
-    else {
-        //the internal ROM header title is not present in the database, but
-        //is needed for internal core overrides
-        manifest += "  title: " + superFamicom.title + "\n";
-        interface->setDocument(1, manifest);
-    }
-
-    hackPatchMemory(rom);
-    superFamicom.location = location;
-
-    unsigned offset = 0;
-    if (auto size = heuristics.programRomSize()) {
-        superFamicom.program.resize(size);
-        std::memcpy(&superFamicom.program[0], &rom[offset], size);
-        offset += size;
-    }
-    if (auto size = heuristics.dataRomSize()) {
-        superFamicom.data.resize(size);
-        std::memcpy(&superFamicom.data[0], &rom[offset], size);
-        offset += size;
-    }
-    if (auto size = heuristics.expansionRomSize()) {
-        superFamicom.expansion.resize(size);
-        std::memcpy(&superFamicom.expansion[0], &rom[offset], size);
-        offset += size;
-    }
-    if (auto size = heuristics.firmwareRomSize()) {
-        superFamicom.firmware.resize(size);
-        std::memcpy(&superFamicom.firmware[0], &rom[offset], size);
-        offset += size;
-    }
     return true;
 }
 
@@ -625,23 +585,6 @@ bool Program::loadSufamiTurboB(std::string location) {
     if (rom.size() < 0x20000) return false;
     interface->setRomSufamiTurboB(rom, location);
     return true;
-}
-
-void Program::hackPatchMemory(std::vector<uint8_t>& data) {
-    auto title = superFamicom.title;
-
-    if (title == "Satellaview BS-X" && data.size() >= 0x100000) {
-        //BS-X: Sore wa Namae o Nusumareta Machi no Monogatari (JPN) (1.1)
-        //disable limited play check for BS Memory flash cartridges
-        //benefit: allow locked out BS Memory flash games to play without manual
-        //header patching.
-        //detriment: BS Memory ROM cartridges will cause the game to hang in the
-        //load menu
-        if (data[0x4a9b] == 0x10) data[0x4a9b] = 0x80;
-        if (data[0x4d6d] == 0x10) data[0x4d6d] = 0x80;
-        if (data[0x4ded] == 0x10) data[0x4ded] = 0x80;
-        if (data[0x4e9a] == 0x10) data[0x4e9a] = 0x80;
-    }
 }
 
 // Jolly Good API Calls

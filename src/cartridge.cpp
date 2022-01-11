@@ -19,6 +19,7 @@
  */
 
 #include <algorithm>
+#include <cstring>
 #include <iterator>
 #include <vector>
 
@@ -256,11 +257,21 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
     if(memory->type == "RAM" && !memory->nonVolatile) return;
     if(memory->type == "RTC" && !memory->nonVolatile) return;
 
-    if (memory->name() == "program.rom" || memory->name() == "data.rom" || memory->name() == "expansion.rom") {
-      std::vector<uint8_t> buf = Emulator::platform->mopen(pathID(), memory->name());
-      if (!buf.empty()) {
-      for (unsigned i = 0; i < memory->size; ++i)
-        mem.data()[i] = buf[i];
+    if (memory->name() == "program.rom") {
+      for (unsigned i = 0; i < memory->size; ++i) {
+        mem.data()[i] = romprg[i];
+      }
+      return;
+    }
+    else if (memory->name() == "data.rom") {
+      for (unsigned i = 0; i < memory->size; ++i) {
+        mem.data()[i] = romdat[i];
+      }
+      return;
+    }
+    else if (memory->name() == "expansion.rom") {
+      for (unsigned i = 0; i < memory->size; ++i) {
+        mem.data()[i] = romexp[i];
       }
       return;
     }
@@ -1397,6 +1408,56 @@ void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
     manifest.empty() ? heuristics.manifest() : manifest;
 
   has.SufamiTurboSlotB = true;
+}
+
+void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc) {
+  auto heuristics = Heuristics::SuperFamicom(data, loc);
+
+  std::ifstream dbfile =
+    Emulator::platform->fopen(ID::System, "Super Famicom.bml");
+
+  std::string sha256 = sha256_digest(data.data(), data.size());
+  std::string manifest = BML::gendoc2(dbfile, "game", "sha256", sha256);
+
+  if (manifest.empty()) {
+      game.document = heuristics.manifest();
+  }
+  else {
+      //the internal ROM header title is not present in the database, but
+      //is needed for internal core overrides
+      manifest += "  title: " + heuristics.title() + "\n";
+      game.document = manifest;
+  }
+
+  if (heuristics.title() == "Satellaview BS-X" && data.size() >= 0x100000) {
+    //BS-X: Sore wa Namae o Nusumareta Machi no Monogatari (JPN) (1.1)
+    //disable limited play check for BS Memory flash cartridges
+    //benefit: allow locked out BS Memory flash games to play without manual
+    //header patching.
+    //detriment: BS Memory ROM cartridges will cause the game to hang in the
+    //load menu
+    if (data[0x4a9b] == 0x10) data[0x4a9b] = 0x80;
+    if (data[0x4d6d] == 0x10) data[0x4d6d] = 0x80;
+    if (data[0x4ded] == 0x10) data[0x4ded] = 0x80;
+    if (data[0x4e9a] == 0x10) data[0x4e9a] = 0x80;
+  }
+
+  unsigned offset = 0;
+  if (auto size = heuristics.programRomSize()) {
+    romprg.resize(size);
+    std::memcpy(&romprg[0], &data[offset], size);
+    offset += size;
+  }
+  if (auto size = heuristics.dataRomSize()) {
+    romdat.resize(size);
+    std::memcpy(&romdat[0], &data[offset], size);
+    offset += size;
+  }
+  if (auto size = heuristics.expansionRomSize()) {
+    romexp.resize(size);
+    std::memcpy(&romexp[0], &data[offset], size);
+    offset += size;
+  }
 }
 
 void Cartridge::unload() {

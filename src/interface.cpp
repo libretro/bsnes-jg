@@ -180,7 +180,7 @@ void Interface::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
 }
 
 void Interface::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc) {
-  //cartridge.setRomSuperFamicom(data, loc);
+  cartridge.setRomSuperFamicom(data, loc);
 }
 
 }

@@ -41,6 +41,7 @@ struct Cartridge {
   void setRomBSMemory(std::vector<uint8_t>&, std::string&);
   void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);
   void setRomSufamiTurboB(std::vector<uint8_t>&, std::string&);
+  void setRomSuperFamicom(std::vector<uint8_t>&, std::string&);
 
   ReadableMemory rom;
   WritableMemory ram;
@@ -142,6 +143,10 @@ private:
   void saveSharpRTC(std::string);
 
   void setDocument(unsigned, std::string);
+
+  std::vector<uint8_t> romprg;
+  std::vector<uint8_t> romdat;
+  std::vector<uint8_t> romexp;
 
   std::vector<uint8_t> romdataBS;
   std::vector<uint8_t> romdataSTA;
