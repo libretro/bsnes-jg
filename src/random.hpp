@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include "serializer.hpp"
-
 namespace Emulator {
 
 struct Random {

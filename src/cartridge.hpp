@@ -21,7 +21,6 @@
 #pragma once
 
 #include "memory.hpp"
-#include "serializer.hpp"
 
 namespace SuperFamicom {
 

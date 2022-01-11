@@ -18,8 +18,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <time.h>
+#include <ctime>
 
+#include "../serializer.hpp"
 #include "../cpu.hpp"
 
 #include "sharprtc.hpp"

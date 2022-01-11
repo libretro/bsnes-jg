@@ -23,7 +23,6 @@
 #pragma once
 
 #include "../function.hpp"
-#include "../serializer.hpp"
 
 namespace Processor {
 

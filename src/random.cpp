@@ -22,6 +22,7 @@
 #include <optional>
 
 #include "memory.hpp"
+#include "serializer.hpp"
 
 #include "random.hpp"
 

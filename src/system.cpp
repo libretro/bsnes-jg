@@ -22,6 +22,7 @@
 #include <cstring>
 #include <vector>
 
+#include "serializer.hpp"
 #include "audio.hpp"
 #include "cartridge.hpp"
 #include "controller.hpp"

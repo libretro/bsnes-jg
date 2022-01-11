@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include "serializer.hpp"
-
 namespace SuperFamicom {
 
 static constexpr double NTSC = 315.0 / 88.0 * 1'000'000.0;

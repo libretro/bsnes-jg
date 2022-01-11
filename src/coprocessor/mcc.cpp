@@ -18,6 +18,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cstdint>
+
+#include "../serializer.hpp"
+#include "../memory.hpp"
+#include "../sfc.hpp"
 #include "../bsmemory.hpp"
 
 #include "mcc.hpp"

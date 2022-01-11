@@ -26,6 +26,7 @@
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
 
+#include "src/serializer.hpp"
 #include "src/cheat.hpp"
 #include "src/emulator.hpp"
 #include "src/interface.hpp"

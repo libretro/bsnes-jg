@@ -20,9 +20,6 @@
 
 #pragma once
 
-#include "memory.hpp"
-#include "sfc.hpp"
-
 namespace SuperFamicom {
 
 //MaskROMs supported:

@@ -19,8 +19,9 @@
  */
 
 #include <cstring>
-#include <math.h>
+#include <cmath>
 
+#include "../serializer.hpp"
 #include "../cpu.hpp"
 #include "../memory.hpp"
 

@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 
+#include "serializer.hpp"
 #include "controller.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"

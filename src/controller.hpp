@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include "serializer.hpp"
-
 namespace SuperFamicom {
 
 void setInputPoll(int16_t (*)(unsigned, unsigned, unsigned));

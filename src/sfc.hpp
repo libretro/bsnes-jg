@@ -22,8 +22,6 @@
 
 #include <libco/libco.h>
 
-#include "serializer.hpp"
-
 inline constexpr auto operator"" _KiB(unsigned long long value) {
   return value * 1024;
 }

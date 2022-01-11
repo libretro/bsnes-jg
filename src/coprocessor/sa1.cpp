@@ -18,7 +18,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <vector>
+
+#include "../serializer.hpp"
 #include "../cpu.hpp"
+#include "../memory.hpp"
 #include "../settings.hpp"
 #include "../bsmemory.hpp"
 

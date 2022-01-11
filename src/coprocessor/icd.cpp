@@ -21,6 +21,7 @@
 #include <iterator>
 #include <vector>
 
+#include "../serializer.hpp"
 #include "../audio.hpp"
 #include "../emulator.hpp"
 #include "../cartridge.hpp"

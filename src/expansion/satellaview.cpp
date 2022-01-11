@@ -19,6 +19,7 @@
  */
 
 #include "../memory.hpp"
+#include "../serializer.hpp"
 
 #include "expansion.hpp"
 

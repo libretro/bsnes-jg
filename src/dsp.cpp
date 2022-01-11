@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "audio.hpp"
+#include "serializer.hpp"
 #include "settings.hpp"
 #include "system.hpp"
 

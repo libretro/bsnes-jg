@@ -20,6 +20,7 @@
 
 #include <cstring>
 
+#include "serializer.hpp"
 #include "sfc.hpp"
 
 namespace SuperFamicom {

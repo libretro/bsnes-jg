@@ -22,6 +22,7 @@
 #include <optional>
 #include <vector>
 
+#include "serializer.hpp"
 #include "audio.hpp"
 #include "cpu.hpp"
 #include "dsp.hpp"
