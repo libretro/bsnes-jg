@@ -120,7 +120,6 @@ struct Program : Emulator::Platform {
     Emulator::Platform::Load load(unsigned id, std::string name,
         std::string type, std::vector<std::string> options = {}) override;
     std::ifstream fopen(unsigned id, std::string name) override;
-    std::vector<uint8_t> mopen(unsigned id, std::string name) override;
     void write(unsigned id, std::string name, const uint8_t *data,
         unsigned size) override;
     void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
@@ -333,21 +332,6 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
         jg_cb_log(JG_LOG_ERR, "Failed to load file: %s\n", path.c_str());
     }
     return stream;
-}
-
-std::vector<uint8_t> Program::mopen(unsigned id, std::string name) {
-    if (id == 1) { // Super Famicom
-        if (name == "program.rom") {
-            return superFamicom.program;
-        }
-        else if (name == "data.rom") {
-            return superFamicom.data;
-        }
-        else if (name == "expansion.rom") {
-            return superFamicom.expansion;
-        }
-    }
-    return {};
 }
 
 void Program::write(unsigned id, std::string name, const uint8_t *data,
