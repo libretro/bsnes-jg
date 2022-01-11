@@ -148,11 +148,11 @@ unsigned SharpRTC::calculateWeekday(int yy, int mm, int dd) {
   int y = 1000, m = 1;  //SharpRTC epoch is 1000-01-01
   unsigned sum = 0;     //number of days passed since epoch
 
-  year = std::max(1000, yy);
-  month = std::max(1, std::min(12, mm));
-  day = std::max(1, std::min(31, dd));
+  yy = std::max(1000, yy);
+  mm = std::max(1, std::min(12, mm));
+  dd = std::max(1, std::min(31, dd));
 
-  while(y < year) {
+  while(y < yy) {
     bool leapyear = false;
     if(y % 4 == 0) {
       leapyear = true;
@@ -162,7 +162,7 @@ unsigned SharpRTC::calculateWeekday(int yy, int mm, int dd) {
     y++;
   }
 
-  while(m < month) {
+  while(m < mm) {
     unsigned days = daysInMonth[(m - 1) % 12];
     bool leapyearmonth = false;
     if(days == 28) {
@@ -175,7 +175,7 @@ unsigned SharpRTC::calculateWeekday(int yy, int mm, int dd) {
     m++;
   }
 
-  sum += day - 1;
+  sum += dd - 1;
   return (sum + 3) % 7;  //1000-01-01 was a Wednesday
 }
 
