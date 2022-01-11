@@ -41,9 +41,9 @@ struct Decompressor {
 
   //inverse morton code transform: unpack big-endian packed pixels
   //returns odd bits in lower half; even bits in upper half
-  uint32_t deinterleave(uint64_t data, unsigned bits) {
-    data = data & ((1ull << bits) - 1);
-    data = 0x5555555555555555ull & (data << bits | data >> 1);
+  uint32_t deinterleave(uint64_t data, unsigned bit) {
+    data = data & ((1ull << bit) - 1);
+    data = 0x5555555555555555ull & (data << bit | data >> 1);
     data = 0x3333333333333333ull & (data | data >> 1);
     data = 0x0f0f0f0f0f0f0f0full & (data | data >> 2);
     data = 0x00ff00ff00ff00ffull & (data | data >> 4);
