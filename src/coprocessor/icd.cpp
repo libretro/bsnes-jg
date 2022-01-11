@@ -411,10 +411,7 @@ bool ICD::load() {
   GB_set_log_callback(&sameboy, &SameBoy::log);
   GB_set_pixels_output(&sameboy, &bitmap[0]);
 
-  if(auto loaded = Emulator::platform->load(ID::GameBoy, "Game Boy", "gb")) {
-    information.pathID = loaded.pathID;
-  }
-  else return unload(), false;
+  information.pathID = 2; // TODO: Magic numbers are bad
 
   cartridge.information.sha256 = sha256_digest(romdata, romsize).c_str();
   GB_load_rom_from_buffer(&sameboy, romdata, romsize);
