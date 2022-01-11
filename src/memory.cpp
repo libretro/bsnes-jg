@@ -83,27 +83,27 @@ unsigned Bus::map(
       bankRange.push_back(std::stoul(i, nullptr, 16)));
     if (bankRange.size() == 1) bankRange.push_back(bankRange[0]);
 
-    for (auto& addr : addrs) {
-      ss.clear(); ss.str(addr);
+    for (auto& addr2 : addrs) {
+      ss.clear(); ss.str(addr2);
       std::vector<unsigned> addrRange;
       for (std::string i; std::getline(ss, i, '-');
         addrRange.push_back(std::stoul(i, nullptr, 16)));
       if (addrRange.size() == 1) addrRange.push_back(addrRange[0]);
 
-      for(unsigned bank = bankRange[0]; bank <= bankRange[1]; bank++) {
-        for(unsigned addr = addrRange[0]; addr <= addrRange[1]; addr++) {
-          unsigned pid = lookup[bank << 16 | addr];
+      for(unsigned bank2 = bankRange[0]; bank2 <= bankRange[1]; ++bank2) {
+        for(unsigned addr3 = addrRange[0]; addr3 <= addrRange[1]; ++addr3) {
+          unsigned pid = lookup[bank2 << 16 | addr3];
           if(pid && --counter[pid] == 0) {
             reader[pid].reset();
             writer[pid].reset();
           }
 
-          unsigned offset = reduce(bank << 16 | addr, mask);
+          unsigned offset = reduce(bank2 << 16 | addr3, mask);
           if(size) base = mirror(base, size);
           if(size) offset = base + mirror(offset, size - base);
-          lookup[bank << 16 | addr] = id;
-          target[bank << 16 | addr] = offset;
-          counter[id]++;
+          lookup[bank2 << 16 | addr3] = id;
+          target[bank2 << 16 | addr3] = offset;
+          ++counter[id];
         }
       }
     }
@@ -131,22 +131,22 @@ void Bus::unmap(const std::string& addr) {
     for (std::string i; std::getline(ss, i, '-');
       bankRange.push_back(std::stoul(i, nullptr, 16)));
 
-    for (auto& addr : addrs) {
-      ss.clear(); ss.str(addr);
+    for (auto& addr2 : addrs) {
+      ss.clear(); ss.str(addr2);
       std::vector<unsigned> addrRange;
       for (std::string i; std::getline(ss, i, '-');
         addrRange.push_back(std::stoul(i, nullptr, 16)));
 
-      for(unsigned bank = bankRange[0]; bank <= bankRange[1]; bank++) {
-        for(unsigned addr = addrRange[0]; addr <= addrRange[1]; addr++) {
-          unsigned pid = lookup[bank << 16 | addr];
+      for(unsigned bank2 = bankRange[0]; bank2 <= bankRange[1]; ++bank2) {
+        for(unsigned addr3 = addrRange[0]; addr3 <= addrRange[1]; ++addr3) {
+          unsigned pid = lookup[bank2 << 16 | addr3];
           if(pid && --counter[pid] == 0) {
             reader[pid].reset();
             writer[pid].reset();
           }
 
-          lookup[bank << 16 | addr] = 0;
-          target[bank << 16 | addr] = 0;
+          lookup[bank2 << 16 | addr3] = 0;
+          target[bank2 << 16 | addr3] = 0;
         }
       }
     }
