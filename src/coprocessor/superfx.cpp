@@ -160,7 +160,7 @@ void SuperFX::flushPixelCache(PixelCache& cache) {
   for(unsigned n = 0; n < bpp; ++n) {
     unsigned byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
     uint8_t data = 0x00;
-    for(unsigned x = 0; x < 8; ++x) data |= ((cache.data[x] >> n) & 1) << x;
+    for(unsigned i = 0; i < 8; ++i) data |= ((cache.data[i] >> n) & 1) << i;
     if(cache.bitpend != 0xff) {
       step(regs.clsr ? 5 : 6);
       data &= cache.bitpend;
