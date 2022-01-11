@@ -49,17 +49,17 @@ void BSMemory::serialize(serializer& s) {
   s.array(page.buffer[0]);
   s.array(page.buffer[1]);
 
-  for(auto& block : blocks) {
-    s.integer(block.id);
-    s.integer(block.erased);
-    s.integer(block.locked);
-    s.integer(block.erasing);
-    s.integer(block.status.vppLow);
-    s.integer(block.status.queueFull);
-    s.integer(block.status.aborted);
-    s.integer(block.status.failed);
-    s.integer(block.status.locked);
-    s.integer(block.status.ready);
+  for(auto& _block : blocks) {
+    s.integer(_block.id);
+    s.integer(_block.erased);
+    s.integer(_block.locked);
+    s.integer(_block.erasing);
+    s.integer(_block.status.vppLow);
+    s.integer(_block.status.queueFull);
+    s.integer(_block.status.aborted);
+    s.integer(_block.status.failed);
+    s.integer(_block.status.locked);
+    s.integer(_block.status.ready);
   }
 
   s.integer(compatible.status.vppLow);
@@ -105,7 +105,7 @@ void BSMemory::Queue::serialize(serializer& s) {
 BSMemory::BSMemory() {
   page.self = this;
   unsigned blockID = 0;
-  for(auto& block : blocks) block.self = this, block.id = blockID++;
+  for(auto& _block : blocks) _block.self = this, _block.id = blockID++;
   block.self = this;
 }
 
@@ -157,9 +157,9 @@ bool BSMemory::load() {
   for(auto& byte : page.buffer[0]) byte = random();
   for(auto& byte : page.buffer[1]) byte = random();
 
-  for(auto& block : blocks) {
-    block.erased = 1;
-    block.locked = 1;
+  for(auto& _block : blocks) {
+    _block.erased = 1;
+    _block.locked = 1;
   }
 
   /*if(auto fp = platform->open(pathID, "metadata.bml", File::Read, File::Optional)) {
@@ -212,9 +212,9 @@ void BSMemory::unload() {
 void BSMemory::power() {
   create(Enter, 1'000'000);  //microseconds
 
-  for(auto& block : blocks) {
-    block.erasing = 0;
-    block.status = {};
+  for(auto& _block : blocks) {
+    _block.erasing = 0;
+    _block.status = {};
   }
   compatible.status = {};
   global.status = {};
@@ -269,10 +269,10 @@ void BSMemory::write(unsigned address, uint8_t data) {
     uint16_t count;  //1 - 65536
     count  = queue.data(!(queue.address(1) & 1) ? 1 : 2) << 0;
     count |= queue.data(!(queue.address(1) & 1) ? 2 : 1) << 8;
-    unsigned address = queue.address(2);
+    unsigned addr = queue.address(2);
     do {
-      block(address >> block.bitCount()).write(address, page.read(address));
-      address++;
+      block(addr >> block.bitCount()).write(addr, page.read(addr));
+      ++addr;
     } while(count--);
     page.swap();
     mode = Mode::CompatibleStatus;
@@ -414,14 +414,14 @@ void BSMemory::write(unsigned address, uint8_t data) {
     page.write(0x06, 0x06);  //unknown constant
     page.write(0x07, 0x00);  //unknown constant
     for(uint8_t id = 0; id < block.count(); ++id) {
-      uint8_t address = 0;
-      address += (id >> 0 & 3) * 0x08;  //verified for LH28F800SUT-ZI
-      address += (id >> 2 & 3) * 0x40;  //verified for LH28F800SUT-ZI
-      address += (id >> 4 & 1) * 0x20;  //guessed for LH28F016SU
-      address += (id >> 5 & 1) * 0x04;  //guessed for LH28F032SU; will overwrite unknown constants
+      uint8_t addr2 = 0;
+      addr2 += (id >> 0 & 3) * 0x08;  //verified for LH28F800SUT-ZI
+      addr2 += (id >> 2 & 3) * 0x40;  //verified for LH28F800SUT-ZI
+      addr2 += (id >> 4 & 1) * 0x20;  //guessed for LH28F016SU
+      addr2 += (id >> 5 & 1) * 0x04;  //guessed for LH28F032SU; will overwrite unknown constants
       uint32_t erased = 1 << 31 | block(id).erased;  //unknown if d31 is set when erased == 0
       for(unsigned byte = 0; byte < 4; ++byte) {
-        page.write(address + byte, erased >> byte * 8);  //little endian
+        page.write(addr2 + byte, erased >> byte * 8);  //little endian
       }
     }
     page.swap();
