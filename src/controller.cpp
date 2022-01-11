@@ -195,8 +195,8 @@ void ControllerPort::connect(unsigned deviceID) {
   }
 }
 
-void ControllerPort::power(unsigned port) {
-  this->port = port;
+void ControllerPort::power(unsigned device) {
+  this->port = device;
 }
 
 void ControllerPort::unload() {

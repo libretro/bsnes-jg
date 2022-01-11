@@ -38,22 +38,22 @@ void setInputPoll(int16_t (*)(unsigned, unsigned, unsigned));
 //  7:    gnd
 
 struct Controller {
-  Controller(unsigned port);
+  Controller(unsigned);
   virtual ~Controller();
 
   bool iobit();
-  void iobit(bool data);
+  void iobit(bool);
   virtual uint8_t data() { return 0; }
-  virtual void latch(bool data) {}
+  virtual void latch(bool) {}
   virtual void latch() {}  // light guns
 
   const unsigned port;
 };
 
 struct ControllerPort {
-  void connect(unsigned deviceID);
+  void connect(unsigned);
 
-  void power(unsigned port);
+  void power(unsigned);
   void unload();
   void serialize(serializer&);
 
