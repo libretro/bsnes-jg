@@ -403,7 +403,6 @@ void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
 static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
 
 static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
-    //print("port: ", port, " device: ", device, " input: ", input, "\n");
     if (device == SuperFamicom::ID::Device::SuperScope) {
         switch (input) {
             case 0: { // X
