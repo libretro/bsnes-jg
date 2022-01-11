@@ -66,19 +66,19 @@ unsigned Cartridge::pathID() const { return information.pathID; }
 std::string Cartridge::region() const { return information.region; }
 std::string Cartridge::headerTitle() const { return game.title; }
 
-std::string Cartridge::loadBoard(std::string board) {
-  if (board.find("SNSP-") == 0) board.replace(0, 5, "SHVC-");
-  if (board.find("MAXI-") == 0) board.replace(0, 5, "SHVC-");
-  if (board.find("MJSC-") == 0) board.replace(0, 5, "SHVC-");
-  if (board.find("EA-") == 0) board.replace(0, 3, "SHVC-");
-  if (board.find("WEI-") == 0) board.replace(0, 4, "SHVC-");
+std::string Cartridge::loadBoard(std::string node) {
+  if (node.find("SNSP-") == 0) node.replace(0, 5, "SHVC-");
+  if (node.find("MAXI-") == 0) node.replace(0, 5, "SHVC-");
+  if (node.find("MJSC-") == 0) node.replace(0, 5, "SHVC-");
+  if (node.find("EA-") == 0) node.replace(0, 3, "SHVC-");
+  if (node.find("WEI-") == 0) node.replace(0, 4, "SHVC-");
 
   std::ifstream boardsfile = Emulator::platform->fopen(ID::System, "boards.bml");
   if (boardsfile.is_open()) {
     std::string boards((std::istreambuf_iterator<char>(boardsfile)),
       (std::istreambuf_iterator<char>()));
 
-    std::string bdoc = BML::searchBoard(boards, board);
+    std::string bdoc = BML::searchBoard(boards, node);
     return bdoc;
   }
 
@@ -1065,11 +1065,11 @@ void Cartridge::saveCartridgeSufamiTurboB(std::string node) {
   }
 }
 
-void Cartridge::saveMemory(Memory& ram, std::string node) {
+void Cartridge::saveMemory(Memory& sram, std::string node) {
   if(auto memory = game.memory(node)) {
     if(memory->type == "RAM" && !memory->nonVolatile) return;
     if(memory->type == "RTC" && !memory->nonVolatile) return;
-    Emulator::platform->write(pathID(), memory->name(), ram.data(), ram.size());
+    Emulator::platform->write(pathID(), memory->name(), sram.data(), sram.size());
   }
 }
 

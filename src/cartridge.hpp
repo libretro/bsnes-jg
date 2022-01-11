@@ -87,7 +87,7 @@ private:
   bool loadSufamiTurboB();
 
   //load.cpp
-  std::string loadBoard(std::string board);
+  std::string loadBoard(std::string);
   void loadCartridge(std::string);
   void loadCartridgeBSMemory(std::string);
   void loadCartridgeSufamiTurboA(std::string);
