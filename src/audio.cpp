@@ -35,6 +35,10 @@ void Audio::setBuffer(float *buffer) {
   this->buffer = buffer;
 }
 
+void Audio::setCallback(void (*cb)(size_t)) {
+  audioFrame = cb;
+}
+
 void Audio::setSpf(unsigned spf) {
   _spf = spf;
 }
@@ -121,7 +125,7 @@ void Audio::process() {
     stream->queue_out.erase(stream->queue_out.begin(), stream->queue_out.begin() + _spf);
   }
 
-  Emulator::platform->audioFrame(_spf);
+  audioFrame(_spf);
   memset(&buffer[0], 0.0, _spf * sizeof(float));
 }
 

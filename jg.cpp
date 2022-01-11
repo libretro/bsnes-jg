@@ -129,7 +129,6 @@ struct Program : Emulator::Platform {
         unsigned size) override;
     void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
         unsigned height) override;
-    void audioFrame(unsigned numsamps) override;
     int16_t inputPoll(unsigned port, unsigned device, unsigned input) override;
 
     void load();
@@ -423,10 +422,6 @@ void Program::videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
     vidinfo.h = height;
     vidinfo.p = pitch / 2; // Divide by pixel size - 16-bit pixels == 2
     vidinfo.buf = (void*)data;
-}
-
-void Program::audioFrame(unsigned numsamps) {
-    jg_cb_audio(numsamps);
 }
 
 static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
@@ -965,6 +960,7 @@ void jg_setup_video() {
 
 void jg_setup_audio() {
     SuperFamicom::audio.setBuffer((float*)audinfo.buf);
+    SuperFamicom::audio.setCallback(jg_cb_audio);
 }
 
 void jg_set_inputstate(jg_inputstate_t *ptr, int port) {
