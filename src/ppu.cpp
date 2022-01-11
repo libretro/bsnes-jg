@@ -18,6 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cstring>
+
 #include "cpu.hpp"
 #include "emulator.hpp"
 #include "memory.hpp"

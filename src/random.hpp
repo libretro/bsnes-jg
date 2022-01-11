@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <cstdint>
-#include <cstring>
 #include <optional>
 
 #include "serializer.hpp"
@@ -31,9 +29,7 @@ namespace Emulator {
 struct Random {
   enum class Entropy : unsigned { None, Low, High };
 
-  uint64_t operator()() {
-    return random();
-  }
+  uint64_t operator()();
 
   uint64_t random();
   uint64_t bias(uint64_t);

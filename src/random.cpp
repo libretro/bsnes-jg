@@ -18,6 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cstring>
+
 #include "memory.hpp"
 
 #include "random.hpp"
@@ -34,6 +36,10 @@ static uint32_t step() {
   uint32_t xorshift = (state >> 18 ^ state) >> 27;
   uint32_t rotate = state >> 59;
   return xorshift >> rotate | xorshift << (-rotate & 31);
+}
+
+uint64_t Random::operator()() {
+  return random();
 }
 
 void Random::seed(std::optional<uint32_t> seed = std::nullopt, std::optional<uint32_t> sequence = std::nullopt) {
