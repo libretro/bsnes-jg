@@ -19,6 +19,7 @@
  */
 
 #include <cstring>
+#include <optional>
 
 #include "memory.hpp"
 
@@ -38,11 +39,7 @@ static uint32_t step() {
   return xorshift >> rotate | xorshift << (-rotate & 31);
 }
 
-uint64_t Random::operator()() {
-  return random();
-}
-
-void Random::seed(std::optional<uint32_t> seed = std::nullopt, std::optional<uint32_t> sequence = std::nullopt) {
+static void seed(std::optional<uint32_t> seed = std::nullopt, std::optional<uint32_t> sequence = std::nullopt) {
   if(!seed) seed = (uint32_t)clock();
   if(!sequence) sequence = 0;
 
@@ -51,6 +48,10 @@ void Random::seed(std::optional<uint32_t> seed = std::nullopt, std::optional<uin
   step();
   _state += seed.value();
   step();
+}
+
+uint64_t Random::operator()() {
+  return random();
 }
 
 void Random::entropy(Random::Entropy entropy) {

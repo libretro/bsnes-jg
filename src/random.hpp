@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <optional>
-
 #include "serializer.hpp"
 
 namespace Emulator {
@@ -37,7 +35,6 @@ struct Random {
 
   void array(uint8_t*, uint32_t);
   void entropy(Entropy);
-  void seed(std::optional<uint32_t>, std::optional<uint32_t>);
   void serialize(serializer&);
 };
 
