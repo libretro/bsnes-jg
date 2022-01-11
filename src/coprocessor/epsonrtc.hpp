@@ -28,7 +28,7 @@ struct EpsonRTC : Thread {
   void synchronizeCPU();
   static void Enter();
   void main();
-  void step(unsigned clocks);
+  void step(unsigned);
 
   void initialize();
   void power();

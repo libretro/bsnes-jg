@@ -478,8 +478,8 @@ void EpsonRTC::main() {
   synchronizeCPU();
 }
 
-void EpsonRTC::step(unsigned clocks) {
-  clock += clocks * (uint64_t)cpu.frequency;
+void EpsonRTC::step(unsigned time) {
+  clock += time * (uint64_t)cpu.frequency;
 }
 
 void EpsonRTC::initialize() {
