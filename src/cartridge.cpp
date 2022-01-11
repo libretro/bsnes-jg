@@ -1374,6 +1374,7 @@ void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
+  dbfile.close();
 
   slotBSMemory.document = manifest.empty() ? heuristics.manifest() : manifest;
 }
@@ -1387,6 +1388,7 @@ void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc)
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
+  dbfile.close();
 
   slotSufamiTurboA.document =
     manifest.empty() ? heuristics.manifest() : manifest;
@@ -1403,6 +1405,7 @@ void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
+  dbfile.close();
 
   slotSufamiTurboB.document =
     manifest.empty() ? heuristics.manifest() : manifest;
@@ -1417,6 +1420,7 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
     Emulator::platform->fopen(ID::System, "Super Famicom.bml");
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
+  dbfile.close();
 
   if (manifest.empty()) {
       game.document = heuristics.manifest();
