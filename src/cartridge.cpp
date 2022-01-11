@@ -43,6 +43,7 @@
 #include "coprocessor/superfx.hpp"
 #include "bsmemory.hpp"
 #include "emulator.hpp"
+#include "heuristics.hpp"
 #include "markup.hpp"
 #include "settings.hpp"
 #include "sha256.hpp"
@@ -1356,27 +1357,46 @@ void Cartridge::setDocument(unsigned id, std::string doc) {
   if (id == 1) {
     game.document = doc;
   }
-  else if (id == 3) {
-    slotBSMemory.document = doc;
-  }
-  else if (id == 4) {
-    slotSufamiTurboA.document = doc;
-  }
-  else if (id == 5) {
-    slotSufamiTurboB.document = doc;
-  }
 }
 
-void Cartridge::setRomBSMemory(std::vector<uint8_t>& data) {
+void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   romdataBS = data;
+  auto heuristics = Heuristics::BSMemory(data, loc);
+
+  std::ifstream dbfile = Emulator::platform->fopen(ID::System, "BS Memory.bml");
+
+  std::string sha256 = sha256_digest(data.data(), data.size());
+  std::string manifest = BML::gendoc2(dbfile, "game", "sha256", sha256);
+
+  slotBSMemory.document = manifest.empty() ? heuristics.manifest() : manifest;
 }
 
-void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data) {
+void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc) {
   romdataSTA = data;
+  auto heuristics = Heuristics::SufamiTurbo(data, loc);
+
+  std::ifstream dbfile =
+    Emulator::platform->fopen(ID::System, "Sufami Turbo.bml");
+
+  std::string sha256 = sha256_digest(data.data(), data.size());
+  std::string manifest = BML::gendoc2(dbfile, "game", "sha256", sha256);
+
+  slotSufamiTurboA.document =
+    manifest.empty() ? heuristics.manifest() : manifest;
 }
 
-void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data) {
+void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc) {
   romdataSTB = data;
+  auto heuristics = Heuristics::SufamiTurbo(data, loc);
+
+  std::ifstream dbfile =
+    Emulator::platform->fopen(ID::System, "Sufami Turbo.bml");
+
+  std::string sha256 = sha256_digest(data.data(), data.size());
+  std::string manifest = BML::gendoc2(dbfile, "game", "sha256", sha256);
+
+  slotSufamiTurboB.document =
+    manifest.empty() ? heuristics.manifest() : manifest;
 }
 
 void Cartridge::unload() {

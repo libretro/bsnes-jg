@@ -47,11 +47,11 @@ struct Interface {
   void setRunAhead(bool);
 
   void setDocument(unsigned, std::string);
-  void setRomBSMemory(std::vector<uint8_t>&);
+  void setRomBSMemory(std::vector<uint8_t>&, std::string&);
   void setRomGB(const uint8_t*, size_t);
-  void setRomSufamiTurboA(std::vector<uint8_t>&);
-  void setRomSufamiTurboB(std::vector<uint8_t>&);
-  void setRomSuperFamicom(std::vector<uint8_t>&);
+  void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);
+  void setRomSufamiTurboB(std::vector<uint8_t>&, std::string&);
+  void setRomSuperFamicom(std::vector<uint8_t>&, std::string&);
 };
 
 }

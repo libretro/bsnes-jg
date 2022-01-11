@@ -19,6 +19,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <iostream>
 #include <vector>
 
 #include "byuuML/byuuML.hpp"
@@ -62,6 +63,30 @@ std::string gendoc(std::string docpath, std::string parent, std::string child, s
 
     std::istream& is = stream;
 
+    streamreader bmlreader(is);
+    byuuML::document doc(bmlreader);
+
+    for (auto&& node : doc) {
+        byuuML::cursor p0 = node.query(doc, parent);
+        if (p0) {
+            byuuML::cursor p1 = node.query(doc, parent, child);
+            if (p1) {
+                std::string str(p1.value<std::string>());
+                str.erase(0, str.find_first_not_of(' '));
+                if (str == val) {
+                    if (node.get_name() != parent) continue;
+                    std::stringstream ss;
+                    dumpnode(ss, doc, node);
+                    return ss.str();
+                }
+            }
+        }
+    }
+
+    return {};
+}
+
+std::string gendoc2(std::istream& is, std::string parent, std::string child, std::string val) {
     streamreader bmlreader(is);
     byuuML::document doc(bmlreader);
 

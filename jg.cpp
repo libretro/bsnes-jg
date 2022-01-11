@@ -212,6 +212,14 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
             path = std::string(pathinfo.core) + "/boards.bml";
             required = true;
         }
+        else if (name == "BS Memory.bml") {
+            path = std::string(pathinfo.core) + "/BS Memory.bml";
+            required = true;
+        }
+        else if (name == "Sufami Turbo.bml") {
+            path = std::string(pathinfo.core) + "/Sufami Turbo.bml";
+            required = true;
+        }
     }
     else if (id == 1) { // SFC
         if (name == "program.rom") {
@@ -590,21 +598,8 @@ bool Program::loadSuperFamicom(std::string location) {
 bool Program::loadBSMemory(std::string location) {
     std::vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
-
     if (rom.size() < 0x8000) return false;
-
-    auto heuristics = Heuristics::BSMemory(rom, location);
-    auto sha256 = sha256_digest(rom.data(), rom.size());
-
-    interface->setRomBSMemory(rom);
-
-    std::string dbpath = std::string(pathinfo.core) + "/BS Memory.bml";
-    std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
-
-    interface->setDocument(3,
-        manifest.empty() ? heuristics.manifest() : manifest);
-    bsMemory.location = location;
-
+    interface->setRomBSMemory(rom, location);
     return true;
 }
 
@@ -617,22 +612,7 @@ bool Program::loadSufamiTurboA(std::string location) {
         rom = loadFile(gameinfo.data, gameinfo.size);
 
     if (rom.size() < 0x20000) return false;
-
-    if (sufamiinfo.size)
-        interface->setRomSufamiTurboA(rom);
-    else
-        interface->setRomSufamiTurboA(rom);
-
-    auto heuristics = Heuristics::SufamiTurbo(rom, location);
-    auto sha256 = sha256_digest(rom.data(), rom.size());
-
-    std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
-    std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
-
-    interface->setDocument(4,
-        manifest.empty() ? heuristics.manifest() : manifest);
-    sufamiTurboA.location = std::string(gameinfo.path);
-
+    interface->setRomSufamiTurboA(rom, location);
     return true;
 }
 
@@ -642,21 +622,8 @@ bool Program::loadSufamiTurboB(std::string location) {
 
     std::vector<uint8_t> rom;
     rom = loadFile(gameinfo.data, gameinfo.size);
-
     if (rom.size() < 0x20000) return false;
-
-    interface->setRomSufamiTurboB(rom);
-
-    auto heuristics = Heuristics::SufamiTurbo(rom, location);
-    auto sha256 = sha256_digest(rom.data(), rom.size());
-
-    std::string dbpath = std::string(pathinfo.core) + "/Sufami Turbo.bml";
-    std::string manifest = BML::gendoc(dbpath, "game", "sha256", sha256);
-
-    interface->setDocument(5,
-        manifest.empty() ? heuristics.manifest() : manifest);
-    sufamiTurboB.location = location;
-
+    interface->setRomSufamiTurboB(rom, location);
     return true;
 }
 

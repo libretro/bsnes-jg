@@ -38,9 +38,9 @@ struct Cartridge {
 
   void serialize(serializer&);
 
-  void setRomBSMemory(std::vector<uint8_t>&);
-  void setRomSufamiTurboA(std::vector<uint8_t>&);
-  void setRomSufamiTurboB(std::vector<uint8_t>&);
+  void setRomBSMemory(std::vector<uint8_t>&, std::string&);
+  void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);
+  void setRomSufamiTurboB(std::vector<uint8_t>&, std::string&);
 
   ReadableMemory rom;
   WritableMemory ram;
