@@ -45,7 +45,6 @@ struct Platform {
   virtual Load load(unsigned id, std::string name, std::string type, std::vector<std::string> options = {}) { return {}; }
   virtual std::ifstream fopen(unsigned id, std::string name) { return {}; }
   virtual void write(unsigned id, std::string name, const uint8_t *data, unsigned size) {}
-  virtual int16_t inputPoll(unsigned port, unsigned device, unsigned input) { return 0; }
 };
 
 extern Platform* platform;

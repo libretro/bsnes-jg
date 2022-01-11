@@ -52,6 +52,7 @@ struct Interface {
   void setAudioCallback(void (*)(size_t));
   void setAudioSpf(unsigned);
   void setAudioQuality(unsigned);
+  void setInputCallback(int16_t (*)(unsigned, unsigned, unsigned));
   void setRomBSMemory(std::vector<uint8_t>&, std::string&);
   void setRomGB(const uint8_t*, size_t);
   void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);

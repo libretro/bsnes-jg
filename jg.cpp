@@ -119,7 +119,6 @@ struct Program : Emulator::Platform {
     std::ifstream fopen(unsigned id, std::string name) override;
     void write(unsigned id, std::string name, const uint8_t *data,
         unsigned size) override;
-    int16_t inputPoll(unsigned port, unsigned device, unsigned input) override;
 
     void load();
     bool loadSuperFamicom(std::string location);
@@ -403,7 +402,7 @@ void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
 
 static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
 
-static int16_t pollInputDevices(unsigned port, unsigned device, unsigned input) {
+static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
     //print("port: ", port, " device: ", device, " input: ", input, "\n");
     if (device == SuperFamicom::ID::Device::SuperScope) {
         switch (input) {
@@ -488,10 +487,6 @@ static int16_t pollInputDevices(unsigned port, unsigned device, unsigned input) 
     }
 
     return port > 1 ? 0 : input_device[port]->button[imap[input]];
-}
-
-int16_t Program::inputPoll(unsigned port, unsigned device, unsigned input) {
-    return pollInputDevices(port, device, input);
 }
 
 static std::vector<uint8_t> loadFile(void *data, size_t size) {
@@ -580,6 +575,7 @@ int jg_init() {
         sizeof(settings_bsnes) / sizeof(jg_setting_t));
     interface = new SuperFamicom::Interface;
     program = new Program;
+    interface->setInputCallback(&pollInput);
 
     return 1;
 }

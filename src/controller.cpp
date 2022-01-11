@@ -25,7 +25,13 @@
 
 #include "controller.hpp"
 
+static int16_t (*inputPoll)(unsigned, unsigned, unsigned);
+
 namespace SuperFamicom {
+
+void setInputPoll(int16_t (*cb)(unsigned, unsigned, unsigned)) {
+  inputPoll = cb;
+}
 
 struct Gamepad : Controller {
   enum : unsigned {
@@ -207,7 +213,7 @@ Gamepad::Gamepad(unsigned port) : Controller(port) {
 
 uint8_t Gamepad::data() {
   if(counter >= 16) return 1;
-  if(latched == 1) return Emulator::platform->inputPoll(port, ID::Device::Gamepad, B);
+  if(latched == 1) return inputPoll(port, ID::Device::Gamepad, B);
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
@@ -234,18 +240,18 @@ void Gamepad::latch(bool data) {
   counter = 0;
 
   if(latched == 0) {
-    b      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, B);
-    y      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Y);
-    select = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Select);
-    start  = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Start);
-    up     = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Up);
-    down   = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Down);
-    left   = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Left);
-    right  = Emulator::platform->inputPoll(port, ID::Device::Gamepad, Right);
-    a      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, A);
-    x      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, X);
-    l      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, L);
-    r      = Emulator::platform->inputPoll(port, ID::Device::Gamepad, R);
+    b      = inputPoll(port, ID::Device::Gamepad, B);
+    y      = inputPoll(port, ID::Device::Gamepad, Y);
+    select = inputPoll(port, ID::Device::Gamepad, Select);
+    start  = inputPoll(port, ID::Device::Gamepad, Start);
+    up     = inputPoll(port, ID::Device::Gamepad, Up);
+    down   = inputPoll(port, ID::Device::Gamepad, Down);
+    left   = inputPoll(port, ID::Device::Gamepad, Left);
+    right  = inputPoll(port, ID::Device::Gamepad, Right);
+    a      = inputPoll(port, ID::Device::Gamepad, A);
+    x      = inputPoll(port, ID::Device::Gamepad, X);
+    l      = inputPoll(port, ID::Device::Gamepad, L);
+    r      = inputPoll(port, ID::Device::Gamepad, R);
   }
 }
 
@@ -282,13 +288,13 @@ uint8_t Justifier::data() {
   if(counter >= 32) return 1;
 
   if(counter == 0) {
-    player1.trigger = Emulator::platform->inputPoll(port, device, 0 + Trigger);
-    player1.start   = Emulator::platform->inputPoll(port, device, 0 + Start);
+    player1.trigger = inputPoll(port, device, 0 + Trigger);
+    player1.start   = inputPoll(port, device, 0 + Start);
   }
 
   if(counter == 0 && chained) {
-    player2.trigger = Emulator::platform->inputPoll(port, device, 4 + Trigger);
-    player2.start   = Emulator::platform->inputPoll(port, device, 4 + Start);
+    player2.trigger = inputPoll(port, device, 4 + Trigger);
+    player2.start   = inputPoll(port, device, 4 + Start);
   }
 
   switch(counter++) {
@@ -342,14 +348,14 @@ void Justifier::latch(bool data) {
 
 void Justifier::latch() {
   if(!active) {
-    player1.x = Emulator::platform->inputPoll(port, device, 0 + X);
-    player1.y = Emulator::platform->inputPoll(port, device, 0 + Y);
+    player1.x = inputPoll(port, device, 0 + X);
+    player1.y = inputPoll(port, device, 0 + Y);
     bool offscreen = (player1.x < 0 || player1.y < 0 || player1.x >= 256 || player1.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player1.x, player1.y);
   }
   else {
-    player2.x = Emulator::platform->inputPoll(port, device, 4 + X);
-    player2.y = Emulator::platform->inputPoll(port, device, 4 + Y);
+    player2.x = inputPoll(port, device, 4 + X);
+    player2.y = inputPoll(port, device, 4 + Y);
     bool offscreen = (player2.x < 0 || player2.y < 0 || player2.x >= 256 || player2.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player2.x, player2.y);
   }
@@ -421,10 +427,10 @@ void Mouse::latch(bool data) {
   latched = data;
   counter = 0;
 
-  x = Emulator::platform->inputPoll(port, ID::Device::Mouse, X);  //-n = left, 0 = center, +n = right
-  y = Emulator::platform->inputPoll(port, ID::Device::Mouse, Y);  //-n = up,   0 = center, +n = down
-  l = Emulator::platform->inputPoll(port, ID::Device::Mouse, Left);
-  r = Emulator::platform->inputPoll(port, ID::Device::Mouse, Right);
+  x = inputPoll(port, ID::Device::Mouse, X);  //-n = left, 0 = center, +n = right
+  y = inputPoll(port, ID::Device::Mouse, Y);  //-n = up,   0 = center, +n = down
+  l = inputPoll(port, ID::Device::Mouse, Left);
+  r = inputPoll(port, ID::Device::Mouse, Right);
 
   dx = x < 0;  //0 = right, 1 = left
   dy = y < 0;  //0 = down,  1 = up
@@ -497,18 +503,18 @@ void SuperMultitap::latch(bool data) {
   if(latched == 0) {
     for(unsigned id = 0; id < 4; ++id) {
       auto& gamepad = gamepads[id];
-      gamepad.b      = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + B);
-      gamepad.y      = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + Y);
-      gamepad.select = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + Select);
-      gamepad.start  = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + Start);
-      gamepad.up     = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + Up);
-      gamepad.down   = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + Down);
-      gamepad.left   = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + Left);
-      gamepad.right  = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + Right);
-      gamepad.a      = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + A);
-      gamepad.x      = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + X);
-      gamepad.l      = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + L);
-      gamepad.r      = Emulator::platform->inputPoll(port, ID::Device::SuperMultitap, id * 12 + R);
+      gamepad.b      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + B);
+      gamepad.y      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Y);
+      gamepad.select = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Select);
+      gamepad.start  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Start);
+      gamepad.up     = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Up);
+      gamepad.down   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Down);
+      gamepad.left   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Left);
+      gamepad.right  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Right);
+      gamepad.a      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + A);
+      gamepad.x      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + X);
+      gamepad.l      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + L);
+      gamepad.r      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + R);
     }
   }
 }
@@ -551,7 +557,7 @@ uint8_t SuperScope::data() {
 
   if(counter == 0) {
     //turbo is a switch; toggle is edge sensitive
-    bool newturbo = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Turbo);
+    bool newturbo = inputPoll(port, ID::Device::SuperScope, Turbo);
     if(newturbo && !oldturbo) {
       turbo = !turbo;  //toggle state
     }
@@ -560,7 +566,7 @@ uint8_t SuperScope::data() {
     //trigger is a button
     //if turbo is active, trigger is level sensitive; otherwise, it is edge sensitive
     trigger = false;
-    bool newtrigger = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Trigger);
+    bool newtrigger = inputPoll(port, ID::Device::SuperScope, Trigger);
     if(newtrigger && (turbo || !triggerlock)) {
       trigger = true;
       triggerlock = true;
@@ -569,11 +575,11 @@ uint8_t SuperScope::data() {
     }
 
     //cursor is a button; it is always level sensitive
-    cursor = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Cursor);
+    cursor = inputPoll(port, ID::Device::SuperScope, Cursor);
 
     //pause is a button; it is always edge sensitive
     pause = false;
-    bool newpause = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Pause);
+    bool newpause = inputPoll(port, ID::Device::SuperScope, Pause);
     if(newpause && !pauselock) {
       pause = true;
       pauselock = true;
@@ -606,8 +612,8 @@ void SuperScope::latch(bool data) {
 }
 
 void SuperScope::latch() {
-  x = Emulator::platform->inputPoll(port, ID::Device::SuperScope, X);
-  y = Emulator::platform->inputPoll(port, ID::Device::SuperScope, Y);
+  x = inputPoll(port, ID::Device::SuperScope, X);
+  y = inputPoll(port, ID::Device::SuperScope, Y);
   offscreen = (x < 0 || y < 0 || x >= 512 || y >= 480);
   if(!offscreen) ppu.latchCounters(x, y);
 }

@@ -181,6 +181,10 @@ void Interface::setAudioQuality(unsigned rsqual) {
   audio.setQuality(rsqual);
 }
 
+void Interface::setInputCallback(int16_t (*cb)(unsigned, unsigned, unsigned)) {
+  setInputPoll(cb);
+}
+
 void Interface::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   cartridge.setRomBSMemory(data, loc);
 }
