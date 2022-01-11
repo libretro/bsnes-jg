@@ -538,13 +538,13 @@ uint8_t SA1::readIOCPU(unsigned address, uint8_t data) {
 
   //(SFR) S-CPU flag read
   case 0x2300: {
-    uint8_t data;
-    data  = mmio.cpu_irqfl   << 7;
-    data |= mmio.cpu_ivsw    << 6;
-    data |= mmio.chdma_irqfl << 5;
-    data |= mmio.cpu_nvsw    << 4;
-    data |= mmio.cmeg;
-    return data;
+    uint8_t _data;
+    _data  = mmio.cpu_irqfl   << 7;
+    _data |= mmio.cpu_ivsw    << 6;
+    _data |= mmio.chdma_irqfl << 5;
+    _data |= mmio.cpu_nvsw    << 4;
+    _data |= mmio.cmeg;
+    return _data;
   }
 
   //(VC) version code register
