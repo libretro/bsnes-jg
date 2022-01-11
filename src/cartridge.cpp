@@ -1409,7 +1409,6 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
 
   std::ifstream dbfile =
     Emulator::platform->fopen(ID::System, "Super Famicom.bml");
-
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
 

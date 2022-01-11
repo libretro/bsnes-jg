@@ -159,6 +159,10 @@ void Interface::setRunAhead(bool runAhead) {
   system.runAhead = runAhead;
 }
 
+std::string Interface::getRegion() {
+  return cartridge.region();
+}
+
 void Interface::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   cartridge.setRomBSMemory(data, loc);
 }

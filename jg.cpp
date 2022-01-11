@@ -28,10 +28,8 @@
 
 #include "src/audio.hpp"
 #include "src/cheat.hpp"
-#include "src/heuristics.hpp"
 #include "src/emulator.hpp"
 #include "src/interface.hpp"
-#include "src/sfc.hpp"
 #include "src/settings.hpp"
 
 #include "gamedb.hpp"
@@ -137,14 +135,7 @@ struct Program : Emulator::Platform {
 
 public:
     struct Game {
-        std::string option;
         std::string location;
-        std::string title;
-        std::string region;
-        std::vector<uint8_t> program;
-        std::vector<uint8_t> data;
-        std::vector<uint8_t> expansion;
-        std::vector<uint8_t> firmware;
     } bsMemory, superFamicom, sufamiTurboA, sufamiTurboB;
 };
 
@@ -173,7 +164,7 @@ Emulator::Platform::Load Program::load(unsigned id, std::string name,
 
     if (id == 1) {
         if (loadSuperFamicom(superFamicom.location)) {
-            return {id, superFamicom.region};
+            return {id, "Auto"};
         }
     }
     else if (id == 2) {
@@ -532,9 +523,6 @@ bool Program::loadSuperFamicom(std::string location) {
     }
 
     interface->setRomSuperFamicom(rom, location);
-
-    auto heuristics = Heuristics::SuperFamicom(rom, location);
-    superFamicom.region = heuristics.videoRegion();
     return true;
 }
 
@@ -737,10 +725,13 @@ int jg_game_load() {
             SuperFamicom::ID::Device::Justifier);
     }
 
+    // Find out whether this is NTSC or PAL
+    std::string region = interface->getRegion();
+
     // Set the aspect ratio
     switch (settings_bsnes[ASPECT].value) {
         default: case 0: { // Auto Region
-            vidinfo.aspect = program->superFamicom.region == "PAL" ?
+            vidinfo.aspect = region == "PAL" ?
                 ASPECT_PAL : ASPECT_NTSC;
             break;
         }
@@ -761,7 +752,7 @@ int jg_game_load() {
     SuperFamicom::audio.setQuality(settings_bsnes[RSQUAL].value);
 
     // Audio and timing adjustments
-    if (program->superFamicom.region == "PAL") {
+    if (region == "PAL") {
         audinfo.spf = (SAMPLERATE / FRAMERATE_PAL) * CHANNELS;
         SuperFamicom::audio.setSpf(audinfo.spf);
         jg_cb_frametime(TIMING_PAL);
