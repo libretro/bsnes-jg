@@ -164,7 +164,7 @@ void Cartridge::loadCartridgeBSMemory(std::string node) {
     bsmemory.ROM = memory.type == "ROM";
     bsmemory.memory.allocate(memory.size);
     for (unsigned i = 0; i < memory.size; ++i) {
-      bsmemory.memory.data()[i] = romdataBS.data()[i];
+      bsmemory.memory.data()[i] = slotBSMemory.prgrom.data()[i];
     }
   }
 }
@@ -178,7 +178,7 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
       if(auto memory = Emulator::Game::Memory(m)) {
         sufamiturboA.rom.allocate(memory.size);
         for (unsigned i = 0; i < memory.size; ++i) {
-          sufamiturboA.rom.data()[i] = romdataSTA.data()[i];
+          sufamiturboA.rom.data()[i] = slotSufamiTurboA.prgrom.data()[i];
         }
       }
     }
@@ -205,7 +205,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
       if(auto memory = Emulator::Game::Memory(m)) {
         sufamiturboB.rom.allocate(memory.size);
         for (unsigned i = 0; i < memory.size; ++i) {
-          sufamiturboB.rom.data()[i] = romdataSTB.data()[i];
+          sufamiturboB.rom.data()[i] = slotSufamiTurboB.prgrom.data()[i];
         }
       }
     }
@@ -260,19 +260,19 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
 
     if (memory->name() == "program.rom") {
       for (unsigned i = 0; i < memory->size; ++i) {
-        mem.data()[i] = romprg[i];
+        mem.data()[i] = game.prgrom[i];
       }
       return;
     }
     else if (memory->name() == "data.rom") {
       for (unsigned i = 0; i < memory->size; ++i) {
-        mem.data()[i] = romdat[i];
+        mem.data()[i] = game.datarom[i];
       }
       return;
     }
     else if (memory->name() == "expansion.rom") {
       for (unsigned i = 0; i < memory->size; ++i) {
-        mem.data()[i] = romexp[i];
+        mem.data()[i] = game.exprom[i];
       }
       return;
     }
@@ -1368,7 +1368,7 @@ void Cartridge::save() {
 }
 
 void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
-  romdataBS = data;
+  slotBSMemory.prgrom = data;
   auto heuristics = Heuristics::BSMemory(data, loc);
 
   std::ifstream dbfile = Emulator::platform->fopen(ID::System, "BS Memory.bml");
@@ -1381,7 +1381,7 @@ void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
 }
 
 void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc) {
-  romdataSTA = data;
+  slotSufamiTurboA.prgrom = data;
   auto heuristics = Heuristics::SufamiTurbo(data, loc);
 
   std::ifstream dbfile =
@@ -1398,7 +1398,7 @@ void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc)
 }
 
 void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc) {
-  romdataSTB = data;
+  slotSufamiTurboB.prgrom = data;
   auto heuristics = Heuristics::SufamiTurbo(data, loc);
 
   std::ifstream dbfile =
@@ -1448,18 +1448,18 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
 
   unsigned offset = 0;
   if (auto size = heuristics.programRomSize()) {
-    romprg.resize(size);
-    std::memcpy(&romprg[0], &data[offset], size);
+    game.prgrom.resize(size);
+    std::memcpy(&game.prgrom[0], &data[offset], size);
     offset += size;
   }
   if (auto size = heuristics.dataRomSize()) {
-    romdat.resize(size);
-    std::memcpy(&romdat[0], &data[offset], size);
+    game.datarom.resize(size);
+    std::memcpy(&game.datarom[0], &data[offset], size);
     offset += size;
   }
   if (auto size = heuristics.expansionRomSize()) {
-    romexp.resize(size);
-    std::memcpy(&romexp[0], &data[offset], size);
+    game.exprom.resize(size);
+    std::memcpy(&game.exprom[0], &data[offset], size);
     offset += size;
   }
 }

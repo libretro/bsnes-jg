@@ -139,14 +139,6 @@ private:
   void saveEpsonRTC(std::string);
   void saveSharpRTC(std::string);
 
-  std::vector<uint8_t> romprg;
-  std::vector<uint8_t> romdat;
-  std::vector<uint8_t> romexp;
-
-  std::vector<uint8_t> romdataBS;
-  std::vector<uint8_t> romdataSTA;
-  std::vector<uint8_t> romdataSTB;
-
   friend struct Interface;
   friend struct ICD;
 };
