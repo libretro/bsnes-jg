@@ -110,7 +110,7 @@ void EpsonRTC::rtcWrite(uint8_t addr, uint8_t data) {
     break;
   case 13: {
     bool held = hold;
-    hold = data;
+    hold = data & 0x01;
     calendar = (data >> 1) & 0x01;
     roundseconds = (data >> 3) & 0x01;
     if(held == 1 && hold == 0 && holdtick == 1) {
