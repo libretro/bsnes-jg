@@ -760,7 +760,7 @@ void DSP4_OP08()
       // scan next command if no SR check needed
       if (DSP4_vars.segments)
       {
-        int32_t win_left, win_right;
+        int32_t wleft, wright;
 
         // road turnoff selection
         if( (uint16_t) envelope[ polygon ][ 0 ] == (uint16_t) 0xc001 )
@@ -800,8 +800,8 @@ void DSP4_OP08()
 
         // update each point on the line
 
-        win_left = SEX16(DSP4_vars.poly_cx[polygon][0] - DSP4_vars.poly_start[poly] + env[0][0]);
-        win_right = SEX16(DSP4_vars.poly_cx[polygon][1] - DSP4_vars.poly_start[poly] + env[1][0]);
+        wleft = SEX16(DSP4_vars.poly_cx[polygon][0] - DSP4_vars.poly_start[poly] + env[0][0]);
+        wright = SEX16(DSP4_vars.poly_cx[polygon][1] - DSP4_vars.poly_start[poly] + env[1][0]);
 
         // update DSP4_vars.distance drawn into world
         DSP4_vars.poly_plane[polygon] = DSP4_vars.distance;
@@ -812,12 +812,12 @@ void DSP4_OP08()
           int16_t x_left, x_right;
 
           // project new coordinates
-          win_left += left_inc;
-          win_right += right_inc;
+          wleft += left_inc;
+          wright += right_inc;
 
           // grab integer portion, drop fraction (no rounding)
-          x_left = (int16_t)(win_left >> 16);
-          x_right = (int16_t)(win_right >> 16);
+          x_left = (int16_t)(wleft >> 16);
+          x_right = (int16_t)(wright >> 16);
 
           // saturate offscreen data
           if (x_left < DSP4_vars.poly_clipLf[polygon][0])
