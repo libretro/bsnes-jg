@@ -388,15 +388,14 @@ void Program::write(unsigned id, std::string name, const uint8_t *data,
     }
 }
 
-void videoFrame(const uint16_t *data, unsigned pitch, unsigned width,
-    unsigned height) {
-    hmult = width / 256;
-    vmult = height / 240;
+void videoFrame(const uint16_t *data, unsigned pitch, unsigned w, unsigned h) {
+    hmult = w / 256;
+    vmult = h / 240;
     vidinfo.y = 8 * vmult;
-    height -= 2 * vidinfo.y;
+    h -= 2 * vidinfo.y;
 
-    vidinfo.w = width;
-    vidinfo.h = height;
+    vidinfo.w = w;
+    vidinfo.h = h;
     vidinfo.p = pitch / 2; // Divide by pixel size - 16-bit pixels == 2
     vidinfo.buf = (void*)data;
 }
