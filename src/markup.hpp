@@ -21,8 +21,7 @@
 
 namespace BML {
 
-std::string gendoc(std::string dbpath, std::string parent, std::string child, std::string match);
-std::string gendoc2(std::istream& is, std::string parent, std::string child, std::string match);
+std::string gendoc(std::istream& is, std::string parent, std::string child, std::string match);
 bool exists(std::string text, std::vector<std::string> terms);
 std::string search(std::string text, std::vector<std::string> terms);
 std::string searchBoard(std::string text, std::string board);

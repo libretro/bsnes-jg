@@ -27,7 +27,6 @@
 #include <jg/jg_snes.h>
 
 #include "src/audio.hpp"
-#include "src/cartridge.hpp"
 #include "src/cheat.hpp"
 #include "src/heuristics.hpp"
 #include "src/emulator.hpp"

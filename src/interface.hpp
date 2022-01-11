@@ -46,7 +46,6 @@ struct Interface {
   bool runAhead();
   void setRunAhead(bool);
 
-  void setDocument(unsigned, std::string);
   void setRomBSMemory(std::vector<uint8_t>&, std::string&);
   void setRomGB(const uint8_t*, size_t);
   void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);

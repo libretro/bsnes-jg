@@ -142,8 +142,6 @@ private:
   void saveEpsonRTC(std::string);
   void saveSharpRTC(std::string);
 
-  void setDocument(unsigned, std::string);
-
   std::vector<uint8_t> romprg;
   std::vector<uint8_t> romdat;
   std::vector<uint8_t> romexp;

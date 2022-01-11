@@ -159,10 +159,6 @@ void Interface::setRunAhead(bool runAhead) {
   system.runAhead = runAhead;
 }
 
-void Interface::setDocument(unsigned id, std::string doc) {
-  cartridge.setDocument(id, doc);
-}
-
 void Interface::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   cartridge.setRomBSMemory(data, loc);
 }

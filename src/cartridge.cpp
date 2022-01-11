@@ -1360,12 +1360,6 @@ void Cartridge::save() {
   }
 }
 
-void Cartridge::setDocument(unsigned id, std::string doc) {
-  if (id == 1) {
-    game.document = doc;
-  }
-}
-
 void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   romdataBS = data;
   auto heuristics = Heuristics::BSMemory(data, loc);
@@ -1373,7 +1367,7 @@ void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   std::ifstream dbfile = Emulator::platform->fopen(ID::System, "BS Memory.bml");
 
   std::string sha256 = sha256_digest(data.data(), data.size());
-  std::string manifest = BML::gendoc2(dbfile, "game", "sha256", sha256);
+  std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
 
   slotBSMemory.document = manifest.empty() ? heuristics.manifest() : manifest;
 }
@@ -1386,7 +1380,7 @@ void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc)
     Emulator::platform->fopen(ID::System, "Sufami Turbo.bml");
 
   std::string sha256 = sha256_digest(data.data(), data.size());
-  std::string manifest = BML::gendoc2(dbfile, "game", "sha256", sha256);
+  std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
 
   slotSufamiTurboA.document =
     manifest.empty() ? heuristics.manifest() : manifest;
@@ -1402,7 +1396,7 @@ void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
     Emulator::platform->fopen(ID::System, "Sufami Turbo.bml");
 
   std::string sha256 = sha256_digest(data.data(), data.size());
-  std::string manifest = BML::gendoc2(dbfile, "game", "sha256", sha256);
+  std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
 
   slotSufamiTurboB.document =
     manifest.empty() ? heuristics.manifest() : manifest;
@@ -1417,7 +1411,7 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
     Emulator::platform->fopen(ID::System, "Super Famicom.bml");
 
   std::string sha256 = sha256_digest(data.data(), data.size());
-  std::string manifest = BML::gendoc2(dbfile, "game", "sha256", sha256);
+  std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
 
   if (manifest.empty()) {
       game.document = heuristics.manifest();
