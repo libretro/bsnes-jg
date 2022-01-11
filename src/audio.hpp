@@ -53,7 +53,7 @@ private:
 };
 
 struct Stream {
-  void reset(double, double);
+  void reset(double);
   void setFrequency(double, double);
   void write(const int16_t samples[]);
 

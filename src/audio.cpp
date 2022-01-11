@@ -31,8 +31,8 @@ void Audio::setFrequency(double frequency) {
   _frequency = frequency;
 }
 
-void Audio::setBuffer(float *buffer) {
-  this->buffer = buffer;
+void Audio::setBuffer(float *b) {
+  buffer = b;
 }
 
 void Audio::setCallback(void (*cb)(size_t)) {
@@ -50,32 +50,32 @@ void Audio::setQuality(unsigned rsqual) {
 
 Stream* Audio::createStream(double frequency) {
   Stream *stream = new Stream;
-  stream->reset(frequency, _frequency);
+  stream->reset(frequency);
   _streams.push_back(stream);
   return stream;
 }
 
-void Stream::reset(double inputFrequency, double outputFrequency) {
+void Stream::reset(double freq_in) {
   if (srcstate == nullptr) {
     int err;
     srcstate = src_new(audio._rsqual, 2, &err); // 2 channels
-    memset(&srcdata, 0, sizeof(SRC_DATA)); // end_of_input MUST be zero initialized
+    memset(&srcdata, 0, sizeof(SRC_DATA)); // MUST be zero initialized
   }
 
   src_reset(srcstate);
-  setFrequency(inputFrequency, this->outputFrequency);
+  setFrequency(freq_in, outputFrequency);
   queue_in.reserve(audio._spf << 1);
   queue_out.reserve(audio._spf << 1);
   resamp_out.reserve(audio._spf << 1);
 }
 
-void Stream::setFrequency(double inputFrequency, double outputFrequency) {
-  this->inputFrequency = inputFrequency;
-  if (outputFrequency) {
-    this->outputFrequency = outputFrequency;
+void Stream::setFrequency(double freq_in, double freq_out) {
+  inputFrequency = freq_in;
+  if (freq_out) {
+    outputFrequency = freq_out;
   }
-  srcdata.src_ratio = this->outputFrequency / inputFrequency;
-  spf_in = (unsigned)(inputFrequency / ((this->outputFrequency / audio._spf)));
+  srcdata.src_ratio = outputFrequency / inputFrequency;
+  spf_in = (unsigned)(inputFrequency / ((outputFrequency / audio._spf)));
   if (spf_in & 1) --spf_in; // 2 channels means samples per frame must be even
 }
 
