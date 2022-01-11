@@ -18,9 +18,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 
+#include "audio.hpp"
 #include "cartridge.hpp"
 #include "cheat.hpp"
 #include "controller.hpp"
@@ -161,6 +163,21 @@ void Interface::setRunAhead(bool runAhead) {
 
 std::string Interface::getRegion() {
   return cartridge.region();
+}
+
+void Interface::setAudioBuffer(float *buf) {
+  audio.setBuffer(buf);
+}
+void Interface::setAudioCallback(void (*cb)(size_t)) {
+  audio.setCallback(cb);
+}
+
+void Interface::setAudioSpf(unsigned spf) {
+  audio.setSpf(spf);
+}
+
+void Interface::setAudioQuality(unsigned rsqual) {
+  audio.setQuality(rsqual);
 }
 
 void Interface::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {

@@ -26,7 +26,6 @@
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
 
-#include "src/audio.hpp"
 #include "src/cheat.hpp"
 #include "src/emulator.hpp"
 #include "src/interface.hpp"
@@ -749,16 +748,16 @@ int jg_game_load() {
         }
     }
 
-    SuperFamicom::audio.setQuality(settings_bsnes[RSQUAL].value);
+    interface->setAudioQuality(settings_bsnes[RSQUAL].value);
 
     // Audio and timing adjustments
     if (region == "PAL") {
         audinfo.spf = (SAMPLERATE / FRAMERATE_PAL) * CHANNELS;
-        SuperFamicom::audio.setSpf(audinfo.spf);
+        interface->setAudioSpf(audinfo.spf);
         jg_cb_frametime(TIMING_PAL);
     }
     else {
-        SuperFamicom::audio.setSpf(audinfo.spf);
+        interface->setAudioSpf(audinfo.spf);
         jg_cb_frametime(TIMING_NTSC);
     }
 
@@ -843,8 +842,8 @@ void jg_setup_video() {
 }
 
 void jg_setup_audio() {
-    SuperFamicom::audio.setBuffer((float*)audinfo.buf);
-    SuperFamicom::audio.setCallback(jg_cb_audio);
+    interface->setAudioBuffer((float*)audinfo.buf);
+    interface->setAudioCallback(jg_cb_audio);
 }
 
 void jg_set_inputstate(jg_inputstate_t *ptr, int port) {
