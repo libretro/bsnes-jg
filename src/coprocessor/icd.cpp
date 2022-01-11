@@ -446,7 +446,7 @@ void ICD::power(bool reset) {
   create(ICD::Enter, frequency);
   if(!reset) stream = audio.createStream(frequency / 128);
 
-  for(auto& packet : this->packet) packet = {};
+  for(auto& p : this->packet) p = {};
   packetSize = 0;
 
   joypID = 0;
