@@ -354,8 +354,6 @@ void Cartridge::loadBSMemory(std::string node) {
 
 //slot(type=SufamiTurbo)[0]
 void Cartridge::loadSufamiTurboA(std::string node) {
-  has.SufamiTurboSlotA = true;
-
   if(auto loaded = Emulator::platform->load(ID::SufamiTurboA, "Sufami Turbo", "st")) {
     sufamiturboA.pathID = loaded.pathID;
     loadSufamiTurboA();
@@ -368,8 +366,6 @@ void Cartridge::loadSufamiTurboA(std::string node) {
 
 //slot(type=SufamiTurbo)[1]
 void Cartridge::loadSufamiTurboB(std::string node) {
-  has.SufamiTurboSlotB = true;
-
   if(auto loaded = Emulator::platform->load(ID::SufamiTurboB, "Sufami Turbo", "st")) {
     sufamiturboB.pathID = loaded.pathID;
     loadSufamiTurboB();
@@ -1383,6 +1379,8 @@ void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc)
 
   slotSufamiTurboA.document =
     manifest.empty() ? heuristics.manifest() : manifest;
+
+  has.SufamiTurboSlotA = true;
 }
 
 void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc) {
@@ -1397,6 +1395,8 @@ void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
 
   slotSufamiTurboB.document =
     manifest.empty() ? heuristics.manifest() : manifest;
+
+  has.SufamiTurboSlotB = true;
 }
 
 void Cartridge::unload() {
