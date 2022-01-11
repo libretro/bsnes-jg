@@ -62,15 +62,15 @@ struct serializer {
   }
 
   template<typename T> serializer& integer(T& value) {
-    enum : unsigned { size = std::is_same<bool, T>::value ? 1 : sizeof(T) };
+    enum : unsigned { intsize = std::is_same<bool, T>::value ? 1 : sizeof(T) };
     if(_mode == Save) {
       T copy = value;
-      for(unsigned n = 0; n < size; ++n) _data[_size++] = copy, copy >>= 8;
+      for(unsigned n = 0; n < intsize; ++n) _data[_size++] = copy, copy >>= 8;
     } else if(_mode == Load) {
       value = 0;
-      for(unsigned n = 0; n < size; ++n) value |= (T)_data[_size++] << (n << 3);
+      for(unsigned n = 0; n < intsize; ++n) value |= (T)_data[_size++] << (n << 3);
     } else if(_mode == Size) {
-      _size += size;
+      _size += intsize;
     }
     return *this;
   }
