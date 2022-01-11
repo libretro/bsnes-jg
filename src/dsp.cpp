@@ -23,7 +23,6 @@
 #include <vector>
 
 #include "audio.hpp"
-#include "cartridge.hpp"
 #include "settings.hpp"
 #include "system.hpp"
 
@@ -108,13 +107,13 @@ void DSP::power(bool reset) {
     spc_dsp.set_output(samplebuffer, 8192);
   }
 
-  if(configuration.hotfixes) {
+  /*if(configuration.hotfixes) {
     //Magical Drop (Japan) does not initialize the DSP registers at startup:
     //tokoton mode will hang forever in some instances even on real hardware.
     if(cartridge.headerTitle() == "MAGICAL DROP") {
       for(unsigned address = 0; address < 0x80; ++address) spc_dsp.write(address, 0xff);
     }
-  }
+  }*/
 }
 
 bool DSP::mute() {

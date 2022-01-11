@@ -18,7 +18,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../cartridge.hpp"
 #include "../cpu.hpp"
 
 #include "hitachidsp.hpp"
@@ -293,7 +292,6 @@ void HitachiDSP::writeIO(unsigned address, uint8_t data) {
 
 std::vector<uint8_t> HitachiDSP::firmware() const {
   std::vector<uint8_t> buffer;
-  if(!cartridge.has.HitachiDSP) return buffer;
   buffer.reserve(1024 * 3);
   for(unsigned n = 0; n < 1024; ++n) {
     buffer.push_back(dataROM[n] >>  0);

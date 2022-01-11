@@ -18,10 +18,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "cartridge.hpp"
+#include <string>
+#include <vector>
+
 #include "controller.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"
+#include "memory.hpp"
 #include "random.hpp"
 #include "settings.hpp"
 #include "smp.hpp"
@@ -1142,14 +1145,14 @@ void CPU::power(bool reset) {
 
   if(!reset) random.array(wram, sizeof(wram));
 
-  if(configuration.hotfixes) {
+  /*if(configuration.hotfixes) {
     //Dirt Racer (Europe) relies on uninitialized memory containing certain values to boot without freezing.
     //the game itself is broken and will fail to run sometimes on real hardware, but for the sake of expedience,
     //WRAM is initialized to a constant value that will allow this game to always boot in successfully.
     if(cartridge.headerTitle() == "DIRT RACER") {
       for(auto& byte : wram) byte = 0xff;
     }
-  }
+  }*/
 
   for(unsigned n = 0; n < 8; ++n) {
     channels[n] = {};

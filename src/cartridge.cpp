@@ -1298,14 +1298,20 @@ bool Cartridge::load() {
 
     //hash all firmware that exists
     std::vector<uint8_t> firm;
-    firm = armdsp.firmware();
-    for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    if(cartridge.has.ARMDSP) {
+      firm = armdsp.firmware();
+      for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    }
 
-    firm = hitachidsp.firmware();
-    for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    if(cartridge.has.HitachiDSP) {
+      firm = hitachidsp.firmware();
+      for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    }
 
-    firm = necdsp.firmware();
-    for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    if(cartridge.has.NECDSP) {
+      firm = necdsp.firmware();
+      for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    }
 
     //finalize hash
     information.sha256 = sha256_digest(buf.data(), buf.size());

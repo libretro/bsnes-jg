@@ -18,7 +18,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../cartridge.hpp"
 #include "../cpu.hpp"
 #include "../random.hpp"
 
@@ -122,7 +121,6 @@ void ArmDSP::set(unsigned mode, uint32_t addr, uint32_t word) {
 
 std::vector<uint8_t> ArmDSP::firmware() const {
   std::vector<uint8_t> buffer;
-  if(!cartridge.has.ARMDSP) return buffer;
   buffer.reserve(128 * 1024 + 32 * 1024);
   for(unsigned n = 0; n < (128 * 1024); ++n) buffer.push_back(programROM[n]);
   for(unsigned n = 0; n < (32 * 1024); ++n) buffer.push_back(dataROM[n]);

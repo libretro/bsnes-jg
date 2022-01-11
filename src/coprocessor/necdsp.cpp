@@ -18,7 +18,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../cartridge.hpp"
 #include "../cpu.hpp"
 
 #include "necdsp.hpp"
@@ -27,7 +26,6 @@ namespace SuperFamicom {
 
 std::vector<uint8_t> NECDSP::firmware() const {
   std::vector<uint8_t> buffer;
-  if(!cartridge.has.NECDSP) return buffer;
   unsigned plength = 2048, dlength = 1024;
   if(revision == Revision::uPD96050) plength = 16384, dlength = 2048;
   buffer.reserve(plength * 3 + dlength * 2);
