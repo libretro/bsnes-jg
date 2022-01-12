@@ -225,12 +225,12 @@ void ICD::writeIO(unsigned addr, uint8_t data) {
     if(mltReq == 2) joypID &= 0;  //4-player mode (unverified; but the most likely behavior)
     if(mltReq == 3) joypID &= 0;  //4-player mode
 
-    auto frequency = clockFrequency();
+    auto freq = clockFrequency();
     switch(data & 3) {
-    case 0: this->frequency = frequency / 4; break;  //fast (glitchy, even on real hardware)
-    case 1: this->frequency = frequency / 5; break;  //normal
-    case 2: this->frequency = frequency / 7; break;  //slow
-    case 3: this->frequency = frequency / 9; break;  //very slow
+    case 0: this->frequency = freq / 4; break;  //fast (glitchy, even on real hardware)
+    case 1: this->frequency = freq / 5; break;  //normal
+    case 2: this->frequency = freq / 7; break;  //slow
+    case 3: this->frequency = freq / 9; break;  //very slow
     }
 
     stream->setFrequency(this->frequency / 128, 0);
@@ -443,9 +443,9 @@ void ICD::unload() {
 }
 
 void ICD::power(bool reset) {
-  auto frequency = clockFrequency() / 5;
-  create(ICD::Enter, frequency);
-  if(!reset) stream = audio.createStream(frequency / 128);
+  auto freq = clockFrequency() / 5;
+  create(ICD::Enter, freq);
+  if(!reset) stream = audio.createStream(freq / 128);
 
   for(auto& p : this->packet) p = {};
   packetSize = 0;
