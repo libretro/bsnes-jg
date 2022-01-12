@@ -40,6 +40,7 @@ struct Interface {
   bool unserialize(serializer&);
 
   void cheats(const std::vector<std::string>&);
+  void configure(std::string, int);
 
   bool runAhead();
   void setRunAhead(bool);

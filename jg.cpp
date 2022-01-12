@@ -20,8 +20,9 @@
 
 #include <algorithm>
 #include <fstream>
-#include <sstream>
 #include <optional>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include <jg/jg.h>
@@ -503,11 +504,18 @@ int jg_init() {
     jg_cb_settings_read(settings_bsnes,
         sizeof(settings_bsnes) / sizeof(jg_setting_t));
 
+    // Create interface and set callbacks
     interface = new SuperFamicom::Interface;
     interface->setInputCallback(&pollInput);
     interface->setOpenCallback(&fileOpen);
     interface->setRomCallback(&loadRom);
     interface->setWriteCallback(&fileWrite);
+
+    // Configuration
+    interface->configure("CoprocessorDelayedSync",
+        settings_bsnes[COPROC_DELAYSYNC].value);
+    interface->configure("CoprocessorPreferHLE",
+        settings_bsnes[COPROC_PREFERHLE].value);
 
     return 1;
 }
@@ -528,11 +536,6 @@ void jg_exec_frame() {
 }
 
 int jg_game_load() {
-    SuperFamicom::configuration.coprocessor.delayedSync =
-        (bool)settings_bsnes[COPROC_DELAYSYNC].value;
-    SuperFamicom::configuration.coprocessor.preferHLE =
-        (bool)settings_bsnes[COPROC_PREFERHLE].value;
-
     // Load the game
     std::string fname = std::string(gameinfo.fname);
     std::string ext = fname.substr(fname.find_last_of(".") + 1);

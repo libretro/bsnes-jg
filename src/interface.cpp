@@ -21,6 +21,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <fstream>
+#include <string>
 #include <vector>
 
 #include "serializer.hpp"
@@ -58,6 +59,15 @@ void Interface::save() {
 void Interface::unload() {
   save();
   system.unload();
+}
+
+void Interface::configure(std::string name, int value) {
+  if (name == "CoprocessorDelayedSync") {
+    configuration.coprocessor.delayedSync = (bool)value;
+  }
+  else if (name == "CoprocessorPreferHLE") {
+    configuration.coprocessor.preferHLE = (bool)value;
+  }
 }
 
 unsigned Interface::connected(unsigned port) {
