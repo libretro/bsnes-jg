@@ -67,3 +67,8 @@ serializer::serializer(const uint8_t* data, unsigned capacity) {
 serializer::~serializer() {
   if(_data) delete[] _data;
 }
+
+void serializer::setMode(Mode mode) {
+  _mode = mode;
+  _size = 0;
+}

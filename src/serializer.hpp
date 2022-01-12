@@ -50,6 +50,8 @@ struct serializer {
   const uint8_t* data() const;
   unsigned size() const;
 
+  void setMode(Mode);
+
   template<typename T> serializer& boolean(T& value) {
     if(_mode == Save) {
       _data[_size++] = (bool)value;
