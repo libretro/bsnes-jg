@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <string>
-
 namespace SuperFamicom {
 
 struct ID {
