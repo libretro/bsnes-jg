@@ -517,7 +517,10 @@ void jg_deinit() {
 }
 
 void jg_reset(int hard) {
-    interface->reset();
+    if (hard)
+        interface->power();
+    else
+        interface->reset();
 }
 
 void jg_exec_frame() {
@@ -746,6 +749,7 @@ void jg_cheat_set(const char *code) {
 
 // JG Functions that return values to the frontend
 jg_coreinfo_t* jg_get_coreinfo(const char *sys) {
+    if (sys) { }
     return &coreinfo;
 }
 
