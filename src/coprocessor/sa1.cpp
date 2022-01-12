@@ -58,9 +58,9 @@ uint8_t SA1::ROM::readCPU(unsigned address, uint8_t data) {
     if(address == 0x7fef && sa1.mmio.cpu_ivsw) return sa1.mmio.siv >> 8;
   }
 
-  static auto read = [](unsigned address) {
-    if((address & 0x400000) && bsmemory.size()) return bsmemory.read(address, 0x00);
-    return sa1.rom.read(address);
+  static auto read = [](unsigned addr) {
+    if((addr & 0x400000) && bsmemory.size()) return bsmemory.read(addr, 0x00);
+    return sa1.rom.read(addr);
   };
 
   bool lo = address < 0x400000;  //*bmode==0 only applies to 00-3f,80-bf:8000-ffff
