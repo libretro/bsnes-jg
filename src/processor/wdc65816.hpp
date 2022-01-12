@@ -50,7 +50,7 @@ struct WDC65816 {
     inline auto& operator=(unsigned data) { w = data; return *this; }
 
     uint16_t w;
-    struct { uint8_t order_lsb2(l, h); };
+    struct { uint8_t order_lsb2(l, h); } r16_lsb2;
   };
 
   union r24 {
