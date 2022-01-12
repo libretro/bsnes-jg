@@ -74,7 +74,7 @@ struct Configuration {
   } system;
 
   bool hotfixes = true;
-  std::string entropy = "Low";
+  unsigned entropy = 1; // 0 = None, 1 = Low, 2 = High
   struct CPU {
     unsigned overclock = 100;
     bool fastMath = false;

@@ -354,12 +354,7 @@ void System::unload() {
 void System::power(bool reset) {
   audio.reset();
 
-  if(configuration.entropy == "None")
-    random.entropy(Emulator::Random::Entropy::None);
-  else if(configuration.entropy == "High")
-    random.entropy(Emulator::Random::Entropy::High);
-  else
-    random.entropy(Emulator::Random::Entropy::Low);
+  random.entropy((Emulator::Random::Entropy)configuration.entropy);
 
   cpu.power(reset);
   smp.power(reset);
