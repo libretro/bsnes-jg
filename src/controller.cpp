@@ -159,7 +159,7 @@ private:
 ControllerPort controllerPort1;
 ControllerPort controllerPort2;
 
-Controller::Controller(unsigned port) : port(port) {
+Controller::Controller(unsigned deviceID) : port(deviceID) {
 }
 
 Controller::~Controller() {
@@ -207,7 +207,7 @@ void ControllerPort::unload() {
 void ControllerPort::serialize(serializer& s) {
 }
 
-Gamepad::Gamepad(unsigned port) : Controller(port) {
+Gamepad::Gamepad(unsigned deviceID) : Controller(deviceID) {
   latched = 0;
   counter = 0;
 }
@@ -256,9 +256,9 @@ void Gamepad::latch(bool data) {
   }
 }
 
-Justifier::Justifier(unsigned port, bool chained):
-Controller(port),
-chained(chained),
+Justifier::Justifier(unsigned deviceID, bool chain):
+Controller(deviceID),
+chained(chain),
 device(!chained ? ID::Device::Justifier : ID::Device::Justifiers)
 {
   latched = 0;
@@ -362,7 +362,7 @@ void Justifier::latch() {
   }
 }
 
-Mouse::Mouse(unsigned port) : Controller(port) {
+Mouse::Mouse(unsigned deviceID) : Controller(deviceID) {
   latched = 0;
   counter = 0;
 
@@ -449,7 +449,7 @@ void Mouse::latch(bool data) {
   y = std::min(127, y);
 }
 
-SuperMultitap::SuperMultitap(unsigned port) : Controller(port) {
+SuperMultitap::SuperMultitap(unsigned deviceID) : Controller(deviceID) {
   latched = 0;
   counter1 = 0;
   counter2 = 0;
@@ -532,7 +532,7 @@ void SuperMultitap::latch(bool data) {
 //require manual polling of PIO ($4201.d6) to determine when iobit was written.
 //Note that no commercial game ever utilizes a Super Scope in port 1.
 
-SuperScope::SuperScope(unsigned port) : Controller(port) {
+SuperScope::SuperScope(unsigned deviceID) : Controller(deviceID) {
   latched = 0;
   counter = 0;
 
