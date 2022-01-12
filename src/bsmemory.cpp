@@ -123,9 +123,9 @@ void BSMemory::Enter() {
 void BSMemory::main() {
   if(ROM) return step(1'000'000);  //1 second
 
-  for(unsigned id = 0; id < block.count(); ++id) {
-    if(block(id).erasing) return block(id).erase();
-    block(id).status.ready = 1;
+  for(unsigned n = 0; n < block.count(); ++n) {
+    if(block(n).erasing) return block(n).erase();
+    block(n).status.ready = 1;
   }
 
   compatible.status.ready = 1;
@@ -325,9 +325,9 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //clear status register
   if(queue.data(0) == 0x50) {
-    for(unsigned id = 0; id < block.count(); ++id) {
-      block(id).status.vppLow = 0;
-      block(id).status.failed = 0;
+    for(unsigned n = 0; n < block.count(); ++n) {
+      block(n).status.vppLow = 0;
+      block(n).status.failed = 0;
     }
     compatible.status.vppLow = 0;
     compatible.status.writeFailed = 0;
@@ -403,7 +403,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
   if(queue.data(0) == 0x97) {
   if(queue.size() < 2) return;
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
-    for(unsigned id = 0; id < block.count(); ++id) block(id).update();
+    for(unsigned n = 0; n < block.count(); ++n) block(n).update();
     return queue.flush();
   }
 
@@ -413,13 +413,13 @@ void BSMemory::write(unsigned address, uint8_t data) {
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
     page.write(0x06, 0x06);  //unknown constant
     page.write(0x07, 0x00);  //unknown constant
-    for(uint8_t id = 0; id < block.count(); ++id) {
+    for(uint8_t n = 0; n < block.count(); ++n) {
       uint8_t addr2 = 0;
-      addr2 += (id >> 0 & 3) * 0x08;  //verified for LH28F800SUT-ZI
-      addr2 += (id >> 2 & 3) * 0x40;  //verified for LH28F800SUT-ZI
-      addr2 += (id >> 4 & 1) * 0x20;  //guessed for LH28F016SU
-      addr2 += (id >> 5 & 1) * 0x04;  //guessed for LH28F032SU; will overwrite unknown constants
-      uint32_t erased = 1 << 31 | block(id).erased;  //unknown if d31 is set when erased == 0
+      addr2 += (n >> 0 & 3) * 0x08;  //verified for LH28F800SUT-ZI
+      addr2 += (n >> 2 & 3) * 0x40;  //verified for LH28F800SUT-ZI
+      addr2 += (n >> 4 & 1) * 0x20;  //guessed for LH28F016SU
+      addr2 += (n >> 5 & 1) * 0x04;  //guessed for LH28F032SU; will overwrite unknown constants
+      uint32_t erased = 1 << 31 | block(n).erased;  //unknown if d31 is set when erased == 0
       for(unsigned byte = 0; byte < 4; ++byte) {
         page.write(addr2 + byte, erased >> byte * 8);  //little endian
       }
@@ -432,7 +432,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
   if(queue.data(0) == 0xa7) {
   if(queue.size() < 2) return;
   if(queue.data(1) != 0xd0) return failed(), queue.flush();
-    for(unsigned id = 0; id < block.count(); ++id) block(id & 0x3f).erase();
+    for(unsigned n = 0; n < block.count(); ++n) block(n & 0x3f).erase();
     mode = Mode::CompatibleStatus;
     return queue.flush();
   }
