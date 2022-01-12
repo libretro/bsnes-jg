@@ -298,11 +298,11 @@ bool System::load() {
 
   if(region == "NTSC") {
     information.region = Region::NTSC;
-    information.cpuFrequency = NTSC * 6.0;
+    information.cpuFrequency = FREQ_NTSC * 6.0;
   }
   else if(region == "PAL") {
     information.region = Region::PAL;
-    information.cpuFrequency = PAL * 4.8;
+    information.cpuFrequency = FREQ_PAL * 4.8;
   }
 
   if(configuration.hotfixes) {

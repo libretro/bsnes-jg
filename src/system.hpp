@@ -22,8 +22,8 @@
 
 namespace SuperFamicom {
 
-static constexpr double NTSC = 315.0 / 88.0 * 1'000'000.0;
-static constexpr double PAL  = 283.75 * 15'625.0 + 25.0;
+static constexpr double FREQ_NTSC = 315.0 / 88.0 * 1'000'000.0;
+static constexpr double FREQ_PAL = 283.75 * 15'625.0 + 25.0;
 
 struct Region {
   static inline bool NTSC();
@@ -61,7 +61,7 @@ private:
   struct Information {
     bool loaded = false;
     Region region = Region::NTSC;
-    double cpuFrequency = NTSC * 6.0;
+    double cpuFrequency = FREQ_NTSC * 6.0;
     double apuFrequency = 32040.0 * 768.0;
     unsigned serializeSize[2] = {0, 0};
   } information;
