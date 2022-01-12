@@ -210,6 +210,11 @@ void Interface::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
   cartridge.setRomSuperFamicom(data, loc);
 }
 
+void Interface::setWriteCallback(void (*cb)(unsigned, std::string, const uint8_t*, unsigned)) {
+  cartridge.setWriteCallback(cb);
+  icd.setWriteCallback(cb);
+}
+
 void Interface::setVideoCallback(void (*cb)(const uint16_t*, unsigned, unsigned, unsigned)) {
   ppu.setCallback(cb);
 }

@@ -30,6 +30,8 @@ struct ICD : Thread {
 
   inline unsigned pathID() const { return information.pathID; }
 
+  void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
+
   void synchronizeCPU();
   static void Enter();
   void main();
@@ -69,6 +71,9 @@ private:
     auto operator[](uint8_t address) -> uint8_t& { return data[address & 0x0f]; }
     uint8_t data[16];
   };
+
+  void (*writeCallback)(unsigned, std::string, const uint8_t*, unsigned);
+
   Packet packet[64];
   uint8_t packetSize;
 

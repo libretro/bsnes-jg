@@ -36,6 +36,7 @@ struct Cartridge {
   void serialize(serializer&);
 
   void setRomCallback(bool (*)(unsigned));
+  void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
 
   void setRomBSMemory(std::vector<uint8_t>&, std::string&);
   void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);
@@ -142,6 +143,7 @@ private:
   void saveSharpRTC(std::string);
 
   bool (*romCallback)(unsigned);
+  void (*writeCallback)(unsigned, std::string, const uint8_t*, unsigned);
 
   friend struct Interface;
   friend struct ICD;

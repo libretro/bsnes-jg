@@ -57,6 +57,7 @@ struct Interface {
   void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);
   void setRomSufamiTurboB(std::vector<uint8_t>&, std::string&);
   void setRomSuperFamicom(std::vector<uint8_t>&, std::string&);
+  void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
   void setVideoCallback(void (*)(const uint16_t*, unsigned, unsigned, unsigned));
 };
 

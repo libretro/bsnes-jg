@@ -431,7 +431,7 @@ void ICD::save() {
   if(auto size = GB_save_battery_size(&sameboy)) {
     auto data = (uint8_t*)malloc(size);
     GB_save_battery_to_buffer(&sameboy, data, size);
-    Emulator::platform->write(pathID(), "save.ram", data, size);
+    writeCallback(pathID(), "save.ram", data, size);
     free(data);
   }
 }
@@ -481,6 +481,10 @@ void ICD::power(bool reset) {
 void ICD::setRom(const uint8_t *data, size_t size) {
   romdata = data;
   romsize = size;
+}
+
+void ICD::setWriteCallback(void (*cb)(unsigned, std::string, const uint8_t*, unsigned)) {
+  writeCallback = cb;
 }
 
 }

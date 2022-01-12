@@ -1028,7 +1028,7 @@ void Cartridge::saveCartridgeBSMemory(std::string node) {
     if (type == "Flash" && content == "Program") {
       if(auto memory = Emulator::Game::Memory(m)) {
         if (bsmemory.memory.data() != nullptr) {
-          Emulator::platform->write(bsmemory.pathID, memory.name(), bsmemory.memory.data(), memory.size);
+          writeCallback(bsmemory.pathID, memory.name(), bsmemory.memory.data(), memory.size);
         }
       }
     }
@@ -1043,7 +1043,7 @@ void Cartridge::saveCartridgeSufamiTurboA(std::string node) {
     if (type == "RAM" && content == "Save") {
       if(auto memory = Emulator::Game::Memory(m)) {
         if (memory.nonVolatile) {
-          Emulator::platform->write(sufamiturboA.pathID, memory.name(), sufamiturboA.ram.data(), memory.size);
+          writeCallback(sufamiturboA.pathID, memory.name(), sufamiturboA.ram.data(), memory.size);
         }
       }
     }
@@ -1058,7 +1058,7 @@ void Cartridge::saveCartridgeSufamiTurboB(std::string node) {
     if (type == "RAM" && content == "Save") {
       if(auto memory = Emulator::Game::Memory(m)) {
         if (memory.nonVolatile) {
-          Emulator::platform->write(sufamiturboB.pathID, memory.name(), sufamiturboB.ram.data(), memory.size);
+          writeCallback(sufamiturboB.pathID, memory.name(), sufamiturboB.ram.data(), memory.size);
         }
       }
     }
@@ -1069,7 +1069,7 @@ void Cartridge::saveMemory(Memory& sram, std::string node) {
   if(auto memory = game.memory(node)) {
     if(memory->type == "RAM" && !memory->nonVolatile) return;
     if(memory->type == "RTC" && !memory->nonVolatile) return;
-    Emulator::platform->write(pathID(), memory->name(), sram.data(), sram.size());
+    writeCallback(pathID(), memory->name(), sram.data(), sram.size());
   }
 }
 
@@ -1122,7 +1122,7 @@ void Cartridge::saveARMDSP(std::string node) {
     if (type == "RAM" && content == "Data" && arch == "ARM6") {
       if(auto file = game.memory(m)) {
       if(file->nonVolatile) {
-        Emulator::platform->write(ID::SuperFamicom, "save.ram", armdsp.programRAM, (16 * 1024));
+        writeCallback(ID::SuperFamicom, "save.ram", armdsp.programRAM, (16 * 1024));
       }
     }
     }
@@ -1139,7 +1139,7 @@ void Cartridge::saveHitachiDSP(std::string node) {
     if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
       if(auto file = game.memory(m)) {
         if(file->nonVolatile) {
-          Emulator::platform->write(ID::SuperFamicom, "save.ram", hitachidsp.dataRAM, (3 * 1024));
+          writeCallback(ID::SuperFamicom, "save.ram", hitachidsp.dataRAM, (3 * 1024));
         }
       }
     }
@@ -1156,7 +1156,7 @@ void Cartridge::saveuPD7725(std::string node) {
     if (type == "RAM" && content == "Data" && arch == "uPD7725") {
       if(auto file = game.memory(m)) {
         if(file->nonVolatile) {
-          Emulator::platform->write(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, 2 * 256);
+          writeCallback(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, 2 * 256);
         }
       }
     }
@@ -1173,7 +1173,7 @@ void Cartridge::saveuPD96050(std::string node) {
     if (type == "RAM" && content == "Data" && arch == "uPD96050") {
       if(auto file = game.memory(m)) {
         if(file->nonVolatile) {
-          Emulator::platform->write(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, (4 * 1024));
+          writeCallback(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, (4 * 1024));
         }
       }
     }
@@ -1187,7 +1187,7 @@ void Cartridge::saveEpsonRTC(std::string node) {
     if(file->nonVolatile) {
       uint8_t data[16] = {0};
       epsonrtc.save(data);
-      Emulator::platform->write(ID::SuperFamicom, "time.rtc", data, 16);
+      writeCallback(ID::SuperFamicom, "time.rtc", data, 16);
     }
   }
 }
@@ -1199,7 +1199,7 @@ void Cartridge::saveSharpRTC(std::string node) {
     if(file->nonVolatile) {
       uint8_t data[16] = {0};
       sharprtc.save(data);
-      Emulator::platform->write(ID::SuperFamicom, "time.rtc", data, 16);
+      writeCallback(ID::SuperFamicom, "time.rtc", data, 16);
     }
   }
 }
@@ -1471,6 +1471,10 @@ void Cartridge::unload() {
 
 void Cartridge::setRomCallback(bool (*cb)(unsigned)) {
   romCallback = cb;
+}
+
+void Cartridge::setWriteCallback(void (*cb)(unsigned, std::string, const uint8_t*, unsigned)) {
+  writeCallback = cb;
 }
 
 }

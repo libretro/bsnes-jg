@@ -116,8 +116,6 @@ struct Program : Emulator::Platform {
     ~Program() override;
 
     std::ifstream fopen(unsigned id, std::string name) override;
-    void write(unsigned id, std::string name, const uint8_t *data,
-        unsigned size) override;
 
     void load();
     void save();
@@ -286,8 +284,8 @@ std::ifstream Program::fopen(unsigned id, std::string name) {
     return stream;
 }
 
-void Program::write(unsigned id, std::string name, const uint8_t *data,
-        unsigned size) {
+void fileWrite(unsigned id, std::string name, const uint8_t *data,
+    unsigned size) {
 
     std::string path;
 
@@ -539,6 +537,7 @@ int jg_init() {
     program = new Program;
     interface->setInputCallback(&pollInput);
     interface->setRomCallback(&loadRom);
+    interface->setWriteCallback(&fileWrite);
 
     return 1;
 }
