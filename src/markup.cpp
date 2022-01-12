@@ -33,7 +33,7 @@ class streamreader : public byuuML::reader {
     char buf[512];
     std::istream& is;
 public:
-    streamreader(std::istream& is) : is(is) {}
+    streamreader(std::istream& _is) : is(_is) {}
     void read_more(const char*& begin, const char*& end) override {
         begin = buf;
         if(!is) {
