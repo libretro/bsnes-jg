@@ -287,7 +287,7 @@ void ARM7TDMI::armInitialize() {
   #define bind(id, name, ...) { \
     unsigned index = (id & 0x0ff00000) >> 16 | (id & 0x000000f0) >> 4; \
     assert(!armInstruction[index]); \
-    armInstruction[index] = [&](uint32_t opcode) { return armInstruction##name(arguments); }; \
+    armInstruction[index] = [&](uint32_t _opcode) { return armInstruction##name(arguments); }; \
   }
 
   #define pattern(s) \
@@ -303,19 +303,19 @@ void ARM7TDMI::armInitialize() {
   for(unsigned displacementLo = 0; displacementLo < 16; ++displacementLo)
   for(unsigned displacementHi = 0; displacementHi < 16; ++displacementHi)
   for(unsigned link = 0; link < 2; ++link) {
-    //auto opcode = pattern(".... 101? ???? ???? ???? ???? ???? ????")
-    auto opcode = pattern(0xa000000)
+    //auto op = pattern(".... 101? ???? ???? ???? ???? ???? ????")
+    auto op = pattern(0xa000000)
                 | displacementLo << 4 | displacementHi << 20 | link << 24;
-    bind(opcode, Branch);
+    bind(op, Branch);
   }
   #undef arguments
 
   #define arguments \
     bits(opcode, 0, 3)   /* m */
   {
-    //auto opcode = pattern(".... 0001 0010 ---- ---- ---- 0001 ????");
-    auto opcode = pattern(0x1200010);
-    bind(opcode, BranchExchangeRegister);
+    //auto op = pattern(".... 0001 0010 ---- ---- ---- 0001 ????");
+    auto op = pattern(0x1200010);
+    bind(op, BranchExchangeRegister);
   }
   #undef arguments
 
@@ -330,9 +330,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned save = 0; save < 2; ++save)
   for(unsigned mode = 0; mode < 16; ++mode) {
     if(mode >= 8 && mode <= 11 && !save) continue;  //TST, TEQ, CMP, CMN
-    //auto opcode = pattern(".... 001? ???? ???? ???? ???? ???? ????") | shiftHi << 4 | save << 20 | mode << 21;
-    auto opcode = pattern(0x2000000) | shiftHi << 4 | save << 20 | mode << 21;
-    bind(opcode, DataImmediate);
+    //auto op = pattern(".... 001? ???? ???? ???? ???? ???? ????") | shiftHi << 4 | save << 20 | mode << 21;
+    auto op = pattern(0x2000000) | shiftHi << 4 | save << 20 | mode << 21;
+    bind(op, DataImmediate);
   }
   #undef arguments
 
@@ -349,9 +349,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned save = 0; save < 2; ++save)
   for(unsigned mode = 0; mode < 16; ++mode) {
     if(mode >= 8 && mode <= 11 && !save) continue;  //TST, TEQ, CMP, CMN
-    //auto opcode = pattern(".... 000? ???? ???? ???? ???? ???0 ????") | type << 5 | shiftLo << 7 | save << 20 | mode << 21;
-    auto opcode = pattern(0x0000000) | type << 5 | shiftLo << 7 | save << 20 | mode << 21;
-    bind(opcode, DataImmediateShift);
+    //auto op = pattern(".... 000? ???? ???? ???? ???? ???0 ????") | type << 5 | shiftLo << 7 | save << 20 | mode << 21;
+    auto op = pattern(0x0000000) | type << 5 | shiftLo << 7 | save << 20 | mode << 21;
+    bind(op, DataImmediateShift);
   }
   #undef arguments
 
@@ -367,9 +367,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned save = 0; save < 2; ++save)
   for(unsigned mode = 0; mode < 16; ++mode) {
     if(mode >= 8 && mode <= 11 && !save) continue;  //TST, TEQ, CMP, CMN
-    //auto opcode = pattern(".... 000? ???? ???? ???? ???? 0??1 ????") | type << 5 | save << 20 | mode << 21;
-    auto opcode = pattern(0x0000010) | type << 5 | save << 20 | mode << 21;
-    bind(opcode, DataRegisterShift);
+    //auto ope = pattern(".... 000? ???? ???? ???? ???? 0??1 ????") | type << 5 | save << 20 | mode << 21;
+    auto op = pattern(0x0000010) | type << 5 | save << 20 | mode << 21;
+    bind(op, DataRegisterShift);
   }
   #undef arguments
 
@@ -385,9 +385,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned writeback = 0; writeback < 2; ++writeback)
   for(unsigned up = 0; up < 2; ++up)
   for(unsigned pre = 0; pre < 2; ++pre) {
-    //auto opcode = pattern(".... 000? ?1?1 ???? ???? ???? 11?1 ????") | half << 5 | writeback << 21 | up << 23 | pre << 24;
-    auto opcode = pattern(0x05000d0) | half << 5 | writeback << 21 | up << 23 | pre << 24;
-    bind(opcode, LoadImmediate);
+    //auto op = pattern(".... 000? ?1?1 ???? ???? ???? 11?1 ????") | half << 5 | writeback << 21 | up << 23 | pre << 24;
+    auto op = pattern(0x05000d0) | half << 5 | writeback << 21 | up << 23 | pre << 24;
+    bind(op, LoadImmediate);
   }
   #undef arguments
 
@@ -403,9 +403,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned writeback = 0; writeback < 2; ++writeback)
   for(unsigned up = 0; up < 2; ++up)
   for(unsigned pre = 0; pre < 2; ++pre) {
-    //auto opcode = pattern(".... 000? ?0?1 ???? ???? ---- 11?1 ????") | half << 5 | writeback << 21 | up << 23 | pre << 24;
-    auto opcode = pattern(0x01000d0) | half << 5 | writeback << 21 | up << 23 | pre << 24;
-    bind(opcode, LoadRegister);
+    //auto op = pattern(".... 000? ?0?1 ???? ???? ---- 11?1 ????") | half << 5 | writeback << 21 | up << 23 | pre << 24;
+    auto op = pattern(0x01000d0) | half << 5 | writeback << 21 | up << 23 | pre << 24;
+    bind(op, LoadRegister);
   }
   #undef arguments
 
@@ -415,9 +415,9 @@ void ARM7TDMI::armInitialize() {
     bits(opcode,16,19),  /* n */ \
     bit1(opcode,22)      /* byte */
   for(unsigned byte = 0; byte < 2; ++byte) {
-    //auto opcode = pattern(".... 0001 0?00 ???? ???? ---- 1001 ????") | byte << 22;
-    auto opcode = pattern(0x1000090) | byte << 22;
-    bind(opcode, MemorySwap);
+    //auto op = pattern(".... 0001 0?00 ???? ???? ---- 1001 ????") | byte << 22;
+    auto op = pattern(0x1000090) | byte << 22;
+    bind(op, MemorySwap);
   }
   #undef arguments
 
@@ -433,9 +433,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned writeback = 0; writeback < 2; ++writeback)
   for(unsigned up = 0; up < 2; ++up)
   for(unsigned pre = 0; pre < 2; ++pre) {
-    //auto opcode = pattern(".... 000? ?1?? ???? ???? ???? 1011 ????") | mode << 20 | writeback << 21 | up << 23 | pre << 24;
-    auto opcode = pattern(0x04000b0) | mode << 20 | writeback << 21 | up << 23 | pre << 24;
-    bind(opcode, MoveHalfImmediate);
+    //auto op = pattern(".... 000? ?1?? ???? ???? ???? 1011 ????") | mode << 20 | writeback << 21 | up << 23 | pre << 24;
+    auto op = pattern(0x04000b0) | mode << 20 | writeback << 21 | up << 23 | pre << 24;
+    bind(op, MoveHalfImmediate);
   }
   #undef arguments
 
@@ -451,9 +451,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned writeback = 0; writeback < 2; ++writeback)
   for(unsigned up = 0; up < 2; ++up)
   for(unsigned pre = 0; pre < 2; ++pre) {
-    //auto opcode = pattern(".... 000? ?0?? ???? ???? ---- 1011 ????") | mode << 20 | writeback << 21 | up << 23 | pre << 24;
-    auto opcode = pattern(0x00000b0) | mode << 20 | writeback << 21 | up << 23 | pre << 24;
-    bind(opcode, MoveHalfRegister);
+    //auto op = pattern(".... 000? ?0?? ???? ???? ---- 1011 ????") | mode << 20 | writeback << 21 | up << 23 | pre << 24;
+    auto op = pattern(0x00000b0) | mode << 20 | writeback << 21 | up << 23 | pre << 24;
+    bind(op, MoveHalfRegister);
   }
   #undef arguments
 
@@ -472,10 +472,10 @@ void ARM7TDMI::armInitialize() {
   for(unsigned byte = 0; byte < 2; ++byte)
   for(unsigned up = 0; up < 2; ++up)
   for(unsigned pre = 0; pre < 2; ++pre) {
-    //auto opcode = pattern(".... 010? ???? ???? ???? ???? ???? ????")
-    auto opcode = pattern(0x4000000)
+    //auto op = pattern(".... 010? ???? ???? ???? ???? ???? ????")
+    auto op = pattern(0x4000000)
                 | immediatePart << 4 | mode << 20 | writeback << 21 | byte << 22 | up << 23 | pre << 24;
-    bind(opcode, MoveImmediateOffset);
+    bind(op, MoveImmediateOffset);
   }
   #undef arguments
 
@@ -493,10 +493,10 @@ void ARM7TDMI::armInitialize() {
   for(unsigned type = 0; type < 2; ++type)
   for(unsigned up = 0; up < 2; ++up)
   for(unsigned pre = 0; pre < 2; ++pre) {
-    //auto opcode = pattern(".... 100? ???? ???? ???? ???? ???? ????")
-    auto opcode = pattern(0x8000000)
+    //auto op = pattern(".... 100? ???? ???? ???? ???? ???? ????")
+    auto op = pattern(0x8000000)
                 | listPart << 4 | mode << 20 | writeback << 21 | type << 22 | up << 23 | pre << 24;
-    bind(opcode, MoveMultiple);
+    bind(op, MoveMultiple);
   }
   #undef arguments
 
@@ -518,10 +518,10 @@ void ARM7TDMI::armInitialize() {
   for(unsigned byte = 0; byte < 2; ++byte)
   for(unsigned up = 0; up < 2; ++up)
   for(unsigned pre = 0; pre < 2; ++pre) {
-    //auto opcode = pattern(".... 011? ???? ???? ???? ???? ???0 ????")
-    auto opcode = pattern(0x6000000)
+    //auto op = pattern(".... 011? ???? ???? ???? ???? ???0 ????")
+    auto op = pattern(0x6000000)
                 | type << 5 | shiftLo << 7 | mode << 20 | writeback << 21 | byte << 22 | up << 23 | pre << 24;
-    bind(opcode, MoveRegisterOffset);
+    bind(op, MoveRegisterOffset);
   }
   #undef arguments
 
@@ -529,9 +529,9 @@ void ARM7TDMI::armInitialize() {
     bits(opcode,12,15),  /* d */ \
     bit1(opcode,22)      /* mode */
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern(".... 0001 0?00 ---- ???? ---- 0000 ----") | mode << 22;
-    auto opcode = pattern(0x1000000) | mode << 22;
-    bind(opcode, MoveToRegisterFromStatus);
+    //auto op = pattern(".... 0001 0?00 ---- ???? ---- 0000 ----") | mode << 22;
+    auto op = pattern(0x1000000) | mode << 22;
+    bind(op, MoveToRegisterFromStatus);
   }
   #undef arguments
 
@@ -542,9 +542,9 @@ void ARM7TDMI::armInitialize() {
     bit1(opcode,22)      /* mode */
   for(unsigned immediateHi = 0; immediateHi < 16; ++immediateHi)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern(".... 0011 0?10 ???? ---- ???? ???? ????") | immediateHi << 4 | mode << 22;
-    auto opcode = pattern(0x3200000) | immediateHi << 4 | mode << 22;
-    bind(opcode, MoveToStatusFromImmediate);
+    //auto op = pattern(".... 0011 0?10 ???? ---- ???? ???? ????") | immediateHi << 4 | mode << 22;
+    auto op = pattern(0x3200000) | immediateHi << 4 | mode << 22;
+    bind(op, MoveToStatusFromImmediate);
   }
   #undef arguments
 
@@ -553,9 +553,9 @@ void ARM7TDMI::armInitialize() {
     bits(opcode,16,19),  /* field */ \
     bit1(opcode,22)      /* mode */
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern(".... 0001 0?10 ???? ---- ---- 0000 ????") | mode << 22;
-    auto opcode = pattern(0x1200000) | mode << 22;
-    bind(opcode, MoveToStatusFromRegister);
+    //auto op = pattern(".... 0001 0?10 ???? ---- ---- 0000 ????") | mode << 22;
+    auto op = pattern(0x1200000) | mode << 22;
+    bind(op, MoveToStatusFromRegister);
   }
   #undef arguments
 
@@ -568,9 +568,9 @@ void ARM7TDMI::armInitialize() {
     bit1(opcode,21)      /* accumulate */
   for(unsigned save = 0; save < 2; ++save)
   for(unsigned accumulate = 0; accumulate < 2; ++accumulate) {
-    //auto opcode = pattern(".... 0000 00?? ???? ???? ???? 1001 ????") | save << 20 | accumulate << 21;
-    auto opcode = pattern(0x0000090) | save << 20 | accumulate << 21;
-    bind(opcode, Multiply);
+    //auto op = pattern(".... 0000 00?? ???? ???? ???? 1001 ????") | save << 20 | accumulate << 21;
+    auto op = pattern(0x0000090) | save << 20 | accumulate << 21;
+    bind(op, Multiply);
   }
   #undef arguments
 
@@ -585,9 +585,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned save = 0; save < 2; ++save)
   for(unsigned accumulate = 0; accumulate < 2; ++accumulate)
   for(unsigned sign = 0; sign < 2; ++sign) {
-    //auto opcode = pattern(".... 0000 1??? ???? ???? ???? 1001 ????") | save << 20 | accumulate << 21 | sign << 22;
-    auto opcode = pattern(0x0800090) | save << 20 | accumulate << 21 | sign << 22;
-    bind(opcode, MultiplyLong);
+    //auto op = pattern(".... 0000 1??? ???? ???? ???? 1001 ????") | save << 20 | accumulate << 21 | sign << 22;
+    auto op = pattern(0x0800090) | save << 20 | accumulate << 21 | sign << 22;
+    bind(op, MultiplyLong);
   }
   #undef arguments
 
@@ -595,18 +595,18 @@ void ARM7TDMI::armInitialize() {
     bits(opcode, 0,23)  /* immediate */
   for(unsigned immediateLo = 0; immediateLo < 16; ++immediateLo)
   for(unsigned immediateHi = 0; immediateHi < 16; ++immediateHi) {
-    //auto opcode = pattern(".... 1111 ???? ???? ???? ???? ???? ????") | immediateLo << 4 | immediateHi << 20;
-    auto opcode = pattern(0xf000000) | immediateLo << 4 | immediateHi << 20;
-    bind(opcode, SoftwareInterrupt);
+    //auto op = pattern(".... 1111 ???? ???? ???? ???? ???? ????") | immediateLo << 4 | immediateHi << 20;
+    auto op = pattern(0xf000000) | immediateLo << 4 | immediateHi << 20;
+    bind(op, SoftwareInterrupt);
   }
   #undef arguments
 
   #define arguments
   for(unsigned id = 0; id < 4096; ++id) {
     if(armInstruction[id]) continue;
-    //auto opcode = pattern(".... ???? ???? ---- ---- ---- ???? ----") | bits(id,0,3) << 4 | bits(id,4,11) << 20;
-    auto opcode = pattern(0x0000000) | bits(id,0,3) << 4 | bits(id,4,11) << 20;
-    bind(opcode, Undefined);
+    //auto op = pattern(".... ???? ???? ---- ---- ---- ???? ----") | bits(id,0,3) << 4 | bits(id,4,11) << 20;
+    auto op = pattern(0x0000000) | bits(id,0,3) << 4 | bits(id,4,11) << 20;
+    bind(op, Undefined);
   }
   #undef arguments
 
@@ -627,151 +627,151 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned m = 0; m < 8; ++m)
   for(unsigned mode = 0; mode < 16; ++mode) {
-    //auto opcode = pattern("0100 00?? ???? ????") | d << 0 | m << 3 | mode << 6;
-    auto opcode = pattern(0x4000) | d << 0 | m << 3 | mode << 6;
-    bind(opcode, ALU, d, m, mode);
+    //auto op = pattern("0100 00?? ???? ????") | d << 0 | m << 3 | mode << 6;
+    auto op = pattern(0x4000) | d << 0 | m << 3 | mode << 6;
+    bind(op, ALU, d, m, mode);
   }
 
   for(unsigned d = 0; d < 16; ++d)
   for(unsigned m = 0; m < 16; ++m)
   for(unsigned mode = 0; mode < 4; ++mode) {
     if(mode == 3) continue;
-    //auto opcode = pattern("0100 01?? ???? ????") | bits(d,0,2) << 0 | m << 3 | bit1(d,3) << 7 | mode << 8;
-    auto opcode = pattern(0x4400) | bits(d,0,2) << 0 | m << 3 | bit1(d,3) << 7 | mode << 8;
-    bind(opcode, ALUExtended, d, m, mode);
+    //auto op = pattern("0100 01?? ???? ????") | bits(d,0,2) << 0 | m << 3 | bit1(d,3) << 7 | mode << 8;
+    auto op = pattern(0x4400) | bits(d,0,2) << 0 | m << 3 | bit1(d,3) << 7 | mode << 8;
+    bind(op, ALUExtended, d, m, mode);
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate)
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern("1010 ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
-    auto opcode = pattern(0xa000) | immediate << 0 | d << 8 | mode << 11;
-    bind(opcode, AddRegister, immediate, d, mode);
+    //auto op = pattern("1010 ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
+    auto op = pattern(0xa000) | immediate << 0 | d << 8 | mode << 11;
+    bind(op, AddRegister, immediate, d, mode);
   }
 
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned immediate = 0; immediate < 8; ++immediate)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern("0001 11?? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 9;
-    auto opcode = pattern(0x1c00) | d << 0 | n << 3 | immediate << 6 | mode << 9;
-    bind(opcode, AdjustImmediate, d, n, immediate, mode);
+    //auto op = pattern("0001 11?? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 9;
+    auto op = pattern(0x1c00) | d << 0 | n << 3 | immediate << 6 | mode << 9;
+    bind(op, AdjustImmediate, d, n, immediate, mode);
   }
 
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned m = 0; m < 8; ++m)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern("0001 10?? ???? ????") | d << 0 | n << 3 | m << 6 | mode << 9;
-    auto opcode = pattern(0x1800) | d << 0 | n << 3 | m << 6 | mode << 9;
-    bind(opcode, AdjustRegister, d, n, m, mode);
+    //auto op = pattern("0001 10?? ???? ????") | d << 0 | n << 3 | m << 6 | mode << 9;
+    auto op = pattern(0x1800) | d << 0 | n << 3 | m << 6 | mode << 9;
+    bind(op, AdjustRegister, d, n, m, mode);
   }
 
   for(unsigned immediate = 0; immediate < 128; ++immediate)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern("1011 0000 ???? ????") | immediate << 0 | mode << 7;
-    auto opcode = pattern(0xb000) | immediate << 0 | mode << 7;
-    bind(opcode, AdjustStack, immediate, mode);
+    //auto op = pattern("1011 0000 ???? ????") | immediate << 0 | mode << 7;
+    auto op = pattern(0xb000) | immediate << 0 | mode << 7;
+    bind(op, AdjustStack, immediate, mode);
   }
 
   for(unsigned _ = 0; _ < 8; ++_)
   for(unsigned m = 0; m < 16; ++m) {
-    //auto opcode = pattern("0100 0111 0??? ?---") | _ << 0 | m << 3;
-    auto opcode = pattern(0x4700) | _ << 0 | m << 3;
-    bind(opcode, BranchExchange, m);
+    //auto op = pattern("0100 0111 0??? ?---") | _ << 0 | m << 3;
+    auto op = pattern(0x4700) | _ << 0 | m << 3;
+    bind(op, BranchExchange, m);
   }
 
   for(unsigned displacement = 0; displacement < 2048; ++displacement) {
-    //auto opcode = pattern("1111 0??? ???? ????") | displacement << 0;
-    auto opcode = pattern(0xf000) | displacement << 0;
-    bind(opcode, BranchFarPrefix, displacement);
+    //auto op = pattern("1111 0??? ???? ????") | displacement << 0;
+    auto op = pattern(0xf000) | displacement << 0;
+    bind(op, BranchFarPrefix, displacement);
   }
 
   for(unsigned displacement = 0; displacement < 2048; ++displacement) {
-    //auto opcode = pattern("1111 1??? ???? ????") | displacement << 0;
-    auto opcode = pattern(0xf800) | displacement << 0;
-    bind(opcode, BranchFarSuffix, displacement);
+    //auto op = pattern("1111 1??? ???? ????") | displacement << 0;
+    auto op = pattern(0xf800) | displacement << 0;
+    bind(op, BranchFarSuffix, displacement);
   }
 
   for(unsigned displacement = 0; displacement < 2048; ++displacement) {
-    //auto opcode = pattern("1110 0??? ???? ????") | displacement << 0;
-    auto opcode = pattern(0xe000) | displacement << 0;
-    bind(opcode, BranchNear, displacement);
+    //auto op = pattern("1110 0??? ???? ????") | displacement << 0;
+    auto op = pattern(0xe000) | displacement << 0;
+    bind(op, BranchNear, displacement);
   }
 
   for(unsigned displacement = 0; displacement < 256; ++displacement)
   for(unsigned condition = 0; condition < 16; ++condition) {
     if(condition == 15) continue;  //BNV
-    //auto opcode = pattern("1101 ???? ???? ????") | displacement << 0 | condition << 8;
-    auto opcode = pattern(0xd000) | displacement << 0 | condition << 8;
-    bind(opcode, BranchTest, displacement, condition);
+    //auto op = pattern("1101 ???? ???? ????") | displacement << 0 | condition << 8;
+    auto op = pattern(0xd000) | displacement << 0 | condition << 8;
+    bind(op, BranchTest, displacement, condition);
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate)
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned mode = 0; mode < 4; ++mode) {
-    //auto opcode = pattern("001? ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
-    auto opcode = pattern(0x2000) | immediate << 0 | d << 8 | mode << 11;
-    bind(opcode, Immediate, immediate, d, mode);
+    //auto op = pattern("001? ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
+    auto op = pattern(0x2000) | immediate << 0 | d << 8 | mode << 11;
+    bind(op, Immediate, immediate, d, mode);
   }
 
   for(unsigned displacement = 0; displacement < 256; ++displacement)
   for(unsigned d = 0; d < 8; ++d) {
-    //auto opcode = pattern("0100 1??? ???? ????") | displacement << 0 | d << 8;
-    auto opcode = pattern(0x4800) | displacement << 0 | d << 8;
-    bind(opcode, LoadLiteral, displacement, d);
+    //auto op = pattern("0100 1??? ???? ????") | displacement << 0 | d << 8;
+    auto op = pattern(0x4800) | displacement << 0 | d << 8;
+    bind(op, LoadLiteral, displacement, d);
   }
 
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned immediate = 0; immediate < 32; ++immediate)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern("0111 ???? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 11;
-    auto opcode = pattern(0x7000) | d << 0 | n << 3 | immediate << 6 | mode << 11;
-    bind(opcode, MoveByteImmediate, d, n, immediate, mode);
+    //auto op = pattern("0111 ???? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 11;
+    auto op = pattern(0x7000) | d << 0 | n << 3 | immediate << 6 | mode << 11;
+    bind(op, MoveByteImmediate, d, n, immediate, mode);
   }
 
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned immediate = 0; immediate < 32; ++immediate)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern("1000 ???? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 11;
-    auto opcode = pattern(0x8000) | d << 0 | n << 3 | immediate << 6 | mode << 11;
-    bind(opcode, MoveHalfImmediate, d, n, immediate, mode);
+    //auto op = pattern("1000 ???? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 11;
+    auto op = pattern(0x8000) | d << 0 | n << 3 | immediate << 6 | mode << 11;
+    bind(op, MoveHalfImmediate, d, n, immediate, mode);
   }
 
   for(unsigned list = 0; list < 256; ++list)
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern("1100 ???? ???? ????") | list << 0 | n << 8 | mode << 11;
-    auto opcode = pattern(0xc000) | list << 0 | n << 8 | mode << 11;
-    bind(opcode, MoveMultiple, list, n, mode);
+    //auto op = pattern("1100 ???? ???? ????") | list << 0 | n << 8 | mode << 11;
+    auto op = pattern(0xc000) | list << 0 | n << 8 | mode << 11;
+    bind(op, MoveMultiple, list, n, mode);
   }
 
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned m = 0; m < 8; ++m)
   for(unsigned mode = 0; mode < 8; ++mode) {
-    //auto opcode = pattern("0101 ???? ???? ????") | d << 0 | n << 3 | m << 6 | mode << 9;
-    auto opcode = pattern(0x5000) | d << 0 | n << 3 | m << 6 | mode << 9;
-    bind(opcode, MoveRegisterOffset, d, n, m, mode);
+    //auto op = pattern("0101 ???? ???? ????") | d << 0 | n << 3 | m << 6 | mode << 9;
+    auto op = pattern(0x5000) | d << 0 | n << 3 | m << 6 | mode << 9;
+    bind(op, MoveRegisterOffset, d, n, m, mode);
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate)
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern("1001 ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
-    auto opcode = pattern(0x9000) | immediate << 0 | d << 8 | mode << 11;
-    bind(opcode, MoveStack, immediate, d, mode);
+    //auto op = pattern("1001 ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
+    auto op = pattern(0x9000) | immediate << 0 | d << 8 | mode << 11;
+    bind(op, MoveStack, immediate, d, mode);
   }
 
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned offset = 0; offset < 32; ++offset)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern("0110 ???? ???? ????") | d << 0 | n << 3 | offset << 6 | mode << 11;
-    auto opcode = pattern(0x6000) | d << 0 | n << 3 | offset << 6 | mode << 11;
-    bind(opcode, MoveWordImmediate, d, n, offset, mode);
+    //auto op = pattern("0110 ???? ???? ????") | d << 0 | n << 3 | offset << 6 | mode << 11;
+    auto op = pattern(0x6000) | d << 0 | n << 3 | offset << 6 | mode << 11;
+    bind(op, MoveWordImmediate, d, n, offset, mode);
   }
 
   for(unsigned d = 0; d < 8; ++d)
@@ -779,30 +779,30 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned immediate = 0; immediate < 32; ++immediate)
   for(unsigned mode = 0; mode < 4; ++mode) {
     if(mode == 3) continue;
-    //auto opcode = pattern("000? ???? ???? ????") | d << 0 | m << 3 | immediate << 6 | mode << 11;
-    auto opcode = pattern(0x0000) | d << 0 | m << 3 | immediate << 6 | mode << 11;
-    bind(opcode, ShiftImmediate, d, m, immediate, mode);
+    //auto op = pattern("000? ???? ???? ????") | d << 0 | m << 3 | immediate << 6 | mode << 11;
+    auto op = pattern(0x0000) | d << 0 | m << 3 | immediate << 6 | mode << 11;
+    bind(op, ShiftImmediate, d, m, immediate, mode);
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate) {
-    //auto opcode = pattern("1101 1111 ???? ????") | immediate << 0;
-    auto opcode = pattern(0xdf00) | immediate << 0;
-    bind(opcode, SoftwareInterrupt, immediate);
+    //auto op = pattern("1101 1111 ???? ????") | immediate << 0;
+    auto op = pattern(0xdf00) | immediate << 0;
+    bind(op, SoftwareInterrupt, immediate);
   }
 
   for(unsigned list = 0; list < 256; ++list)
   for(unsigned lrpc = 0; lrpc < 2; ++lrpc)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto opcode = pattern("1011 ?10? ???? ????") | list << 0 | lrpc << 8 | mode << 11;
-    auto opcode = pattern(0xb400) | list << 0 | lrpc << 8 | mode << 11;
-    bind(opcode, StackMultiple, list, lrpc, mode);
+    //auto op = pattern("1011 ?10? ???? ????") | list << 0 | lrpc << 8 | mode << 11;
+    auto op = pattern(0xb400) | list << 0 | lrpc << 8 | mode << 11;
+    bind(op, StackMultiple, list, lrpc, mode);
   }
 
   for(unsigned id = 0; id < 65536; ++id) {
     if(thumbInstruction[id]) continue;
-    //auto opcode = pattern("???? ???? ???? ????") | id << 0;
-    auto opcode = pattern(0x0000) | id << 0;
-    bind(opcode, Undefined);
+    //auto op = pattern("???? ???? ???? ????") | id << 0;
+    auto op = pattern(0x0000) | id << 0;
+    bind(op, Undefined);
   }
 
   #undef bit1
