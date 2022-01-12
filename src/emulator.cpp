@@ -27,8 +27,6 @@
 
 namespace Emulator {
 
-Platform* platform = nullptr;
-
 void Game::load(std::string text) {
   sha256 = BML::search(text, {"game", "sha256"});
   label = BML::search(text, {"game", "label"});

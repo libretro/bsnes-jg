@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <fstream>
 #include <optional>
 #include <string>
 #include <vector>
@@ -29,22 +28,6 @@ namespace Emulator {
 
 //incremented only when serialization format changes
 static const std::string SerializerVersion = "115";
-
-struct Platform {
-  struct Load {
-    Load() = default;
-    Load(unsigned pathID, std::string option = "") : valid(true), pathID(pathID), option(option) {}
-    explicit operator bool() const { return valid; }
-
-    bool valid = false;
-    unsigned pathID = 0;
-    std::string option;
-  };
-
-  virtual ~Platform() {};
-};
-
-extern Platform* platform;
 
 struct Game {
   struct Memory;

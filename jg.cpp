@@ -19,6 +19,7 @@
  */
 
 #include <algorithm>
+#include <fstream>
 #include <sstream>
 #include <optional>
 #include <vector>
@@ -28,7 +29,6 @@
 
 #include "src/serializer.hpp"
 #include "src/cheat.hpp"
-#include "src/emulator.hpp"
 #include "src/interface.hpp"
 #include "src/settings.hpp"
 
@@ -111,37 +111,9 @@ static uint8_t addon = 0;
 
 static SuperFamicom::Interface *interface;
 
-struct Program : Emulator::Platform {
-    Program();
-    ~Program() override;
-
-    void load();
-    void save();
-};
-
-static Program *program = nullptr;
-
 static struct Location {
     std::string location;
 } bsMemory, superFamicom, sufamiTurboA, sufamiTurboB;
-
-Program::Program() {
-    Emulator::platform = this;
-}
-
-Program::~Program() {
-    delete interface;
-}
-
-void Program::save() {
-    if (!interface->loaded()) return;
-    interface->save();
-}
-
-void Program::load() {
-    interface->unload();
-    interface->load();
-}
 
 std::ifstream fileOpen(unsigned id, std::string name) {
     std::string path;
@@ -530,8 +502,8 @@ void jg_set_cb_settings_read(jg_cb_settings_read_t func) {
 int jg_init() {
     jg_cb_settings_read(settings_bsnes,
         sizeof(settings_bsnes) / sizeof(jg_setting_t));
+
     interface = new SuperFamicom::Interface;
-    program = new Program;
     interface->setInputCallback(&pollInput);
     interface->setOpenCallback(&fileOpen);
     interface->setRomCallback(&loadRom);
@@ -541,7 +513,7 @@ int jg_init() {
 }
 
 void jg_deinit() {
-    delete program;
+    delete interface;
 }
 
 void jg_reset(int hard) {
@@ -608,7 +580,8 @@ int jg_game_load() {
         superFamicom.location = std::string(gameinfo.path);
     }
 
-    program->load();
+    interface->unload();
+    interface->load();
 
     // Set up inputs
     int multitap = 0;
@@ -720,10 +693,7 @@ int jg_game_load() {
 }
 
 int jg_game_unload() {
-    /* Save happens on interface->unload, program->save() is useful for saving
-       at a time interval to avoid losing SRAM data if something crashes.
-    */
-    //program->save();
+    // Save happens on interface->unload
     interface->unload();
     return 1;
 }
