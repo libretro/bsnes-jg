@@ -119,14 +119,13 @@ struct Program : Emulator::Platform {
 
     void load();
     void save();
-
-public:
-    struct Game {
-        std::string location;
-    } bsMemory, superFamicom, sufamiTurboA, sufamiTurboB;
 };
 
 static Program *program = nullptr;
+
+static struct Location {
+    std::string location;
+} bsMemory, superFamicom, sufamiTurboA, sufamiTurboB;
 
 Program::Program() {
     Emulator::platform = this;
@@ -476,13 +475,13 @@ static bool loadRom(unsigned id) {
             rom.erase(rom.begin(), rom.begin() + 512);
         }
 
-        interface->setRomSuperFamicom(rom, program->superFamicom.location);
+        interface->setRomSuperFamicom(rom, superFamicom.location);
         return true;
     }
     else if (id == 3) {
         std::vector<uint8_t> rom = bufToVec(gameinfo.data, gameinfo.size);
         if (rom.size() < 0x8000) return false;
-        interface->setRomBSMemory(rom, program->bsMemory.location);
+        interface->setRomBSMemory(rom, bsMemory.location);
         return true;
     }
     else if (id == 4) {
@@ -494,7 +493,7 @@ static bool loadRom(unsigned id) {
             rom = bufToVec(gameinfo.data, gameinfo.size);
 
         if (rom.size() < 0x20000) return false;
-        interface->setRomSufamiTurboA(rom, program->sufamiTurboA.location);
+        interface->setRomSufamiTurboA(rom, sufamiTurboA.location);
         return true;
     }
     else if (id == 5) {
@@ -503,7 +502,7 @@ static bool loadRom(unsigned id) {
 
         std::vector<uint8_t> rom = bufToVec(gameinfo.data, gameinfo.size);
         if (rom.size() < 0x20000) return false;
-        interface->setRomSufamiTurboB(rom, program->sufamiTurboB.location);
+        interface->setRomSufamiTurboB(rom, sufamiTurboB.location);
         return true;
     }
     return false;
@@ -572,7 +571,7 @@ int jg_game_load() {
             return 0;
         }
 
-        program->superFamicom.location = std::string(addoninfo.path);
+        superFamicom.location = std::string(addoninfo.path);
         interface->setRomGB((const uint8_t*)gameinfo.data, gameinfo.size);
         addon = 1;
     }
@@ -583,8 +582,8 @@ int jg_game_load() {
             return 0;
         }
 
-        program->superFamicom.location = std::string(addoninfo.path);
-        program->bsMemory.location = std::string(gameinfo.path);
+        superFamicom.location = std::string(addoninfo.path);
+        bsMemory.location = std::string(gameinfo.path);
         addon = 2;
     }
     else if (ext == "st") {
@@ -595,19 +594,19 @@ int jg_game_load() {
             return 0;
         }
 
-        program->superFamicom.location = std::string(addoninfo.path);
+        superFamicom.location = std::string(addoninfo.path);
 
         if (sufamiinfo.size) {
-            program->sufamiTurboA.location = std::string(sufamiinfo.path);
-            program->sufamiTurboB.location = std::string(gameinfo.path);
+            sufamiTurboA.location = std::string(sufamiinfo.path);
+            sufamiTurboB.location = std::string(gameinfo.path);
         }
         else {
-            program->sufamiTurboA.location = std::string(gameinfo.path);
+            sufamiTurboA.location = std::string(gameinfo.path);
         }
         addon = 3;
     }
     else {
-        program->superFamicom.location = std::string(gameinfo.path);
+        superFamicom.location = std::string(gameinfo.path);
     }
 
     program->load();
