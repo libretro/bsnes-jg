@@ -58,7 +58,7 @@ struct SuperFX : Processor::GSU, Thread {
   void plot(uint8_t x, uint8_t y) override;
   uint8_t rpix(uint8_t x, uint8_t y) override;
 
-  void flushPixelCache(PixelCache& cache);
+  void flushPixelCache(PixelCache&);
 
   //memory.cpp
   uint8_t read(unsigned addr, uint8_t data = 0x00) override;

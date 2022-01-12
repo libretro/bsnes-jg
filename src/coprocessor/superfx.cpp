@@ -141,11 +141,11 @@ uint8_t SuperFX::rpix(uint8_t x, uint8_t y) {
   return data;
 }
 
-void SuperFX::flushPixelCache(PixelCache& cache) {
-  if(cache.bitpend == 0x00) return;
+void SuperFX::flushPixelCache(PixelCache& pcache) {
+  if(pcache.bitpend == 0x00) return;
 
-  uint8_t x = cache.offset << 3;
-  uint8_t y = cache.offset >> 5;
+  uint8_t x = pcache.offset << 3;
+  uint8_t y = pcache.offset >> 5;
 
   unsigned cn = 0;  //character number
   switch(regs.por.obj ? 3 : regs.scmr.ht) {
@@ -160,17 +160,17 @@ void SuperFX::flushPixelCache(PixelCache& cache) {
   for(unsigned n = 0; n < bpp; ++n) {
     unsigned byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
     uint8_t data = 0x00;
-    for(unsigned i = 0; i < 8; ++i) data |= ((cache.data[i] >> n) & 1) << i;
-    if(cache.bitpend != 0xff) {
+    for(unsigned i = 0; i < 8; ++i) data |= ((pcache.data[i] >> n) & 1) << i;
+    if(pcache.bitpend != 0xff) {
       step(regs.clsr ? 5 : 6);
-      data &= cache.bitpend;
-      data |= read(addr + byte) & ~cache.bitpend;
+      data &= pcache.bitpend;
+      data |= read(addr + byte) & ~pcache.bitpend;
     }
     step(regs.clsr ? 5 : 6);
     write(addr + byte, data);
   }
 
-  cache.bitpend = 0x00;
+  pcache.bitpend = 0x00;
 }
 
 uint8_t SuperFX::read(unsigned addr, uint8_t data) {
