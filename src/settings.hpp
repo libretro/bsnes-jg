@@ -67,7 +67,7 @@ struct Configuration {
       unsigned version = 3;
     } ppu2;
     struct Serialization {
-      bool faststates;
+      bool faststates = false;
     } serialization;
   } system;
 
@@ -75,7 +75,6 @@ struct Configuration {
   unsigned entropy = 1; // 0 = None, 1 = Low, 2 = High
   struct CPU {
     unsigned overclock = 100;
-    bool fastMath = false;
   } cpu;
   struct Coprocessor {
     bool delayedSync = true;
