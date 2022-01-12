@@ -60,7 +60,7 @@ std::string Slot::text() const {
   return output;
 }
 
-BSMemory::BSMemory(std::vector<uint8_t>& data, std::string location) : data(data), location(location) {
+BSMemory::BSMemory(std::vector<uint8_t>& dat, std::string loc) : data(dat), location(loc) {
 }
 
 BSMemory::operator bool() const {
@@ -84,8 +84,8 @@ std::string BSMemory::manifest() const {
   return output;
 }
 
-GameBoy::GameBoy(std::vector<uint8_t>& data, std::string location) : data(data), location(location) {
-  headerAddress = data.size() < 0x8000 ? data.size() : data.size() - 0x8000;
+GameBoy::GameBoy(std::vector<uint8_t>& dat, std::string loc) : data(dat), location(loc) {
+  headerAddress = dat.size() < 0x8000 ? dat.size() : dat.size() - 0x8000;
   if(read(0x0104) == 0xce && read(0x0105) == 0xed && read(0x0106) == 0x66 && read(0x0107) == 0x66
   && read(0x0108) == 0xcc && read(0x0109) == 0x0d && read(0x0147) >= 0x0b && read(0x0147) <= 0x0d
   ) {  //MMM01 stores header at bottom of data[]
@@ -374,7 +374,7 @@ std::string GameBoy::manifest() const {
   return output;
 }
 
-SufamiTurbo::SufamiTurbo(std::vector<uint8_t>& data, std::string location) : data(data), location(location) {
+SufamiTurbo::SufamiTurbo(std::vector<uint8_t>& dat, std::string loc) : data(dat), location(loc) {
 }
 
 SufamiTurbo::operator bool() const {
@@ -404,12 +404,12 @@ std::string SufamiTurbo::manifest() const {
   return output;
 }
 
-SuperFamicom::SuperFamicom(std::vector<uint8_t>& data, std::string location) : data(data), location(location) {
+SuperFamicom::SuperFamicom(std::vector<uint8_t>& dat, std::string loc) : data(dat), location(loc) {
   if((size() & 0x7fff) == 512) {
     //remove header if present
-    //nall::memory::move(&data[0], &data[512], size() - 512);
-    //data.resize(size() - 512);
-    data.erase(data.begin(), data.begin() + 512);
+    //nall::memory::move(&dat[0], &dat[512], size() - 512);
+    //dat.resize(size() - 512);
+    dat.erase(dat.begin(), dat.begin() + 512);
   }
 
   if(size() < 0x8000) return;  //ignore images too small to be valid
