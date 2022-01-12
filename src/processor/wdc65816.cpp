@@ -1503,7 +1503,6 @@ void WDC65816::instruction() {
   //m = instructions affected by M flag (1 = 8-bit; 0 = 16-bit)
   //x = instructions affected by X flag (1 = 8-bit; 0 = 16-bit)
 
-  #define opA(id, name, ...) case id: return instruction##name(__VA_ARGS__);
   if(MF) {
     #define opM(id, name, ...) case id: return instruction##name##8(__VA_ARGS__);
     #define m(name) &WDC65816::algorithm##name##8
@@ -1541,7 +1540,6 @@ void WDC65816::instruction() {
     #undef opM
     #undef m
   }
-  #undef opA
 }
 
 void WDC65816::power() {
