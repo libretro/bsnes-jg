@@ -29,7 +29,6 @@
 #include <jg/jg_snes.h>
 
 #include "serializer.hpp"
-#include "cheat.hpp"
 #include "interface.hpp"
 #include "settings.hpp"
 
@@ -100,8 +99,6 @@ enum {
     COPROC_PREFERHLE,
     RSQUAL,
 };
-
-static std::vector<std::string> cheatList;
 
 static int hmult = 2;
 static int vmult = 1;
@@ -731,22 +728,12 @@ void jg_media_insert() {
 }
 
 void jg_cheat_clear() {
-    cheatList.clear();
-    interface->cheats(cheatList);
+    interface->cheatsClear();
 }
 
 void jg_cheat_set(const char *code) {
-    std::string cht = std::string(code);
-    bool decoded = false;
-
-    if (addon == 1)
-        decoded = CheatDecoder::gb(cht);
-    else
-        decoded = CheatDecoder::snes(cht);
-
-    if (decoded) {
-        cheatList.push_back(cht);
-        interface->cheats(cheatList);
+    if (!interface->cheatsDecode(addon, code)) {
+        jg_cb_log(JG_LOG_WRN, "Failed to decode cheat: %s\n", code);
     }
 }
 

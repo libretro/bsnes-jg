@@ -39,7 +39,9 @@ struct Interface {
   serializer serialize(bool = true);
   bool unserialize(serializer&);
 
-  void cheats(const std::vector<std::string>&);
+  void cheatsApply(const std::vector<std::string>&);
+  void cheatsClear();
+  bool cheatsDecode(int, std::string);
   void configure(std::string, int);
 
   bool runAhead();

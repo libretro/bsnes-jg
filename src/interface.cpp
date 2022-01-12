@@ -44,6 +44,8 @@ extern Emulator::Cheat cheat;
 
 Configuration configuration;
 
+static std::vector<std::string> cheatList;
+
 bool Interface::loaded() {
   return system.loaded();
 }
@@ -109,7 +111,7 @@ bool Interface::unserialize(serializer& s) {
   return system.unserialize(s);
 }
 
-void Interface::cheats(const std::vector<std::string>& list) {
+void Interface::cheatsApply(const std::vector<std::string>& list) {
   if(cartridge.has.ICD) {
     icd.cheats.assign(list);
     return;
@@ -164,6 +166,26 @@ void Interface::cheats(const std::vector<std::string>& list) {
 
   //restore ROM write protection
   Memory::GlobalWriteEnable = false;
+}
+
+void Interface::cheatsClear() {
+  cheatList.clear();
+  cheatsApply(cheatList);
+}
+
+bool Interface::cheatsDecode(int sys, std::string code) {
+  bool decoded = false;
+  if (sys == 1) // Game Boy
+    decoded = CheatDecoder::gb(code);
+  else // Other
+    decoded = CheatDecoder::snes(code);
+
+  if (decoded) {
+    cheatList.push_back(code);
+    cheatsApply(cheatList);
+  }
+
+  return decoded;
 }
 
 bool Interface::runAhead() {
