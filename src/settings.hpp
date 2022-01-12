@@ -89,17 +89,12 @@ struct Configuration {
   struct SuperFX {
     unsigned overclock = 100;
   } superfx;
-};
 
-extern Configuration configuration;
-
-struct Settings {
   unsigned controllerPort1 = ID::Device::Gamepad;
   unsigned controllerPort2 = ID::Device::Gamepad;
   unsigned expansionPort = ID::Device::None;
-  bool random = true;
 };
 
-extern Settings settings;
+extern Configuration configuration;
 
 }

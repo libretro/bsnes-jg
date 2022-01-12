@@ -41,7 +41,6 @@ namespace SuperFamicom {
 
 extern Emulator::Cheat cheat;
 
-Settings settings;
 Configuration configuration;
 
 bool Interface::loaded() {
@@ -62,16 +61,16 @@ void Interface::unload() {
 }
 
 unsigned Interface::connected(unsigned port) {
-  if(port == ID::Port::Controller1) return settings.controllerPort1;
-  if(port == ID::Port::Controller2) return settings.controllerPort2;
-  if(port == ID::Port::Expansion) return settings.expansionPort;
+  if(port == ID::Port::Controller1) return configuration.controllerPort1;
+  if(port == ID::Port::Controller2) return configuration.controllerPort2;
+  if(port == ID::Port::Expansion) return configuration.expansionPort;
   return 0;
 }
 
 void Interface::connect(unsigned port, unsigned device) {
-  if(port == ID::Port::Controller1) controllerPort1.connect(settings.controllerPort1 = device);
-  if(port == ID::Port::Controller2) controllerPort2.connect(settings.controllerPort2 = device);
-  if(port == ID::Port::Expansion) expansionPort.connect(settings.expansionPort = device);
+  if(port == ID::Port::Controller1) controllerPort1.connect(configuration.controllerPort1 = device);
+  if(port == ID::Port::Controller2) controllerPort2.connect(configuration.controllerPort2 = device);
+  if(port == ID::Port::Expansion) expansionPort.connect(configuration.expansionPort = device);
 }
 
 void Interface::power() {
