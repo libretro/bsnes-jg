@@ -127,8 +127,8 @@ void ARM7TDMI::store(unsigned mode, uint32_t address, uint32_t word) {
   return set(Store | mode, address, word);
 }
 
-uint32_t ARM7TDMI::ADD(uint32_t source, uint32_t modify, bool carry) {
-  uint32_t result = source + modify + carry;
+uint32_t ARM7TDMI::ADD(uint32_t source, uint32_t modify, bool flagc) {
+  uint32_t result = source + modify + flagc;
   if(cpsr().t || (opcode & 1 << 20)) {
     uint32_t overflow = ~(source ^ modify) & (source ^ result);
     cpsr().v = 1 << 31 & (overflow);
@@ -198,8 +198,8 @@ uint32_t ARM7TDMI::RRX(uint32_t source) {
   return cpsr().c << 31 | source >> 1;
 }
 
-uint32_t ARM7TDMI::SUB(uint32_t source, uint32_t modify, bool carry) {
-  return ADD(source, ~modify, carry);
+uint32_t ARM7TDMI::SUB(uint32_t source, uint32_t modify, bool flagc) {
+  return ADD(source, ~modify, flagc);
 }
 
 bool ARM7TDMI::TST(uint8_t mode) {
