@@ -27,10 +27,10 @@
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
 
-#include "src/serializer.hpp"
-#include "src/cheat.hpp"
-#include "src/interface.hpp"
-#include "src/settings.hpp"
+#include "serializer.hpp"
+#include "cheat.hpp"
+#include "interface.hpp"
+#include "settings.hpp"
 
 #include "gamedb.hpp"
 

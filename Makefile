@@ -18,7 +18,7 @@ CPPFLAGS_SPC := -DNDEBUG
 PKGCONF ?= pkg-config
 CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
 
-INCLUDES := -I$(SOURCEDIR)/deps
+INCLUDES := -I$(SOURCEDIR)/deps -I$(SOURCEDIR)/src
 WARNINGS := -Wall -Wshadow
 WARNINGS_BML := -Wall -Wextra -Wshadow -pedantic
 WARNINGS_CO := -Wall -Wextra -Wshadow -Wmissing-prototypes
