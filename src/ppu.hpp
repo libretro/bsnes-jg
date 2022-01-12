@@ -466,10 +466,7 @@ struct Window {
     } above, below;
   } output;
 
-  struct {
-    unsigned x;
-  };
-
+  unsigned x;
   friend struct PPU;
 };
 
