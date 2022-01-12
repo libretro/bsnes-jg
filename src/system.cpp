@@ -190,8 +190,8 @@ void System::run() {
 }
 
 void System::runToSave() {
-  static const std::string headerTitle = cartridge.headerTitle();
-  static std::string method = configuration.system.serialization.method;
+  const std::string headerTitle = cartridge.headerTitle();
+  bool method = configuration.system.serialization.faststates;
 
   //these games will periodically deadlock when using "Fast" synchronization
   if(headerTitle == "MEGAMAN X3"
@@ -199,11 +199,11 @@ void System::runToSave() {
       || headerTitle == "Star Ocean"
       || headerTitle == "SUPER MARIO RPG"
       || headerTitle == "TALES OF PHANTASIA")
-    method = "Strict";
+    method = 0;
 
   scheduler.mode = Scheduler::Mode::Synchronize;
 
-  method == "Fast" ? runToSaveFast() : runToSaveStrict();
+  method ? runToSaveFast() : runToSaveStrict();
 
   scheduler.mode = Scheduler::Mode::Run;
   scheduler.active = cpu.thread;

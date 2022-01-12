@@ -69,7 +69,7 @@ struct Configuration {
       unsigned version = 3;
     } ppu2;
     struct Serialization {
-      std::string method = "Strict";
+      bool faststates;
     } serialization;
   } system;
 
