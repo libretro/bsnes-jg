@@ -38,12 +38,12 @@ void ArmDSP::sleep() {
 uint32_t ArmDSP::get(unsigned mode, uint32_t addr) {
   step(1);
 
-  static auto memory = [&](const uint8_t* memory, unsigned mode, uint32_t addr) -> uint32_t {
-    if(mode & Word) {
-      memory += addr & ~3;
-      return memory[0] << 0 | memory[1] << 8 | memory[2] << 16 | memory[3] << 24;
-    } else if(mode & Byte) {
-      return memory[addr];
+  static auto memory = [&](const uint8_t* mem, unsigned _mode, uint32_t _addr) -> uint32_t {
+    if(_mode & Word) {
+      mem += _addr & ~3;
+      return mem[0] << 0 | mem[1] << 8 | mem[2] << 16 | mem[3] << 24;
+    } else if(_mode & Byte) {
+      return mem[_addr];
     } else {
       return 0;  //should never occur
     }
@@ -79,16 +79,16 @@ uint32_t ArmDSP::get(unsigned mode, uint32_t addr) {
 void ArmDSP::set(unsigned mode, uint32_t addr, uint32_t word) {
   step(1);
 
-  static auto memory = [](uint8_t *memory, unsigned mode, uint32_t addr, uint32_t word) {
-    if(mode & Word) {
-      memory += addr & ~3;
-      *memory++ = word >>  0;
-      *memory++ = word >>  8;
-      *memory++ = word >> 16;
-      *memory++ = word >> 24;
-    } else if(mode & Byte) {
-      memory += addr;
-      *memory++ = word >>  0;
+  static auto memory = [](uint8_t *mem, unsigned _mode, uint32_t _addr, uint32_t shrt) {
+    if(_mode & Word) {
+      mem += _addr & ~3;
+      *mem++ = shrt >>  0;
+      *mem++ = shrt >>  8;
+      *mem++ = shrt >> 16;
+      *mem++ = shrt >> 24;
+    } else if(_mode & Byte) {
+      mem += _addr;
+      *mem++ = shrt >>  0;
     }
   };
 
