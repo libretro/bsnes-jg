@@ -38,7 +38,7 @@ template<typename R, typename... P> struct bfunction<auto (P...) -> R> {
   };
 
   bfunction() {}
-  template<typename C> bfunction(auto (C::*bfunction)(P...) -> R, C* object) { callback = new member<C>(bfunction, object); }
+  template<typename C> bfunction(auto (C::*_bfunction)(P...) -> R, C* object) { callback = new member<C>(_bfunction, object); }
   template<typename L, typename = std::enable_if_t<is_compatible<L>::value>> bfunction(const L& object) { callback = new lambda<L>(object); }
   ~bfunction() { if(callback) delete callback; }
 
@@ -68,13 +68,13 @@ private:
     C* object;
     auto operator()(P... p) const -> R { return (object->*bfunction)(std::forward<P>(p)...); }
     container* copy() const { return new member(bfunction, object); }
-    member(auto (C::*bfunction)(P...) -> R, C* object) : bfunction(bfunction), object(object) {}
+    member(auto (C::*_bfunction)(P...) -> R, C* obj) : bfunction(_bfunction), object(obj) {}
   };
 
   template<typename L> struct lambda : container {
     mutable L object;
     auto operator()(P... p) const -> R { return object(std::forward<P>(p)...); }
     container* copy() const { return new lambda(object); }
-    lambda(const L& object) : object(object) {}
+    lambda(const L& obj) : object(obj) {}
   };
 };
