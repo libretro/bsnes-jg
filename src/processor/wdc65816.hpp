@@ -60,7 +60,7 @@ struct WDC65816 {
 
     uint32_t d;
     struct { uint16_t order_lsb2(w, x); } r24_lsb2;
-    struct {  uint8_t order_lsb4(l, h, b, y); };
+    struct { uint8_t order_lsb4(l, h, b, y); } r24_lsb4;
   };
 
   //wdc65816.cpp

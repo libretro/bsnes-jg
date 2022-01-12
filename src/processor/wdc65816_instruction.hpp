@@ -74,7 +74,7 @@ switch(fetch()) {
   opM(0x48, Push, A)
   opM(0x49, ImmediateRead, m(EOR))
   opM(0x4a, ImpliedModify, m(LSR), A)
-  opA(0x4b, Push8, (r16)PC.b)
+  opA(0x4b, Push8, (r16)PC.r24_lsb4.b)
   opA(0x4c, JumpShort)
   opM(0x4d, BankRead, m(EOR))
   opM(0x4e, BankModify, m(LSR))

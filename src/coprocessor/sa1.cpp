@@ -1232,9 +1232,9 @@ void SA1::main() {
 void SA1::interrupt() {
   read(r.pc.d);
   idle();
-  if(!r.e) push(r.pc.b);
-  push(r.pc.h);
-  push(r.pc.l);
+  if(!r.e) push(r.pc.r24_lsb4.b);
+  push(r.pc.r24_lsb4.h);
+  push(r.pc.r24_lsb4.l);
   push(r.e ? r.p & ~0x10 : r.p);
   r.p.i = 1;
   r.p.d = 0;
