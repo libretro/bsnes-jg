@@ -33,7 +33,7 @@ namespace SuperFamicom {
 struct Decompressor {
   SPC7110& spc7110;
 
-  Decompressor(SPC7110& spc7110) : spc7110(spc7110) {}
+  Decompressor(SPC7110& _spc7110) : spc7110(_spc7110) {}
 
   uint8_t read() {
     return spc7110.dataromRead(offset++);
