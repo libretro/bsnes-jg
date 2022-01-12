@@ -59,10 +59,10 @@ struct ARM7TDMI {
 
   //memory.cpp
   void idle();
-  uint32_t read(unsigned mode, uint32_t address);
-  uint32_t load(unsigned mode, uint32_t address);
-  void write(unsigned mode, uint32_t address, uint32_t word);
-  void store(unsigned mode, uint32_t address, uint32_t word);
+  uint32_t read(unsigned, uint32_t);
+  uint32_t load(unsigned, uint32_t);
+  void write(unsigned, uint32_t, uint32_t);
+  void store(unsigned, uint32_t, uint32_t);
 
   //algorithms.cpp
   uint32_t ADD(uint32_t, uint32_t, bool);
@@ -79,13 +79,13 @@ struct ARM7TDMI {
   //instruction.cpp
   void fetch();
   void instruction();
-  void exception(unsigned mode, uint32_t address);
+  void exception(unsigned, uint32_t);
   void armInitialize();
   void thumbInitialize();
 
   //instructions-arm.cpp
-  void armALU(uint8_t mode, uint8_t target, uint8_t source, uint32_t data);
-  void armMoveToStatus(uint8_t field, uint8_t source, uint32_t data);
+  void armALU(uint8_t, uint8_t, uint8_t, uint32_t);
+  void armMoveToStatus(uint8_t, uint8_t, uint32_t);
 
   void armInstructionBranch(uint32_t, uint8_t);
   void armInstructionBranchExchangeRegister(uint8_t);
@@ -105,7 +105,7 @@ struct ARM7TDMI {
   void armInstructionMoveToStatusFromRegister(uint8_t, uint8_t, uint8_t);
   void armInstructionMultiply(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
   void armInstructionMultiplyLong(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
-  void armInstructionSoftwareInterrupt(uint32_t immediate);
+  void armInstructionSoftwareInterrupt(uint32_t);
   void armInstructionUndefined();
 
   //instructions-thumb.cpp
