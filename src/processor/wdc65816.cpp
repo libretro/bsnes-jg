@@ -1503,42 +1503,18 @@ void WDC65816::instruction() {
   //m = instructions affected by M flag (1 = 8-bit; 0 = 16-bit)
   //x = instructions affected by X flag (1 = 8-bit; 0 = 16-bit)
 
-  if(MF) {
-    #define opM(id, name, ...) case id: return instruction##name##8(__VA_ARGS__);
-    #define m(name) &WDC65816::algorithm##name##8
-    if(XF) {
-      #define opX(id, name, ...) case id: return instruction##name##8(__VA_ARGS__);
-      #define x(name) &WDC65816::algorithm##name##8
-      #include "wdc65816_instruction.hpp"
-      #undef opX
-      #undef x
-    } else {
-      #define opX(id, name, ...) case id: return instruction##name##16(__VA_ARGS__);
-      #define x(name) &WDC65816::algorithm##name##16
-      #include "wdc65816_instruction.hpp"
-      #undef opX
-      #undef x
-    }
-    #undef opM
-    #undef m
+  if(XF) {
+    #define opX(id, name, ...) case id: return instruction##name##8(__VA_ARGS__);
+    #define x(name) &WDC65816::algorithm##name##8
+    #include "wdc65816_instruction.hpp"
+    #undef opX
+    #undef x
   } else {
-    #define opM(id, name, ...) case id: return instruction##name##16(__VA_ARGS__);
-    #define m(name) &WDC65816::algorithm##name##16
-    if(XF) {
-      #define opX(id, name, ...) case id: return instruction##name##8(__VA_ARGS__);
-      #define x(name) &WDC65816::algorithm##name##8
-      #include "wdc65816_instruction.hpp"
-      #undef opX
-      #undef x
-    } else {
-      #define opX(id, name, ...) case id: return instruction##name##16(__VA_ARGS__);
-      #define x(name) &WDC65816::algorithm##name##16
-      #include "wdc65816_instruction.hpp"
-      #undef opX
-      #undef x
-    }
-    #undef opM
-    #undef m
+    #define opX(id, name, ...) case id: return instruction##name##16(__VA_ARGS__);
+    #define x(name) &WDC65816::algorithm##name##16
+    #include "wdc65816_instruction.hpp"
+    #undef opX
+    #undef x
   }
 }
 
