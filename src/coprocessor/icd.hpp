@@ -30,6 +30,7 @@ struct ICD : Thread {
 
   inline unsigned pathID() const { return information.pathID; }
 
+  void setOpenCallback(std::ifstream (*)(unsigned, std::string));
   void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
 
   void synchronizeCPU();
@@ -109,6 +110,8 @@ private:
   struct Information {
     unsigned pathID = 0;
   } information;
+
+  std::ifstream (*openCallback)(unsigned, std::string);
 
 public:
   uint32_t bitmap[160 * 144];

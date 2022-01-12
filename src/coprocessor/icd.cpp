@@ -417,7 +417,7 @@ bool ICD::load() {
   cartridge.information.sha256 = sha256_digest(romdata, romsize).c_str();
   GB_load_rom_from_buffer(&sameboy, romdata, romsize);
 
-  std::ifstream sramfile = Emulator::platform->fopen(pathID(), "save.ram");
+  std::ifstream sramfile = openCallback(pathID(), "save.ram");
   if (sramfile.is_open()) {
     std::vector<char> sram((std::istreambuf_iterator<char>(sramfile)),
       (std::istreambuf_iterator<char>()));
@@ -481,6 +481,10 @@ void ICD::power(bool reset) {
 void ICD::setRom(const uint8_t *data, size_t size) {
   romdata = data;
   romsize = size;
+}
+
+void ICD::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
+  openCallback = cb;
 }
 
 void ICD::setWriteCallback(void (*cb)(unsigned, std::string, const uint8_t*, unsigned)) {

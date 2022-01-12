@@ -42,7 +42,6 @@ struct Platform {
   };
 
   virtual ~Platform() {};
-  virtual std::ifstream fopen(unsigned id, std::string name) { return {}; }
 };
 
 extern Platform* platform;

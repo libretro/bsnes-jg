@@ -35,6 +35,7 @@ struct Cartridge {
 
   void serialize(serializer&);
 
+  void setOpenCallback(std::ifstream (*)(unsigned, std::string));
   void setRomCallback(bool (*)(unsigned));
   void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
 
@@ -142,6 +143,7 @@ private:
   void saveEpsonRTC(std::string);
   void saveSharpRTC(std::string);
 
+  std::ifstream (*openCallback)(unsigned, std::string);
   bool (*romCallback)(unsigned);
   void (*writeCallback)(unsigned, std::string, const uint8_t*, unsigned);
 

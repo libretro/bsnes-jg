@@ -20,6 +20,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <fstream>
 #include <vector>
 
 #include "serializer.hpp"
@@ -28,6 +29,7 @@
 #include "cheat.hpp"
 #include "controller.hpp"
 #include "coprocessor/icd.hpp"
+#include "coprocessor/msu1.hpp"
 #include "expansion/expansion.hpp"
 #include "ppu.hpp"
 #include "settings.hpp"
@@ -184,6 +186,12 @@ void Interface::setAudioQuality(unsigned rsqual) {
 
 void Interface::setInputCallback(int16_t (*cb)(unsigned, unsigned, unsigned)) {
   setInputPoll(cb);
+}
+
+void Interface::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
+  cartridge.setOpenCallback(cb);
+  icd.setOpenCallback(cb);
+  msu1.setOpenCallback(cb);
 }
 
 void Interface::setRomCallback(bool (*cb)(unsigned)) {

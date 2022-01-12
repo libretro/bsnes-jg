@@ -73,7 +73,7 @@ std::string Cartridge::loadBoard(std::string node) {
   if (node.find("EA-") == 0) node.replace(0, 3, "SHVC-");
   if (node.find("WEI-") == 0) node.replace(0, 4, "SHVC-");
 
-  std::ifstream boardsfile = Emulator::platform->fopen(ID::System, "boards.bml");
+  std::ifstream boardsfile = openCallback(ID::System, "boards.bml");
   if (boardsfile.is_open()) {
     std::string boards((std::istreambuf_iterator<char>(boardsfile)),
       (std::istreambuf_iterator<char>()));
@@ -152,7 +152,7 @@ void Cartridge::loadCartridge(std::string node) {
   }
 
   std::ifstream msu1file =
-    Emulator::platform->fopen(ID::SuperFamicom, "msu1/data.rom");
+    openCallback(ID::SuperFamicom, "msu1/data.rom");
   if (msu1file.is_open()) {
     msu1file.close();
     loadMSU1();
@@ -186,7 +186,7 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
       if(auto memory = Emulator::Game::Memory(m)) {
         sufamiturboA.ram.allocate(memory.size);
         std::ifstream sramfile =
-          Emulator::platform->fopen(sufamiturboA.pathID, "save.ram");
+          openCallback(sufamiturboA.pathID, "save.ram");
         if (sramfile.is_open()) {
           sramfile.read((char*)sufamiturboA.ram.data(), memory.size);
           sramfile.close();
@@ -213,7 +213,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
       if(auto memory = Emulator::Game::Memory(m)) {
         sufamiturboB.ram.allocate(memory.size);
         std::ifstream sramfile =
-          Emulator::platform->fopen(sufamiturboB.pathID, "save.ram");
+          openCallback(sufamiturboB.pathID, "save.ram");
         if (sramfile.is_open()) {
           sramfile.read((char*)sufamiturboB.ram.data(), memory.size);
           sramfile.close();
@@ -277,7 +277,7 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
       return;
     }
 
-    std::ifstream memfile = Emulator::platform->fopen(pathID(), memory->name());
+    std::ifstream memfile = openCallback(pathID(), memory->name());
     if (memfile.is_open()) {
       memfile.seekg(0, memfile.end);
       unsigned fsize = memfile.tellg();
@@ -546,7 +546,7 @@ void Cartridge::loadARMDSP(std::string node) {
 
     if (type == "ROM" && content == "Program" && arch == "ARM6") {
       if(auto file = game.memory(m)) {
-        std::ifstream firmfile = Emulator::platform->fopen(ID::SuperFamicom, file->name());
+        std::ifstream firmfile = openCallback(ID::SuperFamicom, file->name());
         if (firmfile.is_open()) {
           firmfile.read((char*)armdsp.programROM, (128 * 1024));
           firmfile.close();
@@ -556,7 +556,7 @@ void Cartridge::loadARMDSP(std::string node) {
 
     if (type == "ROM" && content == "Data" && arch == "ARM6") {
       if(auto file = game.memory(m)) {
-        std::ifstream firmfile = Emulator::platform->fopen(ID::SuperFamicom, file->name());
+        std::ifstream firmfile = openCallback(ID::SuperFamicom, file->name());
         if (firmfile.is_open()) {
           firmfile.read((char*)armdsp.dataROM, (32 * 1024));
           firmfile.close();
@@ -566,7 +566,7 @@ void Cartridge::loadARMDSP(std::string node) {
 
     if (type == "RAM" && content == "Data" && arch == "ARM6") {
       if(auto file = game.memory(m)) {
-        std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
+        std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
         if (sramfile.is_open()) {
           sramfile.read((char*)armdsp.programRAM, (16 * 1024));
           sramfile.close();
@@ -647,7 +647,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
     }
     else if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
       if(auto file = game.memory(m)) {
-        std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
+        std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
         if (sramfile.is_open()) {
           sramfile.read((char*)hitachidsp.dataRAM, (3 * 1024));
           sramfile.close();
@@ -691,7 +691,7 @@ void Cartridge::loaduPD7725(std::string node) {
 
   bool failed = false;
 
-  std::ifstream prgfile = Emulator::platform->fopen(ID::SuperFamicom, pname);
+  std::ifstream prgfile = openCallback(ID::SuperFamicom, pname);
   if (prgfile.is_open()) {
     for (unsigned i = 0; i < 2048; ++i) {
       uint8_t a = prgfile.get(); uint8_t b = prgfile.get(); uint8_t c = prgfile.get();
@@ -703,7 +703,7 @@ void Cartridge::loaduPD7725(std::string node) {
     failed = true;
   }
 
-  std::ifstream datafile = Emulator::platform->fopen(ID::SuperFamicom, dname);
+  std::ifstream datafile = openCallback(ID::SuperFamicom, dname);
   if (datafile.is_open()) {
     for (unsigned i = 0; i < 1024; ++i) {
       uint8_t a = datafile.get(); uint8_t b = datafile.get();
@@ -747,7 +747,7 @@ void Cartridge::loaduPD7725(std::string node) {
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
     if (type == "RAM" && content == "Data" && arch == "uPD7725") {
-      std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
+      std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
       if (sramfile.is_open()) {
         sramfile.read((char*)necdsp.dataRAM, 2 * 256);
         sramfile.close();
@@ -784,7 +784,7 @@ void Cartridge::loaduPD96050(std::string node) {
 
   bool failed = false;
 
-  std::ifstream prgfile = Emulator::platform->fopen(ID::SuperFamicom, pname);
+  std::ifstream prgfile = openCallback(ID::SuperFamicom, pname);
   if (prgfile.is_open()) {
     for (unsigned i = 0; i < 16384; ++i) {
       uint8_t a = prgfile.get(); uint8_t b = prgfile.get(); uint8_t c = prgfile.get();
@@ -796,7 +796,7 @@ void Cartridge::loaduPD96050(std::string node) {
     failed = true;
   }
 
-  std::ifstream datafile = Emulator::platform->fopen(ID::SuperFamicom, dname);
+  std::ifstream datafile = openCallback(ID::SuperFamicom, dname);
   if (datafile.is_open()) {
     for (unsigned i = 0; i < 2048; ++i) {
       uint8_t a = datafile.get(); uint8_t b = datafile.get();
@@ -830,7 +830,7 @@ void Cartridge::loaduPD96050(std::string node) {
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
     if (type == "RAM" && content == "Data" && arch == "uPD96050") {
-      std::ifstream sramfile = Emulator::platform->fopen(ID::SuperFamicom, "save.ram");
+      std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
       if (sramfile.is_open()) {
         for (unsigned i = 0; i < 2048; ++i) {
           uint8_t a = sramfile.get(); uint8_t b = sramfile.get();
@@ -865,7 +865,7 @@ void Cartridge::loadEpsonRTC(std::string node) {
 
   std::string memory = BML::searchNode(node, {"rtc", "memory"});
   if(auto file = game.memory(memory)) {
-    std::ifstream rtcfile = Emulator::platform->fopen(ID::SuperFamicom, "time.rtc");
+    std::ifstream rtcfile = openCallback(ID::SuperFamicom, "time.rtc");
     if (rtcfile.is_open()) {
       uint8_t data[16] = {0};
       for(auto& byte : data) byte = rtcfile.get();
@@ -886,7 +886,7 @@ void Cartridge::loadSharpRTC(std::string node) {
 
   std::string memory = BML::searchNode(node, {"rtc", "memory"});
   if(auto file = game.memory(memory)) {
-    std::ifstream rtcfile = Emulator::platform->fopen(ID::SuperFamicom, "time.rtc");
+    std::ifstream rtcfile = openCallback(ID::SuperFamicom, "time.rtc");
     if (rtcfile.is_open()) {
       uint8_t data[16] = {0};
       for(auto& byte : data) byte = rtcfile.get();
@@ -1371,7 +1371,7 @@ void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   slotBSMemory.prgrom = data;
   auto heuristics = Heuristics::BSMemory(data, loc);
 
-  std::ifstream dbfile = Emulator::platform->fopen(ID::System, "BS Memory.bml");
+  std::ifstream dbfile = openCallback(ID::System, "BS Memory.bml");
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
@@ -1385,7 +1385,7 @@ void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc)
   auto heuristics = Heuristics::SufamiTurbo(data, loc);
 
   std::ifstream dbfile =
-    Emulator::platform->fopen(ID::System, "Sufami Turbo.bml");
+    openCallback(ID::System, "Sufami Turbo.bml");
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
@@ -1402,7 +1402,7 @@ void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
   auto heuristics = Heuristics::SufamiTurbo(data, loc);
 
   std::ifstream dbfile =
-    Emulator::platform->fopen(ID::System, "Sufami Turbo.bml");
+    openCallback(ID::System, "Sufami Turbo.bml");
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
@@ -1418,7 +1418,7 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
   auto heuristics = Heuristics::SuperFamicom(data, loc);
 
   std::ifstream dbfile =
-    Emulator::platform->fopen(ID::System, "Super Famicom.bml");
+    openCallback(ID::System, "Super Famicom.bml");
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
   dbfile.close();
@@ -1467,6 +1467,10 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
 void Cartridge::unload() {
   rom.reset();
   ram.reset();
+}
+
+void Cartridge::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
+  openCallback = cb;
 }
 
 void Cartridge::setRomCallback(bool (*cb)(unsigned)) {

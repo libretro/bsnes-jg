@@ -25,6 +25,8 @@
 namespace SuperFamicom {
 
 struct MSU1 : Thread {
+  void setOpenCallback(std::ifstream (*)(unsigned, std::string));
+
   void synchronizeCPU();
   static void Enter();
   void main();
@@ -72,6 +74,8 @@ private:
     bool audioBusy;
     bool dataBusy;
   } io;
+
+  std::ifstream (*openCallback)(unsigned, std::string);
 };
 
 extern MSU1 msu1;

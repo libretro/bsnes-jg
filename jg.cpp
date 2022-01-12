@@ -115,8 +115,6 @@ struct Program : Emulator::Platform {
     Program();
     ~Program() override;
 
-    std::ifstream fopen(unsigned id, std::string name) override;
-
     void load();
     void save();
 };
@@ -145,7 +143,7 @@ void Program::load() {
     interface->load();
 }
 
-std::ifstream Program::fopen(unsigned id, std::string name) {
+std::ifstream fileOpen(unsigned id, std::string name) {
     std::string path;
     bool required = false;
 
@@ -535,6 +533,7 @@ int jg_init() {
     interface = new SuperFamicom::Interface;
     program = new Program;
     interface->setInputCallback(&pollInput);
+    interface->setOpenCallback(&fileOpen);
     interface->setRomCallback(&loadRom);
     interface->setWriteCallback(&fileWrite);
 
