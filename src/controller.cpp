@@ -39,10 +39,10 @@ struct Gamepad : Controller {
     Up, Down, Left, Right, B, A, Y, X, L, R, Select, Start,
   };
 
-  Gamepad(unsigned port);
+  Gamepad(unsigned);
 
   uint8_t data();
-  void latch(bool data);
+  void latch(bool);
 
 private:
   bool latched;
@@ -58,10 +58,10 @@ struct Justifier : Controller {
     X, Y, Trigger, Start,
   };
 
-  Justifier(unsigned port, bool chained);
+  Justifier(unsigned, bool);
 
   uint8_t data() override;
-  void latch(bool data) override;
+  void latch(bool) override;
   void latch() override;
 
 private:
@@ -85,10 +85,10 @@ struct Mouse : Controller {
     X, Y, Left, Right,
   };
 
-  Mouse(unsigned port);
+  Mouse(unsigned);
 
   uint8_t data();
-  void latch(bool data);
+  void latch(bool);
 
 private:
   bool latched;
@@ -108,10 +108,10 @@ struct SuperMultitap : Controller {
     Up, Down, Left, Right, B, A, Y, X, L, R, Select, Start,
   };
 
-  SuperMultitap(unsigned port);
+  SuperMultitap(unsigned);
 
   uint8_t data();
-  void latch(bool data);
+  void latch(bool);
 
 private:
   bool latched;
@@ -130,10 +130,10 @@ struct SuperScope : Controller {
     X, Y, Trigger, Cursor, Turbo, Pause,
   };
 
-  SuperScope(unsigned port);
+  SuperScope(unsigned);
 
   uint8_t data() override;
-  void latch(bool data) override;
+  void latch(bool) override;
   void latch() override;
 
 private:
