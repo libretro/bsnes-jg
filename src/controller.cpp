@@ -475,22 +475,22 @@ uint8_t SuperMultitap::data() {
     b = 3;  //controller 5
   }
 
-  auto& A = gamepads[a];
-  auto& B = gamepads[b];
+  auto& padA = gamepads[a];
+  auto& padB = gamepads[b];
 
   switch(counter) {
-  case  0: return A.b << 0 | B.b << 1;
-  case  1: return A.y << 0 | B.y << 1;
-  case  2: return A.select << 0 | B.select << 1;
-  case  3: return A.start << 0 | B.start << 1;
-  case  4: return (A.up & !A.down) << 0 | (B.up & !B.down) << 1;
-  case  5: return (A.down & !A.up) << 0 | (B.down & !B.up) << 1;
-  case  6: return (A.left & !A.right) << 0 | (B.left & !B.right) << 1;
-  case  7: return (A.right & !A.left) << 0 | (B.right & !B.left) << 1;
-  case  8: return A.a << 0 | B.a << 1;
-  case  9: return A.x << 0 | B.x << 1;
-  case 10: return A.l << 0 | B.l << 1;
-  case 11: return A.r << 0 | B.r << 1;
+  case  0: return padA.b << 0 | padB.b << 1;
+  case  1: return padA.y << 0 | padB.y << 1;
+  case  2: return padA.select << 0 | padB.select << 1;
+  case  3: return padA.start << 0 | padB.start << 1;
+  case  4: return (padA.up & !padA.down) << 0 | (padB.up & !padB.down) << 1;
+  case  5: return (padA.down & !padA.up) << 0 | (padB.down & !padB.up) << 1;
+  case  6: return (padA.left & !padA.right) << 0 | (padB.left & !padB.right) << 1;
+  case  7: return (padA.right & !padA.left) << 0 | (padB.right & !padB.left) << 1;
+  case  8: return padA.a << 0 | padB.a << 1;
+  case  9: return padA.x << 0 | padB.x << 1;
+  case 10: return padA.l << 0 | padB.l << 1;
+  case 11: return padA.r << 0 | padB.r << 1;
   }
   return 0; // unreachable
 }
