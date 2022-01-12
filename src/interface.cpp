@@ -186,6 +186,10 @@ void Interface::setInputCallback(int16_t (*cb)(unsigned, unsigned, unsigned)) {
   setInputPoll(cb);
 }
 
+void Interface::setRomCallback(bool (*cb)(unsigned)) {
+  cartridge.setRomCallback(cb);
+}
+
 void Interface::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   cartridge.setRomBSMemory(data, loc);
 }

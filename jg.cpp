@@ -115,18 +115,11 @@ struct Program : Emulator::Platform {
     Program();
     ~Program() override;
 
-    Emulator::Platform::Load load(unsigned id, std::string name,
-        std::string type, std::vector<std::string> options = {}) override;
     std::ifstream fopen(unsigned id, std::string name) override;
     void write(unsigned id, std::string name, const uint8_t *data,
         unsigned size) override;
 
     void load();
-    bool loadSuperFamicom(std::string location);
-    bool loadBSMemory(std::string location);
-    bool loadSufamiTurboA(std::string location);
-    bool loadSufamiTurboB(std::string location);
-
     void save();
 
 public:
@@ -153,34 +146,6 @@ void Program::save() {
 void Program::load() {
     interface->unload();
     interface->load();
-}
-
-Emulator::Platform::Load Program::load(unsigned id, std::string name,
-    std::string type, std::vector<std::string> options) {
-
-    if (id == 1) {
-        if (loadSuperFamicom(superFamicom.location)) {
-            return {id, "Auto"};
-        }
-    }
-    else if (id == 2) {
-    }
-    else if (id == 3) {
-        if (loadBSMemory(bsMemory.location)) {
-            return { id, "" };
-        }
-    }
-    else if (id == 4) {
-        if (loadSufamiTurboA(sufamiTurboA.location)) {
-            return { id, "" };
-        }
-    }
-    else if (id == 5) {
-        if (loadSufamiTurboB(sufamiTurboB.location)) {
-            return { id, "" };
-        }
-    }
-    return { id, "" };
 }
 
 std::ifstream Program::fopen(unsigned id, std::string name) {
@@ -488,7 +453,7 @@ static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
     return port > 1 ? 0 : input_device[port]->button[imap[input]];
 }
 
-static std::vector<uint8_t> loadFile(void *data, size_t size) {
+static inline std::vector<uint8_t> bufToVec(void *data, size_t size) {
     uint8_t *buf = (uint8_t*)data;
     std::vector<uint8_t> ret;
 
@@ -498,54 +463,52 @@ static std::vector<uint8_t> loadFile(void *data, size_t size) {
     return ret;
 }
 
-bool Program::loadSuperFamicom(std::string location) {
-    std::vector<uint8_t> rom = addon ?
-        loadFile(addoninfo.data, addoninfo.size) :
-        loadFile(gameinfo.data, gameinfo.size);
+static bool loadRom(unsigned id) {
+    if (id == 1) {
+        std::vector<uint8_t> rom = addon ?
+        bufToVec(addoninfo.data, addoninfo.size) :
+        bufToVec(gameinfo.data, gameinfo.size);
 
-    if (rom.size() < 0x8000) return false;
+        if (rom.size() < 0x8000) return false;
 
-    //assume ROM and IPS agree on whether a copier header is present
-    //superFamicom.patched = applyPatchIPS(rom, location);
-    if ((rom.size() & 0x7fff) == 512) {
-        //remove copier header
-        rom.erase(rom.begin(), rom.begin() + 512);
+        //assume ROM and IPS agree on whether a copier header is present
+        //superFamicom.patched = applyPatchIPS(rom, location);
+        if ((rom.size() & 0x7fff) == 512) {
+            //remove copier header
+            rom.erase(rom.begin(), rom.begin() + 512);
+        }
+
+        interface->setRomSuperFamicom(rom, program->superFamicom.location);
+        return true;
     }
+    else if (id == 3) {
+        std::vector<uint8_t> rom = bufToVec(gameinfo.data, gameinfo.size);
+        if (rom.size() < 0x8000) return false;
+        interface->setRomBSMemory(rom, program->bsMemory.location);
+        return true;
+    }
+    else if (id == 4) {
+        std::vector<uint8_t> rom;
 
-    interface->setRomSuperFamicom(rom, location);
-    return true;
-}
+        if (sufamiinfo.size)
+            rom = bufToVec(sufamiinfo.data, sufamiinfo.size);
+        else
+            rom = bufToVec(gameinfo.data, gameinfo.size);
 
-bool Program::loadBSMemory(std::string location) {
-    std::vector<uint8_t> rom;
-    rom = loadFile(gameinfo.data, gameinfo.size);
-    if (rom.size() < 0x8000) return false;
-    interface->setRomBSMemory(rom, location);
-    return true;
-}
+        if (rom.size() < 0x20000) return false;
+        interface->setRomSufamiTurboA(rom, program->sufamiTurboA.location);
+        return true;
+    }
+    else if (id == 5) {
+        if (!sufamiinfo.size)
+            return false;
 
-bool Program::loadSufamiTurboA(std::string location) {
-    std::vector<uint8_t> rom;
-
-    if (sufamiinfo.size)
-        rom = loadFile(sufamiinfo.data, sufamiinfo.size);
-    else
-        rom = loadFile(gameinfo.data, gameinfo.size);
-
-    if (rom.size() < 0x20000) return false;
-    interface->setRomSufamiTurboA(rom, location);
-    return true;
-}
-
-bool Program::loadSufamiTurboB(std::string location) {
-    if (!sufamiinfo.size)
-        return false;
-
-    std::vector<uint8_t> rom;
-    rom = loadFile(gameinfo.data, gameinfo.size);
-    if (rom.size() < 0x20000) return false;
-    interface->setRomSufamiTurboB(rom, location);
-    return true;
+        std::vector<uint8_t> rom = bufToVec(gameinfo.data, gameinfo.size);
+        if (rom.size() < 0x20000) return false;
+        interface->setRomSufamiTurboB(rom, program->sufamiTurboB.location);
+        return true;
+    }
+    return false;
 }
 
 // Jolly Good API Calls
@@ -575,6 +538,7 @@ int jg_init() {
     interface = new SuperFamicom::Interface;
     program = new Program;
     interface->setInputCallback(&pollInput);
+    interface->setRomCallback(&loadRom);
 
     return 1;
 }

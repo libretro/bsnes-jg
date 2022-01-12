@@ -353,8 +353,8 @@ void Cartridge::loadMCC(std::string node) {
 void Cartridge::loadBSMemory(std::string node) {
   has.BSMemorySlot = true;
 
-  if(auto loaded = Emulator::platform->load(ID::BSMemory, "BS Memory", "bs")) {
-    bsmemory.pathID = loaded.pathID;
+  if(romCallback(ID::BSMemory)) {
+    bsmemory.pathID = ID::BSMemory;
     loadBSMemory();
 
     std::vector<std::string> maps = BML::searchList(node, "map");
@@ -366,8 +366,8 @@ void Cartridge::loadBSMemory(std::string node) {
 
 //slot(type=SufamiTurbo)[0]
 void Cartridge::loadSufamiTurboA(std::string node) {
-  if(auto loaded = Emulator::platform->load(ID::SufamiTurboA, "Sufami Turbo", "st")) {
-    sufamiturboA.pathID = loaded.pathID;
+  if(romCallback(ID::SufamiTurboA)) {
+    sufamiturboA.pathID = ID::SufamiTurboA;
     loadSufamiTurboA();
     std::string rommap = BML::searchNode(node, {"slot", "rom", "map"});
     std::string rammap = BML::searchNode(node, {"slot", "ram", "map"});
@@ -378,8 +378,8 @@ void Cartridge::loadSufamiTurboA(std::string node) {
 
 //slot(type=SufamiTurbo)[1]
 void Cartridge::loadSufamiTurboB(std::string node) {
-  if(auto loaded = Emulator::platform->load(ID::SufamiTurboB, "Sufami Turbo", "st")) {
-    sufamiturboB.pathID = loaded.pathID;
+  if(romCallback(ID::SufamiTurboB)) {
+    sufamiturboB.pathID = ID::SufamiTurboB;
     loadSufamiTurboB();
     std::string rommap = BML::searchNode(node, {"slot", "rom", "map"});
     std::string rammap = BML::searchNode(node, {"slot", "ram", "map"});
@@ -1241,9 +1241,9 @@ bool Cartridge::load() {
   slotSufamiTurboA = {};
   slotSufamiTurboB = {};
 
-  if(auto loaded = Emulator::platform->load(ID::SuperFamicom, "Super Famicom", "sfc", {"Auto", "NTSC", "PAL"})) {
-    information.pathID = loaded.pathID;
-    information.region = loaded.option;
+  if(romCallback(ID::SuperFamicom)) {
+    information.pathID = ID::SuperFamicom;
+    information.region = "Auto";
   } else return false;
 
   if (!game.document.empty()) {
@@ -1467,6 +1467,10 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
 void Cartridge::unload() {
   rom.reset();
   ram.reset();
+}
+
+void Cartridge::setRomCallback(bool (*cb)(unsigned)) {
+  romCallback = cb;
 }
 
 }
