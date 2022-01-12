@@ -69,7 +69,7 @@ public:
     };
 
     struct GCD {  //golomb-code decoder
-      GCD(SDD1::Decompressor& self) : self(self) {}
+      GCD(SDD1::Decompressor& _self) : self(_self) {}
       void getRunCount(uint8_t codeNumber, uint8_t &mpsCount, bool& lpsIndex);
       void serialize(serializer&);
 
@@ -79,7 +79,7 @@ public:
     };
 
     struct BG {  //bits generator
-      BG(SDD1::Decompressor& self, uint8_t codeNumber) : self(self), codeNumber(codeNumber) {}
+      BG(SDD1::Decompressor& _self, uint8_t cNumber) : self(_self), codeNumber(cNumber) {}
       void init();
       uint8_t getBit(bool& endOfRun);
       void serialize(serializer&);
@@ -92,7 +92,7 @@ public:
     };
 
     struct PEM {  //probability estimation module
-      PEM(SDD1::Decompressor& self) : self(self) {}
+      PEM(SDD1::Decompressor& _self) : self(_self) {}
       void init();
       uint8_t getBit(uint8_t context);
       void serialize(serializer&);
@@ -112,7 +112,7 @@ public:
     };
 
     struct CM {  //context model
-      CM(SDD1::Decompressor& self) : self(self) {}
+      CM(SDD1::Decompressor& _self) : self(_self) {}
       void init(unsigned offset);
       uint8_t getBit();
       void serialize(serializer&);
@@ -127,7 +127,7 @@ public:
     };
 
     struct OL {  //output logic
-      OL(SDD1::Decompressor& self) : self(self) {}
+      OL(SDD1::Decompressor& _self) : self(_self) {}
       void init(unsigned offset);
       uint8_t decompress();
       void serialize(serializer&);
