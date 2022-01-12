@@ -248,7 +248,7 @@ struct Mosaic {
 };
 
 struct Background {
-  Background(unsigned id) : id(id) {}
+  Background(unsigned _id) : id(_id) {}
 
   inline bool hires() const;
 
