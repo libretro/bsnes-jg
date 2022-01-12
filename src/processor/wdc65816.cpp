@@ -80,7 +80,7 @@ void WDC65816::idle6(uint16_t address) {
 }
 
 uint8_t WDC65816::fetch() {
-  return read(PC.b << 16 | PC.w++);
+  return read(PC.b << 16 | PC.r24_lsb2.w++);
 }
 
 uint8_t WDC65816::pull() {
@@ -513,43 +513,43 @@ void WDC65816::instructionImmediateRead16(alu16 op) {
   W.l = fetch();
   lastCycle();
   W.h = fetch();
-  alu(W.w);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionBankRead8(alu8 op) {
   V.l = fetch();
   V.h = fetch();
   lastCycle();
-  W.l = readBank(V.w + 0);
+  W.l = readBank(V.r24_lsb2.w + 0);
   alu(W.l);
 }
 
 void WDC65816::instructionBankRead16(alu16 op) {
   V.l = fetch();
   V.h = fetch();
-  W.l = readBank(V.w + 0);
+  W.l = readBank(V.r24_lsb2.w + 0);
   lastCycle();
-  W.h = readBank(V.w + 1);
-  alu(W.w);
+  W.h = readBank(V.r24_lsb2.w + 1);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionBankRead8(alu8 op, r16 I) {
   V.l = fetch();
   V.h = fetch();
-  idle4(V.w, V.w + I.w);
+  idle4(V.r24_lsb2.w, V.r24_lsb2.w + I.w);
   lastCycle();
-  W.l = readBank(V.w + I.w + 0);
+  W.l = readBank(V.r24_lsb2.w + I.w + 0);
   alu(W.l);
 }
 
 void WDC65816::instructionBankRead16(alu16 op, r16 I) {
   V.l = fetch();
   V.h = fetch();
-  idle4(V.w, V.w + I.w);
-  W.l = readBank(V.w + I.w + 0);
+  idle4(V.r24_lsb2.w, V.r24_lsb2.w + I.w);
+  W.l = readBank(V.r24_lsb2.w + I.w + 0);
   lastCycle();
-  W.h = readBank(V.w + I.w + 1);
-  alu(W.w);
+  W.h = readBank(V.r24_lsb2.w + I.w + 1);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionLongRead8(alu8 op, r16 I) {
@@ -568,7 +568,7 @@ void WDC65816::instructionLongRead16(alu16 op, r16 I) {
   W.l = readLong(V.d + I.w + 0);
   lastCycle();
   W.h = readLong(V.d + I.w + 1);
-  alu(W.w);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionDirectRead8(alu8 op) {
@@ -585,7 +585,7 @@ void WDC65816::instructionDirectRead16(alu16 op) {
   W.l = readDirect(U.l + 0);
   lastCycle();
   W.h = readDirect(U.l + 1);
-  alu(W.w);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionDirectRead8(alu8 op, r16 I) {
@@ -604,7 +604,7 @@ void WDC65816::instructionDirectRead16(alu16 op, r16 I) {
   W.l = readDirect(U.l + I.w + 0);
   lastCycle();
   W.h = readDirect(U.l + I.w + 1);
-  alu(W.w);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionIndirectRead8(alu8 op) {
@@ -613,7 +613,7 @@ void WDC65816::instructionIndirectRead8(alu8 op) {
   V.l = readDirect(U.l + 0);
   V.h = readDirect(U.l + 1);
   lastCycle();
-  W.l = readBank(V.w + 0);
+  W.l = readBank(V.r24_lsb2.w + 0);
   alu(W.l);
 }
 
@@ -622,10 +622,10 @@ void WDC65816::instructionIndirectRead16(alu16 op) {
   idle2();
   V.l = readDirect(U.l + 0);
   V.h = readDirect(U.l + 1);
-  W.l = readBank(V.w + 0);
+  W.l = readBank(V.r24_lsb2.w + 0);
   lastCycle();
-  W.h = readBank(V.w + 1);
-  alu(W.w);
+  W.h = readBank(V.r24_lsb2.w + 1);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionIndexedIndirectRead8(alu8 op) {
@@ -635,7 +635,7 @@ void WDC65816::instructionIndexedIndirectRead8(alu8 op) {
   V.l = readDirect(U.l + X.w + 0);
   V.h = readDirect(U.l + X.w + 1);
   lastCycle();
-  W.l = readBank(V.w + 0);
+  W.l = readBank(V.r24_lsb2.w + 0);
   alu(W.l);
 }
 
@@ -645,10 +645,10 @@ void WDC65816::instructionIndexedIndirectRead16(alu16 op) {
   idle();
   V.l = readDirect(U.l + X.w + 0);
   V.h = readDirect(U.l + X.w + 1);
-  W.l = readBank(V.w + 0);
+  W.l = readBank(V.r24_lsb2.w + 0);
   lastCycle();
-  W.h = readBank(V.w + 1);
-  alu(W.w);
+  W.h = readBank(V.r24_lsb2.w + 1);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionIndirectIndexedRead8(alu8 op) {
@@ -656,9 +656,9 @@ void WDC65816::instructionIndirectIndexedRead8(alu8 op) {
   idle2();
   V.l = readDirect(U.l + 0);
   V.h = readDirect(U.l + 1);
-  idle4(V.w, V.w + Y.w);
+  idle4(V.r24_lsb2.w, V.r24_lsb2.w + Y.w);
   lastCycle();
-  W.l = readBank(V.w + Y.w + 0);
+  W.l = readBank(V.r24_lsb2.w + Y.w + 0);
   alu(W.l);
 }
 
@@ -667,11 +667,11 @@ void WDC65816::instructionIndirectIndexedRead16(alu16 op) {
   idle2();
   V.l = readDirect(U.l + 0);
   V.h = readDirect(U.l + 1);
-  idle4(V.w, V.w + Y.w);
-  W.l = readBank(V.w + Y.w + 0);
+  idle4(V.r24_lsb2.w, V.r24_lsb2.w + Y.w);
+  W.l = readBank(V.r24_lsb2.w + Y.w + 0);
   lastCycle();
-  W.h = readBank(V.w + Y.w + 1);
-  alu(W.w);
+  W.h = readBank(V.r24_lsb2.w + Y.w + 1);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionIndirectLongRead8(alu8 op, r16 I) {
@@ -694,7 +694,7 @@ void WDC65816::instructionIndirectLongRead16(alu16 op, r16 I) {
   W.l = readLong(V.d + I.w + 0);
   lastCycle();
   W.h = readLong(V.d + I.w + 1);
-  alu(W.w);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionStackRead8(alu8 op) {
@@ -711,7 +711,7 @@ void WDC65816::instructionStackRead16(alu16 op) {
   W.l = readStack(U.l + 0);
   lastCycle();
   W.h = readStack(U.l + 1);
-  alu(W.w);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionIndirectStackRead8(alu8 op) {
@@ -721,7 +721,7 @@ void WDC65816::instructionIndirectStackRead8(alu8 op) {
   V.h = readStack(U.l + 1);
   idle();
   lastCycle();
-  W.l = readBank(V.w + Y.w + 0);
+  W.l = readBank(V.r24_lsb2.w + Y.w + 0);
   alu(W.l);
 }
 
@@ -731,25 +731,25 @@ void WDC65816::instructionIndirectStackRead16(alu16 op) {
   V.l = readStack(U.l + 0);
   V.h = readStack(U.l + 1);
   idle();
-  W.l = readBank(V.w + Y.w + 0);
+  W.l = readBank(V.r24_lsb2.w + Y.w + 0);
   lastCycle();
-  W.h = readBank(V.w + Y.w + 1);
-  alu(W.w);
+  W.h = readBank(V.r24_lsb2.w + Y.w + 1);
+  alu(W.r24_lsb2.w);
 }
 
 void WDC65816::instructionBankWrite8(r16 F) {
   V.l = fetch();
   V.h = fetch();
   lastCycle();
-  writeBank(V.w + 0, F.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + 0, F.r16_lsb2.l);
 }
 
 void WDC65816::instructionBankWrite16(r16 F) {
   V.l = fetch();
   V.h = fetch();
-  writeBank(V.w + 0, F.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + 0, F.r16_lsb2.l);
   lastCycle();
-  writeBank(V.w + 1, F.r16_lsb2.h);
+  writeBank(V.r24_lsb2.w + 1, F.r16_lsb2.h);
 }
 
 void WDC65816::instructionBankWrite8(r16 F, r16 I) {
@@ -757,16 +757,16 @@ void WDC65816::instructionBankWrite8(r16 F, r16 I) {
   V.h = fetch();
   idle();
   lastCycle();
-  writeBank(V.w + I.w + 0, F.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + I.w + 0, F.r16_lsb2.l);
 }
 
 void WDC65816::instructionBankWrite16(r16 F, r16 I) {
   V.l = fetch();
   V.h = fetch();
   idle();
-  writeBank(V.w + I.w + 0, F.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + I.w + 0, F.r16_lsb2.l);
   lastCycle();
-  writeBank(V.w + I.w + 1, F.r16_lsb2.h);
+  writeBank(V.r24_lsb2.w + I.w + 1, F.r16_lsb2.h);
 }
 
 void WDC65816::instructionLongWrite8(r16 I) {
@@ -824,7 +824,7 @@ void WDC65816::instructionIndirectWrite8() {
   V.l = readDirect(U.l + 0);
   V.h = readDirect(U.l + 1);
   lastCycle();
-  writeBank(V.w + 0, A.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + 0, A.r16_lsb2.l);
 }
 
 void WDC65816::instructionIndirectWrite16() {
@@ -832,9 +832,9 @@ void WDC65816::instructionIndirectWrite16() {
   idle2();
   V.l = readDirect(U.l + 0);
   V.h = readDirect(U.l + 1);
-  writeBank(V.w + 0, A.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + 0, A.r16_lsb2.l);
   lastCycle();
-  writeBank(V.w + 1, A.r16_lsb2.h);
+  writeBank(V.r24_lsb2.w + 1, A.r16_lsb2.h);
 }
 
 void WDC65816::instructionIndexedIndirectWrite8() {
@@ -844,7 +844,7 @@ void WDC65816::instructionIndexedIndirectWrite8() {
   V.l = readDirect(U.l + X.w + 0);
   V.h = readDirect(U.l + X.w + 1);
   lastCycle();
-  writeBank(V.w + 0, A.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + 0, A.r16_lsb2.l);
 }
 
 void WDC65816::instructionIndexedIndirectWrite16() {
@@ -853,9 +853,9 @@ void WDC65816::instructionIndexedIndirectWrite16() {
   idle();
   V.l = readDirect(U.l + X.w + 0);
   V.h = readDirect(U.l + X.w + 1);
-  writeBank(V.w + 0, A.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + 0, A.r16_lsb2.l);
   lastCycle();
-  writeBank(V.w + 1, A.r16_lsb2.h);
+  writeBank(V.r24_lsb2.w + 1, A.r16_lsb2.h);
 }
 
 void WDC65816::instructionIndirectIndexedWrite8() {
@@ -865,7 +865,7 @@ void WDC65816::instructionIndirectIndexedWrite8() {
   V.h = readDirect(U.l + 1);
   idle();
   lastCycle();
-  writeBank(V.w + Y.w + 0, A.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + Y.w + 0, A.r16_lsb2.l);
 }
 
 void WDC65816::instructionIndirectIndexedWrite16() {
@@ -874,9 +874,9 @@ void WDC65816::instructionIndirectIndexedWrite16() {
   V.l = readDirect(U.l + 0);
   V.h = readDirect(U.l + 1);
   idle();
-  writeBank(V.w + Y.w + 0, A.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + Y.w + 0, A.r16_lsb2.l);
   lastCycle();
-  writeBank(V.w + Y.w + 1, A.r16_lsb2.h);
+  writeBank(V.r24_lsb2.w + Y.w + 1, A.r16_lsb2.h);
 }
 
 void WDC65816::instructionIndirectLongWrite8(r16 I) {
@@ -922,7 +922,7 @@ void WDC65816::instructionIndirectStackWrite8() {
   V.h = readStack(U.l + 1);
   idle();
   lastCycle();
-  writeBank(V.w + Y.w + 0, A.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + Y.w + 0, A.r16_lsb2.l);
 }
 
 void WDC65816::instructionIndirectStackWrite16() {
@@ -931,9 +931,9 @@ void WDC65816::instructionIndirectStackWrite16() {
   V.l = readStack(U.l + 0);
   V.h = readStack(U.l + 1);
   idle();
-  writeBank(V.w + Y.w + 0, A.r16_lsb2.l);
+  writeBank(V.r24_lsb2.w + Y.w + 0, A.r16_lsb2.l);
   lastCycle();
-  writeBank(V.w + Y.w + 1, A.r16_lsb2.h);
+  writeBank(V.r24_lsb2.w + Y.w + 1, A.r16_lsb2.h);
 }
 
 void WDC65816::instructionImpliedModify8(alu8 op, r16& M) {
@@ -951,47 +951,47 @@ void WDC65816::instructionImpliedModify16(alu16 op, r16& M) {
 void WDC65816::instructionBankModify8(alu8 op) {
   V.l = fetch();
   V.h = fetch();
-  W.l = readBank(V.w + 0);
+  W.l = readBank(V.r24_lsb2.w + 0);
   idle();
   W.l = alu(W.l);
   lastCycle();
-  writeBank(V.w + 0, W.l);
+  writeBank(V.r24_lsb2.w + 0, W.l);
 }
 
 void WDC65816::instructionBankModify16(alu16 op) {
   V.l = fetch();
   V.h = fetch();
-  W.l = readBank(V.w + 0);
-  W.h = readBank(V.w + 1);
+  W.l = readBank(V.r24_lsb2.w + 0);
+  W.h = readBank(V.r24_lsb2.w + 1);
   idle();
-  W.w = alu(W.w);
-  writeBank(V.w + 1, W.h);
+  W.r24_lsb2.w = alu(W.r24_lsb2.w);
+  writeBank(V.r24_lsb2.w + 1, W.h);
   lastCycle();
-  writeBank(V.w + 0, W.l);
+  writeBank(V.r24_lsb2.w + 0, W.l);
 }
 
 void WDC65816::instructionBankIndexedModify8(alu8 op) {
   V.l = fetch();
   V.h = fetch();
   idle();
-  W.l = readBank(V.w + X.w + 0);
+  W.l = readBank(V.r24_lsb2.w + X.w + 0);
   idle();
   W.l = alu(W.l);
   lastCycle();
-  writeBank(V.w + X.w + 0, W.l);
+  writeBank(V.r24_lsb2.w + X.w + 0, W.l);
 }
 
 void WDC65816::instructionBankIndexedModify16(alu16 op) {
   V.l = fetch();
   V.h = fetch();
   idle();
-  W.l = readBank(V.w + X.w + 0);
-  W.h = readBank(V.w + X.w + 1);
+  W.l = readBank(V.r24_lsb2.w + X.w + 0);
+  W.h = readBank(V.r24_lsb2.w + X.w + 1);
   idle();
-  W.w = alu(W.w);
-  writeBank(V.w + X.w + 1, W.h);
+  W.r24_lsb2.w = alu(W.r24_lsb2.w);
+  writeBank(V.r24_lsb2.w + X.w + 1, W.h);
   lastCycle();
-  writeBank(V.w + X.w + 0, W.l);
+  writeBank(V.r24_lsb2.w + X.w + 0, W.l);
 }
 
 void WDC65816::instructionDirectModify8(alu8 op) {
@@ -1010,7 +1010,7 @@ void WDC65816::instructionDirectModify16(alu16 op) {
   W.l = readDirect(U.l + 0);
   W.h = readDirect(U.l + 1);
   idle();
-  W.w = alu(W.w);
+  W.r24_lsb2.w = alu(W.r24_lsb2.w);
   writeDirect(U.l + 1, W.h);
   lastCycle();
   writeDirect(U.l + 0, W.l);
@@ -1034,7 +1034,7 @@ void WDC65816::instructionDirectIndexedModify16(alu16 op) {
   W.l = readDirect(U.l + X.w + 0);
   W.h = readDirect(U.l + X.w + 1);
   idle();
-  W.w = alu(W.w);
+  W.r24_lsb2.w = alu(W.r24_lsb2.w);
   writeDirect(U.l + X.w + 1, W.h);
   lastCycle();
   writeDirect(U.l + X.w + 0, W.l);
@@ -1046,11 +1046,11 @@ void WDC65816::instructionBranch(bool take) {
     fetch();
   } else {
     U.l = fetch();
-    V.w = PC.d + (int8_t)U.l;
-    idle6(V.w);
+    V.r24_lsb2.w = PC.d + (int8_t)U.l;
+    idle6(V.r24_lsb2.w);
   lastCycle();
     idle();
-    PC.w = V.w;
+    PC.r24_lsb2.w = V.r24_lsb2.w;
     idleBranch();
   }
 }
@@ -1058,10 +1058,10 @@ void WDC65816::instructionBranch(bool take) {
 void WDC65816::instructionBranchLong() {
   U.l = fetch();
   U.h = fetch();
-  V.w = PC.d + (int16_t)U.w;
+  V.r24_lsb2.w = PC.d + (int16_t)U.r24_lsb2.w;
   lastCycle();
   idle();
-  PC.w = V.w;
+  PC.r24_lsb2.w = V.r24_lsb2.w;
   idleBranch();
 }
 
@@ -1069,7 +1069,7 @@ void WDC65816::instructionJumpShort() {
   W.l = fetch();
   lastCycle();
   W.h = fetch();
-  PC.w = W.w;
+  PC.r24_lsb2.w = W.r24_lsb2.w;
   idleJump();
 }
 
@@ -1085,10 +1085,10 @@ void WDC65816::instructionJumpLong() {
 void WDC65816::instructionJumpIndirect() {
   V.l = fetch();
   V.h = fetch();
-  W.l = read(uint16_t(V.w + 0));
+  W.l = read(uint16_t(V.r24_lsb2.w + 0));
   lastCycle();
-  W.h = read(uint16_t(V.w + 1));
-  PC.w = W.w;
+  W.h = read(uint16_t(V.r24_lsb2.w + 1));
+  PC.r24_lsb2.w = W.r24_lsb2.w;
   idleJump();
 }
 
@@ -1096,20 +1096,20 @@ void WDC65816::instructionJumpIndexedIndirect() {
   V.l = fetch();
   V.h = fetch();
   idle();
-  W.l = read(PC.b << 16 | uint16_t(V.w + X.w + 0));
+  W.l = read(PC.b << 16 | uint16_t(V.r24_lsb2.w + X.w + 0));
   lastCycle();
-  W.h = read(PC.b << 16 | uint16_t(V.w + X.w + 1));
-  PC.w = W.w;
+  W.h = read(PC.b << 16 | uint16_t(V.r24_lsb2.w + X.w + 1));
+  PC.r24_lsb2.w = W.r24_lsb2.w;
   idleJump();
 }
 
 void WDC65816::instructionJumpIndirectLong() {
   U.l = fetch();
   U.h = fetch();
-  V.l = read(uint16_t(U.w + 0));
-  V.h = read(uint16_t(U.w + 1));
+  V.l = read(uint16_t(U.r24_lsb2.w + 0));
+  V.h = read(uint16_t(U.r24_lsb2.w + 1));
   lastCycle();
-  V.b = read(uint16_t(U.w + 2));
+  V.b = read(uint16_t(U.r24_lsb2.w + 2));
   PC.d = V.d;
   idleJump();
 }
@@ -1118,11 +1118,11 @@ void WDC65816::instructionCallShort() {
   W.l = fetch();
   W.h = fetch();
   idle();
-  PC.w--;
+  PC.r24_lsb2.w--;
   push(PC.h);
   lastCycle();
   push(PC.l);
-  PC.w = W.w;
+  PC.r24_lsb2.w = W.r24_lsb2.w;
   idleJump();
 }
 
@@ -1132,7 +1132,7 @@ void WDC65816::instructionCallLong() {
   pushN(PC.b);
   idle();
   V.b = fetch();
-  PC.w--;
+  PC.r24_lsb2.w--;
   pushN(PC.h);
   lastCycle();
   pushN(PC.l);
@@ -1147,10 +1147,10 @@ void WDC65816::instructionCallIndexedIndirect() {
   pushN(PC.l);
   V.h = fetch();
   idle();
-  W.l = read(PC.b << 16 | uint16_t(V.w + X.w + 0));
+  W.l = read(PC.b << 16 | uint16_t(V.r24_lsb2.w + X.w + 0));
   lastCycle();
-  W.h = read(PC.b << 16 | uint16_t(V.w + X.w + 1));
-  PC.w = W.w;
+  W.h = read(PC.b << 16 | uint16_t(V.r24_lsb2.w + X.w + 1));
+  PC.r24_lsb2.w = W.r24_lsb2.w;
   if(r.e) S.r16_lsb2.h = 0x01;
   idleJump();
 }
@@ -1180,8 +1180,8 @@ void WDC65816::instructionReturnShort() {
   W.h = pull();
   lastCycle();
   idle();
-  PC.w = W.w;
-  PC.w++;
+  PC.r24_lsb2.w = W.r24_lsb2.w;
+  PC.r24_lsb2.w++;
   idleJump();
 }
 
@@ -1193,7 +1193,7 @@ void WDC65816::instructionReturnLong() {
   lastCycle();
   V.b = pullN();
   PC.d = V.d;
-  PC.w++;
+  PC.r24_lsb2.w++;
   if(r.e) S.r16_lsb2.h = 0x01;
   idleJump();
 }
@@ -1208,7 +1208,7 @@ void WDC65816::instructionBitImmediate16() {
   U.l = fetch();
   lastCycle();
   U.h = fetch();
-  ZF = (U.w & A.w) == 0;
+  ZF = (U.r24_lsb2.w & A.w) == 0;
 }
 
 void WDC65816::instructionNoOperation() {
@@ -1241,7 +1241,7 @@ void WDC65816::instructionBlockMove8(int adjust) {
   Y.r16_lsb2.l += adjust;
   lastCycle();
   idle();
-  if(A.w--) PC.w -= 3;
+  if(A.w--) PC.r24_lsb2.w -= 3;
 }
 
 void WDC65816::instructionBlockMove16(int adjust) {
@@ -1255,7 +1255,7 @@ void WDC65816::instructionBlockMove16(int adjust) {
   Y.w += adjust;
   lastCycle();
   idle();
-  if(A.w--) PC.w -= 3;
+  if(A.w--) PC.r24_lsb2.w -= 3;
 }
 
 void WDC65816::instructionInterrupt(r16 vector) {
@@ -1471,7 +1471,7 @@ void WDC65816::instructionPushEffectiveRelativeAddress() {
   V.l = fetch();
   V.h = fetch();
   idle();
-  W.w = PC.d + (int16_t)V.w;
+  W.r24_lsb2.w = PC.d + (int16_t)V.r24_lsb2.w;
   pushN(W.h);
   lastCycle();
   pushN(W.l);
