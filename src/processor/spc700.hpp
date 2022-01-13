@@ -36,8 +36,6 @@ struct SPC700 {
   virtual void write(uint16_t address, uint8_t data) = 0;
   virtual bool synchronizing() const = 0;
 
-  virtual uint8_t readDisassembler(uint16_t address) { return 0; }
-
   //spc700.cpp
   void power();
 

@@ -92,7 +92,7 @@ private:
   uint8_t read(uint16_t address) override;
   void write(uint16_t address, uint8_t data) override;
 
-  uint8_t readDisassembler(uint16_t address) override;
+  uint8_t readDisassembler(uint16_t address);
 
   //io.cpp
   inline uint8_t readIO(uint16_t address);
