@@ -789,271 +789,269 @@ void SPC700::instructionWait() {
   }
 }
 
-#define op(id, name, ...) case id: return instruction##name(__VA_ARGS__);
 #define fp(name) &SPC700::algorithm##name
 
 void SPC700::instruction() {
   switch(fetch()) {
-  op(0x00, NoOperation)
-  op(0x01, CallTable, 0)
-  op(0x02, AbsoluteBitSet, 0, true)
-  op(0x03, BranchBit, 0, true)
-  op(0x04, DirectRead, fp(OR), A)
-  op(0x05, AbsoluteRead, fp(OR), A)
-  op(0x06, IndirectXRead, fp(OR))
-  op(0x07, IndexedIndirectRead, fp(OR), X)
-  op(0x08, ImmediateRead, fp(OR), A)
-  op(0x09, DirectDirectModify, fp(OR))
-  op(0x0a, AbsoluteBitModify, 0)
-  op(0x0b, DirectModify, fp(ASL))
-  op(0x0c, AbsoluteModify, fp(ASL))
-  op(0x0d, Push, P)
-  op(0x0e, TestSetBitsAbsolute, true)
-  op(0x0f, Break)
-  op(0x10, Branch, NF == 0)
-  op(0x11, CallTable, 1)
-  op(0x12, AbsoluteBitSet, 0, false)
-  op(0x13, BranchBit, 0, false)
-  op(0x14, DirectIndexedRead, fp(OR), A, X)
-  op(0x15, AbsoluteIndexedRead, fp(OR), X)
-  op(0x16, AbsoluteIndexedRead, fp(OR), Y)
-  op(0x17, IndirectIndexedRead, fp(OR), Y)
-  op(0x18, DirectImmediateModify, fp(OR))
-  op(0x19, IndirectXWriteIndirectY, fp(OR))
-  op(0x1a, DirectModifyWord, -1)
-  op(0x1b, DirectIndexedModify, fp(ASL), X)
-  op(0x1c, ImpliedModify, fp(ASL), A)
-  op(0x1d, ImpliedModify, fp(DEC), X)
-  op(0x1e, AbsoluteRead, fp(CMP), X)
-  op(0x1f, JumpIndirectX)
-  op(0x20, FlagSet, PF, false)
-  op(0x21, CallTable, 2)
-  op(0x22, AbsoluteBitSet, 1, true)
-  op(0x23, BranchBit, 1, true)
-  op(0x24, DirectRead, fp(AND), A)
-  op(0x25, AbsoluteRead, fp(AND), A)
-  op(0x26, IndirectXRead, fp(AND))
-  op(0x27, IndexedIndirectRead, fp(AND), X)
-  op(0x28, ImmediateRead, fp(AND), A)
-  op(0x29, DirectDirectModify, fp(AND))
-  op(0x2a, AbsoluteBitModify, 1)
-  op(0x2b, DirectModify, fp(ROL))
-  op(0x2c, AbsoluteModify, fp(ROL))
-  op(0x2d, Push, A)
-  op(0x2e, BranchNotDirect)
-  op(0x2f, Branch, true)
-  op(0x30, Branch, NF == 1)
-  op(0x31, CallTable, 3)
-  op(0x32, AbsoluteBitSet, 1, false)
-  op(0x33, BranchBit, 1, false)
-  op(0x34, DirectIndexedRead, fp(AND), A, X)
-  op(0x35, AbsoluteIndexedRead, fp(AND), X)
-  op(0x36, AbsoluteIndexedRead, fp(AND), Y)
-  op(0x37, IndirectIndexedRead, fp(AND), Y)
-  op(0x38, DirectImmediateModify, fp(AND))
-  op(0x39, IndirectXWriteIndirectY, fp(AND))
-  op(0x3a, DirectModifyWord, +1)
-  op(0x3b, DirectIndexedModify, fp(ROL), X)
-  op(0x3c, ImpliedModify, fp(ROL), A)
-  op(0x3d, ImpliedModify, fp(INC), X)
-  op(0x3e, DirectRead, fp(CMP), X)
-  op(0x3f, CallAbsolute)
-  op(0x40, FlagSet, PF, true)
-  op(0x41, CallTable, 4)
-  op(0x42, AbsoluteBitSet, 2, true)
-  op(0x43, BranchBit, 2, true)
-  op(0x44, DirectRead, fp(EOR), A)
-  op(0x45, AbsoluteRead, fp(EOR), A)
-  op(0x46, IndirectXRead, fp(EOR))
-  op(0x47, IndexedIndirectRead, fp(EOR), X)
-  op(0x48, ImmediateRead, fp(EOR), A)
-  op(0x49, DirectDirectModify, fp(EOR))
-  op(0x4a, AbsoluteBitModify, 2)
-  op(0x4b, DirectModify, fp(LSR))
-  op(0x4c, AbsoluteModify, fp(LSR))
-  op(0x4d, Push, X)
-  op(0x4e, TestSetBitsAbsolute, false)
-  op(0x4f, CallPage)
-  op(0x50, Branch, VF == 0)
-  op(0x51, CallTable, 5)
-  op(0x52, AbsoluteBitSet, 2, false)
-  op(0x53, BranchBit, 2, false)
-  op(0x54, DirectIndexedRead, fp(EOR), A, X)
-  op(0x55, AbsoluteIndexedRead, fp(EOR), X)
-  op(0x56, AbsoluteIndexedRead, fp(EOR), Y)
-  op(0x57, IndirectIndexedRead, fp(EOR), Y)
-  op(0x58, DirectImmediateModify, fp(EOR))
-  op(0x59, IndirectXWriteIndirectY, fp(EOR))
-  op(0x5a, DirectCompareWord, fp(CPW))
-  op(0x5b, DirectIndexedModify, fp(LSR), X)
-  op(0x5c, ImpliedModify, fp(LSR), A)
-  op(0x5d, Transfer, A, X)
-  op(0x5e, AbsoluteRead, fp(CMP), Y)
-  op(0x5f, JumpAbsolute)
-  op(0x60, FlagSet, CF, false)
-  op(0x61, CallTable, 6)
-  op(0x62, AbsoluteBitSet, 3, true)
-  op(0x63, BranchBit, 3, true)
-  op(0x64, DirectRead, fp(CMP), A)
-  op(0x65, AbsoluteRead, fp(CMP), A)
-  op(0x66, IndirectXRead, fp(CMP))
-  op(0x67, IndexedIndirectRead, fp(CMP), X)
-  op(0x68, ImmediateRead, fp(CMP), A)
-  op(0x69, DirectDirectCompare, fp(CMP))
-  op(0x6a, AbsoluteBitModify, 3)
-  op(0x6b, DirectModify, fp(ROR))
-  op(0x6c, AbsoluteModify, fp(ROR))
-  op(0x6d, Push, Y)
-  op(0x6e, BranchNotDirectDecrement)
-  op(0x6f, ReturnSubroutine)
-  op(0x70, Branch, VF == 1)
-  op(0x71, CallTable, 7)
-  op(0x72, AbsoluteBitSet, 3, false)
-  op(0x73, BranchBit, 3, false)
-  op(0x74, DirectIndexedRead, fp(CMP), A, X)
-  op(0x75, AbsoluteIndexedRead, fp(CMP), X)
-  op(0x76, AbsoluteIndexedRead, fp(CMP), Y)
-  op(0x77, IndirectIndexedRead, fp(CMP), Y)
-  op(0x78, DirectImmediateCompare, fp(CMP))
-  op(0x79, IndirectXCompareIndirectY, fp(CMP))
-  op(0x7a, DirectReadWord, fp(ADW))
-  op(0x7b, DirectIndexedModify, fp(ROR), X)
-  op(0x7c, ImpliedModify, fp(ROR), A)
-  op(0x7d, Transfer, X, A)
-  op(0x7e, DirectRead, fp(CMP), Y)
-  op(0x7f, ReturnInterrupt)
-  op(0x80, FlagSet, CF, true)
-  op(0x81, CallTable, 8)
-  op(0x82, AbsoluteBitSet, 4, true)
-  op(0x83, BranchBit, 4, true)
-  op(0x84, DirectRead, fp(ADC), A)
-  op(0x85, AbsoluteRead, fp(ADC), A)
-  op(0x86, IndirectXRead, fp(ADC))
-  op(0x87, IndexedIndirectRead, fp(ADC), X)
-  op(0x88, ImmediateRead, fp(ADC), A)
-  op(0x89, DirectDirectModify, fp(ADC))
-  op(0x8a, AbsoluteBitModify, 4)
-  op(0x8b, DirectModify, fp(DEC))
-  op(0x8c, AbsoluteModify, fp(DEC))
-  op(0x8d, ImmediateRead, fp(LD), Y)
-  op(0x8e, PullP)
-  op(0x8f, DirectImmediateWrite)
-  op(0x90, Branch, CF == 0)
-  op(0x91, CallTable, 9)
-  op(0x92, AbsoluteBitSet, 4, false)
-  op(0x93, BranchBit, 4, false)
-  op(0x94, DirectIndexedRead, fp(ADC), A, X)
-  op(0x95, AbsoluteIndexedRead, fp(ADC), X)
-  op(0x96, AbsoluteIndexedRead, fp(ADC), Y)
-  op(0x97, IndirectIndexedRead, fp(ADC), Y)
-  op(0x98, DirectImmediateModify, fp(ADC))
-  op(0x99, IndirectXWriteIndirectY, fp(ADC))
-  op(0x9a, DirectReadWord, fp(SBW))
-  op(0x9b, DirectIndexedModify, fp(DEC), X)
-  op(0x9c, ImpliedModify, fp(DEC), A)
-  op(0x9d, Transfer, S, X)
-  op(0x9e, Divide)
-  op(0x9f, ExchangeNibble)
-  op(0xa0, FlagSet, IF, true)
-  op(0xa1, CallTable, 10)
-  op(0xa2, AbsoluteBitSet, 5, true)
-  op(0xa3, BranchBit, 5, true)
-  op(0xa4, DirectRead, fp(SBC), A)
-  op(0xa5, AbsoluteRead, fp(SBC), A)
-  op(0xa6, IndirectXRead, fp(SBC))
-  op(0xa7, IndexedIndirectRead, fp(SBC), X)
-  op(0xa8, ImmediateRead, fp(SBC), A)
-  op(0xa9, DirectDirectModify, fp(SBC))
-  op(0xaa, AbsoluteBitModify, 5)
-  op(0xab, DirectModify, fp(INC))
-  op(0xac, AbsoluteModify, fp(INC))
-  op(0xad, ImmediateRead, fp(CMP), Y)
-  op(0xae, Pull, A)
-  op(0xaf, IndirectXIncrementWrite, A)
-  op(0xb0, Branch, CF == 1)
-  op(0xb1, CallTable, 11)
-  op(0xb2, AbsoluteBitSet, 5, false)
-  op(0xb3, BranchBit, 5, false)
-  op(0xb4, DirectIndexedRead, fp(SBC), A, X)
-  op(0xb5, AbsoluteIndexedRead, fp(SBC), X)
-  op(0xb6, AbsoluteIndexedRead, fp(SBC), Y)
-  op(0xb7, IndirectIndexedRead, fp(SBC), Y)
-  op(0xb8, DirectImmediateModify, fp(SBC))
-  op(0xb9, IndirectXWriteIndirectY, fp(SBC))
-  op(0xba, DirectReadWord, fp(LDW))
-  op(0xbb, DirectIndexedModify, fp(INC), X)
-  op(0xbc, ImpliedModify, fp(INC), A)
-  op(0xbd, Transfer, X, S)
-  op(0xbe, DecimalAdjustSub)
-  op(0xbf, IndirectXIncrementRead, A)
-  op(0xc0, FlagSet, IF, false)
-  op(0xc1, CallTable, 12)
-  op(0xc2, AbsoluteBitSet, 6, true)
-  op(0xc3, BranchBit, 6, true)
-  op(0xc4, DirectWrite, A)
-  op(0xc5, AbsoluteWrite, A)
-  op(0xc6, IndirectXWrite, A)
-  op(0xc7, IndexedIndirectWrite, A, X)
-  op(0xc8, ImmediateRead, fp(CMP), X)
-  op(0xc9, AbsoluteWrite, X)
-  op(0xca, AbsoluteBitModify, 6)
-  op(0xcb, DirectWrite, Y)
-  op(0xcc, AbsoluteWrite, Y)
-  op(0xcd, ImmediateRead, fp(LD), X)
-  op(0xce, Pull, X)
-  op(0xcf, Multiply)
-  op(0xd0, Branch, ZF == 0)
-  op(0xd1, CallTable, 13)
-  op(0xd2, AbsoluteBitSet, 6, false)
-  op(0xd3, BranchBit, 6, false)
-  op(0xd4, DirectIndexedWrite, A, X)
-  op(0xd5, AbsoluteIndexedWrite, X)
-  op(0xd6, AbsoluteIndexedWrite, Y)
-  op(0xd7, IndirectIndexedWrite, A, Y)
-  op(0xd8, DirectWrite, X)
-  op(0xd9, DirectIndexedWrite, X, Y)
-  op(0xda, DirectWriteWord)
-  op(0xdb, DirectIndexedWrite, Y, X)
-  op(0xdc, ImpliedModify, fp(DEC), Y)
-  op(0xdd, Transfer, Y, A)
-  op(0xde, BranchNotDirectIndexed, X)
-  op(0xdf, DecimalAdjustAdd)
-  op(0xe0, OverflowClear)
-  op(0xe1, CallTable, 14)
-  op(0xe2, AbsoluteBitSet, 7, true)
-  op(0xe3, BranchBit, 7, true)
-  op(0xe4, DirectRead, fp(LD), A)
-  op(0xe5, AbsoluteRead, fp(LD), A)
-  op(0xe6, IndirectXRead, fp(LD))
-  op(0xe7, IndexedIndirectRead, fp(LD), X)
-  op(0xe8, ImmediateRead, fp(LD), A)
-  op(0xe9, AbsoluteRead, fp(LD), X)
-  op(0xea, AbsoluteBitModify, 7)
-  op(0xeb, DirectRead, fp(LD), Y)
-  op(0xec, AbsoluteRead, fp(LD), Y)
-  op(0xed, ComplementCarry)
-  op(0xee, Pull, Y)
-  op(0xef, Wait)
-  op(0xf0, Branch, ZF == 1)
-  op(0xf1, CallTable, 15)
-  op(0xf2, AbsoluteBitSet, 7, false)
-  op(0xf3, BranchBit, 7, false)
-  op(0xf4, DirectIndexedRead, fp(LD), A, X)
-  op(0xf5, AbsoluteIndexedRead, fp(LD), X)
-  op(0xf6, AbsoluteIndexedRead, fp(LD), Y)
-  op(0xf7, IndirectIndexedRead, fp(LD), Y)
-  op(0xf8, DirectRead, fp(LD), X)
-  op(0xf9, DirectIndexedRead, fp(LD), X, Y)
-  op(0xfa, DirectDirectWrite)
-  op(0xfb, DirectIndexedRead, fp(LD), Y, X)
-  op(0xfc, ImpliedModify, fp(INC), Y)
-  op(0xfd, Transfer, A, Y)
-  op(0xfe, BranchNotYDecrement)
-  op(0xff, Stop)
+    case 0x00: return instructionNoOperation();
+    case 0x01: return instructionCallTable(0);
+    case 0x02: return instructionAbsoluteBitSet(0, true);
+    case 0x03: return instructionBranchBit(0, true);
+    case 0x04: return instructionDirectRead(fp(OR), A);
+    case 0x05: return instructionAbsoluteRead(fp(OR), A);
+    case 0x06: return instructionIndirectXRead(fp(OR));
+    case 0x07: return instructionIndexedIndirectRead(fp(OR), X);
+    case 0x08: return instructionImmediateRead(fp(OR), A);
+    case 0x09: return instructionDirectDirectModify(fp(OR));
+    case 0x0a: return instructionAbsoluteBitModify(0);
+    case 0x0b: return instructionDirectModify(fp(ASL));
+    case 0x0c: return instructionAbsoluteModify(fp(ASL));
+    case 0x0d: return instructionPush(P);
+    case 0x0e: return instructionTestSetBitsAbsolute(true);
+    case 0x0f: return instructionBreak();
+    case 0x10: return instructionBranch(NF == 0);
+    case 0x11: return instructionCallTable(1);
+    case 0x12: return instructionAbsoluteBitSet(0, false);
+    case 0x13: return instructionBranchBit(0, false);
+    case 0x14: return instructionDirectIndexedRead(fp(OR), A, X);
+    case 0x15: return instructionAbsoluteIndexedRead(fp(OR), X);
+    case 0x16: return instructionAbsoluteIndexedRead(fp(OR), Y);
+    case 0x17: return instructionIndirectIndexedRead(fp(OR), Y);
+    case 0x18: return instructionDirectImmediateModify(fp(OR));
+    case 0x19: return instructionIndirectXWriteIndirectY(fp(OR));
+    case 0x1a: return instructionDirectModifyWord(-1);
+    case 0x1b: return instructionDirectIndexedModify(fp(ASL), X);
+    case 0x1c: return instructionImpliedModify(fp(ASL), A);
+    case 0x1d: return instructionImpliedModify(fp(DEC), X);
+    case 0x1e: return instructionAbsoluteRead(fp(CMP), X);
+    case 0x1f: return instructionJumpIndirectX();
+    case 0x20: return instructionFlagSet(PF, false);
+    case 0x21: return instructionCallTable(2);
+    case 0x22: return instructionAbsoluteBitSet(1, true);
+    case 0x23: return instructionBranchBit(1, true);
+    case 0x24: return instructionDirectRead(fp(AND), A);
+    case 0x25: return instructionAbsoluteRead(fp(AND), A);
+    case 0x26: return instructionIndirectXRead(fp(AND));
+    case 0x27: return instructionIndexedIndirectRead(fp(AND), X);
+    case 0x28: return instructionImmediateRead(fp(AND), A);
+    case 0x29: return instructionDirectDirectModify(fp(AND));
+    case 0x2a: return instructionAbsoluteBitModify(1);
+    case 0x2b: return instructionDirectModify(fp(ROL));
+    case 0x2c: return instructionAbsoluteModify(fp(ROL));
+    case 0x2d: return instructionPush(A);
+    case 0x2e: return instructionBranchNotDirect();
+    case 0x2f: return instructionBranch(true);
+    case 0x30: return instructionBranch(NF == 1);
+    case 0x31: return instructionCallTable(3);
+    case 0x32: return instructionAbsoluteBitSet(1, false);
+    case 0x33: return instructionBranchBit(1, false);
+    case 0x34: return instructionDirectIndexedRead(fp(AND), A, X);
+    case 0x35: return instructionAbsoluteIndexedRead(fp(AND), X);
+    case 0x36: return instructionAbsoluteIndexedRead(fp(AND), Y);
+    case 0x37: return instructionIndirectIndexedRead(fp(AND), Y);
+    case 0x38: return instructionDirectImmediateModify(fp(AND));
+    case 0x39: return instructionIndirectXWriteIndirectY(fp(AND));
+    case 0x3a: return instructionDirectModifyWord(+1);
+    case 0x3b: return instructionDirectIndexedModify(fp(ROL), X);
+    case 0x3c: return instructionImpliedModify(fp(ROL), A);
+    case 0x3d: return instructionImpliedModify(fp(INC), X);
+    case 0x3e: return instructionDirectRead(fp(CMP), X);
+    case 0x3f: return instructionCallAbsolute();
+    case 0x40: return instructionFlagSet(PF, true);
+    case 0x41: return instructionCallTable(4);
+    case 0x42: return instructionAbsoluteBitSet(2, true);
+    case 0x43: return instructionBranchBit(2, true);
+    case 0x44: return instructionDirectRead(fp(EOR), A);
+    case 0x45: return instructionAbsoluteRead(fp(EOR), A);
+    case 0x46: return instructionIndirectXRead(fp(EOR));
+    case 0x47: return instructionIndexedIndirectRead(fp(EOR), X);
+    case 0x48: return instructionImmediateRead(fp(EOR), A);
+    case 0x49: return instructionDirectDirectModify(fp(EOR));
+    case 0x4a: return instructionAbsoluteBitModify(2);
+    case 0x4b: return instructionDirectModify(fp(LSR));
+    case 0x4c: return instructionAbsoluteModify(fp(LSR));
+    case 0x4d: return instructionPush(X);
+    case 0x4e: return instructionTestSetBitsAbsolute(false);
+    case 0x4f: return instructionCallPage();
+    case 0x50: return instructionBranch(VF == 0);
+    case 0x51: return instructionCallTable(5);
+    case 0x52: return instructionAbsoluteBitSet(2, false);
+    case 0x53: return instructionBranchBit(2, false);
+    case 0x54: return instructionDirectIndexedRead(fp(EOR), A, X);
+    case 0x55: return instructionAbsoluteIndexedRead(fp(EOR), X);
+    case 0x56: return instructionAbsoluteIndexedRead(fp(EOR), Y);
+    case 0x57: return instructionIndirectIndexedRead(fp(EOR), Y);
+    case 0x58: return instructionDirectImmediateModify(fp(EOR));
+    case 0x59: return instructionIndirectXWriteIndirectY(fp(EOR));
+    case 0x5a: return instructionDirectCompareWord(fp(CPW));
+    case 0x5b: return instructionDirectIndexedModify(fp(LSR), X);
+    case 0x5c: return instructionImpliedModify(fp(LSR), A);
+    case 0x5d: return instructionTransfer(A, X);
+    case 0x5e: return instructionAbsoluteRead(fp(CMP), Y);
+    case 0x5f: return instructionJumpAbsolute();
+    case 0x60: return instructionFlagSet(CF, false);
+    case 0x61: return instructionCallTable(6);
+    case 0x62: return instructionAbsoluteBitSet(3, true);
+    case 0x63: return instructionBranchBit(3, true);
+    case 0x64: return instructionDirectRead(fp(CMP), A);
+    case 0x65: return instructionAbsoluteRead(fp(CMP), A);
+    case 0x66: return instructionIndirectXRead(fp(CMP));
+    case 0x67: return instructionIndexedIndirectRead(fp(CMP), X);
+    case 0x68: return instructionImmediateRead(fp(CMP), A);
+    case 0x69: return instructionDirectDirectCompare(fp(CMP));
+    case 0x6a: return instructionAbsoluteBitModify(3);
+    case 0x6b: return instructionDirectModify(fp(ROR));
+    case 0x6c: return instructionAbsoluteModify(fp(ROR));
+    case 0x6d: return instructionPush(Y);
+    case 0x6e: return instructionBranchNotDirectDecrement();
+    case 0x6f: return instructionReturnSubroutine();
+    case 0x70: return instructionBranch(VF == 1);
+    case 0x71: return instructionCallTable(7);
+    case 0x72: return instructionAbsoluteBitSet(3, false);
+    case 0x73: return instructionBranchBit(3, false);
+    case 0x74: return instructionDirectIndexedRead(fp(CMP), A, X);
+    case 0x75: return instructionAbsoluteIndexedRead(fp(CMP), X);
+    case 0x76: return instructionAbsoluteIndexedRead(fp(CMP), Y);
+    case 0x77: return instructionIndirectIndexedRead(fp(CMP), Y);
+    case 0x78: return instructionDirectImmediateCompare(fp(CMP));
+    case 0x79: return instructionIndirectXCompareIndirectY(fp(CMP));
+    case 0x7a: return instructionDirectReadWord(fp(ADW));
+    case 0x7b: return instructionDirectIndexedModify(fp(ROR), X);
+    case 0x7c: return instructionImpliedModify(fp(ROR), A);
+    case 0x7d: return instructionTransfer(X, A);
+    case 0x7e: return instructionDirectRead(fp(CMP), Y);
+    case 0x7f: return instructionReturnInterrupt();
+    case 0x80: return instructionFlagSet(CF, true);
+    case 0x81: return instructionCallTable(8);
+    case 0x82: return instructionAbsoluteBitSet(4, true);
+    case 0x83: return instructionBranchBit(4, true);
+    case 0x84: return instructionDirectRead(fp(ADC), A);
+    case 0x85: return instructionAbsoluteRead(fp(ADC), A);
+    case 0x86: return instructionIndirectXRead(fp(ADC));
+    case 0x87: return instructionIndexedIndirectRead(fp(ADC), X);
+    case 0x88: return instructionImmediateRead(fp(ADC), A);
+    case 0x89: return instructionDirectDirectModify(fp(ADC));
+    case 0x8a: return instructionAbsoluteBitModify(4);
+    case 0x8b: return instructionDirectModify(fp(DEC));
+    case 0x8c: return instructionAbsoluteModify(fp(DEC));
+    case 0x8d: return instructionImmediateRead(fp(LD), Y);
+    case 0x8e: return instructionPullP();
+    case 0x8f: return instructionDirectImmediateWrite();
+    case 0x90: return instructionBranch(CF == 0);
+    case 0x91: return instructionCallTable(9);
+    case 0x92: return instructionAbsoluteBitSet(4, false);
+    case 0x93: return instructionBranchBit(4, false);
+    case 0x94: return instructionDirectIndexedRead(fp(ADC), A, X);
+    case 0x95: return instructionAbsoluteIndexedRead(fp(ADC), X);
+    case 0x96: return instructionAbsoluteIndexedRead(fp(ADC), Y);
+    case 0x97: return instructionIndirectIndexedRead(fp(ADC), Y);
+    case 0x98: return instructionDirectImmediateModify(fp(ADC));
+    case 0x99: return instructionIndirectXWriteIndirectY(fp(ADC));
+    case 0x9a: return instructionDirectReadWord(fp(SBW));
+    case 0x9b: return instructionDirectIndexedModify(fp(DEC), X);
+    case 0x9c: return instructionImpliedModify(fp(DEC), A);
+    case 0x9d: return instructionTransfer(S, X);
+    case 0x9e: return instructionDivide();
+    case 0x9f: return instructionExchangeNibble();
+    case 0xa0: return instructionFlagSet(IF, true);
+    case 0xa1: return instructionCallTable(10);
+    case 0xa2: return instructionAbsoluteBitSet(5, true);
+    case 0xa3: return instructionBranchBit(5, true);
+    case 0xa4: return instructionDirectRead(fp(SBC), A);
+    case 0xa5: return instructionAbsoluteRead(fp(SBC), A);
+    case 0xa6: return instructionIndirectXRead(fp(SBC));
+    case 0xa7: return instructionIndexedIndirectRead(fp(SBC), X);
+    case 0xa8: return instructionImmediateRead(fp(SBC), A);
+    case 0xa9: return instructionDirectDirectModify(fp(SBC));
+    case 0xaa: return instructionAbsoluteBitModify(5);
+    case 0xab: return instructionDirectModify(fp(INC));
+    case 0xac: return instructionAbsoluteModify(fp(INC));
+    case 0xad: return instructionImmediateRead(fp(CMP), Y);
+    case 0xae: return instructionPull(A);
+    case 0xaf: return instructionIndirectXIncrementWrite(A);
+    case 0xb0: return instructionBranch(CF == 1);
+    case 0xb1: return instructionCallTable(11);
+    case 0xb2: return instructionAbsoluteBitSet(5, false);
+    case 0xb3: return instructionBranchBit(5, false);
+    case 0xb4: return instructionDirectIndexedRead(fp(SBC), A, X);
+    case 0xb5: return instructionAbsoluteIndexedRead(fp(SBC), X);
+    case 0xb6: return instructionAbsoluteIndexedRead(fp(SBC), Y);
+    case 0xb7: return instructionIndirectIndexedRead(fp(SBC), Y);
+    case 0xb8: return instructionDirectImmediateModify(fp(SBC));
+    case 0xb9: return instructionIndirectXWriteIndirectY(fp(SBC));
+    case 0xba: return instructionDirectReadWord(fp(LDW));
+    case 0xbb: return instructionDirectIndexedModify(fp(INC), X);
+    case 0xbc: return instructionImpliedModify(fp(INC), A);
+    case 0xbd: return instructionTransfer(X, S);
+    case 0xbe: return instructionDecimalAdjustSub();
+    case 0xbf: return instructionIndirectXIncrementRead(A);
+    case 0xc0: return instructionFlagSet(IF, false);
+    case 0xc1: return instructionCallTable(12);
+    case 0xc2: return instructionAbsoluteBitSet(6, true);
+    case 0xc3: return instructionBranchBit(6, true);
+    case 0xc4: return instructionDirectWrite(A);
+    case 0xc5: return instructionAbsoluteWrite(A);
+    case 0xc6: return instructionIndirectXWrite(A);
+    case 0xc7: return instructionIndexedIndirectWrite(A, X);
+    case 0xc8: return instructionImmediateRead(fp(CMP), X);
+    case 0xc9: return instructionAbsoluteWrite(X);
+    case 0xca: return instructionAbsoluteBitModify(6);
+    case 0xcb: return instructionDirectWrite(Y);
+    case 0xcc: return instructionAbsoluteWrite(Y);
+    case 0xcd: return instructionImmediateRead(fp(LD), X);
+    case 0xce: return instructionPull(X);
+    case 0xcf: return instructionMultiply();
+    case 0xd0: return instructionBranch(ZF == 0);
+    case 0xd1: return instructionCallTable(13);
+    case 0xd2: return instructionAbsoluteBitSet(6, false);
+    case 0xd3: return instructionBranchBit(6, false);
+    case 0xd4: return instructionDirectIndexedWrite(A, X);
+    case 0xd5: return instructionAbsoluteIndexedWrite(X);
+    case 0xd6: return instructionAbsoluteIndexedWrite(Y);
+    case 0xd7: return instructionIndirectIndexedWrite(A, Y);
+    case 0xd8: return instructionDirectWrite(X);
+    case 0xd9: return instructionDirectIndexedWrite(X, Y);
+    case 0xda: return instructionDirectWriteWord();
+    case 0xdb: return instructionDirectIndexedWrite(Y, X);
+    case 0xdc: return instructionImpliedModify(fp(DEC), Y);
+    case 0xdd: return instructionTransfer(Y, A);
+    case 0xde: return instructionBranchNotDirectIndexed(X);
+    case 0xdf: return instructionDecimalAdjustAdd();
+    case 0xe0: return instructionOverflowClear();
+    case 0xe1: return instructionCallTable(14);
+    case 0xe2: return instructionAbsoluteBitSet(7, true);
+    case 0xe3: return instructionBranchBit(7, true);
+    case 0xe4: return instructionDirectRead(fp(LD), A);
+    case 0xe5: return instructionAbsoluteRead(fp(LD), A);
+    case 0xe6: return instructionIndirectXRead(fp(LD));
+    case 0xe7: return instructionIndexedIndirectRead(fp(LD), X);
+    case 0xe8: return instructionImmediateRead(fp(LD), A);
+    case 0xe9: return instructionAbsoluteRead(fp(LD), X);
+    case 0xea: return instructionAbsoluteBitModify(7);
+    case 0xeb: return instructionDirectRead(fp(LD), Y);
+    case 0xec: return instructionAbsoluteRead(fp(LD), Y);
+    case 0xed: return instructionComplementCarry();
+    case 0xee: return instructionPull(Y);
+    case 0xef: return instructionWait();
+    case 0xf0: return instructionBranch(ZF == 1);
+    case 0xf1: return instructionCallTable(15);
+    case 0xf2: return instructionAbsoluteBitSet(7, false);
+    case 0xf3: return instructionBranchBit(7, false);
+    case 0xf4: return instructionDirectIndexedRead(fp(LD), A, X);
+    case 0xf5: return instructionAbsoluteIndexedRead(fp(LD), X);
+    case 0xf6: return instructionAbsoluteIndexedRead(fp(LD), Y);
+    case 0xf7: return instructionIndirectIndexedRead(fp(LD), Y);
+    case 0xf8: return instructionDirectRead(fp(LD), X);
+    case 0xf9: return instructionDirectIndexedRead(fp(LD), X, Y);
+    case 0xfa: return instructionDirectDirectWrite();
+    case 0xfb: return instructionDirectIndexedRead(fp(LD), Y, X);
+    case 0xfc: return instructionImpliedModify(fp(INC), Y);
+    case 0xfd: return instructionTransfer(A, Y);
+    case 0xfe: return instructionBranchNotYDecrement();
+    case 0xff: return instructionStop();
   }
 }
 
-#undef op
 #undef fp
 
 void SPC700::serialize(serializer& s) {
