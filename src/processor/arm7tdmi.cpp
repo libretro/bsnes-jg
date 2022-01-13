@@ -648,11 +648,6 @@ void ARM7TDMI::armInitialize() {
 }
 
 void ARM7TDMI::thumbInitialize() {
-  #define bind(id, name, ...) { \
-    assert(!thumbInstruction[id]); \
-    thumbInstruction[id] = [=] { return thumbInstruction##name(__VA_ARGS__); }; \
-  }
-
   #define pattern(s) \
     std::integral_constant<uint16_t, s>::value
     //std::integral_constant<uint16_t, nall::test(s)>::value
@@ -662,7 +657,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 16; ++mode) {
     //auto op = pattern("0100 00?? ???? ????") | d | m << 3 | mode << 6;
     auto op = pattern(0x4000) | d | m << 3 | mode << 6;
-    bind(op, ALU, d, m, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionALU(d, m, mode); };
   }
 
   for(unsigned d = 0; d < 16; ++d)
@@ -671,7 +667,8 @@ void ARM7TDMI::thumbInitialize() {
     if(mode == 3) continue;
     //auto op = pattern("0100 01?? ???? ????") | bits(d,0,2) | m << 3 | bit1(d,3) << 7 | mode << 8;
     auto op = pattern(0x4400) | bits(d,0,2) | m << 3 | bit1(d,3) << 7 | mode << 8;
-    bind(op, ALUExtended, d, m, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionALUExtended(d, m, mode); };
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate)
@@ -679,7 +676,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern("1010 ???? ???? ????") | immediate | d << 8 | mode << 11;
     auto op = pattern(0xa000) | immediate | d << 8 | mode << 11;
-    bind(op, AddRegister, immediate, d, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionAddRegister(immediate, d, mode); };
   }
 
   for(unsigned d = 0; d < 8; ++d)
@@ -688,7 +686,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern("0001 11?? ???? ????") | d | n << 3 | immediate << 6 | mode << 9;
     auto op = pattern(0x1c00) | d | n << 3 | immediate << 6 | mode << 9;
-    bind(op, AdjustImmediate, d, n, immediate, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionAdjustImmediate(d, n, immediate, mode); };
   }
 
   for(unsigned d = 0; d < 8; ++d)
@@ -697,39 +696,45 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern("0001 10?? ???? ????") | d | n << 3 | m << 6 | mode << 9;
     auto op = pattern(0x1800) | d | n << 3 | m << 6 | mode << 9;
-    bind(op, AdjustRegister, d, n, m, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionAdjustRegister(d, n, m, mode); };
   }
 
   for(unsigned immediate = 0; immediate < 128; ++immediate)
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern("1011 0000 ???? ????") | immediate | mode << 7;
     auto op = pattern(0xb000) | immediate | mode << 7;
-    bind(op, AdjustStack, immediate, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionAdjustStack(immediate, mode); };
   }
 
   for(unsigned _ = 0; _ < 8; ++_)
   for(unsigned m = 0; m < 16; ++m) {
     //auto op = pattern("0100 0111 0??? ?---") | _ | m << 3;
     auto op = pattern(0x4700) | _ | m << 3;
-    bind(op, BranchExchange, m);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionBranchExchange(m); };
   }
 
   for(unsigned displacement = 0; displacement < 2048; ++displacement) {
     //auto op = pattern("1111 0??? ???? ????") | displacement;
     auto op = pattern(0xf000) | displacement;
-    bind(op, BranchFarPrefix, displacement);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionBranchFarPrefix(displacement); };
   }
 
   for(unsigned displacement = 0; displacement < 2048; ++displacement) {
     //auto op = pattern("1111 1??? ???? ????") | displacement;
     auto op = pattern(0xf800) | displacement;
-    bind(op, BranchFarSuffix, displacement);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionBranchFarSuffix(displacement); };
   }
 
   for(unsigned displacement = 0; displacement < 2048; ++displacement) {
     //auto op = pattern("1110 0??? ???? ????") | displacement;
     auto op = pattern(0xe000) | displacement;
-    bind(op, BranchNear, displacement);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionBranchNear(displacement); };
   }
 
   for(unsigned displacement = 0; displacement < 256; ++displacement)
@@ -737,7 +742,8 @@ void ARM7TDMI::thumbInitialize() {
     if(condition == 15) continue;  //BNV
     //auto op = pattern("1101 ???? ???? ????") | displacement | condition << 8;
     auto op = pattern(0xd000) | displacement | condition << 8;
-    bind(op, BranchTest, displacement, condition);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionBranchTest(displacement, condition); };
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate)
@@ -745,14 +751,16 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 4; ++mode) {
     //auto op = pattern("001? ???? ???? ????") | immediate | d << 8 | mode << 11;
     auto op = pattern(0x2000) | immediate | d << 8 | mode << 11;
-    bind(op, Immediate, immediate, d, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionImmediate(immediate, d, mode); };
   }
 
   for(unsigned displacement = 0; displacement < 256; ++displacement)
   for(unsigned d = 0; d < 8; ++d) {
     //auto op = pattern("0100 1??? ???? ????") | displacement | d << 8;
     auto op = pattern(0x4800) | displacement | d << 8;
-    bind(op, LoadLiteral, displacement, d);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionLoadLiteral(displacement, d); };
   }
 
   for(unsigned d = 0; d < 8; ++d)
@@ -761,7 +769,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern("0111 ???? ???? ????") | d | n << 3 | immediate << 6 | mode << 11;
     auto op = pattern(0x7000) | d | n << 3 | immediate << 6 | mode << 11;
-    bind(op, MoveByteImmediate, d, n, immediate, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionMoveByteImmediate(d, n, immediate, mode); };
   }
 
   for(unsigned d = 0; d < 8; ++d)
@@ -770,7 +779,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern("1000 ???? ???? ????") | d | n << 3 | immediate << 6 | mode << 11;
     auto op = pattern(0x8000) | d | n << 3 | immediate << 6 | mode << 11;
-    bind(op, MoveHalfImmediate, d, n, immediate, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionMoveHalfImmediate(d, n, immediate, mode); };
   }
 
   for(unsigned list = 0; list < 256; ++list)
@@ -778,7 +788,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern("1100 ???? ???? ????") | list | n << 8 | mode << 11;
     auto op = pattern(0xc000) | list | n << 8 | mode << 11;
-    bind(op, MoveMultiple, list, n, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionMoveMultiple(list, n, mode); };
   }
 
   for(unsigned d = 0; d < 8; ++d)
@@ -787,7 +798,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 8; ++mode) {
     //auto op = pattern("0101 ???? ???? ????") | d | n << 3 | m << 6 | mode << 9;
     auto op = pattern(0x5000) | d | n << 3 | m << 6 | mode << 9;
-    bind(op, MoveRegisterOffset, d, n, m, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionMoveRegisterOffset(d, n, m, mode); };
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate)
@@ -795,7 +807,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern("1001 ???? ???? ????") | immediate | d << 8 | mode << 11;
     auto op = pattern(0x9000) | immediate | d << 8 | mode << 11;
-    bind(op, MoveStack, immediate, d, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionMoveStack(immediate, d, mode); };
   }
 
   for(unsigned d = 0; d < 8; ++d)
@@ -804,7 +817,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern("0110 ???? ???? ????") | d | n << 3 | offset << 6 | mode << 11;
     auto op = pattern(0x6000) | d | n << 3 | offset << 6 | mode << 11;
-    bind(op, MoveWordImmediate, d, n, offset, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionMoveWordImmediate(d, n, offset, mode); };
   }
 
   for(unsigned d = 0; d < 8; ++d)
@@ -814,13 +828,15 @@ void ARM7TDMI::thumbInitialize() {
     if(mode == 3) continue;
     //auto op = pattern("000? ???? ???? ????") | d | m << 3 | immediate << 6 | mode << 11;
     auto op = pattern(0x0000) | d | m << 3 | immediate << 6 | mode << 11;
-    bind(op, ShiftImmediate, d, m, immediate, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionShiftImmediate(d, m, immediate, mode); };
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate) {
     //auto op = pattern("1101 1111 ???? ????") | immediate;
     auto op = pattern(0xdf00) | immediate;
-    bind(op, SoftwareInterrupt, immediate);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionSoftwareInterrupt(immediate); };
   }
 
   for(unsigned list = 0; list < 256; ++list)
@@ -828,20 +844,20 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern("1011 ?10? ???? ????") | list | lrpc << 8 | mode << 11;
     auto op = pattern(0xb400) | list | lrpc << 8 | mode << 11;
-    bind(op, StackMultiple, list, lrpc, mode);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionStackMultiple(list, lrpc, mode); };
   }
 
   for(unsigned id = 0; id < 65536; ++id) {
     if(thumbInstruction[id]) continue;
     //auto op = pattern("???? ???? ???? ????") | id;
     auto op = pattern(0x0000) | id;
-    bind(op, Undefined);
+    assert(!thumbInstruction[op]);
+    thumbInstruction[op] = [=] { return thumbInstructionUndefined(); };
   }
 
   #undef bit1
   #undef bits
-
-  #undef bind
   #undef pattern
 }
 
