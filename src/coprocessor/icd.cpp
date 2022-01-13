@@ -22,13 +22,13 @@
 #include <iterator>
 #include <vector>
 
-#include "../serializer.hpp"
-#include "../audio.hpp"
-#include "../emulator.hpp"
-#include "../cartridge.hpp"
-#include "../cpu.hpp"
-#include "../settings.hpp"
-#include "../sha256.hpp"
+#include "serializer.hpp"
+#include "audio.hpp"
+#include "emulator.hpp"
+#include "cartridge.hpp"
+#include "cpu.hpp"
+#include "settings.hpp"
+#include "sha256.hpp"
 
 #include "icd.hpp"
 

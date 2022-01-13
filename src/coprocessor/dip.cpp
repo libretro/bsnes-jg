@@ -21,7 +21,7 @@
 //DIP switch
 //used for Nintendo Super System emulation
 
-#include "../serializer.hpp"
+#include "serializer.hpp"
 
 #include "dip.hpp"
 

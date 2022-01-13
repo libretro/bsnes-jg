@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "../cheat.hpp"
-#include "../sfc.hpp"
+#include "cheat.hpp"
+#include "sfc.hpp"
 
 namespace SuperFamicom {
 

@@ -21,9 +21,9 @@
 #include <cstring>
 #include <cmath>
 
-#include "../serializer.hpp"
-#include "../cpu.hpp"
-#include "../memory.hpp"
+#include "serializer.hpp"
+#include "cpu.hpp"
+#include "memory.hpp"
 
 #include "cx4.hpp"
 

@@ -20,8 +20,8 @@
 
 #include <ctime>
 
-#include "../serializer.hpp"
-#include "../cpu.hpp"
+#include "serializer.hpp"
+#include "cpu.hpp"
 
 #include "epsonrtc.hpp"
 

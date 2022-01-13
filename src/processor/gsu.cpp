@@ -21,7 +21,7 @@
 #include <cstring>
 #include <string>
 
-#include "../serializer.hpp"
+#include "serializer.hpp"
 
 #include "gsu.hpp"
 

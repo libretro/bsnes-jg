@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "../function.hpp"
+#include "function.hpp"
 
 namespace Processor {
 

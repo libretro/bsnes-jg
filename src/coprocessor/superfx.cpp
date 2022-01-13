@@ -18,10 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../serializer.hpp"
-#include "../cpu.hpp"
-#include "../memory.hpp"
-#include "../settings.hpp"
+#include "serializer.hpp"
+#include "cpu.hpp"
+#include "memory.hpp"
+#include "settings.hpp"
 
 #include "superfx.hpp"
 

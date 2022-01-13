@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "../processor/arm7tdmi.hpp"
-#include "../sfc.hpp"
+#include "processor/arm7tdmi.hpp"
+#include "sfc.hpp"
 
 namespace SuperFamicom {
 

@@ -21,7 +21,7 @@
 #include <bitset>
 #include <cassert>
 
-#include "../serializer.hpp"
+#include "serializer.hpp"
 
 #include "arm7tdmi.hpp"
 

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "../processor/gsu.hpp"
+#include "processor/gsu.hpp"
 
 namespace SuperFamicom {
 

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "../processor/upd96050.hpp"
+#include "processor/upd96050.hpp"
 
 namespace SuperFamicom {
 

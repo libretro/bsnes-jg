@@ -20,11 +20,11 @@
 
 #include <vector>
 
-#include "../serializer.hpp"
-#include "../cpu.hpp"
-#include "../memory.hpp"
-#include "../settings.hpp"
-#include "../bsmemory.hpp"
+#include "serializer.hpp"
+#include "cpu.hpp"
+#include "memory.hpp"
+#include "settings.hpp"
+#include "bsmemory.hpp"
 
 #include "sa1.hpp"
 

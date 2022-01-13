@@ -20,10 +20,10 @@
 
 #include <cstdint>
 
-#include "../serializer.hpp"
-#include "../memory.hpp"
-#include "../sfc.hpp"
-#include "../bsmemory.hpp"
+#include "serializer.hpp"
+#include "memory.hpp"
+#include "sfc.hpp"
+#include "bsmemory.hpp"
 
 #include "mcc.hpp"
 

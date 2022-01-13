@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "../processor/wdc65816.hpp"
+#include "processor/wdc65816.hpp"
 
 namespace SuperFamicom {
 

@@ -20,7 +20,7 @@
 
 #include <cstring>
 
-#include "../serializer.hpp"
+#include "serializer.hpp"
 
 #include "dsp1emu.hpp"
 

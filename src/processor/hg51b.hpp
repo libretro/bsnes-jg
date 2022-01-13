@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "../function.hpp"
+#include "function.hpp"
 
 //Hitachi HG51B S169
 

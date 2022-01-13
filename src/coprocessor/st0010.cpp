@@ -21,7 +21,7 @@
 #include <cstring>
 #include <math.h>
 
-#include "../serializer.hpp"
+#include "serializer.hpp"
 
 #include "st0010.hpp"
 
