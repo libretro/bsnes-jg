@@ -79,8 +79,10 @@ Notes
 - Firmware is required for DSP3, ST011, and ST018 in all cases.
 - Save states created with LLE coprocessor emulation are incompatible with
   states created with HLE coprocessor emulation.
-- Turning off both HLE coprocessor emulation and Delayed Sync is roughly the
-  same as the "Accuracy Profile" in previous version of the emulator.
+- The equivalent of the "Accuracy Profile" from previous versions of the
+  emulator may be used by setting Coprocessor Delayed Sync and Coprocessor
+  HLE off. The defaults are similar to the "Balanced Profile". The "Performance
+  Profile" is gone. If this is still too slow, try Mednafen's snes_faust.
 
 Copyright
 ---------
