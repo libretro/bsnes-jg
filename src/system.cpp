@@ -258,14 +258,13 @@ void System::runToSaveStrict() {
     //this is extremely critical for Tales of Phantasia and Star Ocean.
     if(!synchronize(smp.thread)) continue;
     if(!synchronize(cpu.thread)) continue;
-    if(!synchronize(smp.thread)) continue;
-    if(!synchronize(ppu.thread)) continue;
-
     bool synchronized = true;
     for(auto coprocessor : cpu.coprocessors) {
       if(!synchronize(coprocessor->thread)) { synchronized = false; break; }
     }
     if(!synchronized) continue;
+    if(!synchronize(smp.thread)) continue;
+    if(!synchronize(ppu.thread)) continue;
 
     break;
   }
