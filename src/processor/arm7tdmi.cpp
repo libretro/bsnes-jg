@@ -287,7 +287,7 @@ void ARM7TDMI::armInitialize() {
   #define bind(id, name, ...) { \
     unsigned index = (id & 0x0ff00000) >> 16 | (id & 0x000000f0) >> 4; \
     assert(!armInstruction[index]); \
-    armInstruction[index] = [&](uint32_t _opcode) { return armInstruction##name(arguments); }; \
+    armInstruction[index] = [&](uint32_t) { return armInstruction##name(arguments); }; \
   }
 
   #define pattern(s) \
