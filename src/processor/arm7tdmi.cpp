@@ -374,7 +374,7 @@ void ARM7TDMI::armInitialize() {
   #undef arguments
 
   #define arguments \
-    bits(opcode, 0, 3) << 0 | bits(opcode, 8,11) << 4,  /* immediate */ \
+    bits(opcode, 0, 3) | bits(opcode, 8,11) << 4,  /* immediate */ \
     bit1(opcode, 5),     /* half */ \
     bits(opcode,12,15),  /* d */ \
     bits(opcode,16,19),  /* n */ \
@@ -422,7 +422,7 @@ void ARM7TDMI::armInitialize() {
   #undef arguments
 
   #define arguments \
-    bits(opcode, 0, 3) << 0 | bits(opcode, 8,11) << 4,  /* immediate */ \
+    bits(opcode, 0, 3) | bits(opcode, 8,11) << 4,  /* immediate */ \
     bits(opcode,12,15),  /* d */ \
     bits(opcode,16,19),  /* n */ \
     bit1(opcode,20),     /* mode */ \
@@ -627,8 +627,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned m = 0; m < 8; ++m)
   for(unsigned mode = 0; mode < 16; ++mode) {
-    //auto op = pattern("0100 00?? ???? ????") | d << 0 | m << 3 | mode << 6;
-    auto op = pattern(0x4000) | d << 0 | m << 3 | mode << 6;
+    //auto op = pattern("0100 00?? ???? ????") | d | m << 3 | mode << 6;
+    auto op = pattern(0x4000) | d | m << 3 | mode << 6;
     bind(op, ALU, d, m, mode);
   }
 
@@ -636,16 +636,16 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned m = 0; m < 16; ++m)
   for(unsigned mode = 0; mode < 4; ++mode) {
     if(mode == 3) continue;
-    //auto op = pattern("0100 01?? ???? ????") | bits(d,0,2) << 0 | m << 3 | bit1(d,3) << 7 | mode << 8;
-    auto op = pattern(0x4400) | bits(d,0,2) << 0 | m << 3 | bit1(d,3) << 7 | mode << 8;
+    //auto op = pattern("0100 01?? ???? ????") | bits(d,0,2) | m << 3 | bit1(d,3) << 7 | mode << 8;
+    auto op = pattern(0x4400) | bits(d,0,2) | m << 3 | bit1(d,3) << 7 | mode << 8;
     bind(op, ALUExtended, d, m, mode);
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate)
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto op = pattern("1010 ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
-    auto op = pattern(0xa000) | immediate << 0 | d << 8 | mode << 11;
+    //auto op = pattern("1010 ???? ???? ????") | immediate | d << 8 | mode << 11;
+    auto op = pattern(0xa000) | immediate | d << 8 | mode << 11;
     bind(op, AddRegister, immediate, d, mode);
   }
 
@@ -653,8 +653,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned immediate = 0; immediate < 8; ++immediate)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto op = pattern("0001 11?? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 9;
-    auto op = pattern(0x1c00) | d << 0 | n << 3 | immediate << 6 | mode << 9;
+    //auto op = pattern("0001 11?? ???? ????") | d | n << 3 | immediate << 6 | mode << 9;
+    auto op = pattern(0x1c00) | d | n << 3 | immediate << 6 | mode << 9;
     bind(op, AdjustImmediate, d, n, immediate, mode);
   }
 
@@ -662,63 +662,63 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned m = 0; m < 8; ++m)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto op = pattern("0001 10?? ???? ????") | d << 0 | n << 3 | m << 6 | mode << 9;
-    auto op = pattern(0x1800) | d << 0 | n << 3 | m << 6 | mode << 9;
+    //auto op = pattern("0001 10?? ???? ????") | d | n << 3 | m << 6 | mode << 9;
+    auto op = pattern(0x1800) | d | n << 3 | m << 6 | mode << 9;
     bind(op, AdjustRegister, d, n, m, mode);
   }
 
   for(unsigned immediate = 0; immediate < 128; ++immediate)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto op = pattern("1011 0000 ???? ????") | immediate << 0 | mode << 7;
-    auto op = pattern(0xb000) | immediate << 0 | mode << 7;
+    //auto op = pattern("1011 0000 ???? ????") | immediate | mode << 7;
+    auto op = pattern(0xb000) | immediate | mode << 7;
     bind(op, AdjustStack, immediate, mode);
   }
 
   for(unsigned _ = 0; _ < 8; ++_)
   for(unsigned m = 0; m < 16; ++m) {
-    //auto op = pattern("0100 0111 0??? ?---") | _ << 0 | m << 3;
-    auto op = pattern(0x4700) | _ << 0 | m << 3;
+    //auto op = pattern("0100 0111 0??? ?---") | _ | m << 3;
+    auto op = pattern(0x4700) | _ | m << 3;
     bind(op, BranchExchange, m);
   }
 
   for(unsigned displacement = 0; displacement < 2048; ++displacement) {
-    //auto op = pattern("1111 0??? ???? ????") | displacement << 0;
-    auto op = pattern(0xf000) | displacement << 0;
+    //auto op = pattern("1111 0??? ???? ????") | displacement;
+    auto op = pattern(0xf000) | displacement;
     bind(op, BranchFarPrefix, displacement);
   }
 
   for(unsigned displacement = 0; displacement < 2048; ++displacement) {
-    //auto op = pattern("1111 1??? ???? ????") | displacement << 0;
-    auto op = pattern(0xf800) | displacement << 0;
+    //auto op = pattern("1111 1??? ???? ????") | displacement;
+    auto op = pattern(0xf800) | displacement;
     bind(op, BranchFarSuffix, displacement);
   }
 
   for(unsigned displacement = 0; displacement < 2048; ++displacement) {
-    //auto op = pattern("1110 0??? ???? ????") | displacement << 0;
-    auto op = pattern(0xe000) | displacement << 0;
+    //auto op = pattern("1110 0??? ???? ????") | displacement;
+    auto op = pattern(0xe000) | displacement;
     bind(op, BranchNear, displacement);
   }
 
   for(unsigned displacement = 0; displacement < 256; ++displacement)
   for(unsigned condition = 0; condition < 16; ++condition) {
     if(condition == 15) continue;  //BNV
-    //auto op = pattern("1101 ???? ???? ????") | displacement << 0 | condition << 8;
-    auto op = pattern(0xd000) | displacement << 0 | condition << 8;
+    //auto op = pattern("1101 ???? ???? ????") | displacement | condition << 8;
+    auto op = pattern(0xd000) | displacement | condition << 8;
     bind(op, BranchTest, displacement, condition);
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate)
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned mode = 0; mode < 4; ++mode) {
-    //auto op = pattern("001? ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
-    auto op = pattern(0x2000) | immediate << 0 | d << 8 | mode << 11;
+    //auto op = pattern("001? ???? ???? ????") | immediate | d << 8 | mode << 11;
+    auto op = pattern(0x2000) | immediate | d << 8 | mode << 11;
     bind(op, Immediate, immediate, d, mode);
   }
 
   for(unsigned displacement = 0; displacement < 256; ++displacement)
   for(unsigned d = 0; d < 8; ++d) {
-    //auto op = pattern("0100 1??? ???? ????") | displacement << 0 | d << 8;
-    auto op = pattern(0x4800) | displacement << 0 | d << 8;
+    //auto op = pattern("0100 1??? ???? ????") | displacement | d << 8;
+    auto op = pattern(0x4800) | displacement | d << 8;
     bind(op, LoadLiteral, displacement, d);
   }
 
@@ -726,8 +726,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned immediate = 0; immediate < 32; ++immediate)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto op = pattern("0111 ???? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 11;
-    auto op = pattern(0x7000) | d << 0 | n << 3 | immediate << 6 | mode << 11;
+    //auto op = pattern("0111 ???? ???? ????") | d | n << 3 | immediate << 6 | mode << 11;
+    auto op = pattern(0x7000) | d | n << 3 | immediate << 6 | mode << 11;
     bind(op, MoveByteImmediate, d, n, immediate, mode);
   }
 
@@ -735,16 +735,16 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned immediate = 0; immediate < 32; ++immediate)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto op = pattern("1000 ???? ???? ????") | d << 0 | n << 3 | immediate << 6 | mode << 11;
-    auto op = pattern(0x8000) | d << 0 | n << 3 | immediate << 6 | mode << 11;
+    //auto op = pattern("1000 ???? ???? ????") | d | n << 3 | immediate << 6 | mode << 11;
+    auto op = pattern(0x8000) | d | n << 3 | immediate << 6 | mode << 11;
     bind(op, MoveHalfImmediate, d, n, immediate, mode);
   }
 
   for(unsigned list = 0; list < 256; ++list)
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto op = pattern("1100 ???? ???? ????") | list << 0 | n << 8 | mode << 11;
-    auto op = pattern(0xc000) | list << 0 | n << 8 | mode << 11;
+    //auto op = pattern("1100 ???? ???? ????") | list | n << 8 | mode << 11;
+    auto op = pattern(0xc000) | list | n << 8 | mode << 11;
     bind(op, MoveMultiple, list, n, mode);
   }
 
@@ -752,16 +752,16 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned m = 0; m < 8; ++m)
   for(unsigned mode = 0; mode < 8; ++mode) {
-    //auto op = pattern("0101 ???? ???? ????") | d << 0 | n << 3 | m << 6 | mode << 9;
-    auto op = pattern(0x5000) | d << 0 | n << 3 | m << 6 | mode << 9;
+    //auto op = pattern("0101 ???? ???? ????") | d | n << 3 | m << 6 | mode << 9;
+    auto op = pattern(0x5000) | d | n << 3 | m << 6 | mode << 9;
     bind(op, MoveRegisterOffset, d, n, m, mode);
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate)
   for(unsigned d = 0; d < 8; ++d)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto op = pattern("1001 ???? ???? ????") | immediate << 0 | d << 8 | mode << 11;
-    auto op = pattern(0x9000) | immediate << 0 | d << 8 | mode << 11;
+    //auto op = pattern("1001 ???? ???? ????") | immediate | d << 8 | mode << 11;
+    auto op = pattern(0x9000) | immediate | d << 8 | mode << 11;
     bind(op, MoveStack, immediate, d, mode);
   }
 
@@ -769,8 +769,8 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned n = 0; n < 8; ++n)
   for(unsigned offset = 0; offset < 32; ++offset)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto op = pattern("0110 ???? ???? ????") | d << 0 | n << 3 | offset << 6 | mode << 11;
-    auto op = pattern(0x6000) | d << 0 | n << 3 | offset << 6 | mode << 11;
+    //auto op = pattern("0110 ???? ???? ????") | d | n << 3 | offset << 6 | mode << 11;
+    auto op = pattern(0x6000) | d | n << 3 | offset << 6 | mode << 11;
     bind(op, MoveWordImmediate, d, n, offset, mode);
   }
 
@@ -779,29 +779,29 @@ void ARM7TDMI::thumbInitialize() {
   for(unsigned immediate = 0; immediate < 32; ++immediate)
   for(unsigned mode = 0; mode < 4; ++mode) {
     if(mode == 3) continue;
-    //auto op = pattern("000? ???? ???? ????") | d << 0 | m << 3 | immediate << 6 | mode << 11;
-    auto op = pattern(0x0000) | d << 0 | m << 3 | immediate << 6 | mode << 11;
+    //auto op = pattern("000? ???? ???? ????") | d | m << 3 | immediate << 6 | mode << 11;
+    auto op = pattern(0x0000) | d | m << 3 | immediate << 6 | mode << 11;
     bind(op, ShiftImmediate, d, m, immediate, mode);
   }
 
   for(unsigned immediate = 0; immediate < 256; ++immediate) {
-    //auto op = pattern("1101 1111 ???? ????") | immediate << 0;
-    auto op = pattern(0xdf00) | immediate << 0;
+    //auto op = pattern("1101 1111 ???? ????") | immediate;
+    auto op = pattern(0xdf00) | immediate;
     bind(op, SoftwareInterrupt, immediate);
   }
 
   for(unsigned list = 0; list < 256; ++list)
   for(unsigned lrpc = 0; lrpc < 2; ++lrpc)
   for(unsigned mode = 0; mode < 2; ++mode) {
-    //auto op = pattern("1011 ?10? ???? ????") | list << 0 | lrpc << 8 | mode << 11;
-    auto op = pattern(0xb400) | list << 0 | lrpc << 8 | mode << 11;
+    //auto op = pattern("1011 ?10? ???? ????") | list | lrpc << 8 | mode << 11;
+    auto op = pattern(0xb400) | list | lrpc << 8 | mode << 11;
     bind(op, StackMultiple, list, lrpc, mode);
   }
 
   for(unsigned id = 0; id < 65536; ++id) {
     if(thumbInstruction[id]) continue;
-    //auto op = pattern("???? ???? ???? ????") | id << 0;
-    auto op = pattern(0x0000) | id << 0;
+    //auto op = pattern("???? ???? ???? ????") | id;
+    auto op = pattern(0x0000) | id;
     bind(op, Undefined);
   }
 
@@ -1104,7 +1104,7 @@ void ARM7TDMI::armInstructionMultiplyLong
   }
 
   uint64_t rd = rm * rs;
-  if(accumulate) rd += (uint64_t)r(h) << 32 | (uint64_t)r(l) << 0;
+  if(accumulate) rd += (uint64_t)r(h) << 32 | (uint64_t)r(l);
 
   r(h) = rd >> 32;
   r(l) = rd >>  0;
