@@ -1496,26 +1496,8 @@ void WDC65816::interrupt() {
 
 //both the accumulator and index registers can independently be in either 8-bit or 16-bit mode.
 //controlled via the M/X flags, this changes the execution details of various instructions.
-//rather than implement four instruction tables for all possible combinations of these bits,
-//instead use macro abuse to generate all four tables based off of a single template table.
 void WDC65816::instruction() {
-  //a = instructions unaffected by M/X flags
-  //m = instructions affected by M flag (1 = 8-bit; 0 = 16-bit)
-  //x = instructions affected by X flag (1 = 8-bit; 0 = 16-bit)
-
-  if(XF) {
-    #define opX(id, name, ...) case id: return instruction##name##8(__VA_ARGS__);
-    #define x(name) &WDC65816::algorithm##name##8
-    #include "wdc65816_instruction.hpp"
-    #undef opX
-    #undef x
-  } else {
-    #define opX(id, name, ...) case id: return instruction##name##16(__VA_ARGS__);
-    #define x(name) &WDC65816::algorithm##name##16
-    #include "wdc65816_instruction.hpp"
-    #undef opX
-    #undef x
-  }
+  #include "wdc65816_instruction.hpp"
 }
 
 void WDC65816::power() {

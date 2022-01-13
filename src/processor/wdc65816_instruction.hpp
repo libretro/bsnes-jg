@@ -68,7 +68,7 @@ switch(fetch()) {
   case 0x41: return MF ? instructionIndexedIndirectRead8(&WDC65816::algorithmEOR8) : instructionIndexedIndirectRead16(&WDC65816::algorithmEOR16);
   case 0x42: return instructionPrefix();
   case 0x43: return MF ? instructionStackRead8(&WDC65816::algorithmEOR8) : instructionStackRead16(&WDC65816::algorithmEOR16);
-  opX(0x44, BlockMove, -1)
+  case 0x44: return XF ? instructionBlockMove8(-1) : instructionBlockMove16(-1);
   case 0x45: return MF ? instructionDirectRead8(&WDC65816::algorithmEOR8) : instructionDirectRead16(&WDC65816::algorithmEOR16);
   case 0x46: return MF ? instructionDirectModify8(&WDC65816::algorithmLSR8) : instructionDirectModify16(&WDC65816::algorithmLSR16);
   case 0x47: return MF ? instructionIndirectLongRead8(&WDC65816::algorithmEOR8) : instructionIndirectLongRead16(&WDC65816::algorithmEOR16);
@@ -84,13 +84,13 @@ switch(fetch()) {
   case 0x51: return MF ? instructionIndirectIndexedRead8(&WDC65816::algorithmEOR8) : instructionIndirectIndexedRead16(&WDC65816::algorithmEOR16);
   case 0x52: return MF ? instructionIndirectRead8(&WDC65816::algorithmEOR8) : instructionIndirectRead16(&WDC65816::algorithmEOR16);
   case 0x53: return MF ? instructionIndirectStackRead8(&WDC65816::algorithmEOR8) : instructionIndirectStackRead16(&WDC65816::algorithmEOR16);
-  opX(0x54, BlockMove, +1)
+  case 0x54: return XF ? instructionBlockMove8(+1) : instructionBlockMove16(+1);
   case 0x55: return MF ? instructionDirectRead8(&WDC65816::algorithmEOR8, X) : instructionDirectRead16(&WDC65816::algorithmEOR16, X);
   case 0x56: return MF ? instructionDirectIndexedModify8(&WDC65816::algorithmLSR8) : instructionDirectIndexedModify16(&WDC65816::algorithmLSR16);
   case 0x57: return MF ? instructionIndirectLongRead8(&WDC65816::algorithmEOR8, Y) : instructionIndirectLongRead16(&WDC65816::algorithmEOR16, Y);
   case 0x58: return instructionClearFlag(IF);
   case 0x59: return MF ? instructionBankRead8(&WDC65816::algorithmEOR8, Y) : instructionBankRead16(&WDC65816::algorithmEOR16, Y);
-  opX(0x5a, Push, Y)
+  case 0x5a: return XF ? instructionPush8(Y) : instructionPush16(Y);
   case 0x5b: return instructionTransfer16(A, D);
   case 0x5c: return instructionJumpLong();
   case 0x5d: return MF ? instructionBankRead8(&WDC65816::algorithmEOR8, X) : instructionBankRead16(&WDC65816::algorithmEOR16, X);
@@ -122,7 +122,7 @@ switch(fetch()) {
   case 0x77: return MF ? instructionIndirectLongRead8(&WDC65816::algorithmADC8, Y) : instructionIndirectLongRead16(&WDC65816::algorithmADC16, Y);
   case 0x78: return instructionSetFlag(IF);
   case 0x79: return MF ? instructionBankRead8(&WDC65816::algorithmADC8, Y) : instructionBankRead16(&WDC65816::algorithmADC16, Y);
-  opX(0x7a, Pull, Y)
+  case 0x7a: return XF ? instructionPull8(Y) : instructionPull16(Y);
   case 0x7b: return instructionTransfer16(D, A);
   case 0x7c: return instructionJumpIndexedIndirect();
   case 0x7d: return MF ? instructionBankRead8(&WDC65816::algorithmADC8, X) : instructionBankRead16(&WDC65816::algorithmADC16, X);
@@ -132,79 +132,79 @@ switch(fetch()) {
   case 0x81: return MF ? instructionIndexedIndirectWrite8() : instructionIndexedIndirectWrite16();
   case 0x82: return instructionBranchLong();
   case 0x83: return MF ? instructionStackWrite8() : instructionStackWrite16();
-  opX(0x84, DirectWrite, Y)
+  case 0x84: return XF ? instructionDirectWrite8(Y) : instructionDirectWrite16(Y);
   case 0x85: return MF ? instructionDirectWrite8(A) : instructionDirectWrite16(A);
-  opX(0x86, DirectWrite, X)
+  case 0x86: return XF ? instructionDirectWrite8(X) : instructionDirectWrite16(X);
   case 0x87: return MF ? instructionIndirectLongWrite8() : instructionIndirectLongWrite16();
-  opX(0x88, ImpliedModify, x(DEC), Y)
+  case 0x88: return XF ? instructionImpliedModify8(&WDC65816::algorithmDEC8, Y) : instructionImpliedModify16(&WDC65816::algorithmDEC16, Y);
   case 0x89: return MF ? instructionBitImmediate8() : instructionBitImmediate16();
   case 0x8a: return MF ? instructionTransfer8(X, A) : instructionTransfer16(X, A);
   case 0x8b: return instructionPush8((r16)B);
-  opX(0x8c, BankWrite, Y)
+  case 0x8c: return XF ? instructionBankWrite8(Y) : instructionBankWrite16(Y);
   case 0x8d: return MF ? instructionBankWrite8(A) : instructionBankWrite16(A);
-  opX(0x8e, BankWrite, X)
+  case 0x8e: return XF ? instructionBankWrite8(X) : instructionBankWrite16(X);
   case 0x8f: return MF ? instructionLongWrite8() : instructionLongWrite16();
   case 0x90: return instructionBranch(CF == 0);
   case 0x91: return MF ? instructionIndirectIndexedWrite8() : instructionIndirectIndexedWrite16();
   case 0x92: return MF ? instructionIndirectWrite8() : instructionIndirectWrite16();
   case 0x93: return MF ? instructionIndirectStackWrite8() : instructionIndirectStackWrite16();
-  opX(0x94, DirectWrite, Y, X)
+  case 0x94: return XF ? instructionDirectWrite8(Y, X) : instructionDirectWrite16(Y, X);
   case 0x95: return MF ? instructionDirectWrite8(A, X) : instructionDirectWrite16(A, X);
-  opX(0x96, DirectWrite, X, Y)
+  case 0x96: return XF ? instructionDirectWrite8(X, Y) : instructionDirectWrite16(X, Y);
   case 0x97: return MF ? instructionIndirectLongWrite8(Y) : instructionIndirectLongWrite16(Y);
   case 0x98: return MF ? instructionTransfer8(Y, A) : instructionTransfer16(Y, A);
   case 0x99: return MF ? instructionBankWrite8(A, Y) : instructionBankWrite16(A, Y);
   case 0x9a: return instructionTransferXS();
-  opX(0x9b, Transfer, X, Y)
+  case 0x9b: return XF ? instructionTransfer8(X, Y) : instructionTransfer16(X, Y);
   case 0x9c: return MF ? instructionBankWrite8(Z) : instructionBankWrite16(Z);
   case 0x9d: return MF ? instructionBankWrite8(A, X) : instructionBankWrite16(A, X);
   case 0x9e: return MF ? instructionBankWrite8(Z, X) : instructionBankWrite16(Z, X);
   case 0x9f: return MF ? instructionLongWrite8(X) : instructionLongWrite16(X);
-  opX(0xa0, ImmediateRead, x(LDY))
+  case 0xa0: return XF ? instructionImmediateRead8(&WDC65816::algorithmLDY8) : instructionImmediateRead16(&WDC65816::algorithmLDY16);
   case 0xa1: return MF ? instructionIndexedIndirectRead8(&WDC65816::algorithmLDA8) : instructionIndexedIndirectRead16(&WDC65816::algorithmLDA16);
-  opX(0xa2, ImmediateRead, x(LDX))
+  case 0xa2: return XF ? instructionImmediateRead8(&WDC65816::algorithmLDX8) : instructionImmediateRead16(&WDC65816::algorithmLDX16);
   case 0xa3: return MF ? instructionStackRead8(&WDC65816::algorithmLDA8) : instructionStackRead16(&WDC65816::algorithmLDA16);
-  opX(0xa4, DirectRead, x(LDY))
+  case 0xa4: return XF ? instructionDirectRead8(&WDC65816::algorithmLDY8) : instructionDirectRead16(&WDC65816::algorithmLDY16);
   case 0xa5: return MF ? instructionDirectRead8(&WDC65816::algorithmLDA8) : instructionDirectRead16(&WDC65816::algorithmLDA16);
-  opX(0xa6, DirectRead, x(LDX))
+  case 0xa6: return XF ? instructionDirectRead8(&WDC65816::algorithmLDX8) : instructionDirectRead16(&WDC65816::algorithmLDX16);
   case 0xa7: return MF ? instructionIndirectLongRead8(&WDC65816::algorithmLDA8) : instructionIndirectLongRead16(&WDC65816::algorithmLDA16);
-  opX(0xa8, Transfer, A, Y)
+  case 0xa8: return XF ? instructionTransfer8(A, Y) : instructionTransfer16(A, Y);
   case 0xa9: return MF ? instructionImmediateRead8(&WDC65816::algorithmLDA8) : instructionImmediateRead16(&WDC65816::algorithmLDA16);
-  opX(0xaa, Transfer, A, X)
+  case 0xaa: return XF ? instructionTransfer8(A, X) : instructionTransfer16(A, X);
   case 0xab: return instructionPullB();
-  opX(0xac, BankRead, x(LDY))
+  case 0xac: return XF ? instructionBankRead8(&WDC65816::algorithmLDY8) : instructionBankRead16(&WDC65816::algorithmLDY16);
   case 0xad: return MF ? instructionBankRead8(&WDC65816::algorithmLDA8) : instructionBankRead16(&WDC65816::algorithmLDA16);
-  opX(0xae, BankRead, x(LDX))
+  case 0xae: return XF ? instructionBankRead8(&WDC65816::algorithmLDX8) : instructionBankRead16(&WDC65816::algorithmLDX16);
   case 0xaf: return MF ? instructionLongRead8(&WDC65816::algorithmLDA8) : instructionLongRead16(&WDC65816::algorithmLDA16);
   case 0xb0: return instructionBranch(CF == 1);
   case 0xb1: return MF ? instructionIndirectIndexedRead8(&WDC65816::algorithmLDA8) : instructionIndirectIndexedRead16(&WDC65816::algorithmLDA16);
   case 0xb2: return MF ? instructionIndirectRead8(&WDC65816::algorithmLDA8) : instructionIndirectRead16(&WDC65816::algorithmLDA16);
   case 0xb3: return MF ? instructionIndirectStackRead8(&WDC65816::algorithmLDA8) : instructionIndirectStackRead16(&WDC65816::algorithmLDA16);
-  opX(0xb4, DirectRead, x(LDY), X)
+  case 0xb4: return XF ? instructionDirectRead8(&WDC65816::algorithmLDY8, X) : instructionDirectRead16(&WDC65816::algorithmLDY16, X);
   case 0xb5: return MF ? instructionDirectRead8(&WDC65816::algorithmLDA8, X) : instructionDirectRead16(&WDC65816::algorithmLDA16, X);
-  opX(0xb6, DirectRead, x(LDX), Y)
+  case 0xb6: return XF ? instructionDirectRead8(&WDC65816::algorithmLDX8, Y) : instructionDirectRead16(&WDC65816::algorithmLDX16, Y);
   case 0xb7: return MF ? instructionIndirectLongRead8(&WDC65816::algorithmLDA8, Y) : instructionIndirectLongRead16(&WDC65816::algorithmLDA16, Y);
   case 0xb8: return instructionClearFlag(VF);
   case 0xb9: return MF ? instructionBankRead8(&WDC65816::algorithmLDA8, Y) : instructionBankRead16(&WDC65816::algorithmLDA16, Y);
-  opX(0xba, TransferSX)
-  opX(0xbb, Transfer, Y, X)
-  opX(0xbc, BankRead, x(LDY), X)
+  case 0xba: return XF ? instructionTransferSX8() : instructionTransferSX16();
+  case 0xbb: return XF ? instructionTransfer8(Y, X) : instructionTransfer16(Y, X);
+  case 0xbc: return XF ? instructionBankRead8(&WDC65816::algorithmLDY8, X) : instructionBankRead16(&WDC65816::algorithmLDY16, X);
   case 0xbd: return MF ? instructionBankRead8(&WDC65816::algorithmLDA8, X) : instructionBankRead16(&WDC65816::algorithmLDA16, X);
-  opX(0xbe, BankRead, x(LDX), Y)
+  case 0xbe: return XF ? instructionBankRead8(&WDC65816::algorithmLDX8, Y) : instructionBankRead16(&WDC65816::algorithmLDX16, Y);
   case 0xbf: return MF ? instructionLongRead8(&WDC65816::algorithmLDA8, X) : instructionLongRead16(&WDC65816::algorithmLDA16, X);
-  opX(0xc0, ImmediateRead, x(CPY))
+  case 0xc0: return XF ? instructionImmediateRead8(&WDC65816::algorithmCPY8) : instructionImmediateRead16(&WDC65816::algorithmCPY16);
   case 0xc1: return MF ? instructionIndexedIndirectRead8(&WDC65816::algorithmCMP8) : instructionIndexedIndirectRead16(&WDC65816::algorithmCMP16);
   case 0xc2: return instructionResetP();
   case 0xc3: return MF ? instructionStackRead8(&WDC65816::algorithmCMP8) : instructionStackRead16(&WDC65816::algorithmCMP16);
-  opX(0xc4, DirectRead, x(CPY))
+  case 0xc4: return XF ? instructionDirectRead8(&WDC65816::algorithmCPY8) : instructionDirectRead16(&WDC65816::algorithmCPY16);
   case 0xc5: return MF ? instructionDirectRead8(&WDC65816::algorithmCMP8) : instructionDirectRead16(&WDC65816::algorithmCMP16);
   case 0xc6: return MF ? instructionDirectModify8(&WDC65816::algorithmDEC8) : instructionDirectModify16(&WDC65816::algorithmDEC16);
   case 0xc7: return MF ? instructionIndirectLongRead8(&WDC65816::algorithmCMP8) : instructionIndirectLongRead16(&WDC65816::algorithmCMP16);
-  opX(0xc8, ImpliedModify, x(INC), Y)
+  case 0xc8: return XF ? instructionImpliedModify8(&WDC65816::algorithmINC8, Y) : instructionImpliedModify16(&WDC65816::algorithmINC16, Y);
   case 0xc9: return MF ? instructionImmediateRead8(&WDC65816::algorithmCMP8) : instructionImmediateRead16(&WDC65816::algorithmCMP16);
-  opX(0xca, ImpliedModify, x(DEC), X)
+  case 0xca: return XF ? instructionImpliedModify8(&WDC65816::algorithmDEC8, X) : instructionImpliedModify16(&WDC65816::algorithmDEC16, X);
   case 0xcb: return instructionWait();
-  opX(0xcc, BankRead, x(CPY))
+  case 0xcc: return XF ? instructionBankRead8(&WDC65816::algorithmCPY8) : instructionBankRead16(&WDC65816::algorithmCPY16);
   case 0xcd: return MF ? instructionBankRead8(&WDC65816::algorithmCMP8) : instructionBankRead16(&WDC65816::algorithmCMP16);
   case 0xce: return MF ? instructionBankModify8(&WDC65816::algorithmDEC8) : instructionBankModify16(&WDC65816::algorithmDEC16);
   case 0xcf: return MF ? instructionLongRead8(&WDC65816::algorithmCMP8) : instructionLongRead16(&WDC65816::algorithmCMP16);
@@ -218,25 +218,25 @@ switch(fetch()) {
   case 0xd7: return MF ? instructionIndirectLongRead8(&WDC65816::algorithmCMP8, Y) : instructionIndirectLongRead16(&WDC65816::algorithmCMP16, Y);
   case 0xd8: return instructionClearFlag(DF);
   case 0xd9: return MF ? instructionBankRead8(&WDC65816::algorithmCMP8, Y) : instructionBankRead16(&WDC65816::algorithmCMP16, Y);
-  opX(0xda, Push, X)
+  case 0xda: return XF ? instructionPush8(X) : instructionPush16(X);
   case 0xdb: return instructionStop();
   case 0xdc: return instructionJumpIndirectLong();
   case 0xdd: return MF ? instructionBankRead8(&WDC65816::algorithmCMP8, X) : instructionBankRead16(&WDC65816::algorithmCMP16, X);
   case 0xde: return MF ? instructionBankIndexedModify8(&WDC65816::algorithmDEC8) : instructionBankIndexedModify16(&WDC65816::algorithmDEC16);
   case 0xdf: return MF ? instructionLongRead8(&WDC65816::algorithmCMP8, X) : instructionLongRead16(&WDC65816::algorithmCMP16, X);
-  opX(0xe0, ImmediateRead, x(CPX))
+  case 0xe0: return XF ? instructionImmediateRead8(&WDC65816::algorithmCPX8) : instructionImmediateRead16(&WDC65816::algorithmCPX16);
   case 0xe1: return MF ? instructionIndexedIndirectRead8(&WDC65816::algorithmSBC8) : instructionIndexedIndirectRead16(&WDC65816::algorithmSBC16);
   case 0xe2: return instructionSetP();
   case 0xe3: return MF ? instructionStackRead8(&WDC65816::algorithmSBC8) : instructionStackRead16(&WDC65816::algorithmSBC16);
-  opX(0xe4, DirectRead, x(CPX))
+  case 0xe4: return XF ? instructionDirectRead8(&WDC65816::algorithmCPX8) : instructionDirectRead16(&WDC65816::algorithmCPX16);
   case 0xe5: return MF ? instructionDirectRead8(&WDC65816::algorithmSBC8) : instructionDirectRead16(&WDC65816::algorithmSBC16);
   case 0xe6: return MF ? instructionDirectModify8(&WDC65816::algorithmINC8) : instructionDirectModify16(&WDC65816::algorithmINC16);
   case 0xe7: return MF ? instructionIndirectLongRead8(&WDC65816::algorithmSBC8) : instructionIndirectLongRead16(&WDC65816::algorithmSBC16);
-  opX(0xe8, ImpliedModify, x(INC), X)
+  case 0xe8: return XF ? instructionImpliedModify8(&WDC65816::algorithmINC8, X) : instructionImpliedModify16(&WDC65816::algorithmINC16, X);
   case 0xe9: return MF ? instructionImmediateRead8(&WDC65816::algorithmSBC8) : instructionImmediateRead16(&WDC65816::algorithmSBC16);
   case 0xea: return instructionNoOperation();
   case 0xeb: return instructionExchangeBA();
-  opX(0xec, BankRead, x(CPX))
+  case 0xec: return XF ? instructionBankRead8(&WDC65816::algorithmCPX8) : instructionBankRead16(&WDC65816::algorithmCPX16);
   case 0xed: return MF ? instructionBankRead8(&WDC65816::algorithmSBC8) : instructionBankRead16(&WDC65816::algorithmSBC16);
   case 0xee: return MF ? instructionBankModify8(&WDC65816::algorithmINC8) : instructionBankModify16(&WDC65816::algorithmINC16);
   case 0xef: return MF ? instructionLongRead8(&WDC65816::algorithmSBC8) : instructionLongRead16(&WDC65816::algorithmSBC16);
@@ -250,7 +250,7 @@ switch(fetch()) {
   case 0xf7: return MF ? instructionIndirectLongRead8(&WDC65816::algorithmSBC8, Y) : instructionIndirectLongRead16(&WDC65816::algorithmSBC16, Y);
   case 0xf8: return instructionSetFlag(DF);
   case 0xf9: return MF ? instructionBankRead8(&WDC65816::algorithmSBC8, Y) : instructionBankRead16(&WDC65816::algorithmSBC16, Y);
-  opX(0xfa, Pull, X)
+  case 0xfa: return XF ? instructionPull8(X) : instructionPull16(X);
   case 0xfb: return instructionExchangeCE();
   case 0xfc: return instructionCallIndexedIndirect();
   case 0xfd: return MF ? instructionBankRead8(&WDC65816::algorithmSBC8, X) : instructionBankRead16(&WDC65816::algorithmSBC16, X);
