@@ -136,7 +136,7 @@ HG51B::HG51B() {
     std::integral_constant<uint16_t, s>::value
     //std::integral_constant<uint16_t, nall::test(s)>::value
 
-  static const uint8_t shifts[] = {0, 1, 8, 16};
+  const uint8_t shifts[] = {0, 1, 8, 16};
 
   //NOP
   for(unsigned null = 0; null < 1024; ++null) {
