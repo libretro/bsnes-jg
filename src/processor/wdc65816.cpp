@@ -503,20 +503,20 @@ uint16_t WDC65816::algorithmTSB16(uint16_t data) {
   return data;
 }
 
-void WDC65816::instructionImmediateRead8(alu8 op) {
+void WDC65816::ImmediateRead8(alu8 op) {
   lastCycle();
   W.r24_lsb4.l = fetch();
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionImmediateRead16(alu16 op) {
+void WDC65816::ImmediateRead16(alu16 op) {
   W.r24_lsb4.l = fetch();
   lastCycle();
   W.r24_lsb4.h = fetch();
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionBankRead8(alu8 op) {
+void WDC65816::BankRead8(alu8 op) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   lastCycle();
@@ -524,7 +524,7 @@ void WDC65816::instructionBankRead8(alu8 op) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionBankRead16(alu16 op) {
+void WDC65816::BankRead16(alu16 op) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   W.r24_lsb4.l = readBank(V.r24_lsb2.w + 0);
@@ -533,7 +533,7 @@ void WDC65816::instructionBankRead16(alu16 op) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionBankRead8(alu8 op, r16 I) {
+void WDC65816::BankRead8(alu8 op, r16 I) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   idle4(V.r24_lsb2.w, V.r24_lsb2.w + I.w);
@@ -542,7 +542,7 @@ void WDC65816::instructionBankRead8(alu8 op, r16 I) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionBankRead16(alu16 op, r16 I) {
+void WDC65816::BankRead16(alu16 op, r16 I) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   idle4(V.r24_lsb2.w, V.r24_lsb2.w + I.w);
@@ -552,7 +552,7 @@ void WDC65816::instructionBankRead16(alu16 op, r16 I) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionLongRead8(alu8 op, r16 I) {
+void WDC65816::LongRead8(alu8 op, r16 I) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   V.r24_lsb4.b = fetch();
@@ -561,7 +561,7 @@ void WDC65816::instructionLongRead8(alu8 op, r16 I) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionLongRead16(alu16 op, r16 I) {
+void WDC65816::LongRead16(alu16 op, r16 I) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   V.r24_lsb4.b = fetch();
@@ -571,7 +571,7 @@ void WDC65816::instructionLongRead16(alu16 op, r16 I) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionDirectRead8(alu8 op) {
+void WDC65816::DirectRead8(alu8 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   lastCycle();
@@ -579,7 +579,7 @@ void WDC65816::instructionDirectRead8(alu8 op) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionDirectRead16(alu16 op) {
+void WDC65816::DirectRead16(alu16 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   W.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -588,7 +588,7 @@ void WDC65816::instructionDirectRead16(alu16 op) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionDirectRead8(alu8 op, r16 I) {
+void WDC65816::DirectRead8(alu8 op, r16 I) {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
@@ -597,7 +597,7 @@ void WDC65816::instructionDirectRead8(alu8 op, r16 I) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionDirectRead16(alu16 op, r16 I) {
+void WDC65816::DirectRead16(alu16 op, r16 I) {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
@@ -607,7 +607,7 @@ void WDC65816::instructionDirectRead16(alu16 op, r16 I) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionIndirectRead8(alu8 op) {
+void WDC65816::IndirectRead8(alu8 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -617,7 +617,7 @@ void WDC65816::instructionIndirectRead8(alu8 op) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionIndirectRead16(alu16 op) {
+void WDC65816::IndirectRead16(alu16 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -628,7 +628,7 @@ void WDC65816::instructionIndirectRead16(alu16 op) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionIndexedIndirectRead8(alu8 op) {
+void WDC65816::IndexedIndirectRead8(alu8 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
@@ -639,7 +639,7 @@ void WDC65816::instructionIndexedIndirectRead8(alu8 op) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionIndexedIndirectRead16(alu16 op) {
+void WDC65816::IndexedIndirectRead16(alu16 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
@@ -651,7 +651,7 @@ void WDC65816::instructionIndexedIndirectRead16(alu16 op) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionIndirectIndexedRead8(alu8 op) {
+void WDC65816::IndirectIndexedRead8(alu8 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -662,7 +662,7 @@ void WDC65816::instructionIndirectIndexedRead8(alu8 op) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionIndirectIndexedRead16(alu16 op) {
+void WDC65816::IndirectIndexedRead16(alu16 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -674,7 +674,7 @@ void WDC65816::instructionIndirectIndexedRead16(alu16 op) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionIndirectLongRead8(alu8 op, r16 I) {
+void WDC65816::IndirectLongRead8(alu8 op, r16 I) {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirectN(U.r24_lsb4.l + 0);
@@ -685,7 +685,7 @@ void WDC65816::instructionIndirectLongRead8(alu8 op, r16 I) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionIndirectLongRead16(alu16 op, r16 I) {
+void WDC65816::IndirectLongRead16(alu16 op, r16 I) {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirectN(U.r24_lsb4.l + 0);
@@ -697,7 +697,7 @@ void WDC65816::instructionIndirectLongRead16(alu16 op, r16 I) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionStackRead8(alu8 op) {
+void WDC65816::StackRead8(alu8 op) {
   U.r24_lsb4.l = fetch();
   idle();
   lastCycle();
@@ -705,7 +705,7 @@ void WDC65816::instructionStackRead8(alu8 op) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionStackRead16(alu16 op) {
+void WDC65816::StackRead16(alu16 op) {
   U.r24_lsb4.l = fetch();
   idle();
   W.r24_lsb4.l = readStack(U.r24_lsb4.l + 0);
@@ -714,7 +714,7 @@ void WDC65816::instructionStackRead16(alu16 op) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionIndirectStackRead8(alu8 op) {
+void WDC65816::IndirectStackRead8(alu8 op) {
   U.r24_lsb4.l = fetch();
   idle();
   V.r24_lsb4.l = readStack(U.r24_lsb4.l + 0);
@@ -725,7 +725,7 @@ void WDC65816::instructionIndirectStackRead8(alu8 op) {
   alu(W.r24_lsb4.l);
 }
 
-void WDC65816::instructionIndirectStackRead16(alu16 op) {
+void WDC65816::IndirectStackRead16(alu16 op) {
   U.r24_lsb4.l = fetch();
   idle();
   V.r24_lsb4.l = readStack(U.r24_lsb4.l + 0);
@@ -737,14 +737,14 @@ void WDC65816::instructionIndirectStackRead16(alu16 op) {
   alu(W.r24_lsb2.w);
 }
 
-void WDC65816::instructionBankWrite8(r16 F) {
+void WDC65816::BankWrite8(r16 F) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   lastCycle();
   writeBank(V.r24_lsb2.w + 0, F.r16_lsb2.l);
 }
 
-void WDC65816::instructionBankWrite16(r16 F) {
+void WDC65816::BankWrite16(r16 F) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   writeBank(V.r24_lsb2.w + 0, F.r16_lsb2.l);
@@ -752,7 +752,7 @@ void WDC65816::instructionBankWrite16(r16 F) {
   writeBank(V.r24_lsb2.w + 1, F.r16_lsb2.h);
 }
 
-void WDC65816::instructionBankWrite8(r16 F, r16 I) {
+void WDC65816::BankWrite8(r16 F, r16 I) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   idle();
@@ -760,7 +760,7 @@ void WDC65816::instructionBankWrite8(r16 F, r16 I) {
   writeBank(V.r24_lsb2.w + I.w + 0, F.r16_lsb2.l);
 }
 
-void WDC65816::instructionBankWrite16(r16 F, r16 I) {
+void WDC65816::BankWrite16(r16 F, r16 I) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   idle();
@@ -769,7 +769,7 @@ void WDC65816::instructionBankWrite16(r16 F, r16 I) {
   writeBank(V.r24_lsb2.w + I.w + 1, F.r16_lsb2.h);
 }
 
-void WDC65816::instructionLongWrite8(r16 I) {
+void WDC65816::LongWrite8(r16 I) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   V.r24_lsb4.b = fetch();
@@ -777,7 +777,7 @@ void WDC65816::instructionLongWrite8(r16 I) {
   writeLong(V.d + I.w + 0, A.r16_lsb2.l);
 }
 
-void WDC65816::instructionLongWrite16(r16 I) {
+void WDC65816::LongWrite16(r16 I) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   V.r24_lsb4.b = fetch();
@@ -786,14 +786,14 @@ void WDC65816::instructionLongWrite16(r16 I) {
   writeLong(V.d + I.w + 1, A.r16_lsb2.h);
 }
 
-void WDC65816::instructionDirectWrite8(r16 F) {
+void WDC65816::DirectWrite8(r16 F) {
   U.r24_lsb4.l = fetch();
   idle2();
   lastCycle();
   writeDirect(U.r24_lsb4.l + 0, F.r16_lsb2.l);
 }
 
-void WDC65816::instructionDirectWrite16(r16 F) {
+void WDC65816::DirectWrite16(r16 F) {
   U.r24_lsb4.l = fetch();
   idle2();
   writeDirect(U.r24_lsb4.l + 0, F.r16_lsb2.l);
@@ -801,7 +801,7 @@ void WDC65816::instructionDirectWrite16(r16 F) {
   writeDirect(U.r24_lsb4.l + 1, F.r16_lsb2.h);
 }
 
-void WDC65816::instructionDirectWrite8(r16 F, r16 I) {
+void WDC65816::DirectWrite8(r16 F, r16 I) {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
@@ -809,7 +809,7 @@ void WDC65816::instructionDirectWrite8(r16 F, r16 I) {
   writeDirect(U.r24_lsb4.l + I.w + 0, F.r16_lsb2.l);
 }
 
-void WDC65816::instructionDirectWrite16(r16 F, r16 I) {
+void WDC65816::DirectWrite16(r16 F, r16 I) {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
@@ -818,7 +818,7 @@ void WDC65816::instructionDirectWrite16(r16 F, r16 I) {
   writeDirect(U.r24_lsb4.l + I.w + 1, F.r16_lsb2.h);
 }
 
-void WDC65816::instructionIndirectWrite8() {
+void WDC65816::IndirectWrite8() {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -827,7 +827,7 @@ void WDC65816::instructionIndirectWrite8() {
   writeBank(V.r24_lsb2.w + 0, A.r16_lsb2.l);
 }
 
-void WDC65816::instructionIndirectWrite16() {
+void WDC65816::IndirectWrite16() {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -837,7 +837,7 @@ void WDC65816::instructionIndirectWrite16() {
   writeBank(V.r24_lsb2.w + 1, A.r16_lsb2.h);
 }
 
-void WDC65816::instructionIndexedIndirectWrite8() {
+void WDC65816::IndexedIndirectWrite8() {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
@@ -847,7 +847,7 @@ void WDC65816::instructionIndexedIndirectWrite8() {
   writeBank(V.r24_lsb2.w + 0, A.r16_lsb2.l);
 }
 
-void WDC65816::instructionIndexedIndirectWrite16() {
+void WDC65816::IndexedIndirectWrite16() {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
@@ -858,7 +858,7 @@ void WDC65816::instructionIndexedIndirectWrite16() {
   writeBank(V.r24_lsb2.w + 1, A.r16_lsb2.h);
 }
 
-void WDC65816::instructionIndirectIndexedWrite8() {
+void WDC65816::IndirectIndexedWrite8() {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -868,7 +868,7 @@ void WDC65816::instructionIndirectIndexedWrite8() {
   writeBank(V.r24_lsb2.w + Y.w + 0, A.r16_lsb2.l);
 }
 
-void WDC65816::instructionIndirectIndexedWrite16() {
+void WDC65816::IndirectIndexedWrite16() {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -879,7 +879,7 @@ void WDC65816::instructionIndirectIndexedWrite16() {
   writeBank(V.r24_lsb2.w + Y.w + 1, A.r16_lsb2.h);
 }
 
-void WDC65816::instructionIndirectLongWrite8(r16 I) {
+void WDC65816::IndirectLongWrite8(r16 I) {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirectN(U.r24_lsb4.l + 0);
@@ -889,7 +889,7 @@ void WDC65816::instructionIndirectLongWrite8(r16 I) {
   writeLong(V.d + I.w + 0, A.r16_lsb2.l);
 }
 
-void WDC65816::instructionIndirectLongWrite16(r16 I) {
+void WDC65816::IndirectLongWrite16(r16 I) {
   U.r24_lsb4.l = fetch();
   idle2();
   V.r24_lsb4.l = readDirectN(U.r24_lsb4.l + 0);
@@ -900,14 +900,14 @@ void WDC65816::instructionIndirectLongWrite16(r16 I) {
   writeLong(V.d + I.w + 1, A.r16_lsb2.h);
 }
 
-void WDC65816::instructionStackWrite8() {
+void WDC65816::StackWrite8() {
   U.r24_lsb4.l = fetch();
   idle();
   lastCycle();
   writeStack(U.r24_lsb4.l + 0, A.r16_lsb2.l);
 }
 
-void WDC65816::instructionStackWrite16() {
+void WDC65816::StackWrite16() {
   U.r24_lsb4.l = fetch();
   idle();
   writeStack(U.r24_lsb4.l + 0, A.r16_lsb2.l);
@@ -915,7 +915,7 @@ void WDC65816::instructionStackWrite16() {
   writeStack(U.r24_lsb4.l + 1, A.r16_lsb2.h);
 }
 
-void WDC65816::instructionIndirectStackWrite8() {
+void WDC65816::IndirectStackWrite8() {
   U.r24_lsb4.l = fetch();
   idle();
   V.r24_lsb4.l = readStack(U.r24_lsb4.l + 0);
@@ -925,7 +925,7 @@ void WDC65816::instructionIndirectStackWrite8() {
   writeBank(V.r24_lsb2.w + Y.w + 0, A.r16_lsb2.l);
 }
 
-void WDC65816::instructionIndirectStackWrite16() {
+void WDC65816::IndirectStackWrite16() {
   U.r24_lsb4.l = fetch();
   idle();
   V.r24_lsb4.l = readStack(U.r24_lsb4.l + 0);
@@ -936,19 +936,19 @@ void WDC65816::instructionIndirectStackWrite16() {
   writeBank(V.r24_lsb2.w + Y.w + 1, A.r16_lsb2.h);
 }
 
-void WDC65816::instructionImpliedModify8(alu8 op, r16& M) {
+void WDC65816::ImpliedModify8(alu8 op, r16& M) {
   lastCycle();
   idleIRQ();
   M.r16_lsb2.l = alu(M.r16_lsb2.l);
 }
 
-void WDC65816::instructionImpliedModify16(alu16 op, r16& M) {
+void WDC65816::ImpliedModify16(alu16 op, r16& M) {
   lastCycle();
   idleIRQ();
   M.w = alu(M.w);
 }
 
-void WDC65816::instructionBankModify8(alu8 op) {
+void WDC65816::BankModify8(alu8 op) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   W.r24_lsb4.l = readBank(V.r24_lsb2.w + 0);
@@ -958,7 +958,7 @@ void WDC65816::instructionBankModify8(alu8 op) {
   writeBank(V.r24_lsb2.w + 0, W.r24_lsb4.l);
 }
 
-void WDC65816::instructionBankModify16(alu16 op) {
+void WDC65816::BankModify16(alu16 op) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   W.r24_lsb4.l = readBank(V.r24_lsb2.w + 0);
@@ -970,7 +970,7 @@ void WDC65816::instructionBankModify16(alu16 op) {
   writeBank(V.r24_lsb2.w + 0, W.r24_lsb4.l);
 }
 
-void WDC65816::instructionBankIndexedModify8(alu8 op) {
+void WDC65816::BankIndexedModify8(alu8 op) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   idle();
@@ -981,7 +981,7 @@ void WDC65816::instructionBankIndexedModify8(alu8 op) {
   writeBank(V.r24_lsb2.w + X.w + 0, W.r24_lsb4.l);
 }
 
-void WDC65816::instructionBankIndexedModify16(alu16 op) {
+void WDC65816::BankIndexedModify16(alu16 op) {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   idle();
@@ -994,7 +994,7 @@ void WDC65816::instructionBankIndexedModify16(alu16 op) {
   writeBank(V.r24_lsb2.w + X.w + 0, W.r24_lsb4.l);
 }
 
-void WDC65816::instructionDirectModify8(alu8 op) {
+void WDC65816::DirectModify8(alu8 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   W.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -1004,7 +1004,7 @@ void WDC65816::instructionDirectModify8(alu8 op) {
   writeDirect(U.r24_lsb4.l + 0, W.r24_lsb4.l);
 }
 
-void WDC65816::instructionDirectModify16(alu16 op) {
+void WDC65816::DirectModify16(alu16 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   W.r24_lsb4.l = readDirect(U.r24_lsb4.l + 0);
@@ -1016,7 +1016,7 @@ void WDC65816::instructionDirectModify16(alu16 op) {
   writeDirect(U.r24_lsb4.l + 0, W.r24_lsb4.l);
 }
 
-void WDC65816::instructionDirectIndexedModify8(alu8 op) {
+void WDC65816::DirectIndexedModify8(alu8 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
@@ -1027,7 +1027,7 @@ void WDC65816::instructionDirectIndexedModify8(alu8 op) {
   writeDirect(U.r24_lsb4.l + X.w + 0, W.r24_lsb4.l);
 }
 
-void WDC65816::instructionDirectIndexedModify16(alu16 op) {
+void WDC65816::DirectIndexedModify16(alu16 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
@@ -1040,7 +1040,7 @@ void WDC65816::instructionDirectIndexedModify16(alu16 op) {
   writeDirect(U.r24_lsb4.l + X.w + 0, W.r24_lsb4.l);
 }
 
-void WDC65816::instructionBranch(bool take) {
+void WDC65816::Branch(bool take) {
   if(!take) {
   lastCycle();
     fetch();
@@ -1055,7 +1055,7 @@ void WDC65816::instructionBranch(bool take) {
   }
 }
 
-void WDC65816::instructionBranchLong() {
+void WDC65816::BranchLong() {
   U.r24_lsb4.l = fetch();
   U.r24_lsb4.h = fetch();
   V.r24_lsb2.w = PC.d + (int16_t)U.r24_lsb2.w;
@@ -1065,7 +1065,7 @@ void WDC65816::instructionBranchLong() {
   idleBranch();
 }
 
-void WDC65816::instructionJumpShort() {
+void WDC65816::JumpShort() {
   W.r24_lsb4.l = fetch();
   lastCycle();
   W.r24_lsb4.h = fetch();
@@ -1073,7 +1073,7 @@ void WDC65816::instructionJumpShort() {
   idleJump();
 }
 
-void WDC65816::instructionJumpLong() {
+void WDC65816::JumpLong() {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   lastCycle();
@@ -1082,7 +1082,7 @@ void WDC65816::instructionJumpLong() {
   idleJump();
 }
 
-void WDC65816::instructionJumpIndirect() {
+void WDC65816::JumpIndirect() {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   W.r24_lsb4.l = read(uint16_t(V.r24_lsb2.w + 0));
@@ -1092,7 +1092,7 @@ void WDC65816::instructionJumpIndirect() {
   idleJump();
 }
 
-void WDC65816::instructionJumpIndexedIndirect() {
+void WDC65816::JumpIndexedIndirect() {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   idle();
@@ -1103,7 +1103,7 @@ void WDC65816::instructionJumpIndexedIndirect() {
   idleJump();
 }
 
-void WDC65816::instructionJumpIndirectLong() {
+void WDC65816::JumpIndirectLong() {
   U.r24_lsb4.l = fetch();
   U.r24_lsb4.h = fetch();
   V.r24_lsb4.l = read(uint16_t(U.r24_lsb2.w + 0));
@@ -1114,7 +1114,7 @@ void WDC65816::instructionJumpIndirectLong() {
   idleJump();
 }
 
-void WDC65816::instructionCallShort() {
+void WDC65816::CallShort() {
   W.r24_lsb4.l = fetch();
   W.r24_lsb4.h = fetch();
   idle();
@@ -1126,7 +1126,7 @@ void WDC65816::instructionCallShort() {
   idleJump();
 }
 
-void WDC65816::instructionCallLong() {
+void WDC65816::CallLong() {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   pushN(PC.r24_lsb4.b);
@@ -1141,7 +1141,7 @@ void WDC65816::instructionCallLong() {
   idleJump();
 }
 
-void WDC65816::instructionCallIndexedIndirect() {
+void WDC65816::CallIndexedIndirect() {
   V.r24_lsb4.l = fetch();
   pushN(PC.r24_lsb4.h);
   pushN(PC.r24_lsb4.l);
@@ -1155,7 +1155,7 @@ void WDC65816::instructionCallIndexedIndirect() {
   idleJump();
 }
 
-void WDC65816::instructionReturnInterrupt() {
+void WDC65816::ReturnInterrupt() {
   idle();
   idle();
   P = pull();
@@ -1173,7 +1173,7 @@ void WDC65816::instructionReturnInterrupt() {
   idleJump();
 }
 
-void WDC65816::instructionReturnShort() {
+void WDC65816::ReturnShort() {
   idle();
   idle();
   W.r24_lsb4.l = pull();
@@ -1185,7 +1185,7 @@ void WDC65816::instructionReturnShort() {
   idleJump();
 }
 
-void WDC65816::instructionReturnLong() {
+void WDC65816::ReturnLong() {
   idle();
   idle();
   V.r24_lsb4.l = pullN();
@@ -1198,30 +1198,30 @@ void WDC65816::instructionReturnLong() {
   idleJump();
 }
 
-void WDC65816::instructionBitImmediate8() {
+void WDC65816::BitImmediate8() {
   lastCycle();
   U.r24_lsb4.l = fetch();
   ZF = (U.r24_lsb4.l & A.r16_lsb2.l) == 0;
 }
 
-void WDC65816::instructionBitImmediate16() {
+void WDC65816::BitImmediate16() {
   U.r24_lsb4.l = fetch();
   lastCycle();
   U.r24_lsb4.h = fetch();
   ZF = (U.r24_lsb2.w & A.w) == 0;
 }
 
-void WDC65816::instructionNoOperation() {
+void WDC65816::NoOperation() {
   lastCycle();
   idleIRQ();
 }
 
-void WDC65816::instructionPrefix() {
+void WDC65816::Prefix() {
   lastCycle();
   fetch();
 }
 
-void WDC65816::instructionExchangeBA() {
+void WDC65816::ExchangeBA() {
   idle();
   lastCycle();
   idle();
@@ -1230,7 +1230,7 @@ void WDC65816::instructionExchangeBA() {
   NF = A.r16_lsb2.l & 0x80;
 }
 
-void WDC65816::instructionBlockMove8(int adjust) {
+void WDC65816::BlockMove8(int adjust) {
   U.r24_lsb4.b = fetch();
   V.r24_lsb4.b = fetch();
   B = U.r24_lsb4.b;
@@ -1244,7 +1244,7 @@ void WDC65816::instructionBlockMove8(int adjust) {
   if(A.w--) PC.r24_lsb2.w -= 3;
 }
 
-void WDC65816::instructionBlockMove16(int adjust) {
+void WDC65816::BlockMove16(int adjust) {
   U.r24_lsb4.b = fetch();
   V.r24_lsb4.b = fetch();
   B = U.r24_lsb4.b;
@@ -1258,7 +1258,7 @@ void WDC65816::instructionBlockMove16(int adjust) {
   if(A.w--) PC.r24_lsb2.w -= 3;
 }
 
-void WDC65816::instructionInterrupt(r16 vector) {
+void WDC65816::Interrupt(r16 vector) {
   fetch();
   if(!r.e) push(PC.r24_lsb4.b);
   push(PC.r24_lsb4.h);
@@ -1289,7 +1289,7 @@ void WDC65816::instructionWait() {
   idle();
 }
 
-void WDC65816::instructionExchangeCE() {
+void WDC65816::ExchangeCE() {
   lastCycle();
   idleIRQ();
   std::swap(CF, EF);
@@ -1302,19 +1302,19 @@ void WDC65816::instructionExchangeCE() {
   }
 }
 
-void WDC65816::instructionSetFlag(bool& flag) {
+void WDC65816::SetFlag(bool& flag) {
   lastCycle();
   idleIRQ();
   flag = 1;
 }
 
-void WDC65816::instructionClearFlag(bool& flag) {
+void WDC65816::ClearFlag(bool& flag) {
   lastCycle();
   idleIRQ();
   flag = 0;
 }
 
-void WDC65816::instructionResetP() {
+void WDC65816::ResetP() {
   W.r24_lsb4.l = fetch();
   lastCycle();
   idle();
@@ -1323,7 +1323,7 @@ void WDC65816::instructionResetP() {
   if(XF) X.r16_lsb2.h = 0x00, Y.r16_lsb2.h = 0x00;
 }
 
-void WDC65816::instructionSetP() {
+void WDC65816::SetP() {
   W.r24_lsb4.l = fetch();
   lastCycle();
   idle();
@@ -1332,7 +1332,7 @@ void WDC65816::instructionSetP() {
   if(XF) X.r16_lsb2.h = 0x00, Y.r16_lsb2.h = 0x00;
 }
 
-void WDC65816::instructionTransfer8(r16 F, r16& T) {
+void WDC65816::Transfer8(r16 F, r16& T) {
   lastCycle();
   idleIRQ();
   T.r16_lsb2.l = F.r16_lsb2.l;
@@ -1340,7 +1340,7 @@ void WDC65816::instructionTransfer8(r16 F, r16& T) {
   NF = T.r16_lsb2.l & 0x80;
 }
 
-void WDC65816::instructionTransfer16(r16 F, r16& T) {
+void WDC65816::Transfer16(r16 F, r16& T) {
   lastCycle();
   idleIRQ();
   T.w = F.w;
@@ -1348,14 +1348,14 @@ void WDC65816::instructionTransfer16(r16 F, r16& T) {
   NF = T.w & 0x8000;
 }
 
-void WDC65816::instructionTransferCS() {
+void WDC65816::TransferCS() {
   lastCycle();
   idleIRQ();
   S.w = A.w;
   if(r.e) S.r16_lsb2.h = 0x01;
 }
 
-void WDC65816::instructionTransferSX8() {
+void WDC65816::TransferSX8() {
   lastCycle();
   idleIRQ();
   X.r16_lsb2.l = S.r16_lsb2.l;
@@ -1363,7 +1363,7 @@ void WDC65816::instructionTransferSX8() {
   NF = X.r16_lsb2.l & 0x80;
 }
 
-void WDC65816::instructionTransferSX16() {
+void WDC65816::TransferSX16() {
   lastCycle();
   idleIRQ();
   X.w = S.w;
@@ -1371,27 +1371,27 @@ void WDC65816::instructionTransferSX16() {
   NF = X.w & 0x8000;
 }
 
-void WDC65816::instructionTransferXS() {
+void WDC65816::TransferXS() {
   lastCycle();
   idleIRQ();
   if(r.e) S.r16_lsb2.l = X.r16_lsb2.l;
   if(!r.e) S.w = X.w;
 }
 
-void WDC65816::instructionPush8(r16 F) {
+void WDC65816::Push8(r16 F) {
   idle();
   lastCycle();
   push(F.r16_lsb2.l);
 }
 
-void WDC65816::instructionPush16(r16 F) {
+void WDC65816::Push16(r16 F) {
   idle();
   push(F.r16_lsb2.h);
   lastCycle();
   push(F.r16_lsb2.l);
 }
 
-void WDC65816::instructionPushD() {
+void WDC65816::PushD() {
   idle();
   pushN(D.r16_lsb2.h);
   lastCycle();
@@ -1399,7 +1399,7 @@ void WDC65816::instructionPushD() {
   if(r.e) S.r16_lsb2.h = 0x01;
 }
 
-void WDC65816::instructionPull8(r16& T) {
+void WDC65816::Pull8(r16& T) {
   idle();
   idle();
   lastCycle();
@@ -1408,7 +1408,7 @@ void WDC65816::instructionPull8(r16& T) {
   NF = T.r16_lsb2.l & 0x80;
 }
 
-void WDC65816::instructionPull16(r16& T) {
+void WDC65816::Pull16(r16& T) {
   idle();
   idle();
   T.r16_lsb2.l = pull();
@@ -1418,7 +1418,7 @@ void WDC65816::instructionPull16(r16& T) {
   NF = T.w & 0x8000;
 }
 
-void WDC65816::instructionPullD() {
+void WDC65816::PullD() {
   idle();
   idle();
   D.r16_lsb2.l = pullN();
@@ -1429,7 +1429,7 @@ void WDC65816::instructionPullD() {
   if(r.e) S.r16_lsb2.h = 0x01;
 }
 
-void WDC65816::instructionPullB() {
+void WDC65816::PullB() {
   idle();
   idle();
   lastCycle();
@@ -1438,7 +1438,7 @@ void WDC65816::instructionPullB() {
   NF = B & 0x80;
 }
 
-void WDC65816::instructionPullP() {
+void WDC65816::PullP() {
   idle();
   idle();
   lastCycle();
@@ -1447,7 +1447,7 @@ void WDC65816::instructionPullP() {
   if(XF) X.r16_lsb2.h = 0x00, Y.r16_lsb2.h = 0x00;
 }
 
-void WDC65816::instructionPushEffectiveAddress() {
+void WDC65816::PushEffectiveAddress() {
   W.r24_lsb4.l = fetch();
   W.r24_lsb4.h = fetch();
   pushN(W.r24_lsb4.h);
@@ -1456,7 +1456,7 @@ void WDC65816::instructionPushEffectiveAddress() {
   if(r.e) S.r16_lsb2.h = 0x01;
 }
 
-void WDC65816::instructionPushEffectiveIndirectAddress() {
+void WDC65816::PushEffectiveIndirectAddress() {
   U.r24_lsb4.l = fetch();
   idle2();
   W.r24_lsb4.l = readDirectN(U.r24_lsb4.l + 0);
@@ -1467,7 +1467,7 @@ void WDC65816::instructionPushEffectiveIndirectAddress() {
   if(r.e) S.r16_lsb2.h = 0x01;
 }
 
-void WDC65816::instructionPushEffectiveRelativeAddress() {
+void WDC65816::PushEffectiveRelativeAddress() {
   V.r24_lsb4.l = fetch();
   V.r24_lsb4.h = fetch();
   idle();
