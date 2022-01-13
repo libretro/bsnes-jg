@@ -141,7 +141,7 @@ HG51B::HG51B() {
   //NOP
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0000 00.. .... ....");
-    auto opcode = pattern(0x0000) | null << 0;
+    auto opcode = pattern(0x0000) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -149,7 +149,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0000 01.. .... ....");
-    auto opcode = pattern(0x0400) | null << 0;
+    auto opcode = pattern(0x0400) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -159,7 +159,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0000 10f. dddd dddd");
-    auto opcode = pattern(0x0800) | data << 0 | null << 8 | far << 9;
+    auto opcode = pattern(0x0800) | data | null << 8 | far << 9;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionJMP(data, far, 1); };
   }
@@ -169,7 +169,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0000 11f. dddd dddd");
-    auto opcode = pattern(0x0c00) | data << 0 | null << 8 | far << 9;
+    auto opcode = pattern(0x0c00) | data | null << 8 | far << 9;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionJMP(data, far, r.z); };
   }
@@ -179,7 +179,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0001 00f. dddd dddd");
-    auto opcode = pattern(0x1000) | data << 0 | null << 8 | far << 9;
+    auto opcode = pattern(0x1000) | data | null << 8 | far << 9;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionJMP(data, far, r.c); };
   }
@@ -189,7 +189,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0001 01f. dddd dddd");
-    auto opcode = pattern(0x1400) | data << 0 | null << 8 | far << 9;
+    auto opcode = pattern(0x1400) | data | null << 8 | far << 9;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionJMP(data, far, r.n); };
   }
@@ -199,7 +199,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0001 10f. dddd dddd");
-    auto opcode = pattern(0x1800) | data << 0 | null << 8 | far << 9;
+    auto opcode = pattern(0x1800) | data | null << 8 | far << 9;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionJMP(data, far, r.v); };
   }
@@ -207,7 +207,7 @@ HG51B::HG51B() {
   //WAIT
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0001 11.. .... ....");
-    auto opcode = pattern(0x1c00) | null << 0;
+    auto opcode = pattern(0x1c00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionWAIT(); };
   }
@@ -215,7 +215,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0010 00.. .... ....");
-    auto opcode = pattern(0x2000) | null << 0;
+    auto opcode = pattern(0x2000) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -224,7 +224,7 @@ HG51B::HG51B() {
   for(unsigned take = 0; take < 2; ++take)
   for(unsigned null = 0; null < 128; ++null) {
     //auto opcode = pattern("0010 0100 .... ...t");
-    auto opcode = pattern(0x2400) | take << 0 | null << 1;
+    auto opcode = pattern(0x2400) | take | null << 1;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSKIP(take, r.v); };
   }
@@ -233,7 +233,7 @@ HG51B::HG51B() {
   for(unsigned take = 0; take < 2; ++take)
   for(unsigned null = 0; null < 128; ++null) {
     //auto opcode = pattern("0010 0101 .... ...t");
-    auto opcode = pattern(0x2500) | take << 0 | null << 1;
+    auto opcode = pattern(0x2500) | take | null << 1;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSKIP(take, r.c); };
   }
@@ -242,7 +242,7 @@ HG51B::HG51B() {
   for(unsigned take = 0; take < 2; ++take)
   for(unsigned null = 0; null < 128; ++null) {
     //auto opcode = pattern("0010 0110 .... ...t");
-    auto opcode = pattern(0x2600) | take << 0 | null << 1;
+    auto opcode = pattern(0x2600) | take | null << 1;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSKIP(take, r.z); };
   }
@@ -251,7 +251,7 @@ HG51B::HG51B() {
   for(unsigned take = 0; take < 2; ++take)
   for(unsigned null = 0; null < 128; ++null) {
     //auto opcode = pattern("0010 0111 .... ...t");
-    auto opcode = pattern(0x2700) | take << 0 | null << 1;
+    auto opcode = pattern(0x2700) | take | null << 1;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSKIP(take, r.n); };
   }
@@ -261,7 +261,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0010 10f. dddd dddd");
-    auto opcode = pattern(0x2800) | data << 0 | null << 8 | far << 9;
+    auto opcode = pattern(0x2800) | data | null << 8 | far << 9;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionJSR(data, far, 1); };
   }
@@ -271,7 +271,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0010 11f. dddd dddd");
-    auto opcode = pattern(0x2c00) | data << 0 | null << 8 | far << 9;
+    auto opcode = pattern(0x2c00) | data | null << 8 | far << 9;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionJSR(data, far, r.z); };
   }
@@ -281,7 +281,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0011 00f. dddd dddd");
-    auto opcode = pattern(0x3000) | data << 0 | null << 8 | far << 9;
+    auto opcode = pattern(0x3000) | data | null << 8 | far << 9;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionJSR(data, far, r.c); };
   }
@@ -291,7 +291,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0011 01f. dddd dddd");
-    auto opcode = pattern(0x3400) | data << 0 | null << 8 | far << 9;
+    auto opcode = pattern(0x3400) | data | null << 8 | far << 9;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionJSR(data, far, r.n); };
   }
@@ -301,7 +301,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0011 10f. dddd dddd");
-    auto opcode = pattern(0x3800) | data << 0 | null << 8 | far << 9;
+    auto opcode = pattern(0x3800) | data | null << 8 | far << 9;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionJSR(data, far, r.v); };
   }
@@ -309,7 +309,7 @@ HG51B::HG51B() {
   //RTS
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0011 11.. .... ....");
-    auto opcode = pattern(0x3c00) | null << 0;
+    auto opcode = pattern(0x3c00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionRTS(); };
   }
@@ -317,7 +317,7 @@ HG51B::HG51B() {
   //INC MAR
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0100 00.. .... ....");
-    auto opcode = pattern(0x4000) | null << 0;
+    auto opcode = pattern(0x4000) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionINC(r.mar); };
   }
@@ -325,7 +325,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0100 01.. .... ....");
-    auto opcode = pattern(0x4400) | null << 0;
+    auto opcode = pattern(0x4400) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -335,7 +335,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("0100 10ss .rrr rrrr");
-    auto opcode = pattern(0x4800) | reg << 0 | null << 7 | shift << 8;
+    auto opcode = pattern(0x4800) | reg | null << 7 | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionCMPRr(reg, shifts[shift]); };
   }
@@ -344,7 +344,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("0100 11ss iiii iiii");
-    auto opcode = pattern(0x4c00) | imm << 0 | shift << 8;
+    auto opcode = pattern(0x4c00) | imm | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionCMPR(imm, shifts[shift]); };
   }
@@ -354,7 +354,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("0101 00ss .rrr rrrr");
-    auto opcode = pattern(0x5000) | reg << 0 | null << 7 | shift << 8;
+    auto opcode = pattern(0x5000) | reg | null << 7 | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionCMPr(reg, shifts[shift]); };
   }
@@ -363,7 +363,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("0101 01ss iiii iiii");
-    auto opcode = pattern(0x5400) | imm << 0 | shift << 8;
+    auto opcode = pattern(0x5400) | imm | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionCMP(imm, shifts[shift]); };
   }
@@ -371,7 +371,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0101 1000 .... ....");
-    auto opcode = pattern(0x5800) | null << 0;
+    auto opcode = pattern(0x5800) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -379,7 +379,7 @@ HG51B::HG51B() {
   //SXB A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0101 1001 .... ....");
-    auto opcode = pattern(0x5900) | null << 0;
+    auto opcode = pattern(0x5900) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSXB(); };
   }
@@ -387,7 +387,7 @@ HG51B::HG51B() {
   //SXW A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0101 1010 .... ....");
-    auto opcode = pattern(0x5a00) | null << 0;
+    auto opcode = pattern(0x5a00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSXW(); };
   }
@@ -395,7 +395,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0101 1011 .... ....");
-    auto opcode = pattern(0x5b00) | null << 0;
+    auto opcode = pattern(0x5b00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -403,7 +403,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0101 11.. .... ....");
-    auto opcode = pattern(0x5c00) | null << 0;
+    auto opcode = pattern(0x5c00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -412,7 +412,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("0110 0000 .rrr rrrr");
-    auto opcode = pattern(0x6000) | reg << 0 | null << 7;
+    auto opcode = pattern(0x6000) | reg | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionLDr(r.a, reg); };
   }
@@ -421,7 +421,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("0110 0001 .rrr rrrr");
-    auto opcode = pattern(0x6100) | reg << 0 | null << 7;
+    auto opcode = pattern(0x6100) | reg | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionLDr(r.mdr, reg); };
   }
@@ -430,7 +430,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("0110 0010 .rrr rrrr");
-    auto opcode = pattern(0x6200) | reg << 0 | null << 7;
+    auto opcode = pattern(0x6200) | reg | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionLDr(r.mar, reg); };
   }
@@ -439,7 +439,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 16; ++reg)
   for(unsigned null = 0; null < 16; ++null) {
     //auto opcode = pattern("0110 0011 .... rrrr");
-    auto opcode = pattern(0x6300) | reg << 0 | null << 4;
+    auto opcode = pattern(0x6300) | reg | null << 4;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionLDr(r.p, reg); };
   }
@@ -447,7 +447,7 @@ HG51B::HG51B() {
   //LD A,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 0100 iiii iiii");
-    auto opcode = pattern(0x6400) | imm << 0;
+    auto opcode = pattern(0x6400) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionLD(r.a, imm); };
   }
@@ -455,7 +455,7 @@ HG51B::HG51B() {
   //LD MDR,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 0101 iiii iiii");
-    auto opcode = pattern(0x6500) | imm << 0;
+    auto opcode = pattern(0x6500) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionLD(r.mdr, imm); };
   }
@@ -463,7 +463,7 @@ HG51B::HG51B() {
   //LD MAR,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 0110 iiii iiii");
-    auto opcode = pattern(0x6600) | imm << 0;
+    auto opcode = pattern(0x6600) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionLD(r.mar, imm); };
   }
@@ -471,7 +471,7 @@ HG51B::HG51B() {
   //LD P,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 0111 iiii iiii");
-    auto opcode = pattern(0x6700) | imm << 0;
+    auto opcode = pattern(0x6700) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionLD(r.p, imm); };
   }
@@ -479,7 +479,7 @@ HG51B::HG51B() {
   //RDRAM 0,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0110 1000 .... ....");
-    auto opcode = pattern(0x6800) | null << 0;
+    auto opcode = pattern(0x6800) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionRDRAM(0, r.a); };
   }
@@ -487,7 +487,7 @@ HG51B::HG51B() {
   //RDRAM 1,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0110 1001 .... ....");
-    auto opcode = pattern(0x6900) | null << 0;
+    auto opcode = pattern(0x6900) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionRDRAM(1, r.a); };
   }
@@ -495,7 +495,7 @@ HG51B::HG51B() {
   //RDRAM 2,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0110 1010 .... ....");
-    auto opcode = pattern(0x6a00) | null << 0;
+    auto opcode = pattern(0x6a00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionRDRAM(2, r.a); };
   }
@@ -503,7 +503,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0110 1011 .... ....");
-    auto opcode = pattern(0x6b00) | null << 0;
+    auto opcode = pattern(0x6b00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -511,7 +511,7 @@ HG51B::HG51B() {
   //RDRAM 0,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 1100 iiii iiii");
-    auto opcode = pattern(0x6c00) | imm << 0;
+    auto opcode = pattern(0x6c00) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionRDRAM(0, imm); };
   }
@@ -519,7 +519,7 @@ HG51B::HG51B() {
   //RDRAM 1,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 1101 iiii iiii");
-    auto opcode = pattern(0x6d00) | imm << 0;
+    auto opcode = pattern(0x6d00) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionRDRAM(1, imm); };
   }
@@ -527,7 +527,7 @@ HG51B::HG51B() {
   //RDRAM 2,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 1110 iiii iiii");
-    auto opcode = pattern(0x6e00) | imm << 0;
+    auto opcode = pattern(0x6e00) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionRDRAM(2, imm); };
   }
@@ -535,7 +535,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0110 1111 .... ....");
-    auto opcode = pattern(0x6f00) | null << 0;
+    auto opcode = pattern(0x6f00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -543,7 +543,7 @@ HG51B::HG51B() {
   //RDROM A
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0111 00.. .... ....");
-    auto opcode = pattern(0x7000) | null << 0;
+    auto opcode = pattern(0x7000) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionRDROM(r.a); };
   }
@@ -551,7 +551,7 @@ HG51B::HG51B() {
   //RDROM imm
   for(unsigned imm = 0; imm < 1024; ++imm) {
     //auto opcode = pattern("0111 01ii iiii iiii");
-    auto opcode = pattern(0x7400) | imm << 0;
+    auto opcode = pattern(0x7400) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionRDROM(imm); };
   }
@@ -559,7 +559,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0111 10.. .... ....");
-    auto opcode = pattern(0x7800) | null << 0;
+    auto opcode = pattern(0x7800) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -567,7 +567,7 @@ HG51B::HG51B() {
   //LD PL,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0111 1100 iiii iiii");
-    auto opcode = pattern(0x7c00) | imm << 0;
+    auto opcode = pattern(0x7c00) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionLDL(r.p, imm); };
   }
@@ -576,7 +576,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 128; ++imm)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("0111 1101 .iii iiii");
-    auto opcode = pattern(0x7d00) | imm << 0 | null << 7;
+    auto opcode = pattern(0x7d00) | imm | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionLDHr(r.p, imm); };
   }
@@ -584,7 +584,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 512; ++null) {
     //auto opcode = pattern("0111 111. .... ....");
-    auto opcode = pattern(0x7e00) | null << 0;
+    auto opcode = pattern(0x7e00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -594,7 +594,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1000 00ss .rrr rrrr");
-    auto opcode = pattern(0x8000) | reg << 0 | null << 7 | shift << 8;
+    auto opcode = pattern(0x8000) | reg | null << 7 | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionADDr(reg, shifts[shift]); };
   }
@@ -603,7 +603,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1000 01ss iiii iiii");
-    auto opcode = pattern(0x8400) | imm << 0 | shift << 8;
+    auto opcode = pattern(0x8400) | imm | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionADD(imm, shifts[shift]); };
   }
@@ -613,7 +613,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1000 10ss .rrr rrrr");
-    auto opcode = pattern(0x8800) | reg << 0 | null << 7 | shift << 8;
+    auto opcode = pattern(0x8800) | reg | null << 7 | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSUBRr(reg, shifts[shift]); };
   }
@@ -622,7 +622,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1000 11ss iiii iiii");
-    auto opcode = pattern(0x8c00) | imm << 0 | shift << 8;
+    auto opcode = pattern(0x8c00) | imm | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSUBR(imm, shifts[shift]); };
   }
@@ -632,7 +632,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1001 00ss .rrr rrrr");
-    auto opcode = pattern(0x9000) | reg << 0 | null << 7 | shift << 8;
+    auto opcode = pattern(0x9000) | reg | null << 7 | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSUBr(reg, shifts[shift]); };
   }
@@ -641,7 +641,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1001 01ss iiii iiii");
-    auto opcode = pattern(0x9400) | imm << 0 | shift << 8;
+    auto opcode = pattern(0x9400) | imm | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSUB(imm, shifts[shift]); };
   }
@@ -650,7 +650,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 8; ++null) {
     //auto opcode = pattern("1001 10.. .rrr rrrr");
-    auto opcode = pattern(0x9800) | reg << 0 | null << 7;
+    auto opcode = pattern(0x9800) | reg | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionMULr(reg); };
   }
@@ -659,7 +659,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned null = 0; null < 4; ++null) {
     //auto opcode = pattern("1001 11.. iiii iiii");
-    auto opcode = pattern(0x9c00) | imm << 0 | null << 8;
+    auto opcode = pattern(0x9c00) | imm | null << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionMUL(imm); };
   }
@@ -669,7 +669,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1010 00ss .rrr rrrr");
-    auto opcode = pattern(0xa000) | reg << 0 | null << 7 | shift << 8;
+    auto opcode = pattern(0xa000) | reg | null << 7 | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionXNORr(reg, shifts[shift]); };
   }
@@ -678,7 +678,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1010 01ss iiii iiii");
-    auto opcode = pattern(0xa400) | imm << 0 | shift << 8;
+    auto opcode = pattern(0xa400) | imm | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionXNOR(imm, shifts[shift]); };
   }
@@ -688,7 +688,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1010 10ss .rrr rrrr");
-    auto opcode = pattern(0xa800) | reg << 0 | null << 7 | shift << 8;
+    auto opcode = pattern(0xa800) | reg | null << 7 | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionXORr(reg, shifts[shift]); };
   }
@@ -697,7 +697,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1010 11ss iiii iiii");
-    auto opcode = pattern(0xac00) | imm << 0 | shift << 8;
+    auto opcode = pattern(0xac00) | imm | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionXOR(imm, shifts[shift]); };
   }
@@ -707,7 +707,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1011 00ss .rrr rrrr");
-    auto opcode = pattern(0xb000) | reg << 0 | null << 7 | shift << 8;
+    auto opcode = pattern(0xb000) | reg | null << 7 | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionANDr(reg, shifts[shift]); };
   }
@@ -716,7 +716,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1011 01ss iiii iiii");
-    auto opcode = pattern(0xb400) | imm << 0 | shift << 8;
+    auto opcode = pattern(0xb400) | imm | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionAND(imm, shifts[shift]); };
   }
@@ -726,7 +726,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1011 10ss .rrr rrrr");
-    auto opcode = pattern(0xb800) | reg << 0 | null << 7 | shift << 8;
+    auto opcode = pattern(0xb800) | reg | null << 7 | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionORr(reg, shifts[shift]); };
   }
@@ -735,7 +735,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1011 11ss iiii iiii");
-    auto opcode = pattern(0xbc00) | imm << 0 | shift << 8;
+    auto opcode = pattern(0xbc00) | imm | shift << 8;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionOR(imm, shifts[shift]); };
   }
@@ -744,7 +744,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 8; ++null) {
     //auto opcode = pattern("1100 00.. .rrr rrrr");
-    auto opcode = pattern(0xc000) | reg << 0 | null << 7;
+    auto opcode = pattern(0xc000) | reg | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSHRr(reg); };
   }
@@ -753,7 +753,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 32; ++imm)
   for(unsigned null = 0; null < 32; ++null) {
     //auto opcode = pattern("1100 01.. ...i iiii");
-    auto opcode = pattern(0xc400) | imm << 0 | null << 5;
+    auto opcode = pattern(0xc400) | imm | null << 5;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSHR(imm); };
   }
@@ -762,7 +762,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 8; ++null) {
     //auto opcode = pattern("1100 10.. .rrr rrrr");
-    auto opcode = pattern(0xc800) | reg << 0 | null << 7;
+    auto opcode = pattern(0xc800) | reg | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionASRr(reg); };
   }
@@ -771,7 +771,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 32; ++imm)
   for(unsigned null = 0; null < 32; ++null) {
     //auto opcode = pattern("1100 11.. ...i iiii");
-    auto opcode = pattern(0xcc00) | imm << 0 | null << 5;
+    auto opcode = pattern(0xcc00) | imm | null << 5;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionASR(imm); };
   }
@@ -780,7 +780,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 8; ++null) {
     //auto opcode = pattern("1101 00.. .rrr rrrr");
-    auto opcode = pattern(0xd000) | reg << 0 | null << 7;
+    auto opcode = pattern(0xd000) | reg | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionRORr(reg); };
   }
@@ -789,7 +789,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 32; ++imm)
   for(unsigned null = 0; null < 32; ++null) {
     //auto opcode = pattern("1101 01.. ...i iiii");
-    auto opcode = pattern(0xd400) | imm << 0 | null << 5;
+    auto opcode = pattern(0xd400) | imm | null << 5;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionROR(imm); };
   }
@@ -798,7 +798,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 8; ++null) {
     //auto opcode = pattern("1101 10.. .rrr rrrr");
-    auto opcode = pattern(0xd800) | reg << 0 | null << 7;
+    auto opcode = pattern(0xd800) | reg | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSHLr(reg); };
   }
@@ -807,7 +807,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 32; ++imm)
   for(unsigned null = 0; null < 32; ++null) {
     //auto opcode = pattern("1101 11.. ...i iiii");
-    auto opcode = pattern(0xdc00) | imm << 0 | null << 5;
+    auto opcode = pattern(0xdc00) | imm | null << 5;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSHL(imm); };
   }
@@ -816,7 +816,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("1110 0000 .rrr rrrr");
-    auto opcode = pattern(0xe000) | reg << 0 | null << 7;
+    auto opcode = pattern(0xe000) | reg | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSTr(reg, r.a); };
   }
@@ -825,7 +825,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("1110 0001 .rrr rrrr");
-    auto opcode = pattern(0xe100) | reg << 0 | null << 7;
+    auto opcode = pattern(0xe100) | reg | null << 7;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSTr(reg, r.mdr); };
   }
@@ -833,7 +833,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 512; ++null) {
     //auto opcode = pattern("1110 001. .... ....");
-    auto opcode = pattern(0xe200) | null << 0;
+    auto opcode = pattern(0xe200) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -841,7 +841,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("1110 01.. .... ....");
-    auto opcode = pattern(0xe400) | null << 0;
+    auto opcode = pattern(0xe400) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -849,7 +849,7 @@ HG51B::HG51B() {
   //WRRAM 0,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("1110 1000 .... ....");
-    auto opcode = pattern(0xe800) | null << 0;
+    auto opcode = pattern(0xe800) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionWRRAM(0, r.a); };
   }
@@ -857,7 +857,7 @@ HG51B::HG51B() {
   //WRRAM 1,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("1110 1001 .... ....");
-    auto opcode = pattern(0xe900) | null << 0;
+    auto opcode = pattern(0xe900) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionWRRAM(1, r.a); };
   }
@@ -865,7 +865,7 @@ HG51B::HG51B() {
   //WRRAM 2,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("1110 1010 .... ....");
-    auto opcode = pattern(0xea00) | null << 0;
+    auto opcode = pattern(0xea00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionWRRAM(2, r.a); };
   }
@@ -873,7 +873,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("1110 1011 .... ....");
-    auto opcode = pattern(0xeb00) | null << 0;
+    auto opcode = pattern(0xeb00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -881,7 +881,7 @@ HG51B::HG51B() {
   //WRRAM 0,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("1110 1100 iiii iiii");
-    auto opcode = pattern(0xec00) | imm << 0;
+    auto opcode = pattern(0xec00) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionWRRAM(0, imm); };
   }
@@ -889,7 +889,7 @@ HG51B::HG51B() {
   //WRRAM 1,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("1110 1101 iiii iiii");
-    auto opcode = pattern(0xed00) | imm << 0;
+    auto opcode = pattern(0xed00) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionWRRAM(1, imm); };
   }
@@ -897,7 +897,7 @@ HG51B::HG51B() {
   //WRRAM 2,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("1110 1110 iiii iiii");
-    auto opcode = pattern(0xee00) | imm << 0;
+    auto opcode = pattern(0xee00) | imm;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionWRRAM(2, imm); };
   }
@@ -905,7 +905,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("1110 1111 .... ....");
-    auto opcode = pattern(0xef00) | null << 0;
+    auto opcode = pattern(0xef00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -914,7 +914,7 @@ HG51B::HG51B() {
   for(unsigned reg = 0; reg < 16; ++reg)
   for(unsigned null = 0; null < 64; ++null) {
     //auto opcode = pattern("1111 00.. .... rrrr");
-    auto opcode = pattern(0xf000) | reg << 0 | null << 4;
+    auto opcode = pattern(0xf000) | reg | null << 4;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionSWAPr(r.a, reg); };
   }
@@ -922,7 +922,7 @@ HG51B::HG51B() {
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("1111 01.. .... ....");
-    auto opcode = pattern(0xf400) | null << 0;
+    auto opcode = pattern(0xf400) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
@@ -930,7 +930,7 @@ HG51B::HG51B() {
   //CLEAR
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("1111 10.. .... ....");
-    auto opcode = pattern(0xf800) | null << 0;
+    auto opcode = pattern(0xf800) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionCLEAR(); };
   }
@@ -938,7 +938,7 @@ HG51B::HG51B() {
   //HALT
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("1111 11.. .... ....");
-    auto opcode = pattern(0xfc00) | null << 0;
+    auto opcode = pattern(0xfc00) | null;
     if(instructionTable[opcode]) throw;
     instructionTable[opcode] = [=] { return instructionHALT(); };
   }
@@ -958,7 +958,7 @@ void HG51B::push() {
   stack[3] = stack[2];
   stack[2] = stack[1];
   stack[1] = stack[0];
-  stack[0] = r.pb << 8 | r.pc << 0;
+  stack[0] = r.pb << 8 | r.pc;
 }
 
 void HG51B::pull() {
@@ -1151,7 +1151,7 @@ void HG51B::instructionLD(uint16_t& out, uint8_t imm) {
 }
 
 void HG51B::instructionLDL(uint16_t& out, uint8_t imm) {
-  out = (out & 0x7f00) | imm << 0;
+  out = (out & 0x7f00) | imm;
 }
 
 void HG51B::instructionLDHr(uint16_t& out, uint8_t imm) {
@@ -1438,7 +1438,7 @@ bool HG51B::cache() {
   io.cache.address[io.cache.page] = address;
   for(unsigned offset = 0; offset < 256; ++offset) {
     step(wait(address));
-    programRAM[io.cache.page][offset]  = read(address++) << 0;
+    programRAM[io.cache.page][offset]  = read(address++);
     programRAM[io.cache.page][offset] |= read(address++) << 8;
   }
   return io.cache.enable = 0, true;
