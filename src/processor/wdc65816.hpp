@@ -39,8 +39,6 @@ struct WDC65816 {
   virtual void interrupt();
   virtual bool synchronizing() const = 0;
 
-  virtual uint8_t readDisassembler(unsigned addr) { return 0; }
-
   inline bool irq() const { return r.irq; }
   inline void irq(bool line) { r.irq = line; }
 

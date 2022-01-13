@@ -66,7 +66,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   void idle() override;
   uint8_t read(unsigned addr) override;
   void write(unsigned addr, uint8_t data) override;
-  uint8_t readDisassembler(unsigned addr) override;
+  uint8_t readDisassembler(unsigned addr);
 
   //io.cpp
   uint8_t readRAM(unsigned address, uint8_t data);

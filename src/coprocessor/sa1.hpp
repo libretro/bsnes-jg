@@ -67,7 +67,7 @@ struct SA1 : Processor::WDC65816, Thread {
   inline uint8_t read(unsigned address) override;
   inline void write(unsigned address, uint8_t data) override;
   uint8_t readVBR(unsigned address, uint8_t data = 0);
-  uint8_t readDisassembler(unsigned address) override;
+  uint8_t readDisassembler(unsigned address);
 
   //io.cpp
   uint8_t readIOCPU(unsigned address, uint8_t data);
