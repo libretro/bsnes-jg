@@ -132,11 +132,6 @@ void HG51B::writeRegister(uint8_t address, uint32_t data) {
 }
 
 HG51B::HG51B() {
-  #define bind(id, name, ...) { \
-    if(instructionTable[id]) throw; \
-    instructionTable[id] = [=] { return instruction##name(__VA_ARGS__); }; \
-  }
-
   #define pattern(s) \
     std::integral_constant<uint16_t, s>::value
     //std::integral_constant<uint16_t, nall::test(s)>::value
@@ -146,15 +141,17 @@ HG51B::HG51B() {
   //NOP
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0000 00.. .... ....");
-    auto opcode = pattern(0x0000);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x0000) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0000 01.. .... ....");
-    auto opcode = pattern(0x0400);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x0400) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //JMP imm
@@ -162,8 +159,9 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0000 10f. dddd dddd");
-    auto opcode = pattern(0x0800);
-    bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, 1);
+    auto opcode = pattern(0x0800) | data << 0 | null << 8 | far << 9;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionJMP(data, far, 1); };
   }
 
   //JMP EQ,imm
@@ -171,8 +169,9 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0000 11f. dddd dddd");
-    auto opcode = pattern(0x0c00);
-    bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.z);
+    auto opcode = pattern(0x0c00) | data << 0 | null << 8 | far << 9;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionJMP(data, far, r.z); };
   }
 
   //JMP GE,imm
@@ -180,8 +179,9 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0001 00f. dddd dddd");
-    auto opcode = pattern(0x1000);
-    bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.c);
+    auto opcode = pattern(0x1000) | data << 0 | null << 8 | far << 9;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionJMP(data, far, r.c); };
   }
 
   //JMP MI,imm
@@ -189,8 +189,9 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0001 01f. dddd dddd");
-    auto opcode = pattern(0x1400);
-    bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.n);
+    auto opcode = pattern(0x1400) | data << 0 | null << 8 | far << 9;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionJMP(data, far, r.n); };
   }
 
   //JMP VS,imm
@@ -198,54 +199,61 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0001 10f. dddd dddd");
-    auto opcode = pattern(0x1800);
-    bind(opcode | data << 0 | null << 8 | far << 9, JMP, data, far, r.v);
+    auto opcode = pattern(0x1800) | data << 0 | null << 8 | far << 9;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionJMP(data, far, r.v); };
   }
 
   //WAIT
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0001 11.. .... ....");
-    auto opcode = pattern(0x1c00);
-    bind(opcode | null << 0, WAIT);
+    auto opcode = pattern(0x1c00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionWAIT(); };
   }
 
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0010 00.. .... ....");
-    auto opcode = pattern(0x2000);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x2000) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //SKIP V
   for(unsigned take = 0; take < 2; ++take)
   for(unsigned null = 0; null < 128; ++null) {
     //auto opcode = pattern("0010 0100 .... ...t");
-    auto opcode = pattern(0x2400);
-    bind(opcode | take << 0 | null << 1, SKIP, take, r.v);
+    auto opcode = pattern(0x2400) | take << 0 | null << 1;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSKIP(take, r.v); };
   }
 
   //SKIP C
   for(unsigned take = 0; take < 2; ++take)
   for(unsigned null = 0; null < 128; ++null) {
     //auto opcode = pattern("0010 0101 .... ...t");
-    auto opcode = pattern(0x2500);
-    bind(opcode | take << 0 | null << 1, SKIP, take, r.c);
+    auto opcode = pattern(0x2500) | take << 0 | null << 1;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSKIP(take, r.c); };
   }
 
   //SKIP Z
   for(unsigned take = 0; take < 2; ++take)
   for(unsigned null = 0; null < 128; ++null) {
     //auto opcode = pattern("0010 0110 .... ...t");
-    auto opcode = pattern(0x2600);
-    bind(opcode | take << 0 | null << 1, SKIP, take, r.z);
+    auto opcode = pattern(0x2600) | take << 0 | null << 1;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSKIP(take, r.z); };
   }
 
   //SKIP N
   for(unsigned take = 0; take < 2; ++take)
   for(unsigned null = 0; null < 128; ++null) {
     //auto opcode = pattern("0010 0111 .... ...t");
-    auto opcode = pattern(0x2700);
-    bind(opcode | take << 0 | null << 1, SKIP, take, r.n);
+    auto opcode = pattern(0x2700) | take << 0 | null << 1;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSKIP(take, r.n); };
   }
 
   //JSR
@@ -253,8 +261,9 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0010 10f. dddd dddd");
-    auto opcode = pattern(0x2800);
-    bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, 1);
+    auto opcode = pattern(0x2800) | data << 0 | null << 8 | far << 9;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionJSR(data, far, 1); };
   }
 
   //JSR EQ,imm
@@ -262,8 +271,9 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0010 11f. dddd dddd");
-    auto opcode = pattern(0x2c00);
-    bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.z);
+    auto opcode = pattern(0x2c00) | data << 0 | null << 8 | far << 9;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionJSR(data, far, r.z); };
   }
 
   //JSR GE,imm
@@ -271,8 +281,9 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0011 00f. dddd dddd");
-    auto opcode = pattern(0x3000);
-    bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.c);
+    auto opcode = pattern(0x3000) | data << 0 | null << 8 | far << 9;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionJSR(data, far, r.c); };
   }
 
   //JSR MI,imm
@@ -280,8 +291,9 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0011 01f. dddd dddd");
-    auto opcode = pattern(0x3400);
-    bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.n);
+    auto opcode = pattern(0x3400) | data << 0 | null << 8 | far << 9;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionJSR(data, far, r.n); };
   }
 
   //JSR VS,imm
@@ -289,29 +301,33 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned far = 0; far < 2; ++far) {
     //auto opcode = pattern("0011 10f. dddd dddd");
-    auto opcode = pattern(0x3800);
-    bind(opcode | data << 0 | null << 8 | far << 9, JSR, data, far, r.v);
+    auto opcode = pattern(0x3800) | data << 0 | null << 8 | far << 9;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionJSR(data, far, r.v); };
   }
 
   //RTS
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0011 11.. .... ....");
-    auto opcode = pattern(0x3c00);
-    bind(opcode | null << 0, RTS);
+    auto opcode = pattern(0x3c00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionRTS(); };
   }
 
   //INC MAR
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0100 00.. .... ....");
-    auto opcode = pattern(0x4000);
-    bind(opcode | null << 0, INC, r.mar);
+    auto opcode = pattern(0x4000) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionINC(r.mar); };
   }
 
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0100 01.. .... ....");
-    auto opcode = pattern(0x4400);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x4400) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //CMPR A<<s,reg
@@ -319,16 +335,18 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("0100 10ss .rrr rrrr");
-    auto opcode = pattern(0x4800);
-    bind(opcode | reg << 0 | null << 7 | shift << 8, CMPRr, reg, shifts[shift]);
+    auto opcode = pattern(0x4800) | reg << 0 | null << 7 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionCMPRr(reg, shifts[shift]); };
   }
 
   //CMPR A<<s,imm
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("0100 11ss iiii iiii");
-    auto opcode = pattern(0x4c00);
-    bind(opcode | imm << 0 | shift << 8, CMPR, imm, shifts[shift]);
+    auto opcode = pattern(0x4c00) | imm << 0 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionCMPR(imm, shifts[shift]); };
   }
 
   //CMP A<<s,reg
@@ -336,210 +354,239 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("0101 00ss .rrr rrrr");
-    auto opcode = pattern(0x5000);
-    bind(opcode | reg << 0 | null << 7 | shift << 8, CMPr, reg, shifts[shift]);
+    auto opcode = pattern(0x5000) | reg << 0 | null << 7 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionCMPr(reg, shifts[shift]); };
   }
 
   //CMP A<<s,imm
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("0101 01ss iiii iiii");
-    auto opcode = pattern(0x5400);
-    bind(opcode | imm << 0 | shift << 8, CMP, imm, shifts[shift]);
+    auto opcode = pattern(0x5400) | imm << 0 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionCMP(imm, shifts[shift]); };
   }
 
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0101 1000 .... ....");
-    auto opcode = pattern(0x5800);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x5800) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //SXB A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0101 1001 .... ....");
-    auto opcode = pattern(0x5900);
-    bind(opcode | null << 0, SXB);
+    auto opcode = pattern(0x5900) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSXB(); };
   }
 
   //SXW A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0101 1010 .... ....");
-    auto opcode = pattern(0x5a00);
-    bind(opcode | null << 0, SXW);
+    auto opcode = pattern(0x5a00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSXW(); };
   }
 
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0101 1011 .... ....");
-    auto opcode = pattern(0x5b00);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x5b00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0101 11.. .... ....");
-    auto opcode = pattern(0x5c00);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x5c00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //LD A,reg
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("0110 0000 .rrr rrrr");
-    auto opcode = pattern(0x6000);
-    bind(opcode | reg << 0 | null << 7, LDr, r.a, reg);
+    auto opcode = pattern(0x6000) | reg << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionLDr(r.a, reg); };
   }
 
   //LD MDR,reg
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("0110 0001 .rrr rrrr");
-    auto opcode = pattern(0x6100);
-    bind(opcode | reg << 0 | null << 7, LDr, r.mdr, reg);
+    auto opcode = pattern(0x6100) | reg << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionLDr(r.mdr, reg); };
   }
 
   //LD MAR,reg
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("0110 0010 .rrr rrrr");
-    auto opcode = pattern(0x6200);
-    bind(opcode | reg << 0 | null << 7, LDr, r.mar, reg);
+    auto opcode = pattern(0x6200) | reg << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionLDr(r.mar, reg); };
   }
 
   //LD P,reg
   for(unsigned reg = 0; reg < 16; ++reg)
   for(unsigned null = 0; null < 16; ++null) {
     //auto opcode = pattern("0110 0011 .... rrrr");
-    auto opcode = pattern(0x6300);
-    bind(opcode | reg << 0 | null << 4, LDr, r.p, reg);
+    auto opcode = pattern(0x6300) | reg << 0 | null << 4;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionLDr(r.p, reg); };
   }
 
   //LD A,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 0100 iiii iiii");
-    auto opcode = pattern(0x6400);
-    bind(opcode | imm << 0, LD, r.a, imm);
+    auto opcode = pattern(0x6400) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionLD(r.a, imm); };
   }
 
   //LD MDR,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 0101 iiii iiii");
-    auto opcode = pattern(0x6500);
-    bind(opcode | imm << 0, LD, r.mdr, imm);
+    auto opcode = pattern(0x6500) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionLD(r.mdr, imm); };
   }
 
   //LD MAR,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 0110 iiii iiii");
-    auto opcode = pattern(0x6600);
-    bind(opcode | imm << 0, LD, r.mar, imm);
+    auto opcode = pattern(0x6600) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionLD(r.mar, imm); };
   }
 
   //LD P,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 0111 iiii iiii");
-    auto opcode = pattern(0x6700);
-    bind(opcode | imm << 0, LD, r.p, imm);
+    auto opcode = pattern(0x6700) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionLD(r.p, imm); };
   }
 
   //RDRAM 0,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0110 1000 .... ....");
-    auto opcode = pattern(0x6800);
-    bind(opcode | null << 0, RDRAM, 0, r.a);
+    auto opcode = pattern(0x6800) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionRDRAM(0, r.a); };
   }
 
   //RDRAM 1,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0110 1001 .... ....");
-    auto opcode = pattern(0x6900);
-    bind(opcode | null << 0, RDRAM, 1, r.a);
+    auto opcode = pattern(0x6900) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionRDRAM(1, r.a); };
   }
 
   //RDRAM 2,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0110 1010 .... ....");
-    auto opcode = pattern(0x6a00);
-    bind(opcode | null << 0, RDRAM, 2, r.a);
+    auto opcode = pattern(0x6a00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionRDRAM(2, r.a); };
   }
 
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0110 1011 .... ....");
-    auto opcode = pattern(0x6b00);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x6b00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //RDRAM 0,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 1100 iiii iiii");
-    auto opcode = pattern(0x6c00);
-    bind(opcode | imm << 0, RDRAM, 0, imm);
+    auto opcode = pattern(0x6c00) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionRDRAM(0, imm); };
   }
 
   //RDRAM 1,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 1101 iiii iiii");
-    auto opcode = pattern(0x6d00);
-    bind(opcode | imm << 0, RDRAM, 1, imm);
+    auto opcode = pattern(0x6d00) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionRDRAM(1, imm); };
   }
 
   //RDRAM 2,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0110 1110 iiii iiii");
-    auto opcode = pattern(0x6e00);
-    bind(opcode | imm << 0, RDRAM, 2, imm);
+    auto opcode = pattern(0x6e00) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionRDRAM(2, imm); };
   }
 
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("0110 1111 .... ....");
-    auto opcode = pattern(0x6f00);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x6f00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //RDROM A
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0111 00.. .... ....");
-    auto opcode = pattern(0x7000);
-    bind(opcode | null << 0, RDROM, r.a);
+    auto opcode = pattern(0x7000) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionRDROM(r.a); };
   }
 
   //RDROM imm
   for(unsigned imm = 0; imm < 1024; ++imm) {
     //auto opcode = pattern("0111 01ii iiii iiii");
-    auto opcode = pattern(0x7400);
-    bind(opcode | imm << 0, RDROM, imm);
+    auto opcode = pattern(0x7400) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionRDROM(imm); };
   }
 
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("0111 10.. .... ....");
-    auto opcode = pattern(0x7800);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x7800) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //LD PL,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("0111 1100 iiii iiii");
-    auto opcode = pattern(0x7c00);
-    bind(opcode | imm << 0, LDL, r.p, imm);
+    auto opcode = pattern(0x7c00) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionLDL(r.p, imm); };
   }
 
   //LD PH,imm
   for(unsigned imm = 0; imm < 128; ++imm)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("0111 1101 .iii iiii");
-    auto opcode = pattern(0x7d00);
-    bind(opcode | imm << 0 | null << 7, LDHr, r.p, imm);
+    auto opcode = pattern(0x7d00) | imm << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionLDHr(r.p, imm); };
   }
 
   //???
   for(unsigned null = 0; null < 512; ++null) {
     //auto opcode = pattern("0111 111. .... ....");
-    auto opcode = pattern(0x7e00);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0x7e00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //ADD A<<s,reg
@@ -547,16 +594,18 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1000 00ss .rrr rrrr");
-    auto opcode = pattern(0x8000);
-    bind(opcode | reg << 0 | null << 7 | shift << 8, ADDr, reg, shifts[shift]);
+    auto opcode = pattern(0x8000) | reg << 0 | null << 7 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionADDr(reg, shifts[shift]); };
   }
 
   //ADD A<<s,imm
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1000 01ss iiii iiii");
-    auto opcode = pattern(0x8400);
-    bind(opcode | imm << 0 | shift << 8, ADD, imm, shifts[shift]);
+    auto opcode = pattern(0x8400) | imm << 0 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionADD(imm, shifts[shift]); };
   }
 
   //SUBR A<<s,reg
@@ -564,16 +613,18 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1000 10ss .rrr rrrr");
-    auto opcode = pattern(0x8800);
-    bind(opcode | reg << 0 | null << 7 | shift << 8, SUBRr, reg, shifts[shift]);
+    auto opcode = pattern(0x8800) | reg << 0 | null << 7 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSUBRr(reg, shifts[shift]); };
   }
 
   //SUBR A<<s,imm
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1000 11ss iiii iiii");
-    auto opcode = pattern(0x8c00);
-    bind(opcode | imm << 0 | shift << 8, SUBR, imm, shifts[shift]);
+    auto opcode = pattern(0x8c00) | imm << 0 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSUBR(imm, shifts[shift]); };
   }
 
   //SUB A<<s,reg
@@ -581,32 +632,36 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1001 00ss .rrr rrrr");
-    auto opcode = pattern(0x9000);
-    bind(opcode | reg << 0 | null << 7 | shift << 8, SUBr, reg, shifts[shift]);
+    auto opcode = pattern(0x9000) | reg << 0 | null << 7 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSUBr(reg, shifts[shift]); };
   }
 
   //SUB A<<s,imm
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1001 01ss iiii iiii");
-    auto opcode = pattern(0x9400);
-    bind(opcode | imm << 0 | shift << 8, SUB, imm, shifts[shift]);
+    auto opcode = pattern(0x9400) | imm << 0 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSUB(imm, shifts[shift]); };
   }
 
   //MUL reg
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 8; ++null) {
     //auto opcode = pattern("1001 10.. .rrr rrrr");
-    auto opcode = pattern(0x9800);
-    bind(opcode | reg << 0 | null << 7, MULr, reg);
+    auto opcode = pattern(0x9800) | reg << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionMULr(reg); };
   }
 
   //MUL imm
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned null = 0; null < 4; ++null) {
     //auto opcode = pattern("1001 11.. iiii iiii");
-    auto opcode = pattern(0x9c00);
-    bind(opcode | imm << 0 | null << 8, MUL, imm);
+    auto opcode = pattern(0x9c00) | imm << 0 | null << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionMUL(imm); };
   }
 
   //XNOR A<<s,reg
@@ -614,16 +669,18 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1010 00ss .rrr rrrr");
-    auto opcode = pattern(0xa000);
-    bind(opcode | reg << 0 | null << 7 | shift << 8, XNORr, reg, shifts[shift]);
+    auto opcode = pattern(0xa000) | reg << 0 | null << 7 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionXNORr(reg, shifts[shift]); };
   }
 
   //XNOR A<<s,imm
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1010 01ss iiii iiii");
-    auto opcode = pattern(0xa400);
-    bind(opcode | imm << 0 | shift << 8, XNOR, imm, shifts[shift]);
+    auto opcode = pattern(0xa400) | imm << 0 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionXNOR(imm, shifts[shift]); };
   }
 
   //XOR A<<s,reg
@@ -631,16 +688,18 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1010 10ss .rrr rrrr");
-    auto opcode = pattern(0xa800);
-    bind(opcode | reg << 0 | null << 7 | shift << 8, XORr, reg, shifts[shift]);
+    auto opcode = pattern(0xa800) | reg << 0 | null << 7 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionXORr(reg, shifts[shift]); };
   }
 
   //XOR A<<s,imm
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1010 11ss iiii iiii");
-    auto opcode = pattern(0xac00);
-    bind(opcode | imm << 0 | shift << 8, XOR, imm, shifts[shift]);
+    auto opcode = pattern(0xac00) | imm << 0 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionXOR(imm, shifts[shift]); };
   }
 
   //AND A<<s,reg
@@ -648,16 +707,18 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1011 00ss .rrr rrrr");
-    auto opcode = pattern(0xb000);
-    bind(opcode | reg << 0 | null << 7 | shift << 8, ANDr, reg, shifts[shift]);
+    auto opcode = pattern(0xb000) | reg << 0 | null << 7 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionANDr(reg, shifts[shift]); };
   }
 
   //AND A<<s,imm
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1011 01ss iiii iiii");
-    auto opcode = pattern(0xb400);
-    bind(opcode | imm << 0 | shift << 8, AND, imm, shifts[shift]);
+    auto opcode = pattern(0xb400) | imm << 0 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionAND(imm, shifts[shift]); };
   }
 
   //OR A<<s,reg
@@ -665,198 +726,223 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1011 10ss .rrr rrrr");
-    auto opcode = pattern(0xb800);
-    bind(opcode | reg << 0 | null << 7 | shift << 8, ORr, reg, shifts[shift]);
+    auto opcode = pattern(0xb800) | reg << 0 | null << 7 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionORr(reg, shifts[shift]); };
   }
 
   //OR A<<s,imm
   for(unsigned imm = 0; imm < 256; ++imm)
   for(unsigned shift = 0; shift < 4; ++shift) {
     //auto opcode = pattern("1011 11ss iiii iiii");
-    auto opcode = pattern(0xbc00);
-    bind(opcode | imm << 0 | shift << 8, OR, imm, shifts[shift]);
+    auto opcode = pattern(0xbc00) | imm << 0 | shift << 8;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionOR(imm, shifts[shift]); };
   }
 
   //SHR A,reg
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 8; ++null) {
     //auto opcode = pattern("1100 00.. .rrr rrrr");
-    auto opcode = pattern(0xc000);
-    bind(opcode | reg << 0 | null << 7, SHRr, reg);
+    auto opcode = pattern(0xc000) | reg << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSHRr(reg); };
   }
 
   //SHR A,imm
   for(unsigned imm = 0; imm < 32; ++imm)
   for(unsigned null = 0; null < 32; ++null) {
     //auto opcode = pattern("1100 01.. ...i iiii");
-    auto opcode = pattern(0xc400);
-    bind(opcode | imm << 0 | null << 5, SHR, imm);
+    auto opcode = pattern(0xc400) | imm << 0 | null << 5;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSHR(imm); };
   }
 
   //ASR A,reg
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 8; ++null) {
     //auto opcode = pattern("1100 10.. .rrr rrrr");
-    auto opcode = pattern(0xc800);
-    bind(opcode | reg << 0 | null << 7, ASRr, reg);
+    auto opcode = pattern(0xc800) | reg << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionASRr(reg); };
   }
 
   //ASR A,imm
   for(unsigned imm = 0; imm < 32; ++imm)
   for(unsigned null = 0; null < 32; ++null) {
     //auto opcode = pattern("1100 11.. ...i iiii");
-    auto opcode = pattern(0xcc00);
-    bind(opcode | imm << 0 | null << 5, ASR, imm);
+    auto opcode = pattern(0xcc00) | imm << 0 | null << 5;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionASR(imm); };
   }
 
   //ROR A,reg
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 8; ++null) {
     //auto opcode = pattern("1101 00.. .rrr rrrr");
-    auto opcode = pattern(0xd000);
-    bind(opcode | reg << 0 | null << 7, RORr, reg);
+    auto opcode = pattern(0xd000) | reg << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionRORr(reg); };
   }
 
   //ROR A,imm
   for(unsigned imm = 0; imm < 32; ++imm)
   for(unsigned null = 0; null < 32; ++null) {
     //auto opcode = pattern("1101 01.. ...i iiii");
-    auto opcode = pattern(0xd400);
-    bind(opcode | imm << 0 | null << 5, ROR, imm);
+    auto opcode = pattern(0xd400) | imm << 0 | null << 5;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionROR(imm); };
   }
 
   //SHL A,reg
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 8; ++null) {
     //auto opcode = pattern("1101 10.. .rrr rrrr");
-    auto opcode = pattern(0xd800);
-    bind(opcode | reg << 0 | null << 7, SHLr, reg);
+    auto opcode = pattern(0xd800) | reg << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSHLr(reg); };
   }
 
   //SHL A,imm
   for(unsigned imm = 0; imm < 32; ++imm)
   for(unsigned null = 0; null < 32; ++null) {
     //auto opcode = pattern("1101 11.. ...i iiii");
-    auto opcode = pattern(0xdc00);
-    bind(opcode | imm << 0 | null << 5, SHL, imm);
+    auto opcode = pattern(0xdc00) | imm << 0 | null << 5;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSHL(imm); };
   }
 
   //ST reg,A
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("1110 0000 .rrr rrrr");
-    auto opcode = pattern(0xe000);
-    bind(opcode | reg << 0 | null << 7, STr, reg, r.a);
+    auto opcode = pattern(0xe000) | reg << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSTr(reg, r.a); };
   }
 
   //ST reg,MDR
   for(unsigned reg = 0; reg < 128; ++reg)
   for(unsigned null = 0; null < 2; ++null) {
     //auto opcode = pattern("1110 0001 .rrr rrrr");
-    auto opcode = pattern(0xe100);
-    bind(opcode | reg << 0 | null << 7, STr, reg, r.mdr);
+    auto opcode = pattern(0xe100) | reg << 0 | null << 7;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSTr(reg, r.mdr); };
   }
 
   //???
   for(unsigned null = 0; null < 512; ++null) {
     //auto opcode = pattern("1110 001. .... ....");
-    auto opcode = pattern(0xe200);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0xe200) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("1110 01.. .... ....");
-    auto opcode = pattern(0xe400);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0xe400) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //WRRAM 0,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("1110 1000 .... ....");
-    auto opcode = pattern(0xe800);
-    bind(opcode | null << 0, WRRAM, 0, r.a);
+    auto opcode = pattern(0xe800) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionWRRAM(0, r.a); };
   }
 
   //WRRAM 1,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("1110 1001 .... ....");
-    auto opcode = pattern(0xe900);
-    bind(opcode | null << 0, WRRAM, 1, r.a);
+    auto opcode = pattern(0xe900) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionWRRAM(1, r.a); };
   }
 
   //WRRAM 2,A
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("1110 1010 .... ....");
-    auto opcode = pattern(0xea00);
-    bind(opcode | null << 0, WRRAM, 2, r.a);
+    auto opcode = pattern(0xea00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionWRRAM(2, r.a); };
   }
 
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("1110 1011 .... ....");
-    auto opcode = pattern(0xeb00);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0xeb00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //WRRAM 0,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("1110 1100 iiii iiii");
-    auto opcode = pattern(0xec00);
-    bind(opcode | imm << 0, WRRAM, 0, imm);
+    auto opcode = pattern(0xec00) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionWRRAM(0, imm); };
   }
 
   //WRRAM 1,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("1110 1101 iiii iiii");
-    auto opcode = pattern(0xed00);
-    bind(opcode | imm << 0, WRRAM, 1, imm);
+    auto opcode = pattern(0xed00) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionWRRAM(1, imm); };
   }
 
   //WRRAM 2,imm
   for(unsigned imm = 0; imm < 256; ++imm) {
     //auto opcode = pattern("1110 1110 iiii iiii");
-    auto opcode = pattern(0xee00);
-    bind(opcode | imm << 0, WRRAM, 2, imm);
+    auto opcode = pattern(0xee00) | imm << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionWRRAM(2, imm); };
   }
 
   //???
   for(unsigned null = 0; null < 256; ++null) {
     //auto opcode = pattern("1110 1111 .... ....");
-    auto opcode = pattern(0xef00);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0xef00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //SWAP A,Rn
   for(unsigned reg = 0; reg < 16; ++reg)
   for(unsigned null = 0; null < 64; ++null) {
     //auto opcode = pattern("1111 00.. .... rrrr");
-    auto opcode = pattern(0xf000);
-    bind(opcode | reg << 0 | null << 4, SWAPr, r.a, reg);
+    auto opcode = pattern(0xf000) | reg << 0 | null << 4;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionSWAPr(r.a, reg); };
   }
 
   //???
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("1111 01.. .... ....");
-    auto opcode = pattern(0xf400);
-    bind(opcode | null << 0, NOP);
+    auto opcode = pattern(0xf400) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
   //CLEAR
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("1111 10.. .... ....");
-    auto opcode = pattern(0xf800);
-    bind(opcode | null << 0, CLEAR);
+    auto opcode = pattern(0xf800) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionCLEAR(); };
   }
 
   //HALT
   for(unsigned null = 0; null < 1024; ++null) {
     //auto opcode = pattern("1111 11.. .... ....");
-    auto opcode = pattern(0xfc00);
-    bind(opcode | null << 0, HALT);
+    auto opcode = pattern(0xfc00) | null << 0;
+    if(instructionTable[opcode]) throw;
+    instructionTable[opcode] = [=] { return instructionHALT(); };
   }
 
-  #undef bind
   #undef pattern
 
   for(unsigned opcode = 0; opcode < 65536; ++opcode) {
