@@ -284,12 +284,6 @@ void ARM7TDMI::exception(unsigned mode, uint32_t address) {
 }
 
 void ARM7TDMI::armInitialize() {
-  #define bind(id, name, ...) { \
-    unsigned index = (id & 0x0ff00000) >> 16 | (id & 0x000000f0) >> 4; \
-    assert(!armInstruction[index]); \
-    armInstruction[index] = [&](uint32_t) { return armInstruction##name(arguments); }; \
-  }
-
   #define pattern(s) \
     std::integral_constant<uint32_t, s>::value
     //std::integral_constant<uint32_t, nall::test(s)>::value
@@ -306,7 +300,9 @@ void ARM7TDMI::armInitialize() {
     //auto op = pattern(".... 101? ???? ???? ???? ???? ???? ????")
     auto op = pattern(0xa000000)
                 | displacementLo << 4 | displacementHi << 20 | link << 24;
-    bind(op, Branch);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionBranch(arguments); };
   }
   #undef arguments
 
@@ -315,7 +311,9 @@ void ARM7TDMI::armInitialize() {
   {
     //auto op = pattern(".... 0001 0010 ---- ---- ---- 0001 ????");
     auto op = pattern(0x1200010);
-    bind(op, BranchExchangeRegister);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionBranchExchangeRegister(arguments); };
   }
   #undef arguments
 
@@ -332,7 +330,9 @@ void ARM7TDMI::armInitialize() {
     if(mode >= 8 && mode <= 11 && !save) continue;  //TST, TEQ, CMP, CMN
     //auto op = pattern(".... 001? ???? ???? ???? ???? ???? ????") | shiftHi << 4 | save << 20 | mode << 21;
     auto op = pattern(0x2000000) | shiftHi << 4 | save << 20 | mode << 21;
-    bind(op, DataImmediate);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionDataImmediate(arguments); };
   }
   #undef arguments
 
@@ -351,7 +351,9 @@ void ARM7TDMI::armInitialize() {
     if(mode >= 8 && mode <= 11 && !save) continue;  //TST, TEQ, CMP, CMN
     //auto op = pattern(".... 000? ???? ???? ???? ???? ???0 ????") | type << 5 | shiftLo << 7 | save << 20 | mode << 21;
     auto op = pattern(0x0000000) | type << 5 | shiftLo << 7 | save << 20 | mode << 21;
-    bind(op, DataImmediateShift);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionDataImmediateShift(arguments); };
   }
   #undef arguments
 
@@ -369,7 +371,9 @@ void ARM7TDMI::armInitialize() {
     if(mode >= 8 && mode <= 11 && !save) continue;  //TST, TEQ, CMP, CMN
     //auto ope = pattern(".... 000? ???? ???? ???? ???? 0??1 ????") | type << 5 | save << 20 | mode << 21;
     auto op = pattern(0x0000010) | type << 5 | save << 20 | mode << 21;
-    bind(op, DataRegisterShift);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionDataRegisterShift(arguments); };
   }
   #undef arguments
 
@@ -387,7 +391,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned pre = 0; pre < 2; ++pre) {
     //auto op = pattern(".... 000? ?1?1 ???? ???? ???? 11?1 ????") | half << 5 | writeback << 21 | up << 23 | pre << 24;
     auto op = pattern(0x05000d0) | half << 5 | writeback << 21 | up << 23 | pre << 24;
-    bind(op, LoadImmediate);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionLoadImmediate(arguments); };
   }
   #undef arguments
 
@@ -405,7 +411,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned pre = 0; pre < 2; ++pre) {
     //auto op = pattern(".... 000? ?0?1 ???? ???? ---- 11?1 ????") | half << 5 | writeback << 21 | up << 23 | pre << 24;
     auto op = pattern(0x01000d0) | half << 5 | writeback << 21 | up << 23 | pre << 24;
-    bind(op, LoadRegister);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionLoadRegister(arguments); };
   }
   #undef arguments
 
@@ -417,7 +425,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned byte = 0; byte < 2; ++byte) {
     //auto op = pattern(".... 0001 0?00 ???? ???? ---- 1001 ????") | byte << 22;
     auto op = pattern(0x1000090) | byte << 22;
-    bind(op, MemorySwap);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMemorySwap(arguments); };
   }
   #undef arguments
 
@@ -435,7 +445,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned pre = 0; pre < 2; ++pre) {
     //auto op = pattern(".... 000? ?1?? ???? ???? ???? 1011 ????") | mode << 20 | writeback << 21 | up << 23 | pre << 24;
     auto op = pattern(0x04000b0) | mode << 20 | writeback << 21 | up << 23 | pre << 24;
-    bind(op, MoveHalfImmediate);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMoveHalfImmediate(arguments); };
   }
   #undef arguments
 
@@ -453,7 +465,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned pre = 0; pre < 2; ++pre) {
     //auto op = pattern(".... 000? ?0?? ???? ???? ---- 1011 ????") | mode << 20 | writeback << 21 | up << 23 | pre << 24;
     auto op = pattern(0x00000b0) | mode << 20 | writeback << 21 | up << 23 | pre << 24;
-    bind(op, MoveHalfRegister);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMoveHalfRegister(arguments); };
   }
   #undef arguments
 
@@ -475,7 +489,9 @@ void ARM7TDMI::armInitialize() {
     //auto op = pattern(".... 010? ???? ???? ???? ???? ???? ????")
     auto op = pattern(0x4000000)
                 | immediatePart << 4 | mode << 20 | writeback << 21 | byte << 22 | up << 23 | pre << 24;
-    bind(op, MoveImmediateOffset);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMoveImmediateOffset(arguments); };
   }
   #undef arguments
 
@@ -496,7 +512,9 @@ void ARM7TDMI::armInitialize() {
     //auto op = pattern(".... 100? ???? ???? ???? ???? ???? ????")
     auto op = pattern(0x8000000)
                 | listPart << 4 | mode << 20 | writeback << 21 | type << 22 | up << 23 | pre << 24;
-    bind(op, MoveMultiple);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMoveMultiple(arguments); };
   }
   #undef arguments
 
@@ -521,7 +539,9 @@ void ARM7TDMI::armInitialize() {
     //auto op = pattern(".... 011? ???? ???? ???? ???? ???0 ????")
     auto op = pattern(0x6000000)
                 | type << 5 | shiftLo << 7 | mode << 20 | writeback << 21 | byte << 22 | up << 23 | pre << 24;
-    bind(op, MoveRegisterOffset);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMoveRegisterOffset(arguments); };
   }
   #undef arguments
 
@@ -531,7 +551,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern(".... 0001 0?00 ---- ???? ---- 0000 ----") | mode << 22;
     auto op = pattern(0x1000000) | mode << 22;
-    bind(op, MoveToRegisterFromStatus);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMoveToRegisterFromStatus(arguments); };
   }
   #undef arguments
 
@@ -544,7 +566,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern(".... 0011 0?10 ???? ---- ???? ???? ????") | immediateHi << 4 | mode << 22;
     auto op = pattern(0x3200000) | immediateHi << 4 | mode << 22;
-    bind(op, MoveToStatusFromImmediate);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMoveToStatusFromImmediate(arguments); };
   }
   #undef arguments
 
@@ -555,7 +579,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned mode = 0; mode < 2; ++mode) {
     //auto op = pattern(".... 0001 0?10 ???? ---- ---- 0000 ????") | mode << 22;
     auto op = pattern(0x1200000) | mode << 22;
-    bind(op, MoveToStatusFromRegister);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMoveToStatusFromRegister(arguments); };
   }
   #undef arguments
 
@@ -570,7 +596,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned accumulate = 0; accumulate < 2; ++accumulate) {
     //auto op = pattern(".... 0000 00?? ???? ???? ???? 1001 ????") | save << 20 | accumulate << 21;
     auto op = pattern(0x0000090) | save << 20 | accumulate << 21;
-    bind(op, Multiply);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMultiply(arguments); };
   }
   #undef arguments
 
@@ -587,7 +615,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned sign = 0; sign < 2; ++sign) {
     //auto op = pattern(".... 0000 1??? ???? ???? ???? 1001 ????") | save << 20 | accumulate << 21 | sign << 22;
     auto op = pattern(0x0800090) | save << 20 | accumulate << 21 | sign << 22;
-    bind(op, MultiplyLong);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionMultiplyLong(arguments); };
   }
   #undef arguments
 
@@ -597,7 +627,9 @@ void ARM7TDMI::armInitialize() {
   for(unsigned immediateHi = 0; immediateHi < 16; ++immediateHi) {
     //auto op = pattern(".... 1111 ???? ???? ???? ???? ???? ????") | immediateLo << 4 | immediateHi << 20;
     auto op = pattern(0xf000000) | immediateLo << 4 | immediateHi << 20;
-    bind(op, SoftwareInterrupt);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionSoftwareInterrupt(arguments); };
   }
   #undef arguments
 
@@ -606,11 +638,12 @@ void ARM7TDMI::armInitialize() {
     if(armInstruction[id]) continue;
     //auto op = pattern(".... ???? ???? ---- ---- ---- ???? ----") | bits(id,0,3) << 4 | bits(id,4,11) << 20;
     auto op = pattern(0x0000000) | bits(id,0,3) << 4 | bits(id,4,11) << 20;
-    bind(op, Undefined);
+    unsigned index = (op & 0x0ff00000) >> 16 | (op & 0x000000f0) >> 4;
+    assert(!armInstruction[index]);
+    armInstruction[index] = [&](uint32_t) { return armInstructionUndefined(arguments); };
   }
   #undef arguments
 
-  #undef bind
   #undef pattern
 }
 
