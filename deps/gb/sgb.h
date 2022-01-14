@@ -10,6 +10,7 @@ typedef struct {
         uint8_t tiles[0x100 * 8 * 4];
         uint8_t tiles_legacy[0x100 * 8 * 8]; /* High nibble not used; TODO: Remove when breaking save-state compatibility! */
     };
+#ifdef GB_INTERNAL
     union {
         struct {
             uint16_t map[32 * 32];
@@ -17,6 +18,9 @@ typedef struct {
         };
         uint16_t raw_data[0x440];
     };
+#else
+    uint16_t raw_data[0x440];
+#endif
 } GB_sgb_border_t;
 
 #ifdef GB_INTERNAL
