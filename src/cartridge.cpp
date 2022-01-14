@@ -989,7 +989,7 @@ void Cartridge::loadMSU1() {
   bus.map({&MSU1::readIO, &msu1}, {&MSU1::writeIO, &msu1}, "00-3f,80-bf:2000-2007");
 }
 
-void Cartridge::saveCartridge(std::string node) {
+void Cartridge::saveCartridge() {
   std::vector<std::string> boardmem = BML::searchListShallow(board, "board", "memory");
   for (std::string& m : boardmem) {
     std::string type = BML::search(m, {"memory", "type"});
@@ -1352,7 +1352,7 @@ bool Cartridge::loadSufamiTurboB() {
 }
 
 void Cartridge::save() {
-  saveCartridge(game.document);
+  saveCartridge();
   if(has.GameBoySlot) {
     icd.save();
   }

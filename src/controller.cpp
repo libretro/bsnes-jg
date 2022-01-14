@@ -205,6 +205,7 @@ void ControllerPort::unload() {
 }
 
 void ControllerPort::serialize(serializer& s) {
+  if (s.mode()) {}
 }
 
 Gamepad::Gamepad(unsigned deviceID) : Controller(deviceID) {

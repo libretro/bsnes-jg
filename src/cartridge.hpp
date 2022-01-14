@@ -123,7 +123,7 @@ private:
   void loadMSU1();
 
   //save.cpp
-  void saveCartridge(std::string);
+  void saveCartridge();
   void saveCartridgeBSMemory(std::string);
   void saveCartridgeSufamiTurboA(std::string);
   void saveCartridgeSufamiTurboB(std::string);
