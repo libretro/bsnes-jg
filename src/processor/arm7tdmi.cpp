@@ -924,6 +924,7 @@ void ARM7TDMI::armInstructionBranchExchangeRegister(uint8_t m) {
 
 void ARM7TDMI::armInstructionDataImmediate
 (uint8_t immediate, uint8_t shift, uint8_t d, uint8_t n, uint8_t save, uint8_t mode) {
+  if (save) {}
   uint32_t data = immediate;
   carry = cpsr().c;
   if(shift) data = ROR(data, shift << 1);
@@ -932,6 +933,7 @@ void ARM7TDMI::armInstructionDataImmediate
 
 void ARM7TDMI::armInstructionDataImmediateShift
 (uint8_t m, uint8_t type, uint8_t shift, uint8_t d, uint8_t n, uint8_t save, uint8_t mode) {
+  if (save) {}
   uint32_t rm = r(m);
   carry = cpsr().c;
 
@@ -947,6 +949,7 @@ void ARM7TDMI::armInstructionDataImmediateShift
 
 void ARM7TDMI::armInstructionDataRegisterShift
 (uint8_t m, uint8_t type, uint8_t s, uint8_t d, uint8_t n, uint8_t save, uint8_t mode) {
+  if (save) {}
   uint8_t rs = r(s) + (s == 15 ? 4 : 0);
   uint32_t rm = r(m) + (m == 15 ? 4 : 0);
   carry = cpsr().c;
@@ -1127,6 +1130,7 @@ void ARM7TDMI::armInstructionMoveToStatusFromRegister
 
 void ARM7TDMI::armInstructionMultiply
 (uint8_t m, uint8_t s, uint8_t n, uint8_t d, uint8_t save, uint8_t accumulate) {
+  if (save) {}
   if(accumulate) idle();
   r(d) = MUL(accumulate ? r(n) : 0, r(m), r(s));
 }
@@ -1165,6 +1169,7 @@ void ARM7TDMI::armInstructionMultiplyLong
 }
 
 void ARM7TDMI::armInstructionSoftwareInterrupt(uint32_t immediate) {
+  if (immediate) {}
   exception(PSR::SVC, 0x08);
 }
 
@@ -1352,6 +1357,7 @@ void ARM7TDMI::thumbInstructionShiftImmediate
 }
 
 void ARM7TDMI::thumbInstructionSoftwareInterrupt(uint8_t immediate) {
+  if (immediate) {}
   exception(PSR::SVC, 0x08);
 }
 
