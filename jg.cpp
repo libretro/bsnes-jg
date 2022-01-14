@@ -148,6 +148,10 @@ std::ifstream fileOpen(unsigned id, std::string name) {
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".rtc";
         }
+        else if (name == "download.ram") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".psr";
+        }
         else if (name == "msu1/data.rom") {
             path = superFamicom.location;
             path = path.substr(0, path.find_last_of(".")) + ".msu";
