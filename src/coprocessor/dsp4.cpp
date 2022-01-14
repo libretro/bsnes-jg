@@ -106,6 +106,7 @@ void DSP4::power() {
 }
 
 uint8_t DSP4::read(unsigned addr, uint8_t data) {
+  if (data) {}
   if(addr & 1) return 0x80;
 
   DSP4i::dsp4_address = addr;

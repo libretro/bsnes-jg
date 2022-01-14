@@ -87,6 +87,7 @@ void DSP1::power() {
 }
 
 uint8_t DSP1::read(unsigned addr, uint8_t data) {
+  if (data) {}
   if(addr & 1) {
     return dsp1emu.getSr();
   } else {

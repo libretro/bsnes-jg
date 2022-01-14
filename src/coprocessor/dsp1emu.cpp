@@ -257,6 +257,7 @@ const Dsp1::Command Dsp1::mCommandTable[0x40] = {
 
 void Dsp1::memoryTest(int16_t *input, int16_t *output)
 {
+   if (input) {}
    //int16_t& Size = input[0]; // Unused... what is this function even for?
    int16_t& Result = output[0];
 
@@ -265,11 +266,13 @@ void Dsp1::memoryTest(int16_t *input, int16_t *output)
 
 void Dsp1::memoryDump(int16_t *input, int16_t *output)
 {
+   if (input) {}
    memcpy(output, DataRom, 1024);
 }
 
 void Dsp1::memorySize(int16_t *input, int16_t *output)
 {
+   if (input) {}
    int16_t& Size = output[0];
 
    Size = 0x0100;
@@ -506,6 +509,7 @@ void Dsp1::polar(int16_t *input, int16_t *output)
 
 void Dsp1::attitudeA(int16_t *input, int16_t *output)
 {
+   if (output) {}
    int16_t& S = input[0];
    int16_t& Rz = input[1];
    int16_t& Ry = input[2];
@@ -537,6 +541,7 @@ void Dsp1::attitudeA(int16_t *input, int16_t *output)
 
 void Dsp1::attitudeB(int16_t *input, int16_t *output)
 {
+   if (output) {}
    int16_t& S = input[0];
    int16_t& Rz = input[1];
    int16_t& Ry = input[2];
@@ -568,6 +573,7 @@ void Dsp1::attitudeB(int16_t *input, int16_t *output)
 
 void Dsp1::attitudeC(int16_t *input, int16_t *output)
 {
+   if (output) {}
    int16_t& S = input[0];
    int16_t& Rz = input[1];
    int16_t& Ry = input[2];

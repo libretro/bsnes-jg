@@ -243,6 +243,7 @@ void DSP2::power() {
 }
 
 uint8_t DSP2::read(unsigned addr, uint8_t data) {
+  if (data) {}
   if(addr & 1) return 0x00;
 
   uint8_t r = 0xff;
