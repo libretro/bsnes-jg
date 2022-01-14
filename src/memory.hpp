@@ -69,7 +69,7 @@ struct ReadableMemory : Memory {
     return self.size;
   }
 
-  inline uint8_t read(unsigned address, uint8_t data = 0) override {
+  inline uint8_t read(unsigned address, uint8_t = 0) override {
     return self.data[address];
   }
 
@@ -115,7 +115,7 @@ struct WritableMemory : Memory {
     return self.size;
   }
 
-  inline uint8_t read(unsigned address, uint8_t data = 0) override {
+  inline uint8_t read(unsigned address, uint8_t = 0) override {
     return self.data[address];
   }
 
