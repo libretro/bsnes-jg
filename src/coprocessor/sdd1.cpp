@@ -353,6 +353,7 @@ void SDD1::Decompressor::IM::serialize(serializer& s) {
 }
 
 void SDD1::Decompressor::GCD::serialize(serializer& s) {
+    if (s.mode()) {}
 }
 
 void SDD1::Decompressor::BG::serialize(serializer& s) {
@@ -406,6 +407,7 @@ void SDD1::power() {
 }
 
 uint8_t SDD1::ioRead(unsigned addr, uint8_t data) {
+  if (data) {}
   addr = 0x4800 | (addr & 0xf);
 
   switch(addr) {
@@ -502,6 +504,7 @@ uint8_t SDD1::mcuRead(unsigned addr, uint8_t data) {
 }
 
 void SDD1::mcuWrite(unsigned addr, uint8_t data) {
+  if (addr || data) {}
 }
 
 }

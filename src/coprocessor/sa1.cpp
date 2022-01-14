@@ -44,6 +44,7 @@ uint8_t SA1::ROM::read(unsigned address, uint8_t data) {
 }
 
 void SA1::ROM::write(unsigned address, uint8_t data) {
+  if (address || data) {}
 }
 
 //note: addresses are translated prior to invoking this function:
@@ -90,6 +91,7 @@ uint8_t SA1::ROM::readCPU(unsigned address, uint8_t data) {
 }
 
 void SA1::ROM::writeCPU(unsigned address, uint8_t data) {
+  if (address || data) {}
 }
 
 uint8_t SA1::ROM::readSA1(unsigned address, uint8_t data) {

@@ -286,6 +286,7 @@ uint8_t uPD96050::readSR() {
 }
 
 void uPD96050::writeSR(uint8_t data) {
+  if (data) {}
 }
 
 uint8_t uPD96050::readDR() {

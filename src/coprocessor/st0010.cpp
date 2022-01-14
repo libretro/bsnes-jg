@@ -461,6 +461,7 @@ void ST0010::power() {
 }
 
 uint8_t ST0010::read(unsigned addr, uint8_t data) {
+  if (data) {}
   return readb(addr);
 }
 
