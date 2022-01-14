@@ -135,6 +135,7 @@ uint8_t Event::mcuRead(unsigned addr, uint8_t data) {
 }
 
 void Event::mcuWrite(unsigned addr, uint8_t data) {
+  if (addr || data) {}
 }
 
 uint8_t Event::read(unsigned addr, uint8_t data) {

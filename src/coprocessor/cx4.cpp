@@ -1103,6 +1103,7 @@ void Cx4::writel(uint16_t addr, uint32_t data) {
 }
 
 uint8_t Cx4::read(unsigned addr, uint8_t data) {
+  if (data) {}
   addr &= 0x1fff;
 
   if(addr < 0x0c00) {

@@ -299,6 +299,7 @@ uint8_t MCC::psramAccess(bool mode, unsigned address, uint8_t data) {
 
 //size: 0x100000 (?)
 uint8_t MCC::exAccess(bool mode, unsigned address, uint8_t data) {
+  if (mode || address) {}
   //not physically present on BSC-1A5B9P-01
   return data;
 }
