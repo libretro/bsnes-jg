@@ -40,7 +40,7 @@ struct SMP : Processor::SPC700, Thread {
   static void Enter();
   void main();
   bool load();
-  void power(bool reset);
+  void power();
 
   //serialization.cpp
   void serialize(serializer&);

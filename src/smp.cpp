@@ -431,7 +431,7 @@ bool SMP::load() {
   return true;
 }
 
-void SMP::power(bool reset) {
+void SMP::power() {
   SPC700::power();
   create(Enter, system.apuFrequency() / 12.0);
 

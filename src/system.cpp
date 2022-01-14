@@ -356,7 +356,7 @@ void System::power(bool reset) {
   random.entropy((Emulator::Random::Entropy)configuration.entropy);
 
   cpu.power(reset);
-  smp.power(reset);
+  smp.power();
   dsp.power(reset);
   ppu.power(reset);
 
