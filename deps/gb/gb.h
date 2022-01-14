@@ -382,7 +382,7 @@ struct GB_gameboy_internal_s {
         /* The version field makes sure we don't load save state files with a completely different structure.
            This happens when struct fields are removed/resized in an backward incompatible manner. */
         uint32_t version;
-    );
+    )
 
     GB_SECTION(core_state,
         /* Registers */
@@ -436,7 +436,7 @@ struct GB_gameboy_internal_s {
        int32_t ir_sensor;
        bool effective_ir_input;
        uint16_t address_bus;
-    );
+    )
 
     /* DMA and HDMA */
     GB_SECTION(dma,
@@ -453,7 +453,7 @@ struct GB_gameboy_internal_s {
         bool is_dma_restarting;
         uint8_t last_opcode_read; /* Required to emulte HDMA reads from Exxx */
         bool hdma_starting;
-    );
+    )
     
     /* MBC */
     GB_SECTION(mbc,
@@ -514,14 +514,14 @@ struct GB_gameboy_internal_s {
         uint16_t tpp1_rom_bank;
         uint8_t tpp1_ram_bank;
         uint8_t tpp1_mode;
-    );
+    )
 
 
     /* HRAM and HW Registers */
     GB_SECTION(hram,
         uint8_t hram[0xFFFF - 0xFF80];
         uint8_t io_registers[0x80];
-    );
+    )
 
     /* Timing */
     GB_SECTION(timing,
@@ -536,12 +536,12 @@ struct GB_gameboy_internal_s {
         int32_t speed_switch_halt_countdown;
         uint8_t speed_switch_countdown; // To compensate for the lack of pipeline emulation
         uint8_t speed_switch_freeze; // Solely for realigning the PPU, should be removed when the odd modes are implemented
-    );
+    )
 
     /* APU */
     GB_SECTION(apu,
         GB_apu_t apu;
-    );
+    )
 
     /* RTC */
     GB_SECTION(rtc,
@@ -550,7 +550,7 @@ struct GB_gameboy_internal_s {
         GB_PADDING(bool, rtc_latch);
         uint32_t rtc_cycles;
         uint8_t tpp1_mr4;
-    );
+    )
 
     /* Video Display */
     GB_SECTION(video,
@@ -619,7 +619,7 @@ struct GB_gameboy_internal_s {
         uint16_t last_tile_index_address;
         bool cgb_repeated_a_frame;
         uint8_t data_for_sel_glitch;
-    );
+    )
 
     /* Unsaved data. This includes all pointers, as well as everything that shouldn't be on a save state */
     /* This data is reserved on reset and must come last in the struct */
@@ -767,7 +767,7 @@ struct GB_gameboy_internal_s {
         bool tile_sel_glitch;
                
         GB_gbs_header_t gbs_header;
-   );
+   )
 };
     
 #ifndef GB_INTERNAL
