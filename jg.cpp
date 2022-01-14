@@ -53,7 +53,7 @@ static jg_cb_rumble_t jg_cb_rumble;
 static jg_cb_settings_read_t jg_cb_settings_read;
 
 static jg_coreinfo_t coreinfo = {
-    "bsnes", "bsnes-jg", "1.0.0-pre1", "snes", NUMINPUTS, JG_HINT_VIDEO_INTERNAL
+    "bsnes", "bsnes-jg", "1.0.0-pre1", "snes", NUMINPUTS, 0
 };
 
 static jg_videoinfo_t vidinfo = {
@@ -756,6 +756,7 @@ jg_inputinfo_t* jg_get_inputinfo(int port) {
 }
 
 void jg_setup_video() {
+    interface->setVideoBuffer((uint16_t*)vidinfo.buf);
     interface->setVideoCallback(&videoFrame);
 }
 

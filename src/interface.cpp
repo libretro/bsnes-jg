@@ -254,6 +254,10 @@ void Interface::setWriteCallback(void (*cb)(unsigned, std::string, const uint8_t
   icd.setWriteCallback(cb);
 }
 
+void Interface::setVideoBuffer(uint16_t *buffer) {
+  ppu.setBuffer(buffer);
+}
+
 void Interface::setVideoCallback(void (*cb)(const uint16_t*, unsigned, unsigned, unsigned)) {
   ppu.setCallback(cb);
 }
