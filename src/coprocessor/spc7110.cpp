@@ -763,6 +763,7 @@ uint8_t SPC7110::mcuromRead(unsigned addr, uint8_t data) {
 }
 
 void SPC7110::mcuromWrite(unsigned addr, uint8_t data) {
+  if (addr || data) {};
 }
 
 //===============

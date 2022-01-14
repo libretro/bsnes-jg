@@ -118,6 +118,7 @@ uint8_t SPC700::algorithmINC(uint8_t x) {
 }
 
 uint8_t SPC700::algorithmLD(uint8_t x, uint8_t y) {
+  if (x) {};
   ZF = y == 0;
   NF = y & 0x80;
   return y;
@@ -178,6 +179,7 @@ uint16_t SPC700::algorithmCPW(uint16_t x, uint16_t y) {
 }
 
 uint16_t SPC700::algorithmLDW(uint16_t x, uint16_t y) {
+  if (x) {};
   ZF = y == 0;
   NF = y & 0x8000;
   return y;
