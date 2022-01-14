@@ -315,10 +315,12 @@ uint8_t CPU::readDisassembler(unsigned address) {
 }
 
 uint8_t CPU::readRAM(unsigned addr, uint8_t data) {
+  if (data) {}
   return wram[addr];
 }
 
 uint8_t CPU::readAPU(unsigned addr, uint8_t data) {
+  if (data) {}
   synchronizeSMP();
   return smp.portRead(addr & 3);
 }
