@@ -102,6 +102,7 @@ uint8_t SA1::ROM::readSA1(unsigned address, uint8_t data) {
 }
 
 void SA1::ROM::writeSA1(unsigned address, uint8_t data) {
+  if (address || data) {}
 }
 
 bool SA1::BWRAM::conflict() const {
@@ -181,6 +182,7 @@ void SA1::BWRAM::writeLinear(unsigned address, uint8_t data) {
 }
 
 uint8_t SA1::BWRAM::readBitmap(uint32_t address, uint8_t data) {
+  if (data) {}
   if(sa1.mmio.bbf == 0) {
     //4bpp
     unsigned shift = address & 1;

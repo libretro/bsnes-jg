@@ -77,6 +77,7 @@ uint8_t HitachiDSP::readROM(unsigned address, uint8_t data) {
 }
 
 void HitachiDSP::writeROM(unsigned address, uint8_t data) {
+    if (address || data) {}
 }
 
 std::optional<unsigned> HitachiDSP::addressRAM(unsigned address) const {
@@ -149,6 +150,7 @@ std::optional<unsigned> HitachiDSP::addressIO(unsigned address) const {
 }
 
 uint8_t HitachiDSP::readIO(unsigned address, uint8_t data) {
+  if (data) {}
   address = 0x7c00 | (address & 0x03ff);
 
   //IO

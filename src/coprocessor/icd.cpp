@@ -352,6 +352,7 @@ namespace SameBoy {
   }
 
   static void log(GB_gameboy_t *gb, const char *string, GB_log_attributes attributes) {
+      if (gb || string || attributes) {}
   }
 }
 

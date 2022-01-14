@@ -57,6 +57,7 @@ void ExpansionPort::unload() {
 }
 
 void ExpansionPort::serialize(serializer& s) {
+  if (s.mode()) {}
 }
 
 }
