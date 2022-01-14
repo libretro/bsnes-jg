@@ -35,14 +35,14 @@ PPU ppu;
 
 void PPU::main() {
   if(vcounter() == 0) {
-    if(display.overscan && !io.overscan) {
+    /*if(display.overscan && !io.overscan) {
       //when disabling overscan, clear the overscan area that won't be rendered to:
       for(unsigned y = 1; y <= 240; ++y) {
         if(y >= 8 && y <= 231) continue;
         auto out = ppu.output + y * 1024;
         std::memset(out, 0, 1024 * sizeof(uint16_t));
       }
-    }
+    }*/
     display.interlace = io.interlace;
     display.overscan = io.overscan;
     bg1.frame();
@@ -1763,7 +1763,7 @@ void PPU::Screen::scanline() {
 }
 
 void PPU::Screen::run() {
-  if(ppu.vcounter() == 0) return;
+  if(ppu.vcounter() > 232 || ppu.vcounter() == 0) return;
 
   bool hires      = ppu.io.pseudoHires || ppu.io.bgMode == 5 || ppu.io.bgMode == 6;
   auto belowColor = below(hires);
