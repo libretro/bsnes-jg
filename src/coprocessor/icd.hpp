@@ -25,8 +25,6 @@
 namespace SuperFamicom {
 
 struct ICD : Thread {
-  Emulator::Cheat cheats;
-
   inline unsigned pathID() const { return information.pathID; }
 
   void setOpenCallback(std::ifstream (*)(unsigned, std::string));

@@ -23,7 +23,6 @@
 #include <vector>
 
 #include "serializer.hpp"
-#include "cheat.hpp"
 #include "controller.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"

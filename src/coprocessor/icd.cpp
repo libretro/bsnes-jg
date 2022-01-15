@@ -46,6 +46,8 @@ static GB_gameboy_t sameboy;
 
 namespace SuperFamicom {
 
+extern Emulator::Cheat cheat;
+
 static Stream *stream;
 
 ICD icd;
@@ -336,7 +338,7 @@ namespace SameBoy {
 
   static uint8_t read_memory(GB_gameboy_t*, uint16_t addr, uint8_t data) {
     uint8_t replace;
-    if(icd.cheats.find(&replace, addr, data)) return replace;
+    if(cheat.find(&replace, addr, data)) return replace;
     return data;
   }
 

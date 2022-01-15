@@ -113,7 +113,7 @@ bool Interface::unserialize(serializer& s) {
 
 void Interface::cheatsApply(const std::vector<std::string>& list) {
   if(cartridge.has.ICD) {
-    icd.cheats.assign(list);
+    cheat.assign(list);
     return;
   }
 
