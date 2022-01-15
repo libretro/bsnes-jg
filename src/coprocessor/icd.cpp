@@ -20,7 +20,6 @@
 
 #include <fstream>
 #include <iterator>
-#include <optional>
 #include <vector>
 
 #include "serializer.hpp"
