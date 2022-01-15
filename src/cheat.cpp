@@ -19,7 +19,6 @@
  */
 
 #include <iomanip>
-#include <optional>
 #include <regex>
 #include <sstream>
 
@@ -43,8 +42,8 @@ void Cheat::reset() {
   codes.clear();
 }
 
-void Cheat::append(unsigned address, unsigned data, std::optional<unsigned> compare) {
-  codes.push_back({address, data, compare, true, 0});
+void Cheat::append(unsigned address, unsigned data, unsigned compare, bool usecompare) {
+  codes.push_back({address, data, compare, usecompare, true, 0});
 }
 
 void Cheat::assign(const std::vector<std::string>& list) {
@@ -57,8 +56,8 @@ void Cheat::assign(const std::vector<std::string>& list) {
       while(std::getline(ss, entry, '=')) {
           part.push_back(std::stoul(entry, nullptr, 16));
       }
-      if (part.size() == 2) append(part[0], part[1]);
-      if (part.size() == 3) append(part[0], part[2], part[1]);
+      if (part.size() == 2) append(part[0], part[1], 0, false);
+      if (part.size() == 3) append(part[0], part[2], part[1], true);
   }
 }
 

@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <optional>
-
 namespace Emulator {
 
 struct Cheat {
@@ -30,7 +28,8 @@ struct Cheat {
 
     unsigned address;
     unsigned data;
-    std::optional<unsigned> compare;
+    unsigned compare;
+    bool usecompare;
     bool enable;
     unsigned restore;
   };
@@ -38,7 +37,7 @@ struct Cheat {
   explicit operator bool() const;
 
   void reset();
-  void append(unsigned, unsigned, std::optional<unsigned> = {});
+  void append(unsigned, unsigned, unsigned, bool);
   void assign(const std::vector<std::string>&);
   bool find(uint8_t*, unsigned, unsigned);
 
