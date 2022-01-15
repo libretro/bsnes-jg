@@ -23,7 +23,6 @@
 #include <vector>
 
 #include "audio.hpp"
-#include "emulator.hpp"
 
 namespace SuperFamicom {
 

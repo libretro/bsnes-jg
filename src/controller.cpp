@@ -20,7 +20,6 @@
 
 #include "serializer.hpp"
 #include "cpu.hpp"
-#include "emulator.hpp"
 #include "memory.hpp"
 #include "settings.hpp"
 

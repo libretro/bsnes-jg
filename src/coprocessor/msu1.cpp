@@ -22,7 +22,6 @@
 #include <vector>
 
 #include "audio.hpp"
-#include "emulator.hpp"
 #include "serializer.hpp"
 #include "cpu.hpp"
 #include "dsp.hpp"
