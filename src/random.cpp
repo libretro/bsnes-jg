@@ -19,7 +19,6 @@
  */
 
 #include <cstring>
-#include <optional>
 
 #include "memory.hpp"
 #include "serializer.hpp"
@@ -40,14 +39,14 @@ static uint32_t step() {
   return xorshift >> rotate | xorshift << (-rotate & 31);
 }
 
-static void seed(std::optional<uint32_t> seed = std::nullopt, std::optional<uint32_t> sequence = std::nullopt) {
-  if(!seed) seed = (uint32_t)clock();
-  if(!sequence) sequence = 0;
+static void seed() {
+  uint32_t seed = (uint32_t)clock();
+  uint32_t sequence = 0;
 
   _state = 0;
-  _increment = sequence.value() << 1 | 1;
+  _increment = sequence << 1 | 1;
   step();
-  _state += seed.value();
+  _state += seed;
   step();
 }
 
