@@ -20,11 +20,13 @@
 
 #include <fstream>
 #include <iterator>
+#include <optional>
 #include <vector>
 
 #include "serializer.hpp"
 #include "audio.hpp"
 #include "emulator.hpp"
+#include "cheat.hpp"
 #include "cartridge.hpp"
 #include "cpu.hpp"
 #include "settings.hpp"

@@ -18,10 +18,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "serializer.hpp"
+#include "cheat.hpp"
 #include "controller.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"

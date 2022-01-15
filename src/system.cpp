@@ -25,6 +25,7 @@
 #include "serializer.hpp"
 #include "audio.hpp"
 #include "cartridge.hpp"
+#include "cheat.hpp"
 #include "controller.hpp"
 #include "coprocessor/armdsp.hpp"
 #include "coprocessor/cx4.hpp"

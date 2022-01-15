@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "serializer.hpp"
+#include "cheat.hpp"
 #include "coprocessor/armdsp.hpp"
 #include "coprocessor/cx4.hpp"
 #include "coprocessor/dip.hpp"
