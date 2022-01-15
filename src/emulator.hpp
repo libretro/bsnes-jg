@@ -20,10 +20,6 @@
 
 #pragma once
 
-#include <optional>
-#include <string>
-#include <vector>
-
 namespace Emulator {
 
 //incremented only when serialization format changes
