@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <optional>
-
 #include "memory.hpp"
 #include "processor/hg51b.hpp"
 
