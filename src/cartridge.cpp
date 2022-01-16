@@ -306,8 +306,8 @@ void Cartridge::loadICD(std::string node) {
   has.GameBoySlot = true;
   has.ICD = true;
 
-  if(auto oscillator = game.oscillator()) {
-    icd.Frequency = oscillator->frequency;
+  if(game.oscillatorList.size()) {
+    icd.Frequency = game.oscillatorList[0].frequency;
   } else {
     icd.Frequency = 0;
   }
@@ -489,8 +489,8 @@ void Cartridge::loadSA1(std::string node) {
 void Cartridge::loadSuperFX(std::string node) {
   has.SuperFX = true;
 
-  if(auto oscillator = game.oscillator()) {
-    superfx.Frequency = oscillator->frequency;  //GSU-1, GSU-2
+  if(game.oscillatorList.size()) {
+    superfx.Frequency = game.oscillatorList[0].frequency; //GSU-1, GSU-2
   } else {
     superfx.Frequency = system.cpuFrequency();  //MARIO CHIP 1
   }
@@ -529,8 +529,8 @@ void Cartridge::loadARMDSP(std::string node) {
   for(auto& word : armdsp.dataROM) word = 0x00;
   for(auto& word : armdsp.programRAM) word = 0x00;
 
-  if(auto oscillator = game.oscillator()) {
-    armdsp.Frequency = oscillator->frequency;
+  if(game.oscillatorList.size()) {
+    armdsp.Frequency = game.oscillatorList[0].frequency;
   } else {
     armdsp.Frequency = 21'440'000;
   }
@@ -582,8 +582,8 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
   for(auto& word : hitachidsp.dataROM) word = 0x000000;
   for(auto& word : hitachidsp.dataRAM) word = 0x00;
 
-  if(auto oscillator = game.oscillator()) {
-    hitachidsp.Frequency = oscillator->frequency;
+  if(game.oscillatorList.size()) {
+    hitachidsp.Frequency = game.oscillatorList[0].frequency;
   } else {
     hitachidsp.Frequency = 20'000'000;
   }
@@ -675,8 +675,8 @@ void Cartridge::loaduPD7725(std::string node) {
   for(auto& word : necdsp.dataROM) word = 0x0000;
   for(auto& word : necdsp.dataRAM) word = 0x0000;
 
-  if(auto oscillator = game.oscillator()) {
-    necdsp.Frequency = oscillator->frequency;
+  if(game.oscillatorList.size()) {
+    necdsp.Frequency = game.oscillatorList[0].frequency;
   } else {
     necdsp.Frequency = 7'600'000;
   }
@@ -768,8 +768,8 @@ void Cartridge::loaduPD96050(std::string node) {
   for(auto& word : necdsp.dataROM) word = 0x0000;
   for(auto& word : necdsp.dataRAM) word = 0x0000;
 
-  if(auto oscillator = game.oscillator()) {
-    necdsp.Frequency = oscillator->frequency;
+  if(game.oscillatorList.size()) {
+    necdsp.Frequency = game.oscillatorList[0].frequency;
   } else {
     necdsp.Frequency = 11'000'000;
   }
