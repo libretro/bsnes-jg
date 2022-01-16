@@ -34,34 +34,50 @@ bool HitachiDSP::isRAM(unsigned address) {
 }
 
 uint8_t HitachiDSP::read(unsigned address) {
-  if(auto linear = addressROM (address)) return readROM (*linear);
-  if(auto linear = addressRAM (address)) return readRAM (*linear);
-  if(auto linear = addressDRAM(address)) return readDRAM(*linear);
-  if(auto linear = addressIO  (address)) return readIO  (*linear);
+  unsigned addr = address;
+  if(addressROM(addr)) return readROM(addr);
+
+  addr = address;
+  if(addressRAM(addr)) return readRAM(addr);
+
+  addr = address;
+  if(addressDRAM(addr)) return readDRAM(addr);
+
+  addr = address;
+  if(addressIO(addr)) return readIO(addr);
   return 0x00;
 }
 
 void HitachiDSP::write(unsigned address, uint8_t data) {
-  if(auto linear = addressROM (address)) return writeROM (*linear, data);
-  if(auto linear = addressRAM (address)) return writeRAM (*linear, data);
-  if(auto linear = addressDRAM(address)) return writeDRAM(*linear, data);
-  if(auto linear = addressIO  (address)) return writeIO  (*linear, data);
+  unsigned addr = address;
+  if(addressROM(addr)) return writeROM (addr, data);
+
+  addr = address;
+  if(addressRAM(addr)) return writeRAM(addr, data);
+
+  addr = address;
+  if(addressDRAM(addr)) return writeDRAM(addr, data);
+
+  addr = address;
+  if(addressIO(addr)) return writeIO(addr, data);
 }
 
-std::optional<unsigned> HitachiDSP::addressROM(unsigned address) const {
+bool HitachiDSP::addressROM(unsigned& address) const {
   if(Mapping == 0) {
     //00-3f,80-bf:8000-ffff; c0-ff:0000-ffff
     if((address & 0x408000) == 0x008000 || (address & 0xc00000) == 0xc00000) {
       address = (address & 0x3f0000) >> 1 | (address & 0x7fff);
-      return {address & 0x1fffff};
+      address &= 0x1fffff;
+      return true;
     }
   } else {
     //00-3f,80-bf:8000-ffff; c0-ff:0000-ffff
     if((address & 0x408000) == 0x008000 || (address & 0xc00000) == 0xc00000) {
-      return {address & 0x3fffff};
+      address &= 0x3fffff;
+      return true;
     }
   }
-  return {};
+  return false;
 }
 
 uint8_t HitachiDSP::readROM(unsigned address, uint8_t data) {
@@ -80,21 +96,23 @@ void HitachiDSP::writeROM(unsigned address, uint8_t data) {
     if (address || data) {}
 }
 
-std::optional<unsigned> HitachiDSP::addressRAM(unsigned address) const {
+bool HitachiDSP::addressRAM(unsigned& address) const {
   if(Mapping == 0) {
     //70-77:0000-7fff
     if((address & 0xf88000) == 0x700000) {
       address = (address & 0x070000) >> 1 | (address & 0x7fff);
-      return {address & 0x03ffff};
+      address &= 0x03ffff;
+      return true;
     }
   } else {
     //30-3f,b0-bf:6000-7fff
     if((address & 0x70e000) == 0x306000) {
       address = (address & 0x0f0000) >> 3 | (address & 0x1fff);
-      return {address & 0x01ffff};
+      address &= 0x01ffff;
+      return true;
     }
   }
-  return {};
+  return false;
 }
 
 uint8_t HitachiDSP::readRAM(unsigned address, uint8_t data) {
@@ -107,19 +125,21 @@ void HitachiDSP::writeRAM(unsigned address, uint8_t data) {
   return ram.write(bus.mirror(address, ram.size()), data);
 }
 
-std::optional<unsigned> HitachiDSP::addressDRAM(unsigned address) const {
+bool HitachiDSP::addressDRAM(unsigned& address) const {
   if(Mapping == 0) {
     //00-3f,80-bf:6000-6bff,7000-7bff
     if((address & 0x40e000) == 0x006000 && (address & 0x0c00) != 0x0c00) {
-      return {address & 0x0fff};
+      address &= 0x0fff;
+      return true;
     }
   } else {
     //00-2f,80-af:6000-6bff,7000-7bff
     if((address & 0x40e000) == 0x006000 && (address & 0x0c00) != 0x0c00 && (address & 0x300000) != 0x300000) {
-      return {address & 0x0fff};
+      address &= 0x0fff;
+      return true;
     }
   }
-  return {};
+  return false;
 }
 
 uint8_t HitachiDSP::readDRAM(unsigned address, uint8_t data) {
@@ -134,19 +154,21 @@ void HitachiDSP::writeDRAM(unsigned address, uint8_t data) {
   dataRAM[address] = data;
 }
 
-std::optional<unsigned> HitachiDSP::addressIO(unsigned address) const {
+bool HitachiDSP::addressIO(unsigned& address) const {
   if(Mapping == 0) {
     //00-3f,80-bf:6c00-6fff,7c00-7fff
     if((address & 0x40ec00) == 0x006c00) {
-      return {address & 0x03ff};
+      address &= 0x03ff;
+      return true;
     }
   } else {
     //00-2f,80-af:6c00-6fff,7c00-7fff
     if((address & 0x40ec00) == 0x006c00 && (address & 0x300000) != 0x300000) {
-      return {address & 0x03ff};
+      address &= 0x03ff;
+      return true;
     }
   }
-  return {};
+  return false;
 }
 
 uint8_t HitachiDSP::readIO(unsigned address, uint8_t data) {

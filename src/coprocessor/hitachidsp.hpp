@@ -48,22 +48,22 @@ struct HitachiDSP : Processor::HG51B, Thread {
   void write(unsigned address, uint8_t data) override;
 
   //CPU ROM read/write
-  std::optional<unsigned> addressROM(unsigned address) const;
+  bool addressROM(unsigned& address) const;
   uint8_t readROM(unsigned address, uint8_t data = 0);
   void writeROM(unsigned address, uint8_t data);
 
   //CPU RAM read/write
-  std::optional<unsigned> addressRAM(unsigned address) const;
+  bool addressRAM(unsigned& address) const;
   uint8_t readRAM(unsigned address, uint8_t data = 0);
   void writeRAM(unsigned address, uint8_t data);
 
   //HG51B data RAM read/write
-  std::optional<unsigned> addressDRAM(unsigned address) const;
+  bool addressDRAM(unsigned& address) const;
   uint8_t readDRAM(unsigned address, uint8_t data = 0);
   void writeDRAM(unsigned address, uint8_t data);
 
   //CPU IO read/write
-  std::optional<unsigned> addressIO(unsigned address) const;
+  bool addressIO(unsigned& address) const;
   uint8_t readIO(unsigned address, uint8_t data = 0);
   void writeIO(unsigned address, uint8_t data);
 
