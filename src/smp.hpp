@@ -118,7 +118,7 @@ private:
   Timer<128> timer1;
   Timer< 16> timer2;
 
-  inline void wait(std::optional<uint16_t> address = std::nullopt, bool half = false);
+  inline void wait(uint16_t address, bool half = false);
   inline void waitIdle();
   inline void step(unsigned clocks);
   inline void stepIdle(unsigned clocks);

@@ -278,14 +278,13 @@ void SMP::writeIO(uint16_t address, uint8_t data) {
 //sometimes the SMP will run far slower than expected
 //other times (and more likely), the SMP will deadlock until the system is reset
 //the timers are not affected by this and advance by their expected values
-void SMP::wait(std::optional<uint16_t> addr, bool half) {
+void SMP::wait(uint16_t addr, bool half) {
   static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
   static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
 
   unsigned waitStates = io.externalWaitStates;
-  if(!addr) waitStates = io.internalWaitStates;  //idle cycles
-  else if((*addr & 0xfff0) == 0x00f0) waitStates = io.internalWaitStates;  //IO registers
-  else if(*addr >= 0xffc0 && io.iplromEnable) waitStates = io.internalWaitStates;  //IPLROM
+  if((addr & 0xfff0) == 0x00f0) waitStates = io.internalWaitStates;  //IO registers
+  else if(addr >= 0xffc0 && io.iplromEnable) waitStates = io.internalWaitStates;  //IPLROM
 
   step(cycleWaitStates[waitStates] >> half);
   stepTimers(timerWaitStates[waitStates] >> half);
