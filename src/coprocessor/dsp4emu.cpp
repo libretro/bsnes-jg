@@ -34,7 +34,7 @@ Fixed-point math reminder:
 
 #include "dsp4emu.hpp"
 
-namespace SuperFamicom::DSP4i {
+namespace SuperFamicom {
 
 inline uint16_t READ_WORD(uint8_t *addr) {
   return (addr[0]) + (addr[1] << 8);

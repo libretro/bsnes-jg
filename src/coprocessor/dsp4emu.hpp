@@ -22,7 +22,7 @@
 
 #pragma once
 
-namespace SuperFamicom::DSP4i {
+namespace SuperFamicom {
 
 struct DSP4_t
 {
@@ -37,7 +37,6 @@ struct DSP4_t
   uint8_t output[512];
 };
 
-extern struct DSP4_t DSP4;
 extern uint8_t dsp4_byte;
 extern uint16_t dsp4_address;
 
@@ -115,8 +114,6 @@ struct DSP4_vars_t
   int16_t OAM_RowMax;           // maximum number of tiles per 8 aligned pixels (row)
   int16_t OAM_Row[32];          // current number of tiles per row
 };
-
-extern struct DSP4_vars_t DSP4_vars;
 
 void InitDSP4();
 void DSP4SetByte();
