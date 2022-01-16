@@ -291,17 +291,11 @@ void SMP::wait(std::optional<uint16_t> addr, bool half) {
   stepTimers(timerWaitStates[waitStates] >> half);
 }
 
-void SMP::waitIdle(std::optional<uint16_t> addr, bool half) {
+void SMP::waitIdle() {
   static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
   static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
-
-  unsigned waitStates = io.externalWaitStates;
-  if(!addr) waitStates = io.internalWaitStates;  //idle cycles
-  else if((*addr & 0xfff0) == 0x00f0) waitStates = io.internalWaitStates;  //IO registers
-  else if(*addr >= 0xffc0 && io.iplromEnable) waitStates = io.internalWaitStates;  //IPLROM
-
-  stepIdle(cycleWaitStates[waitStates] >> half);
-  stepTimers(timerWaitStates[waitStates] >> half);
+  stepIdle(cycleWaitStates[io.externalWaitStates]);
+  stepTimers(timerWaitStates[io.externalWaitStates]);
 }
 
 void SMP::step(unsigned clocks) {
