@@ -34,12 +34,12 @@ struct Audio {
   void reset();
   void setFrequency(double);
   void setBuffer(float*);
-  void setCallback(void (*)(size_t));
+  void setCallback(void (*)(std::size_t));
   void setSpf(unsigned);
   void setQuality(unsigned);
 
 private:
-  void (*audioFrame)(size_t);
+  void (*audioFrame)(std::size_t);
   void process();
 
   std::vector<Stream*> _streams;

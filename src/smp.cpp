@@ -19,7 +19,6 @@
  */
 
 #include <cstdint>
-#include <optional>
 #include <vector>
 
 #include "serializer.hpp"
