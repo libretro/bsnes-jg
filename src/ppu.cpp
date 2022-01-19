@@ -115,74 +115,74 @@ template<unsigned Cycle>
 void PPU::cycleBackgroundFetch() {
   switch(io.bgMode) {
   case 0:
-    if constexpr(Cycle == 0) bg4.fetchNameTable();
-    if constexpr(Cycle == 1) bg3.fetchNameTable();
-    if constexpr(Cycle == 2) bg2.fetchNameTable();
-    if constexpr(Cycle == 3) bg1.fetchNameTable();
-    if constexpr(Cycle == 4) bg4.fetchCharacter(0);
-    if constexpr(Cycle == 5) bg3.fetchCharacter(0);
-    if constexpr(Cycle == 6) bg2.fetchCharacter(0);
-    if constexpr(Cycle == 7) bg1.fetchCharacter(0);
+    if(Cycle == 0) bg4.fetchNameTable();
+    else if(Cycle == 1) bg3.fetchNameTable();
+    else if(Cycle == 2) bg2.fetchNameTable();
+    else if(Cycle == 3) bg1.fetchNameTable();
+    else if(Cycle == 4) bg4.fetchCharacter(0);
+    else if(Cycle == 5) bg3.fetchCharacter(0);
+    else if(Cycle == 6) bg2.fetchCharacter(0);
+    else if(Cycle == 7) bg1.fetchCharacter(0);
     break;
   case 1:
-    if constexpr(Cycle == 0) bg3.fetchNameTable();
-    if constexpr(Cycle == 1) bg2.fetchNameTable();
-    if constexpr(Cycle == 2) bg1.fetchNameTable();
-    if constexpr(Cycle == 3) bg3.fetchCharacter(0);
-    if constexpr(Cycle == 4) bg2.fetchCharacter(0);
-    if constexpr(Cycle == 5) bg2.fetchCharacter(1);
-    if constexpr(Cycle == 6) bg1.fetchCharacter(0);
-    if constexpr(Cycle == 7) bg1.fetchCharacter(1);
+    if(Cycle == 0) bg3.fetchNameTable();
+    else if(Cycle == 1) bg2.fetchNameTable();
+    else if(Cycle == 2) bg1.fetchNameTable();
+    else if(Cycle == 3) bg3.fetchCharacter(0);
+    else if(Cycle == 4) bg2.fetchCharacter(0);
+    else if(Cycle == 5) bg2.fetchCharacter(1);
+    else if(Cycle == 6) bg1.fetchCharacter(0);
+    else if(Cycle == 7) bg1.fetchCharacter(1);
     break;
   case 2:
-    if constexpr(Cycle == 0) bg2.fetchNameTable();
-    if constexpr(Cycle == 1) bg1.fetchNameTable();
-    if constexpr(Cycle == 2) bg3.fetchOffset(0);
-    if constexpr(Cycle == 3) bg3.fetchOffset(8);
-    if constexpr(Cycle == 4) bg2.fetchCharacter(0);
-    if constexpr(Cycle == 5) bg2.fetchCharacter(1);
-    if constexpr(Cycle == 6) bg1.fetchCharacter(0);
-    if constexpr(Cycle == 7) bg1.fetchCharacter(1);
+    if(Cycle == 0) bg2.fetchNameTable();
+    else if(Cycle == 1) bg1.fetchNameTable();
+    else if(Cycle == 2) bg3.fetchOffset(0);
+    else if(Cycle == 3) bg3.fetchOffset(8);
+    else if(Cycle == 4) bg2.fetchCharacter(0);
+    else if(Cycle == 5) bg2.fetchCharacter(1);
+    else if(Cycle == 6) bg1.fetchCharacter(0);
+    else if(Cycle == 7) bg1.fetchCharacter(1);
     break;
   case 3:
-    if constexpr(Cycle == 0) bg2.fetchNameTable();
-    if constexpr(Cycle == 1) bg1.fetchNameTable();
-    if constexpr(Cycle == 2) bg2.fetchCharacter(0);
-    if constexpr(Cycle == 3) bg2.fetchCharacter(1);
-    if constexpr(Cycle == 4) bg1.fetchCharacter(0);
-    if constexpr(Cycle == 5) bg1.fetchCharacter(1);
-    if constexpr(Cycle == 6) bg1.fetchCharacter(2);
-    if constexpr(Cycle == 7) bg1.fetchCharacter(3);
+    if(Cycle == 0) bg2.fetchNameTable();
+    else if(Cycle == 1) bg1.fetchNameTable();
+    else if(Cycle == 2) bg2.fetchCharacter(0);
+    else if(Cycle == 3) bg2.fetchCharacter(1);
+    else if(Cycle == 4) bg1.fetchCharacter(0);
+    else if(Cycle == 5) bg1.fetchCharacter(1);
+    else if(Cycle == 6) bg1.fetchCharacter(2);
+    else if(Cycle == 7) bg1.fetchCharacter(3);
     break;
   case 4:
-    if constexpr(Cycle == 0) bg2.fetchNameTable();
-    if constexpr(Cycle == 1) bg1.fetchNameTable();
-    if constexpr(Cycle == 2) bg3.fetchOffset(0);
-    if constexpr(Cycle == 3) bg2.fetchCharacter(0);
-    if constexpr(Cycle == 4) bg1.fetchCharacter(0);
-    if constexpr(Cycle == 5) bg1.fetchCharacter(1);
-    if constexpr(Cycle == 6) bg1.fetchCharacter(2);
-    if constexpr(Cycle == 7) bg1.fetchCharacter(3);
+    if(Cycle == 0) bg2.fetchNameTable();
+    else if(Cycle == 1) bg1.fetchNameTable();
+    else if(Cycle == 2) bg3.fetchOffset(0);
+    else if(Cycle == 3) bg2.fetchCharacter(0);
+    else if(Cycle == 4) bg1.fetchCharacter(0);
+    else if(Cycle == 5) bg1.fetchCharacter(1);
+    else if(Cycle == 6) bg1.fetchCharacter(2);
+    else if(Cycle == 7) bg1.fetchCharacter(3);
     break;
   case 5:
-    if constexpr(Cycle == 0) bg2.fetchNameTable();
-    if constexpr(Cycle == 1) bg1.fetchNameTable();
-    if constexpr(Cycle == 2) bg2.fetchCharacter(0, 0);
-    if constexpr(Cycle == 3) bg2.fetchCharacter(0, 1);
-    if constexpr(Cycle == 4) bg1.fetchCharacter(0, 0);
-    if constexpr(Cycle == 5) bg1.fetchCharacter(1, 0);
-    if constexpr(Cycle == 6) bg1.fetchCharacter(0, 1);
-    if constexpr(Cycle == 7) bg1.fetchCharacter(1, 1);
+    if(Cycle == 0) bg2.fetchNameTable();
+    else if(Cycle == 1) bg1.fetchNameTable();
+    else if(Cycle == 2) bg2.fetchCharacter(0, 0);
+    else if(Cycle == 3) bg2.fetchCharacter(0, 1);
+    else if(Cycle == 4) bg1.fetchCharacter(0, 0);
+    else if(Cycle == 5) bg1.fetchCharacter(1, 0);
+    else if(Cycle == 6) bg1.fetchCharacter(0, 1);
+    else if(Cycle == 7) bg1.fetchCharacter(1, 1);
     break;
   case 6:
-    if constexpr(Cycle == 0) bg2.fetchNameTable();
-    if constexpr(Cycle == 1) bg1.fetchNameTable();
-    if constexpr(Cycle == 2) bg3.fetchOffset(0);
-    if constexpr(Cycle == 3) bg3.fetchOffset(8);
-    if constexpr(Cycle == 4) bg1.fetchCharacter(0, 0);
-    if constexpr(Cycle == 5) bg1.fetchCharacter(1, 0);
-    if constexpr(Cycle == 6) bg1.fetchCharacter(0, 1);
-    if constexpr(Cycle == 7) bg1.fetchCharacter(1, 1);
+    if(Cycle == 0) bg2.fetchNameTable();
+    else if(Cycle == 1) bg1.fetchNameTable();
+    else if(Cycle == 2) bg3.fetchOffset(0);
+    else if(Cycle == 3) bg3.fetchOffset(8);
+    else if(Cycle == 4) bg1.fetchCharacter(0, 0);
+    else if(Cycle == 5) bg1.fetchCharacter(1, 0);
+    else if(Cycle == 6) bg1.fetchCharacter(0, 1);
+    else if(Cycle == 7) bg1.fetchCharacter(1, 1);
     break;
   case 7:
     //handled separately by mode7.cpp
@@ -219,12 +219,14 @@ void PPU::cycleRenderPixel() {
 
 template<unsigned Cycle>
 void PPU::cycle() {
-  if constexpr(Cycle >=  0 && Cycle <= 1016 && (Cycle -  0) % 8 == 0) cycleObjectEvaluate();
-  if constexpr(Cycle >=  0 && Cycle <= 1054 && (Cycle -  0) % 4 == 0) cycleBackgroundFetch<(Cycle - 0) / 4 & 7>();
-  if constexpr(Cycle == 56                                          ) cycleBackgroundBegin();
-  if constexpr(Cycle >= 56 && Cycle <= 1078 && (Cycle - 56) % 4 == 0) cycleBackgroundBelow();
-  if constexpr(Cycle >= 56 && Cycle <= 1078 && (Cycle - 56) % 4 == 2) cycleBackgroundAbove();
-  if constexpr(Cycle >= 56 && Cycle <= 1078 && (Cycle - 56) % 4 == 2) cycleRenderPixel();
+  if(Cycle >=  0 && Cycle <= 1016 && (Cycle -  0) % 8 == 0) cycleObjectEvaluate();
+  if(Cycle >=  0 && Cycle <= 1054 && (Cycle -  0) % 4 == 0) cycleBackgroundFetch<(Cycle - 0) / 4 & 7>();
+  if(Cycle == 56                                          ) cycleBackgroundBegin();
+  if(Cycle >= 56 && Cycle <= 1078 && (Cycle - 56) % 4 == 0) cycleBackgroundBelow();
+  else if(Cycle >= 56 && Cycle <= 1078 && (Cycle - 56) % 4 == 2) {
+    cycleBackgroundAbove();
+    cycleRenderPixel();
+  }
   step();
 }
 
