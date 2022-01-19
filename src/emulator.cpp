@@ -48,8 +48,8 @@ void Game::load(std::string text) {
   }
 }
 
-std::optional<Game::Memory> Game::memory(std::string node) {
-  if (node.empty()) return std::nullopt;
+bool Game::memory(Game::Memory& mem, std::string node) {
+  if (node.empty()) return false;
   for (auto& m : memoryList) {
     std::string type = BML::search(node, {"memory", "type"});
     std::string strsize = BML::search(node, {"memory", "size"});
@@ -64,9 +64,10 @@ std::optional<Game::Memory> Game::memory(std::string node) {
     if(!manufacturer.empty() && manufacturer != m.manufacturer) continue;
     if(!architecture.empty() && architecture != m.architecture) continue;
     if(!identifier.empty() && identifier != m.identifier) continue;
-    return m;
+    mem = m;
+    return true;
   }
-  return std::nullopt;
+  return false;
 }
 
 Game::Oscillator::Oscillator(std::string node) {

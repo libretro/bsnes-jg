@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <optional>
-
 namespace Emulator {
 
 //incremented only when serialization format changes
@@ -32,7 +30,7 @@ struct Game {
   struct Oscillator;
 
   void load(std::string);
-  std::optional<Game::Memory> memory(std::string);
+  bool memory(Game::Memory&, std::string);
 
   struct Memory {
     Memory() = default;
