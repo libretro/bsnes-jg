@@ -7,9 +7,9 @@ Sufami Turbo.
 This is a fork of bsnes v115. Many changes have been made post-fork:
  - Higher quality resampler with settings
  - Improved performance without loss of accuracy
+ - Portability improvements
  - Removal of hacks
  - Removal of code not required for emulation
- - Removal of OS-specific code in the emulator core
  - Translation to the C++ Standard Library
 
 This repository lives at https://gitlab.com/jgemu/bsnes
