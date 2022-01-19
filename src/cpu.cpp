@@ -636,7 +636,7 @@ void CPU::step() {
   if(overclocking.target) {
     overclocking.counter += Clocks;
     if(overclocking.counter < overclocking.target) {
-      if constexpr(Synchronize) {
+      if(Synchronize) {
         if(configuration.coprocessor.delayedSync) return;
         synchronizeCoprocessors();
       }
@@ -644,12 +644,12 @@ void CPU::step() {
     }
   }
 
-  if constexpr(Clocks >=  2) stepOnce();
-  if constexpr(Clocks >=  4) stepOnce();
-  if constexpr(Clocks >=  6) stepOnce();
-  if constexpr(Clocks >=  8) stepOnce();
-  if constexpr(Clocks >= 10) stepOnce();
-  if constexpr(Clocks >= 12) stepOnce();
+  if(Clocks >=  2) stepOnce();
+  if(Clocks >=  4) stepOnce();
+  if(Clocks >=  6) stepOnce();
+  if(Clocks >=  8) stepOnce();
+  if(Clocks >= 10) stepOnce();
+  if(Clocks >= 12) stepOnce();
 
   smp.clock -= Clocks * (uint64_t)smp.frequency;
   ppu.clock -= Clocks;
@@ -685,7 +685,7 @@ void CPU::step() {
     }
   }
 
-  if constexpr(Synchronize) {
+  if (Synchronize) {
     if(configuration.coprocessor.delayedSync) return;
     synchronizeCoprocessors();
   }
