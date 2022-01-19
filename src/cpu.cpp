@@ -626,7 +626,7 @@ void CPU::stepOnce() {
 
 template<unsigned Clocks, bool Synchronize>
 void CPU::step() {
-  static_assert(Clocks == 2 || Clocks == 4 || Clocks == 6 || Clocks == 8 || Clocks == 10 || Clocks == 12);
+  static_assert(Clocks == 2 || Clocks == 4 || Clocks == 6 || Clocks == 8 || Clocks == 10 || Clocks == 12, "invalid number of clock cycles");
 
   for(auto coprocessor : coprocessors) {
     if(coprocessor == &icd || coprocessor == &msu1) continue;
