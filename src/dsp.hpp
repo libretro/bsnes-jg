@@ -30,7 +30,8 @@ struct DSP {
   void write(uint8_t address, uint8_t data);
 
   bool load();
-  void power(bool reset);
+  void power(bool);
+  void quirk();
   bool mute();
 
   void serialize(serializer&);
@@ -38,6 +39,7 @@ struct DSP {
   int64_t clock = 0;
 
 private:
+  bool init = false;
   int16_t samplebuffer[8192];
 };
 

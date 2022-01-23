@@ -24,7 +24,6 @@
 
 #include "audio.hpp"
 #include "serializer.hpp"
-#include "settings.hpp"
 #include "system.hpp"
 
 #include "dsp.hpp"
@@ -46,6 +45,10 @@ static void dsp_state_save(unsigned char** out, void* in, size_t size) {
 static void dsp_state_load(unsigned char** in, void* out, size_t size) {
   memcpy(out, *in, size);
   *in += size;
+}
+
+void DSP::quirk() {
+  init = true;
 }
 
 void DSP::serialize(serializer& s) {
@@ -108,13 +111,8 @@ void DSP::power(bool reset) {
     spc_dsp.set_output(samplebuffer, 8192);
   }
 
-  /*if(configuration.hotfixes) {
-    //Magical Drop (Japan) does not initialize the DSP registers at startup:
-    //tokoton mode will hang forever in some instances even on real hardware.
-    if(cartridge.headerTitle() == "MAGICAL DROP") {
-      for(unsigned address = 0; address < 0x80; ++address) spc_dsp.write(address, 0xff);
-    }
-  }*/
+  if(init)
+    for(unsigned address = 0; address < 0x80; ++address) spc_dsp.write(address, 0xff);
 }
 
 bool DSP::mute() {

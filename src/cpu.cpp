@@ -53,6 +53,10 @@ bool CPU::hdmaActive() {
   return false;
 }
 
+void CPU::quirk() {
+  init = true;
+}
+
 void CPU::dmaRun() {
   counter.dma += 8;
   step<8,0>();
@@ -1134,14 +1138,8 @@ void CPU::power(bool reset) {
 
   if(!reset) random.array(wram, sizeof(wram));
 
-  /*if(configuration.hotfixes) {
-    //Dirt Racer (Europe) relies on uninitialized memory containing certain values to boot without freezing.
-    //the game itself is broken and will fail to run sometimes on real hardware, but for the sake of expedience,
-    //WRAM is initialized to a constant value that will allow this game to always boot in successfully.
-    if(cartridge.headerTitle() == "DIRT RACER") {
-      for(auto& byte : wram) byte = 0xff;
-    }
-  }*/
+  if(init)
+    for(auto& byte : wram) byte = 0xff;
 
   for(unsigned n = 0; n < 8; ++n) {
     channels[n] = {};

@@ -50,7 +50,8 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   static void Enter();
   void main();
   bool load();
-  void power(bool reset);
+  void power(bool);
+  void quirk();
 
   //dma.cpp
   inline bool dmaEnable();
@@ -116,6 +117,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   } overclocking;
 
 private:
+  bool init = false;
   unsigned version = 2;  //allowed: 1, 2
 
   struct Counter {

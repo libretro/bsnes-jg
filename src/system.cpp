@@ -356,6 +356,25 @@ void System::power(bool reset) {
 
   random.entropy((Emulator::Random::Entropy)configuration.entropy);
 
+  if(configuration.hotfixes) {
+    const std::string headerTitle = cartridge.headerTitle();
+
+   /* Magical Drop (Japan) does not initialize the DSP registers at startup:
+      tokoton mode will hang forever in some instances even on real hardware.
+    */
+    if(headerTitle == "MAGICAL DROP")
+      dsp.quirk();
+
+   /* Dirt Racer (Europe) relies on uninitialized memory containing certain
+      values to boot without freezing. the game itself is broken and will fail
+      to run sometimes on real hardware, but for the sake of expedience, WRAM
+      is initialized to a constant value that will allow this game to always
+      boot successfully.
+    */
+    else if(headerTitle == "DIRT RACER")
+      cpu.quirk();
+  }
+
   cpu.power(reset);
   smp.power();
   dsp.power(reset);
