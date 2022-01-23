@@ -306,10 +306,28 @@ bool System::load() {
   }
 
   if(configuration.hotfixes) {
-    //due to poor programming, Rendering Ranger R2 will rarely lock up at 32040 * 768hz.
-    if(cartridge.headerTitle() == "RENDERING RANGER R2") {
+    const std::string headerTitle = cartridge.headerTitle();
+
+   /* Dirt Racer (Europe) relies on uninitialized memory containing certain
+      values to boot without freezing. The game itself is broken and will fail
+      to run sometimes on real hardware, but for the sake of expedience WRAM
+      is initialized to a constant value that will allow this game to always
+      boot successfully.
+    */
+    if(headerTitle == "DIRT RACER")
+      cpu.quirk();
+
+   /* Magical Drop (Japan) does not initialize the DSP registers at startup,
+      tokoton mode will hang forever in some instances even on real hardware.
+    */
+    else if(headerTitle == "MAGICAL DROP")
+      dsp.quirk();
+
+   /* Due to poor programming Rendering Ranger R2 will rarely lock up at
+      32040 * 768hz.
+    */
+    else if(headerTitle == "RENDERING RANGER R2")
       information.apuFrequency = 32000.0 * 768.0;
-    }
   }
 
   if(cartridge.has.ICD) {
@@ -355,25 +373,6 @@ void System::power(bool reset) {
   audio.reset();
 
   random.entropy((Emulator::Random::Entropy)configuration.entropy);
-
-  if(configuration.hotfixes) {
-    const std::string headerTitle = cartridge.headerTitle();
-
-   /* Magical Drop (Japan) does not initialize the DSP registers at startup:
-      tokoton mode will hang forever in some instances even on real hardware.
-    */
-    if(headerTitle == "MAGICAL DROP")
-      dsp.quirk();
-
-   /* Dirt Racer (Europe) relies on uninitialized memory containing certain
-      values to boot without freezing. the game itself is broken and will fail
-      to run sometimes on real hardware, but for the sake of expedience, WRAM
-      is initialized to a constant value that will allow this game to always
-      boot successfully.
-    */
-    else if(headerTitle == "DIRT RACER")
-      cpu.quirk();
-  }
 
   cpu.power(reset);
   smp.power();
