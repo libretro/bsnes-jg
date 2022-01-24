@@ -45,14 +45,7 @@ struct ArmDSP : Processor::ARM7TDMI, Thread {
     bool ready;
     bool signal;
 
-    uint8_t status() const {
-      return (
-        armtocpu.ready << 0
-      | signal         << 2
-      | cputoarm.ready << 3
-      | ready          << 7
-      );
-    }
+    uint8_t status() const;
   } bridge;
 
   void synchronizeCPU();
@@ -60,13 +53,13 @@ struct ArmDSP : Processor::ARM7TDMI, Thread {
   void boot();
   void main();
 
-  void step(unsigned clocks) override;
+  void step(unsigned) override;
   void sleep() override;
-  uint32_t get(unsigned mode, uint32_t addr) override;
-  void set(unsigned mode, uint32_t addr, uint32_t word) override;
+  uint32_t get(unsigned, uint32_t) override;
+  void set(unsigned, uint32_t, uint32_t) override;
 
-  uint8_t read(unsigned addr, uint8_t data);
-  void write(unsigned addr, uint8_t data);
+  uint8_t read(unsigned, uint8_t);
+  void write(unsigned, uint8_t);
 
   void power();
   void reset(); //soft reset

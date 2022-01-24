@@ -247,4 +247,13 @@ void ArmDSP::reset() {
   bridge.armtocpu.ready = false;
 }
 
+uint8_t ArmDSP::Bridge::status() const {
+  return (
+    armtocpu.ready   << 0
+    | signal         << 2
+    | cputoarm.ready << 3
+    | ready          << 7
+  );
+}
+
 }
