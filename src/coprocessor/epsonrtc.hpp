@@ -32,10 +32,10 @@ struct EpsonRTC : Thread {
 
   void initialize();
   void power();
-  void synchronize(uint64_t timestamp);
+  void synchronize(uint64_t);
 
-  uint8_t read(unsigned addr, uint8_t data);
-  void write(unsigned addr, uint8_t data);
+  uint8_t read(unsigned, uint8_t);
+  void write(unsigned, uint8_t);
 
   void serialize(serializer&);
 
@@ -91,14 +91,14 @@ struct EpsonRTC : Thread {
 
   //memory.cpp
   void rtcReset();
-  uint8_t rtcRead(uint8_t addr);
-  void rtcWrite(uint8_t addr, uint8_t data);
+  uint8_t rtcRead(uint8_t);
+  void rtcWrite(uint8_t, uint8_t);
 
-  void load(const uint8_t* data);
-  void save(uint8_t* data);
+  void load(const uint8_t*);
+  void save(uint8_t*);
 
   //time.cpp
-  void irq(uint8_t period);
+  void irq(uint8_t);
   void duty();
   void roundSeconds();
   void tick();
