@@ -29,6 +29,10 @@ namespace SuperFamicom {
 
 //ROM / RAM access from the S-CPU
 
+bool SuperFX::synchronizing() const {
+  return scheduler.synchronizing();
+}
+
 uint8_t* SuperFX::CPUROM::data() {
   return superfx.rom.data();
 }
