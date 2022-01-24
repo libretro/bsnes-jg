@@ -34,17 +34,17 @@ struct MCC {
   void power();
   void commit();
 
-  uint8_t read(unsigned address, uint8_t data);
-  void write(unsigned address, uint8_t data);
+  uint8_t read(unsigned, uint8_t);
+  void write(unsigned, uint8_t);
 
-  uint8_t mcuRead(unsigned address, uint8_t data);
-  void mcuWrite(unsigned address, uint8_t data);
+  uint8_t mcuRead(unsigned, uint8_t);
+  void mcuWrite(unsigned, uint8_t);
 
-  uint8_t mcuAccess(bool mode, unsigned address, uint8_t data);
-  uint8_t romAccess(bool mode, unsigned address, uint8_t data);
-  uint8_t psramAccess(bool mode, unsigned address, uint8_t data);
-  uint8_t exAccess(bool mode, unsigned address, uint8_t data);
-  uint8_t bsAccess(bool mode, unsigned address, uint8_t data);
+  uint8_t mcuAccess(bool, unsigned, uint8_t);
+  uint8_t romAccess(bool, unsigned, uint8_t);
+  uint8_t psramAccess(bool, unsigned, uint8_t);
+  uint8_t exAccess(bool, unsigned, uint8_t);
+  uint8_t bsAccess(bool, unsigned, uint8_t);
 
   //serialization.cpp
   void serialize(serializer&);
