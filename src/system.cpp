@@ -286,15 +286,17 @@ void System::frameEvent() {
 
 bool System::load() {
   information = {};
-
   bus.reset();
-  if(!cpu.load()) return false;
-  if(!smp.load()) return false;
-  if(!ppu.load()) return false;
-  if(!dsp.load()) return false;
-  if(!cartridge.load()) return false;
 
-  static const std::string region = cartridge.region();
+  if(!cpu.load()
+      || !smp.load()
+      || !ppu.load()
+      || !dsp.load()
+      || !cartridge.load()
+      || (cartridge.has.ICD && !icd.load()))
+    return false;
+
+  const std::string region = cartridge.region();
 
   if(region == "NTSC") {
     information.region = Region::NTSC;
@@ -330,9 +332,6 @@ bool System::load() {
       information.apuFrequency = 32000.0 * 768.0;
   }
 
-  if(cartridge.has.ICD) {
-    if(!icd.load()) return false;
-  }
   if(cartridge.has.BSMemorySlot) bsmemory.load();
 
   return information.loaded = true;
