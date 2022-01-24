@@ -31,20 +31,20 @@ struct SPC7110 : Thread {
   void synchronizeCPU();
   static void Enter();
   void main();
-  void step(unsigned clocks);
+  void step(unsigned);
   void unload();
   void power();
 
-  void addClocks(unsigned clocks);
+  void addClocks(unsigned);
 
-  uint8_t read(unsigned addr, uint8_t data);
-  void write(unsigned addr, uint8_t data);
+  uint8_t read(unsigned, uint8_t);
+  void write(unsigned, uint8_t);
 
-  uint8_t mcuromRead(unsigned addr, uint8_t data);
-  void mcuromWrite(unsigned addr, uint8_t data);
+  uint8_t mcuromRead(unsigned, uint8_t);
+  void mcuromWrite(unsigned, uint8_t);
 
-  uint8_t mcuramRead(unsigned addr, uint8_t data);
-  void mcuramWrite(unsigned addr, uint8_t data);
+  uint8_t mcuramRead(unsigned, uint8_t);
+  void mcuramWrite(unsigned, uint8_t);
 
   void serialize(serializer&);
 
@@ -53,19 +53,19 @@ struct SPC7110 : Thread {
   void dcuBeginTransfer();
   uint8_t dcuRead();
 
-  void deinterleave1bpp(unsigned length);
-  void deinterleave2bpp(unsigned length);
-  void deinterleave4bpp(unsigned length);
+  void deinterleave1bpp(unsigned);
+  void deinterleave2bpp(unsigned);
+  void deinterleave4bpp(unsigned);
 
   //data.cpp
-  uint8_t dataromRead(unsigned addr);
+  uint8_t dataromRead(unsigned);
 
   unsigned dataOffset();
   unsigned dataAdjust();
   unsigned dataStride();
 
-  void setDataOffset(unsigned addr);
-  void setDataAdjust(unsigned addr);
+  void setDataOffset(unsigned);
+  void setDataAdjust(unsigned);
 
   void dataPortRead();
 
