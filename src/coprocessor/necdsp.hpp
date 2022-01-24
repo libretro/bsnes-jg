@@ -28,13 +28,13 @@ struct NECDSP : Processor::uPD96050, Thread {
   void synchronizeCPU();
   static void Enter();
   void main();
-  void step(unsigned clocks);
+  void step(unsigned);
 
-  uint8_t read(unsigned addr, uint8_t data);
-  void write(unsigned addr, uint8_t data);
+  uint8_t read(unsigned, uint8_t);
+  void write(unsigned, uint8_t);
 
-  uint8_t readRAM(unsigned addr, uint8_t data);
-  void writeRAM(unsigned addr, uint8_t data);
+  uint8_t readRAM(unsigned, uint8_t);
+  void writeRAM(unsigned, uint8_t);
 
   void power();
 
