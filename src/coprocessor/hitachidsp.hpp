@@ -32,38 +32,38 @@ struct HitachiDSP : Processor::HG51B, Thread {
   //hitachidsp.cpp
   void synchronizeCPU();
   static void Enter();
-  void step(unsigned clocks) override;
+  void step(unsigned) override;
   void halt() override;
 
   void unload();
   void power();
 
-  bool isROM(unsigned address) override;
-  bool isRAM(unsigned address) override;
+  bool isROM(unsigned) override;
+  bool isRAM(unsigned) override;
 
   //HG51B read/write
-  uint8_t read(unsigned address) override;
-  void write(unsigned address, uint8_t data) override;
+  uint8_t read(unsigned) override;
+  void write(unsigned, uint8_t) override;
 
   //CPU ROM read/write
-  bool addressROM(unsigned& address) const;
-  uint8_t readROM(unsigned address, uint8_t data = 0);
-  void writeROM(unsigned address, uint8_t data);
+  bool addressROM(unsigned&) const;
+  uint8_t readROM(unsigned, uint8_t = 0);
+  void writeROM(unsigned, uint8_t);
 
   //CPU RAM read/write
-  bool addressRAM(unsigned& address) const;
-  uint8_t readRAM(unsigned address, uint8_t data = 0);
-  void writeRAM(unsigned address, uint8_t data);
+  bool addressRAM(unsigned&) const;
+  uint8_t readRAM(unsigned, uint8_t = 0);
+  void writeRAM(unsigned, uint8_t);
 
   //HG51B data RAM read/write
-  bool addressDRAM(unsigned& address) const;
-  uint8_t readDRAM(unsigned address, uint8_t data = 0);
-  void writeDRAM(unsigned address, uint8_t data);
+  bool addressDRAM(unsigned&) const;
+  uint8_t readDRAM(unsigned, uint8_t = 0);
+  void writeDRAM(unsigned, uint8_t);
 
   //CPU IO read/write
-  bool addressIO(unsigned& address) const;
-  uint8_t readIO(unsigned address, uint8_t data = 0);
-  void writeIO(unsigned address, uint8_t data);
+  bool addressIO(unsigned&) const;
+  uint8_t readIO(unsigned, uint8_t = 0);
+  void writeIO(unsigned, uint8_t);
 
   std::vector<uint8_t> firmware() const;
   void serialize(serializer&);
