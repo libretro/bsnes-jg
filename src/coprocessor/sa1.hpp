@@ -53,7 +53,7 @@ struct SA1 : Processor::WDC65816, Thread {
 
   void dmaNormal();
   void dmaCC1();
-  uint8_t dmaCC1Read(unsigned addr);
+  uint8_t dmaCC1Read(unsigned);
   void dmaCC2();
 
   //memory.cpp
@@ -64,17 +64,17 @@ struct SA1 : Processor::WDC65816, Thread {
   inline void idle() override;
   inline void idleJump() override;
   inline void idleBranch() override;
-  inline uint8_t read(unsigned address) override;
-  inline void write(unsigned address, uint8_t data) override;
-  uint8_t readVBR(unsigned address, uint8_t data = 0);
-  uint8_t readDisassembler(unsigned address);
+  inline uint8_t read(unsigned) override;
+  inline void write(unsigned, uint8_t) override;
+  uint8_t readVBR(unsigned, uint8_t = 0);
+  uint8_t readDisassembler(unsigned);
 
   //io.cpp
-  uint8_t readIOCPU(unsigned address, uint8_t data);
-  uint8_t readIOSA1(unsigned address, uint8_t data);
-  void writeIOCPU(unsigned address, uint8_t data);
-  void writeIOSA1(unsigned address, uint8_t data);
-  void writeIOShared(unsigned address, uint8_t data);
+  uint8_t readIOCPU(unsigned, uint8_t);
+  uint8_t readIOSA1(unsigned, uint8_t);
+  void writeIOCPU(unsigned, uint8_t);
+  void writeIOSA1(unsigned, uint8_t);
+  void writeIOShared(unsigned, uint8_t);
 
   //serialization.cpp
   void serialize(serializer&);
@@ -83,34 +83,34 @@ struct SA1 : Processor::WDC65816, Thread {
     //rom.cpp
     inline bool conflict() const;
 
-    inline uint8_t read(unsigned address, uint8_t data = 0) override;
-    inline void write(unsigned address, uint8_t data) override;
+    inline uint8_t read(unsigned, uint8_t = 0) override;
+    inline void write(unsigned, uint8_t) override;
 
-    uint8_t readCPU(unsigned address, uint8_t data = 0);
-    void writeCPU(unsigned address, uint8_t data);
+    uint8_t readCPU(unsigned, uint8_t = 0);
+    void writeCPU(unsigned, uint8_t);
 
-    uint8_t readSA1(unsigned address, uint8_t data = 0);
-    void writeSA1(unsigned address, uint8_t data);
+    uint8_t readSA1(unsigned, uint8_t = 0);
+    void writeSA1(unsigned, uint8_t);
   } rom;
 
   struct BWRAM : WritableMemory {
     //bwram.cpp
     inline bool conflict() const;
 
-    inline uint8_t read(unsigned address, uint8_t data = 0) override;
-    inline void write(unsigned address, uint8_t data) override;
+    inline uint8_t read(unsigned, uint8_t = 0) override;
+    inline void write(unsigned, uint8_t) override;
 
-    uint8_t readCPU(unsigned address, uint8_t data = 0);
-    void writeCPU(unsigned address, uint8_t data);
+    uint8_t readCPU(unsigned, uint8_t = 0);
+    void writeCPU(unsigned, uint8_t);
 
-    uint8_t readSA1(unsigned address, uint8_t data = 0);
-    void writeSA1(unsigned address, uint8_t data);
+    uint8_t readSA1(unsigned, uint8_t = 0);
+    void writeSA1(unsigned, uint8_t);
 
-    uint8_t readLinear(unsigned address, uint8_t data = 0);
-    void writeLinear(unsigned address, uint8_t data);
+    uint8_t readLinear(unsigned, uint8_t = 0);
+    void writeLinear(unsigned, uint8_t);
 
-    uint8_t readBitmap(uint32_t address, uint8_t data = 0);
-    void writeBitmap(uint32_t address, uint8_t data);
+    uint8_t readBitmap(uint32_t, uint8_t = 0);
+    void writeBitmap(uint32_t, uint8_t);
 
     bool dma;
   } bwram;
@@ -119,14 +119,14 @@ struct SA1 : Processor::WDC65816, Thread {
     //iram.cpp
     inline bool conflict() const;
 
-    inline uint8_t read(unsigned address, uint8_t data = 0) override;
-    inline void write(unsigned address, uint8_t data) override;
+    inline uint8_t read(unsigned, uint8_t = 0) override;
+    inline void write(unsigned, uint8_t) override;
 
-    uint8_t readCPU(unsigned address, uint8_t data);
-    void writeCPU(unsigned address, uint8_t data);
+    uint8_t readCPU(unsigned, uint8_t);
+    void writeCPU(unsigned, uint8_t);
 
-    uint8_t readSA1(unsigned address, uint8_t data = 0);
-    void writeSA1(unsigned address, uint8_t data);
+    uint8_t readSA1(unsigned, uint8_t = 0);
+    void writeSA1(unsigned, uint8_t);
   } iram;
 
 private:
