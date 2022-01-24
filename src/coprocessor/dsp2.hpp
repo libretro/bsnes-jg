@@ -25,30 +25,32 @@ namespace SuperFamicom {
 struct DSP2 {
   void power();
 
-  uint8_t read(unsigned addr, uint8_t data);
-  void write(unsigned addr, uint8_t data);
+  uint8_t read(unsigned, uint8_t);
+  void write(unsigned, uint8_t);
 
   void serialize(serializer&);
 
   struct {
     bool waiting_for_command;
     unsigned command;
-    unsigned in_count,  in_index;
+    unsigned in_count, in_index;
     unsigned out_count, out_index;
 
-    uint8_t  parameters[512];
-    uint8_t  output[512];
+    uint8_t parameters[512];
+    uint8_t output[512];
 
-    uint8_t  op05transparent;
-    bool   op05haslen;
-    int    op05len;
-    bool   op06haslen;
-    int    op06len;
+    bool op05haslen;
+    bool op06haslen;
+    bool op0dhaslen;
+
+    int op05len;
+    int op06len;
+    int op0doutlen;
+    int op0dinlen;
+
+    uint8_t op05transparent;
     uint16_t op09word1;
     uint16_t op09word2;
-    bool   op0dhaslen;
-    int    op0doutlen;
-    int    op0dinlen;
   } status;
 
   void op01();
