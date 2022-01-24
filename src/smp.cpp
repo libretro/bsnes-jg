@@ -43,6 +43,14 @@ const uint8_t SMP::iplrom[64] = {
   0x5d, 0xd0, 0xdb, 0x1f, 0x00, 0x00, 0xc0, 0xff
 };
 
+bool SMP::synchronizing() const {
+  return scheduler.synchronizing();
+}
+
+bool SMP::raise(bool& data, bool value) {
+  return !data && value ? (data = value, true) : (data = value, false);
+}
+
 uint8_t SMP::readRAM(uint16_t address) {
   if(address >= 0xffc0 && io.iplromEnable) return iplrom[address & 0x3f];
   if(io.ramDisable) return 0x5a;  //0xff on mini-SNES
@@ -313,6 +321,11 @@ void SMP::stepTimers(unsigned clocks) {
   timer0.step(clocks);
   timer1.step(clocks);
   timer2.step(clocks);
+}
+
+template<unsigned Frequency>
+bool SMP::Timer<Frequency>::lower(bool& data, bool value) {
+  return data && !value ? (data = value, true) : (data = value, false);
 }
 
 template<unsigned Frequency> void SMP::Timer<Frequency>::step(unsigned clocks) {

@@ -27,12 +27,12 @@ namespace SuperFamicom {
 //Sony CXP1100Q-1
 
 struct SMP : Processor::SPC700, Thread {
-  inline bool synchronizing() const override { return scheduler.synchronizing(); }
-  inline bool raise(bool& data, bool value) { return !data && value ? (data = value, true) : (data = value, false); }
+  inline bool synchronizing() const override;
+  inline bool raise(bool& data, bool value);
 
   //io.cpp
-  uint8_t portRead(uint8_t port) const;
-  void portWrite(uint8_t port, uint8_t data);
+  uint8_t portRead(uint8_t) const;
+  void portWrite(uint8_t, uint8_t);
 
   //smp.cpp
   void synchronizeCPU();
@@ -85,23 +85,23 @@ private:
   } io;
 
   //memory.cpp
-  inline uint8_t readRAM(uint16_t address);
-  inline void writeRAM(uint16_t address, uint8_t data);
+  inline uint8_t readRAM(uint16_t);
+  inline void writeRAM(uint16_t, uint8_t);
 
   void idle() override;
-  uint8_t read(uint16_t address) override;
-  void write(uint16_t address, uint8_t data) override;
+  uint8_t read(uint16_t) override;
+  void write(uint16_t, uint8_t) override;
 
-  uint8_t readDisassembler(uint16_t address);
+  uint8_t readDisassembler(uint16_t);
 
   //io.cpp
-  inline uint8_t readIO(uint16_t address);
-  inline void writeIO(uint16_t address, uint8_t data);
+  inline uint8_t readIO(uint16_t);
+  inline void writeIO(uint16_t, uint8_t);
 
   //timing.cpp
-  template<unsigned Frequency>
+  template<unsigned>
   struct Timer {
-    inline bool lower(bool& data, bool value) { return data && !value ? (data = value, true) : (data = value, false); }
+    inline bool lower(bool&, bool);
     uint8_t stage0 = 0;
     uint8_t stage1 = 0;
     uint8_t stage2 = 0;
@@ -110,7 +110,7 @@ private:
     bool enable = 0;
     uint8_t target = 0;
 
-    void step(unsigned clocks);
+    void step(unsigned);
     void synchronizeStage1();
   };
 
@@ -118,11 +118,11 @@ private:
   Timer<128> timer1;
   Timer< 16> timer2;
 
-  inline void wait(uint16_t address, bool half = false);
+  inline void wait(uint16_t, bool = false);
   inline void waitIdle();
-  inline void step(unsigned clocks);
-  inline void stepIdle(unsigned clocks);
-  inline void stepTimers(unsigned clocks);
+  inline void step(unsigned);
+  inline void stepIdle(unsigned);
+  inline void stepTimers(unsigned);
 };
 
 extern SMP smp;
