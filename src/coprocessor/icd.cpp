@@ -50,6 +50,10 @@ static Stream *stream;
 
 ICD icd;
 
+unsigned ICD::pathID() const {
+  return information.pathID;
+}
+
 void ICD::ppuHreset() {
   hcounter = 0;
   vcounter++;

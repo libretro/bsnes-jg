@@ -25,7 +25,7 @@
 namespace SuperFamicom {
 
 struct ICD : Thread {
-  inline unsigned pathID() const { return information.pathID; }
+  inline unsigned pathID() const;
 
   void setOpenCallback(std::ifstream (*)(unsigned, std::string));
   void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
@@ -33,24 +33,24 @@ struct ICD : Thread {
   void synchronizeCPU();
   static void Enter();
   void main();
-  void step(unsigned clocks);
+  void step(unsigned);
   unsigned clockFrequency() const;
 
   bool load();
   void save();
   void unload();
-  void power(bool reset = false);
+  void power(bool = false);
 
   //interface.cpp
   void ppuHreset();
   void ppuVreset();
-  void ppuWrite(uint8_t color);
-  void apuWrite(int16_t left, int16_t right);
-  void joypWrite(bool p14, bool p15);
+  void ppuWrite(uint8_t);
+  void apuWrite(int16_t, int16_t);
+  void joypWrite(bool, bool);
 
   //io.cpp
-  uint8_t readIO(unsigned addr, uint8_t data);
-  void writeIO(unsigned addr, uint8_t data);
+  uint8_t readIO(unsigned, uint8_t);
+  void writeIO(unsigned, uint8_t);
 
   //boot-roms.cpp
   static const uint8_t SGB1BootROM[256];
