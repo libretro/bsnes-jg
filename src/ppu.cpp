@@ -103,6 +103,10 @@ void PPU::main() {
   step(hperiod() - hcounter());
 }
 
+bool PPU::overscan() const {
+  return display.overscan;
+}
+
 //it would be lovely if we could put these functions inside cycle(),
 //but due to the multiple template instantiations, that destroys L1 cache.
 //it's a performance penalty of about 25% for the entire(!!) emulator.
@@ -2214,6 +2218,34 @@ void PPUcounter::serialize(serializer& s) {
 
   s.integer(last.vperiod);
   s.integer(last.hperiod);
+}
+
+void PPUcounter::tick(unsigned clocks) {
+  time.hcounter += clocks;
+  if(time.hcounter >= hperiod()) {
+    last.hperiod = hperiod();
+    time.hcounter -= hperiod();
+    tickScanline();
+  }
+}
+
+/* one PPU dot = 4 CPU clocks.
+
+   PPU dots 323 and 327 are 6 CPU clocks long.
+   This does not apply to NTSC non-interlace scanline 240 on odd fields. This is
+   because the PPU skips one dot to alter the color burst phase of the video
+   signal, it is not known what happens for PAL 1368 clock scanlines.
+
+   dot 323 range = {1292, 1294, 1296}
+   dot 327 range = {1310, 1312, 1314}
+*/
+
+unsigned PPUcounter::hdot() const {
+  if(hperiod() == 1360) {
+    return hcounter() >> 2;
+  } else {
+    return (hcounter() - ((hcounter() > 1292) << 1) - ((hcounter() > 1310) << 1)) >> 2;
+  }
 }
 
 void PPU::setBuffer(uint16_t *buffer) {

@@ -46,19 +46,17 @@ namespace SuperFamicom {
 
 struct PPUcounter {
   alwaysinline void tick();
-  alwaysinline void tick(unsigned clocks); private:
-  inline void tickScanline(); public:
+  alwaysinline void tick(unsigned);
 
   inline bool interlace() const;
   inline bool field() const;
   inline unsigned vcounter() const;
   inline unsigned hcounter() const;
-  inline unsigned hdot() const; private:
-  inline unsigned vperiod() const; public:
+  inline unsigned hdot() const;
   inline unsigned hperiod() const;
 
-  inline unsigned vcounter(unsigned offset) const;
-  inline unsigned hcounter(unsigned offset) const;
+  inline unsigned vcounter(unsigned) const;
+  inline unsigned hcounter(unsigned) const;
 
   inline void reset();
   void serialize(serializer&);
@@ -66,6 +64,9 @@ struct PPUcounter {
   bfunction<void ()> scanline;
 
 private:
+  inline void tickScanline();
+  inline unsigned vperiod() const;
+
   struct {
     bool interlace = 0;
     bool field = 0;
@@ -82,9 +83,9 @@ private:
 };
 
 struct PPU : Thread, PPUcounter {
-  inline bool interlace() const { return display.interlace; }
-  inline bool overscan() const { return display.overscan; }
-  inline unsigned vdisp() const { return display.vdisp; }
+  inline bool interlace() const;
+  inline bool overscan() const;
+  inline unsigned vdisp() const;
 
   PPU();
   ~PPU();
@@ -106,7 +107,7 @@ struct PPU : Thread, PPUcounter {
   void cycleRenderPixel();
   template<unsigned> void cycle();
 
-  void latchCounters(unsigned hcounter, unsigned vcounter);
+  void latchCounters(unsigned, unsigned);
   void latchCounters();
 
   void serialize(serializer&);
@@ -115,17 +116,17 @@ struct PPU : Thread, PPUcounter {
 
 private:
   inline void step();
-  inline void step(unsigned clocks);
+  inline void step(unsigned);
 
   inline uint16_t addressVRAM() const;
   inline uint16_t readVRAM();
-  inline void writeVRAM(bool byte, uint8_t data);
-  inline uint8_t readOAM(uint16_t address);
-  inline void writeOAM(uint16_t address, uint8_t data);
-  inline uint8_t readCGRAM(bool byte, uint8_t address);
-  inline void writeCGRAM(uint8_t address, uint16_t data);
-  uint8_t readIO(unsigned address, uint8_t data);
-  void writeIO(unsigned address, uint8_t data);
+  inline void writeVRAM(bool, uint8_t);
+  inline uint8_t readOAM(uint16_t);
+  inline void writeOAM(uint16_t, uint8_t);
+  inline uint8_t readCGRAM(bool, uint8_t);
+  inline void writeCGRAM(uint8_t, uint16_t);
+  uint8_t readIO(unsigned, uint8_t);
+  void writeIO(unsigned, uint8_t);
   void updateVideoMode();
 
   struct VRAM {
@@ -260,12 +261,12 @@ struct Background {
   void begin();
   void fetchNameTable();
   void fetchOffset(unsigned y);
-  void fetchCharacter(unsigned index, bool half = 0);
+  void fetchCharacter(unsigned, bool = false);
   alwaysinline void run(bool);
   void power();
 
   //mode7.cpp
-  inline int clip(int n);
+  inline int clip(int);
   void runMode7();
 
   void serialize(serializer&);
@@ -336,8 +337,8 @@ struct Background {
 };
 
 struct OAM {
-  uint8_t read(uint16_t address);
-  void write(uint16_t address, uint8_t data);
+  uint8_t read(uint16_t);
+  void write(uint16_t, uint8_t);
 
   struct Object {
     inline unsigned width() const;
@@ -360,7 +361,7 @@ struct Object {
   inline void setFirstSprite();
   void frame();
   void scanline();
-  void evaluate(uint8_t index);
+  void evaluate(uint8_t);
   void run();
   void fetch();
   void power();
@@ -430,7 +431,7 @@ struct Object {
 struct Window {
   void scanline();
   void run();
-  bool test(bool oneEnable, bool one, bool twoEnable, bool two, unsigned mask);
+  bool test(bool, bool, bool, bool, unsigned);
   void power();
 
   void serialize(serializer&);
@@ -480,9 +481,9 @@ struct Screen {
   uint16_t below(bool hires);
   uint16_t above();
 
-  uint16_t blend(unsigned x, unsigned y) const;
-  inline uint16_t paletteColor(uint8_t palette) const;
-  inline uint16_t directColor(uint8_t palette, uint8_t paletteGroup) const;
+  uint16_t blend(unsigned, unsigned) const;
+  inline uint16_t paletteColor(uint8_t) const;
+  inline uint16_t directColor(uint8_t, uint8_t) const;
   inline uint16_t fixedColor() const;
 
   void serialize(serializer&);
@@ -538,20 +539,19 @@ struct Screen {
 
 extern PPU ppu;
 
+bool PPU::interlace() const {
+  return display.interlace;
+}
+
+unsigned PPU::vdisp() const {
+  return display.vdisp;
+}
+
 void PPUcounter::tick() {
   time.hcounter += 2;  //increment by smallest unit of time.
   if(time.hcounter == hperiod()) {
     last.hperiod = hperiod();
     time.hcounter = 0;
-    tickScanline();
-  }
-}
-
-void PPUcounter::tick(unsigned clocks) {
-  time.hcounter += clocks;
-  if(time.hcounter >= hperiod()) {
-    last.hperiod = hperiod();
-    time.hcounter -= hperiod();
     tickScanline();
   }
 }
@@ -579,12 +579,29 @@ void PPUcounter::tickScanline() {
   if(scanline) scanline();
 }
 
-bool PPUcounter::interlace() const { return time.interlace; }
-bool PPUcounter::field() const { return time.field; }
-unsigned PPUcounter::vcounter() const { return time.vcounter; }
-unsigned PPUcounter::hcounter() const { return time.hcounter; }
-unsigned PPUcounter::vperiod() const { return time.vperiod; }
-unsigned PPUcounter::hperiod() const { return time.hperiod; }
+bool PPUcounter::interlace() const {
+  return time.interlace;
+}
+
+bool PPUcounter::field() const {
+  return time.field;
+}
+
+unsigned PPUcounter::vcounter() const {
+  return time.vcounter;
+}
+
+unsigned PPUcounter::hcounter() const {
+  return time.hcounter;
+}
+
+unsigned PPUcounter::vperiod() const {
+  return time.vperiod;
+}
+
+unsigned PPUcounter::hperiod() const {
+  return time.hperiod;
+}
 
 unsigned PPUcounter::vcounter(unsigned offset) const {
   if(offset <= hcounter()) return vcounter();
@@ -595,24 +612,6 @@ unsigned PPUcounter::vcounter(unsigned offset) const {
 unsigned PPUcounter::hcounter(unsigned offset) const {
   if(offset <= hcounter()) return hcounter() - offset;
   return hcounter() + last.hperiod - offset;
-}
-
-//one PPU dot = 4 CPU clocks.
-//
-//PPU dots 323 and 327 are 6 CPU clocks long.
-//this does not apply to NTSC non-interlace scanline 240 on odd fields. this is
-//because the PPU skips one dot to alter the color burst phase of the video signal.
-//it is not known what happens for PAL 1368 clock scanlines.
-//
-//dot 323 range = {1292, 1294, 1296}
-//dot 327 range = {1310, 1312, 1314}
-
-unsigned PPUcounter::hdot() const {
-  if(hperiod() == 1360) {
-    return hcounter() >> 2;
-  } else {
-    return (hcounter() - ((hcounter() > 1292) << 1) - ((hcounter() > 1310) << 1)) >> 2;
-  }
 }
 
 void PPUcounter::reset() {
