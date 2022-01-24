@@ -43,15 +43,15 @@ struct BSMemory : Thread, Memory {
   unsigned pathID = 0;
   unsigned ROM = 1;
 
-  bool writable() const { return pin.writable; }
-  void writable(bool writable) { pin.writable = !ROM && writable; }
+  bool writable() const;
+  void writable(bool);
 
   //bsmemory.cpp
   BSMemory();
   void synchronizeCPU();
   static void Enter();
   void main();
-  void step(unsigned clocks);
+  void step(unsigned);
 
   bool load();
   void unload();
@@ -59,8 +59,8 @@ struct BSMemory : Thread, Memory {
 
   uint8_t* data() override;
   unsigned size() const override;
-  uint8_t read(unsigned address, uint8_t data) override;
-  void write(unsigned address, uint8_t data) override;
+  uint8_t read(unsigned, uint8_t) override;
+  void write(unsigned, uint8_t) override;
 
   //serialization.cpp
   void serialize(serializer&);
@@ -82,8 +82,8 @@ private:
     BSMemory* self = nullptr;
 
     void swap();
-    uint8_t read(uint8_t address);
-    void write(uint8_t address, uint8_t data);
+    uint8_t read(uint8_t);
+    void write(uint8_t, uint8_t);
 
     uint8_t buffer[2][256];
   } page;
@@ -97,8 +97,8 @@ private:
   };
 
   struct Block : BlockInformation {
-    uint8_t read(unsigned address);
-    void write(unsigned address, uint8_t data);
+    uint8_t read(unsigned);
+    void write(unsigned, uint8_t);
     void erase();
     void lock();
     void update();
@@ -171,10 +171,10 @@ private:
   struct Queue {
     void flush();
     void pop();
-    void push(uint32_t address, uint8_t data);
+    void push(uint32_t, uint8_t);
     unsigned size();
-    uint32_t address(unsigned index);
-    uint8_t data(unsigned index);
+    uint32_t address(unsigned);
+    uint8_t data(unsigned);
 
     //serialization.cpp
     void serialize(serializer&);
@@ -182,7 +182,7 @@ private:
     struct History {
       bool valid;
       uint32_t address;
-      uint8_t  data;
+      uint8_t data;
     } history[4];
   } queue;
 

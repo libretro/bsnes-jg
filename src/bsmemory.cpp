@@ -102,6 +102,14 @@ void BSMemory::Queue::serialize(serializer& s) {
   s.integer(history[3].data);
 }
 
+bool BSMemory::writable() const {
+  return pin.writable;
+}
+
+void BSMemory::writable(bool writable) {
+  pin.writable = !ROM && writable;
+}
+
 BSMemory::BSMemory() {
   page.self = this;
   unsigned blockID = 0;
