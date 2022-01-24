@@ -34,14 +34,13 @@
 namespace SuperFamicom {
 
 struct CPU : Processor::WDC65816, Thread, PPUcounter {
-  inline bool interruptPending() const override { return status.interruptPending; }
-  inline uint8_t pio() const { return io.pio; }
-  inline bool refresh() const { return status.dramRefresh == 1; }
-  inline bool synchronizing() const override { return scheduler.synchronizing(); }
-
-  inline bool flip(bool& data, bool value) { return data != value ? (data = value, true) : false; }
-  inline bool lower(bool& data) { return data == 1 ? data = 0, true : false; }
-  inline bool raise(bool& data, bool value) { return !data && value ? (data = value, true) : (data = value, false); }
+  inline bool interruptPending() const override;
+  inline bool refresh() const;
+  inline uint8_t pio() const;
+  inline bool synchronizing() const override;
+  inline bool flip(bool& data, bool value);
+  inline bool lower(bool& data);
+  inline bool raise(bool& data, bool value);
 
   //cpu.cpp
   void synchronizeSMP();
@@ -65,27 +64,27 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
 
   //memory.cpp
   void idle() override;
-  uint8_t read(unsigned addr) override;
-  void write(unsigned addr, uint8_t data) override;
-  uint8_t readDisassembler(unsigned addr);
+  uint8_t read(unsigned) override;
+  void write(unsigned, uint8_t) override;
+  uint8_t readDisassembler(unsigned);
 
   //io.cpp
-  uint8_t readRAM(unsigned address, uint8_t data);
-  uint8_t readAPU(unsigned address, uint8_t data);
-  uint8_t readCPU(unsigned address, uint8_t data);
-  uint8_t readDMA(unsigned address, uint8_t data);
-  void writeRAM(unsigned address, uint8_t data);
-  void writeAPU(unsigned address, uint8_t data);
-  void writeCPU(unsigned address, uint8_t data);
-  void writeDMA(unsigned address, uint8_t data);
+  uint8_t readRAM(unsigned, uint8_t);
+  uint8_t readAPU(unsigned, uint8_t);
+  uint8_t readCPU(unsigned, uint8_t);
+  uint8_t readDMA(unsigned, uint8_t);
+  void writeRAM(unsigned, uint8_t);
+  void writeAPU(unsigned, uint8_t);
+  void writeCPU(unsigned, uint8_t);
+  void writeDMA(unsigned, uint8_t);
 
   //timing.cpp
   inline unsigned dmaCounter() const;
   inline unsigned joypadCounter() const;
 
   alwaysinline void stepOnce();
-  inline void step(unsigned clocks);
-  template<unsigned Clocks, bool Synchronize> void step();
+  inline void step(unsigned);
+  template<unsigned, bool> void step();
   void scanline();
 
   inline void aluEdge();
@@ -94,7 +93,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   //irq.cpp
   inline void nmiPoll();
   inline void irqPoll();
-  void nmitimenUpdate(uint8_t data);
+  void nmitimenUpdate(uint8_t);
   bool rdnmi();
   bool timeup();
 
@@ -210,15 +209,15 @@ private:
 
   struct Channel {
     //dma.cpp
-    template<unsigned Clocks, bool Synchronize> inline void step();
+    template<unsigned, bool> inline void step();
     inline void edge();
 
-    inline bool validA(uint32_t address);
-    inline uint8_t readA(uint32_t address);
-    inline uint8_t readB(uint8_t address, bool valid);
-    inline void writeA(uint32_t address, uint8_t data);
-    inline void writeB(uint8_t address, uint8_t data, bool valid);
-    inline void transfer(uint32_t address, uint8_t index);
+    inline bool validA(uint32_t);
+    inline uint8_t readA(uint32_t);
+    inline uint8_t readB(uint8_t, bool);
+    inline void writeA(uint32_t, uint8_t);
+    inline void writeB(uint8_t, uint8_t, bool);
+    inline void transfer(uint32_t, uint8_t);
 
     inline void dmaRun();
     inline bool hdmaActive();
@@ -281,6 +280,14 @@ private:
 };
 
 extern CPU cpu;
+
+bool CPU::refresh() const {
+  return status.dramRefresh == 1;
+}
+
+uint8_t CPU::pio() const {
+  return io.pio;
+}
 
 }
 

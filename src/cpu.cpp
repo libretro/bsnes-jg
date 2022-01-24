@@ -38,6 +38,26 @@ extern Emulator::Random random;
 
 CPU cpu;
 
+bool CPU::interruptPending() const {
+  return status.interruptPending;
+}
+
+bool CPU::synchronizing() const {
+  return scheduler.synchronizing();
+}
+
+bool CPU::flip(bool& data, bool value) {
+  return data != value ? (data = value, true) : false;
+}
+
+bool CPU::lower(bool& data) {
+  return data == 1 ? data = 0, true : false;
+}
+
+bool CPU::raise(bool& data, bool value) {
+  return !data && value ? (data = value, true) : (data = value, false);
+}
+
 bool CPU::dmaEnable() {
   for(auto& channel : channels) if(channel.dmaEnable) return true;
   return false;
