@@ -30,15 +30,15 @@ struct MSU1 : Thread {
   void synchronizeCPU();
   static void Enter();
   void main();
-  void step(unsigned clocks);
+  void step(unsigned);
   void unload();
   void power();
 
   void dataOpen();
   void audioOpen();
 
-  uint8_t readIO(unsigned addr, uint8_t data);
-  void writeIO(unsigned addr, uint8_t data);
+  uint8_t readIO(unsigned, uint8_t);
+  void writeIO(unsigned, uint8_t);
 
   void serialize(serializer&);
 
