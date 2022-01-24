@@ -33,12 +33,10 @@ struct Region {
 struct System {
   enum class Region : unsigned { NTSC, PAL };
 
-  inline bool loaded() const { return information.loaded; }
-  inline Region region() const { return information.region; }
-  inline double cpuFrequency() const { return information.cpuFrequency; }
-  inline double apuFrequency() const { return information.apuFrequency; }
-
-  inline bool fastPPU() const { return hacks.fastPPU; }
+  inline bool loaded() const;
+  inline Region region() const;
+  inline double cpuFrequency() const;
+  inline double apuFrequency() const;
 
   void run();
   void runToSave();
@@ -49,10 +47,10 @@ struct System {
   bool load();
   void save();
   void unload();
-  void power(bool reset);
+  void power(bool);
 
   //serialization.cpp
-  serializer serialize(bool synchronize);
+  serializer serialize(bool);
   bool unserialize(serializer&);
 
   bool runAhead = false;
@@ -70,15 +68,36 @@ private:
     bool fastPPU = false;
   } hacks;
 
-  void serializeAll(serializer&, bool synchronize);
-  unsigned serializeInit(bool synchronize);
+  void serializeAll(serializer&, bool);
+  unsigned serializeInit(bool);
 
   friend struct Cartridge;
 };
 
 extern System system;
 
-bool Region::NTSC() { return system.region() == System::Region::NTSC; }
-bool Region::PAL() { return system.region() == System::Region::PAL; }
+bool System::loaded() const {
+  return information.loaded;
+}
+
+System::Region System::region() const {
+  return information.region;
+}
+
+double System::cpuFrequency() const {
+  return information.cpuFrequency;
+}
+
+double System::apuFrequency() const {
+  return information.apuFrequency;
+}
+
+bool Region::NTSC() {
+  return system.region() == System::Region::NTSC;
+}
+
+bool Region::PAL() {
+  return system.region() == System::Region::PAL;
+}
 
 }
