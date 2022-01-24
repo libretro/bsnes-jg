@@ -25,8 +25,8 @@ namespace SuperFamicom {
 struct DSP4 {
   void power();
 
-  uint8_t read(unsigned addr, uint8_t data);
-  void write(unsigned addr, uint8_t data);
+  uint8_t read(unsigned, uint8_t);
+  void write(unsigned, uint8_t);
 
   void serialize(serializer&);
 };
