@@ -26,16 +26,16 @@ struct OBC1 {
   void unload();
   void power();
 
-  uint8_t read(unsigned addr, uint8_t data);
-  void write(unsigned addr, uint8_t data);
+  uint8_t read(unsigned, uint8_t);
+  void write(unsigned, uint8_t);
 
   void serialize(serializer&);
 
   WritableMemory ram;
 
 private:
-  uint8_t ramRead(unsigned addr);
-  void ramWrite(unsigned addr, uint8_t data);
+  uint8_t ramRead(unsigned);
+  void ramWrite(unsigned, uint8_t);
 
   struct {
     uint16_t address;
