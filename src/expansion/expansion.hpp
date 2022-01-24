@@ -28,7 +28,7 @@ struct Expansion {
 };
 
 struct ExpansionPort {
-  void connect(unsigned deviceID);
+  void connect(unsigned);
 
   void power();
   void unload();
