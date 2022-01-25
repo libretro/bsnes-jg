@@ -38,9 +38,9 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline bool refresh() const;
   inline uint8_t pio() const;
   inline bool synchronizing() const override;
-  inline bool flip(bool& data, bool value);
-  inline bool lower(bool& data);
-  inline bool raise(bool& data, bool value);
+  inline bool flip(bool&, bool);
+  inline bool lower(bool&);
+  inline bool raise(bool&, bool);
 
   //cpu.cpp
   void synchronizeSMP();
