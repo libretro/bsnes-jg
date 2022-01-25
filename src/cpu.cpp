@@ -19,7 +19,6 @@
  */
 
 #include <string>
-#include <vector>
 
 #include "serializer.hpp"
 #include "controller.hpp"
