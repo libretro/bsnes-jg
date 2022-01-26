@@ -223,14 +223,22 @@ void PPU::cycleRenderPixel() {
 
 template<unsigned Cycle>
 void PPU::cycle() {
-  if(Cycle >=  0 && Cycle <= 1016 && (Cycle -  0) % 8 == 0) cycleObjectEvaluate();
-  if(Cycle >=  0 && Cycle <= 1054 && (Cycle -  0) % 4 == 0) cycleBackgroundFetch<(Cycle - 0) / 4 & 7>();
-  if(Cycle == 56                                          ) cycleBackgroundBegin();
-  if(Cycle >= 56 && Cycle <= 1078 && (Cycle - 56) % 4 == 0) cycleBackgroundBelow();
+  if(Cycle >=  0 && Cycle <= 1016 && (Cycle -  0) % 8 == 0)
+    cycleObjectEvaluate();
+
+  if(Cycle >=  0 && Cycle <= 1054 && (Cycle -  0) % 4 == 0)
+    cycleBackgroundFetch<(Cycle - 0) / 4 & 7>();
+
+  if(Cycle == 56)
+    cycleBackgroundBegin();
+
+  if(Cycle >= 56 && Cycle <= 1078 && (Cycle - 56) % 4 == 0)
+    cycleBackgroundBelow();
   else if(Cycle >= 56 && Cycle <= 1078 && (Cycle - 56) % 4 == 2) {
     cycleBackgroundAbove();
     cycleRenderPixel();
   }
+
   step();
 }
 
@@ -999,10 +1007,11 @@ void PPU::updateVideoMode() {
 }
 
 bool PPU::Mosaic::enable() const {
-  if(ppu.bg1.mosaic.enable) return true;
-  if(ppu.bg2.mosaic.enable) return true;
-  if(ppu.bg3.mosaic.enable) return true;
-  if(ppu.bg4.mosaic.enable) return true;
+  if(ppu.bg1.mosaic.enable
+      || ppu.bg2.mosaic.enable
+      || ppu.bg3.mosaic.enable
+      || ppu.bg4.mosaic.enable)
+    return true;
   return false;
 }
 
@@ -1082,18 +1091,18 @@ void PPU::Background::runMode7() {
     palette &= 0x7f;
   }
 
-  if(palette == 0) return;
+  if(palette != 0) {
+    if(io.aboveEnable) {
+      output.above.priority = priority;
+      output.above.palette = palette;
+      output.above.paletteGroup = 0;
+    }
 
-  if(io.aboveEnable) {
-    output.above.priority = priority;
-    output.above.palette = palette;
-    output.above.paletteGroup = 0;
-  }
-
-  if(io.belowEnable) {
-    output.below.priority = priority;
-    output.below.palette = palette;
-    output.below.paletteGroup = 0;
+    if(io.belowEnable) {
+      output.below.priority = priority;
+      output.below.palette = palette;
+      output.below.paletteGroup = 0;
+    }
   }
 }
 
