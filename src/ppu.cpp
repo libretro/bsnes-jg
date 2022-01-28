@@ -1611,6 +1611,7 @@ void PPU::Object::power() {
   t.tileCount = 0;
 
   t.active = 0;
+
   for(unsigned p = 0; p < 2; ++p) {
     for(unsigned n = 0; n < 32; ++n) {
       t.item[p][n].valid = 0;
@@ -2409,7 +2410,7 @@ void PPU::power(bool reset) {
 
   //$2133  SETINI
   io.extbg = random() & 1;
-  io.pseudoHires = random() & 1;
+  if(!reset) io.pseudoHires = random() & 1;
   io.overscan = 0;
   io.interlace = 0;
 
@@ -2419,14 +2420,16 @@ void PPU::power(bool reset) {
   //$213d  OPVCT
   io.vcounter = 0;
 
-  mosaic.power();
-  bg1.power();
-  bg2.power();
-  bg3.power();
-  bg4.power();
-  obj.power();
-  window.power();
-  screen.power();
+  if(!reset) {
+    mosaic.power();
+    bg1.power();
+    bg2.power();
+    bg3.power();
+    bg4.power();
+    obj.power();
+    window.power();
+    screen.power();
+  }
 
   updateVideoMode();
 }

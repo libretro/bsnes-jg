@@ -96,7 +96,7 @@ struct PPU : Thread, PPUcounter {
   alwaysinline void synchronizeCPU();
   static void Enter();
   bool load();
-  void power(bool reset);
+  void power(bool);
 
   alwaysinline void main();
   void cycleObjectEvaluate();
