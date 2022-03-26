@@ -15,8 +15,8 @@ CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.14.7\"
 CPPFLAGS_SPC := -DNDEBUG
 
-PKGCONF ?= pkg-config
-CFLAGS_JG := $(shell $(PKGCONF) --cflags jg)
+PKG_CONFIG ?= pkg-config
+CFLAGS_JG := $(shell $(PKG_CONFIG) --cflags jg)
 
 INCLUDES := -I$(SOURCEDIR)/deps -I$(SOURCEDIR)/src
 WARNINGS := -Wall -Wextra -Wshadow
@@ -145,8 +145,8 @@ ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 		deps/libsamplerate/src_zoh.c
 else
 	Q_SAMPLERATE := @
-	CFLAGS_SAMPLERATE := $(shell $(PKGCONF) --cflags samplerate)
-	LIBS_SAMPLERATE := $(shell $(PKGCONF) --libs samplerate)
+	CFLAGS_SAMPLERATE := $(shell $(PKG_CONFIG) --cflags samplerate)
+	LIBS_SAMPLERATE := $(shell $(PKG_CONFIG) --libs samplerate)
 endif
 
 INCLUDES += $(CFLAGS_SAMPLERATE)
