@@ -85,9 +85,12 @@ std::string Cartridge::loadBoard(std::string node) {
   return {};
 }
 
-void Cartridge::loadCartridge(std::string node) {
+bool Cartridge::loadCartridge(std::string node) {
   board = BML::searchNode(node, {"board"});
   if (board.empty()) board = loadBoard(game.board);
+
+  // If it is still empty, the board is not supported
+  if (board.empty()) return false;
 
   if(region() == "Auto") {
     std::string regstr = game.region.substr(game.region.length() - 3, game.region.length());
@@ -107,6 +110,7 @@ void Cartridge::loadCartridge(std::string node) {
      search is necessary here.
   */
   std::vector<std::string> boardmem = BML::searchListShallow(board, "board", "memory");
+
   for (std::string& m : boardmem) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
@@ -157,6 +161,8 @@ void Cartridge::loadCartridge(std::string node) {
     msu1file.close();
     loadMSU1();
   }
+
+  return true;
 }
 
 void Cartridge::loadCartridgeBSMemory(std::string node) {
@@ -1268,7 +1274,8 @@ bool Cartridge::load() {
       return false;
   }
 
-  loadCartridge(game.document);
+  if (!loadCartridge(game.document))
+    return false;
 
   //Game Boy
   if(cartridge.has.ICD) {

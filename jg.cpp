@@ -588,7 +588,9 @@ int jg_game_load() {
     }
 
     interface->unload();
-    interface->load();
+
+    if (!interface->load())
+      jg_cb_log(JG_LOG_ERR, "Failed to load ROM\n");
 
     // Set up inputs
     int multitap = 0;

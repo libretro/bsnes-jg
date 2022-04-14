@@ -92,7 +92,7 @@ private:
 
   //load.cpp
   std::string loadBoard(std::string);
-  void loadCartridge(std::string);
+  bool loadCartridge(std::string);
   void loadCartridgeBSMemory(std::string);
   void loadCartridgeSufamiTurboA(std::string);
   void loadCartridgeSufamiTurboB(std::string);
