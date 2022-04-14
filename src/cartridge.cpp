@@ -657,15 +657,6 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
       }
     }
     else if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
-      Emulator::Game::Memory file;
-      if(game.memory(file, m)) {
-        std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
-        if (sramfile.is_open()) {
-          sramfile.read((char*)hitachidsp.dataRAM, (3 * 1024));
-          sramfile.close();
-        }
-      }
-
       std::vector<std::string> maps = BML::searchList(m, "map");
       for (std::string map : maps) {
           loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
@@ -1159,6 +1150,9 @@ void Cartridge::saveHitachiDSP(std::string node) {
           writeCallback(ID::SuperFamicom, "save.ram", hitachidsp.dataRAM, (3 * 1024));
         }
       }
+    }
+    else if (type == "RAM" && content == "Save") {
+      writeCallback(ID::SuperFamicom, "save.ram", hitachidsp.ram.data(), hitachidsp.ram.size());
     }
   }
 }
