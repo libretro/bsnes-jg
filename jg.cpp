@@ -20,9 +20,6 @@
 
 #include <algorithm>
 #include <fstream>
-#include <optional>
-#include <sstream>
-#include <string>
 #include <vector>
 
 #include <jg/jg.h>
