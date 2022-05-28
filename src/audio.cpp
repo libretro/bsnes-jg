@@ -62,7 +62,7 @@ void Stream::reset(double freq_in) {
   }
 
   src_reset(srcstate);
-  setFrequency(freq_in, outputFrequency);
+  setFrequency(freq_in, audio._frequency);
   queue_in.reserve(audio._spf << 1);
   queue_out.reserve(audio._spf << 1);
   resamp_out.reserve(audio._spf << 1);

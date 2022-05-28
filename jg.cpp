@@ -766,6 +766,7 @@ void jg_setup_video() {
 void jg_setup_audio() {
     interface->setAudioBuffer((float*)audinfo.buf);
     interface->setAudioCallback(jg_cb_audio);
+    interface->setAudioFrequency((double)SAMPLERATE);
 }
 
 void jg_set_inputstate(jg_inputstate_t *ptr, int port) {

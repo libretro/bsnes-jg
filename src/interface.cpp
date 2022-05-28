@@ -207,6 +207,10 @@ void Interface::setAudioCallback(void (*cb)(size_t)) {
   audio.setCallback(cb);
 }
 
+void Interface::setAudioFrequency(double freq) {
+  audio.setFrequency(freq);
+}
+
 void Interface::setAudioSpf(unsigned spf) {
   audio.setSpf(spf);
 }

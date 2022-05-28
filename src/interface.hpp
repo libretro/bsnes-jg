@@ -51,6 +51,7 @@ struct Interface {
 
   void setAudioBuffer(float*);
   void setAudioCallback(void (*)(size_t));
+  void setAudioFrequency(double);
   void setAudioSpf(unsigned);
   void setAudioQuality(unsigned);
   void setInputCallback(int16_t (*)(unsigned, unsigned, unsigned));
