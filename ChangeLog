@@ -1,3 +1,13 @@
+Version 1.0.1
+-------------
+ - Code cleanup and refactoring
+ - Fix graphics when resetting CPUMSC test
+ - Build improvements
+ - Handle unsupported boards without crashing
+ - HitachiDSP Data RAM and SRAM saving/loading fixed
+ - Add HITACHI-LOROM-RAM board for MMX3 Hacks
+ - Allow changing the default output samplerate
+
 Version 1.0.0
 -------------
  - Initial tagged release after fork from bsnes v115
