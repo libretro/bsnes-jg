@@ -603,7 +603,7 @@ std::string SuperFamicom::revision() const {
   char F = data[headerAddress + 0x2b] + '0';  //revision code
 
   auto valid = [](char n) { return (n >= '0' && n <= '9') || (n >= 'A' && n <= 'Z'); };
-  if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) & valid(C) & valid(D)) {
+  if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) && valid(C) && valid(D)) {
     std::string code; code = A; code += B; code += C; code += D;
     if(D == 'B') revision = "SNS-"  + code + "-" + F;
     if(D == 'C') revision = "SNSN-" + code + "-" + F;
@@ -819,7 +819,7 @@ std::string SuperFamicom::serial() const {
   char D = data[headerAddress + 0x05];  //region code (new; sometimes ambiguous)
 
   auto valid = [](char n) { return (n >= '0' && n <= '9') || (n >= 'A' && n <= 'Z'); };
-  if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) & valid(C) & valid(D)) {
+  if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) && valid(C) && valid(D)) {
     std::string ret; ret = A; ret += B; ret += C; ret += D;
     return ret;
   }
