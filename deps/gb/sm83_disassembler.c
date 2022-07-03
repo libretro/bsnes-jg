@@ -2,8 +2,9 @@
 #include <stdbool.h>
 #include "gb.h"
 
+#define GB_read_memory GB_safe_read_memory
 
-typedef void GB_opcode_t(GB_gameboy_t *gb, uint8_t opcode, uint16_t *pc);
+typedef void opcode_t(GB_gameboy_t *gb, uint8_t opcode, uint16_t *pc);
 
 static void ill(GB_gameboy_t *gb, uint8_t opcode, uint16_t *pc)
 {
@@ -518,7 +519,7 @@ static void ld_da8_a(GB_gameboy_t *gb, uint8_t opcode, uint16_t *pc)
 {
     (*pc)++;
     uint8_t addr = GB_read_memory(gb, (*pc)++);
-    const char *symbol = GB_debugger_name_for_address(gb, 0xff00 + addr);
+    const char *symbol = GB_debugger_name_for_address(gb, 0xFF00 + addr);
     if (symbol) {
         GB_log(gb, "LDH [%s & $FF], a ; =$%02x\n", symbol, addr);
     }
@@ -531,7 +532,7 @@ static void ld_a_da8(GB_gameboy_t *gb, uint8_t opcode, uint16_t *pc)
 {
     (*pc)++;
     uint8_t addr = GB_read_memory(gb, (*pc)++);
-    const char *symbol = GB_debugger_name_for_address(gb, 0xff00 + addr);
+    const char *symbol = GB_debugger_name_for_address(gb, 0xFF00 + addr);
     if (symbol) {
         GB_log(gb, "LDH a, [%s & $FF] ; =$%02x\n", symbol, addr);
     }
@@ -716,7 +717,7 @@ static void cb_prefix(GB_gameboy_t *gb, uint8_t opcode, uint16_t *pc)
     }
 }
 
-static GB_opcode_t *opcodes[256] = {
+static opcode_t *opcodes[256] = {
     /*  X0          X1          X2          X3          X4          X5          X6          X7                */
     /*  X8          X9          Xa          Xb          Xc          Xd          Xe          Xf                */
     nop,        ld_rr_d16,  ld_drr_a,   inc_rr,     inc_hr,     dec_hr,     ld_hr_d8,   rlca,       /* 0X */

@@ -354,7 +354,7 @@ namespace SameBoy {
     icd.apuWrite(left, right);
   }
 
-  static void vblank(GB_gameboy_t*) {
+  static void vblank(GB_gameboy_t*, GB_vblank_type_t) {
   }
 
   static void log(GB_gameboy_t *gb, const char *string, GB_log_attributes attributes) {
