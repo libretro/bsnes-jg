@@ -110,6 +110,29 @@ static struct Location {
     std::string location;
 } bsMemory, superFamicom, sufamiTurboA, sufamiTurboB;
 
+// Set the aspect ratio
+static void aspectRatio() {
+    switch (settings_bsnes[ASPECT].value) {
+        default: case 0: { // Auto Region
+            vidinfo.aspect = interface->getRegion() == "PAL" ?
+                ASPECT_PAL : ASPECT_NTSC;
+            break;
+        }
+        case 1: { // 8:7
+            vidinfo.aspect = 8.0/7.0;
+            break;
+        }
+        case 2: { // NTSC
+            vidinfo.aspect = ASPECT_NTSC;
+            break;
+        }
+        case 3: { // PAL
+            vidinfo.aspect = ASPECT_PAL;
+            break;
+        }
+    }
+}
+
 std::ifstream fileOpen(unsigned id, std::string name) {
     std::string path;
     bool required = false;
@@ -656,29 +679,10 @@ int jg_game_load() {
             SuperFamicom::ID::Device::Justifier);
     }
 
+    aspectRatio();
+
     // Find out whether this is NTSC or PAL
     std::string region = interface->getRegion();
-
-    // Set the aspect ratio
-    switch (settings_bsnes[ASPECT].value) {
-        default: case 0: { // Auto Region
-            vidinfo.aspect = region == "PAL" ?
-                ASPECT_PAL : ASPECT_NTSC;
-            break;
-        }
-        case 1: { // 8:7
-            vidinfo.aspect = 8.0/7.0;
-            break;
-        }
-        case 2: { // NTSC
-            vidinfo.aspect = ASPECT_NTSC;
-            break;
-        }
-        case 3: { // PAL
-            vidinfo.aspect = ASPECT_PAL;
-            break;
-        }
-    }
 
     interface->setAudioQuality(settings_bsnes[RSQUAL].value);
 
@@ -738,6 +742,10 @@ void jg_cheat_set(const char *code) {
     if (!interface->cheatsDecode(addon, code)) {
         jg_cb_log(JG_LOG_WRN, "Failed to decode cheat: %s\n", code);
     }
+}
+
+void jg_rehash() {
+    aspectRatio();
 }
 
 // JG Functions that return values to the frontend
