@@ -82,12 +82,11 @@ static jg_inputinfo_t inputinfo[NUMINPUTS];
 static jg_inputstate_t *input_device[NUMINPUTS];
 
 // Emulator settings
-static jg_setting_t settings_bsnes[] = { // name, default, min, max
-    // 0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL
-    { "aspect_ratio", "", 0, 0, 3 },
-    { "coproc_delaysync", "", 0, 0, 1 }, // 0 = Off, 1 = On
-    { "coproc_preferhle", "", 1, 0, 1 }, // 0 = Off, 1 = On
-    { "rsqual", "", 0, 0, 2 }, // 0 = Fastest, 1 = Medium, 2 = Best
+static jg_setting_t settings_bsnes[] = {
+    { "aspect_ratio", "0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL", 0, 0, 3 },
+    { "coproc_delaysync", "0 = Off, 1 = On", 0, 0, 1 },
+    { "coproc_preferhle", "0 = Off, 1 = On", 1, 0, 1 },
+    { "rsqual", "0 = Fastest, 1 = Medium, 2 = Best", 0, 0, 2 },
 };
 
 enum {
