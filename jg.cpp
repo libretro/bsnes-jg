@@ -47,7 +47,6 @@ static jg_cb_audio_t jg_cb_audio;
 static jg_cb_frametime_t jg_cb_frametime;
 static jg_cb_log_t jg_cb_log;
 static jg_cb_rumble_t jg_cb_rumble;
-static jg_cb_settings_read_t jg_cb_settings_read;
 
 static jg_coreinfo_t coreinfo = {
     "bsnes", "bsnes-jg", "1.0.1", "snes", NUMINPUTS, 0
@@ -516,14 +515,7 @@ void jg_set_cb_rumble(jg_cb_rumble_t func) {
     jg_cb_rumble = func;
 }
 
-void jg_set_cb_settings_read(jg_cb_settings_read_t func) {
-    jg_cb_settings_read = func;
-}
-
 int jg_init() {
-    jg_cb_settings_read(settings_bsnes,
-        sizeof(settings_bsnes) / sizeof(jg_setting_t));
-
     // Create interface and set callbacks
     interface = new SuperFamicom::Interface;
     interface->setInputCallback(&pollInput);
@@ -763,6 +755,11 @@ jg_audioinfo_t* jg_get_audioinfo() {
 
 jg_inputinfo_t* jg_get_inputinfo(int port) {
     return &inputinfo[port];
+}
+
+jg_setting_t* jg_get_settings(size_t *numsettings) {
+    *numsettings = sizeof(settings_bsnes) / sizeof(jg_setting_t);
+    return settings_bsnes;
 }
 
 void jg_setup_video() {
