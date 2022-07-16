@@ -943,12 +943,12 @@ void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
 		voice_t* v = &m.voices [i];
 
 		// BRR buffer
-		int i;
-		for ( i = 0; i < brr_buf_size; i++ )
+		int n;
+		for ( n = 0; n < brr_buf_size; n++ )
 		{
-			int s = v->buf [i];
+			int s = v->buf [n];
 			SPC_COPY(  int16_t, s );
-			v->buf [i] = v->buf [i + brr_buf_size] = s;
+			v->buf [n] = v->buf [n + brr_buf_size] = s;
 		}
 
 		SPC_COPY( uint16_t, v->interp_pos );
@@ -959,9 +959,9 @@ void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
 		SPC_COPY(  uint8_t, v->brr_offset );
 		SPC_COPY(  uint8_t, v->kon_delay );
 		{
-			int m = v->env_mode;
-			SPC_COPY(  uint8_t, m );
-			v->env_mode = (enum env_mode_t) m;
+			int mode = v->env_mode;
+			SPC_COPY(  uint8_t, mode );
+			v->env_mode = (enum env_mode_t) mode;
 		}
 		SPC_COPY(  uint8_t, v->t_envx_out );
 
