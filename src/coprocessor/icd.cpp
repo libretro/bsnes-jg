@@ -34,7 +34,6 @@
 
 extern "C" {
   #include <gb/gb.h>
-  #include <gb/random.h>
 }
 
 //warning: the size of this object will be too large due to C++ size rules differing from C rules.
