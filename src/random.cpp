@@ -25,7 +25,9 @@
 
 #include "random.hpp"
 
-namespace Emulator {
+namespace SuperFamicom {
+
+Random random;
 
 static Random::Entropy _entropy = Random::Entropy::High;
 static uint64_t _state;

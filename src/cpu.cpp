@@ -33,8 +33,6 @@
 
 namespace SuperFamicom {
 
-extern Emulator::Random random;
-
 CPU cpu;
 
 bool CPU::interruptPending() const {

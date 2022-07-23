@@ -20,7 +20,7 @@
 
 #pragma once
 
-namespace Emulator {
+namespace SuperFamicom {
 
 struct Random {
   enum class Entropy : unsigned { None, Low, High };
@@ -35,5 +35,7 @@ struct Random {
   void entropy(Entropy);
   void serialize(serializer&);
 };
+
+extern Random random;
 
 }

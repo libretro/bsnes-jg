@@ -28,8 +28,6 @@
 
 namespace SuperFamicom {
 
-extern Emulator::Random random;
-
 PPU ppu;
 
 void PPU::main() {

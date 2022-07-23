@@ -30,8 +30,6 @@
 
 namespace SuperFamicom {
 
-extern Emulator::Random random;
-
 BSMemory bsmemory;
 
 void BSMemory::serialize(serializer& s) {
