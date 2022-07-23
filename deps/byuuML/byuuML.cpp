@@ -9,6 +9,8 @@
 
 using namespace byuuML;
 
+reader::~reader() {};
+
 namespace {
   class line_getter : std::vector<char> {
     reader& raw_reader;
