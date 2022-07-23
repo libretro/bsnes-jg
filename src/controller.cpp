@@ -44,6 +44,8 @@ struct Gamepad : Controller {
   void latch(bool);
 
 private:
+  using Controller::latch;
+
   bool latched;
   unsigned counter;
 
@@ -90,6 +92,8 @@ struct Mouse : Controller {
   void latch(bool);
 
 private:
+  using Controller::latch;
+
   bool latched;
   unsigned counter;
 
@@ -113,6 +117,8 @@ struct SuperMultitap : Controller {
   void latch(bool);
 
 private:
+  using Controller::latch;
+
   bool latched;
   unsigned counter1;
   unsigned counter2;
