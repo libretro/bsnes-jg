@@ -139,7 +139,7 @@ static const uint16_t div_lut[64] = {
   0x0222, 0x0219, 0x0210, 0x0208,
 };
 
-int16_t DSP4_Inverse(int16_t value)
+static int16_t DSP4_Inverse(int16_t value)
 {
   // saturate bounds
   if (value < 0)
@@ -158,12 +158,12 @@ int16_t DSP4_Inverse(int16_t value)
 void DSP4_OP0B(uint8_t *draw, int16_t sp_x, int16_t sp_y, int16_t sp_attr, uint8_t size, uint8_t stop);
 
 // OP00
-void DSP4_Multiply(int16_t Multiplicand, int16_t Multiplier, int32_t *Product)
+static void DSP4_Multiply(int16_t Multiplicand, int16_t Multiplier, int32_t *Product)
 {
   *Product = (Multiplicand * Multiplier << 1) >> 1;
 }
 
-void DSP4_OP01()
+static void DSP4_OP01()
 {
   DSP4.waiting4command = false;
 
@@ -365,13 +365,13 @@ void DSP4_OP01()
   DSP4.waiting4command = true;
 }
 
-void DSP4_OP03()
+static void DSP4_OP03()
 {
   DSP4_vars.OAM_RowMax = 33;
   memset(DSP4_vars.OAM_Row, 0, 64);
 }
 
-void DSP4_OP05()
+static void DSP4_OP05()
 {
   DSP4_vars.OAM_index = 0;
   DSP4_vars.OAM_bits = 0;
@@ -379,13 +379,13 @@ void DSP4_OP05()
   DSP4_vars.sprite_count = 0;
 }
 
-void DSP4_OP06()
+static void DSP4_OP06()
 {
   DSP4_CLEAR_OUT();
   DSP4_WRITE_16_WORD(DSP4_vars.OAM_attr);
 }
 
-void DSP4_OP07()
+static void DSP4_OP07()
 {
   DSP4.waiting4command = false;
 
@@ -543,7 +543,7 @@ void DSP4_OP07()
   DSP4.waiting4command = true;
 }
 
-void DSP4_OP08()
+static void DSP4_OP08()
 {
   int16_t win_left, win_right;
   int16_t view_x[2], view_y[2];
@@ -858,7 +858,7 @@ void DSP4_OP08()
   DSP4.waiting4command = true;
 }
 
-void DSP4_OP09()
+static void DSP4_OP09()
 {
   DSP4.waiting4command = false;
 
@@ -1114,7 +1114,7 @@ const uint16_t OP0A_Values[16] = {
   0xfe80, 0xfeb0, 0xfee0, 0xff10, 0xff40, 0xff70, 0xffa0, 0xffd0
 };
 
-void DSP4_OP0A(int16_t n2, int16_t *o1, int16_t *o2, int16_t *o3, int16_t *o4)
+static void DSP4_OP0A(int16_t n2, int16_t *o1, int16_t *o2, int16_t *o3, int16_t *o4)
 {
   *o4 = OP0A_Values[(n2 & 0x000f)];
   *o3 = OP0A_Values[(n2 & 0x00f0) >> 4];
@@ -1205,7 +1205,7 @@ void DSP4_OP0B(uint8_t *draw, int16_t sp_x, int16_t sp_y, int16_t sp_attr, uint8
   }
 }
 
-void DSP4_OP0D()
+static void DSP4_OP0D()
 {
   DSP4.waiting4command = false;
 
@@ -1380,13 +1380,13 @@ void DSP4_OP0D()
   DSP4.waiting4command = true;
 }
 
-void DSP4_OP0E()
+static void DSP4_OP0E()
 {
   DSP4_vars.OAM_RowMax = 16;
   memset(DSP4_vars.OAM_Row, 0, 64);
 }
 
-void DSP4_OP0F()
+static void DSP4_OP0F()
 {
   DSP4.waiting4command = false;
 
@@ -1622,7 +1622,7 @@ void DSP4_OP0F()
   DSP4.waiting4command = true;
 }
 
-void DSP4_OP10()
+static void DSP4_OP10()
 {
   DSP4.waiting4command = false;
 
@@ -1817,7 +1817,7 @@ void DSP4_OP10()
   DSP4.waiting4command = true;
 }
 
-void DSP4_OP11(int16_t A, int16_t B, int16_t C, int16_t D, int16_t *M)
+static void DSP4_OP11(int16_t A, int16_t B, int16_t C, int16_t D, int16_t *M)
 {
   // 0x155 = 341 = Horizontal Width of the Screen
   *M = ((A * 0x0155 >> 2) & 0xf000) |
