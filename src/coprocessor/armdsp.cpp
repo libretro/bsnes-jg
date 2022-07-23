@@ -26,8 +26,6 @@
 
 namespace SuperFamicom {
 
-extern Emulator::Random random;
-
 //note: timings are completely unverified
 //due to the ST018 chip design (on-die ROM), testing is nearly impossible
 

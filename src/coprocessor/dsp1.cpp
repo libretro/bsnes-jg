@@ -26,8 +26,8 @@
 
 namespace SuperFamicom {
 
-Dsp1 dsp1emu;
 DSP1 dsp1;
+static Dsp1 dsp1emu;
 
 void DSP1::serialize(serializer& s) {
   dsp1emu.serialize(s);

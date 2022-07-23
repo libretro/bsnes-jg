@@ -61,8 +61,6 @@ namespace SuperFamicom {
 
 System system;
 Scheduler scheduler;
-Emulator::Random random;
-Emulator::Cheat cheat;
 
 serializer System::serialize(bool synchronize) {
   //deterministic serialization (synchronize=false) is only possible with select libco methods
@@ -371,7 +369,7 @@ void System::unload() {
 void System::power(bool reset) {
   audio.reset();
 
-  random.entropy((Emulator::Random::Entropy)configuration.entropy);
+  random.entropy((Random::Entropy)configuration.entropy);
 
   cpu.power(reset);
   smp.power();

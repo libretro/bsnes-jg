@@ -40,8 +40,6 @@
 
 namespace SuperFamicom {
 
-extern Emulator::Cheat cheat;
-
 Configuration configuration;
 
 static std::vector<std::string> cheatList;
@@ -120,8 +118,8 @@ void Interface::cheatsApply(const std::vector<std::string>& list) {
   //make all ROM data writable temporarily
   Memory::GlobalWriteEnable = true;
 
-  Emulator::Cheat oldCheat = cheat;
-  Emulator::Cheat newCheat;
+  Cheat oldCheat = cheat;
+  Cheat newCheat;
   newCheat.assign(list);
 
   //determine all old codes to remove
