@@ -27,6 +27,8 @@
 
 namespace Processor {
 
+ARM7TDMI::~ARM7TDMI() {};
+
 ARM7TDMI::GPR& ARM7TDMI::r(uint8_t index) {
   switch(index) {
   case  0: return processor.r0;

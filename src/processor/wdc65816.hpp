@@ -29,6 +29,7 @@
 namespace Processor {
 
 struct WDC65816 {
+  virtual ~WDC65816() = 0;
   virtual void idle() = 0;
   virtual void idleBranch() {}
   virtual void idleJump() {}

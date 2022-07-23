@@ -50,6 +50,8 @@ namespace Processor {
 
 #define alu(...) (this->*op)(__VA_ARGS__)
 
+WDC65816::~WDC65816() {};
+
 //immediate, 2-cycle opcodes with idle cycle will become bus read
 //when an IRQ is to be triggered immediately after opcode completion.
 //this affects the following opcodes:

@@ -39,6 +39,7 @@ struct ARM7TDMI {
     Signed        = 1 << 8,  //sign-extend
   };
 
+  virtual ~ARM7TDMI() = 0;
   virtual void step(unsigned clocks) = 0;
   virtual void sleep() = 0;
   virtual uint32_t get(unsigned mode, uint32_t address) = 0;
