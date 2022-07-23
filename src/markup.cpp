@@ -46,7 +46,7 @@ public:
 };
 
 // He bought? Dump eet.
-void dumpnode(std::ostream& out, const byuuML::document& document, const byuuML::node& node, int indent_level = 0) {
+static void dumpnode(std::ostream& out, const byuuML::document& document, const byuuML::node& node, int indent_level = 0) {
     for (int n = 0; n < indent_level; ++n) out << "  ";
     out << node.get_name();
     if (!node.get_data().empty()) out << ":" << node.get_data();
@@ -177,7 +177,7 @@ std::string searchNode(std::string text, std::vector<std::string> terms) {
     return {};
 }
 
-void traverse(std::vector<std::string>& ret, const byuuML::document& doc, const byuuML::node& node, std::string& term) {
+static void traverse(std::vector<std::string>& ret, const byuuML::document& doc, const byuuML::node& node, std::string& term) {
     for (auto&& child : byuuML::node_in_document(node, doc)) {
         if (child.get_name() == term) {
             std::stringstream ss;

@@ -24,6 +24,8 @@
 #include <string>
 #include <sstream>
 
+#include "sha256.hpp"
+
 #define S(x, n) (((((uint32_t)(x)&0xFFFFFFFFUL)>>(uint32_t)((n)&31))|((uint32_t)(x)<<(uint32_t)((32-((n)&31))&31)))&0xFFFFFFFFUL)
 #define R(x, n) (((x)&0xFFFFFFFFUL)>>(n))
 #define Gamma0(x) (S(x, 7) ^ S(x, 18) ^ R(x, 3))

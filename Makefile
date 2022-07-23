@@ -14,17 +14,21 @@ FLAGS_SAMPLERATE := -std=c99
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.14.7\"
 CPPFLAGS_SPC := -DNDEBUG
+INCLUDES := -I$(SOURCEDIR)/deps -I$(SOURCEDIR)/src
 
 PKG_CONFIG ?= pkg-config
 CFLAGS_JG := $(shell $(PKG_CONFIG) --cflags jg)
 
-INCLUDES := -I$(SOURCEDIR)/deps -I$(SOURCEDIR)/src
-WARNINGS := -Wall -Wextra -Wshadow
-WARNINGS_BML := -Wall -Wextra -Wshadow -pedantic
-WARNINGS_CO := -Wall -Wextra -Wshadow -Wmissing-prototypes
+WARNINGS_CXX := -Wall -Wextra -Wshadow -Wmissing-declarations
+WARNINGS_C := $(WARNINGS_CXX) -Wmissing-prototypes
+
+WARNINGS := $(WARNINGS_CXX)
+WARNINGS_BML := $(WARNINGS_CXX) -pedantic
+WARNINGS_CO := $(WARNINGS_C)
 WARNINGS_GB := -Wno-multichar
-WARNINGS_SAMPLERATE := -Wall -Wextra -Wshadow -Wmissing-prototypes
-WARNINGS_SPC := -Wall -Wextra -Wshadow -pedantic
+WARNINGS_SAMPLERATE := $(WARNINGS_C)
+WARNINGS_SPC := $(WARNINGS_CXX) -pedantic
+
 LIBS := -lm -lstdc++
 PIC := -fPIC
 SHARED := $(PIC)
