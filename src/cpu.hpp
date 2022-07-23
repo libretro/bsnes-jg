@@ -46,7 +46,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   void synchronizeSMP();
   void synchronizePPU();
   void synchronizeCoprocessors();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void main();
   bool load();
   void power(bool);

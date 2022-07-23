@@ -31,7 +31,7 @@ struct SA1 : Processor::WDC65816, Thread {
 
   //sa1.cpp
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void main();
   void step();
   void interrupt() override;

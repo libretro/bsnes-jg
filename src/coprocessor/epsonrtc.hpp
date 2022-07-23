@@ -26,7 +26,7 @@ namespace SuperFamicom {
 
 struct EpsonRTC : Thread {
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void main();
   void step(unsigned);
 

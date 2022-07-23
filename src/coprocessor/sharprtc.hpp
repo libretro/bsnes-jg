@@ -24,7 +24,7 @@ namespace SuperFamicom {
 
 struct SharpRTC : Thread {
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void main();
   void step(unsigned);
 

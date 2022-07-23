@@ -31,7 +31,7 @@ struct HitachiDSP : Processor::HG51B, Thread {
 
   //hitachidsp.cpp
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void step(unsigned) override;
   void halt() override;
 
