@@ -31,6 +31,7 @@
 namespace Processor {
 
 struct SPC700 {
+  virtual ~SPC700() = 0;
   virtual void idle() = 0;
   virtual uint8_t read(uint16_t address) = 0;
   virtual void write(uint16_t address, uint8_t data) = 0;

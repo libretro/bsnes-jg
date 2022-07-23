@@ -31,6 +31,8 @@
 
 namespace Processor {
 
+GSU::~GSU() {};
+
 void GSU::instruction(uint8_t opcode) {
   #define op4(id, name) \
     case id+ 0: return instruction##name(opcode & 0x0f); \

@@ -174,6 +174,7 @@ struct GSU {
     uint8_t data[8];
   } pixelcache[2];
 
+  virtual ~GSU() = 0;
   virtual void step(unsigned clocks) = 0;
 
   virtual void stop() = 0;

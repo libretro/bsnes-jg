@@ -31,6 +31,7 @@ struct HG51B {
   HG51B();
 
   //hg51b.cpp
+  virtual ~HG51B() = 0;
   virtual void step(unsigned clocks);
   virtual bool isROM(unsigned address) = 0;
   virtual bool isRAM(unsigned address) = 0;

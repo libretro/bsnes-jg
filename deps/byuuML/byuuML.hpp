@@ -71,6 +71,7 @@ namespace byuuML {
   class reader {
   public:
     // Signal EOF by making begin == end
+    virtual ~reader() = 0;
     virtual void read_more(const char*& begin, const char*& end) = 0;
   };
   class document {

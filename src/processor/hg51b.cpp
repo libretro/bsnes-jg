@@ -24,6 +24,8 @@
 
 namespace Processor {
 
+HG51B::~HG51B() {};
+
 uint32_t HG51B::readRegister(uint8_t address) {
   switch(address & 0x7f) {
   case 0x01: return r.mul >> 24 & 0xffffff;
