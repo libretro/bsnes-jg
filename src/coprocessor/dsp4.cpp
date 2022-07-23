@@ -27,8 +27,8 @@
 namespace SuperFamicom {
 
 DSP4 dsp4;
-DSP4_t dsp4emu;
-DSP4_vars_t dsp4emu_vars;
+static DSP4_t dsp4emu;
+static DSP4_vars_t dsp4emu_vars;
 
 void DSP4::serialize(serializer& s) {
   s.integer(dsp4emu.waiting4command);

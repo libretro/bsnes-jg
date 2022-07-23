@@ -49,8 +49,8 @@ inline void WRITE_WORD(uint8_t *addr, uint16_t data) {
   addr[1] = data >> 8;
 }
 
-struct DSP4_t DSP4;
-struct DSP4_vars_t DSP4_vars;
+static struct DSP4_t DSP4;
+static struct DSP4_vars_t DSP4_vars;
 
 // input protocol
 
