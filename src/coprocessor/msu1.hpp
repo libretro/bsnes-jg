@@ -28,7 +28,7 @@ struct MSU1 : Thread {
   void setOpenCallback(std::ifstream (*)(unsigned, std::string));
 
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void main();
   void step(unsigned);
   void unload();

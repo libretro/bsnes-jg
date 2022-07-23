@@ -29,7 +29,7 @@ struct SPC7110 : Thread {
   ~SPC7110();
 
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void main();
   void step(unsigned);
   void unload();

@@ -40,7 +40,7 @@ namespace SuperFamicom {
 struct Event : Thread {
   //event.cpp
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void main();
   void step(unsigned);
   void unload();

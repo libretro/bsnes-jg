@@ -31,7 +31,7 @@ struct ICD : Thread {
   void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
 
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void main();
   void step(unsigned);
   unsigned clockFrequency() const;

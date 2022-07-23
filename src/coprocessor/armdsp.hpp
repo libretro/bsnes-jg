@@ -49,7 +49,7 @@ struct ArmDSP : Processor::ARM7TDMI, Thread {
   } bridge;
 
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void boot();
   void main();
 

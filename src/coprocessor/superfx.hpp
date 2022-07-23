@@ -32,7 +32,7 @@ struct SuperFX : Processor::GSU, Thread {
 
   //superfx.cpp
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void main();
   void unload();
   void power();

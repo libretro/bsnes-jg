@@ -49,7 +49,7 @@ struct BSMemory : Thread, Memory {
   //bsmemory.cpp
   BSMemory();
   void synchronizeCPU();
-  static void Enter();
+  [[noreturn]] static void Enter();
   void main();
   void step(unsigned);
 
