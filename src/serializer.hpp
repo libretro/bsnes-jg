@@ -66,7 +66,7 @@ struct serializer {
   template<typename T> serializer& integer(T& value) {
     enum : unsigned { intsize = std::is_same<bool, T>::value ? 1 : sizeof(T) };
     if(_mode == Save) {
-      T copy = value;
+      uint64_t copy = value;
       for(unsigned n = 0; n < intsize; ++n) _data[_size++] = copy, copy >>= 8;
     } else if(_mode == Load) {
       value = 0;

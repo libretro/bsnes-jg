@@ -58,10 +58,6 @@ ifeq ($(UNAME), Linux)
 	LIBS += -Wl,--no-undefined
 endif
 
-ifeq ($(shell $(CXX) -v 2>&1 | grep -c "clang"),1)
-	WARNINGS += -Wno-shift-count-overflow
-endif
-
 CSRCS := deps/gb/apu.c \
 	deps/gb/camera.c \
 	deps/gb/display.c \
