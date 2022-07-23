@@ -20,7 +20,7 @@
 
 #pragma once
 
-namespace Emulator {
+namespace SuperFamicom {
 
 struct Cheat {
   struct Code {
@@ -43,6 +43,8 @@ struct Cheat {
 
   std::vector<Code> codes;
 };
+
+extern Cheat cheat;
 
 }
 

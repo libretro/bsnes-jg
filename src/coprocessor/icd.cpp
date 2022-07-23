@@ -43,8 +43,6 @@ static GB_gameboy_t sameboy;
 
 namespace SuperFamicom {
 
-extern Emulator::Cheat cheat;
-
 static Stream *stream;
 
 ICD icd;

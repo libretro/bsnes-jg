@@ -24,7 +24,9 @@
 
 #include "cheat.hpp"
 
-namespace Emulator {
+namespace SuperFamicom {
+
+Cheat cheat;
 
 bool Cheat::Code::operator==(const Code& code) const {
   if(address != code.address) return false;
