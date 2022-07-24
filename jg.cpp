@@ -349,7 +349,7 @@ static void videoFrame(const uint16_t *data, unsigned pitch, unsigned w, unsigne
     vidinfo.w = w;
     vidinfo.h = h;
     vidinfo.p = pitch / 2; // Divide by pixel size - 16-bit pixels == 2
-    vidinfo.buf = (void*)data;
+    vidinfo.buf = const_cast<void*>(reinterpret_cast<const void*>(data));
 }
 
 static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
