@@ -242,8 +242,8 @@ void ST0010::op_01() {
 
 void ST0010::op_02() {
   int16_t positions = readw(0x0024);
-  uint16_t *places  = (uint16_t*)(ram + 0x0040);
-  uint16_t *drivers = (uint16_t*)(ram + 0x0080);
+  uint16_t *places  = reinterpret_cast<uint16_t*>(ram + 0x0040);
+  uint16_t *drivers = reinterpret_cast<uint16_t*>(ram + 0x0080);
 
   bool sorted;
   uint16_t temp;
