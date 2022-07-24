@@ -29,6 +29,20 @@ namespace Processor {
 
 ARM7TDMI::~ARM7TDMI() {};
 
+ARM7TDMI::GPR::operator uint32_t() const {
+  return data;
+}
+
+ARM7TDMI::GPR& ARM7TDMI::GPR::operator=(const GPR& value) {
+  return operator=(value.data);
+}
+
+ARM7TDMI::GPR& ARM7TDMI::GPR::operator=(uint32_t value) {
+  data = value;
+  if(modify) modify();
+  return *this;
+}
+
 ARM7TDMI::GPR& ARM7TDMI::r(uint8_t index) {
   switch(index) {
   case  0: return processor.r0;
@@ -1449,6 +1463,22 @@ void ARM7TDMI::Processor::serialize(serializer& s) {
   s.integer(und.r13.data);
   s.integer(und.r14.data);
   und.spsr.serialize(s);
+}
+
+ARM7TDMI::PSR::operator uint32_t() const {
+  return m << 0 | t << 5 | f << 6 | i << 7 | v << 28 | c << 29 | z << 30 | n << 31;
+}
+
+ARM7TDMI::PSR& ARM7TDMI::PSR::operator=(uint32_t data) {
+  m = data >>  0 & 31;
+  t = data >>  5 & 1;
+  f = data >>  6 & 1;
+  i = data >>  7 & 1;
+  v = data >> 28 & 1;
+  c = data >> 29 & 1;
+  z = data >> 30 & 1;
+  n = data >> 31 & 1;
+  return *this;
 }
 
 void ARM7TDMI::PSR::serialize(serializer& s) {
