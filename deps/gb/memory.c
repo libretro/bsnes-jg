@@ -414,8 +414,15 @@ static uint8_t read_mbc_ram(GB_gameboy_t *gb, uint16_t addr)
         return 0xFF;
     }
 
-    if (gb->cartridge_type->mbc_type == GB_CAMERA && gb->mbc_ram_bank == 0 && addr >= 0xA100 && addr < 0xAF00) {
-        return GB_camera_read_image(gb, addr - 0xA100);
+    if (gb->cartridge_type->mbc_type == GB_CAMERA) {
+        /* Forbid reading RAM while the camera is busy. */
+        if (gb->camera_registers[GB_CAMERA_SHOOT_AND_1D_FLAGS] & 1) {
+            return 0;
+        }
+
+        if (gb->mbc_ram_bank == 0 && addr >= 0xA100 && addr < 0xAF00) {
+            return GB_camera_read_image(gb, addr - 0xA100);
+        }
     }
 
     uint8_t effective_bank = gb->mbc_ram_bank;
@@ -482,6 +489,7 @@ internal uint8_t GB_read_oam(GB_gameboy_t *gb, uint8_t addr)
     switch (gb->model) {
         case GB_MODEL_CGB_E:
         case GB_MODEL_AGB_A:
+        case GB_MODEL_GBP_A:
             return (addr & 0xF0) | (addr >> 4);
             
         case GB_MODEL_CGB_D:
@@ -620,6 +628,10 @@ static uint8_t read_high_memory(GB_gameboy_t *gb, uint16_t addr)
             case GB_IO_JOYP:
                 gb->joyp_accessed = true;
                 GB_timing_sync(gb);
+                if (unlikely(gb->joyp_switching_delay)) {
+                    return (gb->io_registers[addr & 0xFF] & ~0x30) | (gb->joyp_switch_value & 0x30);
+                }
+                return gb->io_registers[addr & 0xFF];
             case GB_IO_TMA:
             case GB_IO_LCDC:
             case GB_IO_SCY:
@@ -1219,7 +1231,12 @@ static void write_mbc_ram(GB_gameboy_t *gb, uint16_t addr, uint8_t value)
     if (!gb->mbc_ram || !gb->mbc_ram_size) {
         return;
     }
-    
+
+    if (gb->cartridge_type->mbc_type == GB_CAMERA && (gb->camera_registers[GB_CAMERA_SHOOT_AND_1D_FLAGS] & 1)) {
+        /* Forbid writing to RAM while the camera is busy. */
+        return;
+    }
+
     uint8_t effective_bank = gb->mbc_ram_bank;
     if (gb->cartridge_type->mbc_type == GB_MBC3 && !gb->is_mbc30) {
         if (gb->cartridge_type->has_rtc) {
@@ -1263,6 +1280,7 @@ static void write_oam(GB_gameboy_t *gb, uint8_t addr, uint8_t value)
             break;
         case GB_MODEL_CGB_E:
         case GB_MODEL_AGB_A:
+        case GB_MODEL_GBP_A:
         case GB_MODEL_DMG_B:
         case GB_MODEL_MGB:
         case GB_MODEL_SGB_NTSC:
@@ -1485,6 +1503,15 @@ static void write_high_memory(GB_gameboy_t *gb, uint16_t addr, uint8_t value)
                     GB_update_joyp(gb);
                 }
                 else if ((gb->io_registers[GB_IO_JOYP] & 0x30) != (value & 0x30)) {
+                    if (gb->model < GB_MODEL_SGB) { // DMG only
+                        if (gb->joyp_switching_delay) {
+                            gb->io_registers[GB_IO_JOYP] = (gb->joyp_switch_value & 0xF0) | (gb->io_registers[GB_IO_JOYP] & 0x0F);
+                        }
+                        gb->joyp_switch_value = value;
+                        gb->joyp_switching_delay = 24;
+                        value &= gb->io_registers[GB_IO_JOYP];
+                        gb->joypad_is_stable = false;
+                    }
                     GB_sgb_write(gb, value);
                     gb->io_registers[GB_IO_JOYP] = (value & 0xF0) | (gb->io_registers[GB_IO_JOYP] & 0x0F);
                     GB_update_joyp(gb);
@@ -1794,11 +1821,11 @@ void GB_hdma_run(GB_gameboy_t *gb)
         }
         gb->hdma_current_src++;
         GB_advance_cycles(gb, cycles);
-        if (gb->addr_for_hdma_conflict == 0xFFFF /* || (gb->model >= GB_MODEL_AGB_B && gb->cgb_double_speed) */) {
+        if (gb->addr_for_hdma_conflict == 0xFFFF /* || ((gb->model & ~GB_MODEL_GBP_BIT) >= GB_MODEL_AGB_B && gb->cgb_double_speed) */) {
             uint16_t addr = (gb->hdma_current_dest++ & 0x1FFF);
             gb->vram[vram_base + addr] = byte;
             // TODO: vram_write_blocked might not be the correct timing
-            if (gb->vram_write_blocked /* && gb->model < GB_MODEL_AGB_B */) {
+            if (gb->vram_write_blocked /* && (gb->model & ~GB_MODEL_GBP_BIT) < GB_MODEL_AGB_B */) {
                 gb->vram[(vram_base ^ 0x2000) + addr] = byte;
             }
         }
@@ -1812,7 +1839,7 @@ void GB_hdma_run(GB_gameboy_t *gb)
                 uint16_t addr = (gb->hdma_current_dest & gb->addr_for_hdma_conflict & 0x1FFF);
                 gb->vram[vram_base + addr] = byte;
                 // TODO: vram_write_blocked might not be the correct timing
-                if (gb->vram_write_blocked /* && gb->model < GB_MODEL_AGB_B */) {
+                if (gb->vram_write_blocked /* && (gb->model & ~GB_MODEL_GBP_BIT) < GB_MODEL_AGB_B */) {
                     gb->vram[(vram_base ^ 0x2000) + addr] = byte;
                 }
             }

@@ -33,6 +33,7 @@
 #define GB_MODEL_DMG_FAMILY 0x000
 #define GB_MODEL_MGB_FAMILY 0x100
 #define GB_MODEL_CGB_FAMILY 0x200
+#define GB_MODEL_GBP_BIT 0x20
 #define GB_MODEL_PAL_BIT 0x40
 #define GB_MODEL_NO_SFC_BIT 0x80
 
@@ -117,9 +118,12 @@ typedef enum {
     GB_MODEL_CGB_E = 0x205,
     // GB_MODEL_AGB_0 = 0x206,
     GB_MODEL_AGB_A = 0x207,
+    GB_MODEL_GBP_A = GB_MODEL_AGB_A | GB_MODEL_GBP_BIT, // AGB-A inside a Game Boy Player
     GB_MODEL_AGB = GB_MODEL_AGB_A,
+    GB_MODEL_GBP = GB_MODEL_GBP_A,
     //GB_MODEL_AGB_B = 0x208
     //GB_MODEL_AGB_E = 0x209
+    //GB_MODEL_GBP_E = GB_MODEL_AGB_E | GB_MODEL_GBP_BIT, // AGB-E inside a Game Boy Player
 } GB_model_t;
 
 enum {
@@ -531,6 +535,8 @@ struct GB_gameboy_internal_s {
         uint8_t camera_registers[0x36];
         uint8_t rumble_strength;
         bool cart_ir;
+        uint8_t camera_alignment;
+        int32_t camera_countdown;
     )
 
     /* HRAM and HW Registers */
@@ -557,6 +563,9 @@ struct GB_gameboy_internal_s {
         bool lcd_disabled_outside_of_vblank;
         int32_t allowed_pending_cycles;
         uint16_t mode3_batching_length;
+        uint8_t joyp_switching_delay;
+        uint8_t joyp_switch_value;
+        uint16_t key_bounce_timing[GB_KEY_MAX];
     )
 
     /* APU */
@@ -683,6 +692,8 @@ struct GB_gameboy_internal_s {
         bool background_disabled;
         bool joyp_accessed;
         bool illegal_inputs_allowed;
+        bool no_bouncing_emulation;
+        bool joypad_is_stable;
 
         /* Timing */
         uint64_t last_sync;
