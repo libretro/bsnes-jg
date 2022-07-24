@@ -138,14 +138,9 @@ struct ARM7TDMI {
   void serialize(serializer&);
 
   struct GPR {
-    inline operator uint32_t() const { return data; }
-    inline GPR& operator=(const GPR& value) { return operator=(value.data); }
-
-    inline GPR& operator=(uint32_t value) {
-      data = value;
-      if(modify) modify();
-      return *this;
-    }
+    inline operator uint32_t() const;
+    inline GPR& operator=(const GPR& value);
+    inline GPR& operator=(uint32_t value);
 
     uint32_t data;
     bfunction<void ()> modify;
@@ -162,21 +157,8 @@ struct ARM7TDMI {
       SYS = 0x1f,  //system
     };
 
-    inline operator uint32_t() const {
-      return m << 0 | t << 5 | f << 6 | i << 7 | v << 28 | c << 29 | z << 30 | n << 31;
-    }
-
-    inline PSR& operator=(uint32_t data) {
-      m = data >>  0 & 31;
-      t = data >>  5 & 1;
-      f = data >>  6 & 1;
-      i = data >>  7 & 1;
-      v = data >> 28 & 1;
-      c = data >> 29 & 1;
-      z = data >> 30 & 1;
-      n = data >> 31 & 1;
-      return *this;
-    }
+    inline operator uint32_t() const;
+    inline PSR& operator=(uint32_t data);
 
     //serialization.cpp
     void serialize(serializer&);
