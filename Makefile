@@ -19,12 +19,16 @@ INCLUDES := -I$(SOURCEDIR)/deps -I$(SOURCEDIR)/src
 PKG_CONFIG ?= pkg-config
 CFLAGS_JG := $(shell $(PKG_CONFIG) --cflags jg)
 
-WARNINGS_CXX := -Wall -Wextra -Wshadow -Wmissing-declarations
-WARNINGS_C := $(WARNINGS_CXX) -Wmissing-prototypes
+# TODO: Use -Wstrict-overflow=5 which is the highest level
+WARNINGS_MIN := -Wall -Wextra -Wshadow -Wformat=2 -Wstrict-overflow=1 \
+	-Wmissing-declarations
+WARNINGS_ALL := $(WARNINGS_MIN) -Wmissing-noreturn -Wcast-align -Wcast-qual
+WARNINGS_CXX := $(WARNINGS_ALL) -Wnon-virtual-dtor -Woverloaded-virtual
+WARNINGS_C := $(WARNINGS_ALL) -Wmissing-prototypes
 
 WARNINGS := $(WARNINGS_CXX)
 WARNINGS_BML := $(WARNINGS_CXX) -pedantic
-WARNINGS_CO := $(WARNINGS_C)
+WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
 WARNINGS_GB := -Wno-multichar
 WARNINGS_SAMPLERATE := $(WARNINGS_C)
 WARNINGS_SPC := $(WARNINGS_CXX) -pedantic
