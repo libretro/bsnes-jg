@@ -10,7 +10,7 @@
   || (defined( _BYTE_ORDER) && defined( _LITTLE_ENDIAN) &&  _BYTE_ORDER ==  _LITTLE_ENDIAN) \
   || (defined(  BYTE_ORDER) && defined(  LITTLE_ENDIAN) &&   BYTE_ORDER ==   LITTLE_ENDIAN) \
   || defined(__LITTLE_ENDIAN__) \
-  || defined(__i386__) || defined(__amd64__) \
+  || defined(__i386__) || defined(__amd64__) || defined(__aarch64__) \
   || defined(_M_IX86) || defined(_M_AMD64)
   //little-endian: uint8_t[] { 0x01, 0x02, 0x03, 0x04 } == 0x04030201
   #define order_lsb2(a,b)             a,b
@@ -23,4 +23,6 @@
   //big-endian:    uint8_t[] { 0x01, 0x02, 0x03, 0x04 } == 0x01020304
   #define order_lsb2(a,b)             b,a
   #define order_lsb4(a,b,c,d)         d,c,b,a
+#else
+  #error "Endianness is unknown, update endian.h"
 #endif
