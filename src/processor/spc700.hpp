@@ -33,8 +33,8 @@ namespace Processor {
 struct SPC700 {
   virtual ~SPC700() = 0;
   virtual void idle() = 0;
-  virtual uint8_t read(uint16_t address) = 0;
-  virtual void write(uint16_t address, uint8_t data) = 0;
+  virtual uint8_t read(uint16_t) = 0;
+  virtual void write(uint16_t, uint8_t) = 0;
   virtual bool synchronizing() const = 0;
 
   //spc700.cpp
@@ -42,10 +42,10 @@ struct SPC700 {
 
   //memory.cpp
   alwaysinline uint8_t fetch();
-  alwaysinline uint8_t load(uint8_t address);
-  alwaysinline void store(uint8_t address, uint8_t data);
+  alwaysinline uint8_t load(uint8_t);
+  alwaysinline void store(uint8_t, uint8_t);
   alwaysinline uint8_t pull();
-  alwaysinline void push(uint8_t data);
+  alwaysinline void push(uint8_t);
 
   //instruction.cpp
   void instruction();
