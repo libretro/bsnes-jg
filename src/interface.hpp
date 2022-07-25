@@ -42,7 +42,6 @@ struct Interface {
   void cheatsApply(const std::vector<std::string>&);
   void cheatsClear();
   bool cheatsDecode(int, std::string);
-  void configure(std::string, int);
 
   bool runAhead();
   void setRunAhead(bool);
@@ -54,6 +53,8 @@ struct Interface {
   void setAudioFrequency(double);
   void setAudioSpf(unsigned);
   void setAudioQuality(unsigned);
+  void setCoprocDelayedSync(bool);
+  void setCoprocPreferHLE(bool);
   void setInputCallback(int16_t (*)(unsigned, unsigned, unsigned));
   void setOpenCallback(std::ifstream (*)(unsigned, std::string));
   void setRomCallback(bool (*)(unsigned));

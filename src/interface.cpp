@@ -61,15 +61,6 @@ void Interface::unload() {
   system.unload();
 }
 
-void Interface::configure(std::string name, int value) {
-  if (name == "CoprocessorDelayedSync") {
-    configuration.coprocessor.delayedSync = (bool)value;
-  }
-  else if (name == "CoprocessorPreferHLE") {
-    configuration.coprocessor.preferHLE = (bool)value;
-  }
-}
-
 unsigned Interface::connected(unsigned port) {
   if(port == ID::Port::Controller1) return configuration.controllerPort1;
   if(port == ID::Port::Controller2) return configuration.controllerPort2;
@@ -215,6 +206,14 @@ void Interface::setAudioSpf(unsigned spf) {
 
 void Interface::setAudioQuality(unsigned rsqual) {
   audio.setQuality(rsqual);
+}
+
+void Interface::setCoprocDelayedSync(bool value) {
+    configuration.coprocessor.delayedSync = value;
+}
+
+void Interface::setCoprocPreferHLE(bool value) {
+    configuration.coprocessor.preferHLE = value;
 }
 
 void Interface::setInputCallback(int16_t (*cb)(unsigned, unsigned, unsigned)) {

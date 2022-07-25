@@ -524,10 +524,8 @@ int jg_init() {
     interface->setWriteCallback(&fileWrite);
 
     // Configuration
-    interface->configure("CoprocessorDelayedSync",
-        settings_bsnes[COPROC_DELAYSYNC].value);
-    interface->configure("CoprocessorPreferHLE",
-        settings_bsnes[COPROC_PREFERHLE].value);
+    interface->setCoprocDelayedSync(settings_bsnes[COPROC_DELAYSYNC].value);
+    interface->setCoprocPreferHLE(settings_bsnes[COPROC_PREFERHLE].value);
 
     return 1;
 }
