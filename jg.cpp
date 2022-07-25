@@ -670,13 +670,10 @@ int jg_game_load() {
 
     aspectRatio();
 
-    // Find out whether this is NTSC or PAL
-    std::string region = interface->getRegion();
-
     interface->setAudioQuality(settings_bsnes[RSQUAL].value);
 
     // Audio and timing adjustments
-    if (region == "PAL") {
+    if (interface->getRegion() == "PAL") {
         audinfo.spf = (SAMPLERATE / FRAMERATE_PAL) * CHANNELS;
         interface->setAudioSpf(audinfo.spf);
         jg_cb_frametime(TIMING_PAL);
