@@ -40,10 +40,10 @@ struct ARM7TDMI {
   };
 
   virtual ~ARM7TDMI() = 0;
-  virtual void step(unsigned clocks) = 0;
+  virtual void step(unsigned) = 0;
   virtual void sleep() = 0;
-  virtual uint32_t get(unsigned mode, uint32_t address) = 0;
-  virtual void set(unsigned mode, uint32_t address, uint32_t word) = 0;
+  virtual uint32_t get(unsigned, uint32_t) = 0;
+  virtual void set(unsigned, uint32_t, uint32_t) = 0;
 
   //arm7tdmi.cpp
   ARM7TDMI();
