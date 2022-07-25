@@ -197,59 +197,59 @@ struct GSU {
   void power();
 
   //instructions.cpp
-  void instructionADD_ADC(unsigned n);
+  void instructionADD_ADC(unsigned);
   void instructionALT1();
   void instructionALT2();
   void instructionALT3();
-  void instructionAND_BIC(unsigned n);
+  void instructionAND_BIC(unsigned);
   void instructionASR_DIV2();
-  void instructionBranch(bool c);
+  void instructionBranch(bool);
   void instructionCACHE();
   void instructionCOLOR_CMODE();
-  void instructionDEC(unsigned n);
+  void instructionDEC(unsigned);
   void instructionFMULT_LMULT();
-  void instructionFROM_MOVES(unsigned n);
+  void instructionFROM_MOVES(unsigned);
   void instructionGETB();
   void instructionGETC_RAMB_ROMB();
   void instructionHIB();
-  void instructionIBT_LMS_SMS(unsigned n);
+  void instructionIBT_LMS_SMS(unsigned);
   void instructionINC(unsigned n);
-  void instructionIWT_LM_SM(unsigned n);
-  void instructionJMP_LJMP(unsigned n);
-  void instructionLINK(unsigned n);
-  void instructionLoad(unsigned n);
+  void instructionIWT_LM_SM(unsigned);
+  void instructionJMP_LJMP(unsigned);
+  void instructionLINK(unsigned);
+  void instructionLoad(unsigned);
   void instructionLOB();
   void instructionLOOP();
   void instructionLSR();
   void instructionMERGE();
-  void instructionMULT_UMULT(unsigned n);
+  void instructionMULT_UMULT(unsigned);
   void instructionNOP();
   void instructionNOT();
-  void instructionOR_XOR(unsigned n);
+  void instructionOR_XOR(unsigned);
   void instructionPLOT_RPIX();
   void instructionROL();
   void instructionROR();
   void instructionSBK();
   void instructionSEX();
-  void instructionStore(unsigned n);
+  void instructionStore(unsigned);
   void instructionSTOP();
-  void instructionSUB_SBC_CMP(unsigned n);
+  void instructionSUB_SBC_CMP(unsigned);
   void instructionSWAP();
-  void instructionTO_MOVE(unsigned n);
-  void instructionWITH(unsigned n);
+  void instructionTO_MOVE(unsigned);
+  void instructionWITH(unsigned);
 
   //switch.cpp
-  void instruction(uint8_t opcode);
+  void instruction(uint8_t);
 
   //serialization.cpp
   void serialize(serializer&);
 
   //disassembler.cpp
-  void disassembleOpcode(char* output);
-  void disassembleALT0(char* output);
-  void disassembleALT1(char* output);
-  void disassembleALT2(char* output);
-  void disassembleALT3(char* output);
+  void disassembleOpcode(char*);
+  void disassembleALT0(char*);
+  void disassembleALT1(char*);
+  void disassembleALT2(char*);
+  void disassembleALT3(char*);
 };
 
 }
