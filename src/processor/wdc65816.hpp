@@ -33,8 +33,8 @@ struct WDC65816 {
   virtual void idle() = 0;
   virtual void idleBranch() {}
   virtual void idleJump() {}
-  virtual uint8_t read(unsigned addr) = 0;
-  virtual void write(unsigned addr, uint8_t data) = 0;
+  virtual uint8_t read(unsigned) = 0;
+  virtual void write(unsigned, uint8_t) = 0;
   virtual void lastCycle() = 0;
   virtual bool interruptPending() const = 0;
   virtual void interrupt();

@@ -30,19 +30,19 @@ struct uPD96050 {
   void exec();
   void serialize(serializer&);
 
-  void execOP(uint32_t opcode);
-  void execRT(uint32_t opcode);
-  void execJP(uint32_t opcode);
-  void execLD(uint32_t opcode);
+  void execOP(uint32_t);
+  void execRT(uint32_t);
+  void execJP(uint32_t);
+  void execLD(uint32_t);
 
   uint8_t readSR();
-  void writeSR(uint8_t data);
+  void writeSR(uint8_t);
 
   uint8_t readDR();
-  void writeDR(uint8_t data);
+  void writeDR(uint8_t);
 
-  uint8_t readDP(uint16_t addr);
-  void writeDP(uint16_t addr, uint8_t data);
+  uint8_t readDP(uint16_t);
+  void writeDP(uint16_t, uint8_t);
 
   enum class Revision : unsigned { uPD7725, uPD96050 } revision;
   uint32_t programROM[16384];
