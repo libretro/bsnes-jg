@@ -29,7 +29,7 @@ WARNINGS_C := $(WARNINGS_ALL) -Wmissing-prototypes
 WARNINGS := $(WARNINGS_CXX)
 WARNINGS_BML := $(WARNINGS_CXX) -pedantic
 WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
-WARNINGS_GB := -Wno-multichar
+WARNINGS_GB := -Wno-multichar -Wno-unused-result
 WARNINGS_SAMPLERATE := $(WARNINGS_C)
 WARNINGS_SPC := $(WARNINGS_CXX) -pedantic
 
