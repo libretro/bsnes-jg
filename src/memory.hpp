@@ -145,9 +145,9 @@ struct Bus {
 
   void reset();
   unsigned map(
-    const bfunction<uint8_t (unsigned, uint8_t)>& read,
-    const bfunction<void (unsigned, uint8_t)>& write,
-    const std::string& address, unsigned size = 0, unsigned base = 0, unsigned mask = 0
+    const bfunction<uint8_t (unsigned, uint8_t)>&,
+    const bfunction<void (unsigned, uint8_t)>&,
+    const std::string&, unsigned = 0, unsigned = 0, unsigned = 0
   );
   void unmap(const std::string&);
 
