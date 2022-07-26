@@ -70,8 +70,8 @@ void uPD96050::execOP(uint32_t opcode) {
 
   if(alu) {
     uint16_t p = 0, q = 0, r = 0;
+    bool c = false;
     Flag flag;
-    bool c;
 
     switch(pselect) {
     case 0: p = dataRAM[regs.dp]; break;
