@@ -38,8 +38,8 @@ struct Memory {
   virtual uint8_t* data() = 0;
   virtual unsigned size() const = 0;
 
-  virtual uint8_t read(unsigned address, uint8_t data = 0) = 0;
-  virtual void write(unsigned address, uint8_t data) = 0;
+  virtual uint8_t read(unsigned, uint8_t = 0) = 0;
+  virtual void write(unsigned, uint8_t) = 0;
 
   unsigned id = 0;
 };
@@ -135,13 +135,13 @@ private:
 };
 
 struct Bus {
-  inline static unsigned mirror(unsigned address, unsigned size);
-  inline static unsigned reduce(unsigned address, unsigned mask);
+  inline static unsigned mirror(unsigned, unsigned);
+  inline static unsigned reduce(unsigned, unsigned);
 
   ~Bus();
 
-  inline uint8_t read(unsigned address, uint8_t data = 0);
-  inline void write(unsigned address, uint8_t data);
+  inline uint8_t read(unsigned, uint8_t = 0);
+  inline void write(unsigned, uint8_t);
 
   void reset();
   unsigned map(
@@ -149,7 +149,7 @@ struct Bus {
     const bfunction<void (unsigned, uint8_t)>& write,
     const std::string& address, unsigned size = 0, unsigned base = 0, unsigned mask = 0
   );
-  void unmap(const std::string& address);
+  void unmap(const std::string&);
 
 private:
   uint8_t *lookup = nullptr;
