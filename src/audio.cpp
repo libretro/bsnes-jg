@@ -54,6 +54,14 @@ Stream* Audio::createStream(double frequency) {
   return stream;
 }
 
+Stream::~Stream() {
+    srcstate = src_delete(srcstate);
+    srcstate = nullptr;
+    queue_in.clear();
+    queue_out.clear();
+    resamp_out.clear();
+}
+
 void Stream::reset(double freq_in) {
   if (srcstate == nullptr) {
     int err;
@@ -101,14 +109,13 @@ void Stream::write(const int16_t samples[]) {
 Audio audio;
 
 Audio::~Audio() {
-  for (auto& stream : _streams) {
-    stream->srcstate = src_delete(stream->srcstate);
-    stream->srcstate = nullptr;
-  }
   reset();
 }
 
 void Audio::reset() {
+  for (auto& stream : _streams) {
+    delete stream;
+  }
   _streams.clear();
 }
 
