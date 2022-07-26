@@ -48,7 +48,7 @@ void uPD96050::execOP(uint32_t opcode) {
   uint8_t src     = (opcode >>  4) & 0x0f;  //move source
   uint8_t dst     = (opcode >>  0) & 0x0f;  //move destination
 
-  uint16_t idb;
+  uint16_t idb = 0;
   switch(src) {
   case  0: idb = regs.trb; break;
   case  1: idb = regs.a; break;
@@ -69,7 +69,7 @@ void uPD96050::execOP(uint32_t opcode) {
   }
 
   if(alu) {
-    uint16_t p, q, r;
+    uint16_t p = 0, q = 0, r = 0;
     Flag flag;
     bool c;
 
