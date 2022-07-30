@@ -53,7 +53,7 @@ static jg_coreinfo_t coreinfo = {
 };
 
 static jg_videoinfo_t vidinfo = {
-    JG_PIXFMT_RGB1555,  // pixfmt
+    JG_PIXFMT_RGB5551,  // pixfmt
     512,                // wmax
     480,                // hmax
     256,                // w

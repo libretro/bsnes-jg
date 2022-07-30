@@ -2276,7 +2276,7 @@ bg4(Background::ID::BG4) {
           unsigned ar = (luma * r + 0.5);
           unsigned ag = (luma * g + 0.5);
           unsigned ab = (luma * b + 0.5);
-          lightTable[l][(r << 10) + (g << 5) + b] = (ab << 10) + (ag << 5) + ar;
+          lightTable[l][(r << 10) + (g << 5) + b] = (ab << 11) + (ag << 6) + (ar << 1);
         }
       }
     }
