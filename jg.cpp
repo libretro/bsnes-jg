@@ -703,6 +703,10 @@ int jg_state_load(const char *filename) {
     return interface->unserialize(s);
 }
 
+void jg_state_load_raw(const void *data) {
+    if (data) { }
+}
+
 int jg_state_save(const char *filename) {
     serializer s = interface->serialize();
     std::ofstream stream(filename, std::ios::out | std::ios::binary);
@@ -711,6 +715,14 @@ int jg_state_save(const char *filename) {
         stream.close();
         return 1;
     }
+    return 0;
+}
+
+const void* jg_state_save_raw(void) {
+    return nullptr;
+}
+
+size_t jg_state_size(void) {
     return 0;
 }
 
@@ -732,6 +744,10 @@ void jg_cheat_set(const char *code) {
 
 void jg_rehash() {
     aspectRatio();
+}
+
+void jg_input_audio(int port, const int16_t *buf, size_t numsamps) {
+    if (port || buf || numsamps) { }
 }
 
 // JG Functions that return values to the frontend
