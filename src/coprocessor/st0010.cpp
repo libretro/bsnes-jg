@@ -18,8 +18,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cmath>
+#include <cstdlib> // abs on gcc 5.5.0
 #include <cstring>
-#include <math.h>
 
 #include "serializer.hpp"
 
