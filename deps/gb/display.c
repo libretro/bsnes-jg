@@ -281,19 +281,24 @@ uint32_t GB_convert_rgb15(GB_gameboy_t *gb, uint16_t color, bool for_border)
         
         if (gb->color_correction_mode != GB_COLOR_CORRECTION_CORRECT_CURVES) {
             uint8_t new_r, new_g, new_b;
-            double gamma = 2.2;
-            if (gb->color_correction_mode < GB_COLOR_CORRECTION_REDUCE_CONTRAST) {
-                /* Don't use absolutely gamma-correct mixing for the high-contrast
-                   modes, to prevent the blue hues from being too washed out */
-                gamma = 1.6;
-            }
-            
-            // TODO: Optimze pow out using a LUT
-            if (agb) {
-                new_g = pow((pow(g / 255.0, gamma) * 5 + pow(b / 255.0, gamma)) / 6, 1 / gamma) * 255;
+            if (g != b) { // Minor optimization
+                double gamma = 2.2;
+                if (gb->color_correction_mode < GB_COLOR_CORRECTION_REDUCE_CONTRAST) {
+                    /* Don't use absolutely gamma-correct mixing for the high-contrast
+                       modes, to prevent the blue hues from being too washed out */
+                    gamma = 1.6;
+                }
+                
+                // TODO: Optimze pow out using a LUT
+                if (agb) {
+                    new_g = round(pow((pow(g / 255.0, gamma) * 5 + pow(b / 255.0, gamma)) / 6, 1 / gamma) * 255);
+                }
+                else {
+                    new_g = round(pow((pow(g / 255.0, gamma) * 3 + pow(b / 255.0, gamma)) / 4, 1 / gamma) * 255);
+                }
             }
             else {
-                new_g = pow((pow(g / 255.0, gamma) * 3 + pow(b / 255.0, gamma)) / 4, 1 / gamma) * 255;
+                new_g = g;
             }
    
             new_r = r;
@@ -338,7 +343,7 @@ uint32_t GB_convert_rgb15(GB_gameboy_t *gb, uint16_t color, bool for_border)
                     new_b = new_b * (157 - 38) / 255 + 38;
                 }
             }
-            else if (gb->color_correction_mode == GB_COLOR_CORRECTION_PRESERVE_BRIGHTNESS) {
+            else if (gb->color_correction_mode == GB_COLOR_CORRECTION_MODERN_BOOST_CONTRAST) {
                 uint8_t old_max = MAX(r, MAX(g, b));
                 uint8_t new_max = MAX(new_r, MAX(new_g, new_b));
                 
