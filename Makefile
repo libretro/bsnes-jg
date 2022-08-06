@@ -242,7 +242,7 @@ $(NAME)/$(TARGET): $(OBJS)
 	@cp $(SOURCEDIR)/Database/Super\ Famicom.bml $(NAME)/
 
 clean:
-	rm -rf $(OBJDIR)/ $(NAME)/
+	rm -rf $(OBJDIR) $(NAME)
 
 install: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
