@@ -20,7 +20,7 @@ PKG_CONFIG ?= pkg-config
 CFLAGS_JG := $(shell $(PKG_CONFIG) --cflags jg)
 
 # TODO: Use -Wstrict-overflow=5 which is the highest level
-WARNINGS_MIN := -Wall -Wextra -Wshadow -Wformat=2 -Wstrict-overflow=1 \
+WARNINGS_MIN := -Wall -Wextra -Wshadow -Wformat=2 -Wstrict-overflow=2 \
 	-Wmissing-declarations
 WARNINGS_ALL := $(WARNINGS_MIN) -Wmissing-noreturn -Wcast-align -Wcast-qual
 WARNINGS_CXX := $(WARNINGS_ALL) -Wnon-virtual-dtor -Woverloaded-virtual

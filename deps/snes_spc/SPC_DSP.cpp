@@ -310,7 +310,7 @@ inline void SPC_DSP::decode_brr( voice_t* v )
 		v->buf_pos = 0;
 
 	// Decode four samples
-	for ( end = pos + 4; pos < end; pos++, nybbles <<= 4 )
+	for ( end = pos + 4; (end - pos) > 0; ++pos, nybbles <<= 4 )
 	{
 		// Extract nybble and sign-extend
 		int s = (int16_t) nybbles >> 12;
