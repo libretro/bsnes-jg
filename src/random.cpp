@@ -19,6 +19,7 @@
  */
 
 #include <cstring>
+#include <ctime>
 
 #include "memory.hpp"
 #include "serializer.hpp"
