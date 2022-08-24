@@ -539,7 +539,7 @@ void Cartridge::loadARMDSP(std::string node) {
   if(game.oscillatorList.size()) {
     armdsp.Frequency = game.oscillatorList[0].frequency;
   } else {
-    armdsp.Frequency = 21'440'000;
+    armdsp.Frequency = 21440000;
   }
 
   std::string pmap = BML::searchNode(node, {"processor", "map"});
@@ -595,7 +595,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
   if(game.oscillatorList.size()) {
     hitachidsp.Frequency = game.oscillatorList[0].frequency;
   } else {
-    hitachidsp.Frequency = 20'000'000;
+    hitachidsp.Frequency = 20000000;
   }
   hitachidsp.Roms = roms;  //1 or 2
   hitachidsp.Mapping = 0;  //0 or 1
@@ -681,7 +681,7 @@ void Cartridge::loaduPD7725(std::string node) {
   if(game.oscillatorList.size()) {
     necdsp.Frequency = game.oscillatorList[0].frequency;
   } else {
-    necdsp.Frequency = 7'600'000;
+    necdsp.Frequency = 7600000;
   }
 
   std::vector<std::string> identifiers = BML::searchList(game.document, "identifier");
@@ -774,7 +774,7 @@ void Cartridge::loaduPD96050(std::string node) {
   if(game.oscillatorList.size()) {
     necdsp.Frequency = game.oscillatorList[0].frequency;
   } else {
-    necdsp.Frequency = 11'000'000;
+    necdsp.Frequency = 11000000;
   }
 
   std::vector<std::string> identifiers = BML::searchList(game.document, "identifier");

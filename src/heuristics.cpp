@@ -489,30 +489,30 @@ std::string SuperFamicom::manifest() const {
     output += Memory{}.type("ROM").size(0x20000).content("Program").manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).text();
     output += Memory{}.type("ROM").size( 0x8000).content("Data"   ).manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).text();
     output += Memory{}.type("RAM").size( 0x4000).content("Data"   ).manufacturer("SETA").architecture("ARM6").identifier(firmwareARM()).isVolatile().text();
-    output += Oscillator{}.frequency(21'440'000).text();
+    output += Oscillator{}.frequency(21440000).text();
   } else if(btokens[0] == "BS" && btokens[1] == "MCC") {
     output += Memory{}.type("RAM").size(0x80000).content("Download").text();
   } else if(btokens[0] == "EXNEC") {
     output += Memory{}.type("ROM").size(0xc000).content("Program").manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text();
     output += Memory{}.type("ROM").size(0x1000).content("Data"   ).manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text();
     output += Memory{}.type("RAM").size(0x1000).content("Data"   ).manufacturer("NEC").architecture("uPD96050").identifier(firmwareEXNEC()).text();
-    output += Oscillator{}.frequency(firmwareEXNEC() == "ST010" ? 11'000'000 : 15'000'000).text();
+    output += Oscillator{}.frequency(firmwareEXNEC() == "ST010" ? 11000000 : 15000000).text();
   } else if(btokens[0] == "GB") {
     output += Memory{}.type("ROM").size(0x100).content("Boot").manufacturer("Nintendo").architecture("LR35902").identifier(firmwareGB()).text();
   if(firmwareGB() == "SGB2")
-    output += Oscillator{}.frequency(20'971'520).text();
+    output += Oscillator{}.frequency(20971520).text();
   } else if(btokens[0] == "GSU") {
   //todo: MARIO CHIP 1 uses CPU oscillator
-    output += Oscillator{}.frequency(21'440'000).text();
+    output += Oscillator{}.frequency(21440000).text();
   } else if(btokens[0] == "HITACHI") {
     output += Memory{}.type("ROM").size(0xc00).content("Data").manufacturer("Hitachi").architecture("HG51BS169").identifier(firmwareHITACHI()).text();
     output += Memory{}.type("RAM").size(0xc00).content("Data").manufacturer("Hitachi").architecture("HG51BS169").identifier(firmwareHITACHI()).isVolatile().text();
-    output += Oscillator{}.frequency(20'000'000).text();
+    output += Oscillator{}.frequency(20000000).text();
   } else if(btokens[0] == "NEC") {
     output += Memory{}.type("ROM").size(0x1800).content("Program").manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).text();
     output += Memory{}.type("ROM").size( 0x800).content("Data"   ).manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).text();
     output += Memory{}.type("RAM").size( 0x200).content("Data"   ).manufacturer("NEC").architecture("uPD7725").identifier(firmwareNEC()).isVolatile().text();
-    output += Oscillator{}.frequency(7'600'000).text();
+    output += Oscillator{}.frequency(7600000).text();
   } else if(btokens[0] == "SA1" || btokens[1] == "SA1") {  //SA1-* or BS-SA1-*
     output += Memory{}.type("RAM").size(0x800).content("Internal").isVolatile().text();
   }

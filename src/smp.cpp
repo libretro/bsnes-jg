@@ -307,7 +307,7 @@ void SMP::step(unsigned clocks) {
   dsp.clock -= clocks;
   synchronizeDSP();
   //forcefully sync SMP to CPU in case chips are not communicating
-  if(clock > 768 * 24 * (int64_t)24'000'000) synchronizeCPU();
+  if(clock > 768 * 24 * (int64_t)24000000) synchronizeCPU();
 }
 
 void SMP::stepIdle(unsigned clocks) {

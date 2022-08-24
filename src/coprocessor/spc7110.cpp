@@ -521,7 +521,7 @@ void SPC7110::unload() {
 }
 
 void SPC7110::power() {
-  create(SPC7110::Enter, 21'477'272);
+  create(SPC7110::Enter, 21477272);
 
   r4801 = 0x00;
   r4802 = 0x00;
