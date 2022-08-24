@@ -47,27 +47,27 @@ uint32_t ArmDSP::get(unsigned mode, uint32_t addr) {
     }
   };
 
-  switch(addr & 0xe000'0000) {
-  case 0x0000'0000: return memory(programROM, mode, addr & 0x1ffff);
-  case 0x2000'0000: return pipeline.fetch.instruction;
-  case 0x4000'0000: break;
-  case 0x6000'0000: return 0x40404001;
-  case 0x8000'0000: return pipeline.fetch.instruction;
-  case 0xa000'0000: return memory(dataROM, mode, addr & 0x7fff);
-  case 0xc000'0000: return pipeline.fetch.instruction;
-  case 0xe000'0000: return memory(programRAM, mode, addr & 0x3fff);
+  switch(addr & 0xe0000000) {
+  case 0x00000000: return memory(programROM, mode, addr & 0x1ffff);
+  case 0x20000000: return pipeline.fetch.instruction;
+  case 0x40000000: break;
+  case 0x60000000: return 0x40404001;
+  case 0x80000000: return pipeline.fetch.instruction;
+  case 0xa0000000: return memory(dataROM, mode, addr & 0x7fff);
+  case 0xc0000000: return pipeline.fetch.instruction;
+  case 0xe0000000: return memory(programRAM, mode, addr & 0x3fff);
   }
 
-  addr &= 0xe000'003f;
+  addr &= 0xe000003f;
 
-  if(addr == 0x4000'0010) {
+  if(addr == 0x40000010) {
     if(bridge.cputoarm.ready) {
       bridge.cputoarm.ready = false;
       return bridge.cputoarm.data;
     }
   }
 
-  if(addr == 0x4000'0020) {
+  if(addr == 0x40000020) {
     return bridge.status();
   }
 
@@ -90,32 +90,32 @@ void ArmDSP::set(unsigned mode, uint32_t addr, uint32_t word) {
     }
   };
 
-  switch(addr & 0xe000'0000) {
-  case 0x0000'0000: return;
-  case 0x2000'0000: return;
-  case 0x4000'0000: break;
-  case 0x6000'0000: return;
-  case 0x8000'0000: return;
-  case 0xa000'0000: return;
-  case 0xc000'0000: return;
-  case 0xe000'0000: return memory(programRAM, mode, addr & 0x3fff, word);
+  switch(addr & 0xe0000000) {
+  case 0x00000000: return;
+  case 0x20000000: return;
+  case 0x40000000: break;
+  case 0x60000000: return;
+  case 0x80000000: return;
+  case 0xa0000000: return;
+  case 0xc0000000: return;
+  case 0xe0000000: return memory(programRAM, mode, addr & 0x3fff, word);
   }
 
-  addr &= 0xe000'003f;
-  word &= 0x0000'00ff;
+  addr &= 0xe000003f;
+  word &= 0x000000ff;
 
-  if(addr == 0x4000'0000) {
+  if(addr == 0x40000000) {
     bridge.armtocpu.ready = true;
     bridge.armtocpu.data = word;
   }
 
-  if(addr == 0x4000'0010) bridge.signal = true;
+  if(addr == 0x40000010) bridge.signal = true;
 
-  if(addr == 0x4000'0020) bridge.timerlatch = (bridge.timerlatch & 0xffff00) | word <<  0;
-  if(addr == 0x4000'0024) bridge.timerlatch = (bridge.timerlatch & 0xff00ff) | word <<  8;
-  if(addr == 0x4000'0028) bridge.timerlatch = (bridge.timerlatch & 0x00ffff) | word << 16;
+  if(addr == 0x40000020) bridge.timerlatch = (bridge.timerlatch & 0xffff00) | word <<  0;
+  if(addr == 0x40000024) bridge.timerlatch = (bridge.timerlatch & 0xff00ff) | word <<  8;
+  if(addr == 0x40000028) bridge.timerlatch = (bridge.timerlatch & 0x00ffff) | word << 16;
 
-  if(addr == 0x4000'002c) bridge.timer = bridge.timerlatch;
+  if(addr == 0x4000002c) bridge.timer = bridge.timerlatch;
 }
 
 std::vector<uint8_t> ArmDSP::firmware() const {
@@ -166,7 +166,7 @@ void ArmDSP::boot() {
 
   //reset sequence delay
   if(bridge.ready == false) {
-    step(65'536);
+    step(65536);
     bridge.ready = true;
   }
 }

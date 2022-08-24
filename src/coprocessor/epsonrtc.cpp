@@ -524,7 +524,7 @@ void EpsonRTC::initialize() {
 }
 
 void EpsonRTC::power() {
-  create(EpsonRTC::Enter, 32'768 * 64);
+  create(EpsonRTC::Enter, 32768 * 64);
 
   clocks = 0;
   seconds = 0;

@@ -127,7 +127,7 @@ void BSMemory::Enter() {
 }
 
 void BSMemory::main() {
-  if(ROM) return step(1'000'000);  //1 second
+  if(ROM) return step(1000000);  //1 second
 
   for(unsigned n = 0; n < block.count(); ++n) {
     if(block(n).erasing) return block(n).erase();
@@ -136,7 +136,7 @@ void BSMemory::main() {
 
   compatible.status.ready = 1;
   global.status.ready = 1;
-  step(10'000);  //10 milliseconds
+  step(10000);  //10 milliseconds
 }
 
 void BSMemory::step(unsigned clocks) {
@@ -152,11 +152,11 @@ bool BSMemory::load() {
     return false;
   }
 
-  chip.vendor = 0x00'b0;  //Sharp
-  if(size() == 0x100000) chip.device = 0x66'a8;  //LH28F800SU
-  if(size() == 0x200000) chip.device = 0x66'88;  //LH28F016SU
-  if(size() == 0x400000) chip.device = 0x66'88;  //LH28F032SU (same device ID as LH28F016SU per datasheet)
-  chip.serial = 0x00'01'23'45'67'89ull;  //serial# should be unique for every cartridge ...
+  chip.vendor = 0x00b0;  //Sharp
+  if(size() == 0x100000) chip.device = 0x66a8;  //LH28F800SU
+  if(size() == 0x200000) chip.device = 0x6688;  //LH28F016SU
+  if(size() == 0x400000) chip.device = 0x6688;  //LH28F032SU (same device ID as LH28F016SU per datasheet)
+  chip.serial = 0x000123456789ull;  //serial# should be unique for every cartridge ...
 
   //page buffer values decay to random noise upon losing power to the flash chip
   //the randomness is high entropy (at least compared to SNES SRAM/DRAM chips)
@@ -216,7 +216,7 @@ void BSMemory::unload() {
 }
 
 void BSMemory::power() {
-  create(Enter, 1'000'000);  //microseconds
+  create(Enter, 1000000);  //microseconds
 
   for(auto& _block : blocks) {
     _block.erasing = 0;
@@ -548,7 +548,7 @@ void BSMemory::Block::erase() {
     return;
   }
 
-  self->step(300'000);  //300 milliseconds are required to erase one block
+  self->step(300000);  //300 milliseconds are required to erase one block
   erasing = 0;
 
   if(!self->writable() && status.locked) {

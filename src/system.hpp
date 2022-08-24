@@ -22,8 +22,8 @@
 
 namespace SuperFamicom {
 
-static constexpr double FREQ_NTSC = 315.0 / 88.0 * 1'000'000.0;
-static constexpr double FREQ_PAL = 283.75 * 15'625.0 + 25.0;
+static constexpr double FREQ_NTSC = 315.0 / 88.0 * 1000000.0;
+static constexpr double FREQ_PAL = 283.75 * 15625.0 + 25.0;
 
 struct Region {
   static inline bool NTSC();
