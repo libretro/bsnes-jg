@@ -63,8 +63,8 @@ void ICD::ppuVreset() {
 }
 
 void ICD::ppuWrite(uint8_t color) {
-  auto x = (uint8_t)hcounter++;
-  auto y = vcounter & 0x07;
+  uint8_t x = hcounter++;
+  uint8_t y = vcounter & 0x07;
   if(x >= 160) return;  //unverified behavior
 
   uint16_t address = (writeBank * 512 + y * 2 + x / 8 * 16) & 0x7ff;
@@ -228,7 +228,7 @@ void ICD::writeIO(unsigned addr, uint8_t data) {
     if(mltReq == 2) joypID &= 0;  //4-player mode (unverified; but the most likely behavior)
     if(mltReq == 3) joypID &= 0;  //4-player mode
 
-    auto freq = clockFrequency();
+    unsigned freq = clockFrequency();
     switch(data & 3) {
     case 0: this->frequency = freq / 4; break;  //fast (glitchy, even on real hardware)
     case 1: this->frequency = freq / 5; break;  //normal
@@ -272,8 +272,8 @@ const uint8_t ICD::SGB2BootROM[256] = {
 void ICD::serialize(serializer& s) {
   Thread::serialize(s);
 
-  auto size = GB_get_save_state_size(&sameboy);
-  auto data = new uint8_t[size];
+  size_t size = GB_get_save_state_size(&sameboy);
+  uint8_t *data = new uint8_t[size];
 
   if(s.mode() == serializer::Save) {
     GB_save_state_to_buffer(&sameboy, data);
@@ -372,7 +372,7 @@ void ICD::Enter() {
 
 void ICD::main() {
   if(r6003 & 0x80) {
-    auto clocks = GB_run(&sameboy);
+    unsigned clocks = GB_run(&sameboy);
     step(clocks >> 1);
   }
   else {  //DMG halted
@@ -433,8 +433,8 @@ bool ICD::load() {
 }
 
 void ICD::save() {
-  if(auto size = GB_save_battery_size(&sameboy)) {
-    auto data = (uint8_t*)malloc(size);
+  if(int size = GB_save_battery_size(&sameboy)) {
+    uint8_t *data = (uint8_t*)malloc(size);
     GB_save_battery_to_buffer(&sameboy, data, size);
     writeCallback(pathID(), "save.ram", data, size);
     free(data);
@@ -447,7 +447,7 @@ void ICD::unload() {
 }
 
 void ICD::power(bool reset) {
-  auto freq = clockFrequency() / 5;
+  unsigned freq = clockFrequency() / 5;
   create(ICD::Enter, freq);
   if(!reset) stream = audio.createStream(freq / 128);
 
