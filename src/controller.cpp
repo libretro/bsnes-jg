@@ -481,8 +481,8 @@ uint8_t SuperMultitap::data() {
     b = 3;  //controller 5
   }
 
-  auto& padA = gamepads[a];
-  auto& padB = gamepads[b];
+  Gamepad& padA = gamepads[a];
+  Gamepad& padB = gamepads[b];
 
   switch(counter) {
   case  0: return padA.b << 0 | padB.b << 1;
@@ -509,7 +509,7 @@ void SuperMultitap::latch(bool data) {
 
   if(latched == 0) {
     for(unsigned id = 0; id < 4; ++id) {
-      auto& gamepad = gamepads[id];
+      Gamepad& gamepad = gamepads[id];
       gamepad.b      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + B);
       gamepad.y      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Y);
       gamepad.select = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Select);
