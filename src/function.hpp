@@ -39,7 +39,7 @@ template<typename R, typename... P> struct bfunction<auto (P...) -> R> {
 
   bfunction() {}
   template<typename C> bfunction(auto (C::*_bfunction)(P...) -> R, C* object) { callback = new member<C>(_bfunction, object); }
-  template<typename L, typename = std::enable_if_t<is_compatible<L>::value>> bfunction(const L& object) { callback = new lambda<L>(object); }
+  template<typename L, typename = typename std::enable_if<is_compatible<L>::value>::type> bfunction(const L& object) { callback = new lambda<L>(object); }
   ~bfunction() { if(callback) delete callback; }
 
   explicit operator bool() const { return callback; }
