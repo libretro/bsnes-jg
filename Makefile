@@ -6,7 +6,7 @@ CXX ?= c++
 CFLAGS ?= -O2
 CXXFLAGS ?= -O2
 FLAGS := -std=c++11
-FLAGS_BML := -std=c++14
+FLAGS_BML := -std=c++11
 FLAGS_CO := -std=c89
 FLAGS_GB := -std=c11
 FLAGS_SPC := -std=c++98

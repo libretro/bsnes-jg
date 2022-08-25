@@ -143,7 +143,7 @@ namespace {
     }
     return ret;
   }
-  constexpr bool is_valid_name_char(char c) {
+  bool is_valid_name_char(char c) {
     if(c >= 'A' && c <= 'Z') return true;
     else if(c >= 'a' && c <= 'z') return true;
     else if(c >= '0' && c <= '9') return true;
@@ -340,14 +340,14 @@ document::document(reader& raw_reader, size_t max_depth) {
     // this code is a little weird because it has to do everything "backwards"
     // TODO: this memory layout isn't ideal, see if we can find a way to "un-
     // reverse" the ordering of child-groups of nodes at the same level
-    node_buffer = std::make_unique<node[]>(num_nodes);
+    node_buffer = std::unique_ptr<node[]>(new node[num_nodes]());
     struct cook_state {
       std::list<node_being_parsed>::const_reverse_iterator current_node,
         current_end;
       node::index current_index, last_index;
     };
     std::unique_ptr<cook_state[]> stack
-      = std::make_unique<cook_state[]>(deepest_child+1);
+      = std::unique_ptr<cook_state[]>(new cook_state[deepest_child+1]());
     stack[0] = cook_state{
       document_nodes.crbegin(),
       document_nodes.crend(),
