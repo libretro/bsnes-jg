@@ -23,13 +23,41 @@
 namespace Heuristics {
 
 struct Memory {
-  auto& type(std::string type) { _type = type; return *this; }
-  auto& size(size_t size) { _size = size; return *this; }
-  auto& content(std::string content) { _content = content; return *this; }
-  auto& manufacturer(std::string manufacturer) { _manufacturer = manufacturer; return *this; }
-  auto& architecture(std::string architecture) { _architecture = architecture; return *this; }
-  auto& identifier(std::string identifier) { _identifier = identifier; return *this; }
-  auto& isVolatile() { _volatile = true; return *this; }
+  Memory& type(std::string type) {
+    _type = type;
+    return *this;
+  }
+
+  Memory& size(size_t size) {
+    _size = size;
+    return *this;
+  }
+
+  Memory& content(std::string content) {
+    _content = content;
+    return *this;
+  }
+
+  Memory& manufacturer(std::string manufacturer) {
+    _manufacturer = manufacturer;
+    return *this;
+  }
+
+  Memory& architecture(std::string architecture) {
+    _architecture = architecture;
+    return *this;
+  }
+
+  Memory& identifier(std::string identifier) {
+    _identifier = identifier;
+    return *this;
+  }
+
+  Memory& isVolatile() {
+    _volatile = true;
+    return *this;
+  }
+
   std::string text() const;
 
   std::string _type;
@@ -43,16 +71,22 @@ struct Memory {
 };
 
 struct Oscillator {
-  auto& frequency(unsigned frequency) { _frequency = frequency; return *this; }
-  std::string text() const;
+  Oscillator& frequency(unsigned frequency) {
+    _frequency = frequency;
+    return *this;
+  }
 
+  std::string text() const;
   unsigned _frequency;
 };
 
 struct Slot {
-  auto& type(std::string type) { _type = type; return *this; }
-  std::string text() const;
+  Slot& type(std::string type) {
+    _type = type;
+    return *this;
+  }
 
+  std::string text() const;
   std::string _type;
 };
 
