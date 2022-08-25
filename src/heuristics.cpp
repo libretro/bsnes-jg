@@ -290,7 +290,7 @@ std::string GameBoy::manifest() const {
   std::string serial = title.substr(0, title.size() - 4);
 
   if(!black && !clear) serial = "";
-  for(auto& byte : serial) {
+  for(char& byte : serial) {
     if(byte >= 'A' && byte <= 'Z') continue;
     //invalid serial
     serial = "";
@@ -462,7 +462,7 @@ std::string SuperFamicom::manifest() const {
     btokens.push_back("");
   }
 
-  if(auto size = romSize()) {
+  if(unsigned size = romSize()) {
     if(btokens[0] == "SPC7110" && size > 0x100000) {
       output += Memory{}.type("ROM").size(0x100000).content("Program").text();
       output += Memory{}.type("ROM").size(size - 0x100000).content("Data").text();
@@ -476,11 +476,11 @@ std::string SuperFamicom::manifest() const {
     }
   }
 
-  if(auto size = ramSize()) {
+  if(unsigned size = ramSize()) {
     output += Memory{}.type("RAM").size(size).content("Save").text();
   }
 
-  if(auto size = expansionRamSize()) {
+  if(unsigned size = expansionRamSize()) {
     output += Memory{}.type("RAM").size(size).content("Save").text();
   }
 
@@ -582,7 +582,7 @@ std::string SuperFamicom::region() const {
 }
 
 std::string SuperFamicom::videoRegion() const {
-  auto region = data[headerAddress + 0x29];
+  unsigned region = data[headerAddress + 0x29];
   if(region == 0x00) return "NTSC";  //JPN
   if(region == 0x01) return "NTSC";  //USA
   if(region == 0x0b) return "NTSC";  //ROC
@@ -632,10 +632,10 @@ std::string SuperFamicom::revision() const {
 std::string SuperFamicom::board() const {
   std::string board;
 
-  auto mapMode          = data[headerAddress + 0x25];
-  auto cartridgeTypeLo  = data[headerAddress + 0x26] & 15;
-  auto cartridgeTypeHi  = data[headerAddress + 0x26] >> 4;
-  auto cartridgeSubType = data[headerAddress + 0x0f];
+  unsigned mapMode          = data[headerAddress + 0x25];
+  unsigned cartridgeTypeLo  = data[headerAddress + 0x26] & 15;
+  unsigned cartridgeTypeHi  = data[headerAddress + 0x26] >> 4;
+  unsigned cartridgeSubType = data[headerAddress + 0x0f];
 
   std::string mode;
   if(mapMode == 0x20 || mapMode == 0x30) mode = "LOROM-";
@@ -711,8 +711,8 @@ std::string SuperFamicom::title() const {
   std::string label;
 
   for(unsigned n = 0; n < 0x15; n++) {
-    auto x = data[headerAddress + 0x10 + n];
-    auto y = n == 0x14 ? 0 : data[headerAddress + 0x11 + n];
+    unsigned x = data[headerAddress + 0x10 + n];
+    unsigned y = n == 0x14 ? 0 : data[headerAddress + 0x11 + n];
 
     //null terminator (padding)
     if(x == 0x00 || x == 0xff);
@@ -850,9 +850,9 @@ unsigned SuperFamicom::expansionRomSize() const {
 
 //detect if any firmware is appended to the ROM image, and return its size if so
 unsigned SuperFamicom::firmwareRomSize() const {
-  auto cartridgeTypeLo  = data[headerAddress + 0x26] & 15;
-  auto cartridgeTypeHi  = data[headerAddress + 0x26] >> 4;
-  auto cartridgeSubType = data[headerAddress + 0x0f];
+  unsigned cartridgeTypeLo  = data[headerAddress + 0x26] & 15;
+  unsigned cartridgeTypeHi  = data[headerAddress + 0x26] >> 4;
+  unsigned cartridgeSubType = data[headerAddress + 0x0f];
 
   if(serial() == "042J" || (cartridgeTypeLo == 0x3 && cartridgeTypeHi == 0xe)) {
     //Game Boy
@@ -883,7 +883,7 @@ unsigned SuperFamicom::firmwareRomSize() const {
 }
 
 unsigned SuperFamicom::ramSize() const {
-  auto ramSize = data[headerAddress + 0x28] & 15;
+  unsigned ramSize = data[headerAddress + 0x28] & 15;
   if(ramSize > 8) ramSize = 8;
   if(ramSize > 0) return 1024 << ramSize;
   return 0;
@@ -891,7 +891,7 @@ unsigned SuperFamicom::ramSize() const {
 
 unsigned SuperFamicom::expansionRamSize() const {
   if(data[headerAddress + 0x2a] == 0x33) {
-    auto ramSize = data[headerAddress + 0x0d] & 15;
+    unsigned ramSize = data[headerAddress + 0x0d] & 15;
     if(ramSize > 8) ramSize = 8;
     if(ramSize > 0) return 1024 << ramSize;
   }
@@ -903,7 +903,7 @@ unsigned SuperFamicom::expansionRamSize() const {
 }
 
 bool SuperFamicom::nonVolatile() const {
-  auto cartridgeTypeLo = data[headerAddress + 0x26] & 15;
+  unsigned cartridgeTypeLo = data[headerAddress + 0x26] & 15;
   return cartridgeTypeLo == 0x2 || cartridgeTypeLo == 0x5 || cartridgeTypeLo == 0x6;
 }
 
