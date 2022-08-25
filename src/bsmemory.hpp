@@ -121,7 +121,7 @@ private:
   } blocks[64];  //8mbit = 16; 16mbit = 32; 32mbit = 64
 
   struct Blocks : BlockInformation {
-    auto operator()(uint8_t id) -> Block&;
+    Block& operator()(uint8_t id);
   } block;
 
   struct Compatible {
