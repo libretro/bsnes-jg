@@ -46,7 +46,11 @@ struct WDC65816 {
   union r16 {
     inline r16() : w(0) {}
     inline r16(unsigned data) : w(data) {}
-    inline auto& operator=(unsigned data) { w = data; return *this; }
+
+    inline r16& operator=(unsigned data) {
+      w = data;
+      return *this;
+    }
 
     uint16_t w;
     struct { uint8_t order_lsb2(l, h); } r16_lsb2;
@@ -55,7 +59,11 @@ struct WDC65816 {
   union r24 {
     inline r24() : d(0) {}
     inline r24(unsigned data) : d(data) {}
-    inline auto& operator=(unsigned data) { d = data; return *this; }
+
+    inline r24& operator=(unsigned data) {
+      d = data;
+      return *this;
+    }
 
     uint32_t d;
     struct { uint16_t order_lsb2(w, x); } r24_lsb2;
@@ -261,7 +269,7 @@ struct WDC65816 {
       return c << 0 | z << 1 | i << 2 | d << 3 | x << 4 | m << 5 | v << 6 | n << 7;
     }
 
-    inline auto& operator=(unsigned data) {
+    inline f8& operator=(unsigned data) {
       c = data & 0x01;
       z = data & 0x02;
       i = data & 0x04;

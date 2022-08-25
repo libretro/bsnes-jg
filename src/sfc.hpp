@@ -22,7 +22,7 @@
 
 #include <libco/libco.h>
 
-inline constexpr auto operator"" _KiB(unsigned long long value) {
+inline constexpr unsigned long long operator"" _KiB(unsigned long long value) {
   return value * 1024;
 }
 

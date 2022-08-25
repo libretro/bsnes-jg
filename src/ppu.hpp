@@ -130,7 +130,9 @@ private:
   void updateVideoMode();
 
   struct VRAM {
-    auto& operator[](unsigned address) { return data[address & mask]; }
+    uint16_t& operator[](unsigned address) {
+      return data[address & mask];
+    }
     uint16_t data[64 * 1024];
     uint16_t mask = 0x7fff;
   } vram;

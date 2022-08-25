@@ -157,7 +157,7 @@ struct SPC700 {
       return c << 0 | z << 1 | i << 2 | h << 3 | b << 4 | p << 5 | v << 6 | n << 7;
     }
 
-    inline auto& operator=(uint8_t data) {
+    inline Flags& operator=(uint8_t data) {
       c = data & 0x01;
       z = data & 0x02;
       i = data & 0x04;
