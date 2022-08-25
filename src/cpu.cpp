@@ -56,17 +56,17 @@ bool CPU::raise(bool& data, bool value) {
 }
 
 bool CPU::dmaEnable() {
-  for(auto& channel : channels) if(channel.dmaEnable) return true;
+  for(Channel& channel : channels) if(channel.dmaEnable) return true;
   return false;
 }
 
 bool CPU::hdmaEnable() {
-  for(auto& channel : channels) if(channel.hdmaEnable) return true;
+  for(Channel& channel : channels) if(channel.hdmaEnable) return true;
   return false;
 }
 
 bool CPU::hdmaActive() {
-  for(auto& channel : channels) if(channel.hdmaActive()) return true;
+  for(Channel& channel : channels) if(channel.hdmaActive()) return true;
   return false;
 }
 
@@ -78,26 +78,26 @@ void CPU::dmaRun() {
   counter.dma += 8;
   step<8,0>();
   dmaEdge();
-  for(auto& channel : channels) channel.dmaRun();
+  for(Channel& channel : channels) channel.dmaRun();
   status.irqLock = true;
 }
 
 void CPU::hdmaReset() {
-  for(auto& channel : channels) channel.hdmaReset();
+  for(Channel& channel : channels) channel.hdmaReset();
 }
 
 void CPU::hdmaSetup() {
   counter.dma += 8;
   step<8,0>();
-  for(auto& channel : channels) channel.hdmaSetup();
+  for(Channel& channel : channels) channel.hdmaSetup();
   status.irqLock = true;
 }
 
 void CPU::hdmaRun() {
   counter.dma += 8;
   step<8,0>();
-  for(auto& channel : channels) channel.hdmaTransfer();
-  for(auto& channel : channels) channel.hdmaAdvance();
+  for(Channel& channel : channels) channel.hdmaTransfer();
+  for(Channel& channel : channels) channel.hdmaAdvance();
   status.irqLock = true;
 }
 
@@ -155,10 +155,10 @@ void CPU::Channel::transfer(uint32_t addressA, uint8_t index) {
 
   cpu.r.mar = addressA;
   if(direction == 0) {
-    auto data = readA(addressA);
+    uint8_t data = readA(addressA);
     writeB(addressB, data, valid);
   } else {
-    auto data = readB(addressB, valid);
+    uint8_t data = readB(addressB, valid);
     writeA(addressA, data);
   }
 }
@@ -209,7 +209,7 @@ void CPU::Channel::hdmaSetup() {
 }
 
 void CPU::Channel::hdmaReload() {
-  auto data = readA(cpu.r.mar = sourceBank << 16 | hdmaAddress);
+  uint8_t data = readA(cpu.r.mar = sourceBank << 16 | hdmaAddress);
 
   if((lineCounter & 0x7f) == 0) {
     lineCounter = data;
@@ -287,7 +287,7 @@ uint8_t CPU::read(unsigned address) {
   }
 
   status.irqLock = 0;
-  auto data = bus.read(address, r.mdr);
+  uint8_t data = bus.read(address, r.mdr);
   step<4,0>();
   aluEdge();
   //$00-3f,80-bf:4000-43ff reads are internal to CPU, and do not update the MDR
@@ -408,7 +408,7 @@ uint8_t CPU::readCPU(unsigned addr, uint8_t data) {
 }
 
 uint8_t CPU::readDMA(unsigned addr, uint8_t data) {
-  auto& channel = this->channels[addr >> 4 & 7];
+  Channel& channel = this->channels[addr >> 4 & 7];
 
   switch(addr & 0xff8f) {
 
@@ -564,7 +564,7 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
 }
 
 void CPU::writeDMA(unsigned addr, uint8_t data) {
-  auto& channel = this->channels[addr >> 4 & 7];
+  Channel& channel = this->channels[addr >> 4 & 7];
 
   switch(addr & 0xff8f) {
 
@@ -649,7 +649,7 @@ template<unsigned Clocks, bool Synchronize>
 void CPU::step() {
   static_assert(Clocks == 2 || Clocks == 4 || Clocks == 6 || Clocks == 8 || Clocks == 10 || Clocks == 12, "invalid number of clock cycles");
 
-  for(auto coprocessor : coprocessors) {
+  for(Thread* coprocessor : coprocessors) {
     if(coprocessor == &icd || coprocessor == &msu1) continue;
     coprocessor->clock -= Clocks * (uint64_t)coprocessor->frequency;
   }
@@ -674,7 +674,7 @@ void CPU::step() {
 
   smp.clock -= Clocks * (uint64_t)smp.frequency;
   ppu.clock -= Clocks;
-  for(auto coprocessor : coprocessors) {
+  for(Thread* coprocessor : coprocessors) {
     if(coprocessor != &icd && coprocessor != &msu1) continue;
     coprocessor->clock -= Clocks * (uint64_t)coprocessor->frequency;
   }
@@ -762,7 +762,7 @@ void CPU::scanline() {
   //handle video frame events from the CPU core to prevent a race condition between
   //games polling inputs during NMI and the PPU thread not being 100% synchronized.
   if(vcounter() == ppu.vdisp()) {
-    if(auto device = controllerPort2.device) device->latch();  //light guns
+    if(Controller* device = controllerPort2.device) device->latch();  //light guns
     synchronizePPU();
     scheduler.leave(Scheduler::Event::Frame);
   }
@@ -1049,7 +1049,7 @@ void CPU::serialize(serializer& s) {
   s.integer(alu.divctr);
   s.integer(alu.shift);
 
-  for(auto& channel : channels) {
+  for(Channel& channel : channels) {
     s.integer(channel.dmaEnable);
     s.integer(channel.hdmaEnable);
     s.integer(channel.direction);
@@ -1080,7 +1080,7 @@ void CPU::synchronizePPU() {
 }
 
 void CPU::synchronizeCoprocessors() {
-  for(auto coprocessor : coprocessors) {
+  for(Thread* coprocessor : coprocessors) {
     if(coprocessor->clock < 0) scheduler.resume(coprocessor->thread);
   }
 }
@@ -1156,7 +1156,7 @@ void CPU::power(bool reset) {
   if(!reset) random.array(wram, sizeof(wram));
 
   if(init)
-    for(auto& byte : wram) byte = 0xff;
+    for(uint8_t& byte : wram) byte = 0xff;
 
   for(unsigned n = 0; n < 8; ++n) {
     channels[n] = {};

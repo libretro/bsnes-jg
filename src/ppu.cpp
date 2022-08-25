@@ -1127,7 +1127,7 @@ void PPU::Background::scanline() {
 //H = 56
 void PPU::Background::begin() {
   //remove partial tile columns that have been scrolled offscreen
-  for(auto& data : tiles[0].data) data >>= pixelCounter << 1;
+  for(uint16_t& data : tiles[0].data) data >>= pixelCounter << 1;
 }
 
 void PPU::Background::fetchNameTable() {
@@ -1197,7 +1197,7 @@ void PPU::Background::fetchNameTable() {
   uint16_t address = io.screenAddress + offset;
   uint16_t attributes = ppu.vram[address];
 
-  auto& tile = tiles[nameTableIndex];
+  Tile& tile = tiles[nameTableIndex];
   tile.character = attributes & 0x03ff;
   tile.paletteGroup = attributes >> 10 & 7;
   tile.priority = io.priority[attributes >> 13 & 1];
@@ -1258,7 +1258,7 @@ void PPU::Background::fetchCharacter(unsigned index, bool half) {
 
   unsigned characterIndex = (ppu.hcounter() >> 5 << hires()) + half;
 
-  auto& tile = tiles[characterIndex];
+  Tile& tile = tiles[characterIndex];
   uint16_t data = ppu.vram[tile.address + (index << 3)];
 
   //reverse bits so that the lowest bit is the left-most pixel
@@ -1286,7 +1286,7 @@ void PPU::Background::run(bool pos) {
 
   if(io.mode == Mode::Mode7) return runMode7();
 
-  auto& tile = tiles[renderingIndex];
+  Tile& tile = tiles[renderingIndex];
   uint8_t color = 0;
 
   if(io.mode >= Mode::BPP2)
@@ -1530,7 +1530,7 @@ void PPU::Object::fetch() {
     }
 
     ppu.latch.oamAddress = 0x0200 + (oamItem[i].index >> 2);
-    const auto& sprite = oam.object[oamItem[i].index];
+    const OAM::Object& sprite = oam.object[oamItem[i].index];
 
     unsigned tileWidth = sprite.width() >> 3;
     int x = sprite.x;
@@ -1590,7 +1590,7 @@ void PPU::Object::fetch() {
 }
 
 void PPU::Object::power() {
-  for(auto& object : oam.object) {
+  for(OAM::Object& object : oam.object) {
     object.x = 0;
     object.y = 0;
     object.character = 0;
@@ -1634,7 +1634,7 @@ void PPU::Object::power() {
   io.tiledataAddress = (random() & 7) << 13;
   io.firstSprite = 0;
 
-  for(auto& p : io.priority) p = 0;
+  for(uint8_t& p : io.priority) p = 0;
 
   io.timeOver = 0;
   io.rangeOver = 0;
@@ -1921,7 +1921,7 @@ uint16_t PPU::Screen::fixedColor() const {
 
 void PPU::Screen::power() {
   random.array((uint8_t*)cgram, sizeof(cgram));
-  for(auto& word : cgram) word &= 0x7fff;
+  for(uint16_t& word : cgram) word &= 0x7fff;
 
   io.blendMode = random() & 1;
   io.directColor = random() & 1;
@@ -2055,7 +2055,7 @@ void PPU::Background::serialize(serializer& s) {
   s.integer(opt.hoffset);
   s.integer(opt.voffset);
 
-  for(auto& tile : tiles) {
+  for(Tile& tile : tiles) {
     s.integer(tile.address);
     s.integer(tile.character);
     s.integer(tile.palette);
@@ -2071,7 +2071,7 @@ void PPU::Background::serialize(serializer& s) {
 }
 
 void PPU::Object::serialize(serializer& s) {
-  for(auto& object : oam.object) {
+  for(OAM::Object& object : oam.object) {
     s.integer(object.x);
     s.integer(object.y);
     s.integer(object.character);

@@ -155,7 +155,7 @@ void System::serializeAll(serializer& s, bool synchronize) {
     cpu.serializeStack(s);
     smp.serializeStack(s);
     ppu.serializeStack(s);
-    for(auto coprocessor : cpu.coprocessors) {
+    for(Thread* coprocessor : cpu.coprocessors) {
       coprocessor->serializeStack(s);
     }
   }
@@ -233,7 +233,7 @@ void System::runToSaveFast() {
 
   synchronize(smp.thread);
   synchronize(ppu.thread);
-  for(auto coprocessor : cpu.coprocessors) {
+  for(Thread* coprocessor : cpu.coprocessors) {
     synchronize(coprocessor->thread);
   }
 }
@@ -258,7 +258,7 @@ void System::runToSaveStrict() {
     if(!synchronize(smp.thread)) continue;
     if(!synchronize(cpu.thread)) continue;
     bool synchronized = true;
-    for(auto coprocessor : cpu.coprocessors) {
+    for(Thread* coprocessor : cpu.coprocessors) {
       if(!synchronize(coprocessor->thread)) { synchronized = false; break; }
     }
     if(!synchronized) continue;
@@ -274,7 +274,7 @@ void System::frameEvent() {
 
   //refresh all cheat codes once per frame
   Memory::GlobalWriteEnable = true;
-  for(auto& code : cheat.codes) {
+  for(Cheat::Code& code : cheat.codes) {
     if(code.enable) {
       bus.write(code.address, code.data);
     }

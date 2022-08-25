@@ -451,7 +451,7 @@ void ICD::power(bool reset) {
   create(ICD::Enter, freq);
   if(!reset) stream = audio.createStream(freq / 128);
 
-  for(auto& p : this->packet) p = {};
+  for(Packet& p : this->packet) p = {};
   packetSize = 0;
 
   joypID = 0;
@@ -464,7 +464,7 @@ void ICD::power(bool reset) {
   bitData = 0;
   bitOffset = 0;
 
-  for(auto& n : output) n = 0xff;
+  for(uint8_t& n : output) n = 0xff;
   readBank = 0;
   readAddress = 0;
   writeBank = 0;
@@ -474,7 +474,7 @@ void ICD::power(bool reset) {
   r6005 = 0xff;
   r6006 = 0xff;
   r6007 = 0xff;
-  for(auto& r : r7000) r = 0x00;
+  for(uint8_t& r : r7000) r = 0x00;
   mltReq = 0;
 
   hcounter = 0;

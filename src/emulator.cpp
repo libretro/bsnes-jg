@@ -39,18 +39,18 @@ void Game::load(std::string text) {
   std::vector<std::string> memlist = BML::searchList(text, "memory");
   std::vector<std::string> osclist = BML::searchList(text, "oscillator");
 
-  for (auto node : memlist) {
+  for (std::string node : memlist) {
     memoryList.push_back(Memory{node});
   }
 
-  for (auto node : osclist) {
+  for (std::string node : osclist) {
     oscillatorList.push_back(Oscillator{node});
   }
 }
 
 bool Game::memory(Game::Memory& mem, std::string node) {
   if (node.empty()) return false;
-  for (auto& m : memoryList) {
+  for (Game::Memory& m : memoryList) {
     std::string type = BML::search(node, {"memory", "type"});
     std::string strsize = BML::search(node, {"memory", "size"});
     unsigned size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);

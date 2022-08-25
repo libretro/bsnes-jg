@@ -114,9 +114,9 @@ void Interface::cheatsApply(const std::vector<std::string>& list) {
   newCheat.assign(list);
 
   //determine all old codes to remove
-  for(auto& oldCode : oldCheat.codes) {
+  for(Cheat::Code& oldCode : oldCheat.codes) {
     bool found = false;
-    for(auto& newCode : newCheat.codes) {
+    for(Cheat::Code& newCode : newCheat.codes) {
       if(oldCode == newCode) {
         found = true;
         break;
@@ -131,9 +131,9 @@ void Interface::cheatsApply(const std::vector<std::string>& list) {
   }
 
   //determine all new codes to create
-  for(auto& newCode : newCheat.codes) {
+  for(Cheat::Code& newCode : newCheat.codes) {
     bool found = false;
-    for(auto& oldCode : oldCheat.codes) {
+    for(Cheat::Code& oldCode : oldCheat.codes) {
       if(newCode == oldCode) {
         found = true;
         break;

@@ -107,8 +107,8 @@ struct Decompressor {
         if(bpp == 2) set = diff;
         if(plane >= 2 && history <= 1) set = diff;
 
-        auto& ctx = context[set][bit + history - 1];
-        auto& model = evolution[ctx.prediction];
+        Context& ctx = context[set][bit + history - 1];
+        ModelState& model = evolution[ctx.prediction];
         uint8_t lps_offset = range - model.probability;
         bool symbol = input >= (lps_offset << 8);  //test only the MSB
 

@@ -76,14 +76,14 @@ unsigned Bus::map(
   std::vector<std::string> addrs;
   for (std::string i; std::getline(ss, i, ','); addrs.push_back(i));
 
-  for (auto& bank : banks) {
+  for (std::string& bank : banks) {
     ss.clear(); ss.str(bank);
     std::vector<unsigned> bankRange;
     for (std::string i; std::getline(ss, i, '-');
       bankRange.push_back(std::stoul(i, nullptr, 16)));
     if (bankRange.size() == 1) bankRange.push_back(bankRange[0]);
 
-    for (auto& addr2 : addrs) {
+    for (std::string& addr2 : addrs) {
       ss.clear(); ss.str(addr2);
       std::vector<unsigned> addrRange;
       for (std::string i; std::getline(ss, i, '-');
@@ -125,13 +125,13 @@ void Bus::unmap(const std::string& addr) {
   std::vector<std::string> addrs;
   for (std::string i; std::getline(ss, i, ','); addrs.push_back(i));
 
-  for (auto& bank : banks) {
+  for (std::string& bank : banks) {
     ss.clear(); ss.str(bank);
     std::vector<unsigned> bankRange;
     for (std::string i; std::getline(ss, i, '-');
       bankRange.push_back(std::stoul(i, nullptr, 16)));
 
-    for (auto& addr2 : addrs) {
+    for (std::string& addr2 : addrs) {
       ss.clear(); ss.str(addr2);
       std::vector<unsigned> addrRange;
       for (std::string i; std::getline(ss, i, '-');

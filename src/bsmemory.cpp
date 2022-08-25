@@ -47,7 +47,7 @@ void BSMemory::serialize(serializer& s) {
   s.array(page.buffer[0]);
   s.array(page.buffer[1]);
 
-  for(auto& _block : blocks) {
+  for(Block& _block : blocks) {
     s.integer(_block.id);
     s.integer(_block.erased);
     s.integer(_block.locked);
@@ -111,7 +111,7 @@ void BSMemory::writable(bool writable) {
 BSMemory::BSMemory() {
   page.self = this;
   unsigned blockID = 0;
-  for(auto& _block : blocks) _block.self = this, _block.id = blockID++;
+  for(Block& _block : blocks) _block.self = this, _block.id = blockID++;
   block.self = this;
 }
 
@@ -160,10 +160,10 @@ bool BSMemory::load() {
 
   //page buffer values decay to random noise upon losing power to the flash chip
   //the randomness is high entropy (at least compared to SNES SRAM/DRAM chips)
-  for(auto& byte : page.buffer[0]) byte = random();
-  for(auto& byte : page.buffer[1]) byte = random();
+  for(uint8_t& byte : page.buffer[0]) byte = random();
+  for(uint8_t& byte : page.buffer[1]) byte = random();
 
-  for(auto& _block : blocks) {
+  for(Block& _block : blocks) {
     _block.erased = 1;
     _block.locked = 1;
   }
@@ -218,7 +218,7 @@ void BSMemory::unload() {
 void BSMemory::power() {
   create(Enter, 1000000);  //microseconds
 
-  for(auto& _block : blocks) {
+  for(Block& _block : blocks) {
     _block.erasing = 0;
     _block.status = {};
   }

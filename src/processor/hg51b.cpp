@@ -964,7 +964,7 @@ void HG51B::push() {
 }
 
 void HG51B::pull() {
-  auto pc  = stack[0];
+  uint32_t pc  = stack[0];
   stack[0] = stack[1];
   stack[1] = stack[2];
   stack[2] = stack[3];
@@ -1455,7 +1455,7 @@ void HG51B::dma() {
     if(isRAM(source) && isRAM(target)) return lock();
 
     step(wait(source));
-    auto data = read(source);
+    uint8_t data = read(source);
 
     step(wait(target));
     write(target, data);
