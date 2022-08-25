@@ -266,13 +266,13 @@ uint16_t PPU::addressVRAM() const {
 
 uint16_t PPU::readVRAM() {
   if(!io.displayDisable && vcounter() < vdisp()) return 0x0000;
-  auto address = addressVRAM();
+  uint16_t address = addressVRAM();
   return vram[address];
 }
 
 void PPU::writeVRAM(bool byte, uint8_t data) {
   if(!io.displayDisable && vcounter() < vdisp()) return;
-  auto address = addressVRAM();
+  uint16_t address = addressVRAM();
   if(byte == 0) vram[address] = (vram[address] & 0xff00) | data << 0;
   if(byte == 1) vram[address] = (vram[address] & 0x00ff) | data << 8;
 }
@@ -1156,8 +1156,8 @@ void PPU::Background::fetchNameTable() {
   unsigned voffset = vpixel + vscroll;
 
   if(ppu.io.bgMode == 2 || ppu.io.bgMode == 4 || ppu.io.bgMode == 6) {
-    auto hlookup = ppu.bg3.opt.hoffset;
-    auto vlookup = ppu.bg3.opt.voffset;
+    uint16_t hlookup = ppu.bg3.opt.hoffset;
+    uint16_t vlookup = ppu.bg3.opt.voffset;
     unsigned valid = 1 << (13 + id);
 
     if(ppu.io.bgMode == 4) {
@@ -1756,7 +1756,7 @@ void PPU::Window::power() {
 }
 
 void PPU::Screen::scanline() {
-  auto y = ppu.vcounter() + (!ppu.display.overscan ? 7 : 0);
+  uint8_t y = ppu.vcounter() + (!ppu.display.overscan ? 7 : 0);
 
   lineA = ppu.output + y * (ppu.display.interlace ? 1024 : 512);
   lineB = lineA + (ppu.display.interlace ? 0 : 512);
@@ -1779,8 +1779,8 @@ void PPU::Screen::run() {
   if(ppu.vcounter() > 232 || ppu.vcounter() == 0) return;
 
   bool hires      = ppu.io.pseudoHires || ppu.io.bgMode == 5 || ppu.io.bgMode == 6;
-  auto belowColor = below(hires);
-  auto aboveColor = above();
+  uint16_t belowColor = below(hires);
+  uint16_t aboveColor = above();
 
   *lineA++ = *lineB++ = ppu.lightTable[ppu.io.displayBrightness][hires ? belowColor : aboveColor];
   *lineA++ = *lineB++ = ppu.lightTable[ppu.io.displayBrightness][aboveColor];
@@ -2106,12 +2106,12 @@ void PPU::Object::serialize(serializer& s) {
   s.integer(t.tileCount);
 
   s.integer(t.active);
-  for(auto p = 0; p < 2; ++p) {
-    for(auto n = 0; n < 32; ++n) {
+  for(unsigned p = 0; p < 2; ++p) {
+    for(unsigned n = 0; n < 32; ++n) {
       s.integer(t.item[p][n].valid);
       s.integer(t.item[p][n].index);
     }
-    for(auto n = 0; n < 34; ++n) {
+    for(unsigned n = 0; n < 34; ++n) {
       s.integer(t.tile[p][n].valid);
       s.integer(t.tile[p][n].x);
       s.integer(t.tile[p][n].priority);
@@ -2435,10 +2435,10 @@ void PPU::power(bool reset) {
 void PPU::refresh() {
   if(system.runAhead) return;
 
-  auto out = this->output;
-  auto pitch  = 512;
-  auto width  = 512;
-  auto height = ppu.display.interlace ? 480 : 240;
+  uint16_t *out = this->output;
+  unsigned pitch  = 512;
+  unsigned width  = 512;
+  unsigned height = ppu.display.interlace ? 480 : 240;
 
   videoFrame(out, pitch * sizeof(uint16_t), width, height);
 }
