@@ -64,7 +64,7 @@ void Cheat::assign(const std::vector<std::string>& list) {
 }
 
 bool Cheat::find(uint8_t *val, unsigned address, unsigned compare) {
-  for(auto& code : codes) {
+  for(Code& code : codes) {
     if(code.address == address && (!code.compare || code.compare == compare)) {
       *val = code.data;
       return true;
