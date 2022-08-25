@@ -113,18 +113,18 @@ Audio::~Audio() {
 }
 
 void Audio::reset() {
-  for (auto& stream : _streams) {
+  for (Stream*& stream : _streams) {
     delete stream;
   }
   _streams.clear();
 }
 
 void Audio::process() {
-  for (auto& stream : _streams) {
+  for (Stream*& stream : _streams) {
       if (stream->queue_out.size() < _spf) return;
   }
 
-  for (auto& stream : _streams) {
+  for (Stream*& stream : _streams) {
     for (unsigned i = 0; i < _spf; ++i) {
       buffer[i] += stream->queue_out[i];
     }
