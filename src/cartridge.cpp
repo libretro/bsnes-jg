@@ -166,7 +166,7 @@ bool Cartridge::loadCartridge(std::string node) {
 }
 
 void Cartridge::loadCartridgeBSMemory(std::string node) {
-  if (auto memory = Emulator::Game::Memory(BML::searchNode(node, {"game", "board", "memory"}))) {
+  if (Emulator::Game::Memory memory = Emulator::Game::Memory(BML::searchNode(node, {"game", "board", "memory"}))) {
     bsmemory.ROM = memory.type == "ROM";
     bsmemory.memory.allocate(memory.size);
     for (unsigned i = 0; i < memory.size; ++i) {
@@ -181,7 +181,7 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "ROM" && content == "Program") {
-      if(auto memory = Emulator::Game::Memory(m)) {
+      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
         sufamiturboA.rom.allocate(memory.size);
         for (unsigned i = 0; i < memory.size; ++i) {
           sufamiturboA.rom.data()[i] = slotSufamiTurboA.prgrom.data()[i];
@@ -189,7 +189,7 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
       }
     }
     else if (type == "RAM" && content == "Save") {
-      if(auto memory = Emulator::Game::Memory(m)) {
+      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
         sufamiturboA.ram.allocate(memory.size);
         std::ifstream sramfile =
           openCallback(sufamiturboA.pathID, "save.ram");
@@ -208,7 +208,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "ROM" && content == "Program") {
-      if(auto memory = Emulator::Game::Memory(m)) {
+      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
         sufamiturboB.rom.allocate(memory.size);
         for (unsigned i = 0; i < memory.size; ++i) {
           sufamiturboB.rom.data()[i] = slotSufamiTurboB.prgrom.data()[i];
@@ -216,7 +216,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
       }
     }
     else if (type == "RAM" && content == "Save") {
-      if(auto memory = Emulator::Game::Memory(m)) {
+      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
         sufamiturboB.ram.allocate(memory.size);
         std::ifstream sramfile =
           openCallback(sufamiturboB.pathID, "save.ram");
@@ -231,7 +231,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
 
 template<typename T>  //T = ReadableMemory, WritableMemory
 unsigned Cartridge::loadMap(std::string map, T& memory) {
-  auto addr = BML::search(map, {"map", "address"});
+  std::string addr = BML::search(map, {"map", "address"});
   std::string strsize = BML::search(map, {"map", "size"});
   std::string strbase = BML::search(map, {"map", "base"});
   std::string strmask = BML::search(map, {"map", "mask"});
@@ -248,7 +248,7 @@ unsigned Cartridge::loadMap(
   const bfunction<uint8_t (unsigned, uint8_t)>& reader,
   const bfunction<void  (unsigned, uint8_t)>& writer
 ) {
-  auto addr = BML::search(map, {"map", "address"});
+  std::string addr = BML::search(map, {"map", "address"});
   std::string strsize = BML::search(map, {"map", "size"});
   std::string strbase = BML::search(map, {"map", "base"});
   std::string strmask = BML::search(map, {"map", "mask"});
@@ -299,13 +299,13 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
 void Cartridge::loadROM(std::string node) {
   loadMemory(rom, node);
   std::vector<std::string> maps = BML::searchList(node, "map");
-  for (auto map : maps) loadMap(map, rom);
+  for (std::string map : maps) loadMap(map, rom);
 }
 
 void Cartridge::loadRAM(std::string node) {
   loadMemory(ram, node);
   std::vector<std::string> maps = BML::searchList(node, "map");
-  for (auto map : maps) loadMap(map, ram);
+  for (std::string map : maps) loadMap(map, ram);
 }
 
 //processor(identifier=ICD)
@@ -321,7 +321,7 @@ void Cartridge::loadICD(std::string node) {
 
   //Game Boy core loads data through ICD interface
   std::vector<std::string> maps = BML::searchList(node, "map");
-  for (auto map : maps) {
+  for (std::string map : maps) {
     loadMap(map, {&ICD::readIO, &icd}, {&ICD::writeIO, &icd});
   }
 }
@@ -337,7 +337,7 @@ void Cartridge::loadMCC(std::string node) {
 
   if (!mcu.empty()) {
     std::vector<std::string> maps = BML::searchList(mcu, "map");
-    for (auto map : maps) {
+    for (std::string map : maps) {
       loadMap(map, {&MCC::mcuRead, &mcc}, {&MCC::mcuWrite, &mcc});
     }
 
@@ -365,7 +365,7 @@ void Cartridge::loadBSMemory(std::string node) {
     loadBSMemory();
 
     std::vector<std::string> maps = BML::searchList(node, "map");
-    for (auto map : maps) {
+    for (std::string map : maps) {
       loadMap(map, bsmemory);
     }
   }
@@ -404,7 +404,7 @@ void Cartridge::loadDIP(std::string node) {
   dip.value = 0;
 
   std::vector<std::string> maps = BML::searchList(node, "map");
-  for (auto map : maps) {
+  for (std::string map : maps) {
     loadMap(map, {&DIP::read, &dip}, {&DIP::write, &dip});
   }
 }
@@ -452,7 +452,7 @@ void Cartridge::loadSA1(std::string node) {
 
   if (!mcu.empty()) {
     std::vector<std::string> maps = BML::searchList(mcu, "map");
-    for (auto map : maps) {
+    for (std::string map : maps) {
       loadMap(map, {&SA1::ROM::readCPU, &sa1.rom}, {&SA1::ROM::writeCPU, &sa1.rom});
     }
 
@@ -477,7 +477,7 @@ void Cartridge::loadSA1(std::string node) {
     if (type == "RAM" && content == "Save") {
       loadMemory(sa1.bwram, m);
       std::vector<std::string> maps = BML::searchList(m, "map");
-      for (auto map : maps) {
+      for (std::string map : maps) {
         loadMap(map, {&SA1::BWRAM::readCPU, &sa1.bwram}, {&SA1::BWRAM::writeCPU, &sa1.bwram});
       }
     }
@@ -485,7 +485,7 @@ void Cartridge::loadSA1(std::string node) {
     if (type == "RAM" && content == "Internal") {
       loadMemory(sa1.iram, m);
       std::vector<std::string> maps = BML::searchList(m, "map");
-      for (auto map : maps) {
+      for (std::string map : maps) {
         loadMap(map, {&SA1::IRAM::readCPU, &sa1.iram}, {&SA1::IRAM::writeCPU, &sa1.iram});
       }
     }
@@ -532,9 +532,9 @@ void Cartridge::loadSuperFX(std::string node) {
 void Cartridge::loadARMDSP(std::string node) {
   has.ARMDSP = true;
 
-  for(auto& word : armdsp.programROM) word = 0x00;
-  for(auto& word : armdsp.dataROM) word = 0x00;
-  for(auto& word : armdsp.programRAM) word = 0x00;
+  for(uint8_t& word : armdsp.programROM) word = 0x00;
+  for(uint8_t& word : armdsp.dataROM) word = 0x00;
+  for(uint8_t& word : armdsp.programRAM) word = 0x00;
 
   if(game.oscillatorList.size()) {
     armdsp.Frequency = game.oscillatorList[0].frequency;
@@ -589,8 +589,8 @@ void Cartridge::loadARMDSP(std::string node) {
 
 //processor(architecture=HG51BS169)
 void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
-  for(auto& word : hitachidsp.dataROM) word = 0x000000;
-  for(auto& word : hitachidsp.dataRAM) word = 0x00;
+  for(unsigned& word : hitachidsp.dataROM) word = 0x000000;
+  for(uint8_t& word : hitachidsp.dataRAM) word = 0x00;
 
   if(game.oscillatorList.size()) {
     hitachidsp.Frequency = game.oscillatorList[0].frequency;
@@ -674,9 +674,9 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
 
 //processor(architecture=uPD7725)
 void Cartridge::loaduPD7725(std::string node) {
-  for(auto& word : necdsp.programROM) word = 0x000000;
-  for(auto& word : necdsp.dataROM) word = 0x0000;
-  for(auto& word : necdsp.dataRAM) word = 0x0000;
+  for(unsigned& word : necdsp.programROM) word = 0x000000;
+  for(uint16_t& word : necdsp.dataROM) word = 0x0000;
+  for(uint16_t& word : necdsp.dataRAM) word = 0x0000;
 
   if(game.oscillatorList.size()) {
     necdsp.Frequency = game.oscillatorList[0].frequency;
@@ -767,9 +767,9 @@ void Cartridge::loaduPD7725(std::string node) {
 
 //processor(architecture=uPD96050)
 void Cartridge::loaduPD96050(std::string node) {
-  for(auto& word : necdsp.programROM) word = 0x000000;
-  for(auto& word : necdsp.dataROM) word = 0x0000;
-  for(auto& word : necdsp.dataRAM) word = 0x0000;
+  for(unsigned& word : necdsp.programROM) word = 0x000000;
+  for(uint16_t& word : necdsp.dataROM) word = 0x0000;
+  for(uint16_t& word : necdsp.dataRAM) word = 0x0000;
 
   if(game.oscillatorList.size()) {
     necdsp.Frequency = game.oscillatorList[0].frequency;
@@ -872,7 +872,7 @@ void Cartridge::loadEpsonRTC(std::string node) {
     std::ifstream rtcfile = openCallback(ID::SuperFamicom, "time.rtc");
     if (rtcfile.is_open()) {
       uint8_t data[16] = {0};
-      for(auto& byte : data) byte = rtcfile.get();
+      for(uint8_t& byte : data) byte = rtcfile.get();
       epsonrtc.load(data);
       rtcfile.close();
     }
@@ -894,7 +894,7 @@ void Cartridge::loadSharpRTC(std::string node) {
     std::ifstream rtcfile = openCallback(ID::SuperFamicom, "time.rtc");
     if (rtcfile.is_open()) {
       uint8_t data[16] = {0};
-      for(auto& byte : data) byte = rtcfile.get();
+      for(uint8_t& byte : data) byte = rtcfile.get();
       sharprtc.load(data);
       rtcfile.close();
     }
@@ -956,7 +956,7 @@ void Cartridge::loadSDD1(std::string node) {
 
   if (!mcu.empty()) {
     std::vector<std::string> maps = BML::searchList(mcu, "map");
-    for (auto map : maps) {
+    for (std::string map : maps) {
       loadMap(map, {&SDD1::mcuRead, &sdd1}, {&SDD1::mcuWrite, &sdd1});
     }
 
@@ -974,12 +974,12 @@ void Cartridge::loadOBC1(std::string node) {
   has.OBC1 = true;
 
   std::vector<std::string> maps = BML::searchList(node, "map");
-  for (auto map : maps) {
+  for (std::string map : maps) {
     loadMap(map, {&OBC1::read, &obc1}, {&OBC1::write, &obc1});
   }
 
   std::vector<std::string> memory = BML::searchList(node, "memory");
-  for (auto m : memory) {
+  for (std::string m : memory) {
     if (BML::search(m, {"memory", "type"}) == "RAM" &&
         BML::search(m, {"memory", "content"}) == "Save") {
       loadMemory(obc1.ram, m);
@@ -1031,7 +1031,7 @@ void Cartridge::saveCartridgeBSMemory(std::string node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "Flash" && content == "Program") {
-      if(auto memory = Emulator::Game::Memory(m)) {
+      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
         if (bsmemory.memory.data() != nullptr) {
           writeCallback(bsmemory.pathID, memory.name(), bsmemory.memory.data(), memory.size);
         }
@@ -1046,7 +1046,7 @@ void Cartridge::saveCartridgeSufamiTurboA(std::string node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM" && content == "Save") {
-      if(auto memory = Emulator::Game::Memory(m)) {
+      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
         if (memory.nonVolatile) {
           writeCallback(sufamiturboA.pathID, memory.name(), sufamiturboA.ram.data(), memory.size);
         }
@@ -1061,7 +1061,7 @@ void Cartridge::saveCartridgeSufamiTurboB(std::string node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM" && content == "Save") {
-      if(auto memory = Emulator::Game::Memory(m)) {
+      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
         if (memory.nonVolatile) {
           writeCallback(sufamiturboB.pathID, memory.name(), sufamiturboB.ram.data(), memory.size);
         }
@@ -1385,7 +1385,7 @@ void Cartridge::save() {
 
 void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   slotBSMemory.prgrom = data;
-  auto heuristics = Heuristics::BSMemory(data, loc);
+  Heuristics::BSMemory heuristics = Heuristics::BSMemory(data, loc);
 
   std::ifstream dbfile = openCallback(ID::System, "BS Memory.bml");
 
@@ -1398,7 +1398,7 @@ void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
 
 void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc) {
   slotSufamiTurboA.prgrom = data;
-  auto heuristics = Heuristics::SufamiTurbo(data, loc);
+  Heuristics::SufamiTurbo heuristics = Heuristics::SufamiTurbo(data, loc);
 
   std::ifstream dbfile =
     openCallback(ID::System, "Sufami Turbo.bml");
@@ -1415,7 +1415,7 @@ void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc)
 
 void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc) {
   slotSufamiTurboB.prgrom = data;
-  auto heuristics = Heuristics::SufamiTurbo(data, loc);
+  Heuristics::SufamiTurbo heuristics = Heuristics::SufamiTurbo(data, loc);
 
   std::ifstream dbfile =
     openCallback(ID::System, "Sufami Turbo.bml");
@@ -1431,7 +1431,7 @@ void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
 }
 
 void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc) {
-  auto heuristics = Heuristics::SuperFamicom(data, loc);
+  Heuristics::SuperFamicom heuristics = Heuristics::SuperFamicom(data, loc);
 
   std::ifstream dbfile =
     openCallback(ID::System, "Super Famicom.bml");
@@ -1463,17 +1463,17 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
   }
 
   unsigned offset = 0;
-  if (auto size = heuristics.programRomSize()) {
+  if (unsigned size = heuristics.programRomSize()) {
     game.prgrom.resize(size);
     std::memcpy(&game.prgrom[0], &data[offset], size);
     offset += size;
   }
-  if (auto size = heuristics.dataRomSize()) {
+  if (unsigned size = heuristics.dataRomSize()) {
     game.datarom.resize(size);
     std::memcpy(&game.datarom[0], &data[offset], size);
     offset += size;
   }
-  if (auto size = heuristics.expansionRomSize()) {
+  if (unsigned size = heuristics.expansionRomSize()) {
     game.exprom.resize(size);
     std::memcpy(&game.exprom[0], &data[offset], size);
     offset += size;
