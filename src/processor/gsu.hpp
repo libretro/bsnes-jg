@@ -36,23 +36,73 @@ struct GSU {
       return data = value;
     }
 
-    inline auto operator++() { return assign(data + 1); }
-    inline auto operator--() { return assign(data - 1); }
-    inline auto operator++(int) { unsigned r = data; assign(data + 1); return r; }
-    inline auto operator--(int) { unsigned r = data; assign(data - 1); return r; }
-    inline auto operator   = (unsigned i) { return assign(i); }
-    inline auto operator  |= (unsigned i) { return assign(data | i); }
-    inline auto operator  ^= (unsigned i) { return assign(data ^ i); }
-    inline auto operator  &= (unsigned i) { return assign(data & i); }
-    inline auto operator <<= (unsigned i) { return assign(data << i); }
-    inline auto operator >>= (unsigned i) { return assign(data >> i); }
-    inline auto operator  += (unsigned i) { return assign(data + i); }
-    inline auto operator  -= (unsigned i) { return assign(data - i); }
-    inline auto operator  *= (unsigned i) { return assign(data * i); }
-    inline auto operator  /= (unsigned i) { return assign(data / i); }
-    inline auto operator  %= (unsigned i) { return assign(data % i); }
+    inline uint16_t operator++() {
+      return assign(data + 1);
+    }
 
-    inline auto operator   = (const Register& value) { return assign(value); }
+    inline uint16_t operator--() {
+      return assign(data - 1);
+    }
+
+    inline unsigned operator++(int) {
+      unsigned r = data;
+      assign(data + 1);
+      return r;
+    }
+
+    inline unsigned operator--(int) {
+      unsigned r = data;
+      assign(data - 1);
+      return r;
+    }
+
+    inline uint16_t operator = (unsigned i) {
+      return assign(i);
+    }
+
+    inline uint16_t operator |= (unsigned i) {
+      return assign(data | i);
+    }
+
+    inline uint16_t operator ^= (unsigned i) {
+      return assign(data ^ i);
+    }
+
+    inline uint16_t operator &= (unsigned i) {
+      return assign(data & i);
+    }
+
+    inline uint16_t operator <<= (unsigned i) {
+      return assign(data << i);
+    }
+
+    inline uint16_t operator >>= (unsigned i) {
+      return assign(data >> i);
+    }
+
+    inline uint16_t operator += (unsigned i) {
+      return assign(data + i);
+    }
+
+    inline uint16_t operator -= (unsigned i) {
+      return assign(data - i);
+    }
+
+    inline uint16_t operator *= (unsigned i) {
+      return assign(data * i);
+    }
+
+    inline uint16_t operator /= (unsigned i) {
+      return assign(data / i);
+    }
+
+    inline uint16_t operator %= (unsigned i) {
+      return assign(data % i);
+    }
+
+    inline uint16_t operator = (const Register& value) {
+      return assign(value);
+    }
 
     Register() = default;
     Register(const Register&) = delete;
@@ -76,7 +126,7 @@ struct GSU {
       return ((ht >> 1) << 5) | (ron << 4) | (ran << 3) | ((ht & 1) << 2) | (md);
     }
 
-    auto& operator=(unsigned data) {
+    SCMR& operator=(unsigned data) {
       ht  = (bool)(data & 0x20) << 1;
       ht |= (bool)(data & 0x04) << 0;
       ron = data & 0x10;
@@ -97,7 +147,7 @@ struct GSU {
       return (obj << 4) | (freezehigh << 3) | (highnibble << 2) | (dither << 1) | (transparent);
     }
 
-    auto& operator=(unsigned data) {
+    POR& operator=(unsigned data) {
       obj         = data & 0x10;
       freezehigh  = data & 0x08;
       highnibble  = data & 0x04;
@@ -115,7 +165,7 @@ struct GSU {
       return (irq << 7) | (ms0 << 5);
     }
 
-    auto& operator=(unsigned data) {
+    CFGR& operator=(unsigned data) {
       irq = data & 0x80;
       ms0 = data & 0x20;
       return *this;
@@ -150,8 +200,16 @@ struct GSU {
 
     unsigned sreg;
     unsigned dreg;
-    auto& sr() { return r[sreg]; }  //source register (from)
-    auto& dr() { return r[dreg]; }  //destination register (to)
+
+    //source register (from)
+    Register& sr() {
+      return r[sreg];
+    }
+
+    //destination register (to)
+    Register& dr() {
+      return r[dreg];
+    }
 
     void reset() {
       sfr.flag.b    = 0;
