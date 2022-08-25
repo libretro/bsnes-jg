@@ -876,7 +876,7 @@ void GSU::disassembleALT3(char* output) {
 #undef op2
 
 void GSU::power() {
-  for(auto& r : regs.r) {
+  for(Register& r : regs.r) {
     r.data = 0x0000;
     r.modified = false;
   }
