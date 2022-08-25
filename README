@@ -10,7 +10,7 @@ This is a fork of bsnes v115. Many changes have been made post-fork:
  - Portability improvements
  - Removal of hacks
  - Removal of code not required for emulation
- - Translation to the C++ Standard Library
+ - Translation to the C++ Standard Library (ISO C++11)
 
 This repository lives at https://gitlab.com/jgemu/bsnes
 
