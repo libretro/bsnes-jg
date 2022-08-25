@@ -1459,7 +1459,7 @@ void SA1::power() {
   mmio.bbf = 0;
 
   //$2240-$224f BRF
-  for(auto& n : mmio.brf) n = 0x00;
+  for(uint8_t& n : mmio.brf) n = 0x00;
 
   //$2250 MCNT
   mmio.acm = 0;
