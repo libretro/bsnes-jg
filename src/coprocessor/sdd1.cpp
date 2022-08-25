@@ -322,7 +322,7 @@ void SDD1::serialize(serializer& s) {
   s.integer(r4806);
   s.integer(r4807);
 
-  for(auto& channel : dma) {
+  for(DMA& channel : dma) {
     s.integer(channel.addr);
     s.integer(channel.size);
   }
@@ -362,7 +362,7 @@ void SDD1::Decompressor::BG::serialize(serializer& s) {
 }
 
 void SDD1::Decompressor::PEM::serialize(serializer& s) {
-  for(auto& info : contextInfo) {
+  for(ContextInfo& info : contextInfo) {
     s.integer(info.status);
     s.integer(info.mps);
   }
