@@ -29,6 +29,41 @@
 
 namespace Heuristics {
 
+Memory& Memory::type(std::string type) {
+  _type = type;
+  return *this;
+}
+
+Memory& Memory::size(size_t size) {
+  _size = size;
+  return *this;
+}
+
+Memory& Memory::content(std::string content) {
+  _content = content;
+  return *this;
+}
+
+Memory& Memory::manufacturer(std::string manufacturer) {
+  _manufacturer = manufacturer;
+  return *this;
+}
+
+Memory& Memory::architecture(std::string architecture) {
+  _architecture = architecture;
+  return *this;
+}
+
+Memory& Memory::identifier(std::string identifier) {
+  _identifier = identifier;
+  return *this;
+}
+
+Memory& Memory::isVolatile() {
+  _volatile = true;
+  return *this;
+}
+
 std::string Memory::text() const {
   std::stringstream output;
   output << "    memory\n";
@@ -46,11 +81,21 @@ std::string Memory::text() const {
   return output.str();
 }
 
+Oscillator& Oscillator::frequency(unsigned frequency) {
+  _frequency = frequency;
+  return *this;
+}
+
 std::string Oscillator::text() const {
   std::stringstream output;
   output << "    oscillator\n";
   output << "      frequency: " << _frequency << "\n";
   return output.str();
+}
+
+Slot& Slot::type(std::string type) {
+  _type = type;
+  return *this;
 }
 
 std::string Slot::text() const {
@@ -372,6 +417,10 @@ std::string GameBoy::manifest() const {
   if(rumble)
     output += "    rumble\n";
   return output;
+}
+
+uint8_t GameBoy::read(unsigned offset) const {
+  return data[headerAddress + offset];
 }
 
 SufamiTurbo::SufamiTurbo(std::vector<uint8_t>& dat, std::string loc) : data(dat), location(loc) {
@@ -905,6 +954,10 @@ unsigned SuperFamicom::expansionRamSize() const {
 bool SuperFamicom::nonVolatile() const {
   unsigned cartridgeTypeLo = data[headerAddress + 0x26] & 15;
   return cartridgeTypeLo == 0x2 || cartridgeTypeLo == 0x5 || cartridgeTypeLo == 0x6;
+}
+
+unsigned SuperFamicom::size() const {
+  return data.size();
 }
 
 unsigned SuperFamicom::scoreHeader(unsigned address) {
