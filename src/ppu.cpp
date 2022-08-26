@@ -1004,6 +1004,10 @@ void PPU::updateVideoMode() {
   }
 }
 
+uint16_t& PPU::VRAM::operator[](unsigned address) {
+  return data[address & mask];
+}
+
 bool PPU::Mosaic::enable() const {
   if(ppu.bg1.mosaic.enable
       || ppu.bg2.mosaic.enable

@@ -46,11 +46,7 @@ struct WDC65816 {
   union r16 {
     inline r16() : w(0) {}
     inline r16(unsigned data) : w(data) {}
-
-    inline r16& operator=(unsigned data) {
-      w = data;
-      return *this;
-    }
+    inline r16& operator=(unsigned);
 
     uint16_t w;
     struct { uint8_t order_lsb2(l, h); } r16_lsb2;
@@ -59,11 +55,7 @@ struct WDC65816 {
   union r24 {
     inline r24() : d(0) {}
     inline r24(unsigned data) : d(data) {}
-
-    inline r24& operator=(unsigned data) {
-      d = data;
-      return *this;
-    }
+    inline r24& operator=(unsigned data);
 
     uint32_t d;
     struct { uint16_t order_lsb2(w, x); } r24_lsb2;
@@ -76,22 +68,22 @@ struct WDC65816 {
   //memory.cpp
   inline void idleIRQ();
   inline void idle2();
-  inline void idle4(uint16_t x, uint16_t y);
-  inline void idle6(uint16_t address);
+  inline void idle4(uint16_t, uint16_t);
+  inline void idle6(uint16_t);
   inline uint8_t fetch();
   inline uint8_t pull();
   void push(uint8_t data);
   inline uint8_t pullN();
   inline void pushN(uint8_t data);
-  inline uint8_t readDirect(unsigned address);
-  inline void writeDirect(unsigned address, uint8_t data);
-  inline uint8_t readDirectN(unsigned address);
-  inline uint8_t readBank(unsigned address);
-  inline void writeBank(unsigned address, uint8_t data);
-  inline uint8_t readLong(unsigned address);
-  inline void writeLong(unsigned address, uint8_t data);
-  inline uint8_t readStack(unsigned address);
-  inline void writeStack(unsigned address, uint8_t data);
+  inline uint8_t readDirect(unsigned);
+  inline void writeDirect(unsigned, uint8_t);
+  inline uint8_t readDirectN(unsigned);
+  inline uint8_t readBank(unsigned);
+  inline void writeBank(unsigned, uint8_t);
+  inline uint8_t readLong(unsigned);
+  inline void writeLong(unsigned, uint8_t);
+  inline uint8_t readStack(unsigned);
+  inline void writeStack(unsigned, uint8_t);
 
   //algorithms.cpp
   using  alu8 = uint8_t (WDC65816::*)( uint8_t);
@@ -265,21 +257,8 @@ struct WDC65816 {
     bool v = 0;  //overflow
     bool n = 0;  //negative
 
-    inline operator unsigned() const {
-      return c << 0 | z << 1 | i << 2 | d << 3 | x << 4 | m << 5 | v << 6 | n << 7;
-    }
-
-    inline f8& operator=(unsigned data) {
-      c = data & 0x01;
-      z = data & 0x02;
-      i = data & 0x04;
-      d = data & 0x08;
-      x = data & 0x10;
-      m = data & 0x20;
-      v = data & 0x40;
-      n = data & 0x80;
-      return *this;
-    }
+    inline operator unsigned() const;
+    inline f8& operator=(unsigned);
   };
 
   struct Registers {
@@ -308,5 +287,31 @@ struct WDC65816 {
     r24 w;  //temporary register
   } r;
 };
+
+WDC65816::r16& WDC65816::r16::operator=(unsigned data) {
+  w = data;
+  return *this;
+}
+
+WDC65816::r24& WDC65816::r24::operator=(unsigned data) {
+  d = data;
+  return *this;
+}
+
+WDC65816::f8::operator unsigned() const {
+  return c << 0 | z << 1 | i << 2 | d << 3 | x << 4 | m << 5 | v << 6 | n << 7;
+}
+
+WDC65816::f8& WDC65816::f8::operator=(unsigned data) {
+  c = data & 0x01;
+  z = data & 0x02;
+  i = data & 0x04;
+  d = data & 0x08;
+  x = data & 0x10;
+  m = data & 0x20;
+  v = data & 0x40;
+  n = data & 0x80;
+  return *this;
+}
 
 }

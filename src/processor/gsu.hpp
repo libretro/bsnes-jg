@@ -27,82 +27,24 @@ struct GSU {
     uint16_t data = 0;
     bool modified = false;
 
-    inline operator unsigned() const {
-      return data;
-    }
-
-    inline uint16_t assign(unsigned value) {
-      modified = true;
-      return data = value;
-    }
-
-    inline uint16_t operator++() {
-      return assign(data + 1);
-    }
-
-    inline uint16_t operator--() {
-      return assign(data - 1);
-    }
-
-    inline unsigned operator++(int) {
-      unsigned r = data;
-      assign(data + 1);
-      return r;
-    }
-
-    inline unsigned operator--(int) {
-      unsigned r = data;
-      assign(data - 1);
-      return r;
-    }
-
-    inline uint16_t operator = (unsigned i) {
-      return assign(i);
-    }
-
-    inline uint16_t operator |= (unsigned i) {
-      return assign(data | i);
-    }
-
-    inline uint16_t operator ^= (unsigned i) {
-      return assign(data ^ i);
-    }
-
-    inline uint16_t operator &= (unsigned i) {
-      return assign(data & i);
-    }
-
-    inline uint16_t operator <<= (unsigned i) {
-      return assign(data << i);
-    }
-
-    inline uint16_t operator >>= (unsigned i) {
-      return assign(data >> i);
-    }
-
-    inline uint16_t operator += (unsigned i) {
-      return assign(data + i);
-    }
-
-    inline uint16_t operator -= (unsigned i) {
-      return assign(data - i);
-    }
-
-    inline uint16_t operator *= (unsigned i) {
-      return assign(data * i);
-    }
-
-    inline uint16_t operator /= (unsigned i) {
-      return assign(data / i);
-    }
-
-    inline uint16_t operator %= (unsigned i) {
-      return assign(data % i);
-    }
-
-    inline uint16_t operator = (const Register& value) {
-      return assign(value);
-    }
+    inline operator unsigned() const;
+    inline uint16_t assign(unsigned);
+    inline uint16_t operator++();
+    inline uint16_t operator--();
+    inline unsigned operator++(int);
+    inline unsigned operator--(int);
+    inline uint16_t operator = (unsigned);
+    inline uint16_t operator |= (unsigned);
+    inline uint16_t operator ^= (unsigned);
+    inline uint16_t operator &= (unsigned);
+    inline uint16_t operator <<= (unsigned);
+    inline uint16_t operator >>= (unsigned);
+    inline uint16_t operator += (unsigned);
+    inline uint16_t operator -= (unsigned);
+    inline uint16_t operator *= (unsigned);
+    inline uint16_t operator /= (unsigned);
+    inline uint16_t operator %= (unsigned);
+    inline uint16_t operator = (const Register&);
 
     Register() = default;
     Register(const Register&) = delete;
@@ -122,18 +64,8 @@ struct GSU {
     bool ran;
     unsigned md;
 
-    operator unsigned() const {
-      return ((ht >> 1) << 5) | (ron << 4) | (ran << 3) | ((ht & 1) << 2) | (md);
-    }
-
-    SCMR& operator=(unsigned data) {
-      ht  = (bool)(data & 0x20) << 1;
-      ht |= (bool)(data & 0x04) << 0;
-      ron = data & 0x10;
-      ran = data & 0x08;
-      md  = data & 0x03;
-      return *this;
-    }
+    operator unsigned() const;
+    SCMR& operator=(unsigned);
   };
 
   struct POR {
@@ -143,33 +75,16 @@ struct GSU {
     bool dither;
     bool transparent;
 
-    operator unsigned() const {
-      return (obj << 4) | (freezehigh << 3) | (highnibble << 2) | (dither << 1) | (transparent);
-    }
-
-    POR& operator=(unsigned data) {
-      obj         = data & 0x10;
-      freezehigh  = data & 0x08;
-      highnibble  = data & 0x04;
-      dither      = data & 0x02;
-      transparent = data & 0x01;
-      return *this;
-    }
+    operator unsigned() const;
+    POR& operator=(unsigned);
   };
 
   struct CFGR {
     bool irq;
     bool ms0;
 
-    operator unsigned() const {
-      return (irq << 7) | (ms0 << 5);
-    }
-
-    CFGR& operator=(unsigned data) {
-      irq = data & 0x80;
-      ms0 = data & 0x20;
-      return *this;
-    }
+    operator unsigned() const;
+    CFGR& operator=(unsigned);
   };
 
   struct Registers {
@@ -191,34 +106,19 @@ struct GSU {
     CFGR cfgr;          //config register
     bool clsr;          //clock select register
 
-    unsigned romcl;         //clock ticks until romdr is valid
+    unsigned romcl;     //clock ticks until romdr is valid
     uint8_t romdr;      //ROM buffer data register
 
-    unsigned ramcl;         //clock ticks until ramdr is valid
+    unsigned ramcl;     //clock ticks until ramdr is valid
     uint16_t ramar;     //RAM buffer address register
     uint8_t ramdr;      //RAM buffer data register
 
     unsigned sreg;
     unsigned dreg;
 
-    //source register (from)
-    Register& sr() {
-      return r[sreg];
-    }
-
-    //destination register (to)
-    Register& dr() {
-      return r[dreg];
-    }
-
-    void reset() {
-      sfr.flag.b    = 0;
-      sfr.flag.alt1 = 0;
-      sfr.flag.alt2 = 0;
-
-      sreg = 0;
-      dreg = 0;
-    }
+    Register& sr();     //source register (from)
+    Register& dr();     //destination register (to)
+    void reset();
   } regs;
 
   struct Cache {
@@ -233,23 +133,23 @@ struct GSU {
   } pixelcache[2];
 
   virtual ~GSU() = 0;
-  virtual void step(unsigned clocks) = 0;
+  virtual void step(unsigned) = 0;
 
   virtual void stop() = 0;
-  virtual uint8_t color(uint8_t source) = 0;
-  virtual void plot(uint8_t x, uint8_t y) = 0;
-  virtual uint8_t rpix(uint8_t x, uint8_t y) = 0;
+  virtual uint8_t color(uint8_t) = 0;
+  virtual void plot(uint8_t, uint8_t) = 0;
+  virtual uint8_t rpix(uint8_t, uint8_t) = 0;
 
   virtual uint8_t pipe() = 0;
   virtual void syncROMBuffer() = 0;
   virtual uint8_t readROMBuffer() = 0;
   virtual void syncRAMBuffer() = 0;
-  virtual uint8_t readRAMBuffer(uint16_t addr) = 0;
-  virtual void writeRAMBuffer(uint16_t addr, uint8_t data) = 0;
+  virtual uint8_t readRAMBuffer(uint16_t) = 0;
+  virtual void writeRAMBuffer(uint16_t, uint8_t) = 0;
   virtual void flushCache() = 0;
 
-  virtual uint8_t read(unsigned addr, uint8_t data = 0x00) = 0;
-  virtual void write(unsigned addr, uint8_t data) = 0;
+  virtual uint8_t read(unsigned, uint8_t = 0x00) = 0;
+  virtual void write(unsigned, uint8_t) = 0;
 
   //gsu.cpp
   void power();
@@ -309,5 +209,82 @@ struct GSU {
   void disassembleALT2(char*);
   void disassembleALT3(char*);
 };
+
+GSU::Register::operator unsigned() const {
+  return data;
+}
+
+uint16_t GSU::Register::assign(unsigned value) {
+  modified = true;
+  return data = value;
+}
+
+uint16_t GSU::Register::operator++() {
+  return assign(data + 1);
+}
+
+uint16_t GSU::Register::operator--() {
+  return assign(data - 1);
+}
+
+unsigned GSU::Register::operator++(int) {
+  unsigned r = data;
+  assign(data + 1);
+  return r;
+}
+
+unsigned GSU::Register::operator--(int) {
+  unsigned r = data;
+  assign(data - 1);
+  return r;
+}
+
+uint16_t GSU::Register::operator = (unsigned i) {
+  return assign(i);
+}
+
+uint16_t GSU::Register::operator |= (unsigned i) {
+  return assign(data | i);
+}
+
+uint16_t GSU::Register::operator ^= (unsigned i) {
+  return assign(data ^ i);
+}
+
+uint16_t GSU::Register::operator &= (unsigned i) {
+  return assign(data & i);
+}
+
+uint16_t GSU::Register::operator <<= (unsigned i) {
+  return assign(data << i);
+}
+
+uint16_t GSU::Register::operator >>= (unsigned i) {
+  return assign(data >> i);
+}
+
+uint16_t GSU::Register::operator += (unsigned i) {
+  return assign(data + i);
+}
+
+uint16_t GSU::Register::operator -= (unsigned i) {
+  return assign(data - i);
+}
+
+uint16_t GSU::Register::operator *= (unsigned i) {
+  return assign(data * i);
+}
+
+uint16_t GSU::Register::operator /= (unsigned i) {
+  return assign(data / i);
+}
+
+uint16_t GSU::Register::operator %= (unsigned i) {
+  return assign(data % i);
+}
+
+uint16_t GSU::Register::operator = (const Register& value) {
+  return assign(value);
+}
 
 }

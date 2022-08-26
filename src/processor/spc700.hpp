@@ -153,21 +153,8 @@ struct SPC700 {
     bool v = 0;  //overflow
     bool n = 0;  //negative
 
-    inline operator unsigned() const {
-      return c << 0 | z << 1 | i << 2 | h << 3 | b << 4 | p << 5 | v << 6 | n << 7;
-    }
-
-    inline Flags& operator=(uint8_t data) {
-      c = data & 0x01;
-      z = data & 0x02;
-      i = data & 0x04;
-      h = data & 0x08;
-      b = data & 0x10;
-      p = data & 0x20;
-      v = data & 0x40;
-      n = data & 0x80;
-      return *this;
-    }
+    inline operator unsigned() const;
+    inline Flags& operator=(uint8_t);
   };
 
   struct Registers {
@@ -184,6 +171,22 @@ struct SPC700 {
     bool stop = 0;
   } r;
 };
+
+SPC700::Flags::operator unsigned() const {
+  return c << 0 | z << 1 | i << 2 | h << 3 | b << 4 | p << 5 | v << 6 | n << 7;
+}
+
+SPC700::Flags& SPC700::Flags::operator=(uint8_t data) {
+  c = data & 0x01;
+  z = data & 0x02;
+  i = data & 0x04;
+  h = data & 0x08;
+  b = data & 0x10;
+  p = data & 0x20;
+  v = data & 0x40;
+  n = data & 0x80;
+  return *this;
+}
 
 }
 

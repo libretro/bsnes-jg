@@ -23,40 +23,13 @@
 namespace Heuristics {
 
 struct Memory {
-  Memory& type(std::string type) {
-    _type = type;
-    return *this;
-  }
-
-  Memory& size(size_t size) {
-    _size = size;
-    return *this;
-  }
-
-  Memory& content(std::string content) {
-    _content = content;
-    return *this;
-  }
-
-  Memory& manufacturer(std::string manufacturer) {
-    _manufacturer = manufacturer;
-    return *this;
-  }
-
-  Memory& architecture(std::string architecture) {
-    _architecture = architecture;
-    return *this;
-  }
-
-  Memory& identifier(std::string identifier) {
-    _identifier = identifier;
-    return *this;
-  }
-
-  Memory& isVolatile() {
-    _volatile = true;
-    return *this;
-  }
+  Memory& type(std::string);
+  Memory& size(size_t);
+  Memory& content(std::string);
+  Memory& manufacturer(std::string);
+  Memory& architecture(std::string);
+  Memory& identifier(std::string);
+  Memory& isVolatile();
 
   std::string text() const;
 
@@ -71,27 +44,19 @@ struct Memory {
 };
 
 struct Oscillator {
-  Oscillator& frequency(unsigned frequency) {
-    _frequency = frequency;
-    return *this;
-  }
-
+  Oscillator& frequency(unsigned);
   std::string text() const;
   unsigned _frequency;
 };
 
 struct Slot {
-  Slot& type(std::string type) {
-    _type = type;
-    return *this;
-  }
-
+  Slot& type(std::string);
   std::string text() const;
   std::string _type;
 };
 
 struct BSMemory {
-  BSMemory(std::vector<uint8_t>& data, std::string location);
+  BSMemory(std::vector<uint8_t>&, std::string);
   explicit operator bool() const;
   std::string manifest() const;
 
@@ -101,7 +66,7 @@ private:
 };
 
 struct GameBoy {
-  GameBoy(std::vector<uint8_t>& data, std::string location);
+  GameBoy(std::vector<uint8_t>&, std::string);
   explicit operator bool() const;
   std::string manifest() const;
 
@@ -110,13 +75,12 @@ private:
   std::string location;
   unsigned headerAddress = 0;
 
-  uint8_t read(unsigned offset) const { return data[headerAddress + offset]; }
+  uint8_t read(unsigned) const;
 };
 
 struct SufamiTurbo {
-  SufamiTurbo(std::vector<uint8_t>& data, std::string location);
+  SufamiTurbo(std::vector<uint8_t>&, std::string);
   explicit operator bool() const;
-
   std::string manifest() const;
 
 private:
@@ -125,7 +89,7 @@ private:
 };
 
 struct SuperFamicom {
-  SuperFamicom(std::vector<uint8_t>& data, std::string location);
+  SuperFamicom(std::vector<uint8_t>&, std::string);
   explicit operator bool() const;
 
   std::string manifest() const;
@@ -145,8 +109,8 @@ struct SuperFamicom {
   bool nonVolatile() const;
 
 private:
-  unsigned size() const { return data.size(); }
-  unsigned scoreHeader(unsigned address);
+  unsigned size() const;
+  unsigned scoreHeader(unsigned);
   std::string firmwareARM() const;
   std::string firmwareEXNEC() const;
   std::string firmwareGB() const;
