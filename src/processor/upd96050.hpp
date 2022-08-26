@@ -50,19 +50,8 @@ struct uPD96050 {
   uint16_t dataRAM[2048];
 
   struct Flag {
-    inline operator unsigned() const {
-      return ov0 << 0 | ov1 << 1 | z << 2 | c << 3 | s0 << 4 | s1 << 5;
-    }
-
-    inline Flag& operator=(uint16_t data) {
-      ov0 = data >> 0 & 1;
-      ov1 = data >> 1 & 1;
-      z   = data >> 2 & 1;
-      c   = data >> 3 & 1;
-      s0  = data >> 4 & 1;
-      s1  = data >> 5 & 1;
-      return *this;
-    }
+    inline operator unsigned() const;
+    inline Flag& operator=(uint16_t);
 
     void serialize(serializer&);
 
@@ -75,26 +64,8 @@ struct uPD96050 {
   };
 
   struct Status {
-    inline operator unsigned() const {
-      bool _drs = drs & !drc;  //when DRC=1, DRS=0
-      return p0 << 0 | p1 << 1 | ei << 7 | sic << 8 | soc << 9 | drc << 10
-           | dma << 11 | _drs << 12 | usf0 << 13 | usf1 << 14 | rqm << 15;
-    }
-
-    inline Status& operator=(uint16_t data) {
-      p0   = data >>  0 & 1;
-      p1   = data >>  1 & 1;
-      ei   = data >>  7 & 1;
-      sic  = data >>  8 & 1;
-      soc  = data >>  9 & 1;
-      drc  = data >> 10 & 1;
-      dma  = data >> 11 & 1;
-      drs  = data >> 12 & 1;
-      usf0 = data >> 13 & 1;
-      usf1 = data >> 14 & 1;
-      rqm  = data >> 15 & 1;
-      return *this;
-    }
+    inline operator unsigned() const;
+    inline Status& operator=(uint16_t);
 
     void serialize(serializer&);
 
@@ -142,5 +113,40 @@ struct uPD96050 {
     Flag b;
   } flags;
 };
+
+uPD96050::Flag::operator unsigned() const {
+  return ov0 << 0 | ov1 << 1 | z << 2 | c << 3 | s0 << 4 | s1 << 5;
+}
+
+uPD96050::Flag& uPD96050::Flag::operator=(uint16_t data) {
+  ov0 = data >> 0 & 1;
+  ov1 = data >> 1 & 1;
+  z   = data >> 2 & 1;
+  c   = data >> 3 & 1;
+  s0  = data >> 4 & 1;
+  s1  = data >> 5 & 1;
+  return *this;
+}
+
+uPD96050::Status::operator unsigned() const {
+  bool _drs = drs & !drc;  //when DRC=1, DRS=0
+  return p0 << 0 | p1 << 1 | ei << 7 | sic << 8 | soc << 9 | drc << 10
+       | dma << 11 | _drs << 12 | usf0 << 13 | usf1 << 14 | rqm << 15;
+}
+
+uPD96050::Status& uPD96050::Status::operator=(uint16_t data) {
+  p0   = data >>  0 & 1;
+  p1   = data >>  1 & 1;
+  ei   = data >>  7 & 1;
+  sic  = data >>  8 & 1;
+  soc  = data >>  9 & 1;
+  drc  = data >> 10 & 1;
+  dma  = data >> 11 & 1;
+  drs  = data >> 12 & 1;
+  usf0 = data >> 13 & 1;
+  usf1 = data >> 14 & 1;
+  rqm  = data >> 15 & 1;
+  return *this;
+}
 
 }
