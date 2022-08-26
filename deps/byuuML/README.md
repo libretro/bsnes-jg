@@ -23,9 +23,9 @@ I don't claim to have originated or designed the byuuML format, or any copyright
 
 (If you are only interested in technical details about the byuuML file format, you want to read [`FORMAT.md`](FORMAT.md).)
 
-This library is written in C++14. Bindings to other languages, including C, are not provided.
+This library is written in C++11. Bindings to other languages, including C, are not provided.
 
-Add `byuuML.cc` to your project, add the directory containing `byuuML.hh` to your include path (if needed), and make sure your compiler is set to comply with C++14 or higher.
+Add `byuuML.cc` to your project, add the directory containing `byuuML.hh` to your include path (if needed), and make sure your compiler is set to comply with C++11 or higher.
 
 Files that must parse or process a byuuML document should `#include "byuuML.hh"`.
 
