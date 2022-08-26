@@ -899,4 +899,57 @@ void GSU::power() {
   regs.reset();
 }
 
+GSU::SCMR::operator unsigned() const {
+  return ((ht >> 1) << 5) | (ron << 4) | (ran << 3) | ((ht & 1) << 2) | (md);
+}
+
+GSU::SCMR& GSU::SCMR::operator=(unsigned data) {
+  ht  = (bool)(data & 0x20) << 1;
+  ht |= (bool)(data & 0x04) << 0;
+  ron = data & 0x10;
+  ran = data & 0x08;
+  md  = data & 0x03;
+  return *this;
+}
+
+GSU::POR::operator unsigned() const {
+  return (obj << 4) | (freezehigh << 3) | (highnibble << 2) | (dither << 1) | (transparent);
+}
+
+GSU::POR& GSU::POR::operator=(unsigned data) {
+  obj         = data & 0x10;
+  freezehigh  = data & 0x08;
+  highnibble  = data & 0x04;
+  dither      = data & 0x02;
+  transparent = data & 0x01;
+  return *this;
+}
+
+GSU::CFGR::operator unsigned() const {
+  return (irq << 7) | (ms0 << 5);
+}
+
+GSU::CFGR& GSU::CFGR::operator=(unsigned data) {
+  irq = data & 0x80;
+  ms0 = data & 0x20;
+  return *this;
+}
+
+GSU::Register& GSU::Registers::sr() {
+  return r[sreg];
+}
+
+GSU::Register& GSU::Registers::dr() {
+  return r[dreg];
+}
+
+void GSU::Registers::reset() {
+  sfr.flag.b    = 0;
+  sfr.flag.alt1 = 0;
+  sfr.flag.alt2 = 0;
+
+  sreg = 0;
+  dreg = 0;
+}
+
 }
