@@ -52,7 +52,7 @@ class Dsp1
       Dsp1();
       uint8_t getSr();            // return the status register's high byte
       uint8_t getDr();
-      void setDr(uint8_t iDr);
+      void setDr(uint8_t);
       void reset();
 
       void serialize(serializer&);
@@ -62,7 +62,7 @@ class Dsp1
       enum MaxDataAccesses {MAX_READS=7, MAX_WRITES=1024};
 
       struct Command {
-         void (Dsp1::*callback)(int16_t *, int16_t *);
+         void (Dsp1::*callback)(int16_t*, int16_t*);
          unsigned int reads;
          unsigned int writes;
       };
@@ -93,58 +93,58 @@ class Dsp1
 
       } shared;
 
-      uint8_t mSr;            // status register
+      uint8_t mSr;                    // status register
       int mSrLowByteAccess;
-      uint16_t mDr;           // "internal" representation of the data register
-      unsigned mFsmMajorState;     // current major state of the FSM
-      uint8_t mCommand;                  // current command processed by the FSM
-      uint8_t mDataCounter;                 // #uint16_t read/writes counter used by the FSM
+      uint16_t mDr;                   // "internal" representation of the data register
+      unsigned mFsmMajorState;        // current major state of the FSM
+      uint8_t mCommand;               // current command processed by the FSM
+      uint8_t mDataCounter;           // #uint16_t read/writes counter used by the FSM
       int16_t mReadBuffer[MAX_READS];
       int16_t mWriteBuffer[MAX_WRITES];
       bool mFreeze;                   // need explanation?  ;)
 
-      void fsmStep(bool read, uint8_t &data);            // FSM logic
+      void fsmStep(bool, uint8_t&);   // FSM logic
 
       // commands
-      void memoryTest(int16_t *input, int16_t *output);
-      void memoryDump(int16_t *input, int16_t *output);
-      void memorySize(int16_t *input, int16_t *output);
-      void multiply(int16_t* input, int16_t* output);
-      void multiply2(int16_t* input, int16_t* output);
-      void inverse(int16_t *input, int16_t *output);
-      void triangle(int16_t *input, int16_t *output);
-      void radius(int16_t *input, int16_t *output);
-      void range(int16_t *input, int16_t *output);
-      void range2(int16_t *input, int16_t *output);
-      void distance(int16_t *input, int16_t *output);
-      void rotate(int16_t *input, int16_t *output);
-      void polar(int16_t *input, int16_t *output);
-      void attitudeA(int16_t *input, int16_t *output);
-      void attitudeB(int16_t *input, int16_t *output);
-      void attitudeC(int16_t *input, int16_t *output);
-      void objectiveA(int16_t *input, int16_t *output);
-      void objectiveB(int16_t *input, int16_t *output);
-      void objectiveC(int16_t *input, int16_t *output);
-      void subjectiveA(int16_t *input, int16_t *output);
-      void subjectiveB(int16_t *input, int16_t *output);
-      void subjectiveC(int16_t *input, int16_t *output);
-      void scalarA(int16_t *input, int16_t *output);
-      void scalarB(int16_t *input, int16_t *output);
-      void scalarC(int16_t *input, int16_t *output);
-      void gyrate(int16_t *input, int16_t *output);
-      void parameter(int16_t *input, int16_t *output);
-      void raster(int16_t *input, int16_t *output);
-      void target(int16_t *input, int16_t *output);
-      void project(int16_t *input, int16_t *output);
+      void memoryTest(int16_t*, int16_t*);
+      void memoryDump(int16_t*, int16_t*);
+      void memorySize(int16_t*, int16_t*);
+      void multiply(int16_t*, int16_t*);
+      void multiply2(int16_t*, int16_t*);
+      void inverse(int16_t*, int16_t*);
+      void triangle(int16_t*, int16_t*);
+      void radius(int16_t*, int16_t*);
+      void range(int16_t*, int16_t*);
+      void range2(int16_t*, int16_t*);
+      void distance(int16_t*, int16_t*);
+      void rotate(int16_t*, int16_t*);
+      void polar(int16_t*, int16_t*);
+      void attitudeA(int16_t*, int16_t*);
+      void attitudeB(int16_t*, int16_t*);
+      void attitudeC(int16_t*, int16_t*);
+      void objectiveA(int16_t*, int16_t*);
+      void objectiveB(int16_t*, int16_t*);
+      void objectiveC(int16_t*, int16_t*);
+      void subjectiveA(int16_t*, int16_t*);
+      void subjectiveB(int16_t*, int16_t*);
+      void subjectiveC(int16_t*, int16_t*);
+      void scalarA(int16_t*, int16_t*);
+      void scalarB(int16_t*, int16_t*);
+      void scalarC(int16_t*, int16_t*);
+      void gyrate(int16_t*, int16_t*);
+      void parameter(int16_t*, int16_t*);
+      void raster(int16_t*, int16_t*);
+      void target(int16_t*, int16_t*);
+      void project(int16_t*, int16_t*);
 
       // auxiliar functions
-      int16_t sin(int16_t Angle);
-      int16_t cos(int16_t Angle);
-      void inverse(int16_t Coefficient, int16_t Exponent, int16_t &iCoefficient, int16_t &iExponent);
-      int16_t denormalizeAndClip(int16_t C, int16_t E);
-      void normalize(int16_t m, int16_t &Coefficient, int16_t &Exponent);
-      void normalizeDouble(int32_t Product, int16_t &Coefficient, int16_t &Exponent);
-      int16_t shiftR(int16_t C, int16_t E);
+      int16_t sin(int16_t);
+      int16_t cos(int16_t);
+      void inverse(int16_t, int16_t, int16_t&, int16_t&);
+      int16_t denormalizeAndClip(int16_t, int16_t);
+      void normalize(int16_t, int16_t&, int16_t&);
+      void normalizeDouble(int32_t, int16_t&, int16_t&);
+      int16_t shiftR(int16_t, int16_t);
 };
 
 }
