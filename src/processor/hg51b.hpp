@@ -27,10 +27,8 @@
 namespace Processor {
 
 struct HG51B {
-  //instruction.cpp
   HG51B();
 
-  //hg51b.cpp
   virtual ~HG51B() = 0;
   virtual void step(unsigned);
   virtual bool isROM(unsigned) = 0;
@@ -51,7 +49,6 @@ struct HG51B {
 
   void power();
 
-  //instructions.cpp
   void push();
   void pull();
 
@@ -122,14 +119,12 @@ struct HG51B {
   void instructionXORr(uint8_t, uint8_t);
   void instructionXOR(uint8_t, uint8_t);
 
-  //serialization.cpp
   void serialize(serializer&);
 
   uint16_t programRAM[2][256];  //instruction cache
   uint32_t dataROM[1024];
   uint8_t dataRAM[3072];
 
-  //registers.cpp
   uint32_t readRegister(uint8_t);
   void writeRegister(uint8_t, uint32_t);
 

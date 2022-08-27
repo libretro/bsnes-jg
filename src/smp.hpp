@@ -30,11 +30,9 @@ struct SMP : Processor::SPC700, Thread {
   inline bool synchronizing() const override;
   inline bool raise(bool&, bool);
 
-  //io.cpp
   uint8_t portRead(uint8_t) const;
   void portWrite(uint8_t, uint8_t);
 
-  //smp.cpp
   void synchronizeCPU();
   void synchronizeDSP();
   [[noreturn]] static void Enter();
@@ -42,7 +40,6 @@ struct SMP : Processor::SPC700, Thread {
   bool load();
   void power();
 
-  //serialization.cpp
   void serialize(serializer&);
 
   static const uint8_t iplrom[64];
@@ -84,7 +81,6 @@ private:
     uint8_t aux5 = 0;
   } io;
 
-  //memory.cpp
   inline uint8_t readRAM(uint16_t);
   inline void writeRAM(uint16_t, uint8_t);
 
@@ -94,11 +90,9 @@ private:
 
   uint8_t readDisassembler(uint16_t);
 
-  //io.cpp
   inline uint8_t readIO(uint16_t);
   inline void writeIO(uint16_t, uint8_t);
 
-  //timing.cpp
   template<unsigned>
   struct Timer {
     inline bool lower(bool&, bool);

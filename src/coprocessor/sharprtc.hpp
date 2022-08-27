@@ -48,14 +48,12 @@ struct SharpRTC : Thread {
   unsigned year;
   unsigned weekday;
 
-  //memory.cpp
   uint8_t rtcRead(uint8_t);
   void rtcWrite(uint8_t, uint8_t);
 
   void load(const uint8_t*);
   void save(uint8_t*);
 
-  //time.cpp
   static const unsigned daysInMonth[12];
   void tickSecond();
   void tickMinute();

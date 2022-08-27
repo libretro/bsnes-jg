@@ -29,7 +29,6 @@ namespace SuperFamicom {
 struct SA1 : Processor::WDC65816, Thread {
   inline bool synchronizing() const override { return scheduler.synchronizing(); }
 
-  //sa1.cpp
   void synchronizeCPU();
   [[noreturn]] static void Enter();
   void main();
@@ -43,7 +42,6 @@ struct SA1 : Processor::WDC65816, Thread {
   void unload();
   void power();
 
-  //dma.cpp
   struct DMA {
     enum CDEN : unsigned { DmaNormal = 0, DmaCharConversion = 1 };
     enum SD : unsigned { SourceROM = 0, SourceBWRAM = 1, SourceIRAM = 2 };
@@ -56,7 +54,6 @@ struct SA1 : Processor::WDC65816, Thread {
   uint8_t dmaCC1Read(unsigned);
   void dmaCC2();
 
-  //memory.cpp
   inline bool conflictROM() const;
   inline bool conflictBWRAM() const;
   inline bool conflictIRAM() const;
@@ -69,18 +66,15 @@ struct SA1 : Processor::WDC65816, Thread {
   uint8_t readVBR(unsigned, uint8_t = 0);
   uint8_t readDisassembler(unsigned);
 
-  //io.cpp
   uint8_t readIOCPU(unsigned, uint8_t);
   uint8_t readIOSA1(unsigned, uint8_t);
   void writeIOCPU(unsigned, uint8_t);
   void writeIOSA1(unsigned, uint8_t);
   void writeIOShared(unsigned, uint8_t);
 
-  //serialization.cpp
   void serialize(serializer&);
 
   struct ROM : ReadableMemory {
-    //rom.cpp
     inline bool conflict() const;
 
     inline uint8_t read(unsigned, uint8_t = 0) override;
@@ -94,7 +88,6 @@ struct SA1 : Processor::WDC65816, Thread {
   } rom;
 
   struct BWRAM : WritableMemory {
-    //bwram.cpp
     inline bool conflict() const;
 
     inline uint8_t read(unsigned, uint8_t = 0) override;
@@ -116,7 +109,6 @@ struct SA1 : Processor::WDC65816, Thread {
   } bwram;
 
   struct IRAM : WritableMemory {
-    //iram.cpp
     inline bool conflict() const;
 
     inline uint8_t read(unsigned, uint8_t = 0) override;

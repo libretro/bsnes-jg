@@ -49,7 +49,6 @@ struct System {
   void unload();
   void power(bool);
 
-  //serialization.cpp
   serializer serialize(bool);
   bool unserialize(serializer&);
 

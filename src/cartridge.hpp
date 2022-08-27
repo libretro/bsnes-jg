@@ -85,12 +85,10 @@ struct Cartridge {
 private:
   std::string board;
 
-  //cartridge.cpp
   bool loadBSMemory();
   bool loadSufamiTurboA();
   bool loadSufamiTurboB();
 
-  //load.cpp
   std::string loadBoard(std::string);
   bool loadCartridge(std::string);
   void loadCartridgeBSMemory(std::string);
@@ -122,7 +120,6 @@ private:
   void loadSharpRTC(std::string);
   void loadMSU1();
 
-  //save.cpp
   void saveCartridge();
   void saveCartridgeBSMemory(std::string);
   void saveCartridgeSufamiTurboA(std::string);

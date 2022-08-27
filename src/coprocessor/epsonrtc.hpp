@@ -89,7 +89,6 @@ struct EpsonRTC : Thread {
   uint8_t atime;  //astronomical time (24-hour mode)
   uint8_t test;
 
-  //memory.cpp
   void rtcReset();
   uint8_t rtcRead(uint8_t);
   void rtcWrite(uint8_t, uint8_t);
@@ -97,7 +96,6 @@ struct EpsonRTC : Thread {
   void load(const uint8_t*);
   void save(uint8_t*);
 
-  //time.cpp
   void irq(uint8_t);
   void duty();
   void roundSeconds();

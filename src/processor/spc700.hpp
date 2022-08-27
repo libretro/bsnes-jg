@@ -37,20 +37,16 @@ struct SPC700 {
   virtual void write(uint16_t, uint8_t) = 0;
   virtual bool synchronizing() const = 0;
 
-  //spc700.cpp
   void power();
 
-  //memory.cpp
   alwaysinline uint8_t fetch();
   alwaysinline uint8_t load(uint8_t);
   alwaysinline void store(uint8_t, uint8_t);
   alwaysinline uint8_t pull();
   alwaysinline void push(uint8_t);
 
-  //instruction.cpp
   void instruction();
 
-  //algorithms.cpp
   uint8_t algorithmADC(uint8_t, uint8_t);
   uint8_t algorithmAND(uint8_t, uint8_t);
   uint8_t algorithmASL(uint8_t);
@@ -69,7 +65,6 @@ struct SPC700 {
   uint16_t algorithmLDW(uint16_t, uint16_t);
   uint16_t algorithmSBW(uint16_t, uint16_t);
 
-  //instructions.cpp
   using fps = uint8_t (SPC700::*)(uint8_t);
   using fpb = uint8_t (SPC700::*)(uint8_t, uint8_t);
   using fpw = uint16_t (SPC700::*)(uint16_t, uint16_t);
@@ -140,7 +135,6 @@ struct SPC700 {
   void instructionTransfer(uint8_t&, uint8_t&);
   void instructionWait();
 
-  //serialization.cpp
   void serialize(serializer&);
 
   struct Flags {

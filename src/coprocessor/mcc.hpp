@@ -29,7 +29,6 @@ struct MCC {
   ReadableMemory rom;
   WritableMemory psram;
 
-  //mcc.cpp
   void unload();
   void power();
   void commit();
@@ -46,7 +45,6 @@ struct MCC {
   uint8_t exAccess(bool, unsigned, uint8_t);
   uint8_t bsAccess(bool, unsigned, uint8_t);
 
-  //serialization.cpp
   void serialize(serializer&);
 
 private:

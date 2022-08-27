@@ -38,7 +38,6 @@ namespace SuperFamicom {
 //As such, our only option is very basic high-level emulation, provided here.
 
 struct Event : Thread {
-  //event.cpp
   void synchronizeCPU();
   [[noreturn]] static void Enter();
   void main();
@@ -52,7 +51,6 @@ struct Event : Thread {
   uint8_t read(unsigned, uint8_t);
   void write(unsigned, uint8_t);
 
-  //serialization.cpp
   void serialize(serializer&);
 
 public:

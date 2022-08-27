@@ -48,7 +48,6 @@ struct SPC7110 : Thread {
 
   void serialize(serializer&);
 
-  //dcu.cpp
   void dcuLoadAddress();
   void dcuBeginTransfer();
   uint8_t dcuRead();
@@ -57,7 +56,6 @@ struct SPC7110 : Thread {
   void deinterleave2bpp(unsigned);
   void deinterleave4bpp(unsigned);
 
-  //data.cpp
   uint8_t dataromRead(unsigned);
 
   unsigned dataOffset();
@@ -74,7 +72,6 @@ struct SPC7110 : Thread {
   void dataPortIncrement4815();
   void dataPortIncrement481a();
 
-  //alu.cpp
   void aluMultiply();
   void aluDivide();
 

@@ -1064,7 +1064,6 @@ void SA1::serialize(serializer& s) {
   s.array(bwram.data(), bwram.size());
   s.integer(bwram.dma);
 
-  //sa1.hpp
   s.integer(status.counter);
 
   s.integer(status.interruptPending);
@@ -1073,10 +1072,8 @@ void SA1::serialize(serializer& s) {
   s.integer(status.vcounter);
   s.integer(status.hcounter);
 
-  //dma/dma.hpp
   s.integer(dma.line);
 
-  //mmio/mmio.hpp
   s.integer(mmio.sa1_irq);
   s.integer(mmio.sa1_rdyb);
   s.integer(mmio.sa1_resb);

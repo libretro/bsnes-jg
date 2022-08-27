@@ -46,7 +46,6 @@ struct BSMemory : Thread, Memory {
   bool writable() const;
   void writable(bool);
 
-  //bsmemory.cpp
   BSMemory();
   void synchronizeCPU();
   [[noreturn]] static void Enter();
@@ -62,7 +61,6 @@ struct BSMemory : Thread, Memory {
   uint8_t read(unsigned, uint8_t) override;
   void write(unsigned, uint8_t) override;
 
-  //serialization.cpp
   void serialize(serializer&);
 
   WritableMemory memory;
@@ -176,7 +174,6 @@ private:
     uint32_t address(unsigned);
     uint8_t data(unsigned);
 
-    //serialization.cpp
     void serialize(serializer&);
 
     struct History {

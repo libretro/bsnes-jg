@@ -23,13 +23,11 @@
 namespace SuperFamicom {
 
 struct DIP {
-  //dip.cpp
   void power();
 
   uint8_t read(unsigned, uint8_t);
   void write(unsigned, uint8_t);
 
-  //serialization.cpp
   void serialize(serializer&);
 
   uint8_t value = 0x00;

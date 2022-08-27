@@ -29,7 +29,6 @@ struct HitachiDSP : Processor::HG51B, Thread {
   ReadableMemory rom;
   WritableMemory ram;
 
-  //hitachidsp.cpp
   void synchronizeCPU();
   [[noreturn]] static void Enter();
   void step(unsigned) override;
@@ -72,7 +71,6 @@ struct HitachiDSP : Processor::HG51B, Thread {
   unsigned Roms;
   bool Mapping;
 
-  //data-rom.cpp
   static const uint8_t staticDataROM[3072];
 };
 

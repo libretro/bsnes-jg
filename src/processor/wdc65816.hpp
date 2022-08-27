@@ -62,10 +62,8 @@ struct WDC65816 {
     struct { uint8_t order_lsb4(l, h, b, y); } r24_lsb4;
   };
 
-  //wdc65816.cpp
   void power();
 
-  //memory.cpp
   inline void idleIRQ();
   inline void idle2();
   inline void idle4(uint16_t, uint16_t);
@@ -85,7 +83,6 @@ struct WDC65816 {
   inline uint8_t readStack(unsigned);
   inline void writeStack(unsigned, uint8_t);
 
-  //algorithms.cpp
   using  alu8 = uint8_t (WDC65816::*)( uint8_t);
   using alu16 = uint16_t (WDC65816::*)(uint16_t);
 
@@ -130,7 +127,6 @@ struct WDC65816 {
   uint8_t algorithmTSB8(uint8_t);
   uint16_t algorithmTSB16(uint16_t);
 
-  //instructions-read.cpp
   void ImmediateRead8(alu8);
   void ImmediateRead16(alu16);
   void BankRead8(alu8);
@@ -156,7 +152,6 @@ struct WDC65816 {
   void IndirectStackRead8(alu8);
   void IndirectStackRead16(alu16);
 
-  //instructions-write.cpp
   void BankWrite8(r16);
   void BankWrite16(r16);
   void BankWrite8(r16, r16);
@@ -180,7 +175,6 @@ struct WDC65816 {
   void IndirectStackWrite8();
   void IndirectStackWrite16();
 
-  //instructions-modify.cpp
   void ImpliedModify8(alu8, r16&);
   void ImpliedModify16(alu16, r16&);
   void BankModify8(alu8);
@@ -192,7 +186,6 @@ struct WDC65816 {
   void DirectIndexedModify8(alu8);
   void DirectIndexedModify16(alu16);
 
-  //instructions-pc.cpp
   void Branch(bool = 1);
   void BranchLong();
   void JumpShort();
@@ -207,7 +200,6 @@ struct WDC65816 {
   void ReturnShort();
   void ReturnLong();
 
-  //instructions-misc.cpp
   void BitImmediate8();
   void BitImmediate16();
   void NoOperation();
@@ -241,10 +233,8 @@ struct WDC65816 {
   void PushEffectiveIndirectAddress();
   void PushEffectiveRelativeAddress();
 
-  //instruction.cpp
   void instruction();
 
-  //serialization.cpp
   void serialize(serializer&);
 
   struct f8 {
