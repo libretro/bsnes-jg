@@ -1,3 +1,12 @@
+Version 1.?.?
+-------------
+ - Support addressing non-power-of-two ROMs with SuperFX coprocessor
+ - Add database entry for SuperFX VoxelLandscape demo
+ - Extensive cleanups and fixes for warnings throughout the codebase
+ - Stricter build flags
+ - Update SameBoy to 0.15.4
+ - Change language standard to ISO C++11
+
 Version 1.0.1
 -------------
  - Code cleanup and refactoring
