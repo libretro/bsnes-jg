@@ -35,7 +35,7 @@ struct Game {
   struct Memory {
     Memory() = default;
     Memory(std::string);
-    explicit operator bool() const { return (bool)!type.empty(); }
+    explicit operator bool() const;
     std::string name() const;
 
     std::string type;
@@ -50,7 +50,7 @@ struct Game {
   struct Oscillator {
     Oscillator() = default;
     Oscillator(std::string);
-    explicit operator bool() const { return frequency; }
+    explicit operator bool() const;
 
     unsigned frequency;
   };
