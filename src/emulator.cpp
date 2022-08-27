@@ -74,6 +74,10 @@ Game::Oscillator::Oscillator(std::string node) {
   frequency = std::stoi(BML::search(node, {"oscillator", "frequency"}));
 }
 
+Game::Oscillator::operator bool() const {
+  return frequency;
+}
+
 Game::Memory::Memory(std::string node) {
   type = BML::search(node, {"memory", "type"});
   size = std::stoi(BML::search(node, {"memory", "size"}), nullptr, 16);
@@ -82,6 +86,10 @@ Game::Memory::Memory(std::string node) {
   architecture = BML::search(node, {"memory", "architecture"});
   identifier = BML::search(node, {"memory", "identifier"});
   nonVolatile = !BML::exists(node, {"memory", "volatile"});
+}
+
+Game::Memory::operator bool() const {
+  return (bool)!type.empty();
 }
 
 std::string Game::Memory::name() const {

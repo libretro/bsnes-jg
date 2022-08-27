@@ -28,7 +28,7 @@ namespace SuperFamicom {
 
 struct SMP : Processor::SPC700, Thread {
   inline bool synchronizing() const override;
-  inline bool raise(bool& data, bool value);
+  inline bool raise(bool&, bool);
 
   //io.cpp
   uint8_t portRead(uint8_t) const;

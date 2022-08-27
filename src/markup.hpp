@@ -21,12 +21,12 @@
 
 namespace BML {
 
-std::string gendoc(std::istream& is, std::string parent, std::string child, std::string match);
-bool exists(std::string text, std::vector<std::string> terms);
-std::string search(std::string text, std::vector<std::string> terms);
-std::string searchBoard(std::string text, std::string board);
-std::vector<std::string> searchList(std::string text, std::string term);
-std::vector<std::string> searchListShallow(std::string text, std::string parent, std::string child);
-std::string searchNode(std::string text, std::vector<std::string> terms);
+std::string gendoc(std::istream&, std::string, std::string, std::string);
+bool exists(std::string, std::vector<std::string>);
+std::string search(std::string, std::vector<std::string>);
+std::string searchBoard(std::string, std::string);
+std::vector<std::string> searchList(std::string, std::string);
+std::vector<std::string> searchListShallow(std::string, std::string, std::string);
+std::string searchNode(std::string, std::vector<std::string>);
 
 }

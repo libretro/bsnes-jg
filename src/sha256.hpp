@@ -19,4 +19,4 @@
 
 #pragma once
 
-std::string sha256_digest(const uint8_t *data, size_t len);
+std::string sha256_digest(const uint8_t*, size_t);

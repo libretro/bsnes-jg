@@ -40,24 +40,9 @@ struct Scheduler {
   void leave(Event);
   void resume(cothread_t);
 
-  inline bool synchronizing() const {
-    return mode == Mode::Synchronize;
-  }
-
-  inline void synchronize() {
-    if(mode == Mode::Synchronize) {
-      if(desynchronized) {
-        desynchronized = false;
-        leave(Event::Desynchronized);
-      } else {
-        leave(Event::Synchronized);
-      }
-    }
-  }
-
-  inline void desynchronize() {
-    desynchronized = true;
-  }
+  inline bool synchronizing() const;
+  inline void synchronize();
+  inline void desynchronize();
 };
 
 extern Scheduler scheduler;
@@ -74,5 +59,24 @@ struct Thread {
   uint32_t frequency = 0;
   int64_t clock = 0;
 };
+
+bool Scheduler::synchronizing() const {
+  return mode == Mode::Synchronize;
+}
+
+void Scheduler::synchronize() {
+  if(mode == Mode::Synchronize) {
+    if(desynchronized) {
+      desynchronized = false;
+      leave(Event::Desynchronized);
+    } else {
+      leave(Event::Synchronized);
+    }
+  }
+}
+
+void Scheduler::desynchronize() {
+  desynchronized = true;
+}
 
 }
