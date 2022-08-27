@@ -29,6 +29,10 @@ namespace SuperFamicom {
 bool Memory::GlobalWriteEnable = false;
 Bus bus;
 
+Memory::~Memory() {
+  reset();
+}
+
 Bus::~Bus() {
   if(lookup) delete[] lookup;
   if(target) delete[] target;

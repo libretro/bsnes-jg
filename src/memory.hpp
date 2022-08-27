@@ -29,8 +29,8 @@ namespace SuperFamicom {
 struct Memory {
   static bool GlobalWriteEnable;
 
-  virtual ~Memory() { reset(); }
-  inline explicit operator bool() const { return size() > 0; }
+  virtual ~Memory();
+  inline explicit operator bool() const;
 
   virtual void reset() {}
   virtual void allocate(unsigned, uint8_t = 0xff) {}
@@ -45,43 +45,13 @@ struct Memory {
 };
 
 struct ReadableMemory : Memory {
-  inline void reset() override {
-    delete[] self.data;
-    self.data = nullptr;
-    self.size = 0;
-  }
-
-  inline void allocate(unsigned size, uint8_t fill = 0xff) override {
-    if(self.size != size) {
-      delete[] self.data;
-      self.data = new uint8_t[self.size = size];
-    }
-    for(unsigned address = 0; address < size; ++address) {
-      self.data[address] = fill;
-    }
-  }
-
-  inline uint8_t* data() override {
-    return self.data;
-  }
-
-  inline unsigned size() const override {
-    return self.size;
-  }
-
-  inline uint8_t read(unsigned address, uint8_t = 0) override {
-    return self.data[address];
-  }
-
-  inline void write(unsigned address, uint8_t data) override {
-    if(Memory::GlobalWriteEnable) {
-      self.data[address] = data;
-    }
-  }
-
-  inline uint8_t operator[](unsigned address) const {
-    return self.data[address];
-  }
+  inline void reset() override;
+  inline void allocate(unsigned, uint8_t = 0xff) override;
+  inline uint8_t* data() override;
+  inline unsigned size() const override;
+  inline uint8_t read(unsigned, uint8_t = 0) override;
+  inline void write(unsigned, uint8_t) override;
+  inline uint8_t operator[](unsigned) const;
 
 private:
   struct {
@@ -91,41 +61,13 @@ private:
 };
 
 struct WritableMemory : Memory {
-  inline void reset() override {
-    delete[] self.data;
-    self.data = nullptr;
-    self.size = 0;
-  }
-
-  inline void allocate(unsigned size, uint8_t fill = 0xff) override {
-    if(self.size != size) {
-      delete[] self.data;
-      self.data = new uint8_t[self.size = size];
-    }
-    for(unsigned address = 0; address < size; ++address) {
-      self.data[address] = fill;
-    }
-  }
-
-  inline uint8_t* data() override {
-    return self.data;
-  }
-
-  inline unsigned size() const override {
-    return self.size;
-  }
-
-  inline uint8_t read(unsigned address, uint8_t = 0) override {
-    return self.data[address];
-  }
-
-  inline void write(unsigned address, uint8_t data) override {
-    self.data[address] = data;
-  }
-
-  inline uint8_t& operator[](unsigned address) {
-    return self.data[address];
-  }
+  inline void reset() override;
+  inline void allocate(unsigned, uint8_t = 0xff) override;
+  inline uint8_t* data() override;
+  inline unsigned size() const override;
+  inline uint8_t read(unsigned, uint8_t = 0) override;
+  inline void write(unsigned, uint8_t) override;
+  inline uint8_t& operator[](unsigned);
 
 private:
   struct {
@@ -161,6 +103,84 @@ private:
 };
 
 extern Bus bus;
+
+Memory::operator bool() const {
+  return size() > 0;
+}
+
+void ReadableMemory::reset() {
+  delete[] self.data;
+  self.data = nullptr;
+  self.size = 0;
+}
+
+void ReadableMemory::allocate(unsigned size, uint8_t fill) {
+  if(self.size != size) {
+    delete[] self.data;
+    self.data = new uint8_t[self.size = size];
+  }
+  for(unsigned address = 0; address < size; ++address) {
+    self.data[address] = fill;
+  }
+}
+
+uint8_t* ReadableMemory::data() {
+  return self.data;
+}
+
+unsigned ReadableMemory::size() const {
+  return self.size;
+}
+
+uint8_t ReadableMemory::read(unsigned address, uint8_t) {
+  return self.data[address];
+}
+
+void ReadableMemory::write(unsigned address, uint8_t data) {
+  if(Memory::GlobalWriteEnable) {
+    self.data[address] = data;
+  }
+}
+
+uint8_t ReadableMemory::operator[](unsigned address) const {
+  return self.data[address];
+}
+
+void WritableMemory::reset() {
+  delete[] self.data;
+  self.data = nullptr;
+  self.size = 0;
+}
+
+void WritableMemory::allocate(unsigned size, uint8_t fill) {
+  if(self.size != size) {
+    delete[] self.data;
+    self.data = new uint8_t[self.size = size];
+  }
+  for(unsigned address = 0; address < size; ++address) {
+    self.data[address] = fill;
+  }
+}
+
+uint8_t* WritableMemory::data() {
+  return self.data;
+}
+
+unsigned WritableMemory::size() const {
+  return self.size;
+}
+
+uint8_t WritableMemory::read(unsigned address, uint8_t) {
+  return self.data[address];
+}
+
+void WritableMemory::write(unsigned address, uint8_t data)  {
+  self.data[address] = data;
+}
+
+uint8_t& WritableMemory::operator[](unsigned address) {
+  return self.data[address];
+}
 
 unsigned Bus::mirror(unsigned addr, unsigned size) {
   if(size == 0) return 0;
