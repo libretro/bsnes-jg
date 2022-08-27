@@ -237,13 +237,11 @@ private:
   } io;
 
 struct Mosaic {
-  //mosaic.cpp
   inline bool enable() const;
   inline unsigned voffset() const;
   void scanline();
   void power();
 
-  //serialization.cpp
   void serialize(serializer&);
 
   uint8_t size;
@@ -255,7 +253,6 @@ struct Background {
 
   inline bool hires() const;
 
-  //background.cpp
   inline void frame();
   inline void scanline();
   void begin();
@@ -265,7 +262,6 @@ struct Background {
   alwaysinline void run(bool);
   void power();
 
-  //mode7.cpp
   inline int clip(int);
   void runMode7();
 

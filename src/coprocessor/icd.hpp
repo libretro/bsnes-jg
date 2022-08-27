@@ -41,22 +41,18 @@ struct ICD : Thread {
   void unload();
   void power(bool = false);
 
-  //interface.cpp
   void ppuHreset();
   void ppuVreset();
   void ppuWrite(uint8_t);
   void apuWrite(int16_t, int16_t);
   void joypWrite(bool, bool);
 
-  //io.cpp
   uint8_t readIO(unsigned, uint8_t);
   void writeIO(unsigned, uint8_t);
 
-  //boot-roms.cpp
   static const uint8_t SGB1BootROM[256];
   static const uint8_t SGB2BootROM[256];
 
-  //serialization.cpp
   void serialize(serializer&);
 
   void setRom(const uint8_t*, size_t);

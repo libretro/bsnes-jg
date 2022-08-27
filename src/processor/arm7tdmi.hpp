@@ -45,11 +45,9 @@ struct ARM7TDMI {
   virtual uint32_t get(unsigned, uint32_t) = 0;
   virtual void set(unsigned, uint32_t, uint32_t) = 0;
 
-  //arm7tdmi.cpp
   ARM7TDMI();
   void power();
 
-  //registers.cpp
   struct GPR;
   struct PSR;
   inline GPR& r(uint8_t);
@@ -58,14 +56,12 @@ struct ARM7TDMI {
   inline bool privileged() const;
   inline bool exception() const;
 
-  //memory.cpp
   void idle();
   uint32_t read(unsigned, uint32_t);
   uint32_t load(unsigned, uint32_t);
   void write(unsigned, uint32_t, uint32_t);
   void store(unsigned, uint32_t, uint32_t);
 
-  //algorithms.cpp
   uint32_t ADD(uint32_t, uint32_t, bool);
   uint32_t ASR(uint32_t, uint8_t);
   uint32_t BIT(uint32_t);
@@ -77,14 +73,12 @@ struct ARM7TDMI {
   uint32_t SUB(uint32_t, uint32_t, bool);
   bool TST(uint8_t);
 
-  //instruction.cpp
   void fetch();
   void instruction();
   void exception(unsigned, uint32_t);
   void armInitialize();
   void thumbInitialize();
 
-  //instructions-arm.cpp
   void armALU(uint8_t, uint8_t, uint8_t, uint32_t);
   void armMoveToStatus(uint8_t, uint8_t, uint32_t);
 
@@ -109,7 +103,6 @@ struct ARM7TDMI {
   void armInstructionSoftwareInterrupt(uint32_t);
   void armInstructionUndefined();
 
-  //instructions-thumb.cpp
   void thumbInstructionALU(uint8_t, uint8_t, uint8_t);
   void thumbInstructionALUExtended(uint8_t, uint8_t, uint8_t);
   void thumbInstructionAddRegister(uint8_t, uint8_t, uint8_t);
@@ -134,7 +127,6 @@ struct ARM7TDMI {
   void thumbInstructionStackMultiple(uint8_t, uint8_t, uint8_t);
   void thumbInstructionUndefined();
 
-  //serialization.cpp
   void serialize(serializer&);
 
   struct GPR {
@@ -160,7 +152,6 @@ struct ARM7TDMI {
     inline operator uint32_t() const;
     inline PSR& operator=(uint32_t data);
 
-    //serialization.cpp
     void serialize(serializer&);
 
     uint8_t m;    //mode
@@ -174,7 +165,6 @@ struct ARM7TDMI {
   };
 
   struct Processor {
-    //serialization.cpp
     void serialize(serializer&);
 
     GPR r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
@@ -207,7 +197,6 @@ struct ARM7TDMI {
   } processor;
 
   struct Pipeline {
-    //serialization.cpp
     void serialize(serializer&);
 
     struct Instruction {

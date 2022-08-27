@@ -42,7 +42,6 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline bool lower(bool&);
   inline bool raise(bool&, bool);
 
-  //cpu.cpp
   void synchronizeSMP();
   void synchronizePPU();
   void synchronizeCoprocessors();
@@ -52,7 +51,6 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   void power(bool);
   void quirk();
 
-  //dma.cpp
   inline bool dmaEnable();
   inline bool hdmaEnable();
   inline bool hdmaActive();
@@ -62,13 +60,11 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   void hdmaSetup();
   void hdmaRun();
 
-  //memory.cpp
   void idle() override;
   uint8_t read(unsigned) override;
   void write(unsigned, uint8_t) override;
   uint8_t readDisassembler(unsigned);
 
-  //io.cpp
   uint8_t readRAM(unsigned, uint8_t);
   uint8_t readAPU(unsigned, uint8_t);
   uint8_t readCPU(unsigned, uint8_t);
@@ -78,7 +74,6 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   void writeCPU(unsigned, uint8_t);
   void writeDMA(unsigned, uint8_t);
 
-  //timing.cpp
   inline unsigned dmaCounter() const;
   inline unsigned joypadCounter() const;
 
@@ -90,7 +85,6 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline void aluEdge();
   inline void dmaEdge();
 
-  //irq.cpp
   inline void nmiPoll();
   inline void irqPoll();
   void nmitimenUpdate(uint8_t);
@@ -101,10 +95,8 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   inline bool irqTest();
   inline void lastCycle() override;
 
-  //joypad.cpp
   void joypadEdge();
 
-  //serialization.cpp
   void serialize(serializer&);
 
   uint8_t wram[128 * 1024];
@@ -208,7 +200,6 @@ private:
   } alu;
 
   struct Channel {
-    //dma.cpp
     template<unsigned, bool> inline void step();
     inline void edge();
 

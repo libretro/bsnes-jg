@@ -30,14 +30,12 @@ struct SuperFX : Processor::GSU, Thread {
 
   inline bool synchronizing() const;
 
-  //superfx.cpp
   void synchronizeCPU();
   [[noreturn]] static void Enter();
   void main();
   void unload();
   void power();
 
-  //bus.cpp
   struct CPUROM : Memory {
     uint8_t* data() override;
     unsigned size() const override;
@@ -52,7 +50,6 @@ struct SuperFX : Processor::GSU, Thread {
     void write(unsigned, uint8_t) override;
   };
 
-  //core.cpp
   void stop() override;
   uint8_t color(uint8_t) override;
   void plot(uint8_t, uint8_t) override;
@@ -60,7 +57,6 @@ struct SuperFX : Processor::GSU, Thread {
 
   void flushPixelCache(PixelCache&);
 
-  //memory.cpp
   uint8_t read(unsigned, uint8_t = 0x00) override;
   void write(unsigned, uint8_t) override;
 
@@ -72,11 +68,9 @@ struct SuperFX : Processor::GSU, Thread {
   uint8_t readCache(uint16_t);
   void writeCache(uint16_t, uint8_t);
 
-  //io.cpp
   uint8_t readIO(unsigned, uint8_t);
   void writeIO(unsigned, uint8_t);
 
-  //timing.cpp
   void step(unsigned) override;
 
   void syncROMBuffer() override;
@@ -87,7 +81,6 @@ struct SuperFX : Processor::GSU, Thread {
   uint8_t readRAMBuffer(uint16_t) override;
   void writeRAMBuffer(uint16_t, uint8_t) override;
 
-  //serialization.cpp
   void serialize(serializer&);
 
   unsigned Frequency;

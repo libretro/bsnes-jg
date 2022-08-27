@@ -151,10 +151,8 @@ struct GSU {
   virtual uint8_t read(unsigned, uint8_t = 0x00) = 0;
   virtual void write(unsigned, uint8_t) = 0;
 
-  //gsu.cpp
   void power();
 
-  //instructions.cpp
   void instructionADD_ADC(unsigned);
   void instructionALT1();
   void instructionALT2();
@@ -196,13 +194,10 @@ struct GSU {
   void instructionTO_MOVE(unsigned);
   void instructionWITH(unsigned);
 
-  //switch.cpp
   void instruction(uint8_t);
 
-  //serialization.cpp
   void serialize(serializer&);
 
-  //disassembler.cpp
   void disassembleOpcode(char*);
   void disassembleALT0(char*);
   void disassembleALT1(char*);
