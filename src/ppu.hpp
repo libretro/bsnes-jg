@@ -328,8 +328,6 @@ private:
 
     uint8_t renderingIndex;
     uint8_t pixelCounter;
-
-    friend struct PPU;
   };
 
   struct OAM {
@@ -420,8 +418,6 @@ private:
         uint8_t palette;
       } above, below;
     } output;
-
-    friend struct PPU;
   };
 
   struct Window {
@@ -466,7 +462,6 @@ private:
     } output;
 
     unsigned x;
-    friend struct PPU;
   };
 
   struct Screen {
@@ -513,8 +508,6 @@ private:
       uint8_t blendMode;
       uint8_t colorHalve;
     } math;
-
-    friend struct PPU;
   };
 
   Mosaic mosaic;
@@ -526,10 +519,6 @@ private:
   Window window;
   Screen screen;
 
-  friend struct PPU::Background;
-  friend struct PPU::Object;
-  friend struct PPU::Window;
-  friend struct PPU::Screen;
   friend struct System;
 };
 
