@@ -69,8 +69,6 @@ private:
 
   void serializeAll(serializer&, bool);
   unsigned serializeInit(bool);
-
-  friend struct Cartridge;
 };
 
 extern System system;

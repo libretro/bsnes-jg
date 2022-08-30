@@ -73,8 +73,6 @@ struct Stream {
 private:
   double inputFrequency;
   double outputFrequency = 48000.0;
-
-  friend struct Audio;
 };
 
 extern Audio audio;

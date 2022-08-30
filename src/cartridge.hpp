@@ -143,9 +143,6 @@ private:
   std::ifstream (*openCallback)(unsigned, std::string);
   bool (*romCallback)(unsigned);
   void (*writeCallback)(unsigned, std::string, const uint8_t*, unsigned);
-
-  friend struct Interface;
-  friend struct ICD;
 };
 
 extern Cartridge cartridge;
