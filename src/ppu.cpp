@@ -266,8 +266,7 @@ uint16_t PPU::addressVRAM() const {
 
 uint16_t PPU::readVRAM() {
   if(!io.displayDisable && vcounter() < vdisp()) return 0x0000;
-  uint16_t address = addressVRAM();
-  return vram[address];
+  return vram[addressVRAM()];
 }
 
 void PPU::writeVRAM(bool byte, uint8_t data) {
