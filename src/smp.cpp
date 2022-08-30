@@ -41,6 +41,9 @@ const uint8_t SMP::iplrom[64] = {
   0x5d, 0xd0, 0xdb, 0x1f, 0x00, 0x00, 0xc0, 0xff
 };
 
+static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
+static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
+
 bool SMP::synchronizing() const {
   return scheduler.synchronizing();
 }
@@ -284,9 +287,6 @@ void SMP::writeIO(uint16_t address, uint8_t data) {
 //other times (and more likely), the SMP will deadlock until the system is reset
 //the timers are not affected by this and advance by their expected values
 void SMP::wait(uint16_t addr, bool half) {
-  static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
-  static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
-
   unsigned waitStates = io.externalWaitStates;
   if((addr & 0xfff0) == 0x00f0) waitStates = io.internalWaitStates;  //IO registers
   else if(addr >= 0xffc0 && io.iplromEnable) waitStates = io.internalWaitStates;  //IPLROM
@@ -296,8 +296,6 @@ void SMP::wait(uint16_t addr, bool half) {
 }
 
 void SMP::waitIdle() {
-  static const unsigned cycleWaitStates[4] = {2, 4, 10, 20};
-  static const unsigned timerWaitStates[4] = {2, 4,  8, 16};
   stepIdle(cycleWaitStates[io.externalWaitStates]);
   stepTimers(timerWaitStates[io.externalWaitStates]);
 }

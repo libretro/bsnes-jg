@@ -27,6 +27,11 @@
 
 namespace SuperFamicom {
 
+static const uint8_t vector[16] = {
+  0x00, 0x01, 0x00, 0x01, 0x04, 0x01, 0x00, 0x01,
+  0x00, 0x01, 0x08, 0x01, 0x00, 0x01, 0x0c, 0x01
+};
+
 //ROM / RAM access from the S-CPU
 
 bool SuperFX::synchronizing() const {
@@ -43,10 +48,6 @@ unsigned SuperFX::CPUROM::size() const {
 
 uint8_t SuperFX::CPUROM::read(unsigned addr, uint8_t data) {
   if(superfx.regs.sfr.flag.g && superfx.regs.scmr.ron) {
-    static const uint8_t vector[16] = {
-      0x00, 0x01, 0x00, 0x01, 0x04, 0x01, 0x00, 0x01,
-      0x00, 0x01, 0x08, 0x01, 0x00, 0x01, 0x0c, 0x01,
-    };
     return vector[addr & 15];
   }
   return superfx.rom.read(addr, data);
