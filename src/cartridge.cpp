@@ -445,7 +445,7 @@ void Cartridge::loadSA1(std::string node) {
 
   std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) {
-      loadMap(pmap, {&SA1::readIOCPU, &sa1}, {&SA1::writeIOCPU, &sa1});
+    loadMap(pmap, {&SA1::readIOCPU, &sa1}, {&SA1::writeIOCPU, &sa1});
   }
 
   std::string mcu = BML::searchNode(node, {"processor", "mcu"});
@@ -504,7 +504,7 @@ void Cartridge::loadSuperFX(std::string node) {
 
   std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) {
-      loadMap(pmap, {&SuperFX::readIO, &superfx}, {&SuperFX::writeIO, &superfx});
+    loadMap(pmap, {&SuperFX::readIO, &superfx}, {&SuperFX::writeIO, &superfx});
   }
 
   std::vector<std::string> sfxmem = BML::searchList(node, "memory");
@@ -659,7 +659,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
     else if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
       std::vector<std::string> maps = BML::searchList(m, "map");
       for (std::string map : maps) {
-          loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
+        loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
       }
     }
   }
@@ -668,7 +668,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
 
   std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) {
-      loadMap(pmap, {&HitachiDSP::readIO, &hitachidsp}, {&HitachiDSP::writeIO, &hitachidsp});
+    loadMap(pmap, {&HitachiDSP::readIO, &hitachidsp}, {&HitachiDSP::writeIO, &hitachidsp});
   }
 }
 
@@ -1265,7 +1265,7 @@ bool Cartridge::load() {
     game.load(game.document);
   }
   else {
-      return false;
+    return false;
   }
 
   if (!loadCartridge(game.document))
@@ -1287,12 +1287,12 @@ bool Cartridge::load() {
 
     // Ugly, but works during the nall removal, needs to change when nall is gone
     if(cartridge.has.SufamiTurboSlotA) {
-        for (size_t i = 0; i < sufamiturboA.rom.size(); ++i)
-            carts.push_back(sufamiturboA.rom[i]);
+      for (size_t i = 0; i < sufamiturboA.rom.size(); ++i)
+        carts.push_back(sufamiturboA.rom[i]);
     }
     if(cartridge.has.SufamiTurboSlotB) {
-        for (size_t i = 0; i < sufamiturboB.rom.size(); ++i)
-            carts.push_back(sufamiturboB.rom[i]);
+      for (size_t i = 0; i < sufamiturboB.rom.size(); ++i)
+        carts.push_back(sufamiturboB.rom[i]);
     }
 
     information.sha256 = sha256_digest(carts.data(), carts.size());
@@ -1440,13 +1440,13 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
   dbfile.close();
 
   if (manifest.empty()) {
-      game.document = heuristics.manifest();
+    game.document = heuristics.manifest();
   }
   else {
-      //the internal ROM header title is not present in the database, but
-      //is needed for internal core overrides
-      manifest += "  title: " + heuristics.title() + "\n";
-      game.document = manifest;
+    //the internal ROM header title is not present in the database, but
+    //is needed for internal core overrides
+    manifest += "  title: " + heuristics.title() + "\n";
+    game.document = manifest;
   }
 
   if (heuristics.title() == "Satellaview BS-X" && data.size() >= 0x100000) {
