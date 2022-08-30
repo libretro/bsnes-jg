@@ -236,286 +236,286 @@ private:
     uint16_t vcounter;
   } io;
 
-struct Mosaic {
-  inline bool enable() const;
-  inline unsigned voffset() const;
-  void scanline();
-  void power();
-
-  void serialize(serializer&);
-
-  uint8_t size;
-  uint8_t vcounter;
-};
-
-struct Background {
-  Background(unsigned _id) : id(_id) {}
-
-  inline bool hires() const;
-
-  inline void frame();
-  inline void scanline();
-  void begin();
-  void fetchNameTable();
-  void fetchOffset(unsigned y);
-  void fetchCharacter(unsigned, bool = false);
-  alwaysinline void run(bool);
-  void power();
-
-  inline int clip(int);
-  void runMode7();
-
-  void serialize(serializer&);
-
-  struct ID { enum : unsigned { BG1, BG2, BG3, BG4 }; };
-  const unsigned id;
-
-  struct Mode { enum : unsigned { BPP2, BPP4, BPP8, Mode7, Inactive }; };
-  struct ScreenSize { enum : unsigned { Size32x32, Size32x64, Size64x32, Size64x64 }; };
-  struct TileSize { enum : unsigned { Size8x8, Size16x16 }; };
-  struct Screen { enum : unsigned { Above, Below }; };
-
-  struct IO {
-    uint16_t tiledataAddress;
-    uint16_t screenAddress;
-    uint8_t screenSize;
-    uint8_t tileSize;
-
-    uint8_t mode;
-    uint8_t priority[2];
-
-    uint8_t aboveEnable;
-    uint8_t belowEnable;
-
-    uint16_t hoffset;
-    uint16_t voffset;
-  } io;
-
-  struct Pixel {
-    uint8_t priority;  //0 = none (transparent)
-    uint8_t palette;
-    uint8_t paletteGroup;
-  } above, below;
-
-  struct Output {
-    Pixel above;
-    Pixel below;
-  } output;
-
   struct Mosaic {
-    uint8_t enable;
-    uint16_t hcounter;
-    uint16_t hoffset;
-    Pixel  pixel;
-  } mosaic;
+    inline bool enable() const;
+    inline unsigned voffset() const;
+    void scanline();
+    void power();
 
-  struct OffsetPerTile {
-    //set in BG3 only; used by BG1 and BG2
-    uint16_t hoffset;
-    uint16_t voffset;
-  } opt;
+    void serialize(serializer&);
 
-  struct Tile {
-    uint16_t address;
-    uint16_t character;
-    uint8_t palette;
-    uint8_t paletteGroup;
-    uint8_t priority;
-    uint8_t hmirror;
-    uint8_t vmirror;
-    uint16_t data[4];
-  } tiles[66];
-
-  uint8_t renderingIndex;
-  uint8_t pixelCounter;
-
-  friend struct PPU;
-};
-
-struct OAM {
-  uint8_t read(uint16_t);
-  void write(uint16_t, uint8_t);
-
-  struct Object {
-    inline unsigned width() const;
-    inline unsigned height() const;
-
-    uint16_t x;
-    uint8_t y;
-    uint8_t character;
-    uint8_t nameselect;
-    uint8_t vflip;
-    uint8_t hflip;
-    uint8_t priority;
-    uint8_t palette;
     uint8_t size;
-  } object[128];
-};
-
-struct Object {
-  inline void addressReset();
-  inline void setFirstSprite();
-  void frame();
-  void scanline();
-  void evaluate(uint8_t);
-  void run();
-  void fetch();
-  void power();
-
-  bool onScanline(PPU::OAM::Object&);
-
-  void serialize(serializer&);
-
-  OAM oam;
-
-  struct IO {
-    uint8_t aboveEnable;
-    uint8_t belowEnable;
-    uint8_t interlace;
-
-    uint8_t baseSize;
-    uint8_t nameselect;
-    uint16_t tiledataAddress;
-    uint8_t firstSprite;
-
-    uint8_t priority[4];
-
-    uint8_t timeOver;
-    uint8_t rangeOver;
-  } io;
-
-  struct Latch {
-     uint8_t firstSprite;
-  } latch;
-
-  struct Item {
-     uint8_t valid;
-     uint8_t index;
+    uint8_t vcounter;
   };
 
-  struct Tile {
-     uint8_t valid;
-     uint16_t x;
-     uint8_t priority;
-     uint8_t palette;
-     uint8_t hflip;
-     uint32_t data;
-  };
+  struct Background {
+    Background(unsigned _id) : id(_id) {}
 
-  struct State {
-    unsigned x;
-    unsigned y;
+    inline bool hires() const;
 
-    unsigned itemCount;
-    unsigned tileCount;
+    inline void frame();
+    inline void scanline();
+    void begin();
+    void fetchNameTable();
+    void fetchOffset(unsigned y);
+    void fetchCharacter(unsigned, bool = false);
+    alwaysinline void run(bool);
+    void power();
 
-    bool active;
-    Item item[2][32];
-    Tile tile[2][34];
-  } t;
+    inline int clip(int);
+    void runMode7();
 
-  struct Output {
+    void serialize(serializer&);
+
+    struct ID { enum : unsigned { BG1, BG2, BG3, BG4 }; };
+    const unsigned id;
+
+    struct Mode { enum : unsigned { BPP2, BPP4, BPP8, Mode7, Inactive }; };
+    struct ScreenSize { enum : unsigned { Size32x32, Size32x64, Size64x32, Size64x64 }; };
+    struct TileSize { enum : unsigned { Size8x8, Size16x16 }; };
+    struct Screen { enum : unsigned { Above, Below }; };
+
+    struct IO {
+      uint16_t tiledataAddress;
+      uint16_t screenAddress;
+      uint8_t screenSize;
+      uint8_t tileSize;
+
+      uint8_t mode;
+      uint8_t priority[2];
+
+      uint8_t aboveEnable;
+      uint8_t belowEnable;
+
+      uint16_t hoffset;
+      uint16_t voffset;
+    } io;
+
     struct Pixel {
       uint8_t priority;  //0 = none (transparent)
       uint8_t palette;
+      uint8_t paletteGroup;
     } above, below;
-  } output;
 
-  friend struct PPU;
-};
+    struct Output {
+      Pixel above;
+      Pixel below;
+    } output;
 
-struct Window {
-  void scanline();
-  void run();
-  bool test(bool, bool, bool, bool, unsigned);
-  void power();
+    struct Mosaic {
+      uint8_t enable;
+      uint16_t hcounter;
+      uint16_t hoffset;
+      Pixel  pixel;
+    } mosaic;
 
-  void serialize(serializer&);
+    struct OffsetPerTile {
+      //set in BG3 only; used by BG1 and BG2
+      uint16_t hoffset;
+      uint16_t voffset;
+    } opt;
 
-  struct IO {
-    struct Layer {
-      bool oneEnable;
-      bool oneInvert;
-      bool twoEnable;
-      bool twoInvert;
-      uint8_t mask;
-      bool aboveEnable;
-      bool belowEnable;
-    } bg1, bg2, bg3, bg4, obj;
+    struct Tile {
+      uint16_t address;
+      uint16_t character;
+      uint8_t palette;
+      uint8_t paletteGroup;
+      uint8_t priority;
+      uint8_t hmirror;
+      uint8_t vmirror;
+      uint16_t data[4];
+    } tiles[66];
 
-    struct Color {
-      bool oneEnable;
-      bool oneInvert;
-      bool twoEnable;
-      bool twoInvert;
-      uint8_t mask;
-      uint8_t aboveMask;
-      uint8_t belowMask;
-    } col;
+    uint8_t renderingIndex;
+    uint8_t pixelCounter;
 
-    uint8_t oneLeft;
-    uint8_t oneRight;
-    uint8_t twoLeft;
-    uint8_t twoRight;
-  } io;
+    friend struct PPU;
+  };
 
-  struct Output {
-    struct Pixel {
-      bool colorEnable;
-    } above, below;
-  } output;
+  struct OAM {
+    uint8_t read(uint16_t);
+    void write(uint16_t, uint8_t);
 
-  unsigned x;
-  friend struct PPU;
-};
+    struct Object {
+      inline unsigned width() const;
+      inline unsigned height() const;
 
-struct Screen {
-  void scanline();
-  void run();
-  void power();
+      uint16_t x;
+      uint8_t y;
+      uint8_t character;
+      uint8_t nameselect;
+      uint8_t vflip;
+      uint8_t hflip;
+      uint8_t priority;
+      uint8_t palette;
+      uint8_t size;
+    } object[128];
+  };
 
-  uint16_t below(bool hires);
-  uint16_t above();
+  struct Object {
+    inline void addressReset();
+    inline void setFirstSprite();
+    void frame();
+    void scanline();
+    void evaluate(uint8_t);
+    void run();
+    void fetch();
+    void power();
 
-  uint16_t blend(unsigned, unsigned) const;
-  inline uint16_t paletteColor(uint8_t) const;
-  inline uint16_t directColor(uint8_t, uint8_t) const;
-  inline uint16_t fixedColor() const;
+    bool onScanline(PPU::OAM::Object&);
 
-  void serialize(serializer&);
+    void serialize(serializer&);
 
-  uint16_t *lineA;
-  uint16_t *lineB;
+    OAM oam;
 
-  uint16_t cgram[256];
+    struct IO {
+      uint8_t aboveEnable;
+      uint8_t belowEnable;
+      uint8_t interlace;
 
-  struct IO {
-    uint8_t blendMode;
-    uint8_t directColor;
+      uint8_t baseSize;
+      uint8_t nameselect;
+      uint16_t tiledataAddress;
+      uint8_t firstSprite;
 
-    uint8_t colorMode;
-    uint8_t colorHalve;
-    struct Layer {
-      uint8_t colorEnable;
-    } bg1, bg2, bg3, bg4, obj, back;
+      uint8_t priority[4];
 
-    uint8_t colorBlue;
-    uint8_t colorGreen;
-    uint8_t colorRed;
-  } io;
+      uint8_t timeOver;
+      uint8_t rangeOver;
+    } io;
 
-  struct Math {
-    struct Screen {
-      uint16_t color;
-       uint8_t colorEnable;
-    } above, below;
-    uint8_t transparent;
-    uint8_t blendMode;
-    uint8_t colorHalve;
-  } math;
+    struct Latch {
+       uint8_t firstSprite;
+    } latch;
 
-  friend struct PPU;
-};
+    struct Item {
+       uint8_t valid;
+       uint8_t index;
+    };
+
+    struct Tile {
+      uint8_t valid;
+      uint16_t x;
+      uint8_t priority;
+      uint8_t palette;
+      uint8_t hflip;
+      uint32_t data;
+    };
+
+    struct State {
+      unsigned x;
+      unsigned y;
+
+      unsigned itemCount;
+      unsigned tileCount;
+
+      bool active;
+      Item item[2][32];
+      Tile tile[2][34];
+    } t;
+
+    struct Output {
+      struct Pixel {
+        uint8_t priority;  //0 = none (transparent)
+        uint8_t palette;
+      } above, below;
+    } output;
+
+    friend struct PPU;
+  };
+
+  struct Window {
+    void scanline();
+    void run();
+    bool test(bool, bool, bool, bool, unsigned);
+    void power();
+
+    void serialize(serializer&);
+
+    struct IO {
+      struct Layer {
+        bool oneEnable;
+        bool oneInvert;
+        bool twoEnable;
+        bool twoInvert;
+        uint8_t mask;
+        bool aboveEnable;
+        bool belowEnable;
+      } bg1, bg2, bg3, bg4, obj;
+
+      struct Color {
+        bool oneEnable;
+        bool oneInvert;
+        bool twoEnable;
+        bool twoInvert;
+        uint8_t mask;
+        uint8_t aboveMask;
+        uint8_t belowMask;
+      } col;
+
+      uint8_t oneLeft;
+      uint8_t oneRight;
+      uint8_t twoLeft;
+      uint8_t twoRight;
+    } io;
+
+    struct Output {
+      struct Pixel {
+        bool colorEnable;
+      } above, below;
+    } output;
+
+    unsigned x;
+    friend struct PPU;
+  };
+
+  struct Screen {
+    void scanline();
+    void run();
+    void power();
+
+    uint16_t below(bool hires);
+    uint16_t above();
+
+    uint16_t blend(unsigned, unsigned) const;
+    inline uint16_t paletteColor(uint8_t) const;
+    inline uint16_t directColor(uint8_t, uint8_t) const;
+    inline uint16_t fixedColor() const;
+
+    void serialize(serializer&);
+
+    uint16_t *lineA;
+    uint16_t *lineB;
+
+    uint16_t cgram[256];
+
+    struct IO {
+      uint8_t blendMode;
+      uint8_t directColor;
+
+      uint8_t colorMode;
+      uint8_t colorHalve;
+      struct Layer {
+        uint8_t colorEnable;
+      } bg1, bg2, bg3, bg4, obj, back;
+
+      uint8_t colorBlue;
+      uint8_t colorGreen;
+      uint8_t colorRed;
+    } io;
+
+    struct Math {
+      struct Screen {
+        uint16_t color;
+        uint8_t colorEnable;
+      } above, below;
+      uint8_t transparent;
+      uint8_t blendMode;
+      uint8_t colorHalve;
+    } math;
+
+    friend struct PPU;
+  };
 
   Mosaic mosaic;
   Background bg1;
