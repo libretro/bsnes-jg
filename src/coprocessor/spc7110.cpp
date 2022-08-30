@@ -35,136 +35,13 @@ struct Decompressor {
 
   Decompressor(SPC7110& _spc7110) : spc7110(_spc7110) {}
 
-  uint8_t read() {
-    return spc7110.dataromRead(offset++);
-  }
+  uint8_t read();
+  uint32_t deinterleave(uint64_t, unsigned);
+  uint64_t moveToFront(uint64_t, unsigned);
 
-  //inverse morton code transform: unpack big-endian packed pixels
-  //returns odd bits in lower half; even bits in upper half
-  uint32_t deinterleave(uint64_t data, unsigned bit) {
-    data = data & ((1ull << bit) - 1);
-    data = 0x5555555555555555ull & (data << bit | data >> 1);
-    data = 0x3333333333333333ull & (data | data >> 1);
-    data = 0x0f0f0f0f0f0f0f0full & (data | data >> 2);
-    data = 0x00ff00ff00ff00ffull & (data | data >> 4);
-    data = 0x0000ffff0000ffffull & (data | data >> 8);
-    return data | data >> 16;
-  }
-
-  //extract a nibble and move it to the low four bits
-  uint64_t moveToFront(uint64_t list, unsigned nibble) {
-    for(uint64_t n = 0, mask = ~15; n < 64; n += 4, mask <<= 4) {
-      if((list >> n & 15) != nibble) continue;
-      return list = (list & mask) + (list << 4 & ~mask) + nibble;
-    }
-    return list;
-  }
-
-  void initialize(unsigned mode, unsigned origin) {
-    for(auto& root : context) for(auto& node : root) node = {0, 0};
-    bpp = 1 << mode;
-    offset = origin;
-    bits = 8;
-    range = Max + 1;
-    input = read();
-    input = input << 8 | read();
-    output = 0;
-    pixels = 0;
-    colormap = 0xfedcba9876543210ull;
-  }
-
-  void decode() {
-    for(unsigned pixel = 0; pixel < 8; pixel++) {
-      uint64_t map = colormap;
-      unsigned diff = 0;
-
-      if(bpp > 1) {
-        unsigned pa = (bpp == 2 ? pixels >>  2 & 3 : pixels >>  0 & 15);
-        unsigned pb = (bpp == 2 ? pixels >> 14 & 3 : pixels >> 28 & 15);
-        unsigned pc = (bpp == 2 ? pixels >> 16 & 3 : pixels >> 32 & 15);
-
-        if(pa != pb || pb != pc) {
-          unsigned match = pa ^ pb ^ pc;
-          diff = 4;                        //no match; all pixels differ
-          if((match ^ pc) == 0) diff = 3;  //a == b; pixel c differs
-          if((match ^ pb) == 0) diff = 2;  //c == a; pixel b differs
-          if((match ^ pa) == 0) diff = 1;  //b == c; pixel a differs
-        }
-
-        colormap = moveToFront(colormap, pa);
-
-        map = moveToFront(map, pc);
-        map = moveToFront(map, pb);
-        map = moveToFront(map, pa);
-      }
-
-      for(unsigned plane = 0; plane < bpp; plane++) {
-        unsigned bit = bpp > 1 ? 1 << plane : 1 << (pixel & 3);
-        unsigned history = (bit - 1) & output;
-        unsigned set = 0;
-
-        if(bpp == 1) set = pixel >= 4;
-        if(bpp == 2) set = diff;
-        if(plane >= 2 && history <= 1) set = diff;
-
-        Context& ctx = context[set][bit + history - 1];
-        ModelState& model = evolution[ctx.prediction];
-        uint8_t lps_offset = range - model.probability;
-        bool symbol = input >= (lps_offset << 8);  //test only the MSB
-
-        output = output << 1 | (symbol ^ ctx.swap);
-
-        if(symbol == MPS) {          //[0 ... range-p]
-          range = lps_offset;        //range = range-p
-        } else {                     //[range-p+1 ... range]
-          range -= lps_offset;       //range = p-1, with p < 0.75
-          input -= lps_offset << 8;  //therefore, always rescale
-        }
-
-        while(range <= Max / 2) {    //scale back into [0.75 ... 1.5]
-          ctx.prediction = model.next[symbol];
-
-          range <<= 1;
-          input <<= 1;
-
-          if(--bits == 0) {
-            bits = 8;
-            input += read();
-          }
-        }
-
-        if(symbol == LPS && model.probability > Half) ctx.swap ^= 1;
-      }
-
-      unsigned index = output & ((1 << bpp) - 1);
-      if(bpp == 1) index ^= pixels >> 15 & 1;
-
-      pixels = pixels << bpp | (map >> 4 * index & 15);
-    }
-
-    if(bpp == 1) result = pixels;
-    if(bpp == 2) result = deinterleave(pixels, 16);
-    if(bpp == 4) result = deinterleave(deinterleave(pixels, 32), 32);
-  }
-
-  void serialize(serializer& s) {
-    for(auto& root : context) {
-      for(auto& node : root) {
-        s.integer(node.prediction);
-        s.integer(node.swap);
-      }
-    }
-
-    s.integer(bpp);
-    s.integer(offset);
-    s.integer(bits);
-    s.integer(range);
-    s.integer(input);
-    s.integer(output);
-    s.integer(pixels);
-    s.integer(colormap);
-    s.integer(result);
-  }
+  void initialize(unsigned, unsigned);
+  void decode();
+  void serialize(serializer&);
 
   enum : unsigned { MPS = 0, LPS = 1 };
   enum : unsigned { One = 0xaa, Half = 0x55, Max = 0xff };
@@ -180,9 +57,9 @@ struct Decompressor {
     uint8_t swap;       //if 1, exchange the role of MPS and LPS
   } context[5][15];     //not all 75 contexts exists; this simplifies the code
 
-  unsigned bpp;             //bits per pixel (1bpp = 1; 2bpp = 2; 4bpp = 4)
-  unsigned offset;          //SPC7110 data ROM read offset
-  unsigned bits;            //bits remaining in input
+  unsigned bpp;         //bits per pixel (1bpp = 1; 2bpp = 2; 4bpp = 4)
+  unsigned offset;      //SPC7110 data ROM read offset
+  unsigned bits;        //bits remaining in input
   uint16_t range;       //arithmetic range: technically 8-bits, but Max+1 = 256
   uint16_t input;       //input data from SPC7110 data ROM
   uint8_t output;
@@ -216,6 +93,137 @@ Decompressor::ModelState Decompressor::evolution[53] = {
   {0x56, {48,47}}, {0x4f, {49,47}}, {0x47, {50,48}},
   {0x41, {51,49}}, {0x3c, {52,50}}, {0x37, {43,51}},
 };
+
+uint8_t Decompressor::read() {
+  return spc7110.dataromRead(offset++);
+}
+
+//inverse morton code transform: unpack big-endian packed pixels
+//returns odd bits in lower half; even bits in upper half
+uint32_t Decompressor::deinterleave(uint64_t data, unsigned bit) {
+  data = data & ((1ull << bit) - 1);
+  data = 0x5555555555555555ull & (data << bit | data >> 1);
+  data = 0x3333333333333333ull & (data | data >> 1);
+  data = 0x0f0f0f0f0f0f0f0full & (data | data >> 2);
+  data = 0x00ff00ff00ff00ffull & (data | data >> 4);
+  data = 0x0000ffff0000ffffull & (data | data >> 8);
+  return data | data >> 16;
+}
+
+//extract a nibble and move it to the low four bits
+uint64_t Decompressor::moveToFront(uint64_t list, unsigned nibble) {
+  for(uint64_t n = 0, mask = ~15; n < 64; n += 4, mask <<= 4) {
+    if((list >> n & 15) != nibble) continue;
+    return list = (list & mask) + (list << 4 & ~mask) + nibble;
+  }
+  return list;
+}
+
+void Decompressor::initialize(unsigned mode, unsigned origin) {
+  for(auto& root : context) for(auto& node : root) node = {0, 0};
+  bpp = 1 << mode;
+  offset = origin;
+  bits = 8;
+  range = Max + 1;
+  input = read();
+  input = input << 8 | read();
+  output = 0;
+  pixels = 0;
+  colormap = 0xfedcba9876543210ull;
+}
+
+void Decompressor::decode() {
+  for(unsigned pixel = 0; pixel < 8; pixel++) {
+    uint64_t map = colormap;
+    unsigned diff = 0;
+
+    if(bpp > 1) {
+      unsigned pa = (bpp == 2 ? pixels >>  2 & 3 : pixels >>  0 & 15);
+      unsigned pb = (bpp == 2 ? pixels >> 14 & 3 : pixels >> 28 & 15);
+      unsigned pc = (bpp == 2 ? pixels >> 16 & 3 : pixels >> 32 & 15);
+
+      if(pa != pb || pb != pc) {
+        unsigned match = pa ^ pb ^ pc;
+        diff = 4;                        //no match; all pixels differ
+        if((match ^ pc) == 0) diff = 3;  //a == b; pixel c differs
+        if((match ^ pb) == 0) diff = 2;  //c == a; pixel b differs
+        if((match ^ pa) == 0) diff = 1;  //b == c; pixel a differs
+      }
+
+      colormap = moveToFront(colormap, pa);
+
+      map = moveToFront(map, pc);
+      map = moveToFront(map, pb);
+      map = moveToFront(map, pa);
+    }
+
+    for(unsigned plane = 0; plane < bpp; plane++) {
+      unsigned bit = bpp > 1 ? 1 << plane : 1 << (pixel & 3);
+      unsigned history = (bit - 1) & output;
+      unsigned set = 0;
+
+      if(bpp == 1) set = pixel >= 4;
+      if(bpp == 2) set = diff;
+      if(plane >= 2 && history <= 1) set = diff;
+
+      Context& ctx = context[set][bit + history - 1];
+      ModelState& model = evolution[ctx.prediction];
+      uint8_t lps_offset = range - model.probability;
+      bool symbol = input >= (lps_offset << 8);  //test only the MSB
+
+      output = output << 1 | (symbol ^ ctx.swap);
+
+      if(symbol == MPS) {          //[0 ... range-p]
+        range = lps_offset;        //range = range-p
+      } else {                     //[range-p+1 ... range]
+        range -= lps_offset;       //range = p-1, with p < 0.75
+        input -= lps_offset << 8;  //therefore, always rescale
+      }
+
+      while(range <= Max / 2) {    //scale back into [0.75 ... 1.5]
+        ctx.prediction = model.next[symbol];
+
+        range <<= 1;
+        input <<= 1;
+
+        if(--bits == 0) {
+          bits = 8;
+          input += read();
+        }
+      }
+
+      if(symbol == LPS && model.probability > Half) ctx.swap ^= 1;
+    }
+
+    unsigned index = output & ((1 << bpp) - 1);
+    if(bpp == 1) index ^= pixels >> 15 & 1;
+
+    pixels = pixels << bpp | (map >> 4 * index & 15);
+  }
+
+  if(bpp == 1) result = pixels;
+  if(bpp == 2) result = deinterleave(pixels, 16);
+  if(bpp == 4) result = deinterleave(deinterleave(pixels, 32), 32);
+}
+
+void Decompressor::serialize(serializer& s) {
+  for(auto& root : context) {
+    for(auto& node : root) {
+      s.integer(node.prediction);
+      s.integer(node.swap);
+    }
+  }
+
+  s.integer(bpp);
+  s.integer(offset);
+  s.integer(bits);
+  s.integer(range);
+  s.integer(input);
+  s.integer(output);
+  s.integer(pixels);
+  s.integer(colormap);
+  s.integer(result);
+}
 
 void SPC7110::dcuLoadAddress() {
   unsigned table = r4801 | r4802 << 8 | r4803 << 16;
