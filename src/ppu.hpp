@@ -385,12 +385,12 @@ private:
     } io;
 
     struct Latch {
-       uint8_t firstSprite;
+      uint8_t firstSprite;
     } latch;
 
     struct Item {
-       uint8_t valid;
-       uint8_t index;
+      uint8_t valid;
+      uint8_t index;
     };
 
     struct Tile {
