@@ -27,6 +27,12 @@
 
 namespace SuperFamicom {
 
+//January - December = 0x01 - 0x09; 0x10 - 0x12
+static const unsigned daysinmonth[32] = {
+  30, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 30, 31, 30,
+  31, 30, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30
+};
+
 void EpsonRTC::rtcReset() {
   state = State::Mode;
   offset = 0;
@@ -317,12 +323,6 @@ void EpsonRTC::tickHour() {
 void EpsonRTC::tickDay() {
   if(calendar == 0) return;
   weekday = ((weekday + 1) + (weekday == 6)) & 0x07;
-
-  //January - December = 0x01 - 0x09; 0x10 - 0x12
-  static const unsigned daysinmonth[32] = {
-    30, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 30, 31, 30,
-    31, 30, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30,
-  };
 
   unsigned days = daysinmonth[monthhi << 4 | monthlo];
   if(days == 28) {
