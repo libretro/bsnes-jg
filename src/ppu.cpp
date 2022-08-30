@@ -30,13 +30,13 @@ namespace SuperFamicom {
 
 PPU ppu;
 
-static const unsigned size[4] = {1, 32, 128, 128};
+static const unsigned vramIncrementSizes[4] = {1, 32, 128, 128};
 
-static const unsigned height0[] = { 8,  8,  8, 16, 16, 32, 32, 32};
-static const unsigned height1[] = {16, 32, 64, 32, 64, 64, 64, 32};
+static const unsigned oamObjectHeight0[] = { 8,  8,  8, 16, 16, 32, 32, 32};
+static const unsigned oamObjectHeight1[] = {16, 32, 64, 32, 64, 64, 64, 32};
 
-static const unsigned width0[] = { 8,  8,  8, 16, 16, 32, 16, 16};
-static const unsigned width1[] = {16, 32, 64, 32, 64, 64, 32, 32};
+static const unsigned oamObjectWidth0[] = { 8,  8,  8, 16, 16, 32, 16, 16};
+static const unsigned oamObjectWidth1[] = {16, 32, 64, 32, 64, 64, 32, 32};
 
 void PPU::main() {
   if(vcounter() == 0) {
@@ -631,7 +631,7 @@ void PPU::writeIO(unsigned addr, uint8_t data) {
 
   //VMAIN
   case 0x2115: {
-    io.vramIncrementSize = size[data & 3];
+    io.vramIncrementSize = vramIncrementSizes[data & 3];
     io.vramMapping       = data >> 2 & 3;
     io.vramIncrementMode = data >> 7 & 1;
     return;
@@ -1418,18 +1418,18 @@ void PPU::OAM::write(uint16_t address, uint8_t data) {
 
 unsigned PPU::OAM::Object::width() const {
   if(size == 0) {
-    return width0[ppu.obj.io.baseSize];
+    return oamObjectWidth0[ppu.obj.io.baseSize];
   } else {
-    return width1[ppu.obj.io.baseSize];
+    return oamObjectWidth1[ppu.obj.io.baseSize];
   }
 }
 
 unsigned PPU::OAM::Object::height() const {
   if(size == 0) {
     if(ppu.obj.io.interlace && ppu.obj.io.baseSize >= 6) return 16;  //hardware quirk
-    return height0[ppu.obj.io.baseSize];
+    return oamObjectHeight0[ppu.obj.io.baseSize];
   } else {
-    return height1[ppu.obj.io.baseSize];
+    return oamObjectHeight1[ppu.obj.io.baseSize];
   }
 }
 

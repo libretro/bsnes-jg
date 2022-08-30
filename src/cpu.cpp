@@ -35,7 +35,7 @@ namespace SuperFamicom {
 
 CPU cpu;
 
-static const unsigned lengths[8] = {1, 2, 2, 4, 4, 4, 2, 4};
+static const unsigned dmaLengths[8] = {1, 2, 2, 4, 4, 4, 2, 4};
 
 bool CPU::interruptPending() const {
   return status.interruptPending;
@@ -236,7 +236,7 @@ void CPU::Channel::hdmaTransfer() {
   dmaEnable = false;  //HDMA will stop active DMA mid-transfer
   if(!hdmaDoTransfer) return;
 
-  for(uint8_t index = 0; index < lengths[transferMode]; ++index) {
+  for(uint8_t index = 0; index < dmaLengths[transferMode]; ++index) {
     uint32_t address = !indirect ? sourceBank << 16 | hdmaAddress++ : indirectBank << 16 | indirectAddress++;
     transfer(address, index);
   }
