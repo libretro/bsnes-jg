@@ -499,7 +499,7 @@ void SPC7110::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void SPC7110::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     spc7110.main();
@@ -529,7 +529,7 @@ void SPC7110::unload() {
 }
 
 void SPC7110::power() {
-  create(SPC7110::Enter, 21477272);
+  create(Enter, 21477272);
 
   r4801 = 0x00;
   r4802 = 0x00;

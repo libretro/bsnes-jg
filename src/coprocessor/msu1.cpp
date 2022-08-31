@@ -64,7 +64,7 @@ void MSU1::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void MSU1::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     msu1.main();
@@ -117,7 +117,7 @@ void MSU1::unload() {
 }
 
 void MSU1::power() {
-  create(MSU1::Enter, 44100);
+  create(Enter, 44100);
   stream = audio.createStream(frequency);
 
   io.dataSeekOffset = 0;

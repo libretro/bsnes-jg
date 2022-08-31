@@ -201,7 +201,7 @@ void SharpRTC::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void SharpRTC::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     sharprtc.main();
@@ -230,7 +230,7 @@ void SharpRTC::initialize() {
 }
 
 void SharpRTC::power() {
-  create(SharpRTC::Enter, 1);
+  create(Enter, 1);
 
   state = State::Read;
   index = -1;

@@ -56,7 +56,7 @@ void NECDSP::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void NECDSP::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     necdsp.main();
@@ -103,7 +103,7 @@ void NECDSP::writeRAM(unsigned addr, uint8_t data) {
 
 void NECDSP::power() {
   uPD96050::power();
-  create(NECDSP::Enter, Frequency);
+  create(Enter, Frequency);
 }
 
 }

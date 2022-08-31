@@ -119,7 +119,7 @@ void BSMemory::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void BSMemory::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     bsmemory.main();

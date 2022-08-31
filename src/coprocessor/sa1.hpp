@@ -30,7 +30,6 @@ struct SA1 : Processor::WDC65816, Thread {
   inline bool synchronizing() const override { return scheduler.synchronizing(); }
 
   void synchronizeCPU();
-  [[noreturn]] static void Enter();
   void main();
   void step();
   void interrupt() override;

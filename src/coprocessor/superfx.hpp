@@ -31,7 +31,6 @@ struct SuperFX : Processor::GSU, Thread {
   inline bool synchronizing() const;
 
   void synchronizeCPU();
-  [[noreturn]] static void Enter();
   void main();
   void unload();
   void power();

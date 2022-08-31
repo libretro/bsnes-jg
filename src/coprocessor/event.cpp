@@ -44,7 +44,7 @@ void Event::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void Event::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     event.main();
@@ -83,7 +83,7 @@ void Event::unload() {
 }
 
 void Event::power() {
-  create(Event::Enter, 1);
+  create(Enter, 1);
 
   //DIP switches 0-3 control the time: 3 minutes + 0-15 extra minutes
   timer = (3 + (dip.value & 15)) * 60;  //in seconds

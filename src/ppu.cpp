@@ -2315,7 +2315,7 @@ void PPU::step(unsigned clocks) {
   }
 }
 
-void PPU::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     ppu.main();

@@ -1086,7 +1086,7 @@ void CPU::synchronizeCoprocessors() {
   }
 }
 
-void CPU::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     cpu.main();

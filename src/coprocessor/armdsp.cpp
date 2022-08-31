@@ -149,7 +149,7 @@ void ArmDSP::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void ArmDSP::Enter() {
+[[noreturn]] static void Enter() {
   armdsp.boot();
   while(true) {
     scheduler.synchronize();
@@ -235,7 +235,7 @@ void ArmDSP::power() {
 
 void ArmDSP::reset() {
   ARM7TDMI::power();
-  create(ArmDSP::Enter, Frequency);
+  create(Enter, Frequency);
 
   bridge.ready = false;
   bridge.signal = false;

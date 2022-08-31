@@ -363,7 +363,7 @@ void ICD::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void ICD::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     icd.main();
@@ -448,7 +448,7 @@ void ICD::unload() {
 
 void ICD::power(bool reset) {
   unsigned freq = clockFrequency() / 5;
-  create(ICD::Enter, freq);
+  create(Enter, freq);
   if(!reset) stream = audio.createStream(freq / 128);
 
   for(Packet& p : this->packet) p = {};

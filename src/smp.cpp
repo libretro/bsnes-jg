@@ -415,7 +415,7 @@ void SMP::synchronizeDSP() {
   while(dsp.clock < 0) dsp.main();
 }
 
-void SMP::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     smp.main();
