@@ -35,13 +35,6 @@ struct Cx4 {
   uint32_t r0, r1, r2,  r3,  r4,  r5,  r6,  r7,
            r8, r9, r10, r11, r12, r13, r14, r15;
 
-  static const uint8_t immediate_data[48];
-  static const uint16_t wave_data[40];
-  static const uint32_t sin_table[256];
-
-  static const int16_t SinTable[512];
-  static const int16_t CosTable[512];
-
   int16_t C4WFXVal, C4WFYVal, C4WFZVal, C4WFX2Val, C4WFY2Val, C4WFDist, C4WFScale;
   int16_t C41FXVal, C41FYVal, C41FAngleRes, C41FDist, C41FDistVal;
 
