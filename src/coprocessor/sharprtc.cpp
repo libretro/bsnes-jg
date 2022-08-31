@@ -95,7 +95,9 @@ void SharpRTC::save(uint8_t* data) {
   }
 }
 
-const unsigned SharpRTC::daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+static const unsigned daysInMonth[12] = {
+  31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+};
 
 void SharpRTC::tickSecond() {
   if(++second < 60) return;
