@@ -452,7 +452,7 @@ void EpsonRTC::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void EpsonRTC::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     epsonrtc.main();
@@ -524,7 +524,7 @@ void EpsonRTC::initialize() {
 }
 
 void EpsonRTC::power() {
-  create(EpsonRTC::Enter, 32768 * 64);
+  create(Enter, 32768 * 64);
 
   clocks = 0;
   seconds = 0;

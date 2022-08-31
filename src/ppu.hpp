@@ -94,7 +94,6 @@ struct PPU : Thread, PPUcounter {
   void (*videoFrame)(const uint16_t*, unsigned, unsigned, unsigned);
 
   alwaysinline void synchronizeCPU();
-  [[noreturn]] static void Enter();
   bool load();
   void power(bool);
 

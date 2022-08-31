@@ -459,7 +459,7 @@ void SuperFX::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void SuperFX::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     superfx.main();
@@ -492,7 +492,7 @@ void SuperFX::power() {
   double overclock = std::max(1.0, std::min(8.0, configuration.superfx.overclock / 100.0));
 
   GSU::power();
-  create(SuperFX::Enter, Frequency * overclock);
+  create(Enter, Frequency * overclock);
 
   romMask = rom.size() - 1;
   ramMask = ram.size() - 1;

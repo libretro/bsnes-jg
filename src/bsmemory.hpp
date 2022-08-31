@@ -48,7 +48,6 @@ struct BSMemory : Thread, Memory {
 
   BSMemory();
   void synchronizeCPU();
-  [[noreturn]] static void Enter();
   void main();
   void step(unsigned);
 

@@ -30,7 +30,6 @@ struct HitachiDSP : Processor::HG51B, Thread {
   WritableMemory ram;
 
   void synchronizeCPU();
-  [[noreturn]] static void Enter();
   void step(unsigned) override;
   void halt() override;
 

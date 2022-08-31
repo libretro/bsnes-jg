@@ -35,7 +35,6 @@ struct SMP : Processor::SPC700, Thread {
 
   void synchronizeCPU();
   void synchronizeDSP();
-  [[noreturn]] static void Enter();
   void main();
   bool load();
   void power();

@@ -438,7 +438,7 @@ void HitachiDSP::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void HitachiDSP::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     hitachidsp.main();
@@ -463,7 +463,7 @@ void HitachiDSP::unload() {
 
 void HitachiDSP::power() {
   HG51B::power();
-  create(HitachiDSP::Enter, Frequency);
+  create(Enter, Frequency);
 }
 
 }

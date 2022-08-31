@@ -1203,7 +1203,7 @@ void SA1::synchronizeCPU() {
   if(clock >= 0) scheduler.resume(cpu.thread);
 }
 
-void SA1::Enter() {
+[[noreturn]] static void Enter() {
   while(true) {
     scheduler.synchronize();
     sa1.main();
@@ -1321,7 +1321,7 @@ void SA1::power() {
   double overclock = std::max(1.0, std::min(4.0, configuration.sa1.overclock / 100.0));
 
   WDC65816::power();
-  create(SA1::Enter, system.cpuFrequency() * overclock);
+  create(Enter, system.cpuFrequency() * overclock);
 
   bwram.dma = false;
   for(unsigned address = 0; address < iram.size(); ++address) {
