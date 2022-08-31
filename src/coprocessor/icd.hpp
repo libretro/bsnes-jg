@@ -49,9 +49,6 @@ struct ICD : Thread {
   uint8_t readIO(unsigned, uint8_t);
   void writeIO(unsigned, uint8_t);
 
-  static const uint8_t SGB1BootROM[256];
-  static const uint8_t SGB2BootROM[256];
-
   void serialize(serializer&);
 
   void setRom(const uint8_t*, size_t);
