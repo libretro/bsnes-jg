@@ -53,7 +53,6 @@ struct SharpRTC : Thread {
   void load(const uint8_t*);
   void save(uint8_t*);
 
-  static const unsigned daysInMonth[12];
   void tickSecond();
   void tickMinute();
   void tickHour();

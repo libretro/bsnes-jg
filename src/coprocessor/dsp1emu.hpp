@@ -68,10 +68,6 @@ class Dsp1
       };
 
       static const Command mCommandTable[];
-      static const int16_t MaxAZS_Exp[16];
-      static const int16_t SinTable[];
-      static const int16_t MulTable[];
-      static const uint16_t DataRom[];
 
       struct SharedData { // some RAM variables shared between commands
          int16_t MatrixA[3][3];          // attitude matrix A

@@ -31,9 +31,6 @@ struct ST0010 {
   void serialize(serializer&);
 
   uint8_t ram[0x1000];
-  static const int16_t sin_table[256];
-  static const int16_t mode7_scale[176];
-  static const uint8_t arctan[32][32];
 
   //interfaces to sin table
   int16_t sin(int16_t);

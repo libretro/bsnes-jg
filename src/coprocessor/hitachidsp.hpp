@@ -69,8 +69,6 @@ struct HitachiDSP : Processor::HG51B, Thread {
   unsigned Frequency;
   unsigned Roms;
   bool Mapping;
-
-  static const uint8_t staticDataROM[3072];
 };
 
 extern HitachiDSP hitachidsp;

@@ -75,7 +75,6 @@ public:
 
     private:
       Decompressor& self;
-      static const uint8_t runCount[256];
     };
 
     struct BG {  //bits generator
@@ -99,12 +98,6 @@ public:
 
     private:
       Decompressor& self;
-      struct State {
-        uint8_t codeNumber;
-        uint8_t nextIfMps;
-        uint8_t nextIfLps;
-      };
-      static const State evolutionTable[33];
       struct ContextInfo {
         uint8_t status;
         uint8_t mps;
