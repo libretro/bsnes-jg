@@ -38,6 +38,12 @@ SDD1 sdd1;
 
 //input manager
 
+struct PEMstate {
+  uint8_t codeNumber;
+  uint8_t nextIfMps;
+  uint8_t nextIfLps;
+};
+
 void SDD1::Decompressor::IM::init(unsigned offset_) {
   offset = offset_;
   bitCount = 4;
@@ -64,7 +70,7 @@ uint8_t SDD1::Decompressor::IM::getCodeWord(uint8_t codeLength) {
 
 //golomb-code decoder
 
-const uint8_t SDD1::Decompressor::GCD::runCount[] = {
+static const uint8_t GCDrunCount[] = {
   0x00, 0x00, 0x01, 0x00, 0x03, 0x01, 0x02, 0x00,
   0x07, 0x03, 0x05, 0x01, 0x06, 0x02, 0x04, 0x00,
   0x0f, 0x07, 0x0b, 0x03, 0x0d, 0x05, 0x09, 0x01,
@@ -104,7 +110,7 @@ void SDD1::Decompressor::GCD::getRunCount(uint8_t codeNumber, uint8_t &mpsCount,
 
   if(codeWord & 0x80) {
     lpsIndex = 1;
-    mpsCount = runCount[codeWord >> (codeNumber ^ 0x07)];
+    mpsCount = GCDrunCount[codeWord >> (codeNumber ^ 0x07)];
   } else {
     mpsCount = 1 << codeNumber;
   }
@@ -135,7 +141,7 @@ uint8_t SDD1::Decompressor::BG::getBit(bool& endOfRun) {
 
 //probability estimation module
 
-const SDD1::Decompressor::PEM::State SDD1::Decompressor::PEM::evolutionTable[33] = {
+static const PEMstate evolutionTable[33] = {
   {0, 25, 25},
   {0,  2,  1},
   {0,  3,  1},
@@ -182,7 +188,7 @@ uint8_t SDD1::Decompressor::PEM::getBit(uint8_t context) {
   ContextInfo& info = contextInfo[context];
   uint8_t currentStatus = info.status;
   uint8_t currentMps = info.mps;
-  const State& s = SDD1::Decompressor::PEM::evolutionTable[currentStatus];
+  const PEMstate& s = evolutionTable[currentStatus];
 
   uint8_t bit = 0;
   bool endOfRun = false;
