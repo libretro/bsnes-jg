@@ -304,6 +304,7 @@ typedef void (*GB_boot_rom_load_callback_t)(GB_gameboy_t *gb, GB_boot_rom_t type
 
 typedef void (*GB_execution_callback_t)(GB_gameboy_t *gb, uint16_t address, uint8_t opcode);
 typedef void (*GB_lcd_line_callback_t)(GB_gameboy_t *gb, uint8_t line);
+typedef void (*GB_lcd_status_callback_t)(GB_gameboy_t *gb, bool on);
 
 struct GB_breakpoint_s;
 struct GB_watchpoint_s;
@@ -600,8 +601,8 @@ struct GB_gameboy_internal_s {
             GB_FRAMESKIP_LCD_TURNED_ON, // On a DMG, the LCD renders a blank screen during this state,
                                         // on a CGB, the previous frame is repeated (which might be
                                         // blank if the LCD was off for more than a few cycles)
-            GB_FRAMESKIP_FIRST_FRAME_SKIPPED, // This state is 'skipped' when emulating a DMG
-            GB_FRAMESKIP_SECOND_FRAME_RENDERED,
+            GB_FRAMESKIP_FIRST_FRAME_SKIPPED__DEPRECATED,
+            GB_FRAMESKIP_FIRST_FRAME_RENDERED,
         } frame_skip_state;
         bool oam_read_blocked;
         bool vram_read_blocked;
@@ -650,9 +651,10 @@ struct GB_gameboy_internal_s {
         bool is_odd_frame;
         uint16_t last_tile_data_address;
         uint16_t last_tile_index_address;
-        bool cgb_repeated_a_frame;
+        GB_PADDING(bool, cgb_repeated_a_frame);
         uint8_t data_for_sel_glitch;
         bool delayed_glitch_hblank_interrupt;
+        uint32_t frame_repeat_countdown;
     )
 
     /* Unsaved data. This includes all pointers, as well as everything that shouldn't be on a save state */
@@ -732,7 +734,7 @@ struct GB_gameboy_internal_s {
         GB_workboy_get_time_callback workboy_get_time_callback;
         GB_execution_callback_t execution_callback;
         GB_lcd_line_callback_t lcd_line_callback;
-
+        GB_lcd_status_callback_t lcd_status_callback;
         /*** Debugger ***/
         volatile bool debug_stopped, debug_disable;
         bool debug_fin_command, debug_next_command;
@@ -832,14 +834,37 @@ struct GB_gameboy_s {
 __attribute__((__format__ (__printf__, fmtarg, firstvararg)))
 #endif
 
-void GB_init(GB_gameboy_t *gb, GB_model_t model);
+/*
+    There are two instance allocation styles – one where you manage your
+    own instance allocation, and one where you use provided allocators.
+ 
+    Managing allocations yourself:
+    GB_gameboy_t gb;
+    GB_init(&gb, model);
+    ...
+    GB_free(&gb);
+ 
+    Using the provided allocators:
+    GB_gameboy_t *gb = GB_init(GB_alloc(), model);
+    ...
+    GB_free(gb); // optional
+    GB_dealloc(gb);
+ 
+*/
+GB_gameboy_t *GB_init(GB_gameboy_t *gb, GB_model_t model);
+void GB_free(GB_gameboy_t *gb);
+GB_gameboy_t *GB_alloc(void);
+void GB_dealloc(GB_gameboy_t *gb);
+
+// For when you want to use your own malloc implementation without having to rely on the header struct
+size_t GB_allocation_size(void);
+    
 bool GB_is_inited(GB_gameboy_t *gb);
 bool GB_is_cgb(const GB_gameboy_t *gb);
 bool GB_is_cgb_in_cgb_mode(GB_gameboy_t *gb);
 bool GB_is_sgb(GB_gameboy_t *gb); // Returns true if the model is SGB or SGB2
 bool GB_is_hle_sgb(GB_gameboy_t *gb); // Returns true if the model is SGB or SGB2 and the SFC/SNES side is HLE'd
 GB_model_t GB_get_model(GB_gameboy_t *gb);
-void GB_free(GB_gameboy_t *gb);
 void GB_reset(GB_gameboy_t *gb);
 void GB_switch_model_and_reset(GB_gameboy_t *gb, GB_model_t model);
 
@@ -894,6 +919,7 @@ void GB_log(GB_gameboy_t *gb, const char *fmt, ...) __printflike(2, 3);
 void GB_attributed_log(GB_gameboy_t *gb, GB_log_attributes attributes, const char *fmt, ...) __printflike(3, 4);
 
 void GB_set_pixels_output(GB_gameboy_t *gb, uint32_t *output);
+uint32_t *GB_get_pixels_output(GB_gameboy_t *gb);
 void GB_set_border_mode(GB_gameboy_t *gb, GB_border_mode_t border_mode);
     
 void GB_set_infrared_input(GB_gameboy_t *gb, bool state);
@@ -911,6 +937,7 @@ void GB_set_boot_rom_load_callback(GB_gameboy_t *gb, GB_boot_rom_load_callback_t
     
 void GB_set_execution_callback(GB_gameboy_t *gb, GB_execution_callback_t callback);
 void GB_set_lcd_line_callback(GB_gameboy_t *gb, GB_lcd_line_callback_t callback);
+void GB_set_lcd_status_callback(GB_gameboy_t *gb, GB_lcd_status_callback_t callback);
 
 void GB_set_palette(GB_gameboy_t *gb, const GB_palette_t *palette);
 const GB_palette_t *GB_get_palette(GB_gameboy_t *gb);

@@ -146,7 +146,19 @@ static void load_default_border(GB_gameboy_t *gb)
     }
 }
 
-void GB_init(GB_gameboy_t *gb, GB_model_t model)
+size_t GB_allocation_size(void)
+{
+    return sizeof(GB_gameboy_t);
+}
+
+GB_gameboy_t *GB_alloc(void)
+{
+    GB_gameboy_t *ret = malloc(sizeof(*ret));
+    ret->magic = 0;
+    return ret;
+}
+
+GB_gameboy_t *GB_init(GB_gameboy_t *gb, GB_model_t model)
 {
     memset(gb, 0, sizeof(*gb));
     gb->model = model;
@@ -173,6 +185,7 @@ void GB_init(GB_gameboy_t *gb, GB_model_t model)
     
     GB_reset(gb);
     load_default_border(gb);
+    return gb;
 }
 
 GB_model_t GB_get_model(GB_gameboy_t *gb)
@@ -217,7 +230,15 @@ void GB_free(GB_gameboy_t *gb)
     }
 #endif
     GB_stop_audio_recording(gb);
-    memset(gb, 0, sizeof(*gb));
+        memset(gb, 0, sizeof(*gb));
+}
+
+void GB_dealloc(GB_gameboy_t *gb)
+{
+    if (GB_is_inited(gb)) {
+        GB_free(gb);
+    }
+    free(gb);
 }
 
 int GB_load_boot_rom(GB_gameboy_t *gb, const char *path)
@@ -1183,6 +1204,11 @@ void GB_set_pixels_output(GB_gameboy_t *gb, uint32_t *output)
     gb->screen = output;
 }
 
+uint32_t *GB_get_pixels_output(GB_gameboy_t *gb)
+{
+    return gb->screen;
+}
+
 void GB_set_vblank_callback(GB_gameboy_t *gb, GB_vblank_callback_t callback)
 {
     gb->vblank_callback = callback;
@@ -1218,6 +1244,11 @@ void GB_set_execution_callback(GB_gameboy_t *gb, GB_execution_callback_t callbac
 void GB_set_lcd_line_callback(GB_gameboy_t *gb, GB_lcd_line_callback_t callback)
 {
     gb->lcd_line_callback = callback;
+}
+
+void GB_set_lcd_status_callback(GB_gameboy_t *gb, GB_lcd_status_callback_t callback)
+{
+    gb->lcd_status_callback = callback;
 }
 
 const GB_palette_t GB_PALETTE_GREY = {{{0x00, 0x00, 0x00}, {0x55, 0x55, 0x55}, {0xAA, 0xAA, 0xAA}, {0xFF, 0xFF, 0xFF}, {0xFF, 0xFF, 0xFF}}};
