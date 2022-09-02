@@ -502,8 +502,11 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
     io.wrmpyb = data;
     io.rddiv = io.wrmpyb << 8 | io.wrmpya;
 
-    alu.mpyctr = 8;  //perform multiplication over the next eight cycles
-    alu.shift = io.wrmpyb;
+    if (!alu.mpylast) {
+      alu.mpyctr = 8;  //perform multiplication over the next eight cycles
+      alu.shift = io.wrmpyb;
+    }
+
     return;
 
   case 0x4204:  //WRDIVL
@@ -518,10 +521,11 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
     io.rdmpy = io.wrdiva;
     if(alu.mpyctr || alu.divctr) return;
 
-    io.wrdivb = data;
-
-    alu.divctr = 16;  //perform division over the next sixteen cycles
-    alu.shift = io.wrdivb << 16;
+    if (!alu.divlast) {
+      io.wrdivb = data;
+      alu.divctr = 16;  //perform division over the next sixteen cycles
+      alu.shift = io.wrdivb << 16;
+    }
     return;
 
   case 0x4207:  //HTIMEL
@@ -771,20 +775,29 @@ void CPU::scanline() {
 
 void CPU::aluEdge() {
   if(alu.mpyctr) {
-    --alu.mpyctr;
-    if(io.rddiv & 1) io.rdmpy += alu.shift;
+    if (!--alu.mpyctr)
+      alu.mpylast = 1;
+    if(io.rddiv & 1)
+      io.rdmpy += alu.shift;
     io.rddiv >>= 1;
     alu.shift <<= 1;
   }
+  else {
+    alu.mpylast = 0;
+  }
 
   if(alu.divctr) {
-    --alu.divctr;
+    if (!--alu.divctr)
+      alu.divlast = 1;
     io.rddiv <<= 1;
     alu.shift >>= 1;
     if(io.rdmpy >= alu.shift) {
       io.rdmpy -= alu.shift;
       io.rddiv |= 1;
     }
+  }
+  else {
+    alu.divlast = 0;
   }
 }
 

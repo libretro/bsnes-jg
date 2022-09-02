@@ -194,7 +194,9 @@ private:
 
   struct ALU {
     unsigned mpyctr = 0;
+    unsigned mpylast = 0;
     unsigned divctr = 0;
+    unsigned divlast = 0;
     unsigned shift = 0;
   } alu;
 
