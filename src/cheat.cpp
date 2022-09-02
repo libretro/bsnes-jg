@@ -29,10 +29,11 @@ namespace SuperFamicom {
 Cheat cheat;
 
 bool Cheat::Code::operator==(const Code& code) const {
-  if(address != code.address) return false;
-  if(data != code.data) return false;
-  if((bool)compare != (bool)code.compare) return false;
-  if(compare && code.compare && compare != code.compare) return false;
+  if(address != code.address
+      || data != code.data
+      || (bool)compare != (bool)code.compare
+      || (compare && code.compare && compare != code.compare))
+    return false;
   return true;
 }
 
