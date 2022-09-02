@@ -697,8 +697,8 @@ void Cartridge::loaduPD7725(std::string node) {
   std::ifstream prgfile = openCallback(ID::SuperFamicom, pname);
   if (prgfile.is_open()) {
     for (unsigned i = 0; i < 2048; ++i) {
-      uint8_t a = prgfile.get(); uint8_t b = prgfile.get(); uint8_t c = prgfile.get();
-      necdsp.programROM[i] = a | (b << 8) | (c << 16);
+      necdsp.programROM[i] = prgfile.get() | (prgfile.get() << 8) |
+        (prgfile.get() << 16);
     }
     prgfile.close();
   }
@@ -709,8 +709,7 @@ void Cartridge::loaduPD7725(std::string node) {
   std::ifstream datafile = openCallback(ID::SuperFamicom, dname);
   if (datafile.is_open()) {
     for (unsigned i = 0; i < 1024; ++i) {
-      uint8_t a = datafile.get(); uint8_t b = datafile.get();
-      necdsp.dataROM[i] = a | (b << 8);
+      necdsp.dataROM[i] = datafile.get() | (datafile.get() << 8);
     }
     datafile.close();
   }
@@ -790,8 +789,8 @@ void Cartridge::loaduPD96050(std::string node) {
   std::ifstream prgfile = openCallback(ID::SuperFamicom, pname);
   if (prgfile.is_open()) {
     for (unsigned i = 0; i < 16384; ++i) {
-      uint8_t a = prgfile.get(); uint8_t b = prgfile.get(); uint8_t c = prgfile.get();
-      necdsp.programROM[i] = a | (b << 8) | (c << 16);
+      necdsp.programROM[i] = prgfile.get() | (prgfile.get() << 8) |
+        (prgfile.get() << 16);
     }
     prgfile.close();
   }
@@ -802,8 +801,7 @@ void Cartridge::loaduPD96050(std::string node) {
   std::ifstream datafile = openCallback(ID::SuperFamicom, dname);
   if (datafile.is_open()) {
     for (unsigned i = 0; i < 2048; ++i) {
-      uint8_t a = datafile.get(); uint8_t b = datafile.get();
-      necdsp.dataROM[i] = a | (b << 8);
+      necdsp.dataROM[i] = datafile.get() | (datafile.get() << 8);
     }
     datafile.close();
   }
@@ -836,8 +834,7 @@ void Cartridge::loaduPD96050(std::string node) {
       std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
       if (sramfile.is_open()) {
         for (unsigned i = 0; i < 2048; ++i) {
-          uint8_t a = sramfile.get(); uint8_t b = sramfile.get();
-          necdsp.dataRAM[i] = a | (b << 8);
+          necdsp.dataRAM[i] = sramfile.get() | (sramfile.get() << 8);
         }
         sramfile.close();
       }
