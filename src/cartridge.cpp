@@ -1354,17 +1354,13 @@ bool Cartridge::load() {
   slotSufamiTurboA = {};
   slotSufamiTurboB = {};
 
-  if(romCallback(ID::SuperFamicom)) {
-    information.pathID = ID::SuperFamicom;
-    information.region = "Auto";
-  } else return false;
-
-  if (!game.document.empty()) {
-    game.load(game.document);
-  }
-  else {
+  if(!romCallback(ID::SuperFamicom) || game.document.empty())
     return false;
-  }
+
+  information.pathID = ID::SuperFamicom;
+  information.region = "Auto";
+
+  game.load(game.document);
 
   if (!loadCartridge(game.document))
     return false;
