@@ -246,10 +246,26 @@ bool Cartridge::loadCartridge(std::string node) {
       loadBSMemory(slots[i]);
     }
     else if (type == "SufamiTurbo") {
-      if (i == 0)
-        loadSufamiTurboA(slots[i]);
-      else if (i == 1)
-        loadSufamiTurboB(slots[i]);
+      //slot(type=SufamiTurbo)[0]
+      if (i == 0 && romCallback(ID::SufamiTurboA)) {
+        sufamiturboA.pathID = ID::SufamiTurboA;
+        if (!slotSufamiTurboA.document.empty()) {
+          slotSufamiTurboA.load(slotSufamiTurboA.document);
+          loadCartridgeSufamiTurboA(slotSufamiTurboA.document);
+        }
+        loadMap(BML::searchNode(slots[i], {"slot", "rom", "map"}), sufamiturboA.rom);
+        loadMap(BML::searchNode(slots[i], {"slot", "ram", "map"}), sufamiturboA.ram);
+      }
+      //slot(type=SufamiTurbo)[1]
+      else if (i == 1 && romCallback(ID::SufamiTurboB)) {
+        sufamiturboB.pathID = ID::SufamiTurboB;
+        if (!slotSufamiTurboB.document.empty()) {
+          slotSufamiTurboB.load(slotSufamiTurboB.document);
+          loadCartridgeSufamiTurboB(slotSufamiTurboB.document);
+        }
+        loadMap(BML::searchNode(slots[i], {"slot", "rom", "map"}), sufamiturboB.rom);
+        loadMap(BML::searchNode(slots[i], {"slot", "ram", "map"}), sufamiturboB.ram);
+      }
     }
   }
 
@@ -476,30 +492,6 @@ void Cartridge::loadBSMemory(std::string node) {
     for (std::string map : maps) {
       loadMap(map, bsmemory);
     }
-  }
-}
-
-//slot(type=SufamiTurbo)[0]
-void Cartridge::loadSufamiTurboA(std::string node) {
-  if(romCallback(ID::SufamiTurboA)) {
-    sufamiturboA.pathID = ID::SufamiTurboA;
-    loadSufamiTurboA();
-    std::string rommap = BML::searchNode(node, {"slot", "rom", "map"});
-    std::string rammap = BML::searchNode(node, {"slot", "ram", "map"});
-    loadMap(rommap, sufamiturboA.rom);
-    loadMap(rammap, sufamiturboA.ram);
-  }
-}
-
-//slot(type=SufamiTurbo)[1]
-void Cartridge::loadSufamiTurboB(std::string node) {
-  if(romCallback(ID::SufamiTurboB)) {
-    sufamiturboB.pathID = ID::SufamiTurboB;
-    loadSufamiTurboB();
-    std::string rommap = BML::searchNode(node, {"slot", "rom", "map"});
-    std::string rammap = BML::searchNode(node, {"slot", "ram", "map"});
-    loadMap(rommap, sufamiturboB.rom);
-    loadMap(rammap, sufamiturboB.ram);
   }
 }
 
@@ -1435,26 +1427,6 @@ bool Cartridge::loadBSMemory() {
   if (!slotBSMemory.document.empty()) {
     slotBSMemory.load(slotBSMemory.document);
     loadCartridgeBSMemory(slotBSMemory.document);
-    return true;
-  }
-
-  return false;
-}
-
-bool Cartridge::loadSufamiTurboA() {
-  if (!slotSufamiTurboA.document.empty()) {
-    slotSufamiTurboA.load(slotSufamiTurboA.document);
-    loadCartridgeSufamiTurboA(slotSufamiTurboA.document);
-    return true;
-  }
-
-  return false;
-}
-
-bool Cartridge::loadSufamiTurboB() {
-  if (!slotSufamiTurboB.document.empty()) {
-    slotSufamiTurboB.load(slotSufamiTurboB.document);
-    loadCartridgeSufamiTurboB(slotSufamiTurboB.document);
     return true;
   }
 
