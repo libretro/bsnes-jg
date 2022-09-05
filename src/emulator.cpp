@@ -26,7 +26,7 @@
 
 #include "emulator.hpp"
 
-namespace Emulator {
+namespace SuperFamicom {
 
 void Game::load(std::string text) {
   sha256 = BML::search(text, {"game", "sha256"});
