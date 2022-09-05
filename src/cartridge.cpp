@@ -299,8 +299,7 @@ void Cartridge::loadCartridgeBSMemory(std::string node) {
 }
 
 void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "ROM" && content == "Program") {
@@ -326,8 +325,7 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
 }
 
 void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "ROM" && content == "Program") {
@@ -569,8 +567,7 @@ void Cartridge::loadSA1(std::string node) {
     }
   }
 
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
 
@@ -646,8 +643,7 @@ void Cartridge::loadARMDSP(std::string node) {
   std::string pmap = BML::searchNode(node, {"processor", "map"});
   if (!pmap.empty()) loadMap(pmap, {&ArmDSP::read, &armdsp}, {&ArmDSP::write, &armdsp});
 
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
@@ -844,8 +840,7 @@ void Cartridge::loaduPD7725(std::string node) {
     }
   }
 
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
@@ -910,10 +905,11 @@ void Cartridge::loaduPD96050(std::string node) {
     failed = true;
   }
 
+  std::vector<std::string> memlist = BML::searchList(node, "memory");
+
   if(failed || configuration.coprocessor.preferHLE) {
     if (ident == "st010") {
       has.ST0010 = true;
-      std::vector<std::string> memlist = BML::searchList(node, "memory");
       for (std::string& m : memlist) {
         std::string type = BML::search(m, {"memory", "type"});
         std::string content = BML::search(m, {"memory", "content"});
@@ -926,7 +922,6 @@ void Cartridge::loaduPD96050(std::string node) {
     return;
   }
 
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
   for (std::string& m : memlist) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
@@ -1016,8 +1011,7 @@ void Cartridge::loadSPC7110(std::string node) {
       loadMap(m, {&SPC7110::mcuromRead, &spc7110}, {&SPC7110::mcuromWrite, &spc7110});
     }
 
-    std::vector<std::string> memlist = BML::searchList(mcu, "memory");
-    for (std::string& m : memlist) {
+    for (std::string& m : BML::searchList(mcu, "memory")) {
       std::string type = BML::search(m, {"memory", "type"});
       std::string content = BML::search(m, {"memory", "content"});
       if (type == "ROM" && content == "Program") {
@@ -1124,8 +1118,7 @@ void Cartridge::saveCartridge() {
 }
 
 void Cartridge::saveCartridgeBSMemory(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "Flash" && content == "Program") {
@@ -1139,8 +1132,7 @@ void Cartridge::saveCartridgeBSMemory(std::string node) {
 }
 
 void Cartridge::saveCartridgeSufamiTurboA(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM" && content == "Save") {
@@ -1154,8 +1146,7 @@ void Cartridge::saveCartridgeSufamiTurboA(std::string node) {
 }
 
 void Cartridge::saveCartridgeSufamiTurboB(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM" && content == "Save") {
@@ -1197,8 +1188,7 @@ void Cartridge::saveMCC(std::string node) {
 
 //processor(architecture=W65C816S)
 void Cartridge::saveSA1(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM") {
@@ -1212,8 +1202,7 @@ void Cartridge::saveSA1(std::string node) {
 
 //processor(architecture=GSU)
 void Cartridge::saveSuperFX(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM" && content == "Save") saveMemory(superfx.ram, m);
@@ -1222,8 +1211,7 @@ void Cartridge::saveSuperFX(std::string node) {
 
 //processor(architecture=ARM6)
 void Cartridge::saveARMDSP(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
@@ -1238,8 +1226,7 @@ void Cartridge::saveARMDSP(std::string node) {
 
 //processor(architecture=HG51BS169)
 void Cartridge::saveHitachiDSP(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
@@ -1257,8 +1244,7 @@ void Cartridge::saveHitachiDSP(std::string node) {
 
 //processor(architecture=uPD7725)
 void Cartridge::saveuPD7725(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
@@ -1273,8 +1259,7 @@ void Cartridge::saveuPD7725(std::string node) {
 
 //processor(architecture=uPD96050)
 void Cartridge::saveuPD96050(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
@@ -1323,8 +1308,7 @@ void Cartridge::saveSPC7110(std::string node) {
 
 //processor(identifier=OBC1)
 void Cartridge::saveOBC1(std::string node) {
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-  for (std::string& m : memlist) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM" && content == "Save") saveMemory(obc1.ram, m);
