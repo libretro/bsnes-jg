@@ -74,7 +74,7 @@ serializer System::serialize(bool synchronize) {
   char version[16] = {};
   char description[512] = {};
   bool placeholder = false;
-  std::memcpy(&version, (const char*)Emulator::SerializerVersion.c_str(), Emulator::SerializerVersion.size());
+  std::memcpy(&version, (const char*)SerializerVersion.c_str(), SerializerVersion.size());
 
   serializer s(serializeSize);
   s.integer(signature);
@@ -104,7 +104,7 @@ bool System::unserialize(serializer& s) {
 
   if(signature != 0x31545342) return false;
   if(serializeSize != information.serializeSize[synchronize]) return false;
-  if(std::string{version} != Emulator::SerializerVersion) return false;
+  if(std::string{version} != SerializerVersion) return false;
 
   if(synchronize) power(/* reset = */ false);
   serializeAll(s, synchronize);

@@ -157,11 +157,11 @@ static const uint8_t hitachidspStaticDataROM[3072] = {
   115,34,78,86,31,133,55,28,166,23,25,208,246,21,32,213,18,183,178,15,178,143,12,50,108,9,85,72,6,58,36,3
 };
 
-static Emulator::Game game;
-static Emulator::Game slotGameBoy;
-static Emulator::Game slotBSMemory;
-static Emulator::Game slotSufamiTurboA;
-static Emulator::Game slotSufamiTurboB;
+static Game game;
+static Game slotGameBoy;
+static Game slotBSMemory;
+static Game slotSufamiTurboA;
+static Game slotSufamiTurboB;
 
 unsigned Cartridge::pathID() const { return information.pathID; }
 std::string Cartridge::region() const { return information.region; }
@@ -289,7 +289,7 @@ bool Cartridge::loadCartridge(std::string node) {
 }
 
 void Cartridge::loadCartridgeBSMemory(std::string node) {
-  if (Emulator::Game::Memory memory = Emulator::Game::Memory(BML::searchNode(node, {"game", "board", "memory"}))) {
+  if (Game::Memory memory = Game::Memory(BML::searchNode(node, {"game", "board", "memory"}))) {
     bsmemory.ROM = memory.type == "ROM";
     bsmemory.memory.allocate(memory.size);
     for (unsigned i = 0; i < memory.size; ++i) {
@@ -303,7 +303,7 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "ROM" && content == "Program") {
-      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
+      if(Game::Memory memory = Game::Memory(m)) {
         sufamiturboA.rom.allocate(memory.size);
         for (unsigned i = 0; i < memory.size; ++i) {
           sufamiturboA.rom.data()[i] = slotSufamiTurboA.prgrom.data()[i];
@@ -311,7 +311,7 @@ void Cartridge::loadCartridgeSufamiTurboA(std::string node) {
       }
     }
     else if (type == "RAM" && content == "Save") {
-      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
+      if(Game::Memory memory = Game::Memory(m)) {
         sufamiturboA.ram.allocate(memory.size);
         std::ifstream sramfile =
           openCallback(sufamiturboA.pathID, "save.ram");
@@ -329,7 +329,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "ROM" && content == "Program") {
-      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
+      if(Game::Memory memory = Game::Memory(m)) {
         sufamiturboB.rom.allocate(memory.size);
         for (unsigned i = 0; i < memory.size; ++i) {
           sufamiturboB.rom.data()[i] = slotSufamiTurboB.prgrom.data()[i];
@@ -337,7 +337,7 @@ void Cartridge::loadCartridgeSufamiTurboB(std::string node) {
       }
     }
     else if (type == "RAM" && content == "Save") {
-      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
+      if(Game::Memory memory = Game::Memory(m)) {
         sufamiturboB.ram.allocate(memory.size);
         std::ifstream sramfile =
           openCallback(sufamiturboB.pathID, "save.ram");
@@ -380,7 +380,7 @@ unsigned Cartridge::loadMap(
 }
 
 void Cartridge::loadMemory(Memory& mem, std::string node) {
-  Emulator::Game::Memory memory;
+  Game::Memory memory;
   if(game.memory(memory, node)) {
     mem.allocate(memory.size);
     if ((memory.type == "RAM" && !memory.nonVolatile)
@@ -506,7 +506,7 @@ void Cartridge::loadDIP(std::string node) {
   has.DIP = true;
   // Multi-game carts (Campus Challenge '92, PowerFest '94) were no longer
   // supported after higan v106, and in bsnes standalone this always returns 0.
-  //dip.value = Emulator::platform->dipSettings(node);
+  //dip.value = platform->dipSettings(node);
   dip.value = 0;
 
   for (std::string map : BML::searchList(node, "map")) {
@@ -655,7 +655,7 @@ void Cartridge::loadARMDSP(std::string node) {
 
       if (type == "ROM") {
         if (content == "Program" ) {
-          Emulator::Game::Memory file;
+          Game::Memory file;
           if(game.memory(file, m)) {
             std::ifstream firmfile = openCallback(ID::SuperFamicom, file.name());
             if (firmfile.is_open()) {
@@ -665,7 +665,7 @@ void Cartridge::loadARMDSP(std::string node) {
           }
         }
         else if (content == "Data") {
-          Emulator::Game::Memory file;
+          Game::Memory file;
           if(game.memory(file, m)) {
             std::ifstream firmfile = openCallback(ID::SuperFamicom, file.name());
             if (firmfile.is_open()) {
@@ -676,7 +676,7 @@ void Cartridge::loadARMDSP(std::string node) {
         }
       }
       else if (type == "RAM" && content == "Data") {
-        Emulator::Game::Memory file;
+        Game::Memory file;
         if(game.memory(file, m)) {
           std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
           if (sramfile.is_open()) {
@@ -746,7 +746,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
         std::string type = BML::search(m, {"memory", "type"});
 
         if (type == "ROM") {
-          Emulator::Game::Memory file;
+          Game::Memory file;
           if(game.memory(file, m)) {
             for (int n = 0; n < 1024; ++n) {
               hitachidsp.dataROM[n]  = hitachidspStaticDataROM[n * 3 + 0] <<  0;
@@ -957,7 +957,7 @@ void Cartridge::loadEpsonRTC(std::string node) {
   std::string map = BML::searchNode(node, {"rtc", "map"});
   loadMap(map, {&EpsonRTC::read, &epsonrtc}, {&EpsonRTC::write, &epsonrtc});
 
-  Emulator::Game::Memory file;
+  Game::Memory file;
 
   if(game.memory(file, BML::searchNode(node, {"rtc", "memory"}))) {
     std::ifstream rtcfile = openCallback(ID::SuperFamicom, "time.rtc");
@@ -979,7 +979,7 @@ void Cartridge::loadSharpRTC(std::string node) {
   std::string map = BML::searchNode(node, {"rtc", "map"});
   loadMap(map, {&SharpRTC::read, &sharprtc}, {&SharpRTC::write, &sharprtc});
 
-  Emulator::Game::Memory file;
+  Game::Memory file;
 
   if(game.memory(file, BML::searchNode(node, {"rtc", "memory"}))) {
     std::ifstream rtcfile = openCallback(ID::SuperFamicom, "time.rtc");
@@ -1118,7 +1118,7 @@ void Cartridge::saveCartridgeBSMemory(std::string node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "Flash" && content == "Program") {
-      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
+      if(Game::Memory memory = Game::Memory(m)) {
         if (bsmemory.memory.data() != nullptr) {
           writeCallback(bsmemory.pathID, memory.name(), bsmemory.memory.data(), memory.size);
         }
@@ -1132,7 +1132,7 @@ void Cartridge::saveCartridgeSufamiTurboA(std::string node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM" && content == "Save") {
-      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
+      if(Game::Memory memory = Game::Memory(m)) {
         if (memory.nonVolatile) {
           writeCallback(sufamiturboA.pathID, memory.name(), sufamiturboA.ram.data(), memory.size);
         }
@@ -1146,7 +1146,7 @@ void Cartridge::saveCartridgeSufamiTurboB(std::string node) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "RAM" && content == "Save") {
-      if(Emulator::Game::Memory memory = Emulator::Game::Memory(m)) {
+      if(Game::Memory memory = Game::Memory(m)) {
         if (memory.nonVolatile) {
           writeCallback(sufamiturboB.pathID, memory.name(), sufamiturboB.ram.data(), memory.size);
         }
@@ -1156,7 +1156,7 @@ void Cartridge::saveCartridgeSufamiTurboB(std::string node) {
 }
 
 void Cartridge::saveMemory(Memory& sram, std::string node) {
-  Emulator::Game::Memory memory;
+  Game::Memory memory;
   if (game.memory(memory, node)
       && !(memory.type == "RAM" && !memory.nonVolatile)
       && !(memory.type == "RTC" && !memory.nonVolatile)) {
@@ -1212,7 +1212,7 @@ void Cartridge::saveARMDSP(std::string node) {
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
     if (type == "RAM" && content == "Data" && arch == "ARM6") {
-      Emulator::Game::Memory file;
+      Game::Memory file;
       if (game.memory(file, m) && file.nonVolatile) {
         writeCallback(ID::SuperFamicom, "save.ram", armdsp.programRAM, (16 * 1024));
       }
@@ -1227,7 +1227,7 @@ void Cartridge::saveHitachiDSP(std::string node) {
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
     if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
-      Emulator::Game::Memory file;
+      Game::Memory file;
       if (game.memory(file, m) && file.nonVolatile) {
         writeCallback(ID::SuperFamicom, "save.ram", hitachidsp.dataRAM, (3 * 1024));
       }
@@ -1245,7 +1245,7 @@ void Cartridge::saveuPD7725(std::string node) {
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
     if (type == "RAM" && content == "Data" && arch == "uPD7725") {
-      Emulator::Game::Memory file;
+      Game::Memory file;
       if (game.memory(file, m) && file.nonVolatile) {
         writeCallback(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, 2 * 256);
       }
@@ -1260,7 +1260,7 @@ void Cartridge::saveuPD96050(std::string node) {
     std::string content = BML::search(m, {"memory", "content"});
     std::string arch = BML::search(m, {"memory", "architecture"});
     if (type == "RAM" && content == "Data" && arch == "uPD96050") {
-      Emulator::Game::Memory file;
+      Game::Memory file;
       if (game.memory(file, m) && file.nonVolatile) {
         writeCallback(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, (4 * 1024));
       }
@@ -1271,7 +1271,7 @@ void Cartridge::saveuPD96050(std::string node) {
 //rtc(manufacturer=Epson)
 void Cartridge::saveEpsonRTC(std::string node) {
   std::string memory = BML::searchNode(node, {"rtc", "memory"});
-  Emulator::Game::Memory file;
+  Game::Memory file;
   if (game.memory(file, memory) && file.nonVolatile) {
     uint8_t data[16] = {0};
     epsonrtc.save(data);
@@ -1282,7 +1282,7 @@ void Cartridge::saveEpsonRTC(std::string node) {
 //rtc(manufacturer=Sharp)
 void Cartridge::saveSharpRTC(std::string node) {
   std::string memory = BML::searchNode(node, {"rtc", "memory"});
-  Emulator::Game::Memory file;
+  Game::Memory file;
   if (game.memory(file, memory) && file.nonVolatile) {
     uint8_t data[16] = {0};
     sharprtc.save(data);

@@ -20,7 +20,7 @@
 
 #pragma once
 
-namespace Emulator {
+namespace SuperFamicom {
 
 //incremented only when serialization format changes
 static const std::string SerializerVersion = "115";
