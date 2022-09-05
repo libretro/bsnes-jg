@@ -224,19 +224,42 @@ bool Cartridge::loadCartridge(std::string node) {
   for (std::string& p : processors) {
     std::string arch = BML::search(p, {"processor", "architecture"});
     std::string id = BML::search(p, {"processor", "identifier"});
-    if (id == "ICD") loadICD(p);
-    else if (id == "MCC") loadMCC(p);
-    if (arch == "W65C816S") loadSA1(p);
-    else if (arch == "GSU") loadSuperFX(p);
-    else if (arch == "ARM6") loadARMDSP(p);
+
+    if (id == "ICD") {
+      loadICD(p);
+    }
+    else if (id == "MCC") {
+      loadMCC(p);
+    }
+
+    if (arch == "W65C816S") {
+      loadSA1(p);
+    }
+    else if (arch == "GSU") {
+      loadSuperFX(p);
+    }
+    else if (arch == "ARM6") {
+      loadARMDSP(p);
+    }
     else if (arch == "HG51BS169") {
       loadHitachiDSP(p, game.board.find("2DC") != std::string::npos ? 2 : 1);
     }
-    else if (arch == "uPD7725") loaduPD7725(p);
-    else if (arch == "uPD96050") loaduPD96050(p);
-    if (id == "SPC7110") loadSPC7110(p);
-    else if (id == "SDD1") loadSDD1(p);
-    else if (id == "OBC1") loadOBC1(p);
+    else if (arch == "uPD7725") {
+      loaduPD7725(p);
+    }
+    else if (arch == "uPD96050") {
+      loaduPD96050(p);
+    }
+
+    if (id == "SPC7110") {
+      loadSPC7110(p);
+    }
+    else if (id == "SDD1") {
+      loadSDD1(p);
+    }
+    else if (id == "OBC1") {
+      loadOBC1(p);
+    }
   }
 
   std::vector<std::string> slots = BML::searchList(board, "slot");
@@ -649,40 +672,38 @@ void Cartridge::loadARMDSP(std::string node) {
   }
 
   for (std::string& m : BML::searchList(node, "memory")) {
-    if (BML::search(m, {"memory", "architecture"}) == "ARM6") {
-      std::string type = BML::search(m, {"memory", "type"});
-      std::string content = BML::search(m, {"memory", "content"});
+    std::string type = BML::search(m, {"memory", "type"});
+    std::string content = BML::search(m, {"memory", "content"});
 
-      if (type == "ROM") {
-        if (content == "Program" ) {
-          Game::Memory file;
-          if(game.memory(file, m)) {
-            std::ifstream firmfile = openCallback(ID::SuperFamicom, file.name());
-            if (firmfile.is_open()) {
-              firmfile.read((char*)armdsp.programROM, (128 * 1024));
-              firmfile.close();
-            }
-          }
-        }
-        else if (content == "Data") {
-          Game::Memory file;
-          if(game.memory(file, m)) {
-            std::ifstream firmfile = openCallback(ID::SuperFamicom, file.name());
-            if (firmfile.is_open()) {
-              firmfile.read((char*)armdsp.dataROM, (32 * 1024));
-              firmfile.close();
-            }
+    if (type == "ROM") {
+      if (content == "Program" ) {
+        Game::Memory file;
+        if(game.memory(file, m)) {
+          std::ifstream firmfile = openCallback(ID::SuperFamicom, file.name());
+          if (firmfile.is_open()) {
+            firmfile.read((char*)armdsp.programROM, (128 * 1024));
+            firmfile.close();
           }
         }
       }
-      else if (type == "RAM" && content == "Data") {
+      else if (content == "Data") {
         Game::Memory file;
         if(game.memory(file, m)) {
-          std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
-          if (sramfile.is_open()) {
-            sramfile.read((char*)armdsp.programRAM, (16 * 1024));
-            sramfile.close();
+          std::ifstream firmfile = openCallback(ID::SuperFamicom, file.name());
+          if (firmfile.is_open()) {
+            firmfile.read((char*)armdsp.dataROM, (32 * 1024));
+            firmfile.close();
           }
+        }
+      }
+    }
+    else if (type == "RAM" && content == "Data") {
+      Game::Memory file;
+      if(game.memory(file, m)) {
+        std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
+        if (sramfile.is_open()) {
+          sramfile.read((char*)armdsp.programRAM, (16 * 1024));
+          sramfile.close();
         }
       }
     }
@@ -731,8 +752,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
 
     for (std::string& m : memlist) {
       if (BML::search(m, {"memory", "type"}) == "RAM" &&
-          BML::search(m, {"memory", "content"}) == "Data" &&
-          BML::search(m, {"memory", "architecture"}) == "HG51BS169") {
+          BML::search(m, {"memory", "content"}) == "Data") {
         for (std::string map : BML::searchList(m, "map")) {
           loadMap(map, {&Cx4::read, &cx4}, {&Cx4::write, &cx4});
         }
@@ -741,8 +761,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
   }
   else {
     for (std::string& m : memlist) {
-      if (BML::search(m, {"memory", "content"}) == "Data" &&
-          BML::search(m, {"memory", "architecture"}) == "HG51BS169") {
+      if (BML::search(m, {"memory", "content"}) == "Data") {
         std::string type = BML::search(m, {"memory", "type"});
 
         if (type == "ROM") {
@@ -846,8 +865,7 @@ void Cartridge::loaduPD7725(std::string node) {
 
   for (std::string& m : BML::searchList(node, "memory")) {
     if (BML::search(m, {"memory", "type"}) == "RAM" &&
-        BML::search(m, {"memory", "content"}) == "Data" &&
-        BML::search(m, {"memory", "architecture"}) == "uPD7725") {
+        BML::search(m, {"memory", "content"}) == "Data") {
       std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
       if (sramfile.is_open()) {
         sramfile.read((char*)necdsp.dataRAM, 2 * 256);
@@ -923,8 +941,7 @@ void Cartridge::loaduPD96050(std::string node) {
   else {
     for (std::string& m : BML::searchList(node, "memory")) {
       if (BML::search(m, {"memory", "type"}) == "RAM" &&
-          BML::search(m, {"memory", "content"}) == "Data" &&
-          BML::search(m, {"memory", "architecture"}) == "uPD96050") {
+          BML::search(m, {"memory", "content"}) == "Data") {
         std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
         if (sramfile.is_open()) {
           for (unsigned i = 0; i < 2048; ++i) {
