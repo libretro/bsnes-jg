@@ -86,8 +86,6 @@ private:
   std::string board;
 
   bool loadBSMemory();
-  bool loadSufamiTurboA();
-  bool loadSufamiTurboB();
 
   std::string loadBoard(std::string);
   bool loadCartridge(std::string);
@@ -104,8 +102,6 @@ private:
   void loadICD(std::string);
   void loadMCC(std::string);
   void loadBSMemory(std::string);
-  void loadSufamiTurboA(std::string);
-  void loadSufamiTurboB(std::string);
   void loadDIP(std::string);
   void loadSA1(std::string);
   void loadSuperFX(std::string);
