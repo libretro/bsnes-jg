@@ -726,35 +726,35 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
         }
       }
     }
-    return;
   }
-
-  for (std::string& m : memlist) {
-    std::string type = BML::search(m, {"memory", "type"});
-    std::string content = BML::search(m, {"memory", "content"});
-    std::string arch = BML::search(m, {"memory", "architecture"});
-    if (type == "ROM" && content == "Data" && arch == "HG51BS169") {
-      Emulator::Game::Memory file;
-      if(game.memory(file, m)) {
-        for (int n = 0; n < 1024; ++n) {
-          hitachidsp.dataROM[n]  = hitachidspStaticDataROM[n * 3 + 0] <<  0;
-          hitachidsp.dataROM[n] |= hitachidspStaticDataROM[n * 3 + 1] <<  8;
-          hitachidsp.dataROM[n] |= hitachidspStaticDataROM[n * 3 + 2] << 16;
+  else {
+    for (std::string& m : memlist) {
+      std::string type = BML::search(m, {"memory", "type"});
+      std::string content = BML::search(m, {"memory", "content"});
+      std::string arch = BML::search(m, {"memory", "architecture"});
+      if (type == "ROM" && content == "Data" && arch == "HG51BS169") {
+        Emulator::Game::Memory file;
+        if(game.memory(file, m)) {
+          for (int n = 0; n < 1024; ++n) {
+            hitachidsp.dataROM[n]  = hitachidspStaticDataROM[n * 3 + 0] <<  0;
+            hitachidsp.dataROM[n] |= hitachidspStaticDataROM[n * 3 + 1] <<  8;
+            hitachidsp.dataROM[n] |= hitachidspStaticDataROM[n * 3 + 2] << 16;
+          }
+        }
+      }
+      else if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
+        for (std::string map : BML::searchList(m, "map")) {
+          loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
         }
       }
     }
-    else if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
-      for (std::string map : BML::searchList(m, "map")) {
-        loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
-      }
+
+    has.HitachiDSP = true;
+
+    std::string pmap = BML::searchNode(node, {"processor", "map"});
+    if (!pmap.empty()) {
+      loadMap(pmap, {&HitachiDSP::readIO, &hitachidsp}, {&HitachiDSP::writeIO, &hitachidsp});
     }
-  }
-
-  has.HitachiDSP = true;
-
-  std::string pmap = BML::searchNode(node, {"processor", "map"});
-  if (!pmap.empty()) {
-    loadMap(pmap, {&HitachiDSP::readIO, &hitachidsp}, {&HitachiDSP::writeIO, &hitachidsp});
   }
 }
 
@@ -894,12 +894,10 @@ void Cartridge::loaduPD96050(std::string node) {
     failed = true;
   }
 
-  std::vector<std::string> memlist = BML::searchList(node, "memory");
-
   if(failed || configuration.coprocessor.preferHLE) {
     if (ident == "st010") {
       has.ST0010 = true;
-      for (std::string& m : memlist) {
+      for (std::string& m : BML::searchList(node, "memory")) {
         std::string type = BML::search(m, {"memory", "type"});
         std::string content = BML::search(m, {"memory", "content"});
         if (type == "RAM" && content == "Data") {
@@ -908,33 +906,33 @@ void Cartridge::loaduPD96050(std::string node) {
         }
       }
     }
-    return;
   }
-
-  for (std::string& m : memlist) {
-    std::string type = BML::search(m, {"memory", "type"});
-    std::string content = BML::search(m, {"memory", "content"});
-    std::string arch = BML::search(m, {"memory", "architecture"});
-    if (type == "RAM" && content == "Data" && arch == "uPD96050") {
-      std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
-      if (sramfile.is_open()) {
-        for (unsigned i = 0; i < 2048; ++i) {
-          necdsp.dataRAM[i] = sramfile.get() | (sramfile.get() << 8);
+  else {
+    for (std::string& m : BML::searchList(node, "memory")) {
+      std::string type = BML::search(m, {"memory", "type"});
+      std::string content = BML::search(m, {"memory", "content"});
+      std::string arch = BML::search(m, {"memory", "architecture"});
+      if (type == "RAM" && content == "Data" && arch == "uPD96050") {
+        std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
+        if (sramfile.is_open()) {
+          for (unsigned i = 0; i < 2048; ++i) {
+            necdsp.dataRAM[i] = sramfile.get() | (sramfile.get() << 8);
+          }
+          sramfile.close();
         }
-        sramfile.close();
-      }
-      for (std::string map : BML::searchList(m, "map")) {
-        loadMap(map, {&NECDSP::readRAM, &necdsp}, {&NECDSP::writeRAM, &necdsp});
+        for (std::string map : BML::searchList(m, "map")) {
+          loadMap(map, {&NECDSP::readRAM, &necdsp}, {&NECDSP::writeRAM, &necdsp});
+        }
       }
     }
-  }
 
-  has.NECDSP = true;
-  necdsp.revision = NECDSP::Revision::uPD96050;
+    has.NECDSP = true;
+    necdsp.revision = NECDSP::Revision::uPD96050;
 
-  std::string pmap = BML::searchNode(node, {"processor", "map"});
-  if (!pmap.empty()) {
-    loadMap(pmap, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
+    std::string pmap = BML::searchNode(node, {"processor", "map"});
+    if (!pmap.empty()) {
+      loadMap(pmap, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
+    }
   }
 }
 
