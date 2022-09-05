@@ -489,7 +489,11 @@ void Cartridge::loadBSMemory(std::string node) {
 
   if(romCallback(ID::BSMemory)) {
     bsmemory.pathID = ID::BSMemory;
-    loadBSMemory();
+
+    if (!slotBSMemory.document.empty()) {
+      slotBSMemory.load(slotBSMemory.document);
+      loadCartridgeBSMemory(slotBSMemory.document);
+    }
 
     for (std::string map : BML::searchList(node, "map")) {
       loadMap(map, bsmemory);
@@ -1397,16 +1401,6 @@ bool Cartridge::load() {
   }
 
   return true;
-}
-
-bool Cartridge::loadBSMemory() {
-  if (!slotBSMemory.document.empty()) {
-    slotBSMemory.load(slotBSMemory.document);
-    loadCartridgeBSMemory(slotBSMemory.document);
-    return true;
-  }
-
-  return false;
 }
 
 void Cartridge::save() {

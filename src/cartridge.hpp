@@ -85,8 +85,6 @@ struct Cartridge {
 private:
   std::string board;
 
-  bool loadBSMemory();
-
   std::string loadBoard(std::string);
   bool loadCartridge(std::string);
   void loadCartridgeBSMemory(std::string);
