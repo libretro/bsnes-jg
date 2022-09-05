@@ -420,14 +420,16 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
 //memory(type=ROM,content=Program)
 void Cartridge::loadROM(std::string node) {
   loadMemory(rom, node);
-  std::vector<std::string> maps = BML::searchList(node, "map");
-  for (std::string map : maps) loadMap(map, rom);
+  for (std::string map : BML::searchList(node, "map")) {
+    loadMap(map, rom);
+  }
 }
 
 void Cartridge::loadRAM(std::string node) {
   loadMemory(ram, node);
-  std::vector<std::string> maps = BML::searchList(node, "map");
-  for (std::string map : maps) loadMap(map, ram);
+  for (std::string map : BML::searchList(node, "map")) {
+    loadMap(map, ram);
+  }
 }
 
 //processor(identifier=ICD)
@@ -442,8 +444,7 @@ void Cartridge::loadICD(std::string node) {
   }
 
   //Game Boy core loads data through ICD interface
-  std::vector<std::string> maps = BML::searchList(node, "map");
-  for (std::string map : maps) {
+  for (std::string map : BML::searchList(node, "map")) {
     loadMap(map, {&ICD::readIO, &icd}, {&ICD::writeIO, &icd});
   }
 }
@@ -458,8 +459,7 @@ void Cartridge::loadMCC(std::string node) {
   std::string mcu = BML::searchNode(node, {"processor", "mcu"});
 
   if (!mcu.empty()) {
-    std::vector<std::string> maps = BML::searchList(mcu, "map");
-    for (std::string map : maps) {
+    for (std::string map : BML::searchList(mcu, "map")) {
       loadMap(map, {&MCC::mcuRead, &mcc}, {&MCC::mcuWrite, &mcc});
     }
 
@@ -486,8 +486,7 @@ void Cartridge::loadBSMemory(std::string node) {
     bsmemory.pathID = ID::BSMemory;
     loadBSMemory();
 
-    std::vector<std::string> maps = BML::searchList(node, "map");
-    for (std::string map : maps) {
+    for (std::string map : BML::searchList(node, "map")) {
       loadMap(map, bsmemory);
     }
   }
@@ -501,8 +500,7 @@ void Cartridge::loadDIP(std::string node) {
   //dip.value = Emulator::platform->dipSettings(node);
   dip.value = 0;
 
-  std::vector<std::string> maps = BML::searchList(node, "map");
-  for (std::string map : maps) {
+  for (std::string map : BML::searchList(node, "map")) {
     loadMap(map, {&DIP::read, &dip}, {&DIP::write, &dip});
   }
 }
@@ -549,8 +547,7 @@ void Cartridge::loadSA1(std::string node) {
   std::string mcu = BML::searchNode(node, {"processor", "mcu"});
 
   if (!mcu.empty()) {
-    std::vector<std::string> maps = BML::searchList(mcu, "map");
-    for (std::string map : maps) {
+    for (std::string map : BML::searchList(mcu, "map")) {
       loadMap(map, {&SA1::ROM::readCPU, &sa1.rom}, {&SA1::ROM::writeCPU, &sa1.rom});
     }
 
@@ -574,15 +571,13 @@ void Cartridge::loadSA1(std::string node) {
     if (type == "RAM") {
       if (content == "Save") {
         loadMemory(sa1.bwram, m);
-        std::vector<std::string> maps = BML::searchList(m, "map");
-        for (std::string map : maps) {
+        for (std::string map : BML::searchList(m, "map")) {
           loadMap(map, {&SA1::BWRAM::readCPU, &sa1.bwram}, {&SA1::BWRAM::writeCPU, &sa1.bwram});
         }
       }
       else if (content == "Internal") {
         loadMemory(sa1.iram, m);
-        std::vector<std::string> maps = BML::searchList(m, "map");
-        for (std::string map : maps) {
+        for (std::string map : BML::searchList(m, "map")) {
           loadMap(map, {&SA1::IRAM::readCPU, &sa1.iram}, {&SA1::IRAM::writeCPU, &sa1.iram});
         }
       }
@@ -611,15 +606,13 @@ void Cartridge::loadSuperFX(std::string node) {
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "ROM" && content == "Program") {
       loadMemory(superfx.rom, m);
-      std::vector<std::string> cpumaps = BML::searchList(m, "map");
-      for (std::string& c : cpumaps) {
+      for (std::string& c : BML::searchList(m, "map")) {
         loadMap(c, superfx.cpurom);
       }
     }
     else if (type == "RAM" && content == "Save") {
       loadMemory(superfx.ram, m);
-      std::vector<std::string> cpumaps = BML::searchList(m, "map");
-      for (std::string& c : cpumaps) {
+      for (std::string& c : BML::searchList(m, "map")) {
         loadMap(c, superfx.cpuram);
       }
     }
@@ -704,15 +697,13 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "ROM" && content == "Program") {
       loadMemory(hitachidsp.rom, m);
-      std::vector<std::string> maps = BML::searchList(m, "map");
-      for (std::string map : maps) {
+      for (std::string map : BML::searchList(m, "map")) {
         loadMap(map, {&HitachiDSP::readROM, &hitachidsp}, {&HitachiDSP::writeROM, &hitachidsp});
       }
     }
     else if (type == "RAM" && content == "Save") {
       loadMemory(hitachidsp.ram, m);
-      std::vector<std::string> maps = BML::searchList(m, "map");
-      for (std::string map : maps) {
+      for (std::string map : BML::searchList(m, "map")) {
         loadMap(map, {&HitachiDSP::readRAM, &hitachidsp}, {&HitachiDSP::writeRAM, &hitachidsp});
       }
     }
@@ -730,8 +721,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
       std::string content = BML::search(m, {"memory", "content"});
       std::string arch = BML::search(m, {"memory", "architecture"});
       if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
-        std::vector<std::string> maps = BML::searchList(m, "map");
-        for (std::string map : maps) {
+        for (std::string map : BML::searchList(m, "map")) {
           loadMap(map, {&Cx4::read, &cx4}, {&Cx4::write, &cx4});
         }
       }
@@ -754,8 +744,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
       }
     }
     else if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
-      std::vector<std::string> maps = BML::searchList(m, "map");
-      for (std::string map : maps) {
+      for (std::string map : BML::searchList(m, "map")) {
         loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
       }
     }
@@ -934,8 +923,7 @@ void Cartridge::loaduPD96050(std::string node) {
         }
         sramfile.close();
       }
-      std::vector<std::string> maps = BML::searchList(m, "map");
-      for (std::string map : maps) {
+      for (std::string map : BML::searchList(m, "map")) {
         loadMap(map, {&NECDSP::readRAM, &necdsp}, {&NECDSP::writeRAM, &necdsp});
       }
     }
@@ -998,16 +986,14 @@ void Cartridge::loadSharpRTC(std::string node) {
 void Cartridge::loadSPC7110(std::string node) {
   has.SPC7110 = true;
 
-  std::vector<std::string> pmaps = BML::searchListShallow(node, "processor", "map");
-  for (std::string& m : pmaps) {
+  for (std::string& m : BML::searchListShallow(node, "processor", "map")) {
     loadMap(m, {&SPC7110::read, &spc7110}, {&SPC7110::write, &spc7110});
   }
 
   std::string mcu = BML::searchNode(node, {"processor", "mcu"});
 
   if (!mcu.empty()) {
-    std::vector<std::string> mcumaps = BML::searchList(mcu, "map");
-    for (std::string& m : mcumaps) {
+    for (std::string& m : BML::searchList(mcu, "map")) {
       loadMap(m, {&SPC7110::mcuromRead, &spc7110}, {&SPC7110::mcuromWrite, &spc7110});
     }
 
@@ -1029,8 +1015,7 @@ void Cartridge::loadSPC7110(std::string node) {
     std::string content = BML::search(sram, {"memory", "content"});
     if (type == "RAM" && content == "Save") {
       loadMemory(spc7110.ram, sram);
-      std::vector<std::string> maps = BML::searchList(sram, "map");
-      for (std::string& m : maps) {
+      for (std::string& m : BML::searchList(sram, "map")) {
         loadMap(m, {&SPC7110::mcuramRead, &spc7110}, {&SPC7110::mcuramWrite, &spc7110});
       }
     }
@@ -1047,8 +1032,7 @@ void Cartridge::loadSDD1(std::string node) {
   std::string mcu = BML::searchNode(node, {"processor", "mcu"});
 
   if (!mcu.empty()) {
-    std::vector<std::string> maps = BML::searchList(mcu, "map");
-    for (std::string map : maps) {
+    for (std::string map : BML::searchList(mcu, "map")) {
       loadMap(map, {&SDD1::mcuRead, &sdd1}, {&SDD1::mcuWrite, &sdd1});
     }
 
@@ -1065,8 +1049,7 @@ void Cartridge::loadSDD1(std::string node) {
 void Cartridge::loadOBC1(std::string node) {
   has.OBC1 = true;
 
-  std::vector<std::string> maps = BML::searchList(node, "map");
-  for (std::string map : maps) {
+  for (std::string map : BML::searchList(node, "map")) {
     loadMap(map, {&OBC1::read, &obc1}, {&OBC1::write, &obc1});
   }
 
