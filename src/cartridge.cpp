@@ -454,7 +454,10 @@ void Cartridge::loadMCC(std::string node) {
   has.MCC = true;
 
   std::string pmap = BML::searchNode(node, {"processor", "map"});
-  if (!pmap.empty()) loadMap(pmap, {&MCC::read, &mcc}, {&MCC::write, &mcc});
+
+  if (!pmap.empty()) {
+    loadMap(pmap, {&MCC::read, &mcc}, {&MCC::write, &mcc});
+  }
 
   std::string mcu = BML::searchNode(node, {"processor", "mcu"});
 
@@ -463,16 +466,18 @@ void Cartridge::loadMCC(std::string node) {
       loadMap(map, {&MCC::mcuRead, &mcc}, {&MCC::mcuWrite, &mcc});
     }
 
-    std::vector<std::string> mcumem = BML::searchList(mcu, "memory");
-    for (std::string& m : mcumem) {
+    for (std::string& m : BML::searchList(mcu, "memory")) {
       std::string type = BML::search(m, {"memory", "type"});
       std::string content = BML::search(m, {"memory", "content"});
-      if (type == "ROM" && content == "Program") loadMemory(mcc.rom, m);
-      if (type == "RAM" && content == "Download") loadMemory(mcc.psram, m);
+      if (type == "ROM" && content == "Program") {
+        loadMemory(mcc.rom, m);
+      }
+      else if (type == "RAM" && content == "Download") {
+        loadMemory(mcc.psram, m);
+      }
     }
 
-    std::vector<std::string> mcuslot = BML::searchList(mcu, "slot");
-    for (std::string& s : mcuslot) {
+    for (std::string& s : BML::searchList(mcu, "slot")) {
       loadBSMemory(s);
     }
   }
@@ -540,6 +545,7 @@ void Cartridge::loadSA1(std::string node) {
   has.SA1 = true;
 
   std::string pmap = BML::searchNode(node, {"processor", "map"});
+
   if (!pmap.empty()) {
     loadMap(pmap, {&SA1::readIOCPU, &sa1}, {&SA1::writeIOCPU, &sa1});
   }
@@ -551,24 +557,23 @@ void Cartridge::loadSA1(std::string node) {
       loadMap(map, {&SA1::ROM::readCPU, &sa1.rom}, {&SA1::ROM::writeCPU, &sa1.rom});
     }
 
-    std::vector<std::string> mcumem = BML::searchList(mcu, "memory");
-    for (std::string& m : mcumem) {
-      std::string type = BML::search(m, {"memory", "type"});
-      std::string content = BML::search(m, {"memory", "content"});
-      if (type == "ROM" && content == "Program") loadMemory(sa1.rom, m);
+    for (std::string& m : BML::searchList(mcu, "memory")) {
+      if (BML::search(m, {"memory", "type"}) == "ROM" &&
+          BML::search(m, {"memory", "content"}) == "Program") {
+        loadMemory(sa1.rom, m);
+      }
     }
 
     std::string slot = BML::searchNode(mcu, {"slot"});
-    if (!slot.empty()) {
-      if (BML::search(slot, {"type"}) == "BSMemory") loadBSMemory(slot);
+
+    if (!slot.empty() && BML::search(slot, {"type"}) == "BSMemory") {
+      loadBSMemory(slot);
     }
   }
 
   for (std::string& m : BML::searchList(node, "memory")) {
-    std::string type = BML::search(m, {"memory", "type"});
-    std::string content = BML::search(m, {"memory", "content"});
-
-    if (type == "RAM") {
+    if (BML::search(m, {"memory", "type"}) == "RAM") {
+      std::string content = BML::search(m, {"memory", "content"});
       if (content == "Save") {
         loadMemory(sa1.bwram, m);
         for (std::string map : BML::searchList(m, "map")) {
@@ -596,12 +601,12 @@ void Cartridge::loadSuperFX(std::string node) {
   }
 
   std::string pmap = BML::searchNode(node, {"processor", "map"});
+
   if (!pmap.empty()) {
     loadMap(pmap, {&SuperFX::readIO, &superfx}, {&SuperFX::writeIO, &superfx});
   }
 
-  std::vector<std::string> sfxmem = BML::searchList(node, "memory");
-  for (std::string& m : sfxmem) {
+  for (std::string& m : BML::searchList(node, "memory")) {
     std::string type = BML::search(m, {"memory", "type"});
     std::string content = BML::search(m, {"memory", "content"});
     if (type == "ROM" && content == "Program") {
@@ -634,46 +639,49 @@ void Cartridge::loadARMDSP(std::string node) {
   }
 
   std::string pmap = BML::searchNode(node, {"processor", "map"});
-  if (!pmap.empty()) loadMap(pmap, {&ArmDSP::read, &armdsp}, {&ArmDSP::write, &armdsp});
+
+  if (!pmap.empty()) {
+    loadMap(pmap, {&ArmDSP::read, &armdsp}, {&ArmDSP::write, &armdsp});
+  }
 
   for (std::string& m : BML::searchList(node, "memory")) {
-    std::string type = BML::search(m, {"memory", "type"});
-    std::string content = BML::search(m, {"memory", "content"});
-    std::string arch = BML::search(m, {"memory", "architecture"});
+    if (BML::search(m, {"memory", "architecture"}) == "ARM6") {
+      std::string type = BML::search(m, {"memory", "type"});
+      std::string content = BML::search(m, {"memory", "content"});
 
-    if (type == "ROM" && content == "Program" && arch == "ARM6") {
-      Emulator::Game::Memory file;
-      if(game.memory(file, m)) {
-        std::ifstream firmfile = openCallback(ID::SuperFamicom, file.name());
-        if (firmfile.is_open()) {
-          firmfile.read((char*)armdsp.programROM, (128 * 1024));
-          firmfile.close();
+      if (type == "ROM") {
+        if (content == "Program" ) {
+          Emulator::Game::Memory file;
+          if(game.memory(file, m)) {
+            std::ifstream firmfile = openCallback(ID::SuperFamicom, file.name());
+            if (firmfile.is_open()) {
+              firmfile.read((char*)armdsp.programROM, (128 * 1024));
+              firmfile.close();
+            }
+          }
+        }
+        else if (content == "Data") {
+          Emulator::Game::Memory file;
+          if(game.memory(file, m)) {
+            std::ifstream firmfile = openCallback(ID::SuperFamicom, file.name());
+            if (firmfile.is_open()) {
+              firmfile.read((char*)armdsp.dataROM, (32 * 1024));
+              firmfile.close();
+            }
+          }
+        }
+      }
+      else if (type == "RAM" && content == "Data") {
+        Emulator::Game::Memory file;
+        if(game.memory(file, m)) {
+          std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
+          if (sramfile.is_open()) {
+            sramfile.read((char*)armdsp.programRAM, (16 * 1024));
+            sramfile.close();
+          }
         }
       }
     }
-
-    if (type == "ROM" && content == "Data" && arch == "ARM6") {
-      Emulator::Game::Memory file;
-      if(game.memory(file, m)) {
-        std::ifstream firmfile = openCallback(ID::SuperFamicom, file.name());
-        if (firmfile.is_open()) {
-          firmfile.read((char*)armdsp.dataROM, (32 * 1024));
-          firmfile.close();
-        }
-      }
-    }
-
-    if (type == "RAM" && content == "Data" && arch == "ARM6") {
-      Emulator::Game::Memory file;
-      if(game.memory(file, m)) {
-        std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
-        if (sramfile.is_open()) {
-          sramfile.read((char*)armdsp.programRAM, (16 * 1024));
-          sramfile.close();
-        }
-      }
-    }
-
   }
 }
 
@@ -712,15 +720,15 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
   if(configuration.coprocessor.preferHLE) {
     has.Cx4 = true;
     std::string pmap = BML::searchNode(node, {"processor", "map"});
+
     if (!pmap.empty()) {
       loadMap(pmap, {&Cx4::read, &cx4}, {&Cx4::write, &cx4});
     }
 
     for (std::string& m : memlist) {
-      std::string type = BML::search(m, {"memory", "type"});
-      std::string content = BML::search(m, {"memory", "content"});
-      std::string arch = BML::search(m, {"memory", "architecture"});
-      if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
+      if (BML::search(m, {"memory", "type"}) == "RAM" &&
+          BML::search(m, {"memory", "content"}) == "Data" &&
+          BML::search(m, {"memory", "architecture"}) == "HG51BS169") {
         for (std::string map : BML::searchList(m, "map")) {
           loadMap(map, {&Cx4::read, &cx4}, {&Cx4::write, &cx4});
         }
@@ -729,22 +737,24 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
   }
   else {
     for (std::string& m : memlist) {
-      std::string type = BML::search(m, {"memory", "type"});
-      std::string content = BML::search(m, {"memory", "content"});
-      std::string arch = BML::search(m, {"memory", "architecture"});
-      if (type == "ROM" && content == "Data" && arch == "HG51BS169") {
-        Emulator::Game::Memory file;
-        if(game.memory(file, m)) {
-          for (int n = 0; n < 1024; ++n) {
-            hitachidsp.dataROM[n]  = hitachidspStaticDataROM[n * 3 + 0] <<  0;
-            hitachidsp.dataROM[n] |= hitachidspStaticDataROM[n * 3 + 1] <<  8;
-            hitachidsp.dataROM[n] |= hitachidspStaticDataROM[n * 3 + 2] << 16;
+      if (BML::search(m, {"memory", "content"}) == "Data" &&
+          BML::search(m, {"memory", "architecture"}) == "HG51BS169") {
+        std::string type = BML::search(m, {"memory", "type"});
+
+        if (type == "ROM") {
+          Emulator::Game::Memory file;
+          if(game.memory(file, m)) {
+            for (int n = 0; n < 1024; ++n) {
+              hitachidsp.dataROM[n]  = hitachidspStaticDataROM[n * 3 + 0] <<  0;
+              hitachidsp.dataROM[n] |= hitachidspStaticDataROM[n * 3 + 1] <<  8;
+              hitachidsp.dataROM[n] |= hitachidspStaticDataROM[n * 3 + 2] << 16;
+            }
           }
         }
-      }
-      else if (type == "RAM" && content == "Data" && arch == "HG51BS169") {
-        for (std::string map : BML::searchList(m, "map")) {
-          loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
+        else if (type == "RAM") {
+          for (std::string map : BML::searchList(m, "map")) {
+            loadMap(map, {&HitachiDSP::readDRAM, &hitachidsp}, {&HitachiDSP::writeDRAM, &hitachidsp});
+          }
         }
       }
     }
@@ -752,6 +762,7 @@ void Cartridge::loadHitachiDSP(std::string node, unsigned roms) {
     has.HitachiDSP = true;
 
     std::string pmap = BML::searchNode(node, {"processor", "map"});
+
     if (!pmap.empty()) {
       loadMap(pmap, {&HitachiDSP::readIO, &hitachidsp}, {&HitachiDSP::writeIO, &hitachidsp});
     }
@@ -775,12 +786,11 @@ void Cartridge::loaduPD7725(std::string node) {
   ident.pop_back();
   std::transform(ident.begin(), ident.end(), ident.begin(), ::tolower);
 
-  std::string pname = ident + ".program.rom";
-  std::string dname = ident + ".data.rom";
-
   bool failed = false;
 
-  std::ifstream prgfile = openCallback(ID::SuperFamicom, pname);
+  std::ifstream prgfile = openCallback(ID::SuperFamicom,
+    ident + ".program.rom");
+
   if (prgfile.is_open()) {
     for (unsigned i = 0; i < 2048; ++i) {
       necdsp.programROM[i] = prgfile.get() | (prgfile.get() << 8) |
@@ -792,7 +802,8 @@ void Cartridge::loaduPD7725(std::string node) {
     failed = true;
   }
 
-  std::ifstream datafile = openCallback(ID::SuperFamicom, dname);
+  std::ifstream datafile = openCallback(ID::SuperFamicom, ident + ".data.rom");
+
   if (datafile.is_open()) {
     for (unsigned i = 0; i < 1024; ++i) {
       necdsp.dataROM[i] = datafile.get() | (datafile.get() << 8);
@@ -830,10 +841,9 @@ void Cartridge::loaduPD7725(std::string node) {
   }
 
   for (std::string& m : BML::searchList(node, "memory")) {
-    std::string type = BML::search(m, {"memory", "type"});
-    std::string content = BML::search(m, {"memory", "content"});
-    std::string arch = BML::search(m, {"memory", "architecture"});
-    if (type == "RAM" && content == "Data" && arch == "uPD7725") {
+    if (BML::search(m, {"memory", "type"}) == "RAM" &&
+        BML::search(m, {"memory", "content"}) == "Data" &&
+        BML::search(m, {"memory", "architecture"}) == "uPD7725") {
       std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
       if (sramfile.is_open()) {
         sramfile.read((char*)necdsp.dataRAM, 2 * 256);
@@ -844,6 +854,7 @@ void Cartridge::loaduPD7725(std::string node) {
 
   has.NECDSP = true;
   necdsp.revision = NECDSP::Revision::uPD7725;
+
   if (!pmap.empty()) {
     loadMap(pmap, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
   }
@@ -866,12 +877,11 @@ void Cartridge::loaduPD96050(std::string node) {
   ident.pop_back();
   std::transform(ident.begin(), ident.end(), ident.begin(), ::tolower);
 
-  std::string pname = ident + ".program.rom";
-  std::string dname = ident + ".data.rom";
-
   bool failed = false;
 
-  std::ifstream prgfile = openCallback(ID::SuperFamicom, pname);
+  std::ifstream prgfile = openCallback(ID::SuperFamicom,
+    ident + ".program.rom");
+
   if (prgfile.is_open()) {
     for (unsigned i = 0; i < 16384; ++i) {
       necdsp.programROM[i] = prgfile.get() | (prgfile.get() << 8) |
@@ -883,7 +893,7 @@ void Cartridge::loaduPD96050(std::string node) {
     failed = true;
   }
 
-  std::ifstream datafile = openCallback(ID::SuperFamicom, dname);
+  std::ifstream datafile = openCallback(ID::SuperFamicom, ident + ".data.rom");
   if (datafile.is_open()) {
     for (unsigned i = 0; i < 2048; ++i) {
       necdsp.dataROM[i] = datafile.get() | (datafile.get() << 8);
@@ -898,9 +908,8 @@ void Cartridge::loaduPD96050(std::string node) {
     if (ident == "st010") {
       has.ST0010 = true;
       for (std::string& m : BML::searchList(node, "memory")) {
-        std::string type = BML::search(m, {"memory", "type"});
-        std::string content = BML::search(m, {"memory", "content"});
-        if (type == "RAM" && content == "Data") {
+        if (BML::search(m, {"memory", "type"}) == "RAM" &&
+            BML::search(m, {"memory", "content"}) == "Data") {
           std::string mem = BML::searchNode(m, {"memory", "map"});
           loadMap(mem, {&ST0010::read, &st0010}, {&ST0010::write, &st0010});
         }
@@ -909,10 +918,9 @@ void Cartridge::loaduPD96050(std::string node) {
   }
   else {
     for (std::string& m : BML::searchList(node, "memory")) {
-      std::string type = BML::search(m, {"memory", "type"});
-      std::string content = BML::search(m, {"memory", "content"});
-      std::string arch = BML::search(m, {"memory", "architecture"});
-      if (type == "RAM" && content == "Data" && arch == "uPD96050") {
+      if (BML::search(m, {"memory", "type"}) == "RAM" &&
+          BML::search(m, {"memory", "content"}) == "Data" &&
+          BML::search(m, {"memory", "architecture"}) == "uPD96050") {
         std::ifstream sramfile = openCallback(ID::SuperFamicom, "save.ram");
         if (sramfile.is_open()) {
           for (unsigned i = 0; i < 2048; ++i) {
@@ -928,8 +936,8 @@ void Cartridge::loaduPD96050(std::string node) {
 
     has.NECDSP = true;
     necdsp.revision = NECDSP::Revision::uPD96050;
-
     std::string pmap = BML::searchNode(node, {"processor", "map"});
+
     if (!pmap.empty()) {
       loadMap(pmap, {&NECDSP::read, &necdsp}, {&NECDSP::write, &necdsp});
     }
@@ -945,9 +953,9 @@ void Cartridge::loadEpsonRTC(std::string node) {
   std::string map = BML::searchNode(node, {"rtc", "map"});
   loadMap(map, {&EpsonRTC::read, &epsonrtc}, {&EpsonRTC::write, &epsonrtc});
 
-  std::string memory = BML::searchNode(node, {"rtc", "memory"});
   Emulator::Game::Memory file;
-  if(game.memory(file, memory)) {
+
+  if(game.memory(file, BML::searchNode(node, {"rtc", "memory"}))) {
     std::ifstream rtcfile = openCallback(ID::SuperFamicom, "time.rtc");
     if (rtcfile.is_open()) {
       uint8_t data[16] = {0};
@@ -967,9 +975,9 @@ void Cartridge::loadSharpRTC(std::string node) {
   std::string map = BML::searchNode(node, {"rtc", "map"});
   loadMap(map, {&SharpRTC::read, &sharprtc}, {&SharpRTC::write, &sharprtc});
 
-  std::string memory = BML::searchNode(node, {"rtc", "memory"});
   Emulator::Game::Memory file;
-  if(game.memory(file, memory)) {
+
+  if(game.memory(file, BML::searchNode(node, {"rtc", "memory"}))) {
     std::ifstream rtcfile = openCallback(ID::SuperFamicom, "time.rtc");
     if (rtcfile.is_open()) {
       uint8_t data[16] = {0};
@@ -996,22 +1004,23 @@ void Cartridge::loadSPC7110(std::string node) {
     }
 
     for (std::string& m : BML::searchList(mcu, "memory")) {
-      std::string type = BML::search(m, {"memory", "type"});
-      std::string content = BML::search(m, {"memory", "content"});
-      if (type == "ROM" && content == "Program") {
-        loadMemory(spc7110.prom, m);
-      }
-      else if (type == "ROM" && content == "Data") {
-        loadMemory(spc7110.drom, m);
+      if (BML::search(m, {"memory", "type"}) == "ROM") {
+        std::string content = BML::search(m, {"memory", "content"});
+        if (content == "Program") {
+          loadMemory(spc7110.prom, m);
+        }
+        else if (content == "Data") {
+          loadMemory(spc7110.drom, m);
+        }
       }
     }
   }
 
   std::string sram = BML::searchNode(node, {"processor", "memory"});
+
   if (!sram.empty()) {
-    std::string type = BML::search(sram, {"memory", "type"});
-    std::string content = BML::search(sram, {"memory", "content"});
-    if (type == "RAM" && content == "Save") {
+    if (BML::search(sram, {"memory", "type"}) == "RAM" &&
+        BML::search(sram, {"memory", "content"}) == "Save") {
       loadMemory(spc7110.ram, sram);
       for (std::string& m : BML::searchList(sram, "map")) {
         loadMap(m, {&SPC7110::mcuramRead, &spc7110}, {&SPC7110::mcuramWrite, &spc7110});
@@ -1025,7 +1034,10 @@ void Cartridge::loadSDD1(std::string node) {
   has.SDD1 = true;
 
   std::string pmap = BML::searchNode(node, {"processor", "map"});
-  if (!pmap.empty()) loadMap(pmap, {&SDD1::ioRead, &sdd1}, {&SDD1::ioWrite, &sdd1});
+
+  if (!pmap.empty()) {
+    loadMap(pmap, {&SDD1::ioRead, &sdd1}, {&SDD1::ioWrite, &sdd1});
+  }
 
   std::string mcu = BML::searchNode(node, {"processor", "mcu"});
 
@@ -1034,11 +1046,11 @@ void Cartridge::loadSDD1(std::string node) {
       loadMap(map, {&SDD1::mcuRead, &sdd1}, {&SDD1::mcuWrite, &sdd1});
     }
 
-    std::vector<std::string> mcumem = BML::searchList(mcu, "memory");
-    for (std::string& m : mcumem) {
-      std::string type = BML::search(m, {"memory", "type"});
-      std::string content = BML::search(m, {"memory", "content"});
-      if (type == "ROM" && content == "Program") loadMemory(sdd1.rom, m);
+    for (std::string& m : BML::searchList(mcu, "memory")) {
+      if (BML::search(m, {"memory", "type"}) == "ROM" &&
+          BML::search(m, {"memory", "content"}) == "Program") {
+        loadMemory(sdd1.rom, m);
+      }
     }
   }
 }
@@ -1051,8 +1063,7 @@ void Cartridge::loadOBC1(std::string node) {
     loadMap(map, {&OBC1::read, &obc1}, {&OBC1::write, &obc1});
   }
 
-  std::vector<std::string> memory = BML::searchList(node, "memory");
-  for (std::string m : memory) {
+  for (std::string m : BML::searchList(node, "memory")) {
     if (BML::search(m, {"memory", "type"}) == "RAM" &&
         BML::search(m, {"memory", "content"}) == "Save") {
       loadMemory(obc1.ram, m);
