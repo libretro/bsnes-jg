@@ -82,10 +82,14 @@ static jg_inputstate_t *input_device[NUMINPUTS];
 
 // Emulator settings
 static jg_setting_t settings_bsnes[] = {
-    { "aspect_ratio", "0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL", 0, 0, 3 },
-    { "coproc_delaysync", "0 = Off, 1 = On", 0, 0, 1 },
-    { "coproc_preferhle", "0 = Off, 1 = On", 1, 0, 1 },
-    { "rsqual", "0 = Fastest, 1 = Medium, 2 = Best", 0, 0, 2 },
+    { "aspect_ratio",
+        "0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL",
+        "",
+        0, 0, 3, 0
+    },
+    { "coproc_delaysync", "0 = Off, 1 = On", "", 0, 0, 1, 1 },
+    { "coproc_preferhle", "0 = Off, 1 = On", "", 1, 0, 1, 1 },
+    { "rsqual", "0 = Fastest, 1 = Medium, 2 = Best", "", 0, 0, 2, 1 },
 };
 
 enum {
@@ -110,7 +114,7 @@ static struct Location {
 
 // Set the aspect ratio
 static void aspectRatio() {
-    switch (settings_bsnes[ASPECT].value) {
+    switch (settings_bsnes[ASPECT].val) {
         default: case 0: { // Auto Region
             vidinfo.aspect = interface->getRegion() == "PAL" ?
                 ASPECT_PAL : ASPECT_NTSC;
@@ -524,8 +528,8 @@ int jg_init() {
     interface->setWriteCallback(&fileWrite);
 
     // Configuration
-    interface->setCoprocDelayedSync(settings_bsnes[COPROC_DELAYSYNC].value);
-    interface->setCoprocPreferHLE(settings_bsnes[COPROC_PREFERHLE].value);
+    interface->setCoprocDelayedSync(settings_bsnes[COPROC_DELAYSYNC].val);
+    interface->setCoprocPreferHLE(settings_bsnes[COPROC_PREFERHLE].val);
 
     return 1;
 }
@@ -670,7 +674,7 @@ int jg_game_load() {
 
     aspectRatio();
 
-    interface->setAudioQuality(settings_bsnes[RSQUAL].value);
+    interface->setAudioQuality(settings_bsnes[RSQUAL].val);
 
     // Audio and timing adjustments
     if (interface->getRegion() == "PAL") {
