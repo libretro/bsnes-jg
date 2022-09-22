@@ -1680,15 +1680,15 @@ static bool lcd(GB_gameboy_t *gb, char *arguments, char *modifiers, const debugg
         return true;
     }
     GB_log(gb, "LCDC:\n");
-    GB_log(gb, "    LCD enabled: %s\n",(gb->io_registers[GB_IO_LCDC] & 128)? "Enabled" : "Disabled");
+    GB_log(gb, "    LCD enabled: %s\n",(gb->io_registers[GB_IO_LCDC] & GB_LCDC_ENABLE)? "Enabled" : "Disabled");
     GB_log(gb, "    %s: %s\n", (gb->cgb_mode? "Object priority flags" : "Background and Window"),
-                               (gb->io_registers[GB_IO_LCDC] & 1)? "Enabled" : "Disabled");
-    GB_log(gb, "    Objects: %s\n", (gb->io_registers[GB_IO_LCDC] & 2)? "Enabled" : "Disabled");
-    GB_log(gb, "    Object size: %s\n", (gb->io_registers[GB_IO_LCDC] & 4)? "8x16" : "8x8");
-    GB_log(gb, "    Background tilemap: %s\n", (gb->io_registers[GB_IO_LCDC] & 8)? "$9C00" : "$9800");
-    GB_log(gb, "    Background and Window Tileset: %s\n", (gb->io_registers[GB_IO_LCDC] & 16)? "$8000" : "$8800");
-    GB_log(gb, "    Window: %s\n", (gb->io_registers[GB_IO_LCDC] & 32)? "Enabled" : "Disabled");
-    GB_log(gb, "    Window tilemap: %s\n", (gb->io_registers[GB_IO_LCDC] & 64)? "$9C00" : "$9800");
+                               (gb->io_registers[GB_IO_LCDC] & GB_LCDC_BG_EN)? "Enabled" : "Disabled");
+    GB_log(gb, "    Objects: %s\n", (gb->io_registers[GB_IO_LCDC] & GB_LCDC_OBJ_EN)? "Enabled" : "Disabled");
+    GB_log(gb, "    Object size: %s\n", (gb->io_registers[GB_IO_LCDC] & GB_LCDC_OBJ_SIZE)? "8x16" : "8x8");
+    GB_log(gb, "    Background tilemap: %s\n", (gb->io_registers[GB_IO_LCDC] & GB_LCDC_BG_MAP)? "$9C00" : "$9800");
+    GB_log(gb, "    Background and Window Tileset: %s\n", (gb->io_registers[GB_IO_LCDC] & GB_LCDC_TILE_SEL)? "$8000" : "$8800");
+    GB_log(gb, "    Window: %s\n", (gb->io_registers[GB_IO_LCDC] & GB_LCDC_WIN_ENABLE)? "Enabled" : "Disabled");
+    GB_log(gb, "    Window tilemap: %s\n", (gb->io_registers[GB_IO_LCDC] & GB_LCDC_WIN_MAP)? "$9C00" : "$9800");
 
     GB_log(gb, "\nSTAT:\n");
     static const char *modes[] = {"Mode 0, H-Blank", "Mode 1, V-Blank", "Mode 2, OAM", "Mode 3, Rendering"};
@@ -1703,7 +1703,7 @@ static bool lcd(GB_gameboy_t *gb, char *arguments, char *modifiers, const debugg
 
     GB_log(gb, "\nCurrent line: %d\n", gb->current_line);
     GB_log(gb, "Current state: ");
-    if (!(gb->io_registers[GB_IO_LCDC] & 0x80)) {
+    if (!(gb->io_registers[GB_IO_LCDC] & GB_LCDC_ENABLE)) {
         GB_log(gb, "Off\n");
     }
     else if (gb->display_state == 7 || gb->display_state == 8) {
@@ -2001,7 +2001,8 @@ static const debugger_command_t commands[] = {
                         "used"},
     {"cartridge", 2, mbc, "Display information about the MBC and cartridge"},
     {"mbc", 3, }, /* Alias */
-    {"apu", 3, apu, "Display information about the current state of the audio processing unit", "[channel (1-4, 5 for NR5x)]"},
+    {"apu", 3, apu, "Display information about the current state of the audio processing" HELP_NEWLINE
+                    "unit", "[channel (1-4, 5 for NR5x)]"},
     {"wave", 3, wave, "Print a visual representation of the wave RAM." HELP_NEWLINE
                       "Modifiers can be used for a (f)ull print (the default)," HELP_NEWLINE
         "a more (c)ompact one, or a one-(l)iner", "", "(f|c|l)", .modifiers_completer = wave_completer},
@@ -2203,6 +2204,9 @@ void GB_debugger_test_read_watchpoint(GB_gameboy_t *gb, uint16_t addr)
 /* Returns true if debugger waits for more commands */
 bool GB_debugger_execute_command(GB_gameboy_t *gb, char *input)
 {
+    while (*input == ' ') {
+        input++;
+    }
     if (!input[0]) {
         return true;
     }
@@ -2228,6 +2232,7 @@ bool GB_debugger_execute_command(GB_gameboy_t *gb, char *input)
         modifiers++;
     }
 
+    gb->help_shown = true;
     const debugger_command_t *command = find_command(command_string);
     if (command) {
         uint8_t *old_state = malloc(GB_get_save_state_size_no_bess(gb));
@@ -2256,7 +2261,7 @@ bool GB_debugger_execute_command(GB_gameboy_t *gb, char *input)
         return ret;
     }
     else {
-        GB_log(gb, "%s: no such command.\n", command_string);
+        GB_log(gb, "%s: no such command. Type 'help' to list the available debugger commands.\n", command_string);
         return true;
     }
 }
@@ -2342,6 +2347,10 @@ void GB_debugger_run(GB_gameboy_t *gb)
         gb->debug_stopped = true;
     }
     if (gb->debug_stopped) {
+        if (!gb->help_shown) {
+            gb->help_shown = true;
+            GB_log(gb, "Type 'help' to list the available debugger commands.\n");
+        }
         GB_cpu_disassemble(gb, gb->pc, 5);
     }
 next_command:
