@@ -8,6 +8,7 @@ CXXFLAGS ?= -O2
 FLAGS := -std=c++11
 FLAGS_BML := -std=c++11
 FLAGS_CO := -std=c89
+FLAGS_ICD := -std=c++11
 FLAGS_GB := -std=c11
 FLAGS_SPC := -std=c++98
 FLAGS_SAMPLERATE := -std=c99
@@ -26,9 +27,10 @@ WARNINGS_ALL := $(WARNINGS_MIN) -Wmissing-noreturn -Wcast-align -Wcast-qual
 WARNINGS_CXX := $(WARNINGS_ALL) -Wnon-virtual-dtor -Woverloaded-virtual
 WARNINGS_C := $(WARNINGS_ALL) -Wmissing-prototypes
 
-WARNINGS := $(WARNINGS_CXX)
+WARNINGS := $(WARNINGS_CXX) -pedantic
 WARNINGS_BML := $(WARNINGS_CXX) -pedantic
 WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
+WARNINGS_ICD := $(WARNINGS_CXX)
 WARNINGS_GB := -Wno-multichar -Wno-unused-result
 WARNINGS_SAMPLERATE := $(WARNINGS_C) -pedantic
 WARNINGS_SPC := $(WARNINGS_CXX) -pedantic
@@ -182,6 +184,7 @@ COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
 # Dependency commands
 BUILD_BML = $(call COMPILE_CXX, $(FLAGS_BML) $(WARNINGS_BML))
 BUILD_CO = $(call COMPILE_C, $(FLAGS_CO) $(WARNINGS_CO))
+BUILD_ICD = $(call COMPILE_CXX, $(FLAGS_ICD) $(WARNINGS_ICD) $(INCLUDES))
 BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB))
 BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE))
 BUILD_SPC = $(call COMPILE_CXX, $(FLAGS_SPC) $(WARNINGS_SPC) $(CPPFLAGS_SPC))
@@ -218,6 +221,11 @@ $(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag
 $(OBJDIR)/deps/snes_spc/%.o: $(SOURCEDIR)/deps/snes_spc/%.cpp $(OBJDIR)/.tag
 	$(call COMPILE_INFO, $(BUILD_SPC))
 	@$(BUILD_SPC)
+
+# snes_icd rules
+$(OBJDIR)/src/coprocessor/icd.o: $(SOURCEDIR)/src/coprocessor/icd.cpp $(OBJDIR)/.tag
+	$(call COMPILE_INFO, $(BUILD_ICD))
+	@$(BUILD_ICD)
 
 # SNES rules
 $(OBJDIR)/src/%.o: $(SOURCEDIR)/src/%.cpp $(OBJDIR)/.tag
