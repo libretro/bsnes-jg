@@ -8,8 +8,8 @@ This is a fork of bsnes v115. Many changes have been made post-fork:
  - Higher quality resampler with settings
  - Improved performance without loss of accuracy
  - Portability improvements
- - Removal of hacks
- - Removal of code not required for emulation
+ - Removal of accuracy-reducing hacks and unnecessary code
+ - Significant increase in standards compliance
  - Translation to the C++ Standard Library (ISO C++11)
 
 This repository lives at https://gitlab.com/jgemu/bsnes
