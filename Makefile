@@ -6,9 +6,7 @@ CXX ?= c++
 CFLAGS ?= -O2
 CXXFLAGS ?= -O2
 FLAGS := -std=c++11
-FLAGS_BML := -std=c++11
 FLAGS_CO := -std=c89
-FLAGS_ICD := -std=c++11
 FLAGS_GB := -std=c11
 FLAGS_SPC := -std=c++98
 FLAGS_SAMPLERATE := -std=c99
@@ -28,12 +26,10 @@ WARNINGS_CXX := $(WARNINGS_ALL) -Wnon-virtual-dtor -Woverloaded-virtual
 WARNINGS_C := $(WARNINGS_ALL) -Wmissing-prototypes
 
 WARNINGS := $(WARNINGS_CXX) -pedantic
-WARNINGS_BML := $(WARNINGS_CXX) -pedantic
 WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
 WARNINGS_ICD := $(WARNINGS_CXX)
 WARNINGS_GB := -Wno-multichar -Wno-unused-result
 WARNINGS_SAMPLERATE := $(WARNINGS_C) -pedantic
-WARNINGS_SPC := $(WARNINGS_CXX) -pedantic
 
 LIBS := -lm -lstdc++
 PIC := -fPIC
@@ -182,12 +178,12 @@ COMPILE_CXX = $(call COMPILE, $(CXX) $(CXXFLAGS), $(1))
 COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
 
 # Dependency commands
-BUILD_BML = $(call COMPILE_CXX, $(FLAGS_BML) $(WARNINGS_BML))
+BUILD_BML = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS))
 BUILD_CO = $(call COMPILE_C, $(FLAGS_CO) $(WARNINGS_CO))
-BUILD_ICD = $(call COMPILE_CXX, $(FLAGS_ICD) $(WARNINGS_ICD) $(INCLUDES))
+BUILD_ICD = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS_ICD) $(INCLUDES))
 BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB))
 BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE))
-BUILD_SPC = $(call COMPILE_CXX, $(FLAGS_SPC) $(WARNINGS_SPC) $(CPPFLAGS_SPC))
+BUILD_SPC = $(call COMPILE_CXX, $(FLAGS_SPC) $(WARNINGS) $(CPPFLAGS_SPC))
 
 # Core commands
 BUILD_JG = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES) $(CFLAGS_JG))
