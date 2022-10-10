@@ -49,7 +49,7 @@ static const uint32_t co_swap_function[1024] = {
   0xd61f03c0,  /* br x30               */
 };
 
-static void co_init() {
+static void co_init(void) {
   #ifdef LIBCO_MPROTECT
   unsigned long addr = (unsigned long)co_swap_function;
   unsigned long base = addr - (addr % sysconf(_SC_PAGESIZE));
