@@ -42,7 +42,7 @@ static const unsigned char co_swap_function[4096] = {
 #ifdef _WIN32
   #include <windows.h>
 
-  static void co_init() {
+  static void co_init(void) {
     #ifdef LIBCO_MPROTECT
     DWORD old_privileges;
     VirtualProtect((void*)co_swap_function, sizeof co_swap_function, PAGE_EXECUTE_READ, &old_privileges);
@@ -54,7 +54,7 @@ static const unsigned char co_swap_function[4096] = {
     #include <sys/mman.h>
   #endif
 
-  static void co_init() {
+  static void co_init(void) {
     #ifdef LIBCO_MPROTECT
     unsigned long addr = (unsigned long)co_swap_function;
     unsigned long base = addr - (addr % sysconf(_SC_PAGESIZE));
@@ -64,7 +64,7 @@ static const unsigned char co_swap_function[4096] = {
   }
 #endif
 
-static void crash() {
+static void crash(void) {
   LIBCO_ASSERT(0);  /* called only if cothread_t entrypoint returns */
 }
 
