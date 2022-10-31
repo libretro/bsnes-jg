@@ -126,7 +126,7 @@ static struct Location {
 } bsMemory, superFamicom, sufamiTurboA, sufamiTurboB;
 
 // Set the aspect ratio
-static void aspectRatio() {
+static void aspectRatio(void) {
     switch (settings_bsnes[ASPECT].val) {
         default: case 0: { // Auto Region
             vidinfo.aspect = interface->getRegion() == "PAL" ?
@@ -532,7 +532,7 @@ void jg_set_cb_rumble(jg_cb_rumble_t func) {
     jg_cb_rumble = func;
 }
 
-int jg_init() {
+int jg_init(void) {
     // Create interface and set callbacks
     interface = new SuperFamicom::Interface;
     interface->setInputCallback(&pollInput);
@@ -547,7 +547,7 @@ int jg_init() {
     return 1;
 }
 
-void jg_deinit() {
+void jg_deinit(void) {
     delete interface;
 }
 
@@ -558,11 +558,11 @@ void jg_reset(int hard) {
         interface->reset();
 }
 
-void jg_exec_frame() {
+void jg_exec_frame(void) {
     interface->run();
 }
 
-int jg_game_load() {
+int jg_game_load(void) {
     // Load the game
     std::string fname = std::string(gameinfo.fname);
     std::string ext = fname.substr(fname.find_last_of(".") + 1);
@@ -705,7 +705,7 @@ int jg_game_load() {
     return 1;
 }
 
-int jg_game_unload() {
+int jg_game_unload(void) {
     // Save happens on interface->unload
     interface->unload();
     return 1;
@@ -743,13 +743,13 @@ size_t jg_state_size(void) {
     return 0;
 }
 
-void jg_media_select() {
+void jg_media_select(void) {
 }
 
-void jg_media_insert() {
+void jg_media_insert(void) {
 }
 
-void jg_cheat_clear() {
+void jg_cheat_clear(void) {
     interface->cheatsClear();
 }
 
@@ -759,7 +759,7 @@ void jg_cheat_set(const char *code) {
     }
 }
 
-void jg_rehash() {
+void jg_rehash(void) {
     aspectRatio();
 }
 
@@ -773,11 +773,11 @@ jg_coreinfo_t* jg_get_coreinfo(const char *sys) {
     return &coreinfo;
 }
 
-jg_videoinfo_t* jg_get_videoinfo() {
+jg_videoinfo_t* jg_get_videoinfo(void) {
     return &vidinfo;
 }
 
-jg_audioinfo_t* jg_get_audioinfo() {
+jg_audioinfo_t* jg_get_audioinfo(void) {
     return &audinfo;
 }
 
@@ -790,12 +790,12 @@ jg_setting_t* jg_get_settings(size_t *numsettings) {
     return settings_bsnes;
 }
 
-void jg_setup_video() {
+void jg_setup_video(void) {
     interface->setVideoBuffer((uint16_t*)vidinfo.buf);
     interface->setVideoCallback(&videoFrame);
 }
 
-void jg_setup_audio() {
+void jg_setup_audio(void) {
     interface->setAudioBuffer((float*)audinfo.buf);
     interface->setAudioCallback(jg_cb_audio);
     interface->setAudioFrequency((double)SAMPLERATE);
