@@ -407,13 +407,13 @@ static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
     else if (device == SuperFamicom::ID::Device::Mouse) {
         switch (input) {
             case 0: { // X
-                int ret = input_device[port]->axis[0] / 2;
-                input_device[port]->axis[0] -= ret;
+                int ret = input_device[port]->rel[0] / 2;
+                input_device[port]->rel[0] -= ret;
                 return ret;
             }
             case 1: { // Y
-                int ret = input_device[port]->axis[1] / 2;
-                input_device[port]->axis[1] -= ret;
+                int ret = input_device[port]->rel[1] / 2;
+                input_device[port]->rel[1] -= ret;
                 return ret;
             }
             case 2: { // Left Click
