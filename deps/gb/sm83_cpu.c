@@ -214,6 +214,10 @@ static void cycle_write(GB_gameboy_t *gb, uint16_t addr, uint8_t value)
             GB_write_memory(gb, addr, old_value | (value & GB_LCDC_BG_EN));
             GB_advance_cycles(gb, 1);
             GB_write_memory(gb, addr, value);
+            
+            if ((old_value & GB_LCDC_WIN_ENABLE) && !(value & GB_LCDC_WIN_ENABLE) && gb->window_is_being_fetched) {
+                gb->disable_window_pixel_insertion_glitch = true;
+            }
             gb->pending_cycles = 5;
             break;
         }
@@ -963,7 +967,7 @@ static void sbc_a_r(GB_gameboy_t *gb, uint8_t opcode)
     value = get_src_value(gb, opcode);
     a = gb->af >> 8;
     carry = (gb->af & GB_CARRY_FLAG) != 0;
-    gb->af = ((a - value - carry) << 8) | GB_SUBTRACT_FLAG;
+    gb->af = (((uint8_t)(a - value - carry)) << 8) | GB_SUBTRACT_FLAG;
 
     if ((uint8_t) (a - value - carry) == 0) {
         gb->af |= GB_ZERO_FLAG;

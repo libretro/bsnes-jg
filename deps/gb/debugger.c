@@ -710,7 +710,7 @@ static const char *lstrip(const char *str)
 
 #define STOPPED_ONLY \
 if (!gb->debug_stopped) { \
-GB_log(gb, "Program is running. \n"); \
+GB_log(gb, "Program is running, use 'interrupt' to stop execution.\n"); \
 return false; \
 }
 
@@ -747,6 +747,24 @@ static bool cont(GB_gameboy_t *gb, char *arguments, char *modifiers, const debug
 
     gb->debug_stopped = false;
     return false;
+}
+
+static bool interrupt(GB_gameboy_t *gb, char *arguments, char *modifiers, const debugger_command_t *command)
+{
+    NO_MODIFIERS
+    
+    if (strlen(lstrip(arguments))) {
+        print_usage(gb, command);
+        return true;
+    }
+    
+    if (gb->debug_stopped) {
+        GB_log(gb, "Program already stopped.\n");
+        return true;
+    }
+    
+    gb->debug_stopped = true;
+    return true;
 }
 
 static bool next(GB_gameboy_t *gb, char *arguments, char *modifiers, const debugger_command_t *command)
@@ -1596,12 +1614,28 @@ static bool backtrace(GB_gameboy_t *gb, char *arguments, char *modifiers, const 
     return true;
 }
 
+static char *keep_completer(GB_gameboy_t *gb, const char *string, uintptr_t *context)
+{
+    size_t length = strlen(string);
+    const char *suggestions[] = {"keep"};
+    while (*context < sizeof(suggestions) / sizeof(suggestions[0])) {
+        if (memcmp(string, suggestions[*context], length) == 0) {
+            return strdup(suggestions[(*context)++] + length);
+        }
+        (*context)++;
+    }
+    return NULL;
+}
+
 static bool ticks(GB_gameboy_t *gb, char *arguments, char *modifiers, const debugger_command_t *command)
 {
     NO_MODIFIERS
     STOPPED_ONLY
-
-    if (strlen(lstrip(arguments))) {
+    bool keep = false;
+    if (strcmp(lstrip(arguments), "keep") == 0) {
+        keep = true;
+    }
+    else if (lstrip(arguments)[0]) {
         print_usage(gb, command);
         return true;
     }
@@ -1610,8 +1644,10 @@ static bool ticks(GB_gameboy_t *gb, char *arguments, char *modifiers, const debu
     GB_log(gb, "M-cycles: %llu\n", (unsigned long long)gb->debugger_ticks / 4);
     GB_log(gb, "Absolute 8MHz ticks: %llu\n", (unsigned long long)gb->absolute_debugger_ticks);
     GB_log(gb, "Tick count reset.\n");
-    gb->debugger_ticks = 0;
-    gb->absolute_debugger_ticks = 0;
+    if (!keep) {
+        gb->debugger_ticks = 0;
+        gb->absolute_debugger_ticks = 0;
+    }
 
     return true;
 }
@@ -1728,6 +1764,17 @@ static bool lcd(GB_gameboy_t *gb, char *arguments, char *modifiers, const debugg
     GB_log(gb, "LYC: %d\n", gb->io_registers[GB_IO_LYC]);
     GB_log(gb, "Window position: %d, %d\n", (signed) gb->io_registers[GB_IO_WX] - 7, gb->io_registers[GB_IO_WY]);
     GB_log(gb, "Interrupt line: %s\n", gb->stat_interrupt_line? "On" : "Off");
+    GB_log(gb, "Background shifter size: %d\n", gb->bg_fifo.size);
+    GB_log(gb, "Background fetcher state: %s\n", (const char *[]){
+        "Tile (1/2)",
+        "Tile (2/2)",
+        "Low data (1/2)",
+        "Low data (2/2)",
+        "High data (1/2)",
+        "High data (2/2)",
+        "Push (1/2)",
+        "Push (2/2)",
+    }[gb->fetcher_state & 7]);
 
     return true;
 }
@@ -1961,11 +2008,11 @@ static bool undo(GB_gameboy_t *gb, char *arguments, char *modifiers, const debug
 
 static bool help(GB_gameboy_t *gb, char *arguments, char *modifiers, const debugger_command_t *command);
 
-#define HELP_NEWLINE "\n             "
 
 /* Commands without implementations are aliases of the previous non-alias commands */
 static const debugger_command_t commands[] = {
     {"continue", 1, cont, "Continue running until next stop"},
+    {"interrupt", 1, interrupt, "Interrupt the program execution"},
     {"next", 1, next, "Run the next instruction, skipping over function calls"},
     {"step", 1, step, "Run the next instruction, stepping into function calls"},
     {"finish", 1, finish, "Run until the current function returns"},
@@ -1973,39 +2020,40 @@ static const debugger_command_t commands[] = {
     {"registers", 1, registers, "Print values of processor registers and other important registers"},
     {"backtrace", 2, backtrace, "Display the current call stack"},
     {"bt", 2, }, /* Alias */
-    {"print", 1, print, "Evaluate and print an expression" HELP_NEWLINE
-        "Use modifier to format as an address (a, default) or as a number in" HELP_NEWLINE
-        "decimal (d), hexadecimal (x), octal (o) or binary (b).",
-        "<expression>", "format", .argument_completer = symbol_completer, .modifiers_completer = format_completer},
+    {"print", 1, print, "Evaluate and print an expression "
+                        "Use modifier to format as an address (a, default) or as a number in "
+                        "decimal (d), hexadecimal (x), octal (o) or binary (b).",
+                        "<expression>", "format", .argument_completer = symbol_completer, .modifiers_completer = format_completer},
     {"eval", 2, }, /* Alias */
     {"examine", 2, examine, "Examine values at address", "<expression>", "count", .argument_completer = symbol_completer},
     {"x", 1, }, /* Alias */
     {"disassemble", 1, disassemble, "Disassemble instructions at address", "<expression>", "count", .argument_completer = symbol_completer},
-    {"breakpoint", 1, breakpoint, "Add a new breakpoint at the specified address/expression" HELP_NEWLINE
-        "Can also modify the condition of existing breakpoints." HELP_NEWLINE
-        "If the j modifier is used, the breakpoint will occur just before" HELP_NEWLINE
-        "jumping to the target.",
-        "<expression>[ if <condition expression>]", "j",
-        .argument_completer = symbol_completer, .modifiers_completer = j_completer},
+    {"breakpoint", 1, breakpoint, "Add a new breakpoint at the specified address/expression "
+                                  "Can also modify the condition of existing breakpoints. "
+                                  "If the j modifier is used, the breakpoint will occur just before "
+                                  "jumping to the target.",
+                                  "<expression>[ if <condition expression>]", "j",
+                                  .argument_completer = symbol_completer, .modifiers_completer = j_completer},
     {"delete", 2, delete, "Delete a breakpoint by its address, or all breakpoints", "[<expression>]", .argument_completer = symbol_completer},
-    {"watch", 1, watch, "Add a new watchpoint at the specified address/expression." HELP_NEWLINE
-        "Can also modify the condition and type of existing watchpoints." HELP_NEWLINE
-        "Default watchpoint type is write-only.",
-        "<expression>[ if <condition expression>]", "(r|w|rw)",
-        .argument_completer = symbol_completer, .modifiers_completer = rw_completer
+    {"watch", 1, watch, "Add a new watchpoint at the specified address/expression. "
+                        "Can also modify the condition and type of existing watchpoints. "
+                        "Default watchpoint type is write-only.",
+                        "<expression>[ if <condition expression>]", "(r|w|rw)",
+                        .argument_completer = symbol_completer, .modifiers_completer = rw_completer
     },
     {"unwatch", 3, unwatch, "Delete a watchpoint by its address, or all watchpoints", "[<expression>]", .argument_completer = symbol_completer},
     {"softbreak", 2, softbreak, "Enable or disable software breakpoints ('ld b, b' opcodes)", "(on|off)", .argument_completer = on_off_completer},
     {"list", 1, list, "List all set breakpoints and watchpoints"},
-    {"ticks", 2, ticks, "Display the number of CPU ticks since the last time 'ticks' was" HELP_NEWLINE
-                        "used"},
+    {"ticks", 2, ticks, "Display the number of CPU ticks since the last time 'ticks' was "
+                        "used. Use 'keep' as an argument to display ticks without reseeting "
+                        "the count.", "(keep)", .argument_completer = keep_completer},
     {"cartridge", 2, mbc, "Display information about the MBC and cartridge"},
     {"mbc", 3, }, /* Alias */
-    {"apu", 3, apu, "Display information about the current state of the audio processing" HELP_NEWLINE
+    {"apu", 3, apu, "Display information about the current state of the audio processing "
                     "unit", "[channel (1-4, 5 for NR5x)]"},
-    {"wave", 3, wave, "Print a visual representation of the wave RAM." HELP_NEWLINE
-                      "Modifiers can be used for a (f)ull print (the default)," HELP_NEWLINE
-        "a more (c)ompact one, or a one-(l)iner", "", "(f|c|l)", .modifiers_completer = wave_completer},
+    {"wave", 3, wave, "Print a visual representation of the wave RAM. "
+                      "Modifiers can be used for a (f)ull print (the default), "
+                      "a more (c)ompact one, or a one-(l)iner", "", "(f|c|l)", .modifiers_completer = wave_completer},
     {"lcd", 3, lcd, "Display information about the current state of the LCD controller"},
     {"palettes", 3, palettes, "Display the current CGB palettes"},
     {"dma", 3, dma, "Display the current OAM DMA status"},
@@ -2041,7 +2089,24 @@ static void print_command_description(GB_gameboy_t *gb, const debugger_command_t
 {
     print_command_shortcut(gb, command);
     GB_log(gb, ": ");
-    GB_log(gb, (const char *)&"           %s\n" + strlen(command->command), command->help_string);
+    GB_log(gb, "%s", (const char *)&"           " + strlen(command->command));
+    
+    const char *string = command->help_string;
+    const unsigned width = 80 - 13;
+    while (strlen(string) > width) {
+        const char *space = string + width;
+        while (*space != ' ') {
+            space--;
+            if (space == string) {
+                // This help string has some extra long word? Abort line-breaking, it's going to break anyway.
+                GB_log(gb, "%s\n", string);
+                return;
+            }
+        }
+        GB_log(gb, "%.*s\n             ", (unsigned)(space - string), string);
+        string = space + 1;
+    }
+    GB_log(gb, "%s\n", string);
 }
 
 static bool help(GB_gameboy_t *gb, char *arguments, char *modifiers, const debugger_command_t *ignored)
@@ -2080,6 +2145,7 @@ void GB_debugger_call_hook(GB_gameboy_t *gb, uint16_t call_addr)
         while (gb->backtrace_size) {
             if (gb->backtrace_sps[gb->backtrace_size - 1] < gb->sp) {
                 gb->backtrace_size--;
+                gb->debug_call_depth--;
             }
             else {
                 break;
@@ -2090,20 +2156,18 @@ void GB_debugger_call_hook(GB_gameboy_t *gb, uint16_t call_addr)
         gb->backtrace_returns[gb->backtrace_size].bank = bank_for_addr(gb, call_addr);
         gb->backtrace_returns[gb->backtrace_size].addr = call_addr;
         gb->backtrace_size++;
+        gb->debug_call_depth++;
     }
-
-    gb->debug_call_depth++;
 }
 
 void GB_debugger_ret_hook(GB_gameboy_t *gb)
 {
     /* Called just before the CPU runs ret/reti */
 
-    gb->debug_call_depth--;
-
     while (gb->backtrace_size) {
         if (gb->backtrace_sps[gb->backtrace_size - 1] <= gb->sp) {
             gb->backtrace_size--;
+            gb->debug_call_depth--;
         }
         else {
             break;
@@ -2343,7 +2407,7 @@ void GB_debugger_run(GB_gameboy_t *gb)
     if (gb->debug_next_command && gb->debug_call_depth <= 0 && !gb->halted) {
         gb->debug_stopped = true;
     }
-    if (gb->debug_fin_command && gb->debug_call_depth == -1) {
+    if (gb->debug_fin_command && gb->debug_call_depth <= -1) {
         gb->debug_stopped = true;
     }
     if (gb->debug_stopped) {

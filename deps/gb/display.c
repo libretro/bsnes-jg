@@ -17,9 +17,10 @@ static void fifo_clear(GB_fifo_t *fifo)
     fifo->read_end = fifo->size = 0;
 }
 
-static GB_fifo_item_t *fifo_pop(GB_fifo_t *fifo)
+static const GB_fifo_item_t *fifo_pop(GB_fifo_t *fifo)
 {
     assert(fifo->size);
+    assert(fifo->size <= 8);
     GB_fifo_item_t *ret = &fifo->fifo[fifo->read_end];
     fifo->read_end++;
     fifo->read_end &= (GB_FIFO_LENGTH - 1);
@@ -602,9 +603,15 @@ static void render_pixel_if_possible(GB_gameboy_t *gb)
         return;
     }
     
-    if (unlikely(gb->wx_triggered && !fifo_size(&gb->bg_fifo))) return;
+    if (unlikely(!fifo_size(&gb->bg_fifo))) return;
     
-    fifo_item = fifo_pop(&gb->bg_fifo);
+    if (unlikely(gb->insert_bg_pixel)) {
+        gb->insert_bg_pixel = false;
+        fifo_item = ({static const GB_fifo_item_t empty_item = {0,}; &empty_item;});
+    }
+    else {
+        fifo_item = fifo_pop(&gb->bg_fifo);
+    }
     bg_priority = fifo_item->bg_priority;
     
     if (fifo_size(&gb->oam_fifo)) {
@@ -946,7 +953,7 @@ static void advance_fetcher_state_machine(GB_gameboy_t *gb, unsigned *cycles)
             }
             if (fifo_size(&gb->bg_fifo) > 0) break;
             
-            if (unlikely(gb->wy_triggered && !(gb->io_registers[GB_IO_LCDC] & GB_LCDC_WIN_ENABLE) && !GB_is_cgb(gb))) {
+            if (unlikely(gb->wy_triggered && !(gb->io_registers[GB_IO_LCDC] & GB_LCDC_WIN_ENABLE) && !GB_is_cgb(gb) && !gb->disable_window_pixel_insertion_glitch)) {
                 /* See https://github.com/LIJI32/SameBoy/issues/278 for documentation */
                 uint8_t logical_position = gb->position_in_line + 7;
                 if (logical_position > 167) {
@@ -1665,6 +1672,7 @@ void GB_display_run(GB_gameboy_t *gb, unsigned cycles, bool force)
             gb->cycles_for_line += 2;
             GB_SLEEP(gb, display, 32, 2);
         mode_3_start:
+            gb->disable_window_pixel_insertion_glitch = false;
             /* TODO: Timing seems incorrect, might need an access conflict handling. */
             if ((gb->io_registers[GB_IO_LCDC] & GB_LCDC_WIN_ENABLE) &&
                 gb->io_registers[GB_IO_WY] == gb->current_line) {
@@ -1750,18 +1758,14 @@ void GB_display_run(GB_gameboy_t *gb, unsigned cycles, bool force)
                         gb->window_y++;
                     }
                 }
-                
-                /* TODO: What happens when WX=0? When the fifo is full? */
+
+                /* TODO: What happens when WX=0?*/
                 if (!GB_is_cgb(gb) && gb->wx_triggered && !gb->window_is_being_fetched &&
                     gb->fetcher_state == 0 && gb->io_registers[GB_IO_WX] == (uint8_t) (gb->position_in_line + 7) && gb->bg_fifo.size == 8) {
                     // Insert a pixel right at the FIFO's end
-                    gb->bg_fifo.read_end--;
-                    gb->bg_fifo.read_end &= GB_FIFO_LENGTH - 1;
-                    gb->bg_fifo.fifo[gb->bg_fifo.read_end] = (GB_fifo_item_t){0,};
-                    gb->bg_fifo.size++;
-                    gb->window_is_being_fetched = false;
+                    gb->insert_bg_pixel = true;
                 }
-
+                
                 /* Handle objects */
                 /* When the object enabled bit is off, this proccess is skipped entirely on the DMG, but not on the CGB.
                    On the CGB, this bit is checked only when the pixel is actually popped from the FIFO. */
@@ -1872,7 +1876,7 @@ skip_slow_mode_3:
             }
             */
             while (gb->lcd_x != 160 && !gb->disable_rendering && gb->screen && !gb->sgb) {
-                /* Oh no! The PPU and LCD desynced! Fill the rest of the line whith white. */
+                /* Oh no! The PPU and LCD desynced! Fill the rest of the line with the last color. */
                 uint32_t *dest = NULL;
                 if (gb->border_mode != GB_BORDER_ALWAYS) {
                     dest = gb->screen + gb->lcd_x + gb->current_line * WIDTH;
@@ -1880,7 +1884,7 @@ skip_slow_mode_3:
                 else {
                     dest = gb->screen + gb->lcd_x + gb->current_line * BORDERED_WIDTH + (BORDERED_WIDTH - WIDTH) / 2 + (BORDERED_HEIGHT - LINES) / 2 * BORDERED_WIDTH;
                 }
-                *dest = gb->background_palettes_rgb[0];
+                *dest = (gb->lcd_x == 0)? gb->background_palettes_rgb[0] : dest[-1];
                 gb->lcd_x++;
 
             }

@@ -453,6 +453,7 @@ struct GB_gameboy_internal_s {
         uint16_t dma_ppu_vram_conflict_addr;
         uint8_t hdma_open_bus; /* Required to emulate HDMA reads from Exxx */
         bool allow_hdma_on_wake;
+        bool dma_restarting;
     )
     
     /* MBC */
@@ -666,6 +667,8 @@ struct GB_gameboy_internal_s {
         uint8_t data_for_sel_glitch;
         bool delayed_glitch_hblank_interrupt;
         uint32_t frame_repeat_countdown;
+        bool disable_window_pixel_insertion_glitch;
+        bool insert_bg_pixel;
     )
 
     /* Unsaved data. This includes all pointers, as well as everything that shouldn't be on a save state */
@@ -878,6 +881,7 @@ bool GB_is_sgb(GB_gameboy_t *gb); // Returns true if the model is SGB or SGB2
 bool GB_is_hle_sgb(GB_gameboy_t *gb); // Returns true if the model is SGB or SGB2 and the SFC/SNES side is HLE'd
 GB_model_t GB_get_model(GB_gameboy_t *gb);
 void GB_reset(GB_gameboy_t *gb);
+void GB_quick_reset(GB_gameboy_t *gb); // Similar to the cart reset line
 void GB_switch_model_and_reset(GB_gameboy_t *gb, GB_model_t model);
 
 /* Returns the time passed, in 8MHz ticks. */
