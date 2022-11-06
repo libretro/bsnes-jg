@@ -763,8 +763,8 @@ void jg_rehash(void) {
     aspectRatio();
 }
 
-void jg_input_audio(int port, const int16_t *buf, size_t numsamps) {
-    if (port || buf || numsamps) { }
+void jg_data_push(uint32_t type, int port, const void *ptr, size_t size) {
+    if (type || port || ptr || size) { }
 }
 
 // JG Functions that return values to the frontend
