@@ -82,6 +82,17 @@ static jg_inputstate_t *input_device[NUMINPUTS];
 
 // Emulator settings
 static jg_setting_t settings_bsnes[] = {
+    { "port1", "Controller Port 1",
+      "0 = Auto, 1 = Controller, 2 = Mouse",
+      "Select the device plugged into controller port 1",
+      0, 0, 2, JG_SETTING_INPUT
+    },
+    { "port2", "Controller Port 2",
+      "0 = Auto, 1 = Controller, 2 = Mouse, 3 = Multitap, 4 = Super Scope, "
+      "5 = Justifier",
+      "Select the device plugged into controller port 2",
+      0, 0, 5, JG_SETTING_INPUT
+    },
     { "aspect_ratio", "Aspect Ratio",
       "0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL",
       "Set the aspect ratio",
@@ -106,10 +117,12 @@ static jg_setting_t settings_bsnes[] = {
 };
 
 enum {
+    PORT1,
+    PORT2,
     ASPECT,
     COPROC_DELAYSYNC,
     COPROC_PREFERHLE,
-    RSQUAL,
+    RSQUAL
 };
 
 static int hmult = 2;
@@ -151,69 +164,84 @@ static void aspectRatio(void) {
 static void inputSetup(void) {
     // Set up inputs
     int multitap = 0;
+    int port[] = { settings_bsnes[PORT1].val, settings_bsnes[PORT2].val };
+    unsigned portid[] = {
+        SuperFamicom::ID::Port::Controller1,
+        SuperFamicom::ID::Port::Controller2
+    };
+
+    // Autodetect Mouse
+    for (size_t i = 0; i < db_mouse_games.size(); ++i) {
+        if ((std::string)gameinfo.md5 == db_mouse_games[i]) {
+            port[0] = port[0] ? port[0] : 2;
+            break;
+        }
+    }
+
+    // Autodetect Multitap
     for (size_t i = 0; i < db_multitap_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_multitap_games[i].md5) {
             multitap = db_multitap_games[i].players;
+            port[1] = port[1] ? port[1] : 3;
             break;
         }
     }
 
-    bool mouse = false;
-    for (size_t i = 0; i < db_mouse_games.size(); ++i) {
-        if ((std::string)gameinfo.md5 == db_mouse_games[i]) {
-            mouse = true;
-            break;
-        }
-    }
-
-    bool superscope = false;
+    // Autodetect Super Scope
     for (size_t i = 0; i < db_superscope_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_superscope_games[i].md5) {
-            superscope = true;
+            port[1] = port[1] ? port[1] : 4;
             ss_offset_x = db_superscope_games[i].x;
             ss_offset_y = db_superscope_games[i].y;
             break;
         }
     }
 
-    bool justifier = false;
+    // Autodetect Justifier
     for (size_t i = 0; i < db_justifier_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_justifier_games[i]) {
-            justifier = true;
+            port[1] = port[1] ? port[1] : 5;
             break;
         }
     }
 
-    // Default input devices are SNES Controllers
-    inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_PAD);
-    interface->connect(SuperFamicom::ID::Port::Controller1,
-        SuperFamicom::ID::Device::Gamepad);
+    for (int i = 0; i < NUMINPUTS; ++i)
+        inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_UNCONNECTED);
 
-    inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_PAD);
-    interface->connect(SuperFamicom::ID::Port::Controller2,
-        SuperFamicom::ID::Device::Gamepad);
+    for (int i = 0; i < 2; ++i) {
+        switch (port[i]) {
+            default: case 0: case 1: {
+                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
+                interface->connect(portid[i],
+                    SuperFamicom::ID::Device::Gamepad);
+                break;
+            }
+            case 2: {
+                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_MOUSE);
+                interface->connect(portid[i],
+                    SuperFamicom::ID::Device::Mouse);
+                break;
+            }
+            case 3: {
+                for (int j = 1; j < (multitap ? multitap : NUMINPUTS); ++j)
+                    inputinfo[j] = jg_snes_inputinfo(j, JG_SNES_PAD);
 
-    if (multitap) {
-        for (int i = 2; (i < multitap) && (i < 5); ++i)
-            inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
-
-        interface->connect(SuperFamicom::ID::Port::Controller2,
-            SuperFamicom::ID::Device::SuperMultitap);
-    }
-    else if (mouse) { // Plug in a mouse if the game supports it
-        inputinfo[0] = jg_snes_inputinfo(0, JG_SNES_MOUSE);
-        interface->connect(SuperFamicom::ID::Port::Controller1,
-            SuperFamicom::ID::Device::Mouse);
-    }
-    else if (superscope) { // Plug in a Super Scope if the game supports it
-        inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_SUPERSCOPE);
-        interface->connect(SuperFamicom::ID::Port::Controller2,
-            SuperFamicom::ID::Device::SuperScope);
-    }
-    else if (justifier) { // Plug in a Justifier if the game supports it
-        inputinfo[1] = jg_snes_inputinfo(1, JG_SNES_JUSTIFIER);
-        interface->connect(SuperFamicom::ID::Port::Controller2,
-            SuperFamicom::ID::Device::Justifier);
+                interface->connect(1, SuperFamicom::ID::Device::SuperMultitap);
+                break;
+            }
+            case 4: {
+                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_SUPERSCOPE);
+                interface->connect(portid[i],
+                    SuperFamicom::ID::Device::SuperScope);
+                break;
+            }
+            case 5: {
+                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_JUSTIFIER);
+                interface->connect(portid[i],
+                    SuperFamicom::ID::Device::Justifier);
+                break;
+            }
+        }
     }
 }
 
@@ -765,6 +793,7 @@ void jg_cheat_set(const char *code) {
 
 void jg_rehash(void) {
     aspectRatio();
+    inputSetup();
 }
 
 void jg_data_push(uint32_t type, int port, const void *ptr, size_t size) {
