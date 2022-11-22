@@ -631,14 +631,17 @@ std::string SuperFamicom::region() const {
 }
 
 std::string SuperFamicom::videoRegion() const {
-  unsigned region = data[headerAddress + 0x29];
-  if(region == 0x00) return "NTSC";  //JPN
-  if(region == 0x01) return "NTSC";  //USA
-  if(region == 0x0b) return "NTSC";  //ROC
-  if(region == 0x0d) return "NTSC";  //KOR
-  if(region == 0x0f) return "NTSC";  //CAN
-  if(region == 0x10) return "NTSC";  //BRA
-  return "PAL";
+  switch(data[headerAddress + 0x29]) {
+    case 0x00: //JPN
+    case 0x01: //USA
+    case 0x0b: //ROC
+    case 0x0d: //KOR
+    case 0x0f: //CAN
+    case 0x10: //BRA
+      return "NTSC";
+    default:
+      return "PAL";
+  }
 }
 
 std::string SuperFamicom::revision() const {
