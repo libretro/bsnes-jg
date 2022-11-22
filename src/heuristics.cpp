@@ -657,20 +657,22 @@ std::string SuperFamicom::revision() const {
   auto valid = [](char n) { return (n >= '0' && n <= '9') || (n >= 'A' && n <= 'Z'); };
   if(data[headerAddress + 0x2a] == 0x33 && valid(A) && valid(B) && valid(C) && valid(D)) {
     std::string code; code = A; code += B; code += C; code += D;
-    if(D == 'B') revision = "SNS-"  + code + "-" + F;
-    if(D == 'C') revision = "SNSN-" + code + "-" + F;
-    if(D == 'D') revision = "SNSP-" + code + "-" + F;
-    if(D == 'E') revision = "SNS-"  + code + "-" + F;
-    if(D == 'F') revision = "SNSP-" + code + "-" + F;
-    if(D == 'H') revision = "SNSP-" + code + "-" + F;
-    if(D == 'I') revision = "SNSP-" + code + "-" + F;
-    if(D == 'J') revision = "SHVC-" + code + "-" + F;
-    if(D == 'K') revision = "SNSN-" + code + "-" + F;
-    if(D == 'N') revision = "SNS-"  + code + "-" + F;
-    if(D == 'P') revision = "SNSP-" + code + "-" + F;
-    if(D == 'S') revision = "SNSP-" + code + "-" + F;
-    if(D == 'U') revision = "SNSP-" + code + "-" + F;
-    if(D == 'X') revision = "SNSP-" + code + "-" + F;
+    switch(D) {
+      case 'B': revision = "SNS-"  + code + "-" + F; break;
+      case 'C': revision = "SNSN-" + code + "-" + F; break;
+      case 'D': revision = "SNSP-" + code + "-" + F; break;
+      case 'E': revision = "SNS-"  + code + "-" + F; break;
+      case 'F': revision = "SNSP-" + code + "-" + F; break;
+      case 'H': revision = "SNSP-" + code + "-" + F; break;
+      case 'I': revision = "SNSP-" + code + "-" + F; break;
+      case 'J': revision = "SHVC-" + code + "-" + F; break;
+      case 'K': revision = "SNSN-" + code + "-" + F; break;
+      case 'N': revision = "SNS-"  + code + "-" + F; break;
+      case 'P': revision = "SNSP-" + code + "-" + F; break;
+      case 'S': revision = "SNSP-" + code + "-" + F; break;
+      case 'U': revision = "SNSP-" + code + "-" + F; break;
+      case 'X': revision = "SNSP-" + code + "-" + F; break;
+    }
   }
 
   if (revision.empty()) {
@@ -690,20 +692,24 @@ std::string SuperFamicom::board() const {
   unsigned cartridgeSubType = data[headerAddress + 0x0f];
 
   std::string mode;
-  if(mapMode == 0x20 || mapMode == 0x30) mode = "LOROM-";
-  if(mapMode == 0x21 || mapMode == 0x31) mode = "HIROM-";
-  if(mapMode == 0x22 || mapMode == 0x32) mode = "SDD1-";
-  if(mapMode == 0x23 || mapMode == 0x33) mode = "SA1-";
-  if(mapMode == 0x25 || mapMode == 0x35) mode = "EXHIROM-";
-  if(mapMode == 0x2a || mapMode == 0x3a) mode = "SPC7110-";
+  switch(mapMode) {
+    case 0x20: case 0x30: mode = "LOROM-"; break;
+    case 0x21: case 0x31: mode = "HIROM-"; break;
+    case 0x22: case 0x32: mode = "SDD1-"; break;
+    case 0x23: case 0x33: mode = "SA1-"; break;
+    case 0x25: case 0x35: mode = "EXHIROM-"; break;
+    case 0x2a: case 0x3a: mode = "SPC7110-"; break;
+  }
 
   //many games will store an extra title character, overwriting the map mode
   //further, ExLoROM mode is unofficial, and lacks a mapping mode value
   if(mode.empty()) {
-    if(headerAddress ==   0x7fb0) mode = "LOROM-";
-    if(headerAddress ==   0xffb0) mode = "HIROM-";
-    if(headerAddress == 0x407fb0) mode = "EXLOROM-";
-    if(headerAddress == 0x40ffb0) mode = "EXHIROM-";
+    switch(headerAddress) {
+      case   0x7fb0: mode = "LOROM-"; break;
+      case   0xffb0: mode = "HIROM-"; break;
+      case 0x407fb0: mode = "EXLOROM-"; break;
+      case 0x40ffb0: mode = "EXHIROM-"; break;
+    }
   }
 
   //this game's title ovewrites the map mode with '!' (0x21), but is a LOROM game
@@ -730,17 +736,19 @@ std::string SuperFamicom::board() const {
     board += "BS-" + mode;
   } else if(cartridgeTypeLo >= 0x3) {
     if(cartridgeTypeHi == 0x0) board += "NEC-" + mode;
-    if(cartridgeTypeHi == 0x1) board += "GSU-";
-    if(cartridgeTypeHi == 0x2) board += "OBC1-" + mode;
-    if(cartridgeTypeHi == 0x3) board += "SA1-";
-    if(cartridgeTypeHi == 0x4) board += "SDD1-";
-    if(cartridgeTypeHi == 0x5) board += mode, sharpRTC = true;
-    if(cartridgeTypeHi == 0xe && cartridgeTypeLo == 0x3) board += "GB-" + mode;
-    if(cartridgeTypeHi == 0xf && cartridgeTypeLo == 0x5 && cartridgeSubType == 0x00) board += "SPC7110-";
-    if(cartridgeTypeHi == 0xf && cartridgeTypeLo == 0x9 && cartridgeSubType == 0x00) board += "SPC7110-", epsonRTC = true;
-    if(cartridgeTypeHi == 0xf                           && cartridgeSubType == 0x01) board += "EXNEC-" + mode;
-    if(cartridgeTypeHi == 0xf                           && cartridgeSubType == 0x02) board += "ARM-" + mode;
-    if(cartridgeTypeHi == 0xf                           && cartridgeSubType == 0x10) board += "HITACHI-" + mode;
+    else if(cartridgeTypeHi == 0x1) board += "GSU-";
+    else if(cartridgeTypeHi == 0x2) board += "OBC1-" + mode;
+    else if(cartridgeTypeHi == 0x3) board += "SA1-";
+    else if(cartridgeTypeHi == 0x4) board += "SDD1-";
+    else if(cartridgeTypeHi == 0x5) board += mode, sharpRTC = true;
+    else if(cartridgeTypeHi == 0xe && cartridgeTypeLo == 0x3) board += "GB-" + mode;
+    else if(cartridgeTypeHi == 0xf) {
+      if(cartridgeTypeLo == 0x5 && cartridgeSubType == 0x00) board += "SPC7110-";
+      else if(cartridgeTypeLo == 0x9 && cartridgeSubType == 0x00) board += "SPC7110-", epsonRTC = true;
+      else if(cartridgeSubType == 0x01) board += "EXNEC-" + mode;
+      else if(cartridgeSubType == 0x02) board += "ARM-" + mode;
+      else if(cartridgeSubType == 0x10) board += "HITACHI-" + mode;
+    }
   }
   if(board.empty()) board += mode;
 
