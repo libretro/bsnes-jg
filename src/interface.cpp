@@ -32,6 +32,7 @@
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"
 #include "expansion/expansion.hpp"
+#include "logger.hpp"
 #include "ppu.hpp"
 #include "settings.hpp"
 #include "system.hpp"
@@ -226,6 +227,10 @@ void Interface::setCoprocPreferHLE(bool value) {
 
 void Interface::setInputCallback(int16_t (*cb)(unsigned, unsigned, unsigned)) {
   setInputPoll(cb);
+}
+
+void Interface::setLogCallback(void (*cb)(int, const char *, ...)) {
+    logger.setCallback(cb);
 }
 
 void Interface::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {

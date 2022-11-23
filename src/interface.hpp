@@ -57,6 +57,7 @@ struct Interface {
   void setCoprocPreferHLE(bool);
   void setInputCallback(int16_t (*)(unsigned, unsigned, unsigned));
   void setOpenCallback(std::ifstream (*)(unsigned, std::string));
+  void setLogCallback(void (*)(int, const char *, ...));
   void setRomCallback(bool (*)(unsigned));
   void setRomBSMemory(std::vector<uint8_t>&, std::string&);
   void setRomGB(const uint8_t*, size_t);
