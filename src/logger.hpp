@@ -20,6 +20,8 @@
 #pragma once
 
 struct Logger {
+  enum levels { DBG, INF, WRN, ERR };
+
   Logger();
   void setCallback(void (*)(int, const char *, ...));
 
