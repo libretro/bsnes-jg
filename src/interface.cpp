@@ -62,16 +62,26 @@ void Interface::unload() {
 }
 
 unsigned Interface::connected(unsigned port) {
-  if(port == ID::Port::Controller1) return configuration.controllerPort1;
-  if(port == ID::Port::Controller2) return configuration.controllerPort2;
-  if(port == ID::Port::Expansion) return configuration.expansionPort;
-  return 0;
+  switch(port) {
+    case ID::Port::Controller1: return configuration.controllerPort1;
+    case ID::Port::Controller2: return configuration.controllerPort2;
+    case ID::Port::Expansion:   return configuration.expansionPort;
+    default: return 0;
+  }
 }
 
 void Interface::connect(unsigned port, unsigned device) {
-  if(port == ID::Port::Controller1) controllerPort1.connect(configuration.controllerPort1 = device);
-  if(port == ID::Port::Controller2) controllerPort2.connect(configuration.controllerPort2 = device);
-  if(port == ID::Port::Expansion) expansionPort.connect(configuration.expansionPort = device);
+  switch(port) {
+    case ID::Port::Controller1:
+      controllerPort1.connect(configuration.controllerPort1 = device);
+      break;
+    case ID::Port::Controller2:
+      controllerPort2.connect(configuration.controllerPort2 = device);
+      break;
+    case ID::Port::Expansion:
+      expansionPort.connect(configuration.expansionPort = device);
+      break;
+  }
 }
 
 void Interface::power() {
@@ -87,9 +97,7 @@ void Interface::run() {
 }
 
 bool Interface::rtc() {
-  if(cartridge.has.EpsonRTC) return true;
-  if(cartridge.has.SharpRTC) return true;
-  return false;
+  return (cartridge.has.EpsonRTC || cartridge.has.SharpRTC);
 }
 
 serializer Interface::serialize(bool synchronize) {
