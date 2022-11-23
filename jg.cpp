@@ -634,6 +634,7 @@ int jg_init(void) {
     interface = new SuperFamicom::Interface;
     interface->setInputCallback(&pollInput);
     interface->setOpenCallback(&fileOpen);
+    interface->setLogCallback(jg_cb_log);
     interface->setRomCallback(&loadRom);
     interface->setWriteCallback(&fileWrite);
 
