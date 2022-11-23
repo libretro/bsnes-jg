@@ -115,6 +115,7 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/expansion/satellaview.cpp \
 	src/heuristics.cpp \
 	src/interface.cpp \
+	src/logger.cpp \
 	src/markup.cpp \
 	src/memory.cpp \
 	src/ppu.cpp \
