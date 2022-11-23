@@ -218,11 +218,11 @@ void Interface::setAudioQuality(unsigned rsqual) {
 }
 
 void Interface::setCoprocDelayedSync(bool value) {
-    configuration.coprocessor.delayedSync = value;
+  configuration.coprocessor.delayedSync = value;
 }
 
 void Interface::setCoprocPreferHLE(bool value) {
-    configuration.coprocessor.preferHLE = value;
+  configuration.coprocessor.preferHLE = value;
 }
 
 void Interface::setInputCallback(int16_t (*cb)(unsigned, unsigned, unsigned)) {
@@ -230,7 +230,7 @@ void Interface::setInputCallback(int16_t (*cb)(unsigned, unsigned, unsigned)) {
 }
 
 void Interface::setLogCallback(void (*cb)(int, const char *, ...)) {
-    logger.setCallback(cb);
+  logger.setCallback(cb);
 }
 
 void Interface::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
