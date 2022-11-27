@@ -24,6 +24,7 @@
 
 Logger logger;
 
+__attribute__ ((format (printf, 2, 3)))
 static void log_default(int level, const char *fmt, ...) {
     static const char *lchr = "DIWE";
     char buffer[512];
