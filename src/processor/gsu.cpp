@@ -31,7 +31,7 @@
 
 namespace Processor {
 
-GSU::~GSU() {};
+GSU::~GSU() {}
 
 void GSU::instruction(uint8_t opcode) {
   #define op4(id, name) \

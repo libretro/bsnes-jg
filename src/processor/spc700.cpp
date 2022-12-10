@@ -43,7 +43,7 @@ namespace Processor {
 
 #define alu (this->*op)
 
-SPC700::~SPC700() {};
+SPC700::~SPC700() {}
 
 uint8_t SPC700::fetch() {
   return read(PC++);

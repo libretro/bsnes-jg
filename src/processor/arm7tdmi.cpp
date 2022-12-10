@@ -27,7 +27,7 @@
 
 namespace Processor {
 
-ARM7TDMI::~ARM7TDMI() {};
+ARM7TDMI::~ARM7TDMI() {}
 
 ARM7TDMI::GPR::operator uint32_t() const {
   return data;

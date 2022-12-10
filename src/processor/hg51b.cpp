@@ -24,7 +24,7 @@
 
 namespace Processor {
 
-HG51B::~HG51B() {};
+HG51B::~HG51B() {}
 
 uint32_t HG51B::readRegister(uint8_t address) {
   switch(address & 0x7f) {
