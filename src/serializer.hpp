@@ -77,13 +77,13 @@ struct serializer {
     return *this;
   }
 
-  template<typename T, int N> serializer& array(T (&array)[N]) {
-    for(unsigned n = 0; n < N; ++n) operator()(array[n]);
+  template<typename T, int N> serializer& array(T (&_array)[N]) {
+    for(unsigned n = 0; n < N; ++n) operator()(_array[n]);
     return *this;
   }
 
-  template<typename T> serializer& array(T array, unsigned size) {
-    for(unsigned n = 0; n < size; ++n) operator()(array[n]);
+  template<typename T> serializer& array(T _array, unsigned size) {
+    for(unsigned n = 0; n < size; ++n) operator()(_array[n]);
     return *this;
   }
 
