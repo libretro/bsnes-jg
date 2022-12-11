@@ -19,6 +19,10 @@ Compiling
 Make sure you have The Jolly Good API's header files installed. If you did
 not install them, you will be required to include their path in CPPFLAGS.
 
+GNU Make's default behaviour for compiling C++ sources is to use g++. If your
+platform of choice uses an unpatched GNU Make, you will need to override the
+CXX implicit variable if you wish to use a different compiler.
+
 Options:
   USE_VENDORED_SAMPLERATE - Set non-zero to use vendored libsamplerate
 
