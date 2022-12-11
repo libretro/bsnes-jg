@@ -1,8 +1,8 @@
 bsnes-jg
 --------
-bsnes-jg is an emulator for the Super Famicom/Super Nintendo Entertainment
-System, including support for the Super Game Boy, BS-X Satellaview, and
-Sufami Turbo.
+bsnes-jg is a cycle accurate emulator for the Super Famicom/Super Nintendo
+Entertainment System, including support for the Super Game Boy, BS-X
+Satellaview, and Sufami Turbo.
 
 This is a fork of bsnes v115. Many changes have been made post-fork:
  - Higher quality resampler with settings
@@ -28,11 +28,8 @@ Linux:
 macOS:
   make
 
-FreeBSD:
-  gmake CC=gcc CXX=g++
-
-OpenBSD:
-  gmake CC=clang CXX=clang++
+BSD:
+  gmake
 
 Windows (MSYS2):
   make
