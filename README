@@ -17,7 +17,7 @@ This repository lives at https://gitlab.com/jgemu/bsnes
 Compiling
 ---------
 Make sure you have The Jolly Good API's header files installed. If you did
-not install them, you will be required to include their path in CPPFLAGS.
+not install them, you will be required to include their path in CXXFLAGS.
 
 GNU Make's default behaviour for compiling C++ sources is to use g++. If your
 platform of choice uses an unpatched GNU Make, you will need to override the
