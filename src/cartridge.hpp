@@ -87,32 +87,11 @@ private:
 
   std::string loadBoard(std::string);
   bool loadCartridge(std::string);
-  void loadCartridgeBSMemory(std::string);
-  void loadCartridgeSufamiTurboA(std::string);
-  void loadCartridgeSufamiTurboB(std::string);
+  void loadBSMemory(std::string);
 
   void loadMemory(Memory&, std::string);
   template<typename T> unsigned loadMap(std::string, T&);
   unsigned loadMap(std::string, const bfunction<uint8_t (unsigned, uint8_t)>&, const bfunction<void (unsigned, uint8_t)>&);
-
-  void loadROM(std::string);
-  void loadRAM(std::string);
-  void loadICD(std::string);
-  void loadMCC(std::string);
-  void loadBSMemory(std::string);
-  void loadDIP(std::string);
-  void loadSA1(std::string);
-  void loadSuperFX(std::string);
-  void loadARMDSP(std::string);
-  void loadHitachiDSP(std::string, unsigned);
-  void loaduPD7725(std::string);
-  void loaduPD96050(std::string);
-  void loadSPC7110(std::string);
-  void loadSDD1(std::string);
-  void loadOBC1(std::string);
-  void loadEpsonRTC(std::string);
-  void loadSharpRTC(std::string);
-  void loadMSU1();
 
   void saveCartridge();
   void saveCartridgeBSMemory(std::string);
