@@ -94,24 +94,7 @@ private:
   unsigned loadMap(std::string, const bfunction<uint8_t (unsigned, uint8_t)>&, const bfunction<void (unsigned, uint8_t)>&);
 
   void saveCartridge();
-  void saveCartridgeBSMemory(std::string);
-  void saveCartridgeSufamiTurboA(std::string);
-  void saveCartridgeSufamiTurboB(std::string);
-
   void saveMemory(Memory&, std::string);
-
-  void saveRAM(std::string);
-  void saveMCC(std::string);
-  void saveSA1(std::string);
-  void saveSuperFX(std::string);
-  void saveARMDSP(std::string);
-  void saveHitachiDSP(std::string);
-  void saveuPD7725(std::string);
-  void saveuPD96050(std::string);
-  void saveSPC7110(std::string);
-  void saveOBC1(std::string);
-  void saveEpsonRTC(std::string);
-  void saveSharpRTC(std::string);
 
   std::ifstream (*openCallback)(unsigned, std::string);
   bool (*romCallback)(unsigned);
