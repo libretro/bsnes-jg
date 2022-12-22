@@ -454,7 +454,9 @@ static void fileWrite(unsigned id, std::string name, const uint8_t *data,
     }
 }
 
-static void videoFrame(const uint16_t *data, unsigned pitch, unsigned w, unsigned h) {
+static void videoFrame(const uint16_t *data, unsigned pitch, unsigned w,
+    unsigned h) {
+
     hmult = w / 256;
     vmult = h / 240;
     vidinfo.y = 8 * vmult;
