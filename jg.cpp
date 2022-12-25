@@ -102,17 +102,22 @@ static jg_setting_t settings_bsnes[] = {
       "0 = Off, 1 = On",
       "Delay syncing Low Level Emulated coprocessors for a performance "
       "increase at the cost of a slight reduction in accuracy",
-      0, 0, 1, 1
+      0, 0, 1, JG_SETTING_RESTART
     },
     { "coproc_preferhle", "Prefer HLE Coprocessors",
       "0 = Off, 1 = On",
       "Prefer High Level Emulation of coprocessors when available",
-      1, 0, 1, 1
+      1, 0, 1, JG_SETTING_RESTART
     },
     { "rsqual", "Resampler Quality",
       "0 = Fastest, 1 = Medium, 2 = Best",
       "Quality level for the internal resampler",
       0, 0, 2, 1
+    },
+    { "region", "Region",
+      "0 = Auto, 1 = NTSC, 2 = PAL",
+      "Set the region to use",
+      0, 0, 2, JG_SETTING_RESTART
     }
 };
 
@@ -122,7 +127,8 @@ enum {
     ASPECT,
     COPROC_DELAYSYNC,
     COPROC_PREFERHLE,
-    RSQUAL
+    RSQUAL,
+    REGION
 };
 
 static int hmult = 2;
@@ -714,6 +720,11 @@ int jg_game_load(void) {
     }
 
     interface->unload();
+
+    if (settings_bsnes[REGION].val == 1)
+        interface->setRegion("NTSC");
+    else if (settings_bsnes[REGION].val == 2)
+        interface->setRegion("PAL");
 
     if (!interface->load())
       jg_cb_log(JG_LOG_ERR, "Failed to load ROM\n");
