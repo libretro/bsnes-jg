@@ -239,6 +239,10 @@ void Interface::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
   msu1.setOpenCallback(cb);
 }
 
+void Interface::setRegion(std::string region) {
+    cartridge.setRegion(region);
+}
+
 void Interface::setRomCallback(bool (*cb)(unsigned)) {
   cartridge.setRomCallback(cb);
 }

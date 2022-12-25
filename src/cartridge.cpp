@@ -1210,7 +1210,11 @@ bool Cartridge::load() {
     return false;
 
   information.pathID = ID::SuperFamicom;
-  information.region = "Auto";
+
+  if (forceRegion == "")
+    information.region = "Auto";
+  else
+    information.region = forceRegion;
 
   game.load(game.document);
 
@@ -1324,6 +1328,10 @@ void Cartridge::save() {
       }
     }
   }
+}
+
+void Cartridge::setRegion(std::string region) {
+    forceRegion = region;
 }
 
 void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {

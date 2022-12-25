@@ -39,6 +39,8 @@ struct Cartridge {
   void setRomCallback(bool (*)(unsigned));
   void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
 
+  void setRegion(std::string);
+
   void setRomBSMemory(std::vector<uint8_t>&, std::string&);
   void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);
   void setRomSufamiTurboB(std::vector<uint8_t>&, std::string&);
@@ -84,6 +86,7 @@ struct Cartridge {
 
 private:
   std::string board;
+  std::string forceRegion;
 
   std::string loadBoard(std::string);
   bool loadCartridge(std::string);
