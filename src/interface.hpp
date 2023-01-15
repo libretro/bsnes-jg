@@ -67,6 +67,7 @@ struct Interface {
   void setRomSuperFamicom(std::vector<uint8_t>&, std::string&);
   void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
   void setVideoBuffer(uint16_t*);
+  void setVideoPixelFormat(unsigned);
   void setVideoCallback(void (*)(const uint16_t*, unsigned, unsigned, unsigned));
 };
 

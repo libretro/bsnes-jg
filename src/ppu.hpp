@@ -112,6 +112,7 @@ struct PPU : Thread, PPUcounter {
   void serialize(serializer&);
 
   void setBuffer(uint16_t*);
+  void setPixelFormat(unsigned); // 0 = 5551, 1 = 1555
 
 private:
   inline void step();

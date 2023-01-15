@@ -276,6 +276,10 @@ void Interface::setVideoBuffer(uint16_t *buffer) {
   ppu.setBuffer(buffer);
 }
 
+void Interface::setVideoPixelFormat(unsigned pixfmt) {
+  ppu.setPixelFormat(pixfmt);
+}
+
 void Interface::setVideoCallback(void (*cb)(const uint16_t*, unsigned, unsigned, unsigned)) {
   ppu.setCallback(cb);
 }

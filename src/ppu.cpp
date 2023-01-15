@@ -2263,14 +2263,7 @@ void PPU::setBuffer(uint16_t *buffer) {
   output = buffer;
 }
 
-PPU::PPU() :
-bg1(Background::ID::BG1),
-bg2(Background::ID::BG2),
-bg3(Background::ID::BG3),
-bg4(Background::ID::BG4) {
-  ppu1.version = 1;  //allowed values: 1
-  ppu2.version = 3;  //allowed values: 1, 2, 3
-
+void PPU::setPixelFormat(unsigned pixfmt) {
   for(unsigned l = 0; l < 16; ++l) {
     for(unsigned r = 0; r < 32; ++r) {
       for(unsigned g = 0; g < 32; ++g) {
@@ -2279,11 +2272,23 @@ bg4(Background::ID::BG4) {
           unsigned ar = (luma * r + 0.5);
           unsigned ag = (luma * g + 0.5);
           unsigned ab = (luma * b + 0.5);
-          lightTable[l][(r << 10) + (g << 5) + b] = (ab << 11) + (ag << 6) + (ar << 1);
+          lightTable[l][(r << 10) + (g << 5) + b] = pixfmt ?
+            (ab << 10) + (ag << 5) + ar :
+            (ab << 11) + (ag << 6) + (ar << 1);
         }
       }
     }
   }
+}
+
+PPU::PPU() :
+bg1(Background::ID::BG1),
+bg2(Background::ID::BG2),
+bg3(Background::ID::BG3),
+bg4(Background::ID::BG4) {
+  ppu1.version = 1;  //allowed values: 1
+  ppu2.version = 3;  //allowed values: 1, 2, 3
+  setPixelFormat(0);
 }
 
 PPU::~PPU() {
