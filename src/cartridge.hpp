@@ -89,7 +89,6 @@ private:
   std::string forceRegion;
 
   std::string loadBoard(std::string);
-  bool loadCartridge(std::string);
   void loadBSMemory(std::string);
 
   void loadMemory(Memory&, std::string);
