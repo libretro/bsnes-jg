@@ -89,14 +89,12 @@ private:
   std::string forceRegion;
 
   std::string loadBoard(std::string);
-  bool loadCartridge(std::string);
   void loadBSMemory(std::string);
 
   void loadMemory(Memory&, std::string);
   template<typename T> unsigned loadMap(std::string, T&);
   unsigned loadMap(std::string, const bfunction<uint8_t (unsigned, uint8_t)>&, const bfunction<void (unsigned, uint8_t)>&);
 
-  void saveCartridge();
   void saveMemory(Memory&, std::string);
 
   std::ifstream (*openCallback)(unsigned, std::string);

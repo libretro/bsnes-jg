@@ -185,12 +185,171 @@ std::string Cartridge::loadBoard(std::string node) {
   return {};
 }
 
-bool Cartridge::loadCartridge(std::string node) {
-  board = BML::searchNode(node, {"board"});
-  if (board.empty()) board = loadBoard(game.board);
+template<typename T>  //T = ReadableMemory, WritableMemory
+unsigned Cartridge::loadMap(std::string map, T& memory) {
+  std::string addr = BML::search(map, {"map", "address"});
+  std::string strsize = BML::search(map, {"map", "size"});
+  std::string strbase = BML::search(map, {"map", "base"});
+  std::string strmask = BML::search(map, {"map", "mask"});
+  unsigned size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);
+  unsigned base = strbase.empty() ? 0 : std::stoi(strbase, nullptr, 16);
+  unsigned mask = strmask.empty() ? 0 : std::stoi(strmask, nullptr, 16);
+  if(size == 0) size = memory.size();
+  if(size == 0) return 0; //does this ever actually occur? - Yes! Sufami Turbo.
+  return bus.map({&T::read, &memory}, {&T::write, &memory}, addr, size, base, mask);
+}
+
+unsigned Cartridge::loadMap(
+  std::string map,
+  const bfunction<uint8_t (unsigned, uint8_t)>& reader,
+  const bfunction<void  (unsigned, uint8_t)>& writer
+) {
+  std::string addr = BML::search(map, {"map", "address"});
+  std::string strsize = BML::search(map, {"map", "size"});
+  std::string strbase = BML::search(map, {"map", "base"});
+  std::string strmask = BML::search(map, {"map", "mask"});
+  unsigned size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);
+  unsigned base = strbase.empty() ? 0 : std::stoi(strbase, nullptr, 16);
+  unsigned mask = strmask.empty() ? 0 : std::stoi(strmask, nullptr, 16);
+  return bus.map(reader, writer, addr, size, base, mask);
+}
+
+void Cartridge::loadMemory(Memory& mem, std::string node) {
+  Game::Memory memory;
+  if(game.memory(memory, node)) {
+    mem.allocate(memory.size);
+    if ((memory.type == "RAM" && !memory.nonVolatile)
+        || (memory.type == "RTC" && !memory.nonVolatile))
+      return;
+
+    const std::string memory_name = memory.name();
+
+    if (memory_name == "program.rom") {
+      for (unsigned i = 0; i < memory.size; ++i) {
+        mem.data()[i] = game.prgrom[i];
+      }
+    }
+    else if (memory_name == "data.rom") {
+      for (unsigned i = 0; i < memory.size; ++i) {
+        mem.data()[i] = game.datarom[i];
+      }
+    }
+    else if (memory_name == "expansion.rom") {
+      for (unsigned i = 0; i < memory.size; ++i) {
+        mem.data()[i] = game.exprom[i];
+      }
+    }
+    else {
+      std::ifstream memfile = openCallback(pathID(), memory_name);
+      if (memfile.is_open()) {
+        memfile.seekg(0, memfile.end);
+        unsigned fsize = memfile.tellg();
+        memfile.seekg(0, memfile.beg);
+        memfile.read((char*)mem.data(), std::min(fsize, mem.size()));
+        memfile.close();
+      }
+    }
+  }
+}
+
+//slot(type=BSMemory)
+void Cartridge::loadBSMemory(std::string node) {
+  has.BSMemorySlot = true;
+
+  if(romCallback(ID::BSMemory)) {
+    bsmemory.pathID = ID::BSMemory;
+
+    if (!slotBSMemory.document.empty()) {
+      slotBSMemory.load(slotBSMemory.document);
+      if (Game::Memory memory = Game::Memory(BML::searchNode(slotBSMemory.document, {"game", "board", "memory"}))) {
+        bsmemory.ROM = memory.type == "ROM";
+        bsmemory.memory.allocate(memory.size);
+        for (unsigned i = 0; i < memory.size; ++i) {
+          bsmemory.memory.data()[i] = slotBSMemory.prgrom.data()[i];
+        }
+      }
+    }
+
+    for (std::string map : BML::searchList(node, "map")) {
+      loadMap(map, bsmemory);
+    }
+  }
+}
+
+//processor(architecture=uPD78214)
+/*void Cartridge::loadEvent(Markup::Node node) {
+  has.Event = true;
+  event.board = Event::Board::Unknown;
+  if(node["identifier"].text() == "Campus Challenge '92") event.board = Event::Board::CampusChallenge92;
+  if(node["identifier"].text() == "PowerFest '94") event.board = Event::Board::PowerFest94;
+
+  for(auto map : node.find("map")) {
+    loadMap(map, {&Event::read, &event}, {&Event::write, &event});
+  }
+
+  if(auto mcu = node["mcu"]) {
+    for(auto map : mcu.find("map")) {
+      loadMap(map, {&Event::mcuRead, &event}, {&Event::mcuWrite, &event});
+    }
+    if(auto memory = mcu["memory(type=ROM,content=Program)"]) {
+      loadMemory(event.rom[0], memory);
+    }
+    if(auto memory = mcu["memory(type=ROM,content=Level-1)"]) {
+      loadMemory(event.rom[1], memory);
+    }
+    if(auto memory = mcu["memory(type=ROM,content=Level-2)"]) {
+      loadMemory(event.rom[2], memory);
+    }
+    if(auto memory = mcu["memory(type=ROM,content=Level-3)"]) {
+      loadMemory(event.rom[3], memory);
+    }
+  }
+}*/
+
+void Cartridge::saveMemory(Memory& sram, std::string node) {
+  Game::Memory memory;
+  if (game.memory(memory, node)
+      && !(memory.type == "RAM" && !memory.nonVolatile)
+      && !(memory.type == "RTC" && !memory.nonVolatile)) {
+    writeCallback(pathID(), memory.name(), sram.data(), sram.size());
+  }
+}
+
+void Cartridge::serialize(serializer& s) {
+  s.array(ram.data(), ram.size());
+}
+
+Cartridge cartridge;
+
+bool Cartridge::load() {
+  information = {};
+  has = {};
+  game = {};
+  slotGameBoy = {};
+  slotBSMemory = {};
+  slotSufamiTurboA = {};
+  slotSufamiTurboB = {};
+
+  if(!romCallback(ID::SuperFamicom) || game.document.empty())
+    return false;
+
+  information.pathID = ID::SuperFamicom;
+
+  if (forceRegion == "")
+    information.region = "Auto";
+  else
+    information.region = forceRegion;
+
+  game.load(game.document);
+
+  board = BML::searchNode(game.document, {"board"});
+
+  if (board.empty())
+    board = loadBoard(game.board);
 
   // If it is still empty, the board is not supported
-  if (board.empty()) return false;
+  if (board.empty())
+    return false;
 
   if(region() == "Auto") {
     std::string regstr = game.region.substr(game.region.length() - 3, game.region.length());
@@ -906,131 +1065,73 @@ bool Cartridge::loadCartridge(std::string node) {
     bus.map({&MSU1::readIO, &msu1}, {&MSU1::writeIO, &msu1}, "00-3f,80-bf:2000-2007");
   }
 
+  //Game Boy
+  if(cartridge.has.ICD) {
+    information.sha256 = "";  //Game Boy cartridge not loaded yet: set later via loadGameBoy()
+  }
+
+  //BS Memory
+  else if(cartridge.has.MCC && cartridge.has.BSMemorySlot) {
+    information.sha256 = sha256_digest(bsmemory.data(), bsmemory.size());
+  }
+
+  //Sufami Turbo
+  else if(cartridge.has.SufamiTurboSlotA || cartridge.has.SufamiTurboSlotB) {
+    std::vector<uint8_t> carts;
+
+    // Ugly, but works during the nall removal, needs to change when nall is gone
+    if(cartridge.has.SufamiTurboSlotA) {
+      for (size_t i = 0; i < sufamiturboA.rom.size(); ++i)
+        carts.push_back(sufamiturboA.rom[i]);
+    }
+    if(cartridge.has.SufamiTurboSlotB) {
+      for (size_t i = 0; i < sufamiturboB.rom.size(); ++i)
+        carts.push_back(sufamiturboB.rom[i]);
+    }
+
+    information.sha256 = sha256_digest(carts.data(), carts.size());
+  }
+
+  //Super Famicom
+  else {
+    // Again ugly, but can/should be rewritten cleanly when nall is gone
+    std::vector<uint8_t> buf;
+
+    //hash each ROM image that exists; any with size() == 0 is ignored
+    for (size_t i = 0; i < rom.size(); ++i) buf.push_back(rom[i]);
+    for (size_t i = 0; i < mcc.rom.size(); ++i) buf.push_back(mcc.rom[i]);
+    for (size_t i = 0; i < sa1.rom.size(); ++i) buf.push_back(sa1.rom[i]);
+    for (size_t i = 0; i < superfx.rom.size(); ++i) buf.push_back(superfx.rom[i]);
+    for (size_t i = 0; i < hitachidsp.rom.size(); ++i) buf.push_back(hitachidsp.rom[i]);
+    for (size_t i = 0; i < spc7110.prom.size(); ++i) buf.push_back(spc7110.prom[i]);
+    for (size_t i = 0; i < spc7110.drom.size(); ++i) buf.push_back(spc7110.drom[i]);
+    for (size_t i = 0; i < sdd1.rom.size(); ++i) buf.push_back(sdd1.rom[i]);
+
+    //hash all firmware that exists
+    std::vector<uint8_t> firm;
+    if(cartridge.has.ARMDSP) {
+      firm = armdsp.firmware();
+      for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    }
+
+    if(cartridge.has.HitachiDSP) {
+      firm = hitachidsp.firmware();
+      for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    }
+
+    if(cartridge.has.NECDSP) {
+      firm = necdsp.firmware();
+      for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
+    }
+
+    //finalize hash
+    information.sha256 = sha256_digest(buf.data(), buf.size());
+  }
+
   return true;
 }
 
-template<typename T>  //T = ReadableMemory, WritableMemory
-unsigned Cartridge::loadMap(std::string map, T& memory) {
-  std::string addr = BML::search(map, {"map", "address"});
-  std::string strsize = BML::search(map, {"map", "size"});
-  std::string strbase = BML::search(map, {"map", "base"});
-  std::string strmask = BML::search(map, {"map", "mask"});
-  unsigned size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);
-  unsigned base = strbase.empty() ? 0 : std::stoi(strbase, nullptr, 16);
-  unsigned mask = strmask.empty() ? 0 : std::stoi(strmask, nullptr, 16);
-  if(size == 0) size = memory.size();
-  if(size == 0) return 0; //does this ever actually occur? - Yes! Sufami Turbo.
-  return bus.map({&T::read, &memory}, {&T::write, &memory}, addr, size, base, mask);
-}
-
-unsigned Cartridge::loadMap(
-  std::string map,
-  const bfunction<uint8_t (unsigned, uint8_t)>& reader,
-  const bfunction<void  (unsigned, uint8_t)>& writer
-) {
-  std::string addr = BML::search(map, {"map", "address"});
-  std::string strsize = BML::search(map, {"map", "size"});
-  std::string strbase = BML::search(map, {"map", "base"});
-  std::string strmask = BML::search(map, {"map", "mask"});
-  unsigned size = strsize.empty() ? 0 : std::stoi(strsize, nullptr, 16);
-  unsigned base = strbase.empty() ? 0 : std::stoi(strbase, nullptr, 16);
-  unsigned mask = strmask.empty() ? 0 : std::stoi(strmask, nullptr, 16);
-  return bus.map(reader, writer, addr, size, base, mask);
-}
-
-void Cartridge::loadMemory(Memory& mem, std::string node) {
-  Game::Memory memory;
-  if(game.memory(memory, node)) {
-    mem.allocate(memory.size);
-    if ((memory.type == "RAM" && !memory.nonVolatile)
-        || (memory.type == "RTC" && !memory.nonVolatile))
-      return;
-
-    const std::string memory_name = memory.name();
-
-    if (memory_name == "program.rom") {
-      for (unsigned i = 0; i < memory.size; ++i) {
-        mem.data()[i] = game.prgrom[i];
-      }
-    }
-    else if (memory_name == "data.rom") {
-      for (unsigned i = 0; i < memory.size; ++i) {
-        mem.data()[i] = game.datarom[i];
-      }
-    }
-    else if (memory_name == "expansion.rom") {
-      for (unsigned i = 0; i < memory.size; ++i) {
-        mem.data()[i] = game.exprom[i];
-      }
-    }
-    else {
-      std::ifstream memfile = openCallback(pathID(), memory_name);
-      if (memfile.is_open()) {
-        memfile.seekg(0, memfile.end);
-        unsigned fsize = memfile.tellg();
-        memfile.seekg(0, memfile.beg);
-        memfile.read((char*)mem.data(), std::min(fsize, mem.size()));
-        memfile.close();
-      }
-    }
-  }
-}
-
-//slot(type=BSMemory)
-void Cartridge::loadBSMemory(std::string node) {
-  has.BSMemorySlot = true;
-
-  if(romCallback(ID::BSMemory)) {
-    bsmemory.pathID = ID::BSMemory;
-
-    if (!slotBSMemory.document.empty()) {
-      slotBSMemory.load(slotBSMemory.document);
-      if (Game::Memory memory = Game::Memory(BML::searchNode(slotBSMemory.document, {"game", "board", "memory"}))) {
-        bsmemory.ROM = memory.type == "ROM";
-        bsmemory.memory.allocate(memory.size);
-        for (unsigned i = 0; i < memory.size; ++i) {
-          bsmemory.memory.data()[i] = slotBSMemory.prgrom.data()[i];
-        }
-      }
-    }
-
-    for (std::string map : BML::searchList(node, "map")) {
-      loadMap(map, bsmemory);
-    }
-  }
-}
-
-//processor(architecture=uPD78214)
-/*void Cartridge::loadEvent(Markup::Node node) {
-  has.Event = true;
-  event.board = Event::Board::Unknown;
-  if(node["identifier"].text() == "Campus Challenge '92") event.board = Event::Board::CampusChallenge92;
-  if(node["identifier"].text() == "PowerFest '94") event.board = Event::Board::PowerFest94;
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&Event::read, &event}, {&Event::write, &event});
-  }
-
-  if(auto mcu = node["mcu"]) {
-    for(auto map : mcu.find("map")) {
-      loadMap(map, {&Event::mcuRead, &event}, {&Event::mcuWrite, &event});
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Program)"]) {
-      loadMemory(event.rom[0], memory);
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Level-1)"]) {
-      loadMemory(event.rom[1], memory);
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Level-2)"]) {
-      loadMemory(event.rom[2], memory);
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Level-3)"]) {
-      loadMemory(event.rom[3], memory);
-    }
-  }
-}*/
-
-void Cartridge::saveCartridge() {
+void Cartridge::save() {
   std::vector<std::string> boardmem = BML::searchListShallow(board, "board", "memory");
   for (std::string& m : boardmem) {
     if (BML::search(m, {"memory", "type"}) == "RAM" &&
@@ -1180,115 +1281,7 @@ void Cartridge::saveCartridge() {
       }
     }
   }
-}
 
-void Cartridge::saveMemory(Memory& sram, std::string node) {
-  Game::Memory memory;
-  if (game.memory(memory, node)
-      && !(memory.type == "RAM" && !memory.nonVolatile)
-      && !(memory.type == "RTC" && !memory.nonVolatile)) {
-    writeCallback(pathID(), memory.name(), sram.data(), sram.size());
-  }
-}
-
-void Cartridge::serialize(serializer& s) {
-  s.array(ram.data(), ram.size());
-}
-
-Cartridge cartridge;
-
-bool Cartridge::load() {
-  information = {};
-  has = {};
-  game = {};
-  slotGameBoy = {};
-  slotBSMemory = {};
-  slotSufamiTurboA = {};
-  slotSufamiTurboB = {};
-
-  if(!romCallback(ID::SuperFamicom) || game.document.empty())
-    return false;
-
-  information.pathID = ID::SuperFamicom;
-
-  if (forceRegion == "")
-    information.region = "Auto";
-  else
-    information.region = forceRegion;
-
-  game.load(game.document);
-
-  if (!loadCartridge(game.document))
-    return false;
-
-  //Game Boy
-  if(cartridge.has.ICD) {
-    information.sha256 = "";  //Game Boy cartridge not loaded yet: set later via loadGameBoy()
-  }
-
-  //BS Memory
-  else if(cartridge.has.MCC && cartridge.has.BSMemorySlot) {
-    information.sha256 = sha256_digest(bsmemory.data(), bsmemory.size());
-  }
-
-  //Sufami Turbo
-  else if(cartridge.has.SufamiTurboSlotA || cartridge.has.SufamiTurboSlotB) {
-    std::vector<uint8_t> carts;
-
-    // Ugly, but works during the nall removal, needs to change when nall is gone
-    if(cartridge.has.SufamiTurboSlotA) {
-      for (size_t i = 0; i < sufamiturboA.rom.size(); ++i)
-        carts.push_back(sufamiturboA.rom[i]);
-    }
-    if(cartridge.has.SufamiTurboSlotB) {
-      for (size_t i = 0; i < sufamiturboB.rom.size(); ++i)
-        carts.push_back(sufamiturboB.rom[i]);
-    }
-
-    information.sha256 = sha256_digest(carts.data(), carts.size());
-  }
-
-  //Super Famicom
-  else {
-    // Again ugly, but can/should be rewritten cleanly when nall is gone
-    std::vector<uint8_t> buf;
-
-    //hash each ROM image that exists; any with size() == 0 is ignored
-    for (size_t i = 0; i < rom.size(); ++i) buf.push_back(rom[i]);
-    for (size_t i = 0; i < mcc.rom.size(); ++i) buf.push_back(mcc.rom[i]);
-    for (size_t i = 0; i < sa1.rom.size(); ++i) buf.push_back(sa1.rom[i]);
-    for (size_t i = 0; i < superfx.rom.size(); ++i) buf.push_back(superfx.rom[i]);
-    for (size_t i = 0; i < hitachidsp.rom.size(); ++i) buf.push_back(hitachidsp.rom[i]);
-    for (size_t i = 0; i < spc7110.prom.size(); ++i) buf.push_back(spc7110.prom[i]);
-    for (size_t i = 0; i < spc7110.drom.size(); ++i) buf.push_back(spc7110.drom[i]);
-    for (size_t i = 0; i < sdd1.rom.size(); ++i) buf.push_back(sdd1.rom[i]);
-
-    //hash all firmware that exists
-    std::vector<uint8_t> firm;
-    if(cartridge.has.ARMDSP) {
-      firm = armdsp.firmware();
-      for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
-    }
-
-    if(cartridge.has.HitachiDSP) {
-      firm = hitachidsp.firmware();
-      for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
-    }
-
-    if(cartridge.has.NECDSP) {
-      firm = necdsp.firmware();
-      for (size_t i = 0; i < firm.size(); ++i) buf.push_back(firm[i]);
-    }
-
-    //finalize hash
-    information.sha256 = sha256_digest(buf.data(), buf.size());
-  }
-
-  return true;
-}
-
-void Cartridge::save() {
-  saveCartridge();
   if(has.GameBoySlot) {
     icd.save();
   }
