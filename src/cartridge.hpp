@@ -95,7 +95,6 @@ private:
   template<typename T> unsigned loadMap(std::string, T&);
   unsigned loadMap(std::string, const bfunction<uint8_t (unsigned, uint8_t)>&, const bfunction<void (unsigned, uint8_t)>&);
 
-  void saveCartridge();
   void saveMemory(Memory&, std::string);
 
   std::ifstream (*openCallback)(unsigned, std::string);

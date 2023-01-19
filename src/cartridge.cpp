@@ -306,158 +306,6 @@ void Cartridge::loadBSMemory(std::string node) {
   }
 }*/
 
-void Cartridge::saveCartridge() {
-  std::vector<std::string> boardmem = BML::searchListShallow(board, "board", "memory");
-  for (std::string& m : boardmem) {
-    if (BML::search(m, {"memory", "type"}) == "RAM" &&
-        BML::search(m, {"memory", "content"}) == "Save") {
-      saveMemory(ram, m);
-    }
-  }
-
-  std::vector<std::string> processors = BML::searchList(board, "processor");
-  for (std::string& p : processors) {
-    std::string arch = BML::search(p, {"processor", "architecture"});
-    std::string id = BML::search(p, {"processor", "identifier"});
-
-    //processor(identifier=MCC)
-    if (id == "MCC") {
-      std::string mcu = BML::searchNode(p, {"processor", "mcu"});
-      if (!mcu.empty()) {
-        std::vector<std::string> mcumem = BML::searchList(mcu, "memory");
-        for (std::string& m : mcumem) {
-          if (BML::search(m, {"memory", "type"}) == "RAM" &&
-              BML::search(m, {"memory", "content"}) == "Download") {
-            saveMemory(mcc.psram, m);
-          }
-        }
-      }
-    }
-    //processor(identifier=SPC7110)
-    else if (id == "SPC7110") {
-      std::string sram = BML::searchNode(p, {"processor", "memory"});
-      if (!sram.empty()) {
-        if (BML::search(sram, {"memory", "type"}) == "RAM" &&
-            BML::search(sram, {"memory", "content"}) == "Save") {
-          saveMemory(spc7110.ram, sram);
-        }
-      }
-    }
-    //processor(identifier=OBC1)
-    else if (id == "OBC1") {
-      for (std::string& m : BML::searchList(p, "memory")) {
-        if (BML::search(m, {"memory", "type"}) == "RAM" &&
-            BML::search(m, {"memory", "content"}) == "Save") {
-          saveMemory(obc1.ram, m);
-        }
-      }
-    }
-
-    //processor(architecture=W65C816S)
-    if (arch == "W65C816S") {
-      for (std::string& m : BML::searchList(p, "memory")) {
-        if (BML::search(m, {"memory", "type"}) == "RAM") {
-          std::string content = BML::search(m, {"memory", "content"});
-          if (content == "Save")
-            saveMemory(sa1.bwram, m);
-          else if (content == "Internal")
-            saveMemory(sa1.iram, m);
-        }
-      }
-    }
-    //processor(architecture=GSU)
-    else if (arch == "GSU") {
-      for (std::string& m : BML::searchList(p, "memory")) {
-        if (BML::search(m, {"memory", "type"}) == "RAM" &&
-            BML::search(m, {"memory", "content"}) == "Save") {
-          saveMemory(superfx.ram, m);
-        }
-      }
-    }
-    //processor(architecture=ARM6)
-    else if (arch == "ARM6") {
-      for (std::string& m : BML::searchList(p, "memory")) {
-        if (BML::search(m, {"memory", "type"}) == "RAM" &&
-            BML::search(m, {"memory", "content"}) == "Data" &&
-            BML::search(m, {"memory", "architecture"}) == "ARM6") {
-          Game::Memory file;
-          if (game.memory(file, m) && file.nonVolatile) {
-            writeCallback(ID::SuperFamicom, "save.ram", armdsp.programRAM, (16 * 1024));
-          }
-        }
-      }
-    }
-    //processor(architecture=HG51BS169)
-    else if (arch == "HG51BS169") {
-      for (std::string& m : BML::searchList(p, "memory")) {
-        if (BML::search(m, {"memory", "type"}) == "RAM") {
-          std::string content = BML::search(m, {"memory", "content"});
-          if (content == "Data" && BML::search(m, {"memory", "architecture"}) == "HG51BS169") {
-            Game::Memory file;
-            if (game.memory(file, m) && file.nonVolatile) {
-              writeCallback(ID::SuperFamicom, "save.ram", hitachidsp.dataRAM, (3 * 1024));
-            }
-          }
-          else if (content == "Save") {
-            writeCallback(ID::SuperFamicom, "save.ram", hitachidsp.ram.data(), hitachidsp.ram.size());
-          }
-        }
-      }
-    }
-    //processor(architecture=uPD7725)
-    else if (arch == "uPD7725") {
-      for (std::string& m : BML::searchList(p, "memory")) {
-        if (BML::search(m, {"memory", "type"}) == "RAM" &&
-            BML::search(m, {"memory", "content"}) == "Data" &&
-            BML::search(m, {"memory", "architecture"}) == "uPD7725") {
-          Game::Memory file;
-          if (game.memory(file, m) && file.nonVolatile) {
-            writeCallback(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, 2 * 256);
-          }
-        }
-      }
-    }
-    //processor(architecture=uPD96050)
-    else if (arch == "uPD96050") {
-      for (std::string& m : BML::searchList(p, "memory")) {
-        if (BML::search(m, {"memory", "type"}) == "RAM" &&
-            BML::search(m, {"memory", "content"}) == "Data" &&
-            BML::search(m, {"memory", "architecture"}) == "uPD96050") {
-          Game::Memory file;
-          if (game.memory(file, m) && file.nonVolatile) {
-            writeCallback(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, (4 * 1024));
-          }
-        }
-      }
-    }
-  }
-
-  std::vector<std::string> rtclist = BML::searchList(board, "rtc");
-  for (std::string& rtc : rtclist) {
-    std::string manufacturer = BML::search(rtc, {"rtc", "manufacturer"});
-    //rtc(manufacturer=Epson)
-    if (manufacturer == "Epson") {
-      std::string memory = BML::searchNode(rtc, {"rtc", "memory"});
-      Game::Memory file;
-      if (game.memory(file, memory) && file.nonVolatile) {
-        uint8_t data[16] = {0};
-        epsonrtc.save(data);
-        writeCallback(ID::SuperFamicom, "time.rtc", data, 16);
-      }
-    }
-    //rtc(manufacturer=Sharp)
-    else if (manufacturer == "Sharp") {
-      std::string memory = BML::searchNode(rtc, {"rtc", "memory"});
-      Game::Memory file;
-      if (game.memory(file, memory) && file.nonVolatile) {
-        uint8_t data[16] = {0};
-        sharprtc.save(data);
-        writeCallback(ID::SuperFamicom, "time.rtc", data, 16);
-      }
-    }
-  }
-}
-
 void Cartridge::saveMemory(Memory& sram, std::string node) {
   Game::Memory memory;
   if (game.memory(memory, node)
@@ -1284,7 +1132,156 @@ bool Cartridge::load() {
 }
 
 void Cartridge::save() {
-  saveCartridge();
+  std::vector<std::string> boardmem = BML::searchListShallow(board, "board", "memory");
+  for (std::string& m : boardmem) {
+    if (BML::search(m, {"memory", "type"}) == "RAM" &&
+        BML::search(m, {"memory", "content"}) == "Save") {
+      saveMemory(ram, m);
+    }
+  }
+
+  std::vector<std::string> processors = BML::searchList(board, "processor");
+  for (std::string& p : processors) {
+    std::string arch = BML::search(p, {"processor", "architecture"});
+    std::string id = BML::search(p, {"processor", "identifier"});
+
+    //processor(identifier=MCC)
+    if (id == "MCC") {
+      std::string mcu = BML::searchNode(p, {"processor", "mcu"});
+      if (!mcu.empty()) {
+        std::vector<std::string> mcumem = BML::searchList(mcu, "memory");
+        for (std::string& m : mcumem) {
+          if (BML::search(m, {"memory", "type"}) == "RAM" &&
+              BML::search(m, {"memory", "content"}) == "Download") {
+            saveMemory(mcc.psram, m);
+          }
+        }
+      }
+    }
+    //processor(identifier=SPC7110)
+    else if (id == "SPC7110") {
+      std::string sram = BML::searchNode(p, {"processor", "memory"});
+      if (!sram.empty()) {
+        if (BML::search(sram, {"memory", "type"}) == "RAM" &&
+            BML::search(sram, {"memory", "content"}) == "Save") {
+          saveMemory(spc7110.ram, sram);
+        }
+      }
+    }
+    //processor(identifier=OBC1)
+    else if (id == "OBC1") {
+      for (std::string& m : BML::searchList(p, "memory")) {
+        if (BML::search(m, {"memory", "type"}) == "RAM" &&
+            BML::search(m, {"memory", "content"}) == "Save") {
+          saveMemory(obc1.ram, m);
+        }
+      }
+    }
+
+    //processor(architecture=W65C816S)
+    if (arch == "W65C816S") {
+      for (std::string& m : BML::searchList(p, "memory")) {
+        if (BML::search(m, {"memory", "type"}) == "RAM") {
+          std::string content = BML::search(m, {"memory", "content"});
+          if (content == "Save")
+            saveMemory(sa1.bwram, m);
+          else if (content == "Internal")
+            saveMemory(sa1.iram, m);
+        }
+      }
+    }
+    //processor(architecture=GSU)
+    else if (arch == "GSU") {
+      for (std::string& m : BML::searchList(p, "memory")) {
+        if (BML::search(m, {"memory", "type"}) == "RAM" &&
+            BML::search(m, {"memory", "content"}) == "Save") {
+          saveMemory(superfx.ram, m);
+        }
+      }
+    }
+    //processor(architecture=ARM6)
+    else if (arch == "ARM6") {
+      for (std::string& m : BML::searchList(p, "memory")) {
+        if (BML::search(m, {"memory", "type"}) == "RAM" &&
+            BML::search(m, {"memory", "content"}) == "Data" &&
+            BML::search(m, {"memory", "architecture"}) == "ARM6") {
+          Game::Memory file;
+          if (game.memory(file, m) && file.nonVolatile) {
+            writeCallback(ID::SuperFamicom, "save.ram", armdsp.programRAM, (16 * 1024));
+          }
+        }
+      }
+    }
+    //processor(architecture=HG51BS169)
+    else if (arch == "HG51BS169") {
+      for (std::string& m : BML::searchList(p, "memory")) {
+        if (BML::search(m, {"memory", "type"}) == "RAM") {
+          std::string content = BML::search(m, {"memory", "content"});
+          if (content == "Data" && BML::search(m, {"memory", "architecture"}) == "HG51BS169") {
+            Game::Memory file;
+            if (game.memory(file, m) && file.nonVolatile) {
+              writeCallback(ID::SuperFamicom, "save.ram", hitachidsp.dataRAM, (3 * 1024));
+            }
+          }
+          else if (content == "Save") {
+            writeCallback(ID::SuperFamicom, "save.ram", hitachidsp.ram.data(), hitachidsp.ram.size());
+          }
+        }
+      }
+    }
+    //processor(architecture=uPD7725)
+    else if (arch == "uPD7725") {
+      for (std::string& m : BML::searchList(p, "memory")) {
+        if (BML::search(m, {"memory", "type"}) == "RAM" &&
+            BML::search(m, {"memory", "content"}) == "Data" &&
+            BML::search(m, {"memory", "architecture"}) == "uPD7725") {
+          Game::Memory file;
+          if (game.memory(file, m) && file.nonVolatile) {
+            writeCallback(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, 2 * 256);
+          }
+        }
+      }
+    }
+    //processor(architecture=uPD96050)
+    else if (arch == "uPD96050") {
+      for (std::string& m : BML::searchList(p, "memory")) {
+        if (BML::search(m, {"memory", "type"}) == "RAM" &&
+            BML::search(m, {"memory", "content"}) == "Data" &&
+            BML::search(m, {"memory", "architecture"}) == "uPD96050") {
+          Game::Memory file;
+          if (game.memory(file, m) && file.nonVolatile) {
+            writeCallback(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, (4 * 1024));
+          }
+        }
+      }
+    }
+  }
+
+  std::vector<std::string> rtclist = BML::searchList(board, "rtc");
+  for (std::string& rtc : rtclist) {
+    std::string manufacturer = BML::search(rtc, {"rtc", "manufacturer"});
+    //rtc(manufacturer=Epson)
+    if (manufacturer == "Epson") {
+      std::string memory = BML::searchNode(rtc, {"rtc", "memory"});
+      Game::Memory file;
+      if (game.memory(file, memory) && file.nonVolatile) {
+        uint8_t data[16] = {0};
+        epsonrtc.save(data);
+        writeCallback(ID::SuperFamicom, "time.rtc", data, 16);
+      }
+    }
+    //rtc(manufacturer=Sharp)
+    else if (manufacturer == "Sharp") {
+      std::string memory = BML::searchNode(rtc, {"rtc", "memory"});
+      Game::Memory file;
+      if (game.memory(file, memory) && file.nonVolatile) {
+        uint8_t data[16] = {0};
+        sharprtc.save(data);
+        writeCallback(ID::SuperFamicom, "time.rtc", data, 16);
+      }
+    }
+  }
+
   if(has.GameBoySlot) {
     icd.save();
   }
