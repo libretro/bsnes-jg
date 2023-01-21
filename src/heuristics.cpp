@@ -1038,16 +1038,18 @@ std::string SuperFamicom::firmwareARM() const {
 }
 
 std::string SuperFamicom::firmwareEXNEC() const {
-  if(title() == "EXHAUST HEAT2") return "ST010";
-  if(title() == "F1 ROC II") return "ST010";
-  if(title() == "2DAN MORITA SHOUGI") return "ST011";
-  return "ST010";
+  const std::string name = title();
+  if(name == "EXHAUST HEAT2") return "ST010";
+  else if(name == "F1 ROC II") return "ST010";
+  else if(name == "2DAN MORITA SHOUGI") return "ST011";
+  else return "ST010";
 }
 
 std::string SuperFamicom::firmwareGB() const {
-  if(title() == "Super GAMEBOY") return "SGB1";
-  if(title() == "Super GAMEBOY2") return "SGB2";
-  return "SGB1";
+  const std::string name = title();
+  if(name == "Super GAMEBOY") return "SGB1";
+  else if(name == "Super GAMEBOY2") return "SGB2";
+  else return "SGB1";
 }
 
 std::string SuperFamicom::firmwareHITACHI() const {
@@ -1055,12 +1057,13 @@ std::string SuperFamicom::firmwareHITACHI() const {
 }
 
 std::string SuperFamicom::firmwareNEC() const {
-  if(title() == "PILOTWINGS") return "DSP1";
-  if(title() == "DUNGEON MASTER") return "DSP2";
-  if(title() == "SDガンダムGX") return "DSP3";
-  if(title() == "PLANETS CHAMP TG3000") return "DSP4";
-  if(title() == "TOP GEAR 3000") return "DSP4";
-  return "DSP1B";
+  const std::string name = title();
+  if(name == "PILOTWINGS") return "DSP1";
+  else if(name == "DUNGEON MASTER") return "DSP2";
+  else if(name == "SDガンダムGX") return "DSP3";
+  else if(name == "PLANETS CHAMP TG3000") return "DSP4";
+  else if(name == "TOP GEAR 3000") return "DSP4";
+  else return "DSP1B";
 }
 
 }
