@@ -115,10 +115,11 @@ void CPU::Channel::edge() {
 
 bool CPU::Channel::validA(uint32_t address) {
   //A-bus cannot access the B-bus or CPU I/O registers
-  if((address & 0x40ff00) == 0x2100) return false;  //00-3f,80-bf:2100-21ff
-  if((address & 0x40fe00) == 0x4000) return false;  //00-3f,80-bf:4000-41ff
-  if((address & 0x40ffe0) == 0x4200) return false;  //00-3f,80-bf:4200-421f
-  if((address & 0x40ff80) == 0x4300) return false;  //00-3f,80-bf:4300-437f
+  if(((address & 0x40ff00) == 0x2100)      //00-3f,80-bf:2100-21ff
+      || ((address & 0x40fe00) == 0x4000)  //00-3f,80-bf:4000-41ff
+      || ((address & 0x40ffe0) == 0x4200)  //00-3f,80-bf:4200-421f
+      || ((address & 0x40ff80) == 0x4300)) //00-3f,80-bf:4300-437f
+    return false;
   return true;
 }
 
@@ -629,7 +630,6 @@ void CPU::writeDMA(unsigned addr, uint8_t data) {
   case 0x430f:  //???x ($43xb mirror)
     channel.unknown = data;
     return;
-
   }
 }
 
