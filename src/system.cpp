@@ -102,9 +102,10 @@ bool System::unserialize(serializer& s) {
   s.boolean(synchronize);
   s.boolean(placeholder);
 
-  if(signature != 0x31545342) return false;
-  if(serializeSize != information.serializeSize[synchronize]) return false;
-  if(std::string{version} != SerializerVersion) return false;
+  if((signature != 0x31545342)
+      || (serializeSize != information.serializeSize[synchronize])
+      || (std::string{version} != SerializerVersion))
+    return false;
 
   if(synchronize) power(/* reset = */ false);
   serializeAll(s, synchronize);
@@ -255,17 +256,18 @@ void System::runToSaveStrict() {
   while(true) {
     //SMP thread is synchronized twice to ensure the CPU and SMP are closely aligned:
     //this is extremely critical for Tales of Phantasia and Star Ocean.
-    if(!synchronize(smp.thread)) continue;
-    if(!synchronize(cpu.thread)) continue;
-    bool synchronized = true;
-    for(Thread* coprocessor : cpu.coprocessors) {
-      if(!synchronize(coprocessor->thread)) { synchronized = false; break; }
+    if(synchronize(smp.thread) && synchronize(cpu.thread)) {
+      bool synchronized = true;
+      for(Thread* coprocessor : cpu.coprocessors) {
+        if(!synchronize(coprocessor->thread)) {
+          synchronized = false;
+          break;
+        }
+      }
+      if(synchronized && synchronize(smp.thread) && synchronize(ppu.thread)) {
+        break;
+      }
     }
-    if(!synchronized) continue;
-    if(!synchronize(smp.thread)) continue;
-    if(!synchronize(ppu.thread)) continue;
-
-    break;
   }
 }
 
@@ -336,34 +338,33 @@ bool System::load() {
 }
 
 void System::save() {
-  if(!loaded()) return;
-
-  cartridge.save();
+  if(loaded())
+    cartridge.save();
 }
 
 void System::unload() {
-  if(!loaded()) return;
+  if(loaded()) {
+    controllerPort1.unload();
+    controllerPort2.unload();
+    expansionPort.unload();
 
-  controllerPort1.unload();
-  controllerPort2.unload();
-  expansionPort.unload();
+    if(cartridge.has.ICD) icd.unload();
+    if(cartridge.has.MCC) mcc.unload();
+    if(cartridge.has.Event) event.unload();
+    if(cartridge.has.SA1) sa1.unload();
+    if(cartridge.has.SuperFX) superfx.unload();
+    if(cartridge.has.HitachiDSP) hitachidsp.unload();
+    if(cartridge.has.SPC7110) spc7110.unload();
+    if(cartridge.has.SDD1) sdd1.unload();
+    if(cartridge.has.OBC1) obc1.unload();
+    if(cartridge.has.MSU1) msu1.unload();
+    if(cartridge.has.BSMemorySlot) bsmemory.unload();
+    if(cartridge.has.SufamiTurboSlotA) sufamiturboA.unload();
+    if(cartridge.has.SufamiTurboSlotB) sufamiturboB.unload();
 
-  if(cartridge.has.ICD) icd.unload();
-  if(cartridge.has.MCC) mcc.unload();
-  if(cartridge.has.Event) event.unload();
-  if(cartridge.has.SA1) sa1.unload();
-  if(cartridge.has.SuperFX) superfx.unload();
-  if(cartridge.has.HitachiDSP) hitachidsp.unload();
-  if(cartridge.has.SPC7110) spc7110.unload();
-  if(cartridge.has.SDD1) sdd1.unload();
-  if(cartridge.has.OBC1) obc1.unload();
-  if(cartridge.has.MSU1) msu1.unload();
-  if(cartridge.has.BSMemorySlot) bsmemory.unload();
-  if(cartridge.has.SufamiTurboSlotA) sufamiturboA.unload();
-  if(cartridge.has.SufamiTurboSlotB) sufamiturboB.unload();
-
-  cartridge.unload();
-  information.loaded = false;
+    cartridge.unload();
+    information.loaded = false;
+  }
 }
 
 void System::power(bool reset) {
