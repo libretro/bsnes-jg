@@ -58,12 +58,13 @@ bool Game::memory(Game::Memory& mem, std::string node) {
     std::string manufacturer = BML::search(node, {"memory", "manufacturer"});
     std::string architecture = BML::search(node, {"memory", "architecture"});
     std::string identifier = BML::search(node, {"memory", "identifier"});
-    if(!type.empty() && type != m.type) continue;
-    if(size && size != m.size) continue;
-    if(!content.empty() && content != m.content) continue;
-    if(!manufacturer.empty() && manufacturer != m.manufacturer) continue;
-    if(!architecture.empty() && architecture != m.architecture) continue;
-    if(!identifier.empty() && identifier != m.identifier) continue;
+    if((!type.empty() && type != m.type)
+        || (size && size != m.size)
+        || (!content.empty() && content != m.content)
+        || (!manufacturer.empty() && manufacturer != m.manufacturer)
+        || (!architecture.empty() && architecture != m.architecture)
+        || (!identifier.empty() && identifier != m.identifier))
+      continue;
     mem = m;
     return true;
   }
