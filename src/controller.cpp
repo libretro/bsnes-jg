@@ -172,16 +172,16 @@ Controller::~Controller() {
 
 bool Controller::iobit() {
   switch(port) {
-  case ID::Port::Controller1: return cpu.pio() & 0x40;
-  case ID::Port::Controller2: return cpu.pio() & 0x80;
+    case ID::Port::Controller1: return cpu.pio() & 0x40;
+    case ID::Port::Controller2: return cpu.pio() & 0x80;
   }
   return 0; // unreachable
 }
 
 void Controller::iobit(bool data) {
   switch(port) {
-  case ID::Port::Controller1: bus.write(0x4201, (cpu.pio() & ~0x40) | (data << 6)); break;
-  case ID::Port::Controller2: bus.write(0x4201, (cpu.pio() & ~0x80) | (data << 7)); break;
+    case ID::Port::Controller1: bus.write(0x4201, (cpu.pio() & ~0x40) | (data << 6)); break;
+    case ID::Port::Controller2: bus.write(0x4201, (cpu.pio() & ~0x80) | (data << 7)); break;
   }
 }
 
@@ -190,13 +190,13 @@ void ControllerPort::connect(unsigned deviceID) {
   delete device;
 
   switch(deviceID) { default:
-  case ID::Device::None: device = new Controller(port); break;
-  case ID::Device::Gamepad: device = new Gamepad(port); break;
-  case ID::Device::Mouse: device = new Mouse(port); break;
-  case ID::Device::SuperMultitap: device = new SuperMultitap(port); break;
-  case ID::Device::SuperScope: device = new SuperScope(port); break;
-  case ID::Device::Justifier: device = new Justifier(port, false); break;
-  case ID::Device::Justifiers: device = new Justifier(port, true); break;
+    case ID::Device::None: device = new Controller(port); break;
+    case ID::Device::Gamepad: device = new Gamepad(port); break;
+    case ID::Device::Mouse: device = new Mouse(port); break;
+    case ID::Device::SuperMultitap: device = new SuperMultitap(port); break;
+    case ID::Device::SuperScope: device = new SuperScope(port); break;
+    case ID::Device::Justifier: device = new Justifier(port, false); break;
+    case ID::Device::Justifiers: device = new Justifier(port, true); break;
   }
 }
 
@@ -224,18 +224,18 @@ uint8_t Gamepad::data() {
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
-  case  0: return b;
-  case  1: return y;
-  case  2: return select;
-  case  3: return start;
-  case  4: return up & !down;
-  case  5: return down & !up;
-  case  6: return left & !right;
-  case  7: return right & !left;
-  case  8: return a;
-  case  9: return x;
-  case 10: return l;
-  case 11: return r;
+    case  0: return b;
+    case  1: return y;
+    case  2: return select;
+    case  3: return start;
+    case  4: return up & !down;
+    case  5: return down & !up;
+    case  6: return left & !right;
+    case  7: return right & !left;
+    case  8: return a;
+    case  9: return x;
+    case 10: return l;
+    case 11: return r;
   }
 
   return 0;  //12-15: signature
@@ -305,42 +305,42 @@ uint8_t Justifier::data() {
   }
 
   switch(counter++) {
-  case  0: return 0;
-  case  1: return 0;
-  case  2: return 0;
-  case  3: return 0;
-  case  4: return 0;
-  case  5: return 0;
-  case  6: return 0;
-  case  7: return 0;
-  case  8: return 0;
-  case  9: return 0;
-  case 10: return 0;
-  case 11: return 0;
+    case  0: return 0;
+    case  1: return 0;
+    case  2: return 0;
+    case  3: return 0;
+    case  4: return 0;
+    case  5: return 0;
+    case  6: return 0;
+    case  7: return 0;
+    case  8: return 0;
+    case  9: return 0;
+    case 10: return 0;
+    case 11: return 0;
 
-  case 12: return 1;  //signature
-  case 13: return 1;  // ||
-  case 14: return 1;  // ||
-  case 15: return 0;  // ||
+    case 12: return 1;  //signature
+    case 13: return 1;  // ||
+    case 14: return 1;  // ||
+    case 15: return 0;  // ||
 
-  case 16: return 0;
-  case 17: return 1;
-  case 18: return 0;
-  case 19: return 1;
-  case 20: return 0;
-  case 21: return 1;
-  case 22: return 0;
-  case 23: return 1;
+    case 16: return 0;
+    case 17: return 1;
+    case 18: return 0;
+    case 19: return 1;
+    case 20: return 0;
+    case 21: return 1;
+    case 22: return 0;
+    case 23: return 1;
 
-  case 24: return player1.trigger;
-  case 25: return player2.trigger;
-  case 26: return player1.start;
-  case 27: return player2.start;
-  case 28: return active;
+    case 24: return player1.trigger;
+    case 25: return player2.trigger;
+    case 26: return player1.start;
+    case 27: return player2.start;
+    case 28: return active;
 
-  case 29: return 0;
-  case 30: return 0;
-  case 31: return 0;
+    case 29: return 0;
+    case 30: return 0;
+    case 31: return 0;
   }
 
   return 0; // unreachable
@@ -390,42 +390,42 @@ uint8_t Mouse::data() {
   if(counter >= 32) return 1;
 
   switch(counter++) { default:
-  case  0: return 0;
-  case  1: return 0;
-  case  2: return 0;
-  case  3: return 0;
-  case  4: return 0;
-  case  5: return 0;
-  case  6: return 0;
-  case  7: return 0;
+    case  0: return 0;
+    case  1: return 0;
+    case  2: return 0;
+    case  3: return 0;
+    case  4: return 0;
+    case  5: return 0;
+    case  6: return 0;
+    case  7: return 0;
 
-  case  8: return r;
-  case  9: return l;
-  case 10: return (speed >> 1) & 1;
-  case 11: return (speed >> 0) & 1;
+    case  8: return r;
+    case  9: return l;
+    case 10: return (speed >> 1) & 1;
+    case 11: return (speed >> 0) & 1;
 
-  case 12: return 0;  //signature
-  case 13: return 0;  // ||
-  case 14: return 0;  // ||
-  case 15: return 1;  // ||
+    case 12: return 0;  //signature
+    case 13: return 0;  // ||
+    case 14: return 0;  // ||
+    case 15: return 1;  // ||
 
-  case 16: return dy;
-  case 17: return (y >> 6) & 1;
-  case 18: return (y >> 5) & 1;
-  case 19: return (y >> 4) & 1;
-  case 20: return (y >> 3) & 1;
-  case 21: return (y >> 2) & 1;
-  case 22: return (y >> 1) & 1;
-  case 23: return (y >> 0) & 1;
+    case 16: return dy;
+    case 17: return (y >> 6) & 1;
+    case 18: return (y >> 5) & 1;
+    case 19: return (y >> 4) & 1;
+    case 20: return (y >> 3) & 1;
+    case 21: return (y >> 2) & 1;
+    case 22: return (y >> 1) & 1;
+    case 23: return (y >> 0) & 1;
 
-  case 24: return dx;
-  case 25: return (x >> 6) & 1;
-  case 26: return (x >> 5) & 1;
-  case 27: return (x >> 4) & 1;
-  case 28: return (x >> 3) & 1;
-  case 29: return (x >> 2) & 1;
-  case 30: return (x >> 1) & 1;
-  case 31: return (x >> 0) & 1;
+    case 24: return dx;
+    case 25: return (x >> 6) & 1;
+    case 26: return (x >> 5) & 1;
+    case 27: return (x >> 4) & 1;
+    case 28: return (x >> 3) & 1;
+    case 29: return (x >> 2) & 1;
+    case 30: return (x >> 1) & 1;
+    case 31: return (x >> 0) & 1;
   }
 }
 
@@ -485,18 +485,18 @@ uint8_t SuperMultitap::data() {
   Gamepad& padB = gamepads[b];
 
   switch(counter) {
-  case  0: return padA.b << 0 | padB.b << 1;
-  case  1: return padA.y << 0 | padB.y << 1;
-  case  2: return padA.select << 0 | padB.select << 1;
-  case  3: return padA.start << 0 | padB.start << 1;
-  case  4: return (padA.up & !padA.down) << 0 | (padB.up & !padB.down) << 1;
-  case  5: return (padA.down & !padA.up) << 0 | (padB.down & !padB.up) << 1;
-  case  6: return (padA.left & !padA.right) << 0 | (padB.left & !padB.right) << 1;
-  case  7: return (padA.right & !padA.left) << 0 | (padB.right & !padB.left) << 1;
-  case  8: return padA.a << 0 | padB.a << 1;
-  case  9: return padA.x << 0 | padB.x << 1;
-  case 10: return padA.l << 0 | padB.l << 1;
-  case 11: return padA.r << 0 | padB.r << 1;
+    case  0: return padA.b << 0 | padB.b << 1;
+    case  1: return padA.y << 0 | padB.y << 1;
+    case  2: return padA.select << 0 | padB.select << 1;
+    case  3: return padA.start << 0 | padB.start << 1;
+    case  4: return (padA.up & !padA.down) << 0 | (padB.up & !padB.down) << 1;
+    case  5: return (padA.down & !padA.up) << 0 | (padB.down & !padB.up) << 1;
+    case  6: return (padA.left & !padA.right) << 0 | (padB.left & !padB.right) << 1;
+    case  7: return (padA.right & !padA.left) << 0 | (padB.right & !padB.left) << 1;
+    case  8: return padA.a << 0 | padB.a << 1;
+    case  9: return padA.x << 0 | padB.x << 1;
+    case 10: return padA.l << 0 | padB.l << 1;
+    case 11: return padA.r << 0 | padB.r << 1;
   }
   return 0; // unreachable
 }
@@ -599,14 +599,14 @@ uint8_t SuperScope::data() {
   }
 
   switch(counter++) {
-  case 0: return offscreen ? 0 : trigger;
-  case 1: return cursor;
-  case 2: return turbo;
-  case 3: return pause;
-  case 4: return 0;
-  case 5: return 0;
-  case 6: return offscreen;
-  case 7: return 0;  //noise (1 = yes)
+    case 0: return offscreen ? 0 : trigger;
+    case 1: return cursor;
+    case 2: return turbo;
+    case 3: return pause;
+    case 4: return 0;
+    case 5: return 0;
+    case 6: return offscreen;
+    case 7: return 0;  //noise (1 = yes)
   }
 
   return 0; // unreachable
