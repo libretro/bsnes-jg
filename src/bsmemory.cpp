@@ -271,7 +271,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //write page to flash
   if(queue.data(0) == 0x0c) {
-  if(queue.size() < 3) return;
+    if(queue.size() < 3) return;
     uint16_t count;  //1 - 65536
     count  = queue.data(!(queue.address(1) & 1) ? 1 : 2) << 0;
     count |= queue.data(!(queue.address(1) & 1) ? 2 : 1) << 8;
@@ -287,7 +287,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //write byte
   if(queue.data(0) == 0x10) {
-  if(queue.size() < 2) return;
+    if(queue.size() < 2) return;
     block(queue.address(1) >> block.bitCount()).write(queue.address(1), queue.data(1));
     mode = Mode::CompatibleStatus;
     return queue.flush();
@@ -295,8 +295,8 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //erase block
   if(queue.data(0) == 0x20) {
-  if(queue.size() < 2) return;
-  if(queue.data(1) != 0xd0) return failed(), queue.flush();
+    if(queue.size() < 2) return;
+    if(queue.data(1) != 0xd0) return failed(), queue.flush();
     block(queue.address(1) >> block.bitCount()).erase();
     mode = Mode::CompatibleStatus;
     return queue.flush();
@@ -305,8 +305,8 @@ void BSMemory::write(unsigned address, uint8_t data) {
   //LH28F800SUT-ZI specific? (undocumented / unavailable? for the LH28F800SU)
   //write signature, identifier, serial# into current page buffer, then swap page buffers
   if(queue.data(0) == 0x38) {
-  if(queue.size() < 2) return;
-  if(queue.data(1) != 0xd0) return failed(), queue.flush();
+    if(queue.size() < 2) return;
+    if(queue.data(1) != 0xd0) return failed(), queue.flush();
     page.write(0x00, 0x4d);  //'M' (memory)
     page.write(0x02, 0x50);  //'P' (pack)
     page.write(0x04, 0x04);  //unknown constant (maybe block count? eg 1<<4 = 16 blocks)
@@ -323,7 +323,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //write byte
   if(queue.data(0) == 0x40) {
-  if(queue.size() < 2) return;
+    if(queue.size() < 2) return;
     block(queue.address(1) >> block.bitCount()).write(queue.address(1), queue.data(1));
     mode = Mode::CompatibleStatus;
     return queue.flush();
@@ -362,7 +362,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //single load to page buffer
   if(queue.data(0) == 0x74) {
-  if(queue.size() < 2) return;
+    if(queue.size() < 2) return;
     page.write(queue.address(1), queue.data(1));
     return queue.flush();
   }
@@ -375,8 +375,8 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //lock block
   if(queue.data(0) == 0x77) {
-  if(queue.size() < 2) return;
-  if(queue.data(1) != 0xd0) return failed(), queue.flush();
+    if(queue.size() < 2) return;
+    if(queue.data(1) != 0xd0) return failed(), queue.flush();
     block(queue.address(1) >> block.bitCount()).lock();
     return queue.flush();
   }
@@ -397,7 +397,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
   //update ry/by mode
   //(unsupported)
   if(queue.data(0) == 0x96) {
-  if(queue.size() < 2) return;
+    if(queue.size() < 2) return;
     if(queue.data(1) == 0x01) readyBusyMode = ReadyBusyMode::EnableToLevelMode;
     if(queue.data(1) == 0x02) readyBusyMode = ReadyBusyMode::PulseOnWrite;
     if(queue.data(1) == 0x03) readyBusyMode = ReadyBusyMode::PulseOnErase;
@@ -407,16 +407,16 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //upload lock status bits
   if(queue.data(0) == 0x97) {
-  if(queue.size() < 2) return;
-  if(queue.data(1) != 0xd0) return failed(), queue.flush();
+    if(queue.size() < 2) return;
+    if(queue.data(1) != 0xd0) return failed(), queue.flush();
     for(unsigned n = 0; n < block.count(); ++n) block(n).update();
     return queue.flush();
   }
 
   //upload device information (number of erase cycles per block)
   if(queue.data(0) == 0x99) {
-  if(queue.size() < 2) return;
-  if(queue.data(1) != 0xd0) return failed(), queue.flush();
+    if(queue.size() < 2) return;
+    if(queue.data(1) != 0xd0) return failed(), queue.flush();
     page.write(0x06, 0x06);  //unknown constant
     page.write(0x07, 0x00);  //unknown constant
     for(uint8_t n = 0; n < block.count(); ++n) {
@@ -436,8 +436,8 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //erase all blocks
   if(queue.data(0) == 0xa7) {
-  if(queue.size() < 2) return;
-  if(queue.data(1) != 0xd0) return failed(), queue.flush();
+    if(queue.size() < 2) return;
+    if(queue.data(1) != 0xd0) return failed(), queue.flush();
     for(unsigned n = 0; n < block.count(); ++n) block(n & 0x3f).erase();
     mode = Mode::CompatibleStatus;
     return queue.flush();
@@ -446,15 +446,15 @@ void BSMemory::write(unsigned address, uint8_t data) {
   //erase suspend/resume
   //(unsupported)
   if(queue.data(0) == 0xb0) {
-  if(queue.size() < 2) return;
-  if(queue.data(1) != 0xd0) return failed(), queue.flush();
+    if(queue.size() < 2) return;
+    if(queue.data(1) != 0xd0) return failed(), queue.flush();
     mode = Mode::CompatibleStatus;
     return queue.flush();
   }
 
   //sequential load to page buffer
   if(queue.data(0) == 0xe0) {
-  if(queue.size() < 4) return;  //command length = 3 + count
+    if(queue.size() < 4) return;  //command length = 3 + count
     uint16_t count;  //1 - 65536
     count  = queue.data(1) << 0;  //endian order not affected by queue.address(1).bit(0)
     count |= queue.data(2) << 8;
@@ -478,7 +478,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
 
   //write word
   if(queue.data(0) == 0xfb) {
-  if(queue.size() < 3) return;
+    if(queue.size() < 3) return;
     uint16_t value;
     value  = queue.data(!(queue.address(1) & 1) ? 1 : 2) << 0;
     value |= queue.data(!(queue.address(1) & 1) ? 2 : 1) << 8;
