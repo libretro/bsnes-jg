@@ -186,17 +186,18 @@ void Controller::iobit(bool data) {
 }
 
 void ControllerPort::connect(unsigned deviceID) {
-  if(!system.loaded()) return;
-  delete device;
+  if(system.loaded()) {
+    delete device;
 
-  switch(deviceID) { default:
-    case ID::Device::None: device = new Controller(port); break;
-    case ID::Device::Gamepad: device = new Gamepad(port); break;
-    case ID::Device::Mouse: device = new Mouse(port); break;
-    case ID::Device::SuperMultitap: device = new SuperMultitap(port); break;
-    case ID::Device::SuperScope: device = new SuperScope(port); break;
-    case ID::Device::Justifier: device = new Justifier(port, false); break;
-    case ID::Device::Justifiers: device = new Justifier(port, true); break;
+    switch(deviceID) { default:
+      case ID::Device::None: device = new Controller(port); break;
+      case ID::Device::Gamepad: device = new Gamepad(port); break;
+      case ID::Device::Mouse: device = new Mouse(port); break;
+      case ID::Device::SuperMultitap: device = new SuperMultitap(port); break;
+      case ID::Device::SuperScope: device = new SuperScope(port); break;
+      case ID::Device::Justifier: device = new Justifier(port, false); break;
+      case ID::Device::Justifiers: device = new Justifier(port, true); break;
+    }
   }
 }
 
@@ -242,23 +243,24 @@ uint8_t Gamepad::data() {
 }
 
 void Gamepad::latch(bool data) {
-  if(latched == data) return;
-  latched = data;
-  counter = 0;
+  if(latched != data) {
+    latched = data;
+    counter = 0;
 
-  if(latched == 0) {
-    b      = inputPoll(port, ID::Device::Gamepad, B);
-    y      = inputPoll(port, ID::Device::Gamepad, Y);
-    select = inputPoll(port, ID::Device::Gamepad, Select);
-    start  = inputPoll(port, ID::Device::Gamepad, Start);
-    up     = inputPoll(port, ID::Device::Gamepad, Up);
-    down   = inputPoll(port, ID::Device::Gamepad, Down);
-    left   = inputPoll(port, ID::Device::Gamepad, Left);
-    right  = inputPoll(port, ID::Device::Gamepad, Right);
-    a      = inputPoll(port, ID::Device::Gamepad, A);
-    x      = inputPoll(port, ID::Device::Gamepad, X);
-    l      = inputPoll(port, ID::Device::Gamepad, L);
-    r      = inputPoll(port, ID::Device::Gamepad, R);
+    if(latched == 0) {
+      b      = inputPoll(port, ID::Device::Gamepad, B);
+      y      = inputPoll(port, ID::Device::Gamepad, Y);
+      select = inputPoll(port, ID::Device::Gamepad, Select);
+      start  = inputPoll(port, ID::Device::Gamepad, Start);
+      up     = inputPoll(port, ID::Device::Gamepad, Up);
+      down   = inputPoll(port, ID::Device::Gamepad, Down);
+      left   = inputPoll(port, ID::Device::Gamepad, Left);
+      right  = inputPoll(port, ID::Device::Gamepad, Right);
+      a      = inputPoll(port, ID::Device::Gamepad, A);
+      x      = inputPoll(port, ID::Device::Gamepad, X);
+      l      = inputPoll(port, ID::Device::Gamepad, L);
+      r      = inputPoll(port, ID::Device::Gamepad, R);
+    }
   }
 }
 
@@ -347,10 +349,13 @@ uint8_t Justifier::data() {
 }
 
 void Justifier::latch(bool data) {
-  if(latched == data) return;
-  latched = data;
-  counter = 0;
-  if(latched == 0) active = !active;  //toggle between both controllers, even when unchained
+  if(latched != data) {
+    latched = data;
+    counter = 0;
+    //toggle between both controllers, even when unchained
+    if(latched == 0)
+      active = !active;
+  }
 }
 
 void Justifier::latch() {
@@ -430,29 +435,30 @@ uint8_t Mouse::data() {
 }
 
 void Mouse::latch(bool data) {
-  if(latched == data) return;
-  latched = data;
-  counter = 0;
+  if(latched != data) {
+    latched = data;
+    counter = 0;
 
-  x = inputPoll(port, ID::Device::Mouse, X);  //-n = left, 0 = center, +n = right
-  y = inputPoll(port, ID::Device::Mouse, Y);  //-n = up,   0 = center, +n = down
-  l = inputPoll(port, ID::Device::Mouse, Left);
-  r = inputPoll(port, ID::Device::Mouse, Right);
+    x = inputPoll(port, ID::Device::Mouse, X);  //-n = left, 0 = center, +n = right
+    y = inputPoll(port, ID::Device::Mouse, Y);  //-n = up,   0 = center, +n = down
+    l = inputPoll(port, ID::Device::Mouse, Left);
+    r = inputPoll(port, ID::Device::Mouse, Right);
 
-  dx = x < 0;  //0 = right, 1 = left
-  dy = y < 0;  //0 = down,  1 = up
+    dx = x < 0;  //0 = right, 1 = left
+    dy = y < 0;  //0 = down,  1 = up
 
-  if(x < 0) x = -x;  //abs(position_x)
-  if(y < 0) y = -y;  //abs(position_y)
+    if(x < 0) x = -x;  //abs(position_x)
+    if(y < 0) y = -y;  //abs(position_y)
 
-  double multiplier = 1.0;
-  if(speed == 1) multiplier = 1.5;
-  if(speed == 2) multiplier = 2.0;
-  x = (double)x * multiplier;
-  y = (double)y * multiplier;
+    double multiplier = 1.0;
+    if(speed == 1) multiplier = 1.5;
+    if(speed == 2) multiplier = 2.0;
+    x = (double)x * multiplier;
+    y = (double)y * multiplier;
 
-  x = std::min(127, x);
-  y = std::min(127, y);
+    x = std::min(127, x);
+    y = std::min(127, y);
+  }
 }
 
 SuperMultitap::SuperMultitap(unsigned deviceID) : Controller(deviceID) {
@@ -502,26 +508,27 @@ uint8_t SuperMultitap::data() {
 }
 
 void SuperMultitap::latch(bool data) {
-  if(latched == data) return;
-  latched = data;
-  counter1 = 0;
-  counter2 = 0;
+  if(latched != data) {
+    latched = data;
+    counter1 = 0;
+    counter2 = 0;
 
-  if(latched == 0) {
-    for(unsigned id = 0; id < 4; ++id) {
-      Gamepad& gamepad = gamepads[id];
-      gamepad.b      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + B);
-      gamepad.y      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Y);
-      gamepad.select = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Select);
-      gamepad.start  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Start);
-      gamepad.up     = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Up);
-      gamepad.down   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Down);
-      gamepad.left   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Left);
-      gamepad.right  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Right);
-      gamepad.a      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + A);
-      gamepad.x      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + X);
-      gamepad.l      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + L);
-      gamepad.r      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + R);
+    if(latched == 0) {
+      for(unsigned id = 0; id < 4; ++id) {
+        Gamepad& gamepad = gamepads[id];
+        gamepad.b      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + B);
+        gamepad.y      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Y);
+        gamepad.select = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Select);
+        gamepad.start  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Start);
+        gamepad.up     = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Up);
+        gamepad.down   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Down);
+        gamepad.left   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Left);
+        gamepad.right  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Right);
+        gamepad.a      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + A);
+        gamepad.x      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + X);
+        gamepad.l      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + L);
+        gamepad.r      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + R);
+      }
     }
   }
 }
@@ -613,9 +620,10 @@ uint8_t SuperScope::data() {
 }
 
 void SuperScope::latch(bool data) {
-  if(latched == data) return;
-  latched = data;
-  counter = 0;
+  if(latched != data) {
+    latched = data;
+    counter = 0;
+  }
 }
 
 void SuperScope::latch() {
