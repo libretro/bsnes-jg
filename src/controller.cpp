@@ -172,31 +172,32 @@ Controller::~Controller() {
 
 bool Controller::iobit() {
   switch(port) {
-  case ID::Port::Controller1: return cpu.pio() & 0x40;
-  case ID::Port::Controller2: return cpu.pio() & 0x80;
+    case ID::Port::Controller1: return cpu.pio() & 0x40;
+    case ID::Port::Controller2: return cpu.pio() & 0x80;
   }
   return 0; // unreachable
 }
 
 void Controller::iobit(bool data) {
   switch(port) {
-  case ID::Port::Controller1: bus.write(0x4201, (cpu.pio() & ~0x40) | (data << 6)); break;
-  case ID::Port::Controller2: bus.write(0x4201, (cpu.pio() & ~0x80) | (data << 7)); break;
+    case ID::Port::Controller1: bus.write(0x4201, (cpu.pio() & ~0x40) | (data << 6)); break;
+    case ID::Port::Controller2: bus.write(0x4201, (cpu.pio() & ~0x80) | (data << 7)); break;
   }
 }
 
 void ControllerPort::connect(unsigned deviceID) {
-  if(!system.loaded()) return;
-  delete device;
+  if(system.loaded()) {
+    delete device;
 
-  switch(deviceID) { default:
-  case ID::Device::None: device = new Controller(port); break;
-  case ID::Device::Gamepad: device = new Gamepad(port); break;
-  case ID::Device::Mouse: device = new Mouse(port); break;
-  case ID::Device::SuperMultitap: device = new SuperMultitap(port); break;
-  case ID::Device::SuperScope: device = new SuperScope(port); break;
-  case ID::Device::Justifier: device = new Justifier(port, false); break;
-  case ID::Device::Justifiers: device = new Justifier(port, true); break;
+    switch(deviceID) { default:
+      case ID::Device::None: device = new Controller(port); break;
+      case ID::Device::Gamepad: device = new Gamepad(port); break;
+      case ID::Device::Mouse: device = new Mouse(port); break;
+      case ID::Device::SuperMultitap: device = new SuperMultitap(port); break;
+      case ID::Device::SuperScope: device = new SuperScope(port); break;
+      case ID::Device::Justifier: device = new Justifier(port, false); break;
+      case ID::Device::Justifiers: device = new Justifier(port, true); break;
+    }
   }
 }
 
@@ -224,41 +225,42 @@ uint8_t Gamepad::data() {
 
   //note: D-pad physically prevents up+down and left+right from being pressed at the same time
   switch(counter++) {
-  case  0: return b;
-  case  1: return y;
-  case  2: return select;
-  case  3: return start;
-  case  4: return up & !down;
-  case  5: return down & !up;
-  case  6: return left & !right;
-  case  7: return right & !left;
-  case  8: return a;
-  case  9: return x;
-  case 10: return l;
-  case 11: return r;
+    case  0: return b;
+    case  1: return y;
+    case  2: return select;
+    case  3: return start;
+    case  4: return up & !down;
+    case  5: return down & !up;
+    case  6: return left & !right;
+    case  7: return right & !left;
+    case  8: return a;
+    case  9: return x;
+    case 10: return l;
+    case 11: return r;
   }
 
   return 0;  //12-15: signature
 }
 
 void Gamepad::latch(bool data) {
-  if(latched == data) return;
-  latched = data;
-  counter = 0;
+  if(latched != data) {
+    latched = data;
+    counter = 0;
 
-  if(latched == 0) {
-    b      = inputPoll(port, ID::Device::Gamepad, B);
-    y      = inputPoll(port, ID::Device::Gamepad, Y);
-    select = inputPoll(port, ID::Device::Gamepad, Select);
-    start  = inputPoll(port, ID::Device::Gamepad, Start);
-    up     = inputPoll(port, ID::Device::Gamepad, Up);
-    down   = inputPoll(port, ID::Device::Gamepad, Down);
-    left   = inputPoll(port, ID::Device::Gamepad, Left);
-    right  = inputPoll(port, ID::Device::Gamepad, Right);
-    a      = inputPoll(port, ID::Device::Gamepad, A);
-    x      = inputPoll(port, ID::Device::Gamepad, X);
-    l      = inputPoll(port, ID::Device::Gamepad, L);
-    r      = inputPoll(port, ID::Device::Gamepad, R);
+    if(latched == 0) {
+      b      = inputPoll(port, ID::Device::Gamepad, B);
+      y      = inputPoll(port, ID::Device::Gamepad, Y);
+      select = inputPoll(port, ID::Device::Gamepad, Select);
+      start  = inputPoll(port, ID::Device::Gamepad, Start);
+      up     = inputPoll(port, ID::Device::Gamepad, Up);
+      down   = inputPoll(port, ID::Device::Gamepad, Down);
+      left   = inputPoll(port, ID::Device::Gamepad, Left);
+      right  = inputPoll(port, ID::Device::Gamepad, Right);
+      a      = inputPoll(port, ID::Device::Gamepad, A);
+      x      = inputPoll(port, ID::Device::Gamepad, X);
+      l      = inputPoll(port, ID::Device::Gamepad, L);
+      r      = inputPoll(port, ID::Device::Gamepad, R);
+    }
   }
 }
 
@@ -305,52 +307,55 @@ uint8_t Justifier::data() {
   }
 
   switch(counter++) {
-  case  0: return 0;
-  case  1: return 0;
-  case  2: return 0;
-  case  3: return 0;
-  case  4: return 0;
-  case  5: return 0;
-  case  6: return 0;
-  case  7: return 0;
-  case  8: return 0;
-  case  9: return 0;
-  case 10: return 0;
-  case 11: return 0;
+    case  0: return 0;
+    case  1: return 0;
+    case  2: return 0;
+    case  3: return 0;
+    case  4: return 0;
+    case  5: return 0;
+    case  6: return 0;
+    case  7: return 0;
+    case  8: return 0;
+    case  9: return 0;
+    case 10: return 0;
+    case 11: return 0;
 
-  case 12: return 1;  //signature
-  case 13: return 1;  // ||
-  case 14: return 1;  // ||
-  case 15: return 0;  // ||
+    case 12: return 1;  //signature
+    case 13: return 1;  // ||
+    case 14: return 1;  // ||
+    case 15: return 0;  // ||
 
-  case 16: return 0;
-  case 17: return 1;
-  case 18: return 0;
-  case 19: return 1;
-  case 20: return 0;
-  case 21: return 1;
-  case 22: return 0;
-  case 23: return 1;
+    case 16: return 0;
+    case 17: return 1;
+    case 18: return 0;
+    case 19: return 1;
+    case 20: return 0;
+    case 21: return 1;
+    case 22: return 0;
+    case 23: return 1;
 
-  case 24: return player1.trigger;
-  case 25: return player2.trigger;
-  case 26: return player1.start;
-  case 27: return player2.start;
-  case 28: return active;
+    case 24: return player1.trigger;
+    case 25: return player2.trigger;
+    case 26: return player1.start;
+    case 27: return player2.start;
+    case 28: return active;
 
-  case 29: return 0;
-  case 30: return 0;
-  case 31: return 0;
+    case 29: return 0;
+    case 30: return 0;
+    case 31: return 0;
   }
 
   return 0; // unreachable
 }
 
 void Justifier::latch(bool data) {
-  if(latched == data) return;
-  latched = data;
-  counter = 0;
-  if(latched == 0) active = !active;  //toggle between both controllers, even when unchained
+  if(latched != data) {
+    latched = data;
+    counter = 0;
+    //toggle between both controllers, even when unchained
+    if(latched == 0)
+      active = !active;
+  }
 }
 
 void Justifier::latch() {
@@ -390,69 +395,70 @@ uint8_t Mouse::data() {
   if(counter >= 32) return 1;
 
   switch(counter++) { default:
-  case  0: return 0;
-  case  1: return 0;
-  case  2: return 0;
-  case  3: return 0;
-  case  4: return 0;
-  case  5: return 0;
-  case  6: return 0;
-  case  7: return 0;
+    case  0: return 0;
+    case  1: return 0;
+    case  2: return 0;
+    case  3: return 0;
+    case  4: return 0;
+    case  5: return 0;
+    case  6: return 0;
+    case  7: return 0;
 
-  case  8: return r;
-  case  9: return l;
-  case 10: return (speed >> 1) & 1;
-  case 11: return (speed >> 0) & 1;
+    case  8: return r;
+    case  9: return l;
+    case 10: return (speed >> 1) & 1;
+    case 11: return (speed >> 0) & 1;
 
-  case 12: return 0;  //signature
-  case 13: return 0;  // ||
-  case 14: return 0;  // ||
-  case 15: return 1;  // ||
+    case 12: return 0;  //signature
+    case 13: return 0;  // ||
+    case 14: return 0;  // ||
+    case 15: return 1;  // ||
 
-  case 16: return dy;
-  case 17: return (y >> 6) & 1;
-  case 18: return (y >> 5) & 1;
-  case 19: return (y >> 4) & 1;
-  case 20: return (y >> 3) & 1;
-  case 21: return (y >> 2) & 1;
-  case 22: return (y >> 1) & 1;
-  case 23: return (y >> 0) & 1;
+    case 16: return dy;
+    case 17: return (y >> 6) & 1;
+    case 18: return (y >> 5) & 1;
+    case 19: return (y >> 4) & 1;
+    case 20: return (y >> 3) & 1;
+    case 21: return (y >> 2) & 1;
+    case 22: return (y >> 1) & 1;
+    case 23: return (y >> 0) & 1;
 
-  case 24: return dx;
-  case 25: return (x >> 6) & 1;
-  case 26: return (x >> 5) & 1;
-  case 27: return (x >> 4) & 1;
-  case 28: return (x >> 3) & 1;
-  case 29: return (x >> 2) & 1;
-  case 30: return (x >> 1) & 1;
-  case 31: return (x >> 0) & 1;
+    case 24: return dx;
+    case 25: return (x >> 6) & 1;
+    case 26: return (x >> 5) & 1;
+    case 27: return (x >> 4) & 1;
+    case 28: return (x >> 3) & 1;
+    case 29: return (x >> 2) & 1;
+    case 30: return (x >> 1) & 1;
+    case 31: return (x >> 0) & 1;
   }
 }
 
 void Mouse::latch(bool data) {
-  if(latched == data) return;
-  latched = data;
-  counter = 0;
+  if(latched != data) {
+    latched = data;
+    counter = 0;
 
-  x = inputPoll(port, ID::Device::Mouse, X);  //-n = left, 0 = center, +n = right
-  y = inputPoll(port, ID::Device::Mouse, Y);  //-n = up,   0 = center, +n = down
-  l = inputPoll(port, ID::Device::Mouse, Left);
-  r = inputPoll(port, ID::Device::Mouse, Right);
+    x = inputPoll(port, ID::Device::Mouse, X);  //-n = left, 0 = center, +n = right
+    y = inputPoll(port, ID::Device::Mouse, Y);  //-n = up,   0 = center, +n = down
+    l = inputPoll(port, ID::Device::Mouse, Left);
+    r = inputPoll(port, ID::Device::Mouse, Right);
 
-  dx = x < 0;  //0 = right, 1 = left
-  dy = y < 0;  //0 = down,  1 = up
+    dx = x < 0;  //0 = right, 1 = left
+    dy = y < 0;  //0 = down,  1 = up
 
-  if(x < 0) x = -x;  //abs(position_x)
-  if(y < 0) y = -y;  //abs(position_y)
+    if(x < 0) x = -x;  //abs(position_x)
+    if(y < 0) y = -y;  //abs(position_y)
 
-  double multiplier = 1.0;
-  if(speed == 1) multiplier = 1.5;
-  if(speed == 2) multiplier = 2.0;
-  x = (double)x * multiplier;
-  y = (double)y * multiplier;
+    double multiplier = 1.0;
+    if(speed == 1) multiplier = 1.5;
+    if(speed == 2) multiplier = 2.0;
+    x = (double)x * multiplier;
+    y = (double)y * multiplier;
 
-  x = std::min(127, x);
-  y = std::min(127, y);
+    x = std::min(127, x);
+    y = std::min(127, y);
+  }
 }
 
 SuperMultitap::SuperMultitap(unsigned deviceID) : Controller(deviceID) {
@@ -485,43 +491,44 @@ uint8_t SuperMultitap::data() {
   Gamepad& padB = gamepads[b];
 
   switch(counter) {
-  case  0: return padA.b << 0 | padB.b << 1;
-  case  1: return padA.y << 0 | padB.y << 1;
-  case  2: return padA.select << 0 | padB.select << 1;
-  case  3: return padA.start << 0 | padB.start << 1;
-  case  4: return (padA.up & !padA.down) << 0 | (padB.up & !padB.down) << 1;
-  case  5: return (padA.down & !padA.up) << 0 | (padB.down & !padB.up) << 1;
-  case  6: return (padA.left & !padA.right) << 0 | (padB.left & !padB.right) << 1;
-  case  7: return (padA.right & !padA.left) << 0 | (padB.right & !padB.left) << 1;
-  case  8: return padA.a << 0 | padB.a << 1;
-  case  9: return padA.x << 0 | padB.x << 1;
-  case 10: return padA.l << 0 | padB.l << 1;
-  case 11: return padA.r << 0 | padB.r << 1;
+    case  0: return padA.b << 0 | padB.b << 1;
+    case  1: return padA.y << 0 | padB.y << 1;
+    case  2: return padA.select << 0 | padB.select << 1;
+    case  3: return padA.start << 0 | padB.start << 1;
+    case  4: return (padA.up & !padA.down) << 0 | (padB.up & !padB.down) << 1;
+    case  5: return (padA.down & !padA.up) << 0 | (padB.down & !padB.up) << 1;
+    case  6: return (padA.left & !padA.right) << 0 | (padB.left & !padB.right) << 1;
+    case  7: return (padA.right & !padA.left) << 0 | (padB.right & !padB.left) << 1;
+    case  8: return padA.a << 0 | padB.a << 1;
+    case  9: return padA.x << 0 | padB.x << 1;
+    case 10: return padA.l << 0 | padB.l << 1;
+    case 11: return padA.r << 0 | padB.r << 1;
   }
   return 0; // unreachable
 }
 
 void SuperMultitap::latch(bool data) {
-  if(latched == data) return;
-  latched = data;
-  counter1 = 0;
-  counter2 = 0;
+  if(latched != data) {
+    latched = data;
+    counter1 = 0;
+    counter2 = 0;
 
-  if(latched == 0) {
-    for(unsigned id = 0; id < 4; ++id) {
-      Gamepad& gamepad = gamepads[id];
-      gamepad.b      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + B);
-      gamepad.y      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Y);
-      gamepad.select = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Select);
-      gamepad.start  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Start);
-      gamepad.up     = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Up);
-      gamepad.down   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Down);
-      gamepad.left   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Left);
-      gamepad.right  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Right);
-      gamepad.a      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + A);
-      gamepad.x      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + X);
-      gamepad.l      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + L);
-      gamepad.r      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + R);
+    if(latched == 0) {
+      for(unsigned id = 0; id < 4; ++id) {
+        Gamepad& gamepad = gamepads[id];
+        gamepad.b      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + B);
+        gamepad.y      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Y);
+        gamepad.select = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Select);
+        gamepad.start  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Start);
+        gamepad.up     = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Up);
+        gamepad.down   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Down);
+        gamepad.left   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Left);
+        gamepad.right  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Right);
+        gamepad.a      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + A);
+        gamepad.x      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + X);
+        gamepad.l      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + L);
+        gamepad.r      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + R);
+      }
     }
   }
 }
@@ -599,23 +606,24 @@ uint8_t SuperScope::data() {
   }
 
   switch(counter++) {
-  case 0: return offscreen ? 0 : trigger;
-  case 1: return cursor;
-  case 2: return turbo;
-  case 3: return pause;
-  case 4: return 0;
-  case 5: return 0;
-  case 6: return offscreen;
-  case 7: return 0;  //noise (1 = yes)
+    case 0: return offscreen ? 0 : trigger;
+    case 1: return cursor;
+    case 2: return turbo;
+    case 3: return pause;
+    case 4: return 0;
+    case 5: return 0;
+    case 6: return offscreen;
+    case 7: return 0;  //noise (1 = yes)
   }
 
   return 0; // unreachable
 }
 
 void SuperScope::latch(bool data) {
-  if(latched == data) return;
-  latched = data;
-  counter = 0;
+  if(latched != data) {
+    latched = data;
+    counter = 0;
+  }
 }
 
 void SuperScope::latch() {
