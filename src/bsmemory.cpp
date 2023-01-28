@@ -628,24 +628,34 @@ void BSMemory::Queue::flush() {
 }
 
 void BSMemory::Queue::pop() {
-  if(history[3].valid) { history[3] = {}; return; }
-  if(history[2].valid) { history[2] = {}; return; }
-  if(history[1].valid) { history[1] = {}; return; }
-  if(history[0].valid) { history[0] = {}; return; }
+  if(history[3].valid) {
+    history[3] = {};
+  } else if(history[2].valid) {
+    history[2] = {};
+  } else if(history[1].valid) {
+    history[1] = {};
+  } else if(history[0].valid) {
+    history[0] = {};
+  }
 }
 
 void BSMemory::Queue::push(uint32_t address, uint8_t data) {
-  if(!history[0].valid) { history[0] = {true, address, data}; return; }
-  if(!history[1].valid) { history[1] = {true, address, data}; return; }
-  if(!history[2].valid) { history[2] = {true, address, data}; return; }
-  if(!history[3].valid) { history[3] = {true, address, data}; return; }
+  if(!history[0].valid) {
+    history[0] = {true, address, data};
+  } else if(!history[1].valid) {
+    history[1] = {true, address, data};
+  } else if(!history[2].valid) {
+    history[2] = {true, address, data};
+  } else if(!history[3].valid) {
+    history[3] = {true, address, data};
+  }
 }
 
 unsigned BSMemory::Queue::size() {
   if(history[3].valid) return 4;
-  if(history[2].valid) return 3;
-  if(history[1].valid) return 2;
-  if(history[0].valid) return 1;
+  else if(history[2].valid) return 3;
+  else if(history[1].valid) return 2;
+  else if(history[0].valid) return 1;
   return 0;
 }
 
