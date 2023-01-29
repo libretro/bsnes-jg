@@ -157,6 +157,10 @@ void ArmDSP::synchronizeCPU() {
   }
 }
 
+void ArmDSP::unload() {
+  destroy();
+}
+
 void ArmDSP::boot() {
   //reset hold delay
   while(bridge.reset) {

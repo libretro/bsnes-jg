@@ -30,6 +30,7 @@ struct EpsonRTC : Thread {
   void step(unsigned);
 
   void initialize();
+  void unload();
   void power();
   void synchronize(uint64_t);
 

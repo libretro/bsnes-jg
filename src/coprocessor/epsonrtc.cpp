@@ -523,6 +523,10 @@ void EpsonRTC::initialize() {
   test = 0;
 }
 
+void EpsonRTC::unload() {
+  destroy();
+}
+
 void EpsonRTC::power() {
   create(Enter, 32768 * 64);
 

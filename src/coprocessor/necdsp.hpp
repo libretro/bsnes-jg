@@ -26,6 +26,7 @@ namespace SuperFamicom {
 
 struct NECDSP : Processor::uPD96050, Thread {
   void synchronizeCPU();
+  void unload();
   void main();
   void step(unsigned);
 

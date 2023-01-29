@@ -231,6 +231,10 @@ void SharpRTC::initialize() {
   weekday = 0;
 }
 
+void SharpRTC::unload() {
+  destroy();
+}
+
 void SharpRTC::power() {
   create(Enter, 1);
 

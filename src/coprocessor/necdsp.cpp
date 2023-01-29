@@ -63,6 +63,10 @@ void NECDSP::synchronizeCPU() {
   }
 }
 
+void NECDSP::unload() {
+  destroy();
+}
+
 void NECDSP::main() {
   exec();
   step(1);

@@ -353,7 +353,11 @@ void System::unload() {
     if(cartridge.has.Event) event.unload();
     if(cartridge.has.SA1) sa1.unload();
     if(cartridge.has.SuperFX) superfx.unload();
+    if(cartridge.has.ARMDSP) armdsp.unload();
     if(cartridge.has.HitachiDSP) hitachidsp.unload();
+    if(cartridge.has.NECDSP) necdsp.unload();
+    if(cartridge.has.EpsonRTC) epsonrtc.unload();
+    if(cartridge.has.SharpRTC) sharprtc.unload();
     if(cartridge.has.SPC7110) spc7110.unload();
     if(cartridge.has.SDD1) sdd1.unload();
     if(cartridge.has.OBC1) obc1.unload();
