@@ -28,6 +28,7 @@ static thread_local cothread_struct* creating;
 static thread_local cothread_struct* co_running = 0;
 
 static void springboard(int ignored) {
+  (void)ignored;
   if(sigsetjmp(creating->context, 0)) {
     co_running->coentry();
   }
