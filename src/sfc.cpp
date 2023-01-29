@@ -51,6 +51,11 @@ void Thread::create(void (*entrypoint)(), unsigned frequency_) {
   clock = 0;
 }
 
+void Thread::destroy() {
+  if(thread) co_delete(thread);
+  thread = nullptr;
+}
+
 bool Thread::active() const {
   return thread == co_active();
 }

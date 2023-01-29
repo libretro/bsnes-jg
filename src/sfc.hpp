@@ -51,6 +51,7 @@ struct Thread {
   enum : unsigned { Size = 4_KiB * sizeof(void*) };
 
   void create(void (*entrypoint)(), unsigned);
+  void destroy();
   bool active() const;
   void serialize(serializer&);
   void serializeStack(serializer&);
