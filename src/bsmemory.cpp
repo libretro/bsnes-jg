@@ -213,6 +213,7 @@ void BSMemory::unload() {
   }*/
 
   memory.reset();
+  destroy();
 }
 
 void BSMemory::power() {

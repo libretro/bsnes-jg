@@ -444,6 +444,7 @@ void ICD::save() {
 void ICD::unload() {
   //save(); // redundant
   GB_free(&sameboy);
+  destroy();
 }
 
 void ICD::power(bool reset) {

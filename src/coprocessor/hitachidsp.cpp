@@ -358,6 +358,7 @@ void HitachiDSP::halt() {
 void HitachiDSP::unload() {
   rom.reset();
   ram.reset();
+  destroy();
 }
 
 void HitachiDSP::power() {

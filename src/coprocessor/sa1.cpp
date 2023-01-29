@@ -1315,6 +1315,7 @@ void SA1::unload() {
   rom.reset();
   iram.reset();
   bwram.reset();
+  destroy();
 }
 
 void SA1::power() {

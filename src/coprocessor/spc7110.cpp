@@ -526,6 +526,7 @@ void SPC7110::unload() {
   prom.reset();
   drom.reset();
   ram.reset();
+  destroy();
 }
 
 void SPC7110::power() {

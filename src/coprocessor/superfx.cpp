@@ -486,6 +486,7 @@ void SuperFX::main() {
 void SuperFX::unload() {
   rom.reset();
   ram.reset();
+  destroy();
 }
 
 void SuperFX::power() {

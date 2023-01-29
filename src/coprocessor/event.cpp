@@ -80,6 +80,7 @@ void Event::unload() {
   rom[1].reset();
   rom[2].reset();
   rom[3].reset();
+  destroy();
 }
 
 void Event::power() {

@@ -114,6 +114,7 @@ void MSU1::step(unsigned clocks) {
 void MSU1::unload() {
   dataFile.close();
   audioFile.close();
+  destroy();
 }
 
 void MSU1::power() {
