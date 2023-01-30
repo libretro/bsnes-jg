@@ -20,6 +20,7 @@
 
 #include <cstdint>
 
+#include "logger.hpp"
 #include "serializer.hpp"
 #include "cpu.hpp"
 #include "dsp.hpp"
@@ -54,7 +55,7 @@ bool SMP::raise(bool& data, bool value) {
 
 uint8_t SMP::readRAM(uint16_t address) {
   if(address >= 0xffc0 && io.iplromEnable) return iplrom[address & 0x3f];
-  if(io.ramDisable) return 0x5a;  //0xff on mini-SNES
+  else if(io.ramDisable) return 0x5a;  //0xff on mini-SNES
   return dsp.apuram[address];
 }
 
@@ -96,18 +97,27 @@ uint8_t SMP::readDisassembler(uint16_t address) {
 }
 
 uint8_t SMP::portRead(uint8_t port) const {
-  if(port == 0) return io.cpu0;
-  if(port == 1) return io.cpu1;
-  if(port == 2) return io.cpu2;
-  if(port == 3) return io.cpu3;
-  return 0; // unreachable
+  switch(port) {
+    case 0: return io.cpu0;
+    case 1: return io.cpu1;
+    case 2: return io.cpu2;
+    case 3: return io.cpu3;
+    default:
+      logger.log(Logger::WRN, "SMP: Invalid Port Read: 0x%02x\n", port);
+      return 0;
+  }
 }
 
 void SMP::portWrite(uint8_t port, uint8_t data) {
-  if(port == 0) io.apu0 = data;
-  if(port == 1) io.apu1 = data;
-  if(port == 2) io.apu2 = data;
-  if(port == 3) io.apu3 = data;
+  switch(port) {
+    case 0: io.apu0 = data; break;
+    case 1: io.apu1 = data; break;
+    case 2: io.apu2 = data; break;
+    case 3: io.apu3 = data; break;
+    default:
+      logger.log(Logger::WRN, "SMP: Invalid Port Write: 0x%02x\n", port);
+      break;
+  }
 }
 
 uint8_t SMP::readIO(uint16_t address) {
@@ -168,9 +178,10 @@ uint8_t SMP::readIO(uint16_t address) {
     data = timer2.stage3;
     timer2.stage3 = 0;
     return data;
+  default:
+    logger.log(Logger::WRN, "SMP: Invalid Address: 0x%04x\n", address);
+    return data;
   }
-
-  return data;  //unreachable
 }
 
 void SMP::writeIO(uint16_t address, uint8_t data) {
@@ -327,28 +338,28 @@ bool SMP::Timer<Frequency>::lower(bool& data, bool value) {
 template<unsigned Frequency> void SMP::Timer<Frequency>::step(unsigned clocks) {
   //stage 0 increment
   stage0 += clocks;
-  if(stage0 < Frequency) return;
-  stage0 -= Frequency;
+  if(stage0 >= Frequency) {
+    stage0 -= Frequency;
 
-  //stage 1 increment
-  stage1 ^= 1;
-  synchronizeStage1();
+    //stage 1 increment
+    stage1 ^= 1;
+    synchronizeStage1();
+  }
 }
 
 template<unsigned Frequency> void SMP::Timer<Frequency>::synchronizeStage1() {
   bool level = stage1;
-  if(!smp.io.timersEnable) level = false;
-  if(smp.io.timersDisable) level = false;
 
-  if(!lower(line, level)) return;  //only pulse on 1->0 transition
+  if(!smp.io.timersEnable || smp.io.timersDisable)
+    level = false;
 
+  //only pulse on 1->0 transition
   //stage 2 increment
-  if(!enable) return;
-  if(++stage2 != target) return;
-
-  //stage 3 increment
-  stage2 = 0;
-  stage3 = (stage3 + 1) & 0x0f;
+  if(lower(line, level) && enable && ++stage2 == target) {
+    //stage 3 increment
+    stage2 = 0;
+    stage3 = (stage3 + 1) & 0x0f;
+  }
 }
 
 void SMP::serialize(serializer& s) {
@@ -424,7 +435,7 @@ void SMP::synchronizeDSP() {
 
 void SMP::main() {
   if(r.wait) return instructionWait();
-  if(r.stop) return instructionStop();
+  else if(r.stop) return instructionStop();
   instruction();
 }
 
