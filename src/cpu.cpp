@@ -203,12 +203,13 @@ void CPU::Channel::hdmaReset() {
 
 void CPU::Channel::hdmaSetup() {
   hdmaDoTransfer = true;  //note: needs hardware verification
-  if(!hdmaEnable) return;
 
-  dmaEnable = false;  //HDMA will stop active DMA mid-transfer
-  hdmaAddress = sourceAddress;
-  lineCounter = 0;
-  hdmaReload();
+  if(hdmaEnable) {
+    dmaEnable = false;  //HDMA will stop active DMA mid-transfer
+    hdmaAddress = sourceAddress;
+    lineCounter = 0;
+    hdmaReload();
+  }
 }
 
 void CPU::Channel::hdmaReload() {
@@ -233,21 +234,23 @@ void CPU::Channel::hdmaReload() {
 }
 
 void CPU::Channel::hdmaTransfer() {
-  if(!hdmaActive()) return;
-  dmaEnable = false;  //HDMA will stop active DMA mid-transfer
-  if(!hdmaDoTransfer) return;
-
-  for(uint8_t index = 0; index < dmaLengths[transferMode]; ++index) {
-    uint32_t address = !indirect ? sourceBank << 16 | hdmaAddress++ : indirectBank << 16 | indirectAddress++;
-    transfer(address, index);
+  if(hdmaActive()) {
+    dmaEnable = false;  //HDMA will stop active DMA mid-transfer
+    if(hdmaDoTransfer) {
+      for(uint8_t index = 0; index < dmaLengths[transferMode]; ++index) {
+        uint32_t address = !indirect ? sourceBank << 16 | hdmaAddress++ : indirectBank << 16 | indirectAddress++;
+        transfer(address, index);
+      }
+    }
   }
 }
 
 void CPU::Channel::hdmaAdvance() {
-  if(!hdmaActive()) return;
-  --lineCounter;
-  hdmaDoTransfer = bool(lineCounter & 0x80);
-  hdmaReload();
+  if(hdmaActive()) {
+    --lineCounter;
+    hdmaDoTransfer = bool(lineCounter & 0x80);
+    hdmaReload();
+  }
 }
 
 void CPU::idle() {
@@ -404,9 +407,8 @@ uint8_t CPU::readCPU(unsigned addr, uint8_t data) {
   case 0x421e: return io.joy4 >> 0;   //JOY4L
   case 0x421f: return io.joy4 >> 8;   //JOY4H
 
+  default: return data;
   }
-
-  return data;
 }
 
 uint8_t CPU::readDMA(unsigned addr, uint8_t data) {
@@ -437,9 +439,8 @@ uint8_t CPU::readDMA(unsigned addr, uint8_t data) {
   case 0x430b: return channel.unknown;             //???x
   case 0x430f: return channel.unknown;             //???x ($43xb mirror)
 
+  default: return data;
   }
-
-  return data;
 }
 
 void CPU::writeRAM(unsigned addr, uint8_t data) {
@@ -565,7 +566,6 @@ void CPU::writeCPU(unsigned addr, uint8_t data) {
   case 0x420d:  //MEMSEL
     io.fastROM = data & 1;
     return;
-
   }
 }
 
@@ -662,8 +662,7 @@ void CPU::step() {
   if(overclocking.target) {
     overclocking.counter += Clocks;
     if(overclocking.counter < overclocking.target) {
-      if(Synchronize) {
-        if(configuration.coprocessor.delayedSync) return;
+      if(Synchronize && !configuration.coprocessor.delayedSync) {
         synchronizeCoprocessors();
       }
       return;
@@ -680,8 +679,8 @@ void CPU::step() {
   smp.clock -= Clocks * (uint64_t)smp.frequency;
   ppu.clock -= Clocks;
   for(Thread* coprocessor : coprocessors) {
-    if(coprocessor != &icd && coprocessor != &msu1) continue;
-    coprocessor->clock -= Clocks * (uint64_t)coprocessor->frequency;
+    if(coprocessor == &icd || coprocessor == &msu1)
+      coprocessor->clock -= Clocks * (uint64_t)coprocessor->frequency;
   }
 
   if(!status.dramRefresh && hcounter() >= status.dramRefreshPosition) {
@@ -711,8 +710,7 @@ void CPU::step() {
     }
   }
 
-  if (Synchronize) {
-    if(configuration.coprocessor.delayedSync) return;
+  if (Synchronize && !configuration.coprocessor.delayedSync) {
     synchronizeCoprocessors();
   }
 }
@@ -836,10 +834,8 @@ void CPU::dmaEdge() {
     }
   }
 
-  if(!status.dmaActive) {
-    if(status.dmaPending || status.hdmaPending) {
-      status.dmaActive = true;
-    }
+  if(!status.dmaActive && (status.dmaPending || status.hdmaPending)) {
+    status.dmaActive = true;
   }
 }
 
@@ -1108,22 +1104,22 @@ void CPU::synchronizeCoprocessors() {
 
 void CPU::main() {
   if(r.wai) return instructionWait();
-  if(r.stp) return instructionStop();
-  if(!status.interruptPending) return instruction();
+  else if(r.stp) return instructionStop();
+  else if(!status.interruptPending) return instruction();
 
-  if(status.nmiPending) {
+  else if(status.nmiPending) {
     status.nmiPending = 0;
     r.vector = r.e ? 0xfffa : 0xffea;
     return interrupt();
   }
 
-  if(status.irqPending) {
+  else if(status.irqPending) {
     status.irqPending = 0;
     r.vector = r.e ? 0xfffe : 0xffee;
     return interrupt();
   }
 
-  if(status.resetPending) {
+  else if(status.resetPending) {
     status.resetPending = 0;
     for(unsigned repeat = 0; repeat < 22; ++repeat) step<6,0>(); //step(132);
     r.vector = 0xfffc;
@@ -1134,9 +1130,8 @@ void CPU::main() {
 }
 
 bool CPU::load() {
-  version = configuration.system.cpu.version;
-  if(version < 1) version = 1;
-  if(version > 2) version = 2;
+  if(configuration.system.cpu.version <= 1) version = 1;
+  else version = 2;
   return true;
 }
 
