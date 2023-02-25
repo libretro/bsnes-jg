@@ -1,3 +1,10 @@
+Version 1.1.1
+-------------
+ - Allow selecting either RGBX5551 or XRGB1555 pixel format
+ - Code cleanups
+ - Add cothread destroy function to clean up cothreads when no longer used
+ - Use standard memory allocation instead of vector for resampled audio output
+
 Version 1.1.0
 -------------
  - Support addressing non-power-of-two ROMs with SuperFX coprocessor
