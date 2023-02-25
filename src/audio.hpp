@@ -67,7 +67,7 @@ struct Stream {
   SRC_DATA srcdata;
   std::vector<float> queue_in;
   std::vector<float> queue_out;
-  std::vector<float> resamp_out;
+  float *resamp_out;
   unsigned spf_in = 0;
 
 private:

@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cstdlib>
 #include <cstdint>
 #include <cstring>
 #include <vector>
@@ -59,7 +60,7 @@ Stream::~Stream() {
     srcstate = nullptr;
     queue_in.clear();
     queue_out.clear();
-    resamp_out.clear();
+    free(resamp_out);
 }
 
 void Stream::reset(double freq_in) {
@@ -73,7 +74,7 @@ void Stream::reset(double freq_in) {
   setFrequency(freq_in, audio._frequency);
   queue_in.reserve(audio._spf << 1);
   queue_out.reserve(audio._spf << 1);
-  resamp_out.reserve(audio._spf << 1);
+  resamp_out = (float*)calloc((audio._spf << 1), sizeof(float));
 }
 
 void Stream::setFrequency(double freq_in, double freq_out) {
@@ -92,7 +93,7 @@ void Stream::write(const int16_t samples[]) {
 
   if (queue_in.size() == spf_in) {
     srcdata.data_in = queue_in.data();
-    srcdata.data_out = resamp_out.data();
+    srcdata.data_out = resamp_out;
     srcdata.input_frames = spf_in >> 1;
     srcdata.output_frames = audio._spf;
     src_process(srcstate, &srcdata);
