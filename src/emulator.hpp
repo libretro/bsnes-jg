@@ -63,9 +63,6 @@ struct Game {
   std::string region;
   std::string revision;
   std::string board;
-  std::vector<uint8_t> prgrom;
-  std::vector<uint8_t> datarom;
-  std::vector<uint8_t> exprom;
   std::vector<Game::Memory> memoryList;
   std::vector<Game::Oscillator> oscillatorList;
 };
