@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace SuperFamicom {
 
 //incremented only when serialization format changes
