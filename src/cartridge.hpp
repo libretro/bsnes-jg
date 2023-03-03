@@ -88,10 +88,6 @@ private:
   std::string board;
   std::string forceRegion;
 
-  std::vector<uint8_t> prgrom;
-  std::vector<uint8_t> datarom;
-  std::vector<uint8_t> exprom;
-
   std::string loadBoard(std::string);
   void loadBSMemory(std::string);
 
