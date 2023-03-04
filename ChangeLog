@@ -1,3 +1,7 @@
+Version 1.1.2
+-------------
+ - Build fix for GCC 13
+
 Version 1.1.1
 -------------
  - Allow selecting either RGBX5551 or XRGB1555 pixel format
