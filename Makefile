@@ -46,18 +46,17 @@ USE_VENDORED_SAMPLERATE ?= 0
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Darwin)
-	SHARED += -dynamiclib
 	TARGET := $(NAME).dylib
 else ifeq ($(OS), Windows_NT)
-	SHARED += -shared
 	TARGET := $(NAME).dll
 else
-	SHARED += -shared
 	TARGET := $(NAME).so
 endif
 
-ifeq ($(UNAME), Linux)
-	LIBS += -Wl,--no-undefined
+ifeq ($(UNAME), Darwin)
+	SHARED += -dynamiclib -Wl,-undefined,error
+else
+	SHARED += -shared -Wl,--no-undefined
 endif
 
 CSRCS := deps/gb/apu.c \
