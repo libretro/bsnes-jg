@@ -1,4 +1,25 @@
 //database
+//  revision: 2023-04-29
+
+//Homebrew
+game
+  sha256:   91fca82b086b9e5e2b5191c969c25d47d50f6b1a9c1452ddb7bc3d8947210ad9
+  label:    Mega Man II SNES (Rev A - infidelity)
+  name:     Mega Man II SNES (Rev A - infidelity)
+  title:    MEGA MAN II SNES
+  region:   NTSC
+  revision: 1.0
+  board:    LOROM-RAM
+    memory
+      type: ROM
+      size: 0x200000
+      content: Program
+    memory
+      type: RAM
+      size: 0x800
+      content: Save
+
+//database
 //  revision: 2020-01-21
 
 //Prototypes (JPN)
