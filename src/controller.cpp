@@ -277,7 +277,7 @@ device(!chained ? ID::Device::Justifier : ID::Device::Justifiers)
   player1.x = 256 / 2;
   player1.y = 240 / 2;
   player1.trigger = false;
-  player2.start = false;
+  player1.start = false;
 
   player2.x = 256 / 2;
   player2.y = 240 / 2;
