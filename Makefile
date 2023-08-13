@@ -139,7 +139,6 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 #	src/expansion/21fx.cpp \
 
 ifneq ($(USE_VENDORED_SAMPLERATE), 0)
-	Q_SAMPLERATE :=
 	CFLAGS_SAMPLERATE := -I$(SOURCEDIR)/deps/libsamplerate
 	LIBS_SAMPLERATE :=
 	CSRCS += deps/libsamplerate/samplerate.c \
@@ -147,7 +146,6 @@ ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 		deps/libsamplerate/src_sinc.c \
 		deps/libsamplerate/src_zoh.c
 else
-	Q_SAMPLERATE := @
 	CFLAGS_SAMPLERATE := $(shell $(PKG_CONFIG) --cflags samplerate)
 	LIBS_SAMPLERATE := $(shell $(PKG_CONFIG) --libs samplerate)
 endif
@@ -264,10 +262,10 @@ install: all
 	cp $(SOURCEDIR)/deps/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
 	cp $(SOURCEDIR)/deps/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
 	cp $(SOURCEDIR)/deps/snes_spc/license.txt $(DESTDIR)$(DOCDIR)/LICENSE-spc
-	$(Q_SAMPLERATE)if test $(USE_VENDORED_SAMPLERATE) != 0; then \
-		cp $(SOURCEDIR)/deps/libsamplerate/COPYING \
-			$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate; \
-	fi
+ifneq ($(USE_VENDORED_SAMPLERATE), 0)
+	cp $(SOURCEDIR)/deps/libsamplerate/COPYING \
+		$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate
+endif
 
 install-strip: install
 	strip $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
