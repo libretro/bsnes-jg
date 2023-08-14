@@ -261,16 +261,16 @@ static std::ifstream fileOpen(unsigned id, std::string name) {
             path = std::string(pathinfo.core) + "/boards.bml";
             required = true;
         }
-        else if (name == "BS Memory.bml") {
-            path = std::string(pathinfo.core) + "/BS Memory.bml";
+        else if (name == "BSMemory.bml") {
+            path = std::string(pathinfo.core) + "/BSMemory.bml";
             required = true;
         }
-        else if (name == "Sufami Turbo.bml") {
-            path = std::string(pathinfo.core) + "/Sufami Turbo.bml";
+        else if (name == "SufamiTurbo.bml") {
+            path = std::string(pathinfo.core) + "/SufamiTurbo.bml";
             required = true;
         }
-        else if (name == "Super Famicom.bml") {
-            path = std::string(pathinfo.core) + "/Super Famicom.bml";
+        else if (name == "SuperFamicom.bml") {
+            path = std::string(pathinfo.core) + "/SuperFamicom.bml";
             required = true;
         }
     }

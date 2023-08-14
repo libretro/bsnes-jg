@@ -239,9 +239,9 @@ $(NAME)/$(TARGET): $(OBJS)
 	@mkdir -p $(NAME)
 	$(CXX) $^ $(LDFLAGS) $(LIBS) $(SHARED) -o $@
 	@cp $(SOURCEDIR)/Database/boards.bml $(NAME)/
-	@cp $(SOURCEDIR)/Database/BS\ Memory.bml $(NAME)/
-	@cp $(SOURCEDIR)/Database/Sufami\ Turbo.bml $(NAME)/
-	@cp $(SOURCEDIR)/Database/Super\ Famicom.bml $(NAME)/
+	@cp $(SOURCEDIR)/Database/BSMemory.bml $(NAME)/
+	@cp $(SOURCEDIR)/Database/SufamiTurbo.bml $(NAME)/
+	@cp $(SOURCEDIR)/Database/SuperFamicom.bml $(NAME)/
 
 clean:
 	rm -rf $(OBJDIR) $(NAME)
@@ -252,9 +252,9 @@ install: all
 	@mkdir -p $(DESTDIR)$(LIBDIR)/jollygood
 	cp $(NAME)/$(TARGET) $(DESTDIR)$(LIBDIR)/jollygood/
 	cp $(NAME)/boards.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
-	cp $(NAME)/BS\ Memory.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
-	cp $(NAME)/Sufami\ Turbo.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
-	cp $(NAME)/Super\ Famicom.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
+	cp $(NAME)/BSMemory.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
+	cp $(NAME)/SufamiTurbo.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
+	cp $(NAME)/SuperFamicom.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 	cp $(SOURCEDIR)/COPYING $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/README $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/deps/byuuML/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-byuuML

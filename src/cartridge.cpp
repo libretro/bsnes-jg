@@ -1331,7 +1331,7 @@ void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   slotBSMemory.prgrom = data;
   Heuristics::BSMemory heuristics = Heuristics::BSMemory(data, loc);
 
-  std::ifstream dbfile = openCallback(ID::System, "BS Memory.bml");
+  std::ifstream dbfile = openCallback(ID::System, "BSMemory.bml");
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
@@ -1345,7 +1345,7 @@ void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc)
   Heuristics::SufamiTurbo heuristics = Heuristics::SufamiTurbo(data, loc);
 
   std::ifstream dbfile =
-    openCallback(ID::System, "Sufami Turbo.bml");
+    openCallback(ID::System, "SufamiTurbo.bml");
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
@@ -1362,7 +1362,7 @@ void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
   Heuristics::SufamiTurbo heuristics = Heuristics::SufamiTurbo(data, loc);
 
   std::ifstream dbfile =
-    openCallback(ID::System, "Sufami Turbo.bml");
+    openCallback(ID::System, "SufamiTurbo.bml");
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
@@ -1378,7 +1378,7 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
   Heuristics::SuperFamicom heuristics = Heuristics::SuperFamicom(data, loc);
 
   std::ifstream dbfile =
-    openCallback(ID::System, "Super Famicom.bml");
+    openCallback(ID::System, "SuperFamicom.bml");
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
   dbfile.close();
