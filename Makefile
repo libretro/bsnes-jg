@@ -51,7 +51,7 @@ USE_VENDORED_SAMPLERATE ?= 0
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Darwin)
-	LIBRARY:= $(NAME).dylib
+	LIBRARY := $(NAME).dylib
 else ifeq ($(OS), Windows_NT)
 	LIBRARY := $(NAME).dll
 else
