@@ -38,10 +38,11 @@ SHARED := $(PIC)
 
 NAME := bsnes
 PREFIX ?= /usr/local
+EXEC_PREFIX ?= $(PREFIX)
+LIBDIR ?= $(EXEC_PREFIX)/lib
 DATAROOTDIR ?= $(PREFIX)/share
 DATADIR ?= $(DATAROOTDIR)
 DOCDIR ?= $(DATAROOTDIR)/doc/$(NAME)
-LIBDIR ?= $(PREFIX)/lib
 
 LIBPATH := $(LIBDIR)/jollygood
 
