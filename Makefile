@@ -163,7 +163,7 @@ ASSETS := Database/boards.bml \
 	Database/SufamiTurbo.bml \
 	Database/SuperFamicom.bml
 
-ASSETS_TARGET := $(subst Database,$(NAME),$(ASSETS))
+ASSETS_TARGET := $(patsubst %,$(NAME)/%,$(notdir $(ASSETS)))
 
 # Object dirs
 MKDIRS := deps/byuuML \
@@ -304,7 +304,7 @@ endif
 install-strip: install
 	strip $(DESTDIR)$(LIBPATH)/$(LIBRARY)
 else
-install:
+install: all
 	@echo 'Nothing to install'
 
 install-strip: install
