@@ -152,6 +152,14 @@ endif
 INCLUDES += $(CFLAGS_SAMPLERATE)
 LIBS += $(LIBS_SAMPLERATE)
 
+# Assets
+ASSETS := Database/boards.bml \
+	Database/BSMemory.bml \
+	Database/SufamiTurbo.bml \
+	Database/SuperFamicom.bml
+
+ASSETS_TARGET := $(subst Database,$(NAME),$(ASSETS))
+
 # Object dirs
 MKDIRS := deps/byuuML \
 	deps/gb \
@@ -189,7 +197,7 @@ BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 .PHONY: all clean install install-strip uninstall
 
-all: $(NAME)/$(TARGET)
+all: $(ASSETS_TARGET) $(NAME)/$(TARGET)
 
 # byuuML rules
 $(OBJDIR)/deps/byuuML/%.o: $(SOURCEDIR)/deps/byuuML/%.cpp $(OBJDIR)/.tag
@@ -238,10 +246,10 @@ $(OBJDIR)/.tag:
 $(NAME)/$(TARGET): $(OBJS)
 	@mkdir -p $(NAME)
 	$(CXX) $^ $(LDFLAGS) $(LIBS) $(SHARED) -o $@
-	@cp $(SOURCEDIR)/Database/boards.bml $(NAME)/
-	@cp $(SOURCEDIR)/Database/BSMemory.bml $(NAME)/
-	@cp $(SOURCEDIR)/Database/SufamiTurbo.bml $(NAME)/
-	@cp $(SOURCEDIR)/Database/SuperFamicom.bml $(NAME)/
+
+$(ASSETS_TARGET): $(patsubst %,$(SOURCEDIR)/%,$(ASSETS))
+	@mkdir -p $(NAME)
+	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/
 
 clean:
 	rm -rf $(OBJDIR) $(NAME)
