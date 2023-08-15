@@ -1,6 +1,7 @@
 SOURCEDIR := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword \
 	$(MAKEFILE_LIST))))))
 
+AR ?= ar
 CC ?= cc
 CXX ?= c++
 CFLAGS ?= -O2
@@ -42,15 +43,19 @@ DATADIR ?= $(DATAROOTDIR)
 DOCDIR ?= $(DATAROOTDIR)/doc/$(NAME)
 LIBDIR ?= $(PREFIX)/lib
 
+LIBPATH := $(LIBDIR)/jollygood
+
+DISABLE_MODULE ?= 0
+ENABLE_STATIC_JG ?= 0
 USE_VENDORED_SAMPLERATE ?= 0
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Darwin)
-	TARGET := $(NAME).dylib
+	LIBRARY:= $(NAME).dylib
 else ifeq ($(OS), Windows_NT)
-	TARGET := $(NAME).dll
+	LIBRARY := $(NAME).dll
 else
-	TARGET := $(NAME).so
+	LIBRARY := $(NAME).so
 endif
 
 ifeq ($(UNAME), Darwin)
@@ -175,6 +180,19 @@ OBJDIR := objs
 # List of object files
 OBJS := $(patsubst %,$(OBJDIR)/%,$(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o))
 
+# Library targets
+TARGET :=
+TARGET_MODULE := $(NAME)/$(LIBRARY)
+TARGET_STATIC_JG := $(NAME)/lib$(NAME)-jg.a
+
+ifeq ($(DISABLE_MODULE), 0)
+	TARGET += $(TARGET_MODULE)
+endif
+
+ifneq ($(ENABLE_STATIC_JG), 0)
+	TARGET += $(NAME)/jg-static.mk
+endif
+
 # Compiler commands
 COMPILE = $(strip $(1) $(CPPFLAGS) $(PIC) $(2) -c $< -o $@)
 COMPILE_C = $(call COMPILE, $(CC) $(CFLAGS), $(1))
@@ -197,7 +215,7 @@ BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 .PHONY: all clean install install-strip uninstall
 
-all: $(ASSETS_TARGET) $(NAME)/$(TARGET)
+all: $(ASSETS_TARGET) $(TARGET)
 
 # byuuML rules
 $(OBJDIR)/deps/byuuML/%.o: $(SOURCEDIR)/deps/byuuML/%.cpp $(OBJDIR)/.tag
@@ -243,22 +261,31 @@ $(OBJDIR)/.tag:
 	@mkdir -p -- $(patsubst %,$(OBJDIR)/%,$(MKDIRS))
 	@touch $@
 
-$(NAME)/$(TARGET): $(OBJS)
+$(TARGET_MODULE): $(OBJS)
 	@mkdir -p $(NAME)
-	$(CXX) $^ $(LDFLAGS) $(LIBS) $(SHARED) -o $@
+	$(strip $(CXX) -o $@ $^ $(LDFLAGS) $(LIBS) $(SHARED))
+
+$(TARGET_STATIC_JG): $(OBJS)
+	@mkdir -p $(NAME)
+	$(AR) rcs $@ $^
 
 $(ASSETS_TARGET): $(patsubst %,$(SOURCEDIR)/%,$(ASSETS))
 	@mkdir -p $(NAME)
 	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/
 
+$(NAME)/jg-static.mk: $(TARGET_STATIC_JG)
+	@printf '%s\n%s\n%s\n' 'NAME := $(NAME)' 'ASSETS := $(ASSETS_TARGET)' \
+		'LIBS_STATIC := $(LIBS)' > $@
+
 clean:
 	rm -rf $(OBJDIR) $(NAME)
 
+ifeq ($(DISABLE_MODULE), 0)
 install: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
 	@mkdir -p $(DESTDIR)$(DOCDIR)
-	@mkdir -p $(DESTDIR)$(LIBDIR)/jollygood
-	cp $(NAME)/$(TARGET) $(DESTDIR)$(LIBDIR)/jollygood/
+	@mkdir -p $(DESTDIR)$(LIBPATH)
+	cp $(TARGET_MODULE) $(DESTDIR)$(LIBPATH)/
 	cp $(NAME)/boards.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 	cp $(NAME)/BSMemory.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 	cp $(NAME)/SufamiTurbo.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
@@ -275,9 +302,15 @@ ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 endif
 
 install-strip: install
-	strip $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
+	strip $(DESTDIR)$(LIBPATH)/$(LIBRARY)
+else
+install:
+	@echo 'Nothing to install'
+
+install-strip: install
+endif
 
 uninstall:
 	rm -rf $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
 	rm -rf $(DESTDIR)$(DOCDIR)
-	rm -f $(DESTDIR)$(LIBDIR)/jollygood/$(TARGET)
+	rm -f $(DESTDIR)$(LIBPATH)/$(LIBRARY)
