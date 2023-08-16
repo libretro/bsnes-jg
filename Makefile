@@ -164,7 +164,8 @@ ASSETS := Database/boards.bml \
 	Database/SufamiTurbo.bml \
 	Database/SuperFamicom.bml
 
-ASSETS_TARGET := $(patsubst %,$(NAME)/%,$(notdir $(ASSETS)))
+ASSETS_BASE := $(notdir $(ASSETS))
+ASSETS_TARGET := $(ASSETS_BASE:%=$(NAME)/%)
 
 # Object dirs
 MKDIRS := deps/byuuML \
@@ -270,13 +271,12 @@ $(TARGET_STATIC_JG): $(OBJS)
 	@mkdir -p $(NAME)
 	$(AR) rcs $@ $^
 
-$(ASSETS_TARGET): $(patsubst %,$(SOURCEDIR)/%,$(ASSETS))
+$(ASSETS_TARGET): $(ASSETS:%=$(SOURCEDIR)/%)
 	@mkdir -p $(NAME)
 	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/
 
 $(NAME)/jg-static.mk: $(TARGET_STATIC_JG)
-	@printf '%s\n%s\n%s\n' \
-		'NAME := $(NAME)-jg' 'ASSETS := $(ASSETS_TARGET)' \
+	@printf '%s\n%s\n%s\n' 'NAME := $(NAME)-jg' 'ASSETS := $(ASSETS_BASE)' \
 		'LIBS_STATIC := $(strip $(LIBS))' > $@
 
 clean:
