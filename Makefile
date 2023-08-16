@@ -276,7 +276,7 @@ $(ASSETS_TARGET): $(patsubst %,$(SOURCEDIR)/%,$(ASSETS))
 
 $(NAME)/jg-static.mk: $(TARGET_STATIC_JG)
 	@printf '%s\n%s\n%s\n' 'NAME := $(NAME)' 'ASSETS := $(ASSETS_TARGET)' \
-		'LIBS_STATIC := $(LIBS)' > $@
+		'LIBS_STATIC := $(strip $(LIBS))' > $@
 
 clean:
 	rm -rf $(OBJDIR) $(NAME)
