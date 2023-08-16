@@ -275,7 +275,8 @@ $(ASSETS_TARGET): $(patsubst %,$(SOURCEDIR)/%,$(ASSETS))
 	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/
 
 $(NAME)/jg-static.mk: $(TARGET_STATIC_JG)
-	@printf '%s\n%s\n%s\n' 'NAME := $(NAME)' 'ASSETS := $(ASSETS_TARGET)' \
+	@printf '%s\n%s\n%s\n' \
+		'NAME := $(NAME)-jg' 'ASSETS := $(ASSETS_TARGET)' \
 		'LIBS_STATIC := $(strip $(LIBS))' > $@
 
 clean:
