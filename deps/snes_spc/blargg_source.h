@@ -92,9 +92,4 @@ typedef unsigned char byte;
 #define BLARGG_CHECK_ALLOC CHECK_ALLOC
 #define BLARGG_RETURN_ERR RETURN_ERR
 
-// BLARGG_SOURCE_BEGIN: If defined, #included, allowing redefition of dprintf and check
-#ifdef BLARGG_SOURCE_BEGIN
-	#include BLARGG_SOURCE_BEGIN
-#endif
-
 #endif

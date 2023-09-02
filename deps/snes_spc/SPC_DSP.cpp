@@ -18,10 +18,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
-#ifdef BLARGG_ENABLE_OPTIMIZER
-	#include BLARGG_ENABLE_OPTIMIZER
-#endif
-
 #if INT_MAX < 0x7FFFFFFF
 	#error "Requires that int type have at least 32 bits"
 #endif
