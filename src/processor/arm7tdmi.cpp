@@ -147,8 +147,8 @@ uint32_t ARM7TDMI::ADD(uint32_t source, uint32_t modify, bool flagc) {
   uint32_t result = source + modify + flagc;
   if(cpsr().t || (opcode & 1 << 20)) {
     uint32_t overflow = ~(source ^ modify) & (source ^ result);
-    cpsr().v = 1 << 31 & (overflow);
-    cpsr().c = 1 << 31 & (overflow ^ source ^ modify ^ result);
+    cpsr().v = (unsigned{1} << 31) & (overflow);
+    cpsr().c = (unsigned{1} << 31) & (overflow ^ source ^ modify ^ result);
     cpsr().z = result == 0;
     cpsr().n = result >> 31;
   }
@@ -158,7 +158,7 @@ uint32_t ARM7TDMI::ADD(uint32_t source, uint32_t modify, bool flagc) {
 uint32_t ARM7TDMI::ASR(uint32_t source, uint8_t shift) {
   carry = cpsr().c;
   if(shift == 0) return source;
-  carry = shift > 32 ? source & 1 << 31 : source & 1 << (shift - 1);
+  carry = shift > 32 ? source & (unsigned{1} << 31) : source & 1 << (shift - 1);
   source = shift > 31 ? (int32_t)source >> 31 : (int32_t)source >> shift;
   return source;
 }
@@ -205,7 +205,7 @@ uint32_t ARM7TDMI::ROR(uint32_t source, uint8_t shift) {
   carry = cpsr().c;
   if(shift == 0) return source;
   if(shift &= 31) source = source << (32 - shift) | source >> shift;
-  carry = source & 1 << 31;
+  carry = source & (unsigned{1} << 31);
   return source;
 }
 

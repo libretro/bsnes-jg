@@ -426,7 +426,7 @@ void BSMemory::write(unsigned address, uint8_t data) {
       addr2 += (n >> 2 & 3) * 0x40;  //verified for LH28F800SUT-ZI
       addr2 += (n >> 4 & 1) * 0x20;  //guessed for LH28F016SU
       addr2 += (n >> 5 & 1) * 0x04;  //guessed for LH28F032SU; will overwrite unknown constants
-      uint32_t erased = 1 << 31 | block(n).erased;  //unknown if d31 is set when erased == 0
+      uint32_t erased = (unsigned{1} << 31) | block(n).erased;  //unknown if d31 is set when erased == 0
       for(unsigned byte = 0; byte < 4; ++byte) {
         page.write(addr2 + byte, erased >> byte * 8);  //little endian
       }
