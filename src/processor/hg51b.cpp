@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "logger.hpp"
 #include "serializer.hpp"
 
 #include "hg51b.hpp"
@@ -144,7 +145,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("0000 00.. .... ....");
     uint16_t opcode = pattern(0x0000) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -152,7 +153,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("0000 01.. .... ....");
     uint16_t opcode = pattern(0x0400) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -162,7 +163,7 @@ HG51B::HG51B() {
   for(unsigned far = 0; far < 2; ++far) {
     //uint16_t opcode = pattern("0000 10f. dddd dddd");
     uint16_t opcode = pattern(0x0800) | data | null << 8 | far << 9;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionJMP(data, far, 1); };
   }
 
@@ -172,7 +173,7 @@ HG51B::HG51B() {
   for(unsigned far = 0; far < 2; ++far) {
     //uint16_t opcode = pattern("0000 11f. dddd dddd");
     uint16_t opcode = pattern(0x0c00) | data | null << 8 | far << 9;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionJMP(data, far, r.z); };
   }
 
@@ -182,7 +183,7 @@ HG51B::HG51B() {
   for(unsigned far = 0; far < 2; ++far) {
     //uint16_t opcode = pattern("0001 00f. dddd dddd");
     uint16_t opcode = pattern(0x1000) | data | null << 8 | far << 9;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionJMP(data, far, r.c); };
   }
 
@@ -192,7 +193,7 @@ HG51B::HG51B() {
   for(unsigned far = 0; far < 2; ++far) {
     //uint16_t opcode = pattern("0001 01f. dddd dddd");
     uint16_t opcode = pattern(0x1400) | data | null << 8 | far << 9;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionJMP(data, far, r.n); };
   }
 
@@ -202,7 +203,7 @@ HG51B::HG51B() {
   for(unsigned far = 0; far < 2; ++far) {
     //uint16_t opcode = pattern("0001 10f. dddd dddd");
     uint16_t opcode = pattern(0x1800) | data | null << 8 | far << 9;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionJMP(data, far, r.v); };
   }
 
@@ -210,7 +211,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("0001 11.. .... ....");
     uint16_t opcode = pattern(0x1c00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionWAIT(); };
   }
 
@@ -218,7 +219,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("0010 00.. .... ....");
     uint16_t opcode = pattern(0x2000) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -227,7 +228,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 128; ++null) {
     //uint16_t opcode = pattern("0010 0100 .... ...t");
     uint16_t opcode = pattern(0x2400) | take | null << 1;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSKIP(take, r.v); };
   }
 
@@ -236,7 +237,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 128; ++null) {
     //uint16_t opcode = pattern("0010 0101 .... ...t");
     uint16_t opcode = pattern(0x2500) | take | null << 1;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSKIP(take, r.c); };
   }
 
@@ -245,7 +246,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 128; ++null) {
     //uint16_t opcode = pattern("0010 0110 .... ...t");
     uint16_t opcode = pattern(0x2600) | take | null << 1;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSKIP(take, r.z); };
   }
 
@@ -254,7 +255,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 128; ++null) {
     //uint16_t opcode = pattern("0010 0111 .... ...t");
     uint16_t opcode = pattern(0x2700) | take | null << 1;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSKIP(take, r.n); };
   }
 
@@ -264,7 +265,7 @@ HG51B::HG51B() {
   for(unsigned far = 0; far < 2; ++far) {
     //uint16_t opcode = pattern("0010 10f. dddd dddd");
     uint16_t opcode = pattern(0x2800) | data | null << 8 | far << 9;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionJSR(data, far, 1); };
   }
 
@@ -274,7 +275,7 @@ HG51B::HG51B() {
   for(unsigned far = 0; far < 2; ++far) {
     //uint16_t opcode = pattern("0010 11f. dddd dddd");
     uint16_t opcode = pattern(0x2c00) | data | null << 8 | far << 9;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionJSR(data, far, r.z); };
   }
 
@@ -284,7 +285,7 @@ HG51B::HG51B() {
   for(unsigned far = 0; far < 2; ++far) {
     //uint16_t opcode = pattern("0011 00f. dddd dddd");
     uint16_t opcode = pattern(0x3000) | data | null << 8 | far << 9;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionJSR(data, far, r.c); };
   }
 
@@ -294,7 +295,7 @@ HG51B::HG51B() {
   for(unsigned far = 0; far < 2; ++far) {
     //uint16_t opcode = pattern("0011 01f. dddd dddd");
     uint16_t opcode = pattern(0x3400) | data | null << 8 | far << 9;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionJSR(data, far, r.n); };
   }
 
@@ -304,7 +305,7 @@ HG51B::HG51B() {
   for(unsigned far = 0; far < 2; ++far) {
     //uint16_t opcode = pattern("0011 10f. dddd dddd");
     uint16_t opcode = pattern(0x3800) | data | null << 8 | far << 9;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionJSR(data, far, r.v); };
   }
 
@@ -312,7 +313,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("0011 11.. .... ....");
     uint16_t opcode = pattern(0x3c00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionRTS(); };
   }
 
@@ -320,7 +321,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("0100 00.. .... ....");
     uint16_t opcode = pattern(0x4000) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionINC(r.mar); };
   }
 
@@ -328,7 +329,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("0100 01.. .... ....");
     uint16_t opcode = pattern(0x4400) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -338,7 +339,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("0100 10ss .rrr rrrr");
     uint16_t opcode = pattern(0x4800) | reg | null << 7 | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionCMPRr(reg, shifts[shift]); };
   }
 
@@ -347,7 +348,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("0100 11ss iiii iiii");
     uint16_t opcode = pattern(0x4c00) | imm | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionCMPR(imm, shifts[shift]); };
   }
 
@@ -357,7 +358,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("0101 00ss .rrr rrrr");
     uint16_t opcode = pattern(0x5000) | reg | null << 7 | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionCMPr(reg, shifts[shift]); };
   }
 
@@ -366,7 +367,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("0101 01ss iiii iiii");
     uint16_t opcode = pattern(0x5400) | imm | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionCMP(imm, shifts[shift]); };
   }
 
@@ -374,7 +375,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("0101 1000 .... ....");
     uint16_t opcode = pattern(0x5800) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -382,7 +383,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("0101 1001 .... ....");
     uint16_t opcode = pattern(0x5900) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSXB(); };
   }
 
@@ -390,7 +391,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("0101 1010 .... ....");
     uint16_t opcode = pattern(0x5a00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSXW(); };
   }
 
@@ -398,7 +399,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("0101 1011 .... ....");
     uint16_t opcode = pattern(0x5b00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -406,7 +407,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("0101 11.. .... ....");
     uint16_t opcode = pattern(0x5c00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -415,7 +416,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null) {
     //uint16_t opcode = pattern("0110 0000 .rrr rrrr");
     uint16_t opcode = pattern(0x6000) | reg | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionLDr(r.a, reg); };
   }
 
@@ -424,7 +425,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null) {
     //uint16_t opcode = pattern("0110 0001 .rrr rrrr");
     uint16_t opcode = pattern(0x6100) | reg | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionLDr(r.mdr, reg); };
   }
 
@@ -433,7 +434,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null) {
     //uint16_t opcode = pattern("0110 0010 .rrr rrrr");
     uint16_t opcode = pattern(0x6200) | reg | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionLDr(r.mar, reg); };
   }
 
@@ -442,7 +443,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 16; ++null) {
     //uint16_t opcode = pattern("0110 0011 .... rrrr");
     uint16_t opcode = pattern(0x6300) | reg | null << 4;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionLDr(r.p, reg); };
   }
 
@@ -450,7 +451,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("0110 0100 iiii iiii");
     uint16_t opcode = pattern(0x6400) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionLD(r.a, imm); };
   }
 
@@ -458,7 +459,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("0110 0101 iiii iiii");
     uint16_t opcode = pattern(0x6500) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionLD(r.mdr, imm); };
   }
 
@@ -466,7 +467,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("0110 0110 iiii iiii");
     uint16_t opcode = pattern(0x6600) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionLD(r.mar, imm); };
   }
 
@@ -474,7 +475,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("0110 0111 iiii iiii");
     uint16_t opcode = pattern(0x6700) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionLD(r.p, imm); };
   }
 
@@ -482,7 +483,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("0110 1000 .... ....");
     uint16_t opcode = pattern(0x6800) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionRDRAM(0, r.a); };
   }
 
@@ -490,7 +491,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("0110 1001 .... ....");
     uint16_t opcode = pattern(0x6900) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionRDRAM(1, r.a); };
   }
 
@@ -498,7 +499,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("0110 1010 .... ....");
     uint16_t opcode = pattern(0x6a00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionRDRAM(2, r.a); };
   }
 
@@ -506,7 +507,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("0110 1011 .... ....");
     uint16_t opcode = pattern(0x6b00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -514,7 +515,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("0110 1100 iiii iiii");
     uint16_t opcode = pattern(0x6c00) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionRDRAM(0, imm); };
   }
 
@@ -522,7 +523,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("0110 1101 iiii iiii");
     uint16_t opcode = pattern(0x6d00) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionRDRAM(1, imm); };
   }
 
@@ -530,7 +531,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("0110 1110 iiii iiii");
     uint16_t opcode = pattern(0x6e00) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionRDRAM(2, imm); };
   }
 
@@ -538,7 +539,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("0110 1111 .... ....");
     uint16_t opcode = pattern(0x6f00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -546,7 +547,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("0111 00.. .... ....");
     uint16_t opcode = pattern(0x7000) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionRDROM(r.a); };
   }
 
@@ -554,7 +555,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 1024; ++imm) {
     //uint16_t opcode = pattern("0111 01ii iiii iiii");
     uint16_t opcode = pattern(0x7400) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionRDROM(imm); };
   }
 
@@ -562,7 +563,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("0111 10.. .... ....");
     uint16_t opcode = pattern(0x7800) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -570,7 +571,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("0111 1100 iiii iiii");
     uint16_t opcode = pattern(0x7c00) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionLDL(r.p, imm); };
   }
 
@@ -579,7 +580,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null) {
     //uint16_t opcode = pattern("0111 1101 .iii iiii");
     uint16_t opcode = pattern(0x7d00) | imm | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionLDHr(r.p, imm); };
   }
 
@@ -587,7 +588,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 512; ++null) {
     //uint16_t opcode = pattern("0111 111. .... ....");
     uint16_t opcode = pattern(0x7e00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -597,7 +598,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1000 00ss .rrr rrrr");
     uint16_t opcode = pattern(0x8000) | reg | null << 7 | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionADDr(reg, shifts[shift]); };
   }
 
@@ -606,7 +607,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1000 01ss iiii iiii");
     uint16_t opcode = pattern(0x8400) | imm | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionADD(imm, shifts[shift]); };
   }
 
@@ -616,7 +617,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1000 10ss .rrr rrrr");
     uint16_t opcode = pattern(0x8800) | reg | null << 7 | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSUBRr(reg, shifts[shift]); };
   }
 
@@ -625,7 +626,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1000 11ss iiii iiii");
     uint16_t opcode = pattern(0x8c00) | imm | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSUBR(imm, shifts[shift]); };
   }
 
@@ -635,7 +636,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1001 00ss .rrr rrrr");
     uint16_t opcode = pattern(0x9000) | reg | null << 7 | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSUBr(reg, shifts[shift]); };
   }
 
@@ -644,7 +645,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1001 01ss iiii iiii");
     uint16_t opcode = pattern(0x9400) | imm | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSUB(imm, shifts[shift]); };
   }
 
@@ -653,7 +654,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 8; ++null) {
     //uint16_t opcode = pattern("1001 10.. .rrr rrrr");
     uint16_t opcode = pattern(0x9800) | reg | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionMULr(reg); };
   }
 
@@ -662,7 +663,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 4; ++null) {
     //uint16_t opcode = pattern("1001 11.. iiii iiii");
     uint16_t opcode = pattern(0x9c00) | imm | null << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionMUL(imm); };
   }
 
@@ -672,7 +673,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1010 00ss .rrr rrrr");
     uint16_t opcode = pattern(0xa000) | reg | null << 7 | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionXNORr(reg, shifts[shift]); };
   }
 
@@ -681,7 +682,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1010 01ss iiii iiii");
     uint16_t opcode = pattern(0xa400) | imm | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionXNOR(imm, shifts[shift]); };
   }
 
@@ -691,7 +692,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1010 10ss .rrr rrrr");
     uint16_t opcode = pattern(0xa800) | reg | null << 7 | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionXORr(reg, shifts[shift]); };
   }
 
@@ -700,7 +701,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1010 11ss iiii iiii");
     uint16_t opcode = pattern(0xac00) | imm | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionXOR(imm, shifts[shift]); };
   }
 
@@ -710,7 +711,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1011 00ss .rrr rrrr");
     uint16_t opcode = pattern(0xb000) | reg | null << 7 | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionANDr(reg, shifts[shift]); };
   }
 
@@ -719,7 +720,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1011 01ss iiii iiii");
     uint16_t opcode = pattern(0xb400) | imm | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionAND(imm, shifts[shift]); };
   }
 
@@ -729,7 +730,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1011 10ss .rrr rrrr");
     uint16_t opcode = pattern(0xb800) | reg | null << 7 | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionORr(reg, shifts[shift]); };
   }
 
@@ -738,7 +739,7 @@ HG51B::HG51B() {
   for(unsigned shift = 0; shift < 4; ++shift) {
     //uint16_t opcode = pattern("1011 11ss iiii iiii");
     uint16_t opcode = pattern(0xbc00) | imm | shift << 8;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionOR(imm, shifts[shift]); };
   }
 
@@ -747,7 +748,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 8; ++null) {
     //uint16_t opcode = pattern("1100 00.. .rrr rrrr");
     uint16_t opcode = pattern(0xc000) | reg | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSHRr(reg); };
   }
 
@@ -756,7 +757,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 32; ++null) {
     //uint16_t opcode = pattern("1100 01.. ...i iiii");
     uint16_t opcode = pattern(0xc400) | imm | null << 5;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSHR(imm); };
   }
 
@@ -765,7 +766,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 8; ++null) {
     //uint16_t opcode = pattern("1100 10.. .rrr rrrr");
     uint16_t opcode = pattern(0xc800) | reg | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionASRr(reg); };
   }
 
@@ -774,7 +775,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 32; ++null) {
     //uint16_t opcode = pattern("1100 11.. ...i iiii");
     uint16_t opcode = pattern(0xcc00) | imm | null << 5;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionASR(imm); };
   }
 
@@ -783,7 +784,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 8; ++null) {
     //uint16_t opcode = pattern("1101 00.. .rrr rrrr");
     uint16_t opcode = pattern(0xd000) | reg | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionRORr(reg); };
   }
 
@@ -792,7 +793,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 32; ++null) {
     //uint16_t opcode = pattern("1101 01.. ...i iiii");
     uint16_t opcode = pattern(0xd400) | imm | null << 5;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionROR(imm); };
   }
 
@@ -801,7 +802,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 8; ++null) {
     //uint16_t opcode = pattern("1101 10.. .rrr rrrr");
     uint16_t opcode = pattern(0xd800) | reg | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSHLr(reg); };
   }
 
@@ -810,7 +811,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 32; ++null) {
     //uint16_t opcode = pattern("1101 11.. ...i iiii");
     uint16_t opcode = pattern(0xdc00) | imm | null << 5;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSHL(imm); };
   }
 
@@ -819,7 +820,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null) {
     //uint16_t opcode = pattern("1110 0000 .rrr rrrr");
     uint16_t opcode = pattern(0xe000) | reg | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSTr(reg, r.a); };
   }
 
@@ -828,7 +829,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 2; ++null) {
     //uint16_t opcode = pattern("1110 0001 .rrr rrrr");
     uint16_t opcode = pattern(0xe100) | reg | null << 7;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSTr(reg, r.mdr); };
   }
 
@@ -836,7 +837,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 512; ++null) {
     //uint16_t opcode = pattern("1110 001. .... ....");
     uint16_t opcode = pattern(0xe200) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -844,7 +845,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("1110 01.. .... ....");
     uint16_t opcode = pattern(0xe400) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -852,7 +853,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("1110 1000 .... ....");
     uint16_t opcode = pattern(0xe800) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionWRRAM(0, r.a); };
   }
 
@@ -860,7 +861,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("1110 1001 .... ....");
     uint16_t opcode = pattern(0xe900) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionWRRAM(1, r.a); };
   }
 
@@ -868,7 +869,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("1110 1010 .... ....");
     uint16_t opcode = pattern(0xea00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionWRRAM(2, r.a); };
   }
 
@@ -876,7 +877,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("1110 1011 .... ....");
     uint16_t opcode = pattern(0xeb00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -884,7 +885,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("1110 1100 iiii iiii");
     uint16_t opcode = pattern(0xec00) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionWRRAM(0, imm); };
   }
 
@@ -892,7 +893,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("1110 1101 iiii iiii");
     uint16_t opcode = pattern(0xed00) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionWRRAM(1, imm); };
   }
 
@@ -900,7 +901,7 @@ HG51B::HG51B() {
   for(unsigned imm = 0; imm < 256; ++imm) {
     //uint16_t opcode = pattern("1110 1110 iiii iiii");
     uint16_t opcode = pattern(0xee00) | imm;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionWRRAM(2, imm); };
   }
 
@@ -908,7 +909,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 256; ++null) {
     //uint16_t opcode = pattern("1110 1111 .... ....");
     uint16_t opcode = pattern(0xef00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -917,7 +918,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 64; ++null) {
     //uint16_t opcode = pattern("1111 00.. .... rrrr");
     uint16_t opcode = pattern(0xf000) | reg | null << 4;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionSWAPr(r.a, reg); };
   }
 
@@ -925,7 +926,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("1111 01.. .... ....");
     uint16_t opcode = pattern(0xf400) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionNOP(); };
   }
 
@@ -933,7 +934,7 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("1111 10.. .... ....");
     uint16_t opcode = pattern(0xf800) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionCLEAR(); };
   }
 
@@ -941,14 +942,14 @@ HG51B::HG51B() {
   for(unsigned null = 0; null < 1024; ++null) {
     //uint16_t opcode = pattern("1111 11.. .... ....");
     uint16_t opcode = pattern(0xfc00) | null;
-    if(instructionTable[opcode]) throw;
+    if(instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error on opcode %04x\n", opcode);
     instructionTable[opcode] = [=] { return instructionHALT(); };
   }
 
   #undef pattern
 
   for(unsigned opcode = 0; opcode < 65536; ++opcode) {
-    if(!instructionTable[opcode]) throw;
+    if(!instructionTable[opcode]) logger.log(Logger::ERR, "HG51B error: no opcode %04x\n", opcode);
   }
 }
 
