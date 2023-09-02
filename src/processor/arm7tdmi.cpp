@@ -20,6 +20,7 @@
 
 #include <bitset>
 #include <cassert>
+#include <exception>
 
 #include "serializer.hpp"
 
@@ -76,7 +77,7 @@ ARM7TDMI::GPR& ARM7TDMI::r(uint8_t index) {
   }
   case 15: return processor.r15;
   }
-  throw; // unreachable
+  throw std::terminate;
 }
 
 ARM7TDMI::PSR& ARM7TDMI::cpsr() {
@@ -91,7 +92,7 @@ ARM7TDMI::PSR& ARM7TDMI::spsr() {
   case PSR::ABT: return processor.abt.spsr;
   case PSR::UND: return processor.und.spsr;
   }
-  throw;
+  throw std::terminate;
 }
 
 bool ARM7TDMI::privileged() const {
