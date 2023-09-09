@@ -79,7 +79,6 @@ CSRCS := deps/gb/apu.c \
 	deps/gb/save_state.c \
 	deps/gb/sgb.c \
 	deps/gb/sm83_cpu.c \
-	deps/gb/symbol_hash.c \
 	deps/gb/timing.c \
 	deps/gb/workboy.c \
 	deps/libco/libco.c
