@@ -166,6 +166,12 @@ ASSETS := Database/boards.bml \
 ASSETS_BASE := $(notdir $(ASSETS))
 ASSETS_TARGET := $(ASSETS_BASE:%=$(NAME)/%)
 
+# Icons
+ICONS := $(wildcard $(SOURCEDIR)/icons/*.png) $(SOURCEDIR)/icons/$(NAME).svg
+
+ICONS_BASE := $(notdir $(ICONS))
+ICONS_TARGET := $(ICONS_BASE:%=$(NAME)/icons/%)
+
 # Object dirs
 MKDIRS := deps/byuuML \
 	deps/gb \
@@ -191,7 +197,7 @@ ifeq ($(DISABLE_MODULE), 0)
 endif
 
 ifneq ($(ENABLE_STATIC_JG), 0)
-	TARGET += $(NAME)/jg-static.mk
+	TARGET += $(ICONS_TARGET) $(NAME)/jg-static.mk
 endif
 
 # Compiler commands
@@ -274,8 +280,13 @@ $(ASSETS_TARGET): $(ASSETS:%=$(SOURCEDIR)/%)
 	@mkdir -p $(NAME)
 	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/
 
+$(ICONS_TARGET): $(ICONS)
+	@mkdir -p $(NAME)/icons
+	@cp $(subst $(NAME)/icons,$(SOURCEDIR)/icons,$@) $(NAME)/icons/
+
 $(NAME)/jg-static.mk: $(TARGET_STATIC_JG)
-	@printf '%s\n%s\n%s\n' 'NAME := $(NAME)-jg' 'ASSETS := $(ASSETS_BASE)' \
+	@printf '%s\n%s\n%s\n%s\n' 'NAME := $(NAME)-jg' \
+		'ASSETS := $(ASSETS_BASE)' 'ICONS := $(ICONS_BASE)' \
 		'LIBS_STATIC := $(strip $(LIBS))' > $@
 
 clean:
