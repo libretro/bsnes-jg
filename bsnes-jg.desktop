@@ -1,0 +1,18 @@
+# https://www.freedesktop.org/wiki/Specifications/desktop-entry-spec/
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=bsnes-jg
+GenericName=SNES/Super Famicom Emulator
+NoDisplay=true
+Comment=Emulate the SNES/Super Famicom
+Icon=bsnes
+TryExec=bsnes-jg
+Exec=bsnes-jg %F
+Terminal=false
+# no mimetype for sfc
+MimeType=application/x-gameboy-rom;
+Categories=Game;Emulator;
+Keywords=emulator;
+StartupNotify=false
+StartupWMClass=bsnes-jg

@@ -166,6 +166,11 @@ ASSETS := Database/boards.bml \
 ASSETS_BASE := $(notdir $(ASSETS))
 ASSETS_TARGET := $(ASSETS_BASE:%=$(NAME)/%)
 
+# Desktop File
+DESKTOP := $(NAME)-jg.desktop
+
+DESKTOP_TARGET := $(NAME)/$(DESKTOP)
+
 # Icons
 ICONS := $(wildcard $(SOURCEDIR)/icons/*.png) $(SOURCEDIR)/icons/$(NAME).svg
 
@@ -197,7 +202,7 @@ ifeq ($(DISABLE_MODULE), 0)
 endif
 
 ifneq ($(ENABLE_STATIC_JG), 0)
-	TARGET += $(ICONS_TARGET) $(NAME)/jg-static.mk
+	TARGET += $(DESKTOP_TARGET) $(ICONS_TARGET) $(NAME)/jg-static.mk
 endif
 
 # Compiler commands
@@ -279,6 +284,10 @@ $(TARGET_STATIC_JG): $(OBJS)
 $(ASSETS_TARGET): $(ASSETS:%=$(SOURCEDIR)/%)
 	@mkdir -p $(NAME)
 	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/
+
+$(DESKTOP_TARGET): $(SOURCEDIR)/$(DESKTOP)
+	@mkdir -p $(NAME)
+	@cp $< $@
 
 $(ICONS_TARGET): $(ICONS)
 	@mkdir -p $(NAME)/icons
