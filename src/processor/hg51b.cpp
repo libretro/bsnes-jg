@@ -93,7 +93,7 @@ uint32_t HG51B::readRegister(uint8_t address) {
 
 void HG51B::writeRegister(uint8_t address, uint32_t data) {
   switch(address & 0x7f) {
-  case 0x01: r.mul = (r.mul &  0xffffffull) | (data & 0xffffff) << 24; return;
+  case 0x01: r.mul = (r.mul &  0xffffffull) | (uint64_t)(data & 0xffffff) << 24; return;
   case 0x02: r.mul = (r.mul & ~0xffffffull) | (data & 0xffffff); return;
   case 0x03: r.mdr = data & 0xffffff; return;
   case 0x08: r.rom = data & 0xffffff; return;
