@@ -1435,9 +1435,10 @@ void WDC65816::PullB() {
   idle();
   idle();
   lastCycle();
-  B = pull();
+  B = pullN();
   ZF = B == 0;
   NF = B & 0x80;
+  if(r.e) S.r16_lsb2.h = 0x01;
 }
 
 void WDC65816::PullP() {
