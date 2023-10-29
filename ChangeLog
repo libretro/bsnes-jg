@@ -1,3 +1,11 @@
+Version 1.?.?
+-------------
+ - Extend the Super Famicom LOROM-RAM#A memory map
+ - libco 16-bit stack alignment fix
+ - Build improvements, including static JG archive build option
+ - Code quality improvements
+ - Ensure writes to Cx4 multiplier register do not have truncated values
+
 Version 1.1.2
 -------------
  - Build fix for GCC 13
