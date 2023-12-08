@@ -24,5 +24,7 @@
   #define order_lsb2(a,b)             b,a
   #define order_lsb4(a,b,c,d)         d,c,b,a
 #else
-  #error "Endianness is unknown, update endian.h"
+  #warning "Endianness is unknown, assuming little endian."
+  #define order_lsb2(a,b)             a,b
+  #define order_lsb4(a,b,c,d)         a,b,c,d
 #endif
