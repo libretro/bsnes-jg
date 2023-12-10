@@ -30,34 +30,6 @@ public:
 	T& operator [] ( size_t ) const;
 };
 
-#ifndef BLARGG_DISABLE_NOTHROW
-	// throw spec mandatory in ISO C++ if operator new can return NULL
-	#if __cplusplus >= 199711 || defined (__GNUC__)
-		#define BLARGG_THROWS( spec ) throw spec
-	#else
-		#define BLARGG_THROWS( spec )
-	#endif
-	#define BLARGG_DISABLE_NOTHROW \
-		void* operator new ( size_t s ) BLARGG_THROWS(()) { return malloc( s ); }\
-		void operator delete ( void* p ) { free( p ); }
-	#define BLARGG_NEW new
-#else
-	#include <new>
-	#define BLARGG_NEW new (std::nothrow)
-#endif
-
-// BLARGG_4CHAR('a','b','c','d') = 'abcd' (four character integer constant)
-#define BLARGG_4CHAR( a, b, c, d ) \
-	((a&0xFF)*0x1000000L + (b&0xFF)*0x10000L + (c&0xFF)*0x100L + (d&0xFF))
-
-// blargg_long/blargg_ulong = at least 32 bits, int if it's big enough
-
-#if INT_MAX < 0x7FFFFFFF || LONG_MAX == 0x7FFFFFFF
-	typedef long blargg_long;
-#else
-	typedef int blargg_long;
-#endif
-
 #if UINT_MAX < 0xFFFFFFFF || ULONG_MAX == 0xFFFFFFFF
 	typedef unsigned long blargg_ulong;
 #else

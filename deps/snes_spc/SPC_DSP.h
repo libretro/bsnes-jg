@@ -93,8 +93,6 @@ public:
 	void disable_surround( bool ); // not supported
 	bool mute(); // This is from byuu's snes_spc fork
 
-	BLARGG_DISABLE_NOTHROW
-
 	enum { echo_hist_size = 8 };
 
 	enum env_mode_t { env_release, env_attack, env_decay, env_sustain };
