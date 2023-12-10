@@ -271,25 +271,4 @@ inline bool SPC_DSP::check_kon()
 	return old;
 }
 
-#if !SPC_NO_COPY_STATE_FUNCS
-
-class SPC_State_Copier {
-	SPC_DSP::copy_func_t func;
-	unsigned char** buf;
-public:
-	SPC_State_Copier( unsigned char** p, SPC_DSP::copy_func_t f ) { func = f; buf = p; }
-	void copy( void* state, size_t size );
-	int copy_int( int state, int size );
-	void skip( int count );
-	void extra();
-};
-
-#define SPC_COPY( type, state )\
-{\
-	state = (type) copier.copy_int( state, sizeof (type) );\
-	assert( (type) state == state );\
-}
-
-#endif
-
 #endif

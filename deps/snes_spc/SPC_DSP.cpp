@@ -45,6 +45,23 @@ all other #include lines. */
 	#error "Requires that int type have at least 32 bits"
 #endif
 
+class SPC_State_Copier {
+	SPC_DSP::copy_func_t func;
+	unsigned char** buf;
+public:
+	SPC_State_Copier( unsigned char**, SPC_DSP::copy_func_t );
+	void copy( void*, size_t );
+	int copy_int( int, int );
+	void skip( int );
+	void extra();
+};
+
+#define SPC_COPY( type, state )\
+{\
+	state = (type) copier.copy_int( state, sizeof (type) );\
+	assert( (type) state == state );\
+}
+
 // blargg_vector - very lightweight vector of POD types (no constructor/destructor)
 template<class T>
 class blargg_vector {
@@ -1100,7 +1117,11 @@ void SPC_DSP::reset() { load( initial_regs ); }
 
 //// State save/load
 
-#if !SPC_NO_COPY_STATE_FUNCS
+SPC_State_Copier::SPC_State_Copier( unsigned char** p, SPC_DSP::copy_func_t f )
+{
+	func = f;
+	buf = p;
+}
 
 void SPC_State_Copier::copy( void* state, size_t size )
 {
@@ -1240,4 +1261,3 @@ void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
 
 	copier.extra();
 }
-#endif
