@@ -15,12 +15,12 @@ public:
 // Setup
 
 	// Initializes DSP and has it use the 64K RAM provided
-	void init( void* ram_64k );
+	void init( void* );
 
 	// Sets destination for output samples. If out is NULL or out_size is 0,
 	// doesn't generate any.
 	typedef short sample_t;
-	void set_output( sample_t* out, int out_size );
+	void set_output( sample_t*, int );
 
 	// Number of samples written to output since it was last set, always
 	// a multiple of 2. Undefined if more samples were generated than
@@ -37,19 +37,19 @@ public:
 
 	// Reads/writes DSP registers. For accuracy, you must first call run()
 	// to catch the DSP up to present.
-	int  read ( int addr ) const;
-	void write( int addr, int data );
+	int  read ( int ) const;
+	void write( int, int );
 
 	// Runs DSP for specified number of clocks (~1024000 per second). Every 32 clocks
 	// a pair of samples is be generated.
-	void run( int clock_count );
+	void run( int );
 
 // Sound control
 
 	// Mutes voices corresponding to non-zero bits in mask (issues repeated KOFF events).
 	// Reduces emulation accuracy.
 	enum { voice_count = 8 };
-	void mute_voices( int mask );
+	void mute_voices( int );
 
 // State
 
@@ -60,7 +60,7 @@ public:
 	// Saves/loads exact emulator state
 	enum { state_size = 640 }; // maximum space needed when saving
 	typedef dsp_copy_func_t copy_func_t;
-	void copy_state( unsigned char** io, copy_func_t );
+	void copy_state( unsigned char**, copy_func_t );
 
 	// Returns non-zero if new key-on events occurred since last call
 	bool check_kon();
@@ -189,18 +189,18 @@ private:
 
 	void init_counter();
 	void run_counters();
-	unsigned read_counter( int rate );
+	unsigned read_counter( int );
 
-	int  interpolate( voice_t const* v );
-	void run_envelope( voice_t* const v );
-	void decode_brr( voice_t* v );
+	int  interpolate( voice_t const* );
+	void run_envelope( voice_t* const );
+	void decode_brr( voice_t* );
 
 	void misc_27();
 	void misc_28();
 	void misc_29();
 	void misc_30();
 
-	void voice_output( voice_t const* v, int ch );
+	void voice_output( voice_t const*, int );
 	void voice_V1( voice_t* const );
 	void voice_V2( voice_t* const );
 	void voice_V3( voice_t* const );
@@ -217,9 +217,9 @@ private:
 	void voice_V8_V5_V2( voice_t* const );
 	void voice_V9_V6_V3( voice_t* const );
 
-	void echo_read( int ch );
-	int  echo_output( int ch );
-	void echo_write( int ch );
+	void echo_read( int );
+	int  echo_output( int );
+	void echo_write( int );
 	void echo_22();
 	void echo_23();
 	void echo_24();
