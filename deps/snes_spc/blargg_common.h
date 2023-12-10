@@ -5,10 +5,6 @@
 #ifndef BLARGG_COMMON_H
 #define BLARGG_COMMON_H
 
-#include <stddef.h>
-#include <stdlib.h>
-#include <limits.h>
-
 // blargg_err_t (0 on success, otherwise error string)
 #ifndef blargg_err_t
 	typedef const char* blargg_err_t;
