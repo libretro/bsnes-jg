@@ -135,12 +135,12 @@ T& blargg_vector<T>::operator [] ( size_t n ) const
 	return begin_ [n];
 }
 
-SPC_DSP::sample_t* SPC_DSP::extra()
+int16_t* SPC_DSP::extra()
 {
 	return m.extra;
 }
 
-SPC_DSP::sample_t const* SPC_DSP::out_pos() const
+int16_t const* SPC_DSP::out_pos() const
 {
 	return m.out;
 }
@@ -327,7 +327,7 @@ static uint8_t const initial_regs [SPC_DSP::register_count] =
 	}\
 }\
 
-void SPC_DSP::set_output( sample_t* out, int size )
+void SPC_DSP::set_output( int16_t* out, int size )
 {
 	require( (size & 1) == 0 ); // must be even
 	if ( !out )
@@ -944,7 +944,7 @@ ECHO_CLOCK( 27 )
 	#ifdef SPC_DSP_OUT_HOOK
 		SPC_DSP_OUT_HOOK( l, r );
 	#else
-		sample_t* out = m.out;
+		int16_t* out = m.out;
 		WRITE_SAMPLES( l, r, out );
 		m.out = out;
 	#endif

@@ -17,8 +17,7 @@ public:
 
 	// Sets destination for output samples. If out is NULL or out_size is 0,
 	// doesn't generate any.
-	typedef short sample_t;
-	void set_output( sample_t*, int );
+	void set_output( int16_t*, int );
 
 	// Number of samples written to output since it was last set, always
 	// a multiple of 2. Undefined if more samples were generated than
@@ -88,8 +87,8 @@ public:
 	};
 
 	enum { extra_size = 16 };
-	sample_t* extra();
-	sample_t const* out_pos() const;
+	int16_t* extra();
+	int16_t const* out_pos() const;
 	void disable_surround( bool ); // not supported
 	bool mute(); // This is from byuu's snes_spc fork
 
@@ -173,10 +172,10 @@ private:
 		// non-emulation state
 		uint8_t* ram; // 64K shared RAM between DSP and SMP
 		int mute_mask;
-		sample_t* out;
-		sample_t* out_end;
-		sample_t* out_begin;
-		sample_t extra [extra_size];
+		int16_t* out;
+		int16_t* out_end;
+		int16_t* out_begin;
+		int16_t extra [extra_size];
 	};
 	state_t m;
 
