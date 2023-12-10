@@ -21,6 +21,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 	#error "Requires that int type have at least 32 bits"
 #endif
 
+SPC_DSP::sample_t* SPC_DSP::extra()
+{
+	return m.extra;
+}
+
+SPC_DSP::sample_t const* SPC_DSP::out_pos() const
+{
+	return m.out;
+}
+
+void SPC_DSP::disable_surround( bool ) { }
+
+bool SPC_DSP::mute()
+{
+	return m.regs[r_flg] & 0x40;
+}
+
 // CPU Byte Order Utilities
 #define GET_LE16SA( addr )      ((BOOST::int16_t) GET_LE16( addr ))
 #define GET_LE16A( addr )       GET_LE16( addr )

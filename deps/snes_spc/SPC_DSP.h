@@ -89,12 +89,12 @@ public:
 		v_envx   = 0x08, v_outx   = 0x09
 	};
 
-public:
 	enum { extra_size = 16 };
-	sample_t* extra()               { return m.extra; }
-	sample_t const* out_pos() const { return m.out; }
-	void disable_surround( bool ) { } // not supported
-public:
+	sample_t* extra();
+	sample_t const* out_pos() const;
+	void disable_surround( bool ); // not supported
+	bool mute(); // This is from byuu's snes_spc fork
+
 	BLARGG_DISABLE_NOTHROW
 
 	typedef BOOST::int8_t   int8_t;
@@ -231,10 +231,6 @@ private:
 	void echo_30();
 
 	void soft_reset_common();
-
-public:
-	// This is from byuu's snes_spc fork
-	bool mute() { return m.regs[r_flg] & 0x40; }
 };
 
 #include <assert.h>
