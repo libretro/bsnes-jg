@@ -4,6 +4,8 @@
 #ifndef SPC_DSP_H
 #define SPC_DSP_H
 
+#include <cassert>
+
 extern "C" { typedef void (*dsp_copy_func_t)( unsigned char** io, void* state, size_t ); }
 
 class SPC_DSP {
@@ -223,8 +225,6 @@ private:
 
 	void soft_reset_common();
 };
-
-#include <assert.h>
 
 inline int SPC_DSP::sample_count() const { return m.out - m.out_begin; }
 
