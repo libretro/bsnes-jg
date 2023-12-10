@@ -88,8 +88,4 @@ inline T max( T x, T y )
 #define byte byte_
 typedef unsigned char byte;
 
-// deprecated
-#define BLARGG_CHECK_ALLOC CHECK_ALLOC
-#define BLARGG_RETURN_ERR RETURN_ERR
-
 #endif
