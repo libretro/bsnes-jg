@@ -1029,8 +1029,6 @@ PHASE(29) misc_29();                                                 echo_29();\
 PHASE(30) misc_30();V(V3c,0)                                         echo_30();\
 PHASE(31)  V(V4,0)       V(V1,2)\
 
-#if !SPC_DSP_CUSTOM_RUN
-
 void SPC_DSP::run( int clocks_remain )
 {
 	require( clocks_remain > 0 );
@@ -1051,8 +1049,6 @@ void SPC_DSP::run( int clocks_remain )
 			goto loop;
 	}
 }
-
-#endif
 
 //// Setup
 
