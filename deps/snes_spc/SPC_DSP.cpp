@@ -45,6 +45,28 @@ all other #include lines. */
 	#error "Requires that int type have at least 32 bits"
 #endif
 
+// blargg_vector - very lightweight vector of POD types (no constructor/destructor)
+template<class T>
+class blargg_vector {
+	T* begin_;
+	size_t size_;
+public:
+	blargg_vector() : begin_( 0 ), size_( 0 ) { }
+	~blargg_vector();
+	size_t size() const;
+	T* begin() const;
+	T* end() const;
+	const char* resize( size_t );
+	void clear();
+	T& operator [] ( size_t ) const;
+};
+
+#if UINT_MAX < 0xFFFFFFFF || ULONG_MAX == 0xFFFFFFFF
+	typedef unsigned long blargg_ulong;
+#else
+	typedef unsigned blargg_ulong;
+#endif
+
 template<class T>
 blargg_vector<T>::~blargg_vector() {
 	free( begin_ );
