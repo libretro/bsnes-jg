@@ -196,42 +196,42 @@ static inline void set_be32( void* p, blargg_ulong n )
 
 // auto-selecting versions
 
-static inline void set_le( uint16_t* p, unsigned n )
+inline void set_le( uint16_t* p, unsigned n )
 {
 	SET_LE16( p, n );
 }
 
-static inline void set_le( uint32_t* p, blargg_ulong n )
+inline void set_le( uint32_t* p, blargg_ulong n )
 {
 	SET_LE32( p, n );
 }
 
-static inline void set_be( uint16_t* p, unsigned n )
+inline void set_be( uint16_t* p, unsigned n )
 {
 	SET_BE16( p, n );
 }
 
-static inline void set_be( uint32_t* p, blargg_ulong n )
+inline void set_be( uint32_t* p, blargg_ulong n )
 {
 	SET_BE32( p, n );
 }
 
-static inline unsigned get_le( uint16_t* p )
+inline unsigned get_le( uint16_t* p )
 {
 	return GET_LE16( p );
 }
 
-static inline blargg_ulong get_le( uint32_t* p )
+inline blargg_ulong get_le( uint32_t* p )
 {
 	return GET_LE32( p );
 }
 
-static inline unsigned get_be( uint16_t* p )
+inline unsigned get_be( uint16_t* p )
 {
 	return GET_BE16( p );
 }
 
-static inline blargg_ulong get_be( uint32_t* p )
+inline blargg_ulong get_be( uint32_t* p )
 {
 	return GET_BE32( p );
 }
