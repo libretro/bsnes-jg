@@ -14,7 +14,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #include <cstring>
 
 #include "SPC_DSP.h"
-#include "blargg_endian.h"
 
 /* Included at the beginning of library source files, after all other #include lines.
 Sets up helpful macros and services used in my source code. They don't need
@@ -64,19 +63,19 @@ bool SPC_DSP::mute()
 #define GET_LE16A( addr )       GET_LE16( addr )
 #define SET_LE16A( addr, data ) SET_LE16( addr, data )
 
-unsigned get_le16( void const* p )
+static inline unsigned get_le16( void const* p )
 {
 	return  (unsigned) ((unsigned char const*) p) [1] << 8 |
 			(unsigned) ((unsigned char const*) p) [0];
 }
 
-unsigned get_be16( void const* p )
+static inline unsigned get_be16( void const* p )
 {
 	return  (unsigned) ((unsigned char const*) p) [0] << 8 |
 			(unsigned) ((unsigned char const*) p) [1];
 }
 
-blargg_ulong get_le32( void const* p )
+static inline blargg_ulong get_le32( void const* p )
 {
 	return  (blargg_ulong) ((unsigned char const*) p) [3] << 24 |
 			(blargg_ulong) ((unsigned char const*) p) [2] << 16 |
@@ -84,7 +83,7 @@ blargg_ulong get_le32( void const* p )
 			(blargg_ulong) ((unsigned char const*) p) [0];
 }
 
-blargg_ulong get_be32( void const* p )
+static inline blargg_ulong get_be32( void const* p )
 {
 	return  (blargg_ulong) ((unsigned char const*) p) [0] << 24 |
 			(blargg_ulong) ((unsigned char const*) p) [1] << 16 |
@@ -92,19 +91,19 @@ blargg_ulong get_be32( void const* p )
 			(blargg_ulong) ((unsigned char const*) p) [3];
 }
 
-void set_le16( void* p, unsigned n )
+static inline void set_le16( void* p, unsigned n )
 {
 	((unsigned char*) p) [1] = (unsigned char) (n >> 8);
 	((unsigned char*) p) [0] = (unsigned char) n;
 }
 
-void set_be16( void* p, unsigned n )
+static inline void set_be16( void* p, unsigned n )
 {
 	((unsigned char*) p) [0] = (unsigned char) (n >> 8);
 	((unsigned char*) p) [1] = (unsigned char) n;
 }
 
-void set_le32( void* p, blargg_ulong n )
+static inline void set_le32( void* p, blargg_ulong n )
 {
 	((unsigned char*) p) [0] = (unsigned char) n;
 	((unsigned char*) p) [1] = (unsigned char) (n >> 8);
@@ -112,7 +111,7 @@ void set_le32( void* p, blargg_ulong n )
 	((unsigned char*) p) [3] = (unsigned char) (n >> 24);
 }
 
-void set_be32( void* p, blargg_ulong n )
+static inline void set_be32( void* p, blargg_ulong n )
 {
 	((unsigned char*) p) [3] = (unsigned char) n;
 	((unsigned char*) p) [2] = (unsigned char) (n >> 8);
@@ -142,14 +141,45 @@ void set_be32( void* p, blargg_ulong n )
 
 // auto-selecting versions
 
-void set_le( BOOST::uint16_t* p, unsigned     n ) { SET_LE16( p, n ); }
-void set_le( BOOST::uint32_t* p, blargg_ulong n ) { SET_LE32( p, n ); }
-void set_be( BOOST::uint16_t* p, unsigned     n ) { SET_BE16( p, n ); }
-void set_be( BOOST::uint32_t* p, blargg_ulong n ) { SET_BE32( p, n ); }
-unsigned     get_le( BOOST::uint16_t* p ) { return GET_LE16( p ); }
-blargg_ulong get_le( BOOST::uint32_t* p ) { return GET_LE32( p ); }
-unsigned     get_be( BOOST::uint16_t* p ) { return GET_BE16( p ); }
-blargg_ulong get_be( BOOST::uint32_t* p ) { return GET_BE32( p ); }
+static inline void set_le( BOOST::uint16_t* p, unsigned n )
+{
+	SET_LE16( p, n );
+}
+
+static inline void set_le( BOOST::uint32_t* p, blargg_ulong n )
+{
+	SET_LE32( p, n );
+}
+
+static inline void set_be( BOOST::uint16_t* p, unsigned n )
+{
+	SET_BE16( p, n );
+}
+
+static inline void set_be( BOOST::uint32_t* p, blargg_ulong n )
+{
+	SET_BE32( p, n );
+}
+
+static inline unsigned get_le( BOOST::uint16_t* p )
+{
+	return GET_LE16( p );
+}
+
+static inline blargg_ulong get_le( BOOST::uint32_t* p )
+{
+	return GET_LE32( p );
+}
+
+static inline unsigned get_be( BOOST::uint16_t* p )
+{
+	return GET_BE16( p );
+}
+
+static inline blargg_ulong get_be( BOOST::uint32_t* p )
+{
+	return GET_BE32( p );
+}
 
 static BOOST::uint8_t const initial_regs [SPC_DSP::register_count] =
 {
