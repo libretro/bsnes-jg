@@ -68,7 +68,7 @@ T* blargg_vector<T>::end() const
 }
 
 template<class T>
-blargg_err_t blargg_vector<T>::resize( size_t n )
+const char* blargg_vector<T>::resize( size_t n )
 {
 	// TODO: blargg_common.cpp to hold this as an outline function, ugh
 	void* p = realloc( begin_, n * sizeof (T) );

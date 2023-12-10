@@ -5,11 +5,6 @@
 #ifndef BLARGG_COMMON_H
 #define BLARGG_COMMON_H
 
-// blargg_err_t (0 on success, otherwise error string)
-#ifndef blargg_err_t
-	typedef const char* blargg_err_t;
-#endif
-
 // blargg_vector - very lightweight vector of POD types (no constructor/destructor)
 template<class T>
 class blargg_vector {
@@ -21,7 +16,7 @@ public:
 	size_t size() const;
 	T* begin() const;
 	T* end() const;
-	blargg_err_t resize( size_t );
+	const char* resize( size_t );
 	void clear();
 	T& operator [] ( size_t ) const;
 };
