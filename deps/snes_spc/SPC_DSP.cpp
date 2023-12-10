@@ -401,7 +401,6 @@ inline int SPC_DSP::interpolate( voice_t const* v )
 	return out;
 }
 
-
 //// Counters
 
 int const simple_counter_range = 2048 * 5 * 3; // 30720
@@ -454,7 +453,6 @@ inline unsigned SPC_DSP::read_counter( int rate )
 {
 	return ((unsigned) m.counter + counter_offsets [rate]) % counter_rates [rate];
 }
-
 
 //// Envelope
 
@@ -537,7 +535,6 @@ inline void SPC_DSP::run_envelope( voice_t* const v )
 	}
 }
 
-
 //// BRR Decoding
 
 inline void SPC_DSP::decode_brr( voice_t* v )
@@ -597,7 +594,6 @@ inline void SPC_DSP::decode_brr( voice_t* v )
 	}
 }
 
-
 //// Misc
 
 #define MISC_CLOCK( n ) inline void SPC_DSP::misc_##n()
@@ -634,7 +630,6 @@ MISC_CLOCK( 30 )
 		m.noise = (feedback & 0x4000) ^ (m.noise >> 1);
 	}
 }
-
 
 //// Voices
 
@@ -835,7 +830,6 @@ VOICE_CLOCK(V7_V4_V1) { voice_V7(v); voice_V1(v+3); voice_V4(v+1); }
 VOICE_CLOCK(V8_V5_V2) { voice_V8(v); voice_V5(v+1); voice_V2(v+2); }
 VOICE_CLOCK(V9_V6_V3) { voice_V9(v); voice_V6(v+1); voice_V3(v+2); }
 
-
 //// Echo
 
 // Current echo buffer pointer for left/right channel
@@ -987,7 +981,6 @@ ECHO_CLOCK( 30 )
 	echo_write( 1 );
 }
 
-
 //// Timing
 
 // Execute clock for a particular voice
@@ -1061,7 +1054,6 @@ void SPC_DSP::run( int clocks_remain )
 
 #endif
 
-
 //// Setup
 
 void SPC_DSP::init( void* ram_64k )
@@ -1113,7 +1105,6 @@ void SPC_DSP::load( uint8_t const regs [register_count] )
 }
 
 void SPC_DSP::reset() { load( initial_regs ); }
-
 
 //// State save/load
 
