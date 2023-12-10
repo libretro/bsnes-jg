@@ -10,12 +10,6 @@
 #include <assert.h>
 #include <limits.h>
 
-#undef BLARGG_COMMON_H
-// allow blargg_config.h to #include blargg_common.h
-#include "blargg_config.h"
-#ifndef BLARGG_COMMON_H
-#define BLARGG_COMMON_H
-
 // BLARGG_RESTRICT: equivalent to restrict, where supported
 #if defined (__GNUC__) || _MSC_VER >= 1100
 	#define BLARGG_RESTRICT __restrict
@@ -97,30 +91,6 @@ public:
 	#endif
 #endif
 
-// BLARGG_COMPILER_HAS_BOOL: If 0, provides bool support for old compiler. If 1,
-// compiler is assumed to support bool. If undefined, availability is determined.
-#ifndef BLARGG_COMPILER_HAS_BOOL
-	#if defined (__MWERKS__)
-		#if !__option(bool)
-			#define BLARGG_COMPILER_HAS_BOOL 0
-		#endif
-	#elif defined (_MSC_VER)
-		#if _MSC_VER < 1100
-			#define BLARGG_COMPILER_HAS_BOOL 0
-		#endif
-	#elif defined (__GNUC__)
-		// supports bool
-	#elif __cplusplus < 199711
-		#define BLARGG_COMPILER_HAS_BOOL 0
-	#endif
-#endif
-#if defined (BLARGG_COMPILER_HAS_BOOL) && !BLARGG_COMPILER_HAS_BOOL
-	// If you get errors here, modify your blargg_config.h file
-	typedef int bool;
-	const bool true  = 1;
-	const bool false = 0;
-#endif
-
 // blargg_long/blargg_ulong = at least 32 bits, int if it's big enough
 
 #if INT_MAX < 0x7FFFFFFF || LONG_MAX == 0x7FFFFFFF
@@ -182,5 +152,4 @@ public:
 	};
 #endif
 
-#endif
 #endif
