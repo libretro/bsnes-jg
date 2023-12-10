@@ -46,10 +46,10 @@ all other #include lines. */
 #endif
 
 class SPC_State_Copier {
-	SPC_DSP::copy_func_t func;
+	dsp_copy_func_t func;
 	unsigned char** buf;
 public:
-	SPC_State_Copier( unsigned char**, SPC_DSP::copy_func_t );
+	SPC_State_Copier( unsigned char**, dsp_copy_func_t );
 	void copy( void*, size_t );
 	int copy_int( int, int );
 	void skip( int );
@@ -1104,7 +1104,7 @@ void SPC_DSP::reset() { load( initial_regs ); }
 
 //// State save/load
 
-SPC_State_Copier::SPC_State_Copier( unsigned char** p, SPC_DSP::copy_func_t f )
+SPC_State_Copier::SPC_State_Copier( unsigned char** p, dsp_copy_func_t f )
 {
 	func = f;
 	buf = p;
@@ -1149,7 +1149,7 @@ void SPC_State_Copier::extra()
 	skip( n );
 }
 
-void SPC_DSP::copy_state( unsigned char** io, copy_func_t copy )
+void SPC_DSP::copy_state( unsigned char** io, dsp_copy_func_t copy )
 {
 	SPC_State_Copier copier( io, copy );
 

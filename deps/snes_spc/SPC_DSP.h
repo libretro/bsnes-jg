@@ -6,7 +6,7 @@
 
 #include <cassert>
 
-extern "C" { typedef void (*dsp_copy_func_t)( unsigned char** io, void* state, size_t ); }
+typedef void (*dsp_copy_func_t)( unsigned char**, void*, size_t );
 
 class SPC_DSP {
 public:
@@ -56,8 +56,7 @@ public:
 
 	// Saves/loads exact emulator state
 	enum { state_size = 640 }; // maximum space needed when saving
-	typedef dsp_copy_func_t copy_func_t;
-	void copy_state( unsigned char**, copy_func_t );
+	void copy_state( unsigned char**, dsp_copy_func_t );
 
 	// Returns non-zero if new key-on events occurred since last call
 	bool check_kon();
