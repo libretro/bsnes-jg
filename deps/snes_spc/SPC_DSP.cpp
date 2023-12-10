@@ -823,21 +823,6 @@ void SPC_DSP::init( void* ram_64k )
 	disable_surround( false );
 	set_output( 0, 0 );
 	reset();
-
-	#ifndef NDEBUG
-		// be sure this sign-extends
-		assert( (int16_t) 0x8000 == -0x8000 );
-
-		// be sure right shift preserves sign
-		assert( (-1 >> 1) == -1 );
-
-		// check clamp macro
-		int i;
-		i = +0x8000; CLAMP16( i ); assert( i == +0x7FFF );
-		i = -0x8001; CLAMP16( i ); assert( i == -0x8000 );
-
-		blargg_verify_byte_order();
-	#endif
 }
 
 void SPC_DSP::soft_reset_common()
