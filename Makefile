@@ -24,13 +24,12 @@ WARNINGS_MIN := -Wall -Wextra -Wshadow -Wformat=2 -Wstrict-overflow=2 \
 	-Wmissing-declarations
 WARNINGS_ALL := $(WARNINGS_MIN) -Wmissing-noreturn -Wcast-align -Wcast-qual
 WARNINGS_CXX := $(WARNINGS_ALL) -Wnon-virtual-dtor -Woverloaded-virtual
-WARNINGS_C := $(WARNINGS_ALL) -Wmissing-prototypes
+WARNINGS_C := $(WARNINGS_ALL) -Wmissing-prototypes -pedantic
 
 WARNINGS := $(WARNINGS_CXX) -pedantic
 WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
 WARNINGS_ICD := $(WARNINGS_CXX)
 WARNINGS_GB := -Wno-multichar -Wno-unused-result
-WARNINGS_SAMPLERATE := $(WARNINGS_C) -pedantic
 
 LIBS := -lm -lstdc++
 PIC := -fPIC
@@ -218,7 +217,7 @@ BUILD_BML = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS))
 BUILD_CO = $(call COMPILE_C, $(FLAGS_CO) $(WARNINGS_CO))
 BUILD_ICD = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS_ICD) $(INCLUDES))
 BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB))
-BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_SAMPLERATE))
+BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_C))
 BUILD_SPC = $(call COMPILE_CXX, $(FLAGS_SPC) $(WARNINGS) $(CPPFLAGS_SPC))
 
 # Core commands
