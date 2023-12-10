@@ -7,7 +7,6 @@
 
 #include <stddef.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <limits.h>
 
 // blargg_err_t (0 on success, otherwise error string)
@@ -22,27 +21,13 @@ class blargg_vector {
 	size_t size_;
 public:
 	blargg_vector() : begin_( 0 ), size_( 0 ) { }
-	~blargg_vector() { free( begin_ ); }
-	size_t size() const { return size_; }
-	T* begin() const { return begin_; }
-	T* end() const { return begin_ + size_; }
-	blargg_err_t resize( size_t n )
-	{
-		// TODO: blargg_common.cpp to hold this as an outline function, ugh
-		void* p = realloc( begin_, n * sizeof (T) );
-		if ( p )
-			begin_ = (T*) p;
-		else if ( n > size_ ) // realloc failure only a problem if expanding
-			return "Out of memory";
-		size_ = n;
-		return 0;
-	}
-	void clear() { void* p = begin_; begin_ = 0; size_ = 0; free( p ); }
-	T& operator [] ( size_t n ) const
-	{
-		assert( n <= size_ ); // <= to allow past-the-end value
-		return begin_ [n];
-	}
+	~blargg_vector();
+	size_t size() const;
+	T* begin() const;
+	T* end() const;
+	blargg_err_t resize( size_t );
+	void clear();
+	T& operator [] ( size_t ) const;
 };
 
 #ifndef BLARGG_DISABLE_NOTHROW

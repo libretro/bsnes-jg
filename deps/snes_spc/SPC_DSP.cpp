@@ -41,6 +41,57 @@ all other #include lines. */
 	#error "Requires that int type have at least 32 bits"
 #endif
 
+template<class T>
+blargg_vector<T>::~blargg_vector() {
+	free( begin_ );
+}
+
+template<class T>
+size_t blargg_vector<T>::size() const {
+	return size_;
+}
+
+template<class T>
+T* blargg_vector<T>::begin() const
+{
+	return begin_;
+}
+
+template<class T>
+T* blargg_vector<T>::end() const
+{
+	return begin_ + size_;
+}
+
+template<class T>
+blargg_err_t blargg_vector<T>::resize( size_t n )
+{
+	// TODO: blargg_common.cpp to hold this as an outline function, ugh
+	void* p = realloc( begin_, n * sizeof (T) );
+	if ( p )
+		begin_ = (T*) p;
+	else if ( n > size_ ) // realloc failure only a problem if expanding
+		return "Out of memory";
+	size_ = n;
+	return 0;
+}
+
+template<class T>
+void blargg_vector<T>::clear()
+{
+	void* p = begin_;
+	begin_ = 0;
+	size_ = 0;
+	free( p );
+}
+
+template<class T>
+T& blargg_vector<T>::operator [] ( size_t n ) const
+{
+	assert( n <= size_ ); // <= to allow past-the-end value
+	return begin_ [n];
+}
+
 SPC_DSP::sample_t* SPC_DSP::extra()
 {
 	return m.extra;
