@@ -9,8 +9,6 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#define BOOST
-
 // blargg_err_t (0 on success, otherwise error string)
 #ifndef blargg_err_t
 	typedef const char* blargg_err_t;

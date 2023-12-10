@@ -111,7 +111,7 @@ bool SPC_DSP::mute()
 }
 
 // CPU Byte Order Utilities
-#define GET_LE16SA( addr )      ((BOOST::int16_t) GET_LE16( addr ))
+#define GET_LE16SA( addr )      ((int16_t) GET_LE16( addr ))
 #define GET_LE16A( addr )       GET_LE16( addr )
 #define SET_LE16A( addr, data ) SET_LE16( addr, data )
 
@@ -193,47 +193,47 @@ static inline void set_be32( void* p, blargg_ulong n )
 
 // auto-selecting versions
 
-static inline void set_le( BOOST::uint16_t* p, unsigned n )
+static inline void set_le( uint16_t* p, unsigned n )
 {
 	SET_LE16( p, n );
 }
 
-static inline void set_le( BOOST::uint32_t* p, blargg_ulong n )
+static inline void set_le( uint32_t* p, blargg_ulong n )
 {
 	SET_LE32( p, n );
 }
 
-static inline void set_be( BOOST::uint16_t* p, unsigned n )
+static inline void set_be( uint16_t* p, unsigned n )
 {
 	SET_BE16( p, n );
 }
 
-static inline void set_be( BOOST::uint32_t* p, blargg_ulong n )
+static inline void set_be( uint32_t* p, blargg_ulong n )
 {
 	SET_BE32( p, n );
 }
 
-static inline unsigned get_le( BOOST::uint16_t* p )
+static inline unsigned get_le( uint16_t* p )
 {
 	return GET_LE16( p );
 }
 
-static inline blargg_ulong get_le( BOOST::uint32_t* p )
+static inline blargg_ulong get_le( uint32_t* p )
 {
 	return GET_LE32( p );
 }
 
-static inline unsigned get_be( BOOST::uint16_t* p )
+static inline unsigned get_be( uint16_t* p )
 {
 	return GET_BE16( p );
 }
 
-static inline blargg_ulong get_be( BOOST::uint32_t* p )
+static inline blargg_ulong get_be( uint32_t* p )
 {
 	return GET_BE32( p );
 }
 
-static BOOST::uint8_t const initial_regs [SPC_DSP::register_count] =
+static uint8_t const initial_regs [SPC_DSP::register_count] =
 {
 	// register values from byuu's snes_spc fork
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -1084,7 +1084,7 @@ void SPC_State_Copier::copy( void* state, size_t size )
 
 int SPC_State_Copier::copy_int( int state, int size )
 {
-	BOOST::uint8_t s [2];
+	uint8_t s [2];
 	SET_LE16( s, state );
 	func( buf, &s, size );
 	return GET_LE16( s );
