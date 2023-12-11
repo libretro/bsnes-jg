@@ -19,17 +19,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "SPC_DSP.h"
 
-/* Included at the beginning of library source files, after all other #include lines.
-Sets up helpful macros and services used in my source code. They don't need
-module an annoying module prefix on their names since they are defined after
-all other #include lines. */
-
-// If enabled, evaluate expr and if false, make debug log entry with source file
-// and line. Meant for finding situations that should be examined further, but that
-// don't indicate a problem. In all cases, execution continues normally.
-#undef check
-#define check( expr ) ((void) 0)
-
 #if INT_MAX < 0x7FFFFFFF
 	#error "Requires that int type have at least 32 bits"
 #endif
@@ -308,9 +297,6 @@ static uint8_t const initial_regs [SPC_DSP::register_count] =
 	out += 2;\
 	if ( out >= m.out_end )\
 	{\
-		check( out == m.out_end );\
-		check( m.out_end != &m.extra [extra_size] || \
-			(m.extra <= m.out_begin && m.extra < &m.extra [extra_size]) );\
 		out       = m.extra;\
 		m.out_end = &m.extra [extra_size];\
 	}\
