@@ -499,14 +499,13 @@ MISC_CLOCK( 30 )
 
 //// Voices
 
-#define VOICE_CLOCK( n ) void SPC_DSP::voice_##n( voice_t* const v )
-
-inline VOICE_CLOCK( V1 )
+inline void SPC_DSP::voice_V1( voice_t* const v )
 {
 	m.t_dir_addr = m.t_dir * 0x100 + m.t_srcn * 4;
 	m.t_srcn = VREG(v->regs,srcn);
 }
-inline VOICE_CLOCK( V2 )
+
+inline void SPC_DSP::voice_V2( voice_t* const v )
 {
 	// Read sample pointer (ignored if not needed)
 	uint8_t const* entry = &m.ram [m.t_dir_addr];
@@ -519,17 +518,20 @@ inline VOICE_CLOCK( V2 )
 	// Read pitch, spread over two clocks
 	m.t_pitch = VREG(v->regs,pitchl);
 }
-inline VOICE_CLOCK( V3a )
+
+inline void SPC_DSP::voice_V3a( voice_t* const v )
 {
 	m.t_pitch += (VREG(v->regs,pitchh) & 0x3F) << 8;
 }
-inline VOICE_CLOCK( V3b )
+
+inline void SPC_DSP::voice_V3b( voice_t* const v )
 {
 	// Read BRR header and byte
 	m.t_brr_byte   = m.ram [(v->brr_addr + v->brr_offset) & 0xFFFF];
 	m.t_brr_header = m.ram [v->brr_addr]; // brr_addr doesn't need masking
 }
-VOICE_CLOCK( V3c )
+
+inline void SPC_DSP::voice_V3c( voice_t* const v )
 {
 	// Pitch modulation using previous voice's output
 	if ( m.t_pmon & v->vbit )
@@ -598,6 +600,7 @@ VOICE_CLOCK( V3c )
 	if ( !v->kon_delay )
 		run_envelope( v );
 }
+
 inline void SPC_DSP::voice_output( voice_t const* v, int ch )
 {
 	// Apply left/right volume
@@ -614,7 +617,8 @@ inline void SPC_DSP::voice_output( voice_t const* v, int ch )
 		CLAMP16( m.t_echo_out [ch] );
 	}
 }
-VOICE_CLOCK( V4 )
+
+inline void SPC_DSP::voice_V4( voice_t* const v )
 {
 	// Decode BRR
 	m.t_looped = 0;
@@ -646,7 +650,8 @@ VOICE_CLOCK( V4 )
 	// Output left
 	voice_output( v, 0 );
 }
-inline VOICE_CLOCK( V5 )
+
+inline void SPC_DSP::voice_V5( voice_t* const v )
 {
 	// Output right
 	voice_output( v, 1 );
@@ -659,31 +664,35 @@ inline VOICE_CLOCK( V5 )
 		endx_buf &= ~v->vbit;
 	m.endx_buf = (uint8_t) endx_buf;
 }
-inline VOICE_CLOCK( V6 )
+
+inline void SPC_DSP::voice_V6( voice_t* const v )
 {
 	(void) v; // avoid compiler warning about unused v
 	m.outx_buf = (uint8_t) (m.t_output >> 8);
 }
-inline VOICE_CLOCK( V7 )
+
+inline void SPC_DSP::voice_V7( voice_t* const v )
 {
 	// Update ENDX
 	REG(endx) = m.endx_buf;
 
 	m.envx_buf = v->t_envx_out;
 }
-inline VOICE_CLOCK( V8 )
+
+inline void SPC_DSP::voice_V8( voice_t* const v )
 {
 	// Update OUTX
 	VREG(v->regs,outx) = m.outx_buf;
 }
-inline VOICE_CLOCK( V9 )
+
+inline void SPC_DSP::voice_V9( voice_t* const v )
 {
 	// Update ENVX
 	VREG(v->regs,envx) = m.envx_buf;
 }
 
 // Most voices do all these in one clock, so make a handy composite
-inline VOICE_CLOCK( V3 )
+inline void SPC_DSP::voice_V3( voice_t* const v )
 {
 	voice_V3a( v );
 	voice_V3b( v );
@@ -692,9 +701,26 @@ inline VOICE_CLOCK( V3 )
 
 // Common combinations of voice steps on different voices. This greatly reduces
 // code size and allows everything to be inlined in these functions.
-VOICE_CLOCK(V7_V4_V1) { voice_V7(v); voice_V1(v+3); voice_V4(v+1); }
-VOICE_CLOCK(V8_V5_V2) { voice_V8(v); voice_V5(v+1); voice_V2(v+2); }
-VOICE_CLOCK(V9_V6_V3) { voice_V9(v); voice_V6(v+1); voice_V3(v+2); }
+void SPC_DSP::voice_V7_V4_V1( voice_t* const v )
+{
+	voice_V7(v);
+	voice_V1(v+3);
+	voice_V4(v+1);
+}
+
+void SPC_DSP::voice_V8_V5_V2( voice_t* const v )
+{
+	voice_V8(v);
+	voice_V5(v+1);
+	voice_V2(v+2);
+}
+
+void SPC_DSP::voice_V9_V6_V3( voice_t* const v )
+{
+	voice_V9(v);
+	voice_V6(v+1);
+	voice_V3(v+2);
+}
 
 //// Echo
 
