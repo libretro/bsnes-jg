@@ -19,10 +19,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "SPC_DSP.h"
 
-#if INT_MAX < 0x7FFFFFFF
-	#error "Requires that int type have at least 32 bits"
-#endif
-
 class SPC_State_Copier {
 	dsp_copy_func_t func;
 	unsigned char** buf;
