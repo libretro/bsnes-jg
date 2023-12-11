@@ -43,6 +43,9 @@ public:
 
 // Sound control
 
+	// This is from byuu's snes_spc fork
+	bool mute();
+
 	// Mutes voices corresponding to non-zero bits in mask (issues repeated KOFF events).
 	// Reduces emulation accuracy.
 	enum { voice_count = 8 };
@@ -58,6 +61,7 @@ public:
 	enum { state_size = 640 }; // maximum space needed when saving
 	void copy_state( unsigned char**, dsp_copy_func_t );
 
+private:
 // DSP register addresses
 
 	// Global registers
@@ -83,12 +87,11 @@ public:
 	};
 
 	enum { extra_size = 16 };
-	bool mute(); // This is from byuu's snes_spc fork
-
 	enum { echo_hist_size = 8 };
-
 	enum env_mode_t { env_release, env_attack, env_decay, env_sustain };
 	enum { brr_buf_size = 12 };
+	enum { brr_block_size = 9 };
+
 	struct voice_t
 	{
 		int buf [brr_buf_size*2];// decoded samples (twice the size to simplify wrap handling)
@@ -104,8 +107,6 @@ public:
 		int hidden_env;         // used by GAIN mode 7, very obscure quirk
 		uint8_t t_envx_out;
 	};
-private:
-	enum { brr_block_size = 9 };
 
 	struct state_t
 	{
