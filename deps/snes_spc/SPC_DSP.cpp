@@ -56,12 +56,6 @@ public:
 	T& operator [] ( size_t ) const;
 };
 
-#if UINT_MAX < 0xFFFFFFFF || ULONG_MAX == 0xFFFFFFFF
-	typedef unsigned long blargg_ulong;
-#else
-	typedef unsigned blargg_ulong;
-#endif
-
 template<class T>
 blargg_vector<T>::~blargg_vector() {
 	free( begin_ );
