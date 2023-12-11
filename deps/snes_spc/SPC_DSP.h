@@ -58,9 +58,6 @@ public:
 	enum { state_size = 640 }; // maximum space needed when saving
 	void copy_state( unsigned char**, dsp_copy_func_t );
 
-	// Returns non-zero if new key-on events occurred since last call
-	bool check_kon();
-
 // DSP register addresses
 
 	// Global registers
@@ -86,9 +83,6 @@ public:
 	};
 
 	enum { extra_size = 16 };
-	int16_t* extra();
-	int16_t const* out_pos() const;
-	void disable_surround( bool ); // not supported
 	bool mute(); // This is from byuu's snes_spc fork
 
 	enum { echo_hist_size = 8 };
@@ -261,12 +255,5 @@ inline void SPC_DSP::write( int addr, int data )
 }
 
 inline void SPC_DSP::mute_voices( int mask ) { m.mute_mask = mask; }
-
-inline bool SPC_DSP::check_kon()
-{
-	bool old = m.kon_check;
-	m.kon_check = 0;
-	return old;
-}
 
 #endif

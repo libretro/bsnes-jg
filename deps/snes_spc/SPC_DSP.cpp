@@ -36,18 +36,6 @@ public:
 	assert( (type) state == state );\
 }
 
-int16_t* SPC_DSP::extra()
-{
-	return m.extra;
-}
-
-int16_t const* SPC_DSP::out_pos() const
-{
-	return m.out;
-}
-
-void SPC_DSP::disable_surround( bool ) { }
-
 bool SPC_DSP::mute()
 {
 	return m.regs[r_flg] & 0x40;
@@ -865,7 +853,6 @@ void SPC_DSP::init( void* ram_64k )
 {
 	m.ram = (uint8_t*) ram_64k;
 	mute_voices( 0 );
-	disable_surround( false );
 	set_output( 0, 0 );
 	reset();
 }
