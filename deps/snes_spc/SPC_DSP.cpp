@@ -707,8 +707,6 @@ VOICE_CLOCK(V9_V6_V3) { voice_V9(v); voice_V6(v+1); voice_V3(v+2); }
 // Calculate FIR point for left/right channel
 #define CALC_FIR( i, ch )   ((ECHO_FIR( i + 1 ) [ch] * (int8_t) REG(fir + i * 0x10)) >> 6)
 
-#define ECHO_CLOCK( n ) inline void SPC_DSP::echo_##n()
-
 inline void SPC_DSP::echo_read( int ch )
 {
 	int s = ((int16_t) get_le16( ECHO_PTR( ch ) ));
@@ -716,7 +714,7 @@ inline void SPC_DSP::echo_read( int ch )
 	ECHO_FIR( 0 ) [ch] = ECHO_FIR( 8 ) [ch] = s >> 1;
 }
 
-ECHO_CLOCK( 22 )
+inline void SPC_DSP::echo_22()
 {
 	// History
 	if ( ++m.echo_hist_pos >= &m.echo_hist [echo_hist_size] )
@@ -732,7 +730,8 @@ ECHO_CLOCK( 22 )
 	m.t_echo_in [0] = l;
 	m.t_echo_in [1] = r;
 }
-ECHO_CLOCK( 23 )
+
+inline void SPC_DSP::echo_23()
 {
 	int l = CALC_FIR( 1, 0 ) + CALC_FIR( 2, 0 );
 	int r = CALC_FIR( 1, 1 ) + CALC_FIR( 2, 1 );
@@ -742,7 +741,8 @@ ECHO_CLOCK( 23 )
 
 	echo_read( 1 );
 }
-ECHO_CLOCK( 24 )
+
+inline void SPC_DSP::echo_24()
 {
 	int l = CALC_FIR( 3, 0 ) + CALC_FIR( 4, 0 ) + CALC_FIR( 5, 0 );
 	int r = CALC_FIR( 3, 1 ) + CALC_FIR( 4, 1 ) + CALC_FIR( 5, 1 );
@@ -750,7 +750,8 @@ ECHO_CLOCK( 24 )
 	m.t_echo_in [0] += l;
 	m.t_echo_in [1] += r;
 }
-ECHO_CLOCK( 25 )
+
+inline void SPC_DSP::echo_25()
 {
 	int l = m.t_echo_in [0] + CALC_FIR( 6, 0 );
 	int r = m.t_echo_in [1] + CALC_FIR( 6, 1 );
@@ -767,6 +768,7 @@ ECHO_CLOCK( 25 )
 	m.t_echo_in [0] = l & ~1;
 	m.t_echo_in [1] = r & ~1;
 }
+
 inline int SPC_DSP::echo_output( int ch )
 {
 	int out = (int16_t) ((m.t_main_out [ch] * (int8_t) REG(mvoll + ch * 0x10)) >> 7) +
@@ -774,7 +776,8 @@ inline int SPC_DSP::echo_output( int ch )
 	CLAMP16( out );
 	return out;
 }
-ECHO_CLOCK( 26 )
+
+inline void SPC_DSP::echo_26()
 {
 	// Left output volumes
 	// (save sample for next clock so we can output both together)
@@ -790,7 +793,8 @@ ECHO_CLOCK( 26 )
 	m.t_echo_out [0] = l & ~1;
 	m.t_echo_out [1] = r & ~1;
 }
-ECHO_CLOCK( 27 )
+
+inline void SPC_DSP::echo_27()
 {
 	// Output
 	int l = m.t_main_out [0];
@@ -815,17 +819,20 @@ ECHO_CLOCK( 27 )
 		m.out = out;
 	#endif
 }
-ECHO_CLOCK( 28 )
+
+inline void SPC_DSP::echo_28()
 {
 	m.t_echo_enabled = REG(flg);
 }
+
 inline void SPC_DSP::echo_write( int ch )
 {
 	if ( !(m.t_echo_enabled & 0x20) )
 		set_le16( ECHO_PTR( ch ), m.t_echo_out [ch] );
 	m.t_echo_out [ch] = 0;
 }
-ECHO_CLOCK( 29 )
+
+inline void SPC_DSP::echo_29()
 {
 	m.t_esa = REG(esa);
 
@@ -841,7 +848,8 @@ ECHO_CLOCK( 29 )
 
 	m.t_echo_enabled = REG(flg);
 }
-ECHO_CLOCK( 30 )
+
+inline void SPC_DSP::echo_30()
 {
 	// Write right echo
 	echo_write( 1 );
