@@ -131,9 +131,6 @@ bool SPC_DSP::mute()
 }
 
 // CPU Byte Order Utilities
-#define GET_LE16SA( addr )      ((int16_t) GET_LE16( addr ))
-#define GET_LE16A( addr )       GET_LE16( addr )
-#define SET_LE16A( addr, data ) SET_LE16( addr, data )
 
 static inline unsigned get_le16( void const* p )
 {
@@ -141,116 +138,10 @@ static inline unsigned get_le16( void const* p )
 			(unsigned) ((unsigned char const*) p) [0];
 }
 
-static inline unsigned get_be16( void const* p )
-{
-	return  (unsigned) ((unsigned char const*) p) [0] << 8 |
-			(unsigned) ((unsigned char const*) p) [1];
-}
-
-static inline blargg_ulong get_le32( void const* p )
-{
-	return  (blargg_ulong) ((unsigned char const*) p) [3] << 24 |
-			(blargg_ulong) ((unsigned char const*) p) [2] << 16 |
-			(blargg_ulong) ((unsigned char const*) p) [1] <<  8 |
-			(blargg_ulong) ((unsigned char const*) p) [0];
-}
-
-static inline blargg_ulong get_be32( void const* p )
-{
-	return  (blargg_ulong) ((unsigned char const*) p) [0] << 24 |
-			(blargg_ulong) ((unsigned char const*) p) [1] << 16 |
-			(blargg_ulong) ((unsigned char const*) p) [2] <<  8 |
-			(blargg_ulong) ((unsigned char const*) p) [3];
-}
-
 static inline void set_le16( void* p, unsigned n )
 {
 	((unsigned char*) p) [1] = (unsigned char) (n >> 8);
 	((unsigned char*) p) [0] = (unsigned char) n;
-}
-
-static inline void set_be16( void* p, unsigned n )
-{
-	((unsigned char*) p) [0] = (unsigned char) (n >> 8);
-	((unsigned char*) p) [1] = (unsigned char) n;
-}
-
-static inline void set_le32( void* p, blargg_ulong n )
-{
-	((unsigned char*) p) [0] = (unsigned char) n;
-	((unsigned char*) p) [1] = (unsigned char) (n >> 8);
-	((unsigned char*) p) [2] = (unsigned char) (n >> 16);
-	((unsigned char*) p) [3] = (unsigned char) (n >> 24);
-}
-
-static inline void set_be32( void* p, blargg_ulong n )
-{
-	((unsigned char*) p) [3] = (unsigned char) n;
-	((unsigned char*) p) [2] = (unsigned char) (n >> 8);
-	((unsigned char*) p) [1] = (unsigned char) (n >> 16);
-	((unsigned char*) p) [0] = (unsigned char) (n >> 24);
-}
-
-#ifndef GET_LE16
-	#define GET_LE16( addr )        get_le16( addr )
-	#define SET_LE16( addr, data )  set_le16( addr, data )
-#endif
-
-#ifndef GET_LE32
-	#define GET_LE32( addr )        get_le32( addr )
-	#define SET_LE32( addr, data )  set_le32( addr, data )
-#endif
-
-#ifndef GET_BE16
-	#define GET_BE16( addr )        get_be16( addr )
-	#define SET_BE16( addr, data )  set_be16( addr, data )
-#endif
-
-#ifndef GET_BE32
-	#define GET_BE32( addr )        get_be32( addr )
-	#define SET_BE32( addr, data )  set_be32( addr, data )
-#endif
-
-// auto-selecting versions
-
-inline void set_le( uint16_t* p, unsigned n )
-{
-	SET_LE16( p, n );
-}
-
-inline void set_le( uint32_t* p, blargg_ulong n )
-{
-	SET_LE32( p, n );
-}
-
-inline void set_be( uint16_t* p, unsigned n )
-{
-	SET_BE16( p, n );
-}
-
-inline void set_be( uint32_t* p, blargg_ulong n )
-{
-	SET_BE32( p, n );
-}
-
-inline unsigned get_le( uint16_t* p )
-{
-	return GET_LE16( p );
-}
-
-inline blargg_ulong get_le( uint32_t* p )
-{
-	return GET_LE32( p );
-}
-
-inline unsigned get_be( uint16_t* p )
-{
-	return GET_BE16( p );
-}
-
-inline blargg_ulong get_be( uint32_t* p )
-{
-	return GET_BE32( p );
 }
 
 static uint8_t const initial_regs [SPC_DSP::register_count] =
@@ -621,7 +512,7 @@ inline VOICE_CLOCK( V2 )
 	uint8_t const* entry = &m.ram [m.t_dir_addr];
 	if ( !v->kon_delay )
 		entry += 2;
-	m.t_brr_next_addr = GET_LE16A( entry );
+	m.t_brr_next_addr = get_le16( entry );
 
 	m.t_adsr0 = VREG(v->regs,adsr0);
 
@@ -820,7 +711,7 @@ VOICE_CLOCK(V9_V6_V3) { voice_V9(v); voice_V6(v+1); voice_V3(v+2); }
 
 inline void SPC_DSP::echo_read( int ch )
 {
-	int s = GET_LE16SA( ECHO_PTR( ch ) );
+	int s = ((int16_t) get_le16( ECHO_PTR( ch ) ));
 	// second copy simplifies wrap-around handling
 	ECHO_FIR( 0 ) [ch] = ECHO_FIR( 8 ) [ch] = s >> 1;
 }
@@ -931,7 +822,7 @@ ECHO_CLOCK( 28 )
 inline void SPC_DSP::echo_write( int ch )
 {
 	if ( !(m.t_echo_enabled & 0x20) )
-		SET_LE16A( ECHO_PTR( ch ), m.t_echo_out [ch] );
+		set_le16( ECHO_PTR( ch ), m.t_echo_out [ch] );
 	m.t_echo_out [ch] = 0;
 }
 ECHO_CLOCK( 29 )
@@ -1093,9 +984,9 @@ void SPC_State_Copier::copy( void* state, size_t size )
 int SPC_State_Copier::copy_int( int state, int size )
 {
 	uint8_t s [2];
-	SET_LE16( s, state );
+	set_le16( s, state );
 	func( buf, &s, size );
-	return GET_LE16( s );
+	return get_le16( s );
 }
 
 void SPC_State_Copier::skip( int count )
