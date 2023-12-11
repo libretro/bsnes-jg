@@ -175,9 +175,6 @@ static uint8_t const initial_regs [SPC_DSP::register_count] =
 		io = (io >> 31) ^ 0x7FFF;\
 }
 
-// Access voice DSP register
-#define VREG(r,n)   r [v_##n]
-
 #define WRITE_SAMPLES( l, r, out ) \
 {\
 	out [0] = l;\
@@ -331,7 +328,7 @@ inline void SPC_DSP::run_envelope( voice_t* const v )
 	else
 	{
 		int rate;
-		int env_data = VREG(v->regs,adsr1);
+		int env_data = v->regs [v_adsr1];
 		if ( m.t_adsr0 & 0x80 ) // 99% ADSR
 		{
 			if ( v->env_mode >= env_decay ) // 99%
@@ -351,7 +348,7 @@ inline void SPC_DSP::run_envelope( voice_t* const v )
 		else // GAIN
 		{
 			int mode;
-			env_data = VREG(v->regs,gain);
+			env_data = v->regs [v_gain];
 			mode = env_data >> 5;
 			if ( mode < 4 ) // direct
 			{
@@ -500,7 +497,7 @@ inline void SPC_DSP::misc_30()
 inline void SPC_DSP::voice_V1( voice_t* const v )
 {
 	m.t_dir_addr = m.t_dir * 0x100 + m.t_srcn * 4;
-	m.t_srcn = VREG(v->regs,srcn);
+	m.t_srcn = v->regs [v_srcn];
 }
 
 inline void SPC_DSP::voice_V2( voice_t* const v )
@@ -511,15 +508,15 @@ inline void SPC_DSP::voice_V2( voice_t* const v )
 		entry += 2;
 	m.t_brr_next_addr = get_le16( entry );
 
-	m.t_adsr0 = VREG(v->regs,adsr0);
+	m.t_adsr0 = v->regs [v_adsr0];
 
 	// Read pitch, spread over two clocks
-	m.t_pitch = VREG(v->regs,pitchl);
+	m.t_pitch = v->regs [v_pitchl];
 }
 
 inline void SPC_DSP::voice_V3a( voice_t* const v )
 {
-	m.t_pitch += (VREG(v->regs,pitchh) & 0x3F) << 8;
+	m.t_pitch += (v->regs [v_pitchh] & 0x3F) << 8;
 }
 
 inline void SPC_DSP::voice_V3b( voice_t* const v )
@@ -602,7 +599,7 @@ inline void SPC_DSP::voice_V3c( voice_t* const v )
 inline void SPC_DSP::voice_output( voice_t const* v, int ch )
 {
 	// Apply left/right volume
-	int amp = (m.t_output * (int8_t) VREG(v->regs,voll + ch)) >> 7;
+	int amp = (m.t_output * (int8_t) v->regs [v_voll + ch]) >> 7;
 
 	// Add to output total
 	m.t_main_out [ch] += amp;
@@ -680,13 +677,13 @@ inline void SPC_DSP::voice_V7( voice_t* const v )
 inline void SPC_DSP::voice_V8( voice_t* const v )
 {
 	// Update OUTX
-	VREG(v->regs,outx) = m.outx_buf;
+	v->regs [v_outx] = m.outx_buf;
 }
 
 inline void SPC_DSP::voice_V9( voice_t* const v )
 {
 	// Update ENVX
-	VREG(v->regs,envx) = m.envx_buf;
+	v->regs [v_envx] = m.envx_buf;
 }
 
 // Most voices do all these in one clock, so make a handy composite
