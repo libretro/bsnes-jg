@@ -175,18 +175,6 @@ static uint8_t const initial_regs [SPC_DSP::register_count] =
 		io = (io >> 31) ^ 0x7FFF;\
 }
 
-#define WRITE_SAMPLES( l, r, out ) \
-{\
-	out [0] = l;\
-	out [1] = r;\
-	out += 2;\
-	if ( out >= m.out_end )\
-	{\
-		out       = m.extra;\
-		m.out_end = &m.extra [extra_size];\
-	}\
-}\
-
 void SPC_DSP::set_output( int16_t* out, int size )
 {
 	assert( (size & 1) == 0 ); // must be even
@@ -832,13 +820,16 @@ inline void SPC_DSP::echo_27()
 	}
 
 	// Output sample to DAC
-	#ifdef SPC_DSP_OUT_HOOK
-		SPC_DSP_OUT_HOOK( l, r );
-	#else
-		int16_t* out = m.out;
-		WRITE_SAMPLES( l, r, out );
-		m.out = out;
-	#endif
+	int16_t* out = m.out;
+	out [0] = l;
+	out [1] = r;
+	out += 2;
+	if ( out >= m.out_end )
+	{
+		out       = m.extra;
+		m.out_end = &m.extra [extra_size];
+	}
+	m.out = out;
 }
 
 inline void SPC_DSP::echo_28()
