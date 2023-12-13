@@ -4,8 +4,6 @@
 #ifndef SPC_DSP_H
 #define SPC_DSP_H
 
-#include <assert.h>
-
 typedef void (*dsp_copy_func_t)( unsigned char**, void*, size_t );
 
 // DSP register addresses

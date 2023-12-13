@@ -15,26 +15,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <limits.h>
 
 #include "SPC_DSP.h"
-
-class SPC_State_Copier {
-	dsp_copy_func_t func;
-	unsigned char** buf;
-public:
-	SPC_State_Copier( unsigned char**, dsp_copy_func_t );
-	void copy( void*, size_t );
-	int copy_int( int, int );
-	void skip( int );
-	void extra();
-};
-
-#define SPC_COPY( type, state )\
-{\
-	state = (type) copier.copy_int( state, sizeof (type) );\
-	assert( (type) state == state );\
-}
 
 static state_t m;
 
@@ -935,58 +919,25 @@ void spc_dsp_reset(void) {
 }
 
 //// State save/load
-
-SPC_State_Copier::SPC_State_Copier( unsigned char** p, dsp_copy_func_t f )
-{
-	func = f;
-	buf = p;
+static int spc_state_copy_int( unsigned char** buf, dsp_copy_func_t func, int state, int size ) {
+    uint8_t s[2];
+    set_le16(s, state);
+    func(buf, &s, size);
+    return get_le16(s);
 }
 
-void SPC_State_Copier::copy( void* state, size_t size )
-{
-	func( buf, state, size );
-}
-
-int SPC_State_Copier::copy_int( int state, int size )
-{
-	uint8_t s [2];
-	set_le16( s, state );
-	func( buf, &s, size );
-	return get_le16( s );
-}
-
-void SPC_State_Copier::skip( int count )
-{
-	if ( count > 0 )
-	{
-		char temp [64];
-		memset( temp, 0, sizeof temp );
-		do
-		{
-			int n = sizeof temp;
-			if ( n > count )
-				n = count;
-			count -= n;
-			func( buf, temp, n );
-		}
-		while ( count );
-	}
-}
-
-void SPC_State_Copier::extra()
-{
-	int n = 0;
-	SPC_State_Copier& copier = *this;
-	SPC_COPY( uint8_t, n );
-	skip( n );
+#define SPC_COPY( type, state )\
+{\
+	state = (type) spc_state_copy_int( io, copy, state, sizeof (type) );\
+	assert( (type) state == state );\
 }
 
 void spc_dsp_copy_state( unsigned char** io, dsp_copy_func_t copy )
 {
-	SPC_State_Copier copier( io, copy );
+	int extra = 0;
 
 	// DSP registers
-	copier.copy( m.regs, register_count );
+	copy( io, m.regs, register_count );
 
 	// Internal state
 
@@ -1019,7 +970,7 @@ void spc_dsp_copy_state( unsigned char** io, dsp_copy_func_t copy )
 		}
 		SPC_COPY(  uint8_t, v->t_envx_out );
 
-		copier.extra();
+		SPC_COPY( uint8_t, extra );
 	}
 
 	// Echo history
@@ -1078,5 +1029,5 @@ void spc_dsp_copy_state( unsigned char** io, dsp_copy_func_t copy )
 	SPC_COPY( uint16_t, m.t_echo_ptr );
 	SPC_COPY(  uint8_t, m.t_looped );
 
-	copier.extra();
+	SPC_COPY( uint8_t, extra );
 }
