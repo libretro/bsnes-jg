@@ -145,44 +145,6 @@ typedef struct _state_t {
 
 static state_t m;
 
-int spc_dsp_sample_count(void) {
-    return m.out - m.out_begin;
-}
-
-int spc_dsp_read(int addr) {
-    assert((unsigned)addr < SPC_REGISTER_COUNT);
-    return m.regs[addr];
-}
-
-void spc_dsp_write(int addr, int data) {
-    assert((unsigned)addr < SPC_REGISTER_COUNT);
-
-    m.regs[addr] = (uint8_t)data;
-    switch (addr & 0x0F) {
-        case v_envx:
-            m.envx_buf = (uint8_t)data;
-            break;
-
-        case v_outx:
-            m.outx_buf = (uint8_t)data;
-            break;
-
-        case 0x0C:
-            if (addr == r_kon)
-                m.new_kon = (uint8_t)data;
-
-            if (addr == r_endx) { // always cleared, regardless of data written
-                m.endx_buf = 0;
-                m.regs[r_endx] = 0;
-            }
-            break;
-    }
-}
-
-bool spc_dsp_mute(void) {
-    return m.regs[r_flg] & 0x40;
-}
-
 // CPU Byte Order Utilities
 
 static inline unsigned get_le16(void const* p) {
@@ -224,17 +186,6 @@ static uint8_t const initial_regs[SPC_REGISTER_COUNT] =
 {\
     if ((int16_t)io != io)\
         io = (io >> 31) ^ 0x7FFF;\
-}
-
-void spc_dsp_set_output(int16_t* out, int size) {
-    assert((size & 1) == 0); // must be even
-    if (!out) {
-        out  = m.extra;
-        size = SPC_EXTRA_SIZE;
-    }
-    m.out_begin = out;
-    m.out       = out;
-    m.out_end   = out + size;
 }
 
 // Volume registers and efb are signed! Easy to forget int8_t cast.
@@ -897,33 +848,6 @@ PHASE(29) misc_29();                                                 echo_29();\
 PHASE(30) misc_30();V(V3c,0)                                         echo_30();\
 PHASE(31)  V(V4,0)       V(V1,2)\
 
-void spc_dsp_run(int clocks_remain) {
-    assert(clocks_remain > 0);
-
-    int const phase = m.phase;
-    m.phase = (phase + clocks_remain) & 31;
-    switch (phase) {
-    loop:
-
-        #define PHASE(n) if (n && !--clocks_remain) break;\
-            /* fallthrough */\
-            case n:
-        GEN_DSP_TIMING
-        #undef PHASE
-
-        if (--clocks_remain)
-            goto loop;
-    }
-}
-
-//// Setup
-
-void spc_dsp_init(void* ram_64k) {
-    m.ram = (uint8_t*)ram_64k;
-    spc_dsp_set_output(0, 0);
-    spc_dsp_reset();
-}
-
 static void soft_reset_common(void) {
     assert(m.ram); // init() must have been called already
 
@@ -936,10 +860,39 @@ static void soft_reset_common(void) {
     init_counter();
 }
 
-void spc_dsp_soft_reset(void) {
-    m.regs[r_flg] = 0xE0;
-    soft_reset_common();
+static int spc_state_copy_int(unsigned char** buf, dsp_copy_func_t func, int state, int size) {
+    uint8_t s[2];
+    set_le16(s, state);
+    func(buf, &s, size);
+    return get_le16(s);
 }
+
+#define SPC_COPY(type, state)\
+{\
+    state = (type)spc_state_copy_int(io, copy, state, sizeof (type));\
+    assert((type)state == state);\
+}
+
+//// Setup
+
+void spc_dsp_init(void* ram_64k) {
+    m.ram = (uint8_t*)ram_64k;
+    spc_dsp_set_output(0, 0);
+    spc_dsp_reset();
+}
+
+void spc_dsp_set_output(int16_t* out, int size) {
+    assert((size & 1) == 0); // must be even
+    if (!out) {
+        out  = m.extra;
+        size = SPC_EXTRA_SIZE;
+    }
+    m.out_begin = out;
+    m.out       = out;
+    m.out_end   = out + size;
+}
+
+//// Emulation
 
 void spc_dsp_reset(void) {
     memcpy(m.regs, initial_regs, sizeof m.regs);
@@ -959,19 +912,71 @@ void spc_dsp_reset(void) {
     soft_reset_common();
 }
 
-//// State save/load
-static int spc_state_copy_int(unsigned char** buf, dsp_copy_func_t func, int state, int size) {
-    uint8_t s[2];
-    set_le16(s, state);
-    func(buf, &s, size);
-    return get_le16(s);
+void spc_dsp_soft_reset(void) {
+    m.regs[r_flg] = 0xE0;
+    soft_reset_common();
 }
 
-#define SPC_COPY(type, state)\
-{\
-    state = (type)spc_state_copy_int(io, copy, state, sizeof (type));\
-    assert((type)state == state);\
+//// Sound control
+
+bool spc_dsp_mute(void) {
+    return m.regs[r_flg] & 0x40;
 }
+
+int spc_dsp_sample_count(void) {
+    return m.out - m.out_begin;
+}
+
+int spc_dsp_read(int addr) {
+    assert((unsigned)addr < SPC_REGISTER_COUNT);
+    return m.regs[addr];
+}
+
+void spc_dsp_write(int addr, int data) {
+    assert((unsigned)addr < SPC_REGISTER_COUNT);
+
+    m.regs[addr] = (uint8_t)data;
+    switch (addr & 0x0F) {
+        case v_envx:
+            m.envx_buf = (uint8_t)data;
+            break;
+
+        case v_outx:
+            m.outx_buf = (uint8_t)data;
+            break;
+
+        case 0x0C:
+            if (addr == r_kon)
+                m.new_kon = (uint8_t)data;
+
+            if (addr == r_endx) { // always cleared, regardless of data written
+                m.endx_buf = 0;
+                m.regs[r_endx] = 0;
+            }
+            break;
+    }
+}
+
+void spc_dsp_run(int clocks_remain) {
+    assert(clocks_remain > 0);
+
+    int const phase = m.phase;
+    m.phase = (phase + clocks_remain) & 31;
+    switch (phase) {
+    loop:
+
+        #define PHASE(n) if (n && !--clocks_remain) break;\
+            /* fallthrough */\
+            case n:
+        GEN_DSP_TIMING
+        #undef PHASE
+
+        if (--clocks_remain)
+            goto loop;
+    }
+}
+
+//// State
 
 void spc_dsp_copy_state(unsigned char** io, dsp_copy_func_t copy) {
     int extra = 0;
