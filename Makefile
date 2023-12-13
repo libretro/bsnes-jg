@@ -312,7 +312,7 @@ install: all
 	cp $(SOURCEDIR)/deps/byuuML/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-byuuML
 	cp $(SOURCEDIR)/deps/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
 	cp $(SOURCEDIR)/deps/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
-	cp $(SOURCEDIR)/deps/snes_spc/license.txt $(DESTDIR)$(DOCDIR)/LICENSE-spc
+	cp $(SOURCEDIR)/deps/snes_spc/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-spc
 ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 	cp $(SOURCEDIR)/deps/libsamplerate/COPYING \
 		$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate
