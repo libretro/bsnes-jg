@@ -25,10 +25,22 @@
 
 typedef void (*dsp_copy_func_t)(unsigned char**, void*, size_t);
 
-// State
+// Setup
 
-// Saves/loads exact emulator state
-void spc_dsp_copy_state(unsigned char**, dsp_copy_func_t);
+// Initializes DSP and has it use the 64K RAM provided
+void spc_dsp_init(void*);
+
+// Sets destination for output samples. If out is NULL or out_size is 0,
+// doesn't generate any.
+void spc_dsp_set_output(int16_t*, int);
+
+// Emulation
+
+// Resets DSP to power-on state
+void spc_dsp_reset(void);
+
+// Emulates pressing reset switch on SNES
+void spc_dsp_soft_reset(void);
 
 // Sound control
 
@@ -49,21 +61,9 @@ void spc_dsp_write(int, int);
 // a pair of samples is be generated.
 void spc_dsp_run(int);
 
-// Setup
+// State
 
-// Initializes DSP and has it use the 64K RAM provided
-void spc_dsp_init(void*);
-
-// Sets destination for output samples. If out is NULL or out_size is 0,
-// doesn't generate any.
-void spc_dsp_set_output(int16_t*, int);
-
-// Emulation
-
-// Resets DSP to power-on state
-void spc_dsp_reset(void);
-
-// Emulates pressing reset switch on SNES
-void spc_dsp_soft_reset(void);
+// Saves/loads exact emulator state
+void spc_dsp_copy_state(unsigned char**, dsp_copy_func_t);
 
 #endif
