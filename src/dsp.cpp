@@ -32,7 +32,6 @@
 
 namespace SuperFamicom {
 
-static SPC_DSP spc_dsp;
 static Stream *stream;
 
 DSP dsp;
@@ -56,25 +55,25 @@ void DSP::serialize(serializer& s) {
   s.array(samplebuffer);
   s.integer(clock);
 
-  unsigned char state[SPC_DSP::state_size];
+  unsigned char state[state_size];
   unsigned char* p = state;
-  memset(&state, 0, SPC_DSP::state_size);
+  memset(&state, 0, state_size);
   if(s.mode() == serializer::Save) {
-    spc_dsp.copy_state(&p, dsp_state_save);
+    spc_dsp_copy_state(&p, dsp_state_save);
     s.array(state);
   } else if(s.mode() == serializer::Load) {
     s.array(state);
-    spc_dsp.copy_state(&p, dsp_state_load);
+    spc_dsp_copy_state(&p, dsp_state_load);
   } else {
     s.array(state);
   }
 }
 
 void DSP::main() {
-  spc_dsp.run(1);
+  spc_dsp_run(1);
   clock += 2;
 
-  int count = spc_dsp.sample_count();
+  int count = spc_dsp_sample_count();
   if(count > 0) {
     if(!system.runAhead)
     for(int n = 0; n < count; n += 2) {
@@ -82,16 +81,16 @@ void DSP::main() {
       int16_t right = samplebuffer[n + 1];
       stream->sample(left, right);
     }
-    spc_dsp.set_output(samplebuffer, 8192);
+    spc_dsp_set_output(samplebuffer, 8192);
   }
 }
 
 uint8_t DSP::read(uint8_t address) {
-  return spc_dsp.read(address);
+  return spc_dsp_read(address);
 }
 
 void DSP::write(uint8_t address, uint8_t data) {
-  spc_dsp.write(address, data);
+  spc_dsp_write(address, data);
 }
 
 bool DSP::load() {
@@ -103,20 +102,20 @@ void DSP::power(bool reset) {
   stream = audio.createStream(system.apuFrequency() / 768.0);
 
   if(!reset) {
-    spc_dsp.init(apuram);
-    spc_dsp.reset();
-    spc_dsp.set_output(samplebuffer, 8192);
+    spc_dsp_init(apuram);
+    spc_dsp_reset();
+    spc_dsp_set_output(samplebuffer, 8192);
   } else {
-    spc_dsp.soft_reset();
-    spc_dsp.set_output(samplebuffer, 8192);
+    spc_dsp_soft_reset();
+    spc_dsp_set_output(samplebuffer, 8192);
   }
 
   if(init)
-    for(unsigned address = 0; address < 0x80; ++address) spc_dsp.write(address, 0xff);
+    for(unsigned address = 0; address < 0x80; ++address) spc_dsp_write(address, 0xff);
 }
 
 bool DSP::mute() {
-  return spc_dsp.mute();
+  return spc_dsp_mute();
 }
 
 }

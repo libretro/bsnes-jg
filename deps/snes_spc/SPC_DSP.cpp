@@ -11,11 +11,11 @@ details. You should have received a copy of the GNU Lesser General Public
 License along with this module; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
+#include <stddef.h>
 #include <stdint.h>
-#include <cstddef>
-#include <cstdlib>
-#include <cstring>
-#include <climits>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
 
 #include "SPC_DSP.h"
 
@@ -36,9 +36,50 @@ public:
 	assert( (type) state == state );\
 }
 
-bool SPC_DSP::mute()
-{
-	return m.regs[r_flg] & 0x40;
+static state_t m;
+
+int spc_dsp_sample_count(void) {
+	return m.out - m.out_begin;
+}
+
+int spc_dsp_read(int addr){
+	assert( (unsigned) addr < register_count );
+	return m.regs [addr];
+}
+
+void spc_dsp_write( int addr, int data ) {
+	assert( (unsigned) addr < register_count );
+
+	m.regs [addr] = (uint8_t) data;
+	switch ( addr & 0x0F )
+	{
+	case v_envx:
+		m.envx_buf = (uint8_t) data;
+		break;
+
+	case v_outx:
+		m.outx_buf = (uint8_t) data;
+		break;
+
+	case 0x0C:
+		if ( addr == r_kon )
+			m.new_kon = (uint8_t) data;
+
+		if ( addr == r_endx ) // always cleared, regardless of data written
+		{
+			m.endx_buf = 0;
+			m.regs [r_endx] = 0;
+		}
+		break;
+	}
+}
+
+void spc_dsp_mute_voices(int mask) {
+    m.mute_mask = mask;
+}
+
+bool spc_dsp_mute(void) {
+    return m.regs[r_flg] & 0x40;
 }
 
 // CPU Byte Order Utilities
@@ -55,7 +96,7 @@ static inline void set_le16( void* p, unsigned n )
 	((unsigned char*) p) [0] = (unsigned char) n;
 }
 
-static uint8_t const initial_regs [SPC_DSP::register_count] =
+static uint8_t const initial_regs[register_count] =
 {
 	// register values from byuu's snes_spc fork
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -86,7 +127,7 @@ static uint8_t const initial_regs [SPC_DSP::register_count] =
 		io = (io >> 31) ^ 0x7FFF;\
 }
 
-void SPC_DSP::set_output( int16_t* out, int size )
+void spc_dsp_set_output( int16_t* out, int size )
 {
 	assert( (size & 1) == 0 ); // must be even
 	if ( !out )
@@ -140,7 +181,7 @@ static short const gauss [512] =
 1299,1300,1300,1301,1302,1302,1303,1303,1303,1304,1304,1304,1304,1304,1305,1305,
 };
 
-inline int SPC_DSP::interpolate( voice_t const* v )
+static inline int interpolate( voice_t const* v )
 {
 	// Make pointers into gaussian based on fractional position between samples
 	int offset = v->interp_pos >> 4 & 0xFF;
@@ -197,25 +238,25 @@ static unsigned const counter_offsets [32] =
 	     0
 };
 
-inline void SPC_DSP::init_counter()
+static inline void init_counter()
 {
 	m.counter = 0;
 }
 
-inline void SPC_DSP::run_counters()
+static inline void run_counters()
 {
 	if ( --m.counter < 0 )
 		m.counter = simple_counter_range - 1;
 }
 
-inline unsigned SPC_DSP::read_counter( int rate )
+static inline unsigned read_counter( int rate )
 {
 	return ((unsigned) m.counter + counter_offsets [rate]) % counter_rates [rate];
 }
 
 //// Envelope
 
-inline void SPC_DSP::run_envelope( voice_t* const v )
+static inline void run_envelope( voice_t* const v )
 {
 	int env = v->env;
 	if ( v->env_mode == env_release ) // 60%
@@ -296,7 +337,7 @@ inline void SPC_DSP::run_envelope( voice_t* const v )
 
 //// BRR Decoding
 
-inline void SPC_DSP::decode_brr( voice_t* v )
+static inline void decode_brr( voice_t* v )
 {
 	// Arrange the four input nybbles in 0xABCD order for easy decoding
 	int nybbles = m.t_brr_byte * 0x100 + m.ram [(v->brr_addr + v->brr_offset + 1) & 0xFFFF];
@@ -355,25 +396,25 @@ inline void SPC_DSP::decode_brr( voice_t* v )
 
 //// Misc
 
-inline void SPC_DSP::misc_27()
+static inline void misc_27()
 {
 	m.t_pmon = m.regs [r_pmon] & 0xFE; // voice 0 doesn't support PMON
 }
 
-inline void SPC_DSP::misc_28()
+static inline void misc_28()
 {
 	m.t_non = m.regs [r_non];
 	m.t_eon = m.regs [r_eon];
 	m.t_dir = m.regs [r_dir];
 }
 
-inline void SPC_DSP::misc_29()
+static inline void misc_29()
 {
 	if ( (m.every_other_sample ^= 1) != 0 )
 		m.new_kon &= ~m.kon; // clears KON 63 clocks after it was last read
 }
 
-inline void SPC_DSP::misc_30()
+static inline void misc_30()
 {
 	if ( m.every_other_sample )
 	{
@@ -393,13 +434,13 @@ inline void SPC_DSP::misc_30()
 
 //// Voices
 
-inline void SPC_DSP::voice_V1( voice_t* const v )
+static inline void voice_V1( voice_t* const v )
 {
 	m.t_dir_addr = m.t_dir * 0x100 + m.t_srcn * 4;
 	m.t_srcn = v->regs [v_srcn];
 }
 
-inline void SPC_DSP::voice_V2( voice_t* const v )
+static inline void voice_V2( voice_t* const v )
 {
 	// Read sample pointer (ignored if not needed)
 	uint8_t const* entry = &m.ram [m.t_dir_addr];
@@ -413,19 +454,19 @@ inline void SPC_DSP::voice_V2( voice_t* const v )
 	m.t_pitch = v->regs [v_pitchl];
 }
 
-inline void SPC_DSP::voice_V3a( voice_t* const v )
+static inline void voice_V3a( voice_t* const v )
 {
 	m.t_pitch += (v->regs [v_pitchh] & 0x3F) << 8;
 }
 
-inline void SPC_DSP::voice_V3b( voice_t* const v )
+static inline void voice_V3b( voice_t* const v )
 {
 	// Read BRR header and byte
 	m.t_brr_byte   = m.ram [(v->brr_addr + v->brr_offset) & 0xFFFF];
 	m.t_brr_header = m.ram [v->brr_addr]; // brr_addr doesn't need masking
 }
 
-inline void SPC_DSP::voice_V3c( voice_t* const v )
+static inline void voice_V3c( voice_t* const v )
 {
 	// Pitch modulation using previous voice's output
 	if ( m.t_pmon & v->vbit )
@@ -495,7 +536,7 @@ inline void SPC_DSP::voice_V3c( voice_t* const v )
 		run_envelope( v );
 }
 
-inline void SPC_DSP::voice_output( voice_t const* v, int ch )
+static inline void voice_output( voice_t const* v, int ch )
 {
 	// Apply left/right volume
 	int amp = (m.t_output * (int8_t) v->regs [v_voll + ch]) >> 7;
@@ -512,7 +553,7 @@ inline void SPC_DSP::voice_output( voice_t const* v, int ch )
 	}
 }
 
-inline void SPC_DSP::voice_V4( voice_t* const v )
+static inline void voice_V4( voice_t* const v )
 {
 	// Decode BRR
 	m.t_looped = 0;
@@ -545,7 +586,7 @@ inline void SPC_DSP::voice_V4( voice_t* const v )
 	voice_output( v, 0 );
 }
 
-inline void SPC_DSP::voice_V5( voice_t* const v )
+static inline void voice_V5( voice_t* const v )
 {
 	// Output right
 	voice_output( v, 1 );
@@ -559,13 +600,13 @@ inline void SPC_DSP::voice_V5( voice_t* const v )
 	m.endx_buf = (uint8_t) endx_buf;
 }
 
-inline void SPC_DSP::voice_V6( voice_t* const v )
+static inline void voice_V6( voice_t* const v )
 {
 	(void) v; // avoid compiler warning about unused v
 	m.outx_buf = (uint8_t) (m.t_output >> 8);
 }
 
-inline void SPC_DSP::voice_V7( voice_t* const v )
+static inline void voice_V7( voice_t* const v )
 {
 	// Update ENDX
 	m.regs [r_endx] = m.endx_buf;
@@ -573,20 +614,20 @@ inline void SPC_DSP::voice_V7( voice_t* const v )
 	m.envx_buf = v->t_envx_out;
 }
 
-inline void SPC_DSP::voice_V8( voice_t* const v )
+static inline void voice_V8( voice_t* const v )
 {
 	// Update OUTX
 	v->regs [v_outx] = m.outx_buf;
 }
 
-inline void SPC_DSP::voice_V9( voice_t* const v )
+static inline void voice_V9( voice_t* const v )
 {
 	// Update ENVX
 	v->regs [v_envx] = m.envx_buf;
 }
 
 // Most voices do all these in one clock, so make a handy composite
-inline void SPC_DSP::voice_V3( voice_t* const v )
+static inline void voice_V3( voice_t* const v )
 {
 	voice_V3a( v );
 	voice_V3b( v );
@@ -595,21 +636,21 @@ inline void SPC_DSP::voice_V3( voice_t* const v )
 
 // Common combinations of voice steps on different voices. This greatly reduces
 // code size and allows everything to be inlined in these functions.
-void SPC_DSP::voice_V7_V4_V1( voice_t* const v )
+static inline void voice_V7_V4_V1( voice_t* const v )
 {
 	voice_V7(v);
 	voice_V1(v+3);
 	voice_V4(v+1);
 }
 
-void SPC_DSP::voice_V8_V5_V2( voice_t* const v )
+static inline void voice_V8_V5_V2( voice_t* const v )
 {
 	voice_V8(v);
 	voice_V5(v+1);
 	voice_V2(v+2);
 }
 
-void SPC_DSP::voice_V9_V6_V3( voice_t* const v )
+static inline void voice_V9_V6_V3( voice_t* const v )
 {
 	voice_V9(v);
 	voice_V6(v+1);
@@ -627,14 +668,14 @@ void SPC_DSP::voice_V9_V6_V3( voice_t* const v )
 // Calculate FIR point for left/right channel
 #define CALC_FIR( i, ch )   ((ECHO_FIR( i + 1 ) [ch] * (int8_t) m.regs [r_fir + i * 0x10]) >> 6)
 
-inline void SPC_DSP::echo_read( int ch )
+inline void echo_read( int ch )
 {
 	int s = ((int16_t) get_le16( ECHO_PTR( ch ) ));
 	// second copy simplifies wrap-around handling
 	ECHO_FIR( 0 ) [ch] = ECHO_FIR( 8 ) [ch] = s >> 1;
 }
 
-inline void SPC_DSP::echo_22()
+inline void echo_22()
 {
 	// History
 	if ( ++m.echo_hist_pos >= &m.echo_hist [echo_hist_size] )
@@ -651,7 +692,7 @@ inline void SPC_DSP::echo_22()
 	m.t_echo_in [1] = r;
 }
 
-inline void SPC_DSP::echo_23()
+inline void echo_23()
 {
 	int l = CALC_FIR( 1, 0 ) + CALC_FIR( 2, 0 );
 	int r = CALC_FIR( 1, 1 ) + CALC_FIR( 2, 1 );
@@ -662,7 +703,7 @@ inline void SPC_DSP::echo_23()
 	echo_read( 1 );
 }
 
-inline void SPC_DSP::echo_24()
+inline void echo_24()
 {
 	int l = CALC_FIR( 3, 0 ) + CALC_FIR( 4, 0 ) + CALC_FIR( 5, 0 );
 	int r = CALC_FIR( 3, 1 ) + CALC_FIR( 4, 1 ) + CALC_FIR( 5, 1 );
@@ -671,7 +712,7 @@ inline void SPC_DSP::echo_24()
 	m.t_echo_in [1] += r;
 }
 
-inline void SPC_DSP::echo_25()
+inline void echo_25()
 {
 	int l = m.t_echo_in [0] + CALC_FIR( 6, 0 );
 	int r = m.t_echo_in [1] + CALC_FIR( 6, 1 );
@@ -689,7 +730,7 @@ inline void SPC_DSP::echo_25()
 	m.t_echo_in [1] = r & ~1;
 }
 
-inline int SPC_DSP::echo_output( int ch )
+inline int echo_output( int ch )
 {
 	int out = (int16_t) ((m.t_main_out [ch] * (int8_t) m.regs [r_mvoll + ch * 0x10]) >> 7) +
 			(int16_t) ((m.t_echo_in [ch] * (int8_t) m.regs [r_evoll + ch * 0x10]) >> 7);
@@ -697,7 +738,7 @@ inline int SPC_DSP::echo_output( int ch )
 	return out;
 }
 
-inline void SPC_DSP::echo_26()
+inline void echo_26()
 {
 	// Left output volumes
 	// (save sample for next clock so we can output both together)
@@ -714,7 +755,7 @@ inline void SPC_DSP::echo_26()
 	m.t_echo_out [1] = r & ~1;
 }
 
-inline void SPC_DSP::echo_27()
+inline void echo_27()
 {
 	// Output
 	int l = m.t_main_out [0];
@@ -743,19 +784,19 @@ inline void SPC_DSP::echo_27()
 	m.out = out;
 }
 
-inline void SPC_DSP::echo_28()
+inline void echo_28()
 {
 	m.t_echo_enabled = m.regs [r_flg];
 }
 
-inline void SPC_DSP::echo_write( int ch )
+inline void echo_write( int ch )
 {
 	if ( !(m.t_echo_enabled & 0x20) )
 		set_le16( ECHO_PTR( ch ), m.t_echo_out [ch] );
 	m.t_echo_out [ch] = 0;
 }
 
-inline void SPC_DSP::echo_29()
+inline void echo_29()
 {
 	m.t_esa = m.regs [r_esa];
 
@@ -772,7 +813,7 @@ inline void SPC_DSP::echo_29()
 	m.t_echo_enabled = m.regs [r_flg];
 }
 
-inline void SPC_DSP::echo_30()
+inline void echo_30()
 {
 	// Write right echo
 	echo_write( 1 );
@@ -826,8 +867,7 @@ PHASE(29) misc_29();                                                 echo_29();\
 PHASE(30) misc_30();V(V3c,0)                                         echo_30();\
 PHASE(31)  V(V4,0)       V(V1,2)\
 
-void SPC_DSP::run( int clocks_remain )
-{
+void spc_dsp_run(int clocks_remain) {
 	assert( clocks_remain > 0 );
 
 	int const phase = m.phase;
@@ -849,16 +889,15 @@ void SPC_DSP::run( int clocks_remain )
 
 //// Setup
 
-void SPC_DSP::init( void* ram_64k )
+void spc_dsp_init( void* ram_64k )
 {
 	m.ram = (uint8_t*) ram_64k;
-	mute_voices( 0 );
-	set_output( 0, 0 );
-	reset();
+	spc_dsp_mute_voices( 0 );
+	spc_dsp_set_output( 0, 0 );
+	spc_dsp_reset();
 }
 
-void SPC_DSP::soft_reset_common()
-{
+static void soft_reset_common(void) {
 	assert( m.ram ); // init() must have been called already
 
 	m.noise              = 0x4000;
@@ -870,15 +909,14 @@ void SPC_DSP::soft_reset_common()
 	init_counter();
 }
 
-void SPC_DSP::soft_reset()
+void spc_dsp_soft_reset(void)
 {
 	m.regs [r_flg] = 0xE0;
 	soft_reset_common();
 }
 
-void SPC_DSP::load( uint8_t const regs [register_count] )
-{
-	memcpy( m.regs, regs, sizeof m.regs );
+void spc_dsp_reset(void) {
+    memcpy( m.regs, initial_regs, sizeof m.regs );
 	memset( &m.regs [register_count], 0, offsetof (state_t,ram) - register_count );
 
 	// Internal state
@@ -895,8 +933,6 @@ void SPC_DSP::load( uint8_t const regs [register_count] )
 
 	soft_reset_common();
 }
-
-void SPC_DSP::reset() { load( initial_regs ); }
 
 //// State save/load
 
@@ -945,7 +981,7 @@ void SPC_State_Copier::extra()
 	skip( n );
 }
 
-void SPC_DSP::copy_state( unsigned char** io, dsp_copy_func_t copy )
+void spc_dsp_copy_state( unsigned char** io, dsp_copy_func_t copy )
 {
 	SPC_State_Copier copier( io, copy );
 
