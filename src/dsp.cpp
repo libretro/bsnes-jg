@@ -28,7 +28,9 @@
 
 #include "dsp.hpp"
 
+extern "C" {
 #include "snes_spc/SPC_DSP.h"
+}
 
 namespace SuperFamicom {
 

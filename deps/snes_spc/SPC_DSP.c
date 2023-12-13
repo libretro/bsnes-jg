@@ -11,6 +11,7 @@ details. You should have received a copy of the GNU Lesser General Public
 License along with this module; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -966,7 +967,7 @@ void spc_dsp_copy_state( unsigned char** io, dsp_copy_func_t copy )
 		{
 			int mode = v->env_mode;
 			SPC_COPY(  uint8_t, mode );
-			v->env_mode = (enum env_mode_t) mode;
+			v->env_mode = mode;
 		}
 		SPC_COPY(  uint8_t, v->t_envx_out );
 

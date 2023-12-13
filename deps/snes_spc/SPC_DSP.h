@@ -32,13 +32,13 @@ enum {
 
 enum { extra_size = 16 };
 enum { echo_hist_size = 8 };
-enum env_mode_t { env_release, env_attack, env_decay, env_sustain };
+typedef enum _env_mode_t { env_release, env_attack, env_decay, env_sustain } env_mode_t;
 enum { brr_buf_size = 12 };
 enum { brr_block_size = 9 };
 enum { voice_count = 8 };
 enum { register_count = 128 };
 
-struct voice_t {
+typedef struct _voice_t {
     int buf [brr_buf_size*2];// decoded samples (twice the size to simplify wrap handling)
     int buf_pos;            // place in buffer where next samples will be decoded
     int interp_pos;         // relative fractional position in sample (0x1000 = 1.0)
@@ -51,7 +51,7 @@ struct voice_t {
     int env;                // current envelope level
     int hidden_env;         // used by GAIN mode 7, very obscure quirk
     uint8_t t_envx_out;
-};
+} voice_t;
 
 // State
 
@@ -62,7 +62,7 @@ void load( uint8_t const regs [register_count] );
 enum { state_size = 640 }; // maximum space needed when saving
 void spc_dsp_copy_state( unsigned char**, dsp_copy_func_t );
 
-struct state_t {
+typedef struct _state_t {
     uint8_t regs[register_count];
 
     // Echo history keeps most recent 8 samples (twice the size to simplify wrap handling)
@@ -123,7 +123,7 @@ struct state_t {
     int16_t* out_end;
     int16_t* out_begin;
     int16_t extra [extra_size];
-};
+} state_t;
 
 // Sound control
 

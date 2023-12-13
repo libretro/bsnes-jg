@@ -7,10 +7,9 @@ CXX ?= c++
 CFLAGS ?= -O2
 CXXFLAGS ?= -O2
 FLAGS := -std=c++11
+FLAGS_C99 := -std=c99
 FLAGS_CO := -std=c89
 FLAGS_GB := -std=gnu11
-FLAGS_SPC := -std=c++98
-FLAGS_SAMPLERATE := -std=c99
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.15.7\"
 INCLUDES := -I$(SOURCEDIR)/deps -I$(SOURCEDIR)/src
@@ -79,10 +78,10 @@ CSRCS := deps/gb/apu.c \
 	deps/gb/sm83_cpu.c \
 	deps/gb/timing.c \
 	deps/gb/workboy.c \
-	deps/libco/libco.c
+	deps/libco/libco.c \
+	deps/snes_spc/SPC_DSP.c
 
 CXXSRCS := deps/byuuML/byuuML.cpp \
-	deps/snes_spc/SPC_DSP.cpp \
 	src/audio.cpp \
 	src/bsmemory.cpp \
 	src/cartridge.cpp \
@@ -213,11 +212,10 @@ COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
 
 # Dependency commands
 BUILD_BML = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS))
+BUILD_C99 = $(call COMPILE_C, $(FLAGS_C99) $(WARNINGS_C))
 BUILD_CO = $(call COMPILE_C, $(FLAGS_CO) $(WARNINGS_CO))
 BUILD_ICD = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS_ICD) $(INCLUDES))
 BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB))
-BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE) $(WARNINGS_C))
-BUILD_SPC = $(call COMPILE_CXX, $(FLAGS_SPC) $(WARNINGS))
 
 # Core commands
 BUILD_JG = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES) $(CFLAGS_JG))
@@ -239,8 +237,8 @@ $(OBJDIR)/deps/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
 
 # libsamplerate rules
 $(OBJDIR)/deps/libsamplerate/%.o: $(SOURCEDIR)/deps/libsamplerate/%.c $(OBJDIR)/.tag
-	$(call COMPILE_INFO, $(BUILD_SAMPLERATE))
-	@$(BUILD_SAMPLERATE)
+	$(call COMPILE_INFO, $(BUILD_C99))
+	@$(BUILD_C99)
 
 # Game Boy rules
 $(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag
@@ -248,9 +246,9 @@ $(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag
 	@$(BUILD_GB)
 
 # snes_spc rules
-$(OBJDIR)/deps/snes_spc/%.o: $(SOURCEDIR)/deps/snes_spc/%.cpp $(OBJDIR)/.tag
-	$(call COMPILE_INFO, $(BUILD_SPC))
-	@$(BUILD_SPC)
+$(OBJDIR)/deps/snes_spc/%.o: $(SOURCEDIR)/deps/snes_spc/%.c $(OBJDIR)/.tag
+	$(call COMPILE_INFO, $(BUILD_C99))
+	@$(BUILD_C99)
 
 # snes_icd rules
 $(OBJDIR)/src/coprocessor/icd.o: $(SOURCEDIR)/src/coprocessor/icd.cpp $(OBJDIR)/.tag
