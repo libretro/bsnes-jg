@@ -135,7 +135,6 @@ typedef struct _state_t {
 
     // non-emulation state
     uint8_t* ram; // 64K shared RAM between DSP and SMP
-    int mute_mask;
     int16_t* out;
     int16_t* out_end;
     int16_t* out_begin;
@@ -176,10 +175,6 @@ void spc_dsp_write(int addr, int data) {
             }
             break;
     }
-}
-
-void spc_dsp_mute_voices(int mask) {
-    m.mute_mask = mask;
 }
 
 bool spc_dsp_mute(void) {
@@ -491,7 +486,7 @@ static inline void misc_29(void) {
 static inline void misc_30(void) {
     if (m.every_other_sample) {
         m.kon    = m.new_kon;
-        m.t_koff = m.regs[r_koff] | m.mute_mask;
+        m.t_koff = m.regs[r_koff];
     }
 
     run_counters();
@@ -923,7 +918,6 @@ void spc_dsp_run(int clocks_remain) {
 
 void spc_dsp_init(void* ram_64k) {
     m.ram = (uint8_t*)ram_64k;
-    spc_dsp_mute_voices(0);
     spc_dsp_set_output(0, 0);
     spc_dsp_reset();
 }

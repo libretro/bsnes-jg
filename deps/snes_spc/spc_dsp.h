@@ -18,10 +18,6 @@ void spc_dsp_copy_state(unsigned char**, dsp_copy_func_t);
 // This is from byuu's snes_spc fork
 bool spc_dsp_mute(void);
 
-// Mutes voices corresponding to non-zero bits in mask (issues repeated KOFF events).
-// Reduces emulation accuracy.
-void spc_dsp_mute_voices(int);
-
 // Number of samples written to output since it was last set, always
 // a multiple of 2. Undefined if more samples were generated than
 // output buffer could hold.
