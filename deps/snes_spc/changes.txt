@@ -1,6 +1,10 @@
 snes_spc Change Log
 -------------------
 
+snes_spc 1.0.0
+--------------
+- Cleanup and conversion to ISO C99
+
 snes_spc 0.9.0
 --------------
 - Improved documentation
