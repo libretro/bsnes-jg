@@ -223,12 +223,12 @@ static unsigned const counter_offsets [32] =
 	     0
 };
 
-static inline void init_counter()
+static inline void init_counter(void)
 {
 	m.counter = 0;
 }
 
-static inline void run_counters()
+static inline void run_counters(void)
 {
 	if ( --m.counter < 0 )
 		m.counter = simple_counter_range - 1;
@@ -381,25 +381,25 @@ static inline void decode_brr( voice_t* v )
 
 //// Misc
 
-static inline void misc_27()
+static inline void misc_27(void)
 {
 	m.t_pmon = m.regs [r_pmon] & 0xFE; // voice 0 doesn't support PMON
 }
 
-static inline void misc_28()
+static inline void misc_28(void)
 {
 	m.t_non = m.regs [r_non];
 	m.t_eon = m.regs [r_eon];
 	m.t_dir = m.regs [r_dir];
 }
 
-static inline void misc_29()
+static inline void misc_29(void)
 {
 	if ( (m.every_other_sample ^= 1) != 0 )
 		m.new_kon &= ~m.kon; // clears KON 63 clocks after it was last read
 }
 
-static inline void misc_30()
+static inline void misc_30(void)
 {
 	if ( m.every_other_sample )
 	{
@@ -660,7 +660,7 @@ static inline void echo_read( int ch )
 	ECHO_FIR( 0 ) [ch] = ECHO_FIR( 8 ) [ch] = s >> 1;
 }
 
-static inline void echo_22()
+static inline void echo_22(void)
 {
 	// History
 	if ( ++m.echo_hist_pos >= &m.echo_hist [echo_hist_size] )
@@ -677,7 +677,7 @@ static inline void echo_22()
 	m.t_echo_in [1] = r;
 }
 
-static inline void echo_23()
+static inline void echo_23(void)
 {
 	int l = CALC_FIR( 1, 0 ) + CALC_FIR( 2, 0 );
 	int r = CALC_FIR( 1, 1 ) + CALC_FIR( 2, 1 );
@@ -688,7 +688,7 @@ static inline void echo_23()
 	echo_read( 1 );
 }
 
-static inline void echo_24()
+static inline void echo_24(void)
 {
 	int l = CALC_FIR( 3, 0 ) + CALC_FIR( 4, 0 ) + CALC_FIR( 5, 0 );
 	int r = CALC_FIR( 3, 1 ) + CALC_FIR( 4, 1 ) + CALC_FIR( 5, 1 );
@@ -697,7 +697,7 @@ static inline void echo_24()
 	m.t_echo_in [1] += r;
 }
 
-static inline void echo_25()
+static inline void echo_25(void)
 {
 	int l = m.t_echo_in [0] + CALC_FIR( 6, 0 );
 	int r = m.t_echo_in [1] + CALC_FIR( 6, 1 );
@@ -723,7 +723,7 @@ static inline int echo_output( int ch )
 	return out;
 }
 
-static inline void echo_26()
+static inline void echo_26(void)
 {
 	// Left output volumes
 	// (save sample for next clock so we can output both together)
@@ -740,7 +740,7 @@ static inline void echo_26()
 	m.t_echo_out [1] = r & ~1;
 }
 
-static inline void echo_27()
+static inline void echo_27(void)
 {
 	// Output
 	int l = m.t_main_out [0];
@@ -769,7 +769,7 @@ static inline void echo_27()
 	m.out = out;
 }
 
-static inline void echo_28()
+static inline void echo_28(void)
 {
 	m.t_echo_enabled = m.regs [r_flg];
 }
@@ -781,7 +781,7 @@ static inline void echo_write( int ch )
 	m.t_echo_out [ch] = 0;
 }
 
-static inline void echo_29()
+static inline void echo_29(void)
 {
 	m.t_esa = m.regs [r_esa];
 
@@ -798,7 +798,7 @@ static inline void echo_29()
 	m.t_echo_enabled = m.regs [r_flg];
 }
 
-static inline void echo_30()
+static inline void echo_30(void)
 {
 	// Write right echo
 	echo_write( 1 );
