@@ -35,12 +35,12 @@ int spc_dsp_sample_count(void) {
 }
 
 int spc_dsp_read(int addr){
-    assert( (unsigned) addr < register_count );
+    assert( (unsigned) addr < SPC_REGISTER_COUNT );
     return m.regs [addr];
 }
 
 void spc_dsp_write( int addr, int data ) {
-    assert( (unsigned) addr < register_count );
+    assert( (unsigned) addr < SPC_REGISTER_COUNT );
 
     m.regs [addr] = (uint8_t) data;
     switch ( addr & 0x0F )
@@ -88,7 +88,7 @@ static inline void set_le16( void* p, unsigned n )
     ((unsigned char*) p) [0] = (unsigned char) n;
 }
 
-static uint8_t const initial_regs[register_count] =
+static uint8_t const initial_regs[SPC_REGISTER_COUNT] =
 {
     // register values from byuu's snes_spc fork
     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -125,7 +125,7 @@ void spc_dsp_set_output( int16_t* out, int size )
     if ( !out )
     {
         out  = m.extra;
-        size = extra_size;
+        size = SPC_EXTRA_SIZE;
     }
     m.out_begin = out;
     m.out       = out;
@@ -339,7 +339,7 @@ static inline void decode_brr( voice_t* v )
     // Write to next four samples in circular buffer
     int* pos = &v->buf [v->buf_pos];
     int* end;
-    if ( (v->buf_pos += 4) >= brr_buf_size )
+    if ( (v->buf_pos += 4) >= SPC_BRR_BUF_SIZE )
         v->buf_pos = 0;
 
     // Decode four samples
@@ -356,8 +356,8 @@ static inline void decode_brr( voice_t* v )
 
         // Apply IIR filter (8 is the most commonly used)
         int const filter = header & 0x0C;
-        int const p1 = pos [brr_buf_size - 1];
-        int const p2 = pos [brr_buf_size - 2] >> 1;
+        int const p1 = pos [SPC_BRR_BUF_SIZE - 1];
+        int const p2 = pos [SPC_BRR_BUF_SIZE - 2] >> 1;
         if ( filter >= 8 )
         {
             s += p1;
@@ -382,7 +382,7 @@ static inline void decode_brr( voice_t* v )
         // Adjust and write sample
         CLAMP16( s );
         s = (int16_t) (s * 2);
-        pos [brr_buf_size] = pos [0] = s; // second copy simplifies wrap-around
+        pos [SPC_BRR_BUF_SIZE] = pos [0] = s; // second copy simplifies wrap-around
     }
 }
 
@@ -553,11 +553,11 @@ static inline void voice_V4( voice_t* const v )
     {
         decode_brr( v );
 
-        if ( (v->brr_offset += 2) >= brr_block_size )
+        if ( (v->brr_offset += 2) >= SPC_BRR_BLOCK_SIZE )
         {
             // Start decoding next BRR block
-            assert( v->brr_offset == brr_block_size );
-            v->brr_addr = (v->brr_addr + brr_block_size) & 0xFFFF;
+            assert( v->brr_offset == SPC_BRR_BLOCK_SIZE );
+            v->brr_addr = (v->brr_addr + SPC_BRR_BLOCK_SIZE) & 0xFFFF;
             if ( m.t_brr_header & 1 )
             {
                 v->brr_addr = m.t_brr_next_addr;
@@ -670,7 +670,7 @@ static inline void echo_read( int ch )
 static inline void echo_22(void)
 {
     // History
-    if ( ++m.echo_hist_pos >= &m.echo_hist [echo_hist_size] )
+    if ( ++m.echo_hist_pos >= &m.echo_hist [SPC_ECHO_HIST_SIZE] )
         m.echo_hist_pos = m.echo_hist;
 
     m.t_echo_ptr = (m.t_esa * 0x100 + m.echo_offset) & 0xFFFF;
@@ -771,7 +771,7 @@ static inline void echo_27(void)
     if ( out >= m.out_end )
     {
         out       = m.extra;
-        m.out_end = &m.extra [extra_size];
+        m.out_end = &m.extra [SPC_EXTRA_SIZE];
     }
     m.out = out;
 }
@@ -909,10 +909,10 @@ void spc_dsp_soft_reset(void)
 
 void spc_dsp_reset(void) {
     memcpy( m.regs, initial_regs, sizeof m.regs );
-    memset( &m.regs [register_count], 0, offsetof (state_t,ram) - register_count );
+    memset( &m.regs [SPC_REGISTER_COUNT], 0, offsetof (state_t,ram) - SPC_REGISTER_COUNT );
 
     // Internal state
-    for ( int i = voice_count; --i >= 0; )
+    for ( int i = SPC_VOICE_COUNT; --i >= 0; )
     {
         voice_t* v = &m.voices [i];
         v->brr_offset = 1;
@@ -945,23 +945,23 @@ void spc_dsp_copy_state( unsigned char** io, dsp_copy_func_t copy )
     int extra = 0;
 
     // DSP registers
-    copy( io, m.regs, register_count );
+    copy( io, m.regs, SPC_REGISTER_COUNT );
 
     // Internal state
 
     // Voices
     int i;
-    for ( i = 0; i < voice_count; i++ )
+    for ( i = 0; i < SPC_VOICE_COUNT; i++ )
     {
         voice_t* v = &m.voices [i];
 
         // BRR buffer
         int n;
-        for ( n = 0; n < brr_buf_size; n++ )
+        for ( n = 0; n < SPC_BRR_BUF_SIZE; n++ )
         {
             int s = v->buf [n];
             SPC_COPY(  int16_t, s );
-            v->buf [n] = v->buf [n + brr_buf_size] = s;
+            v->buf [n] = v->buf [n + SPC_BRR_BUF_SIZE] = s;
         }
 
         SPC_COPY( uint16_t, v->interp_pos );
@@ -982,7 +982,7 @@ void spc_dsp_copy_state( unsigned char** io, dsp_copy_func_t copy )
     }
 
     // Echo history
-    for ( i = 0; i < echo_hist_size; i++ )
+    for ( i = 0; i < SPC_ECHO_HIST_SIZE; i++ )
     {
         int j;
         for ( j = 0; j < 2; j++ )
@@ -993,7 +993,7 @@ void spc_dsp_copy_state( unsigned char** io, dsp_copy_func_t copy )
         }
     }
     m.echo_hist_pos = m.echo_hist;
-    memcpy( &m.echo_hist [echo_hist_size], m.echo_hist, echo_hist_size * sizeof m.echo_hist [0] );
+    memcpy( &m.echo_hist [SPC_ECHO_HIST_SIZE], m.echo_hist, SPC_ECHO_HIST_SIZE * sizeof m.echo_hist [0] );
 
     // Misc
     SPC_COPY(  uint8_t, m.every_other_sample );

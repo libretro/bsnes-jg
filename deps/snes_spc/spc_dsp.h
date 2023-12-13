@@ -30,16 +30,17 @@ enum {
     v_envx   = 0x08, v_outx   = 0x09
 };
 
-enum { extra_size = 16 };
-enum { echo_hist_size = 8 };
 typedef enum _env_mode_t { env_release, env_attack, env_decay, env_sustain } env_mode_t;
-enum { brr_buf_size = 12 };
-enum { brr_block_size = 9 };
-enum { voice_count = 8 };
-enum { register_count = 128 };
+
+#define SPC_BRR_BLOCK_SIZE 9
+#define SPC_BRR_BUF_SIZE 12
+#define SPC_ECHO_HIST_SIZE 8
+#define SPC_EXTRA_SIZE 16
+#define SPC_REGISTER_COUNT 128
+#define SPC_VOICE_COUNT 8
 
 typedef struct _voice_t {
-    int buf [brr_buf_size*2];// decoded samples (twice the size to simplify wrap handling)
+    int buf [SPC_BRR_BUF_SIZE*2];// decoded samples (twice the size to simplify wrap handling)
     int buf_pos;            // place in buffer where next samples will be decoded
     int interp_pos;         // relative fractional position in sample (0x1000 = 1.0)
     int brr_addr;           // address of current BRR block
@@ -56,17 +57,17 @@ typedef struct _voice_t {
 // State
 
 // Resets DSP and uses supplied values to initialize registers
-void load( uint8_t const regs [register_count] );
+void load( uint8_t const regs [SPC_REGISTER_COUNT] );
 
 // Saves/loads exact emulator state
 enum { state_size = 640 }; // maximum space needed when saving
 void spc_dsp_copy_state( unsigned char**, dsp_copy_func_t );
 
 typedef struct _state_t {
-    uint8_t regs[register_count];
+    uint8_t regs[SPC_REGISTER_COUNT];
 
     // Echo history keeps most recent 8 samples (twice the size to simplify wrap handling)
-    int echo_hist [echo_hist_size * 2] [2];
+    int echo_hist [SPC_ECHO_HIST_SIZE * 2] [2];
     int (*echo_hist_pos) [2]; // &echo_hist [0 to 7]
 
     int every_other_sample; // toggles every sample
@@ -114,7 +115,7 @@ typedef struct _state_t {
     int t_echo_out [2];
     int t_echo_in  [2];
 
-    voice_t voices [voice_count];
+    voice_t voices [SPC_VOICE_COUNT];
 
     // non-emulation state
     uint8_t* ram; // 64K shared RAM between DSP and SMP
@@ -122,7 +123,7 @@ typedef struct _state_t {
     int16_t* out;
     int16_t* out_end;
     int16_t* out_begin;
-    int16_t extra [extra_size];
+    int16_t extra [SPC_EXTRA_SIZE];
 } state_t;
 
 // Sound control
