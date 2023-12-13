@@ -79,7 +79,7 @@ CSRCS := deps/gb/apu.c \
 	deps/gb/timing.c \
 	deps/gb/workboy.c \
 	deps/libco/libco.c \
-	deps/snes_spc/SPC_DSP.c
+	deps/snes_spc/spc_dsp.c
 
 CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/audio.cpp \

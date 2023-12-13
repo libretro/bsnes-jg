@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #include <assert.h>
 #include <limits.h>
 
-#include "SPC_DSP.h"
+#include "spc_dsp.h"
 
 static state_t m;
 
