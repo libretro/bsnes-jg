@@ -5,16 +5,13 @@
 #define SPC_DSP_H
 
 #define SPC_REGISTER_COUNT 128
+#define SPC_STATE_SIZE 640
 
 typedef void (*dsp_copy_func_t)( unsigned char**, void*, size_t );
 
 // State
 
-// Resets DSP and uses supplied values to initialize registers
-void load( uint8_t const regs [SPC_REGISTER_COUNT] );
-
 // Saves/loads exact emulator state
-enum { state_size = 640 }; // maximum space needed when saving
 void spc_dsp_copy_state( unsigned char**, dsp_copy_func_t );
 
 // Sound control

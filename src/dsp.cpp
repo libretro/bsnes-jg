@@ -57,9 +57,9 @@ void DSP::serialize(serializer& s) {
   s.array(samplebuffer);
   s.integer(clock);
 
-  unsigned char state[state_size];
+  unsigned char state[SPC_STATE_SIZE];
   unsigned char* p = state;
-  memset(&state, 0, state_size);
+  memset(&state, 0, SPC_STATE_SIZE);
   if(s.mode() == serializer::Save) {
     spc_dsp_copy_state(&p, dsp_state_save);
     s.array(state);
