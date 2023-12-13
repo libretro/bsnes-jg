@@ -653,14 +653,14 @@ static inline void voice_V9_V6_V3( voice_t* const v )
 // Calculate FIR point for left/right channel
 #define CALC_FIR( i, ch )   ((ECHO_FIR( i + 1 ) [ch] * (int8_t) m.regs [r_fir + i * 0x10]) >> 6)
 
-inline void echo_read( int ch )
+static inline void echo_read( int ch )
 {
 	int s = ((int16_t) get_le16( ECHO_PTR( ch ) ));
 	// second copy simplifies wrap-around handling
 	ECHO_FIR( 0 ) [ch] = ECHO_FIR( 8 ) [ch] = s >> 1;
 }
 
-inline void echo_22()
+static inline void echo_22()
 {
 	// History
 	if ( ++m.echo_hist_pos >= &m.echo_hist [echo_hist_size] )
@@ -677,7 +677,7 @@ inline void echo_22()
 	m.t_echo_in [1] = r;
 }
 
-inline void echo_23()
+static inline void echo_23()
 {
 	int l = CALC_FIR( 1, 0 ) + CALC_FIR( 2, 0 );
 	int r = CALC_FIR( 1, 1 ) + CALC_FIR( 2, 1 );
@@ -688,7 +688,7 @@ inline void echo_23()
 	echo_read( 1 );
 }
 
-inline void echo_24()
+static inline void echo_24()
 {
 	int l = CALC_FIR( 3, 0 ) + CALC_FIR( 4, 0 ) + CALC_FIR( 5, 0 );
 	int r = CALC_FIR( 3, 1 ) + CALC_FIR( 4, 1 ) + CALC_FIR( 5, 1 );
@@ -697,7 +697,7 @@ inline void echo_24()
 	m.t_echo_in [1] += r;
 }
 
-inline void echo_25()
+static inline void echo_25()
 {
 	int l = m.t_echo_in [0] + CALC_FIR( 6, 0 );
 	int r = m.t_echo_in [1] + CALC_FIR( 6, 1 );
@@ -715,7 +715,7 @@ inline void echo_25()
 	m.t_echo_in [1] = r & ~1;
 }
 
-inline int echo_output( int ch )
+static inline int echo_output( int ch )
 {
 	int out = (int16_t) ((m.t_main_out [ch] * (int8_t) m.regs [r_mvoll + ch * 0x10]) >> 7) +
 			(int16_t) ((m.t_echo_in [ch] * (int8_t) m.regs [r_evoll + ch * 0x10]) >> 7);
@@ -723,7 +723,7 @@ inline int echo_output( int ch )
 	return out;
 }
 
-inline void echo_26()
+static inline void echo_26()
 {
 	// Left output volumes
 	// (save sample for next clock so we can output both together)
@@ -740,7 +740,7 @@ inline void echo_26()
 	m.t_echo_out [1] = r & ~1;
 }
 
-inline void echo_27()
+static inline void echo_27()
 {
 	// Output
 	int l = m.t_main_out [0];
@@ -769,19 +769,19 @@ inline void echo_27()
 	m.out = out;
 }
 
-inline void echo_28()
+static inline void echo_28()
 {
 	m.t_echo_enabled = m.regs [r_flg];
 }
 
-inline void echo_write( int ch )
+static inline void echo_write( int ch )
 {
 	if ( !(m.t_echo_enabled & 0x20) )
 		set_le16( ECHO_PTR( ch ), m.t_echo_out [ch] );
 	m.t_echo_out [ch] = 0;
 }
 
-inline void echo_29()
+static inline void echo_29()
 {
 	m.t_esa = m.regs [r_esa];
 
@@ -798,7 +798,7 @@ inline void echo_29()
 	m.t_echo_enabled = m.regs [r_flg];
 }
 
-inline void echo_30()
+static inline void echo_30()
 {
 	// Write right echo
 	echo_write( 1 );
