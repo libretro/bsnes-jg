@@ -31,39 +31,39 @@
 static state_t m;
 
 int spc_dsp_sample_count(void) {
-	return m.out - m.out_begin;
+    return m.out - m.out_begin;
 }
 
 int spc_dsp_read(int addr){
-	assert( (unsigned) addr < register_count );
-	return m.regs [addr];
+    assert( (unsigned) addr < register_count );
+    return m.regs [addr];
 }
 
 void spc_dsp_write( int addr, int data ) {
-	assert( (unsigned) addr < register_count );
+    assert( (unsigned) addr < register_count );
 
-	m.regs [addr] = (uint8_t) data;
-	switch ( addr & 0x0F )
-	{
-	case v_envx:
-		m.envx_buf = (uint8_t) data;
-		break;
+    m.regs [addr] = (uint8_t) data;
+    switch ( addr & 0x0F )
+    {
+    case v_envx:
+        m.envx_buf = (uint8_t) data;
+        break;
 
-	case v_outx:
-		m.outx_buf = (uint8_t) data;
-		break;
+    case v_outx:
+        m.outx_buf = (uint8_t) data;
+        break;
 
-	case 0x0C:
-		if ( addr == r_kon )
-			m.new_kon = (uint8_t) data;
+    case 0x0C:
+        if ( addr == r_kon )
+            m.new_kon = (uint8_t) data;
 
-		if ( addr == r_endx ) // always cleared, regardless of data written
-		{
-			m.endx_buf = 0;
-			m.regs [r_endx] = 0;
-		}
-		break;
-	}
+        if ( addr == r_endx ) // always cleared, regardless of data written
+        {
+            m.endx_buf = 0;
+            m.regs [r_endx] = 0;
+        }
+        break;
+    }
 }
 
 void spc_dsp_mute_voices(int mask) {
@@ -78,36 +78,36 @@ bool spc_dsp_mute(void) {
 
 static inline unsigned get_le16( void const* p )
 {
-	return  (unsigned) ((unsigned char const*) p) [1] << 8 |
-			(unsigned) ((unsigned char const*) p) [0];
+    return  (unsigned) ((unsigned char const*) p) [1] << 8 |
+            (unsigned) ((unsigned char const*) p) [0];
 }
 
 static inline void set_le16( void* p, unsigned n )
 {
-	((unsigned char*) p) [1] = (unsigned char) (n >> 8);
-	((unsigned char*) p) [0] = (unsigned char) n;
+    ((unsigned char*) p) [1] = (unsigned char) (n >> 8);
+    ((unsigned char*) p) [0] = (unsigned char) n;
 }
 
 static uint8_t const initial_regs[register_count] =
 {
-	// register values from byuu's snes_spc fork
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    // register values from byuu's snes_spc fork
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 /*
-	0x45,0x8B,0x5A,0x9A,0xE4,0x82,0x1B,0x78,0x00,0x00,0xAA,0x96,0x89,0x0E,0xE0,0x80,
-	0x2A,0x49,0x3D,0xBA,0x14,0xA0,0xAC,0xC5,0x00,0x00,0x51,0xBB,0x9C,0x4E,0x7B,0xFF,
-	0xF4,0xFD,0x57,0x32,0x37,0xD9,0x42,0x22,0x00,0x00,0x5B,0x3C,0x9F,0x1B,0x87,0x9A,
-	0x6F,0x27,0xAF,0x7B,0xE5,0x68,0x0A,0xD9,0x00,0x00,0x9A,0xC5,0x9C,0x4E,0x7B,0xFF,
-	0xEA,0x21,0x78,0x4F,0xDD,0xED,0x24,0x14,0x00,0x00,0x77,0xB1,0xD1,0x36,0xC1,0x67,
-	0x52,0x57,0x46,0x3D,0x59,0xF4,0x87,0xA4,0x00,0x00,0x7E,0x44,0x9C,0x4E,0x7B,0xFF,
-	0x75,0xF5,0x06,0x97,0x10,0xC3,0x24,0xBB,0x00,0x00,0x7B,0x7A,0xE0,0x60,0x12,0x0F,
-	0xF7,0x74,0x1C,0xE5,0x39,0x3D,0x73,0xC1,0x00,0x00,0x7A,0xB3,0xFF,0x4E,0x7B,0xFF
+    0x45,0x8B,0x5A,0x9A,0xE4,0x82,0x1B,0x78,0x00,0x00,0xAA,0x96,0x89,0x0E,0xE0,0x80,
+    0x2A,0x49,0x3D,0xBA,0x14,0xA0,0xAC,0xC5,0x00,0x00,0x51,0xBB,0x9C,0x4E,0x7B,0xFF,
+    0xF4,0xFD,0x57,0x32,0x37,0xD9,0x42,0x22,0x00,0x00,0x5B,0x3C,0x9F,0x1B,0x87,0x9A,
+    0x6F,0x27,0xAF,0x7B,0xE5,0x68,0x0A,0xD9,0x00,0x00,0x9A,0xC5,0x9C,0x4E,0x7B,0xFF,
+    0xEA,0x21,0x78,0x4F,0xDD,0xED,0x24,0x14,0x00,0x00,0x77,0xB1,0xD1,0x36,0xC1,0x67,
+    0x52,0x57,0x46,0x3D,0x59,0xF4,0x87,0xA4,0x00,0x00,0x7E,0x44,0x9C,0x4E,0x7B,0xFF,
+    0x75,0xF5,0x06,0x97,0x10,0xC3,0x24,0xBB,0x00,0x00,0x7B,0x7A,0xE0,0x60,0x12,0x0F,
+    0xF7,0x74,0x1C,0xE5,0x39,0x3D,0x73,0xC1,0x00,0x00,0x7A,0xB3,0xFF,0x4E,0x7B,0xFF
 */
 };
 
@@ -115,21 +115,21 @@ static uint8_t const initial_regs[register_count] =
 // if ( io >  32767 ) io =  32767;
 #define CLAMP16( io )\
 {\
-	if ( (int16_t) io != io )\
-		io = (io >> 31) ^ 0x7FFF;\
+    if ( (int16_t) io != io )\
+        io = (io >> 31) ^ 0x7FFF;\
 }
 
 void spc_dsp_set_output( int16_t* out, int size )
 {
-	assert( (size & 1) == 0 ); // must be even
-	if ( !out )
-	{
-		out  = m.extra;
-		size = extra_size;
-	}
-	m.out_begin = out;
-	m.out       = out;
-	m.out_end   = out + size;
+    assert( (size & 1) == 0 ); // must be even
+    if ( !out )
+    {
+        out  = m.extra;
+        size = extra_size;
+    }
+    m.out_begin = out;
+    m.out       = out;
+    m.out_end   = out + size;
 }
 
 // Volume registers and efb are signed! Easy to forget int8_t cast.
@@ -175,22 +175,22 @@ static short const gauss [512] =
 
 static inline int interpolate( voice_t const* v )
 {
-	// Make pointers into gaussian based on fractional position between samples
-	int offset = v->interp_pos >> 4 & 0xFF;
-	short const* fwd = gauss + 255 - offset;
-	short const* rev = gauss       + offset; // mirror left half of gaussian
+    // Make pointers into gaussian based on fractional position between samples
+    int offset = v->interp_pos >> 4 & 0xFF;
+    short const* fwd = gauss + 255 - offset;
+    short const* rev = gauss       + offset; // mirror left half of gaussian
 
-	int const* in = &v->buf [(v->interp_pos >> 12) + v->buf_pos];
-	int out;
-	out  = (fwd [  0] * in [0]) >> 11;
-	out += (fwd [256] * in [1]) >> 11;
-	out += (rev [256] * in [2]) >> 11;
-	out = (int16_t) out;
-	out += (rev [  0] * in [3]) >> 11;
+    int const* in = &v->buf [(v->interp_pos >> 12) + v->buf_pos];
+    int out;
+    out  = (fwd [  0] * in [0]) >> 11;
+    out += (fwd [256] * in [1]) >> 11;
+    out += (rev [256] * in [2]) >> 11;
+    out = (int16_t) out;
+    out += (rev [  0] * in [3]) >> 11;
 
-	CLAMP16( out );
-	out &= ~1;
-	return out;
+    CLAMP16( out );
+    out &= ~1;
+    return out;
 }
 
 //// Counters
@@ -201,452 +201,452 @@ static unsigned const counter_rates [32] =
 {
    simple_counter_range + 1, // never fires
           2048, 1536,
-	1280, 1024,  768,
-	 640,  512,  384,
-	 320,  256,  192,
-	 160,  128,   96,
-	  80,   64,   48,
-	  40,   32,   24,
-	  20,   16,   12,
-	  10,    8,    6,
-	   5,    4,    3,
-	         2,
-	         1
+    1280, 1024,  768,
+     640,  512,  384,
+     320,  256,  192,
+     160,  128,   96,
+      80,   64,   48,
+      40,   32,   24,
+      20,   16,   12,
+      10,    8,    6,
+       5,    4,    3,
+             2,
+             1
 };
 
 static unsigned const counter_offsets [32] =
 {
-	  1, 0, 1040,
-	536, 0, 1040,
-	536, 0, 1040,
-	536, 0, 1040,
-	536, 0, 1040,
-	536, 0, 1040,
-	536, 0, 1040,
-	536, 0, 1040,
-	536, 0, 1040,
-	536, 0, 1040,
-	     0,
-	     0
+      1, 0, 1040,
+    536, 0, 1040,
+    536, 0, 1040,
+    536, 0, 1040,
+    536, 0, 1040,
+    536, 0, 1040,
+    536, 0, 1040,
+    536, 0, 1040,
+    536, 0, 1040,
+    536, 0, 1040,
+         0,
+         0
 };
 
 static inline void init_counter(void)
 {
-	m.counter = 0;
+    m.counter = 0;
 }
 
 static inline void run_counters(void)
 {
-	if ( --m.counter < 0 )
-		m.counter = simple_counter_range - 1;
+    if ( --m.counter < 0 )
+        m.counter = simple_counter_range - 1;
 }
 
 static inline unsigned read_counter( int rate )
 {
-	return ((unsigned) m.counter + counter_offsets [rate]) % counter_rates [rate];
+    return ((unsigned) m.counter + counter_offsets [rate]) % counter_rates [rate];
 }
 
 //// Envelope
 
 static inline void run_envelope( voice_t* const v )
 {
-	int env = v->env;
-	if ( v->env_mode == env_release ) // 60%
-	{
-		if ( (env -= 0x8) < 0 )
-			env = 0;
-		v->env = env;
-	}
-	else
-	{
-		int rate;
-		int env_data = v->regs [v_adsr1];
-		if ( m.t_adsr0 & 0x80 ) // 99% ADSR
-		{
-			if ( v->env_mode >= env_decay ) // 99%
-			{
-				env--;
-				env -= env >> 8;
-				rate = env_data & 0x1F;
-				if ( v->env_mode == env_decay ) // 1%
-					rate = (m.t_adsr0 >> 3 & 0x0E) + 0x10;
-			}
-			else // env_attack
-			{
-				rate = (m.t_adsr0 & 0x0F) * 2 + 1;
-				env += rate < 31 ? 0x20 : 0x400;
-			}
-		}
-		else // GAIN
-		{
-			int mode;
-			env_data = v->regs [v_gain];
-			mode = env_data >> 5;
-			if ( mode < 4 ) // direct
-			{
-				env = env_data * 0x10;
-				rate = 31;
-			}
-			else
-			{
-				rate = env_data & 0x1F;
-				if ( mode == 4 ) // 4: linear decrease
-				{
-					env -= 0x20;
-				}
-				else if ( mode < 6 ) // 5: exponential decrease
-				{
-					env--;
-					env -= env >> 8;
-				}
-				else // 6,7: linear increase
-				{
-					env += 0x20;
-					if ( mode > 6 && (unsigned) v->hidden_env >= 0x600 )
-						env += 0x8 - 0x20; // 7: two-slope linear increase
-				}
-			}
-		}
+    int env = v->env;
+    if ( v->env_mode == env_release ) // 60%
+    {
+        if ( (env -= 0x8) < 0 )
+            env = 0;
+        v->env = env;
+    }
+    else
+    {
+        int rate;
+        int env_data = v->regs [v_adsr1];
+        if ( m.t_adsr0 & 0x80 ) // 99% ADSR
+        {
+            if ( v->env_mode >= env_decay ) // 99%
+            {
+                env--;
+                env -= env >> 8;
+                rate = env_data & 0x1F;
+                if ( v->env_mode == env_decay ) // 1%
+                    rate = (m.t_adsr0 >> 3 & 0x0E) + 0x10;
+            }
+            else // env_attack
+            {
+                rate = (m.t_adsr0 & 0x0F) * 2 + 1;
+                env += rate < 31 ? 0x20 : 0x400;
+            }
+        }
+        else // GAIN
+        {
+            int mode;
+            env_data = v->regs [v_gain];
+            mode = env_data >> 5;
+            if ( mode < 4 ) // direct
+            {
+                env = env_data * 0x10;
+                rate = 31;
+            }
+            else
+            {
+                rate = env_data & 0x1F;
+                if ( mode == 4 ) // 4: linear decrease
+                {
+                    env -= 0x20;
+                }
+                else if ( mode < 6 ) // 5: exponential decrease
+                {
+                    env--;
+                    env -= env >> 8;
+                }
+                else // 6,7: linear increase
+                {
+                    env += 0x20;
+                    if ( mode > 6 && (unsigned) v->hidden_env >= 0x600 )
+                        env += 0x8 - 0x20; // 7: two-slope linear increase
+                }
+            }
+        }
 
-		// Sustain level
-		if ( (env >> 8) == (env_data >> 5) && v->env_mode == env_decay )
-			v->env_mode = env_sustain;
+        // Sustain level
+        if ( (env >> 8) == (env_data >> 5) && v->env_mode == env_decay )
+            v->env_mode = env_sustain;
 
-		v->hidden_env = env;
+        v->hidden_env = env;
 
-		// unsigned cast because linear decrease going negative also triggers this
-		if ( (unsigned) env > 0x7FF )
-		{
-			env = (env < 0 ? 0 : 0x7FF);
-			if ( v->env_mode == env_attack )
-				v->env_mode = env_decay;
-		}
+        // unsigned cast because linear decrease going negative also triggers this
+        if ( (unsigned) env > 0x7FF )
+        {
+            env = (env < 0 ? 0 : 0x7FF);
+            if ( v->env_mode == env_attack )
+                v->env_mode = env_decay;
+        }
 
-		if ( !read_counter( rate ) )
-			v->env = env; // nothing else is controlled by the counter
-	}
+        if ( !read_counter( rate ) )
+            v->env = env; // nothing else is controlled by the counter
+    }
 }
 
 //// BRR Decoding
 
 static inline void decode_brr( voice_t* v )
 {
-	// Arrange the four input nybbles in 0xABCD order for easy decoding
-	int nybbles = m.t_brr_byte * 0x100 + m.ram [(v->brr_addr + v->brr_offset + 1) & 0xFFFF];
+    // Arrange the four input nybbles in 0xABCD order for easy decoding
+    int nybbles = m.t_brr_byte * 0x100 + m.ram [(v->brr_addr + v->brr_offset + 1) & 0xFFFF];
 
-	int const header = m.t_brr_header;
+    int const header = m.t_brr_header;
 
-	// Write to next four samples in circular buffer
-	int* pos = &v->buf [v->buf_pos];
-	int* end;
-	if ( (v->buf_pos += 4) >= brr_buf_size )
-		v->buf_pos = 0;
+    // Write to next four samples in circular buffer
+    int* pos = &v->buf [v->buf_pos];
+    int* end;
+    if ( (v->buf_pos += 4) >= brr_buf_size )
+        v->buf_pos = 0;
 
-	// Decode four samples
-	for ( end = pos + 4; (end - pos) > 0; ++pos, nybbles <<= 4 )
-	{
-		// Extract nybble and sign-extend
-		int s = (int16_t) nybbles >> 12;
+    // Decode four samples
+    for ( end = pos + 4; (end - pos) > 0; ++pos, nybbles <<= 4 )
+    {
+        // Extract nybble and sign-extend
+        int s = (int16_t) nybbles >> 12;
 
-		// Shift sample based on header
-		int const shift = header >> 4;
-		s = (s << shift) >> 1;
-		if ( shift >= 0xD ) // handle invalid range
-			s = (s >> 25) << 11; // same as: s = (s < 0 ? -0x800 : 0)
+        // Shift sample based on header
+        int const shift = header >> 4;
+        s = (s << shift) >> 1;
+        if ( shift >= 0xD ) // handle invalid range
+            s = (s >> 25) << 11; // same as: s = (s < 0 ? -0x800 : 0)
 
-		// Apply IIR filter (8 is the most commonly used)
-		int const filter = header & 0x0C;
-		int const p1 = pos [brr_buf_size - 1];
-		int const p2 = pos [brr_buf_size - 2] >> 1;
-		if ( filter >= 8 )
-		{
-			s += p1;
-			s -= p2;
-			if ( filter == 8 ) // s += p1 * 0.953125 - p2 * 0.46875
-			{
-				s += p2 >> 4;
-				s += (p1 * -3) >> 6;
-			}
-			else // s += p1 * 0.8984375 - p2 * 0.40625
-			{
-				s += (p1 * -13) >> 7;
-				s += (p2 * 3) >> 4;
-			}
-		}
-		else if ( filter ) // s += p1 * 0.46875
-		{
-			s += p1 >> 1;
-			s += (-p1) >> 5;
-		}
+        // Apply IIR filter (8 is the most commonly used)
+        int const filter = header & 0x0C;
+        int const p1 = pos [brr_buf_size - 1];
+        int const p2 = pos [brr_buf_size - 2] >> 1;
+        if ( filter >= 8 )
+        {
+            s += p1;
+            s -= p2;
+            if ( filter == 8 ) // s += p1 * 0.953125 - p2 * 0.46875
+            {
+                s += p2 >> 4;
+                s += (p1 * -3) >> 6;
+            }
+            else // s += p1 * 0.8984375 - p2 * 0.40625
+            {
+                s += (p1 * -13) >> 7;
+                s += (p2 * 3) >> 4;
+            }
+        }
+        else if ( filter ) // s += p1 * 0.46875
+        {
+            s += p1 >> 1;
+            s += (-p1) >> 5;
+        }
 
-		// Adjust and write sample
-		CLAMP16( s );
-		s = (int16_t) (s * 2);
-		pos [brr_buf_size] = pos [0] = s; // second copy simplifies wrap-around
-	}
+        // Adjust and write sample
+        CLAMP16( s );
+        s = (int16_t) (s * 2);
+        pos [brr_buf_size] = pos [0] = s; // second copy simplifies wrap-around
+    }
 }
 
 //// Misc
 
 static inline void misc_27(void)
 {
-	m.t_pmon = m.regs [r_pmon] & 0xFE; // voice 0 doesn't support PMON
+    m.t_pmon = m.regs [r_pmon] & 0xFE; // voice 0 doesn't support PMON
 }
 
 static inline void misc_28(void)
 {
-	m.t_non = m.regs [r_non];
-	m.t_eon = m.regs [r_eon];
-	m.t_dir = m.regs [r_dir];
+    m.t_non = m.regs [r_non];
+    m.t_eon = m.regs [r_eon];
+    m.t_dir = m.regs [r_dir];
 }
 
 static inline void misc_29(void)
 {
-	if ( (m.every_other_sample ^= 1) != 0 )
-		m.new_kon &= ~m.kon; // clears KON 63 clocks after it was last read
+    if ( (m.every_other_sample ^= 1) != 0 )
+        m.new_kon &= ~m.kon; // clears KON 63 clocks after it was last read
 }
 
 static inline void misc_30(void)
 {
-	if ( m.every_other_sample )
-	{
-		m.kon    = m.new_kon;
-		m.t_koff = m.regs [r_koff] | m.mute_mask;
-	}
+    if ( m.every_other_sample )
+    {
+        m.kon    = m.new_kon;
+        m.t_koff = m.regs [r_koff] | m.mute_mask;
+    }
 
-	run_counters();
+    run_counters();
 
-	// Noise
-	if ( !read_counter( m.regs [r_flg] & 0x1F ) )
-	{
-		int feedback = (m.noise << 13) ^ (m.noise << 14);
-		m.noise = (feedback & 0x4000) ^ (m.noise >> 1);
-	}
+    // Noise
+    if ( !read_counter( m.regs [r_flg] & 0x1F ) )
+    {
+        int feedback = (m.noise << 13) ^ (m.noise << 14);
+        m.noise = (feedback & 0x4000) ^ (m.noise >> 1);
+    }
 }
 
 //// Voices
 
 static inline void voice_V1( voice_t* const v )
 {
-	m.t_dir_addr = m.t_dir * 0x100 + m.t_srcn * 4;
-	m.t_srcn = v->regs [v_srcn];
+    m.t_dir_addr = m.t_dir * 0x100 + m.t_srcn * 4;
+    m.t_srcn = v->regs [v_srcn];
 }
 
 static inline void voice_V2( voice_t* const v )
 {
-	// Read sample pointer (ignored if not needed)
-	uint8_t const* entry = &m.ram [m.t_dir_addr];
-	if ( !v->kon_delay )
-		entry += 2;
-	m.t_brr_next_addr = get_le16( entry );
+    // Read sample pointer (ignored if not needed)
+    uint8_t const* entry = &m.ram [m.t_dir_addr];
+    if ( !v->kon_delay )
+        entry += 2;
+    m.t_brr_next_addr = get_le16( entry );
 
-	m.t_adsr0 = v->regs [v_adsr0];
+    m.t_adsr0 = v->regs [v_adsr0];
 
-	// Read pitch, spread over two clocks
-	m.t_pitch = v->regs [v_pitchl];
+    // Read pitch, spread over two clocks
+    m.t_pitch = v->regs [v_pitchl];
 }
 
 static inline void voice_V3a( voice_t* const v )
 {
-	m.t_pitch += (v->regs [v_pitchh] & 0x3F) << 8;
+    m.t_pitch += (v->regs [v_pitchh] & 0x3F) << 8;
 }
 
 static inline void voice_V3b( voice_t* const v )
 {
-	// Read BRR header and byte
-	m.t_brr_byte   = m.ram [(v->brr_addr + v->brr_offset) & 0xFFFF];
-	m.t_brr_header = m.ram [v->brr_addr]; // brr_addr doesn't need masking
+    // Read BRR header and byte
+    m.t_brr_byte   = m.ram [(v->brr_addr + v->brr_offset) & 0xFFFF];
+    m.t_brr_header = m.ram [v->brr_addr]; // brr_addr doesn't need masking
 }
 
 static inline void voice_V3c( voice_t* const v )
 {
-	// Pitch modulation using previous voice's output
-	if ( m.t_pmon & v->vbit )
-		m.t_pitch += ((m.t_output >> 5) * m.t_pitch) >> 10;
+    // Pitch modulation using previous voice's output
+    if ( m.t_pmon & v->vbit )
+        m.t_pitch += ((m.t_output >> 5) * m.t_pitch) >> 10;
 
-	if ( v->kon_delay )
-	{
-		// Get ready to start BRR decoding on next sample
-		if ( v->kon_delay == 5 )
-		{
-			v->brr_addr    = m.t_brr_next_addr;
-			v->brr_offset  = 1;
-			v->buf_pos     = 0;
-			m.t_brr_header = 0; // header is ignored on this sample
-			m.kon_check    = true;
-		}
+    if ( v->kon_delay )
+    {
+        // Get ready to start BRR decoding on next sample
+        if ( v->kon_delay == 5 )
+        {
+            v->brr_addr    = m.t_brr_next_addr;
+            v->brr_offset  = 1;
+            v->buf_pos     = 0;
+            m.t_brr_header = 0; // header is ignored on this sample
+            m.kon_check    = true;
+        }
 
-		// Envelope is never run during KON
-		v->env        = 0;
-		v->hidden_env = 0;
+        // Envelope is never run during KON
+        v->env        = 0;
+        v->hidden_env = 0;
 
-		// Disable BRR decoding until last three samples
-		v->interp_pos = 0;
-		if ( --v->kon_delay & 3 )
-			v->interp_pos = 0x4000;
+        // Disable BRR decoding until last three samples
+        v->interp_pos = 0;
+        if ( --v->kon_delay & 3 )
+            v->interp_pos = 0x4000;
 
-		// Pitch is never added during KON
-		m.t_pitch = 0;
-	}
+        // Pitch is never added during KON
+        m.t_pitch = 0;
+    }
 
-	// Gaussian interpolation
-	{
-		int output = interpolate( v );
+    // Gaussian interpolation
+    {
+        int output = interpolate( v );
 
-		// Noise
-		if ( m.t_non & v->vbit )
-			output = (int16_t) (m.noise * 2);
+        // Noise
+        if ( m.t_non & v->vbit )
+            output = (int16_t) (m.noise * 2);
 
-		// Apply envelope
-		m.t_output = (output * v->env) >> 11 & ~1;
-		v->t_envx_out = (uint8_t) (v->env >> 4);
-	}
+        // Apply envelope
+        m.t_output = (output * v->env) >> 11 & ~1;
+        v->t_envx_out = (uint8_t) (v->env >> 4);
+    }
 
-	// Immediate silence due to end of sample or soft reset
-	if ( m.regs [r_flg] & 0x80 || (m.t_brr_header & 3) == 1 )
-	{
-		v->env_mode = env_release;
-		v->env      = 0;
-	}
+    // Immediate silence due to end of sample or soft reset
+    if ( m.regs [r_flg] & 0x80 || (m.t_brr_header & 3) == 1 )
+    {
+        v->env_mode = env_release;
+        v->env      = 0;
+    }
 
-	if ( m.every_other_sample )
-	{
-		// KOFF
-		if ( m.t_koff & v->vbit )
-			v->env_mode = env_release;
+    if ( m.every_other_sample )
+    {
+        // KOFF
+        if ( m.t_koff & v->vbit )
+            v->env_mode = env_release;
 
-		// KON
-		if ( m.kon & v->vbit )
-		{
-			v->kon_delay = 5;
-			v->env_mode  = env_attack;
-		}
-	}
+        // KON
+        if ( m.kon & v->vbit )
+        {
+            v->kon_delay = 5;
+            v->env_mode  = env_attack;
+        }
+    }
 
-	// Run envelope for next sample
-	if ( !v->kon_delay )
-		run_envelope( v );
+    // Run envelope for next sample
+    if ( !v->kon_delay )
+        run_envelope( v );
 }
 
 static inline void voice_output( voice_t const* v, int ch )
 {
-	// Apply left/right volume
-	int amp = (m.t_output * (int8_t) v->regs [v_voll + ch]) >> 7;
+    // Apply left/right volume
+    int amp = (m.t_output * (int8_t) v->regs [v_voll + ch]) >> 7;
 
-	// Add to output total
-	m.t_main_out [ch] += amp;
-	CLAMP16( m.t_main_out [ch] );
+    // Add to output total
+    m.t_main_out [ch] += amp;
+    CLAMP16( m.t_main_out [ch] );
 
-	// Optionally add to echo total
-	if ( m.t_eon & v->vbit )
-	{
-		m.t_echo_out [ch] += amp;
-		CLAMP16( m.t_echo_out [ch] );
-	}
+    // Optionally add to echo total
+    if ( m.t_eon & v->vbit )
+    {
+        m.t_echo_out [ch] += amp;
+        CLAMP16( m.t_echo_out [ch] );
+    }
 }
 
 static inline void voice_V4( voice_t* const v )
 {
-	// Decode BRR
-	m.t_looped = 0;
-	if ( v->interp_pos >= 0x4000 )
-	{
-		decode_brr( v );
+    // Decode BRR
+    m.t_looped = 0;
+    if ( v->interp_pos >= 0x4000 )
+    {
+        decode_brr( v );
 
-		if ( (v->brr_offset += 2) >= brr_block_size )
-		{
-			// Start decoding next BRR block
-			assert( v->brr_offset == brr_block_size );
-			v->brr_addr = (v->brr_addr + brr_block_size) & 0xFFFF;
-			if ( m.t_brr_header & 1 )
-			{
-				v->brr_addr = m.t_brr_next_addr;
-				m.t_looped = v->vbit;
-			}
-			v->brr_offset = 1;
-		}
-	}
+        if ( (v->brr_offset += 2) >= brr_block_size )
+        {
+            // Start decoding next BRR block
+            assert( v->brr_offset == brr_block_size );
+            v->brr_addr = (v->brr_addr + brr_block_size) & 0xFFFF;
+            if ( m.t_brr_header & 1 )
+            {
+                v->brr_addr = m.t_brr_next_addr;
+                m.t_looped = v->vbit;
+            }
+            v->brr_offset = 1;
+        }
+    }
 
-	// Apply pitch
-	v->interp_pos = (v->interp_pos & 0x3FFF) + m.t_pitch;
+    // Apply pitch
+    v->interp_pos = (v->interp_pos & 0x3FFF) + m.t_pitch;
 
-	// Keep from getting too far ahead (when using pitch modulation)
-	if ( v->interp_pos > 0x7FFF )
-		v->interp_pos = 0x7FFF;
+    // Keep from getting too far ahead (when using pitch modulation)
+    if ( v->interp_pos > 0x7FFF )
+        v->interp_pos = 0x7FFF;
 
-	// Output left
-	voice_output( v, 0 );
+    // Output left
+    voice_output( v, 0 );
 }
 
 static inline void voice_V5( voice_t* const v )
 {
-	// Output right
-	voice_output( v, 1 );
+    // Output right
+    voice_output( v, 1 );
 
-	// ENDX, OUTX, and ENVX won't update if you wrote to them 1-2 clocks earlier
-	int endx_buf = m.regs [r_endx] | m.t_looped;
+    // ENDX, OUTX, and ENVX won't update if you wrote to them 1-2 clocks earlier
+    int endx_buf = m.regs [r_endx] | m.t_looped;
 
-	// Clear bit in ENDX if KON just began
-	if ( v->kon_delay == 5 )
-		endx_buf &= ~v->vbit;
-	m.endx_buf = (uint8_t) endx_buf;
+    // Clear bit in ENDX if KON just began
+    if ( v->kon_delay == 5 )
+        endx_buf &= ~v->vbit;
+    m.endx_buf = (uint8_t) endx_buf;
 }
 
 static inline void voice_V6( voice_t* const v )
 {
-	(void) v; // avoid compiler warning about unused v
-	m.outx_buf = (uint8_t) (m.t_output >> 8);
+    (void) v; // avoid compiler warning about unused v
+    m.outx_buf = (uint8_t) (m.t_output >> 8);
 }
 
 static inline void voice_V7( voice_t* const v )
 {
-	// Update ENDX
-	m.regs [r_endx] = m.endx_buf;
+    // Update ENDX
+    m.regs [r_endx] = m.endx_buf;
 
-	m.envx_buf = v->t_envx_out;
+    m.envx_buf = v->t_envx_out;
 }
 
 static inline void voice_V8( voice_t* const v )
 {
-	// Update OUTX
-	v->regs [v_outx] = m.outx_buf;
+    // Update OUTX
+    v->regs [v_outx] = m.outx_buf;
 }
 
 static inline void voice_V9( voice_t* const v )
 {
-	// Update ENVX
-	v->regs [v_envx] = m.envx_buf;
+    // Update ENVX
+    v->regs [v_envx] = m.envx_buf;
 }
 
 // Most voices do all these in one clock, so make a handy composite
 static inline void voice_V3( voice_t* const v )
 {
-	voice_V3a( v );
-	voice_V3b( v );
-	voice_V3c( v );
+    voice_V3a( v );
+    voice_V3b( v );
+    voice_V3c( v );
 }
 
 // Common combinations of voice steps on different voices. This greatly reduces
 // code size and allows everything to be inlined in these functions.
 static inline void voice_V7_V4_V1( voice_t* const v )
 {
-	voice_V7(v);
-	voice_V1(v+3);
-	voice_V4(v+1);
+    voice_V7(v);
+    voice_V1(v+3);
+    voice_V4(v+1);
 }
 
 static inline void voice_V8_V5_V2( voice_t* const v )
 {
-	voice_V8(v);
-	voice_V5(v+1);
-	voice_V2(v+2);
+    voice_V8(v);
+    voice_V5(v+1);
+    voice_V2(v+2);
 }
 
 static inline void voice_V9_V6_V3( voice_t* const v )
 {
-	voice_V9(v);
-	voice_V6(v+1);
-	voice_V3(v+2);
+    voice_V9(v);
+    voice_V6(v+1);
+    voice_V3(v+2);
 }
 
 //// Echo
@@ -662,153 +662,153 @@ static inline void voice_V9_V6_V3( voice_t* const v )
 
 static inline void echo_read( int ch )
 {
-	int s = ((int16_t) get_le16( ECHO_PTR( ch ) ));
-	// second copy simplifies wrap-around handling
-	ECHO_FIR( 0 ) [ch] = ECHO_FIR( 8 ) [ch] = s >> 1;
+    int s = ((int16_t) get_le16( ECHO_PTR( ch ) ));
+    // second copy simplifies wrap-around handling
+    ECHO_FIR( 0 ) [ch] = ECHO_FIR( 8 ) [ch] = s >> 1;
 }
 
 static inline void echo_22(void)
 {
-	// History
-	if ( ++m.echo_hist_pos >= &m.echo_hist [echo_hist_size] )
-		m.echo_hist_pos = m.echo_hist;
+    // History
+    if ( ++m.echo_hist_pos >= &m.echo_hist [echo_hist_size] )
+        m.echo_hist_pos = m.echo_hist;
 
-	m.t_echo_ptr = (m.t_esa * 0x100 + m.echo_offset) & 0xFFFF;
-	echo_read( 0 );
+    m.t_echo_ptr = (m.t_esa * 0x100 + m.echo_offset) & 0xFFFF;
+    echo_read( 0 );
 
-	// FIR (using l and r temporaries below helps compiler optimize)
-	int l = CALC_FIR( 0, 0 );
-	int r = CALC_FIR( 0, 1 );
+    // FIR (using l and r temporaries below helps compiler optimize)
+    int l = CALC_FIR( 0, 0 );
+    int r = CALC_FIR( 0, 1 );
 
-	m.t_echo_in [0] = l;
-	m.t_echo_in [1] = r;
+    m.t_echo_in [0] = l;
+    m.t_echo_in [1] = r;
 }
 
 static inline void echo_23(void)
 {
-	int l = CALC_FIR( 1, 0 ) + CALC_FIR( 2, 0 );
-	int r = CALC_FIR( 1, 1 ) + CALC_FIR( 2, 1 );
+    int l = CALC_FIR( 1, 0 ) + CALC_FIR( 2, 0 );
+    int r = CALC_FIR( 1, 1 ) + CALC_FIR( 2, 1 );
 
-	m.t_echo_in [0] += l;
-	m.t_echo_in [1] += r;
+    m.t_echo_in [0] += l;
+    m.t_echo_in [1] += r;
 
-	echo_read( 1 );
+    echo_read( 1 );
 }
 
 static inline void echo_24(void)
 {
-	int l = CALC_FIR( 3, 0 ) + CALC_FIR( 4, 0 ) + CALC_FIR( 5, 0 );
-	int r = CALC_FIR( 3, 1 ) + CALC_FIR( 4, 1 ) + CALC_FIR( 5, 1 );
+    int l = CALC_FIR( 3, 0 ) + CALC_FIR( 4, 0 ) + CALC_FIR( 5, 0 );
+    int r = CALC_FIR( 3, 1 ) + CALC_FIR( 4, 1 ) + CALC_FIR( 5, 1 );
 
-	m.t_echo_in [0] += l;
-	m.t_echo_in [1] += r;
+    m.t_echo_in [0] += l;
+    m.t_echo_in [1] += r;
 }
 
 static inline void echo_25(void)
 {
-	int l = m.t_echo_in [0] + CALC_FIR( 6, 0 );
-	int r = m.t_echo_in [1] + CALC_FIR( 6, 1 );
+    int l = m.t_echo_in [0] + CALC_FIR( 6, 0 );
+    int r = m.t_echo_in [1] + CALC_FIR( 6, 1 );
 
-	l = (int16_t) l;
-	r = (int16_t) r;
+    l = (int16_t) l;
+    r = (int16_t) r;
 
-	l += (int16_t) CALC_FIR( 7, 0 );
-	r += (int16_t) CALC_FIR( 7, 1 );
+    l += (int16_t) CALC_FIR( 7, 0 );
+    r += (int16_t) CALC_FIR( 7, 1 );
 
-	CLAMP16( l );
-	CLAMP16( r );
+    CLAMP16( l );
+    CLAMP16( r );
 
-	m.t_echo_in [0] = l & ~1;
-	m.t_echo_in [1] = r & ~1;
+    m.t_echo_in [0] = l & ~1;
+    m.t_echo_in [1] = r & ~1;
 }
 
 static inline int echo_output( int ch )
 {
-	int out = (int16_t) ((m.t_main_out [ch] * (int8_t) m.regs [r_mvoll + ch * 0x10]) >> 7) +
-			(int16_t) ((m.t_echo_in [ch] * (int8_t) m.regs [r_evoll + ch * 0x10]) >> 7);
-	CLAMP16( out );
-	return out;
+    int out = (int16_t) ((m.t_main_out [ch] * (int8_t) m.regs [r_mvoll + ch * 0x10]) >> 7) +
+            (int16_t) ((m.t_echo_in [ch] * (int8_t) m.regs [r_evoll + ch * 0x10]) >> 7);
+    CLAMP16( out );
+    return out;
 }
 
 static inline void echo_26(void)
 {
-	// Left output volumes
-	// (save sample for next clock so we can output both together)
-	m.t_main_out [0] = echo_output( 0 );
+    // Left output volumes
+    // (save sample for next clock so we can output both together)
+    m.t_main_out [0] = echo_output( 0 );
 
-	// Echo feedback
-	int l = m.t_echo_out [0] + (int16_t) ((m.t_echo_in [0] * (int8_t) m.regs [r_efb]) >> 7);
-	int r = m.t_echo_out [1] + (int16_t) ((m.t_echo_in [1] * (int8_t) m.regs [r_efb]) >> 7);
+    // Echo feedback
+    int l = m.t_echo_out [0] + (int16_t) ((m.t_echo_in [0] * (int8_t) m.regs [r_efb]) >> 7);
+    int r = m.t_echo_out [1] + (int16_t) ((m.t_echo_in [1] * (int8_t) m.regs [r_efb]) >> 7);
 
-	CLAMP16( l );
-	CLAMP16( r );
+    CLAMP16( l );
+    CLAMP16( r );
 
-	m.t_echo_out [0] = l & ~1;
-	m.t_echo_out [1] = r & ~1;
+    m.t_echo_out [0] = l & ~1;
+    m.t_echo_out [1] = r & ~1;
 }
 
 static inline void echo_27(void)
 {
-	// Output
-	int l = m.t_main_out [0];
-	int r = echo_output( 1 );
-	m.t_main_out [0] = 0;
-	m.t_main_out [1] = 0;
+    // Output
+    int l = m.t_main_out [0];
+    int r = echo_output( 1 );
+    m.t_main_out [0] = 0;
+    m.t_main_out [1] = 0;
 
-	// TODO: global muting isn't this simple (turns DAC on and off
-	// or something, causing small ~37-sample pulse when first muted)
-	if ( m.regs [r_flg] & 0x40 )
-	{
-		l = 0;
-		r = 0;
-	}
+    // TODO: global muting isn't this simple (turns DAC on and off
+    // or something, causing small ~37-sample pulse when first muted)
+    if ( m.regs [r_flg] & 0x40 )
+    {
+        l = 0;
+        r = 0;
+    }
 
-	// Output sample to DAC
-	int16_t* out = m.out;
-	out [0] = l;
-	out [1] = r;
-	out += 2;
-	if ( out >= m.out_end )
-	{
-		out       = m.extra;
-		m.out_end = &m.extra [extra_size];
-	}
-	m.out = out;
+    // Output sample to DAC
+    int16_t* out = m.out;
+    out [0] = l;
+    out [1] = r;
+    out += 2;
+    if ( out >= m.out_end )
+    {
+        out       = m.extra;
+        m.out_end = &m.extra [extra_size];
+    }
+    m.out = out;
 }
 
 static inline void echo_28(void)
 {
-	m.t_echo_enabled = m.regs [r_flg];
+    m.t_echo_enabled = m.regs [r_flg];
 }
 
 static inline void echo_write( int ch )
 {
-	if ( !(m.t_echo_enabled & 0x20) )
-		set_le16( ECHO_PTR( ch ), m.t_echo_out [ch] );
-	m.t_echo_out [ch] = 0;
+    if ( !(m.t_echo_enabled & 0x20) )
+        set_le16( ECHO_PTR( ch ), m.t_echo_out [ch] );
+    m.t_echo_out [ch] = 0;
 }
 
 static inline void echo_29(void)
 {
-	m.t_esa = m.regs [r_esa];
+    m.t_esa = m.regs [r_esa];
 
-	if ( !m.echo_offset )
-		m.echo_length = (m.regs [r_edl] & 0x0F) * 0x800;
+    if ( !m.echo_offset )
+        m.echo_length = (m.regs [r_edl] & 0x0F) * 0x800;
 
-	m.echo_offset += 4;
-	if ( m.echo_offset >= m.echo_length )
-		m.echo_offset = 0;
+    m.echo_offset += 4;
+    if ( m.echo_offset >= m.echo_length )
+        m.echo_offset = 0;
 
-	// Write left echo
-	echo_write( 0 );
+    // Write left echo
+    echo_write( 0 );
 
-	m.t_echo_enabled = m.regs [r_flg];
+    m.t_echo_enabled = m.regs [r_flg];
 }
 
 static inline void echo_30(void)
 {
-	// Write right echo
-	echo_write( 1 );
+    // Write right echo
+    echo_write( 1 );
 }
 
 //// Timing
@@ -860,70 +860,70 @@ PHASE(30) misc_30();V(V3c,0)                                         echo_30();\
 PHASE(31)  V(V4,0)       V(V1,2)\
 
 void spc_dsp_run(int clocks_remain) {
-	assert( clocks_remain > 0 );
+    assert( clocks_remain > 0 );
 
-	int const phase = m.phase;
-	m.phase = (phase + clocks_remain) & 31;
-	switch ( phase )
-	{
-	loop:
+    int const phase = m.phase;
+    m.phase = (phase + clocks_remain) & 31;
+    switch ( phase )
+    {
+    loop:
 
-		#define PHASE( n ) if ( n && !--clocks_remain ) break;\
-			/* fallthrough */\
-			case n:
-		GEN_DSP_TIMING
-		#undef PHASE
+        #define PHASE( n ) if ( n && !--clocks_remain ) break;\
+            /* fallthrough */\
+            case n:
+        GEN_DSP_TIMING
+        #undef PHASE
 
-		if ( --clocks_remain )
-			goto loop;
-	}
+        if ( --clocks_remain )
+            goto loop;
+    }
 }
 
 //// Setup
 
 void spc_dsp_init( void* ram_64k )
 {
-	m.ram = (uint8_t*) ram_64k;
-	spc_dsp_mute_voices( 0 );
-	spc_dsp_set_output( 0, 0 );
-	spc_dsp_reset();
+    m.ram = (uint8_t*) ram_64k;
+    spc_dsp_mute_voices( 0 );
+    spc_dsp_set_output( 0, 0 );
+    spc_dsp_reset();
 }
 
 static void soft_reset_common(void) {
-	assert( m.ram ); // init() must have been called already
+    assert( m.ram ); // init() must have been called already
 
-	m.noise              = 0x4000;
-	m.echo_hist_pos      = m.echo_hist;
-	m.every_other_sample = 1;
-	m.echo_offset        = 0;
-	m.phase              = 0;
+    m.noise              = 0x4000;
+    m.echo_hist_pos      = m.echo_hist;
+    m.every_other_sample = 1;
+    m.echo_offset        = 0;
+    m.phase              = 0;
 
-	init_counter();
+    init_counter();
 }
 
 void spc_dsp_soft_reset(void)
 {
-	m.regs [r_flg] = 0xE0;
-	soft_reset_common();
+    m.regs [r_flg] = 0xE0;
+    soft_reset_common();
 }
 
 void spc_dsp_reset(void) {
     memcpy( m.regs, initial_regs, sizeof m.regs );
-	memset( &m.regs [register_count], 0, offsetof (state_t,ram) - register_count );
+    memset( &m.regs [register_count], 0, offsetof (state_t,ram) - register_count );
 
-	// Internal state
-	for ( int i = voice_count; --i >= 0; )
-	{
-		voice_t* v = &m.voices [i];
-		v->brr_offset = 1;
-		v->vbit       = 1 << i;
-		v->regs       = &m.regs [i * 0x10];
-	}
-	m.new_kon = m.regs [r_kon];
-	m.t_dir   = m.regs [r_dir];
-	m.t_esa   = m.regs [r_esa];
+    // Internal state
+    for ( int i = voice_count; --i >= 0; )
+    {
+        voice_t* v = &m.voices [i];
+        v->brr_offset = 1;
+        v->vbit       = 1 << i;
+        v->regs       = &m.regs [i * 0x10];
+    }
+    m.new_kon = m.regs [r_kon];
+    m.t_dir   = m.regs [r_dir];
+    m.t_esa   = m.regs [r_esa];
 
-	soft_reset_common();
+    soft_reset_common();
 }
 
 //// State save/load
@@ -936,106 +936,106 @@ static int spc_state_copy_int( unsigned char** buf, dsp_copy_func_t func, int st
 
 #define SPC_COPY( type, state )\
 {\
-	state = (type) spc_state_copy_int( io, copy, state, sizeof (type) );\
-	assert( (type) state == state );\
+    state = (type) spc_state_copy_int( io, copy, state, sizeof (type) );\
+    assert( (type) state == state );\
 }
 
 void spc_dsp_copy_state( unsigned char** io, dsp_copy_func_t copy )
 {
-	int extra = 0;
+    int extra = 0;
 
-	// DSP registers
-	copy( io, m.regs, register_count );
+    // DSP registers
+    copy( io, m.regs, register_count );
 
-	// Internal state
+    // Internal state
 
-	// Voices
-	int i;
-	for ( i = 0; i < voice_count; i++ )
-	{
-		voice_t* v = &m.voices [i];
+    // Voices
+    int i;
+    for ( i = 0; i < voice_count; i++ )
+    {
+        voice_t* v = &m.voices [i];
 
-		// BRR buffer
-		int n;
-		for ( n = 0; n < brr_buf_size; n++ )
-		{
-			int s = v->buf [n];
-			SPC_COPY(  int16_t, s );
-			v->buf [n] = v->buf [n + brr_buf_size] = s;
-		}
+        // BRR buffer
+        int n;
+        for ( n = 0; n < brr_buf_size; n++ )
+        {
+            int s = v->buf [n];
+            SPC_COPY(  int16_t, s );
+            v->buf [n] = v->buf [n + brr_buf_size] = s;
+        }
 
-		SPC_COPY( uint16_t, v->interp_pos );
-		SPC_COPY( uint16_t, v->brr_addr );
-		SPC_COPY( uint16_t, v->env );
-		SPC_COPY(  int16_t, v->hidden_env );
-		SPC_COPY(  uint8_t, v->buf_pos );
-		SPC_COPY(  uint8_t, v->brr_offset );
-		SPC_COPY(  uint8_t, v->kon_delay );
-		{
-			int mode = v->env_mode;
-			SPC_COPY(  uint8_t, mode );
-			v->env_mode = mode;
-		}
-		SPC_COPY(  uint8_t, v->t_envx_out );
+        SPC_COPY( uint16_t, v->interp_pos );
+        SPC_COPY( uint16_t, v->brr_addr );
+        SPC_COPY( uint16_t, v->env );
+        SPC_COPY(  int16_t, v->hidden_env );
+        SPC_COPY(  uint8_t, v->buf_pos );
+        SPC_COPY(  uint8_t, v->brr_offset );
+        SPC_COPY(  uint8_t, v->kon_delay );
+        {
+            int mode = v->env_mode;
+            SPC_COPY(  uint8_t, mode );
+            v->env_mode = mode;
+        }
+        SPC_COPY(  uint8_t, v->t_envx_out );
 
-		SPC_COPY( uint8_t, extra );
-	}
+        SPC_COPY( uint8_t, extra );
+    }
 
-	// Echo history
-	for ( i = 0; i < echo_hist_size; i++ )
-	{
-		int j;
-		for ( j = 0; j < 2; j++ )
-		{
-			int s = m.echo_hist_pos [i] [j];
-			SPC_COPY( int16_t, s );
-			m.echo_hist [i] [j] = s; // write back at offset 0
-		}
-	}
-	m.echo_hist_pos = m.echo_hist;
-	memcpy( &m.echo_hist [echo_hist_size], m.echo_hist, echo_hist_size * sizeof m.echo_hist [0] );
+    // Echo history
+    for ( i = 0; i < echo_hist_size; i++ )
+    {
+        int j;
+        for ( j = 0; j < 2; j++ )
+        {
+            int s = m.echo_hist_pos [i] [j];
+            SPC_COPY( int16_t, s );
+            m.echo_hist [i] [j] = s; // write back at offset 0
+        }
+    }
+    m.echo_hist_pos = m.echo_hist;
+    memcpy( &m.echo_hist [echo_hist_size], m.echo_hist, echo_hist_size * sizeof m.echo_hist [0] );
 
-	// Misc
-	SPC_COPY(  uint8_t, m.every_other_sample );
-	SPC_COPY(  uint8_t, m.kon );
+    // Misc
+    SPC_COPY(  uint8_t, m.every_other_sample );
+    SPC_COPY(  uint8_t, m.kon );
 
-	SPC_COPY( uint16_t, m.noise );
-	SPC_COPY( uint16_t, m.counter );
-	SPC_COPY( uint16_t, m.echo_offset );
-	SPC_COPY( uint16_t, m.echo_length );
-	SPC_COPY(  uint8_t, m.phase );
+    SPC_COPY( uint16_t, m.noise );
+    SPC_COPY( uint16_t, m.counter );
+    SPC_COPY( uint16_t, m.echo_offset );
+    SPC_COPY( uint16_t, m.echo_length );
+    SPC_COPY(  uint8_t, m.phase );
 
-	SPC_COPY(  uint8_t, m.new_kon );
-	SPC_COPY(  uint8_t, m.endx_buf );
-	SPC_COPY(  uint8_t, m.envx_buf );
-	SPC_COPY(  uint8_t, m.outx_buf );
+    SPC_COPY(  uint8_t, m.new_kon );
+    SPC_COPY(  uint8_t, m.endx_buf );
+    SPC_COPY(  uint8_t, m.envx_buf );
+    SPC_COPY(  uint8_t, m.outx_buf );
 
-	SPC_COPY(  uint8_t, m.t_pmon );
-	SPC_COPY(  uint8_t, m.t_non );
-	SPC_COPY(  uint8_t, m.t_eon );
-	SPC_COPY(  uint8_t, m.t_dir );
-	SPC_COPY(  uint8_t, m.t_koff );
+    SPC_COPY(  uint8_t, m.t_pmon );
+    SPC_COPY(  uint8_t, m.t_non );
+    SPC_COPY(  uint8_t, m.t_eon );
+    SPC_COPY(  uint8_t, m.t_dir );
+    SPC_COPY(  uint8_t, m.t_koff );
 
-	SPC_COPY( uint16_t, m.t_brr_next_addr );
-	SPC_COPY(  uint8_t, m.t_adsr0 );
-	SPC_COPY(  uint8_t, m.t_brr_header );
-	SPC_COPY(  uint8_t, m.t_brr_byte );
-	SPC_COPY(  uint8_t, m.t_srcn );
-	SPC_COPY(  uint8_t, m.t_esa );
-	SPC_COPY(  uint8_t, m.t_echo_enabled );
+    SPC_COPY( uint16_t, m.t_brr_next_addr );
+    SPC_COPY(  uint8_t, m.t_adsr0 );
+    SPC_COPY(  uint8_t, m.t_brr_header );
+    SPC_COPY(  uint8_t, m.t_brr_byte );
+    SPC_COPY(  uint8_t, m.t_srcn );
+    SPC_COPY(  uint8_t, m.t_esa );
+    SPC_COPY(  uint8_t, m.t_echo_enabled );
 
-	SPC_COPY(  int16_t, m.t_main_out [0] );
-	SPC_COPY(  int16_t, m.t_main_out [1] );
-	SPC_COPY(  int16_t, m.t_echo_out [0] );
-	SPC_COPY(  int16_t, m.t_echo_out [1] );
-	SPC_COPY(  int16_t, m.t_echo_in  [0] );
-	SPC_COPY(  int16_t, m.t_echo_in  [1] );
+    SPC_COPY(  int16_t, m.t_main_out [0] );
+    SPC_COPY(  int16_t, m.t_main_out [1] );
+    SPC_COPY(  int16_t, m.t_echo_out [0] );
+    SPC_COPY(  int16_t, m.t_echo_out [1] );
+    SPC_COPY(  int16_t, m.t_echo_in  [0] );
+    SPC_COPY(  int16_t, m.t_echo_in  [1] );
 
-	SPC_COPY( uint16_t, m.t_dir_addr );
-	SPC_COPY( uint16_t, m.t_pitch );
-	SPC_COPY(  int16_t, m.t_output );
-	SPC_COPY( uint16_t, m.t_echo_ptr );
-	SPC_COPY(  uint8_t, m.t_looped );
+    SPC_COPY( uint16_t, m.t_dir_addr );
+    SPC_COPY( uint16_t, m.t_pitch );
+    SPC_COPY(  int16_t, m.t_output );
+    SPC_COPY( uint16_t, m.t_echo_ptr );
+    SPC_COPY(  uint8_t, m.t_looped );
 
-	SPC_COPY( uint8_t, extra );
+    SPC_COPY( uint8_t, extra );
 }
