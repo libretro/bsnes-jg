@@ -285,15 +285,6 @@ static unsigned const counter_offsets[32] =
          0
 };
 
-static inline void init_counter(void) {
-    m.counter = 0;
-}
-
-static inline void run_counters(void) {
-    if (--m.counter < 0)
-        m.counter = simple_counter_range - 1;
-}
-
 static inline unsigned read_counter(int rate) {
     return ((unsigned)m.counter + counter_offsets[rate]) % counter_rates[rate];
 }
@@ -442,7 +433,8 @@ static inline void misc_30(void) {
         m.t_koff = m.regs[r_koff];
     }
 
-    run_counters();
+    if (--m.counter < 0)
+        m.counter = simple_counter_range - 1;
 
     // Noise
     if (!read_counter(m.regs[r_flg] & 0x1F)) {
@@ -856,8 +848,7 @@ static void soft_reset_common(void) {
     m.every_other_sample = 1;
     m.echo_offset        = 0;
     m.phase              = 0;
-
-    init_counter();
+    m.counter            = 0;
 }
 
 static int spc_state_copy_int(unsigned char** buf, dsp_copy_func_t func, int state, int size) {
