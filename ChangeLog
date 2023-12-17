@@ -5,6 +5,9 @@ Version 1.?.?
  - Build improvements, including static JG archive build option
  - Code quality improvements
  - Ensure writes to Cx4 multiplier register do not have truncated values
+ - CPU accuracy improvements: Pass gilyon's 65C816 tests
+ - Rewrite snes_spc in C
+ - Update to SameBoy 0.16
 
 Version 1.1.2
 -------------
