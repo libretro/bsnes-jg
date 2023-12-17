@@ -42,6 +42,9 @@ static void nsleep(uint64_t nanoseconds)
 
 bool GB_timing_sync_turbo(GB_gameboy_t *gb)
 {
+#ifndef GB_DISABLE_DEBUGGER
+    if (unlikely(gb->backstep_instructions)) return false;
+#endif
     if (!gb->turbo_dont_skip) {
         int64_t nanoseconds = get_nanoseconds();
         if (nanoseconds <= gb->last_sync + (1000000000LL * LCDC_PERIOD / GB_get_clock_rate(gb))) {
@@ -54,6 +57,9 @@ bool GB_timing_sync_turbo(GB_gameboy_t *gb)
 
 void GB_timing_sync(GB_gameboy_t *gb)
 {
+#ifndef GB_DISABLE_DEBUGGER
+    if (unlikely(gb->backstep_instructions)) return;
+#endif
     /* Prevent syncing if not enough time has passed.*/
     if (gb->cycles_since_last_sync < LCDC_PERIOD / 3) return;
 
@@ -95,6 +101,9 @@ bool GB_timing_sync_turbo(GB_gameboy_t *gb)
 
 void GB_timing_sync(GB_gameboy_t *gb)
 {
+#ifndef GB_DISABLE_DEBUGGER
+    if (unlikely(gb->backstep_instructions)) return;
+#endif
     if (gb->cycles_since_last_sync < LCDC_PERIOD / 3) return;
     gb->cycles_since_last_sync = 0;
 
@@ -165,8 +174,22 @@ static void increase_tima(GB_gameboy_t *gb)
 
 void GB_serial_master_edge(GB_gameboy_t *gb)
 {
-    if (unlikely(gb->printer_callback && (gb->printer.command_state || gb->printer.bits_received))) {
-        gb->printer.idle_time += 1 << gb->serial_mask;
+    if (gb->printer_callback) {
+        unsigned ticks = 1 << gb->serial_mask;
+        if (unlikely((gb->printer.command_state || gb->printer.bits_received))) {
+            gb->printer.idle_time +=ticks;
+        }
+        if (unlikely(gb->printer.time_remaining)) {
+            if (gb->printer.time_remaining <= ticks) {
+                gb->printer.time_remaining = 0;
+                if (gb->printer_done_callback) {
+                    gb->printer_done_callback(gb);
+                }
+            }
+            else {
+                gb->printer.time_remaining -= ticks;
+            }
+        }
     }
     
     gb->serial_master_clock ^= true;
@@ -268,6 +291,81 @@ void GB_set_rtc_multiplier(GB_gameboy_t *gb, double multiplier)
     gb->rtc_second_length = GB_get_unmultiplied_clock_rate(gb) * 2 * multiplier;
 }
 
+void GB_rtc_set_time(GB_gameboy_t *gb, uint64_t current_time)
+{
+    if (gb->cartridge_type->mbc_type == GB_HUC3) {
+        while (gb->last_rtc_second / 60 < current_time / 60) {
+            gb->last_rtc_second += 60;
+            gb->huc3.minutes++;
+            if (gb->huc3.minutes == 60 * 24) {
+                gb->huc3.days++;
+                gb->huc3.minutes = 0;
+            }
+        }
+        return;
+    }
+    
+    bool running = false;
+    if (gb->cartridge_type->mbc_type == GB_TPP1) {
+        running = gb->tpp1_mr4 & 0x4;
+    }
+    else {
+        running = (gb->rtc_real.high & 0x40) == 0;
+    }
+    
+    if (!running) return;
+    
+    while (gb->last_rtc_second + 60 * 60 * 24 < current_time) {
+        gb->last_rtc_second += 60 * 60 * 24;
+        if (gb->cartridge_type->mbc_type == GB_TPP1) {
+            if (++gb->rtc_real.tpp1.weekday == 7) {
+                gb->rtc_real.tpp1.weekday = 0;
+                if (++gb->rtc_real.tpp1.weeks == 0) {
+                    gb->tpp1_mr4 |= 8; /* Overflow bit */
+                }
+            }
+        }
+        else if (++gb->rtc_real.days == 0) {
+            if (gb->rtc_real.high & 1) { /* Bit 8 of days*/
+                gb->rtc_real.high |= 0x80; /* Overflow bit */
+            }
+            
+            gb->rtc_real.high ^= 1;
+        }
+    }
+    
+    while (gb->last_rtc_second < current_time) {
+        gb->last_rtc_second++;
+        if (++gb->rtc_real.seconds != 60) continue;
+        gb->rtc_real.seconds = 0;
+        
+        if (++gb->rtc_real.minutes != 60) continue;
+        gb->rtc_real.minutes = 0;
+        
+        if (gb->cartridge_type->mbc_type == GB_TPP1) {
+            if (++gb->rtc_real.tpp1.hours != 24) continue;
+            gb->rtc_real.tpp1.hours = 0;
+            if (++gb->rtc_real.tpp1.weekday != 7) continue;
+            gb->rtc_real.tpp1.weekday = 0;
+            if (++gb->rtc_real.tpp1.weeks == 0) {
+                gb->tpp1_mr4 |= 8; /* Overflow bit */
+            }
+        }
+        else {
+            if (++gb->rtc_real.hours != 24) continue;
+            gb->rtc_real.hours = 0;
+            
+            if (++gb->rtc_real.days != 0) continue;
+            
+            if (gb->rtc_real.high & 1) { /* Bit 8 of days*/
+                gb->rtc_real.high |= 0x80; /* Overflow bit */
+            }
+            
+            gb->rtc_real.high ^= 1;
+        }
+    }
+}
+
 static void rtc_run(GB_gameboy_t *gb, uint8_t cycles)
 {
     if (likely(gb->cartridge_type->mbc_type != GB_HUC3 && !gb->cartridge_type->has_rtc)) return;
@@ -293,76 +391,7 @@ static void rtc_run(GB_gameboy_t *gb, uint8_t cycles)
             break;
     }
 
-    if (gb->cartridge_type->mbc_type == GB_HUC3) {
-        while (gb->last_rtc_second / 60 < current_time / 60) {
-            gb->last_rtc_second += 60;
-            gb->huc3.minutes++;
-            if (gb->huc3.minutes == 60 * 24) {
-                gb->huc3.days++;
-                gb->huc3.minutes = 0;
-            }
-        }
-        return;
-    }
-    bool running = false;
-    if (gb->cartridge_type->mbc_type == GB_TPP1) {
-        running = gb->tpp1_mr4 & 0x4;
-    }
-    else {
-        running = (gb->rtc_real.high & 0x40) == 0;
-    }
-    
-    if (running) { /* is timer running? */
-        while (gb->last_rtc_second + 60 * 60 * 24 < current_time) {
-            gb->last_rtc_second += 60 * 60 * 24;
-            if (gb->cartridge_type->mbc_type == GB_TPP1) {
-                if (++gb->rtc_real.tpp1.weekday == 7) {
-                    gb->rtc_real.tpp1.weekday = 0;
-                    if (++gb->rtc_real.tpp1.weeks == 0) {
-                        gb->tpp1_mr4 |= 8; /* Overflow bit */
-                    }
-                }
-            }
-            else if (++gb->rtc_real.days == 0) {
-                if (gb->rtc_real.high & 1) { /* Bit 8 of days*/
-                    gb->rtc_real.high |= 0x80; /* Overflow bit */
-                }
-                
-                gb->rtc_real.high ^= 1;
-            }
-        }
-        
-        while (gb->last_rtc_second < current_time) {
-            gb->last_rtc_second++;
-            if (++gb->rtc_real.seconds != 60) continue;
-            gb->rtc_real.seconds = 0;
-            
-            if (++gb->rtc_real.minutes != 60) continue;
-            gb->rtc_real.minutes = 0;
-            
-            if (gb->cartridge_type->mbc_type == GB_TPP1) {
-                if (++gb->rtc_real.tpp1.hours != 24) continue;
-                gb->rtc_real.tpp1.hours = 0;
-                if (++gb->rtc_real.tpp1.weekday != 7) continue;
-                gb->rtc_real.tpp1.weekday = 0;
-                if (++gb->rtc_real.tpp1.weeks == 0) {
-                    gb->tpp1_mr4 |= 8; /* Overflow bit */
-                }
-            }
-            else {
-                if (++gb->rtc_real.hours != 24) continue;
-                gb->rtc_real.hours = 0;
-                
-                if (++gb->rtc_real.days != 0) continue;
-                
-                if (gb->rtc_real.high & 1) { /* Bit 8 of days*/
-                    gb->rtc_real.high |= 0x80; /* Overflow bit */
-                }
-                
-                gb->rtc_real.high ^= 1;
-            }
-        }
-    }
+    GB_rtc_set_time(gb, current_time);
 }
 
 static void camera_run(GB_gameboy_t *gb, uint8_t cycles)
@@ -421,8 +450,10 @@ void GB_advance_cycles(GB_gameboy_t *gb, uint8_t cycles)
             gb->halted = false;
         }
     }
-    
+        
+#ifndef GB_DISABLE_DEBUGGER
     gb->debugger_ticks += cycles;
+#endif
     
     if (gb->speed_switch_freeze) {
         if (gb->speed_switch_freeze >= cycles) {
@@ -437,7 +468,9 @@ void GB_advance_cycles(GB_gameboy_t *gb, uint8_t cycles)
         cycles <<= 1;
     }
     
+#ifndef GB_DISABLE_DEBUGGER
     gb->absolute_debugger_ticks += cycles;
+#endif
     
     // Not affected by speed boost
     if (likely(gb->io_registers[GB_IO_LCDC] & GB_LCDC_ENABLE)) {
@@ -449,6 +482,16 @@ void GB_advance_cycles(GB_gameboy_t *gb, uint8_t cycles)
     
     gb->rumble_on_cycles += gb->rumble_strength & 3;
     gb->rumble_off_cycles += (gb->rumble_strength & 3) ^ 3;
+    
+    if (unlikely(gb->data_bus_decay_countdown)) {
+        if (gb->data_bus_decay_countdown <= cycles) {
+            gb->data_bus_decay_countdown = 0;
+            gb->data_bus = 0xFF;
+        }
+        else {
+            gb->data_bus_decay_countdown -= cycles;
+        }
+    }
     
     GB_joypad_run(gb, cycles);
     GB_apu_run(gb, false);
