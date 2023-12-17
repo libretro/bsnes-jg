@@ -106,8 +106,8 @@ libsamplerate (BSD-2-Clause)
   Copyright (c) 2002-2021, Erik de Castro Lopo
   See deps/libsamplerate/COPYING (https://github.com/libsndfile/libsamplerate)
 
-SameBoy (MIT)
-  Copyright (c) 2015-2022 Lior Halphon
+SameBoy (Expat)
+  Copyright (c) 2015-2023 Lior Halphon
   See deps/gb/LICENSE (https://github.com/LIJI32/SameBoy)
 
 snes_spc (LGPL-2.1-or-later)
