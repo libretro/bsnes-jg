@@ -1,9 +1,9 @@
 SOURCEDIR := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword \
 	$(MAKEFILE_LIST))))))
 
-AR ?= ar
-CC ?= cc
-CXX ?= c++
+NAME := bsnes
+JGNAME := $(NAME)-jg
+
 CFLAGS ?= -O2
 CXXFLAGS ?= -O2
 FLAGS := -std=c++11
@@ -13,9 +13,6 @@ FLAGS_GB := -std=gnu11
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.16\"
 INCLUDES := -I$(SOURCEDIR)/deps -I$(SOURCEDIR)/src
-
-PKG_CONFIG ?= pkg-config
-CFLAGS_JG := $(shell $(PKG_CONFIG) --cflags jg)
 
 # TODO: Use -Wstrict-overflow=5 which is the highest level
 WARNINGS_MIN := -Wall -Wextra -Wshadow -Wformat=2 -Wstrict-overflow=2 \
@@ -30,37 +27,10 @@ WARNINGS_ICD := $(WARNINGS_CXX)
 WARNINGS_GB := -Wno-multichar -Wno-unused-result
 
 LIBS := -lm -lstdc++
-PIC := -fPIC
-SHARED := $(PIC)
 
-NAME := bsnes
-PREFIX ?= /usr/local
-EXEC_PREFIX ?= $(PREFIX)
-LIBDIR ?= $(EXEC_PREFIX)/lib
-DATAROOTDIR ?= $(PREFIX)/share
-DATADIR ?= $(DATAROOTDIR)
-DOCDIR ?= $(DATAROOTDIR)/doc/$(NAME)
-
-LIBPATH := $(LIBDIR)/jollygood
-
-DISABLE_MODULE ?= 0
-ENABLE_STATIC_JG ?= 0
 USE_VENDORED_SAMPLERATE ?= 0
 
-UNAME := $(shell uname -s)
-ifeq ($(UNAME), Darwin)
-	LIBRARY := $(NAME).dylib
-else ifeq ($(OS), Windows_NT)
-	LIBRARY := $(NAME).dll
-else
-	LIBRARY := $(NAME).so
-endif
-
-ifeq ($(UNAME), Darwin)
-	SHARED += -dynamiclib -Wl,-undefined,error
-else
-	SHARED += -shared -Wl,--no-undefined
-endif
+include $(SOURCEDIR)/jg.mk
 
 CSRCS := deps/gb/apu.c \
 	deps/gb/camera.c \
@@ -163,17 +133,6 @@ ASSETS := Database/boards.bml \
 ASSETS_BASE := $(notdir $(ASSETS))
 ASSETS_TARGET := $(ASSETS_BASE:%=$(NAME)/%)
 
-# Desktop File
-DESKTOP := $(NAME)-jg.desktop
-
-DESKTOP_TARGET := $(NAME)/$(DESKTOP)
-
-# Icons
-ICONS := $(wildcard $(SOURCEDIR)/icons/*.png) $(SOURCEDIR)/icons/$(NAME).svg
-
-ICONS_BASE := $(notdir $(ICONS))
-ICONS_TARGET := $(ICONS_BASE:%=$(NAME)/icons/%)
-
 # Object dirs
 MKDIRS := deps/byuuML \
 	deps/gb \
@@ -184,31 +143,8 @@ MKDIRS := deps/byuuML \
 	src/expansion \
 	src/processor
 
-OBJDIR := objs
-
 # List of object files
 OBJS := $(patsubst %,$(OBJDIR)/%,$(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o))
-
-# Library targets
-TARGET :=
-TARGET_MODULE := $(NAME)/$(LIBRARY)
-TARGET_STATIC_JG := $(NAME)/lib$(NAME)-jg.a
-
-ifeq ($(DISABLE_MODULE), 0)
-	TARGET += $(TARGET_MODULE)
-endif
-
-ifneq ($(ENABLE_STATIC_JG), 0)
-	TARGET += $(DESKTOP_TARGET) $(ICONS_TARGET) $(NAME)/jg-static.mk
-endif
-
-# Compiler commands
-COMPILE = $(strip $(1) $(CPPFLAGS) $(PIC) $(2) -c $< -o $@)
-COMPILE_C = $(call COMPILE, $(CC) $(CFLAGS), $(1))
-COMPILE_CXX = $(call COMPILE, $(CXX) $(CXXFLAGS), $(1))
-
-# Info command
-COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
 
 # Dependency commands
 BUILD_BML = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS))
@@ -290,7 +226,7 @@ $(ICONS_TARGET): $(ICONS)
 	@cp $(subst $(NAME)/icons,$(SOURCEDIR)/icons,$@) $(NAME)/icons/
 
 $(NAME)/jg-static.mk: $(TARGET_STATIC_JG)
-	@printf '%s\n%s\n%s\n%s\n' 'NAME := $(NAME)-jg' \
+	@printf '%s\n%s\n%s\n%s\n' 'NAME := $(JGNAME)' \
 		'ASSETS := $(ASSETS_BASE)' 'ICONS := $(ICONS_BASE)' \
 		'LIBS_STATIC := $(strip $(LIBS))' > $@
 
