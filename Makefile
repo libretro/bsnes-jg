@@ -163,42 +163,42 @@ all: $(ASSETS_TARGET) $(TARGET)
 
 # byuuML rules
 $(OBJDIR)/deps/byuuML/%.o: $(SOURCEDIR)/deps/byuuML/%.cpp $(OBJDIR)/.tag
-	$(call COMPILE_INFO, $(BUILD_BML))
+	$(call COMPILE_INFO,$(BUILD_BML))
 	@$(BUILD_BML)
 
 # libco rules
 $(OBJDIR)/deps/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
-	$(call COMPILE_INFO, $(BUILD_CO))
+	$(call COMPILE_INFO,$(BUILD_CO))
 	@$(BUILD_CO)
 
 # libsamplerate rules
 $(OBJDIR)/deps/libsamplerate/%.o: $(SOURCEDIR)/deps/libsamplerate/%.c $(OBJDIR)/.tag
-	$(call COMPILE_INFO, $(BUILD_C99))
+	$(call COMPILE_INFO,$(BUILD_C99))
 	@$(BUILD_C99)
 
 # Game Boy rules
 $(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag
-	$(call COMPILE_INFO, $(BUILD_GB))
+	$(call COMPILE_INFO,$(BUILD_GB))
 	@$(BUILD_GB)
 
 # snes_spc rules
 $(OBJDIR)/deps/snes_spc/%.o: $(SOURCEDIR)/deps/snes_spc/%.c $(OBJDIR)/.tag
-	$(call COMPILE_INFO, $(BUILD_C99))
+	$(call COMPILE_INFO,$(BUILD_C99))
 	@$(BUILD_C99)
 
 # snes_icd rules
 $(OBJDIR)/src/coprocessor/icd.o: $(SOURCEDIR)/src/coprocessor/icd.cpp $(OBJDIR)/.tag
-	$(call COMPILE_INFO, $(BUILD_ICD))
+	$(call COMPILE_INFO,$(BUILD_ICD))
 	@$(BUILD_ICD)
 
 # SNES rules
 $(OBJDIR)/src/%.o: $(SOURCEDIR)/src/%.cpp $(OBJDIR)/.tag
-	$(call COMPILE_INFO, $(BUILD_MAIN))
+	$(call COMPILE_INFO,$(BUILD_MAIN))
 	@$(BUILD_MAIN)
 
 # Shim rules
 $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
-	$(call COMPILE_INFO, $(BUILD_JG))
+	$(call COMPILE_INFO,$(BUILD_JG))
 	@$(BUILD_JG)
 
 $(OBJDIR)/.tag:
