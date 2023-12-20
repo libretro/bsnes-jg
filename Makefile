@@ -30,6 +30,9 @@ LIBS := -lm -lstdc++
 
 USE_VENDORED_SAMPLERATE ?= 0
 
+override ENABLE_SHARED := 0
+override ENABLE_STATIC := 0
+
 include $(SOURCEDIR)/jg.mk
 
 CSRCS := deps/gb/apu.c \
@@ -233,7 +236,7 @@ $(NAME)/jg-static.mk: $(TARGET_STATIC_JG)
 clean:
 	rm -rf $(OBJDIR) $(NAME)
 
-ifeq ($(DISABLE_MODULE), 0)
+ifneq ($(ENABLE_LIB), 0)
 install: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
 	@mkdir -p $(DESTDIR)$(DOCDIR)
