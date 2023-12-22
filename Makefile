@@ -32,6 +32,8 @@ USE_VENDORED_SAMPLERATE ?= 0
 
 override ENABLE_SHARED := 0
 override ENABLE_STATIC := 0
+override INSTALL_DATA := 1
+override INSTALL_SHARED := 0
 
 include $(SOURCEDIR)/jg.mk
 
@@ -160,7 +162,7 @@ BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB))
 BUILD_JG = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES) $(CFLAGS_JG))
 BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
-.PHONY: all clean install install-strip uninstall
+.PHONY: $(PHONY)
 
 all: $(ASSETS_TARGET) $(TARGET)
 
@@ -204,10 +206,6 @@ $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
 	$(call COMPILE_INFO,$(BUILD_JG))
 	@$(BUILD_JG)
 
-$(OBJDIR)/.tag:
-	@mkdir -p -- $(patsubst %,$(OBJDIR)/%,$(MKDIRS))
-	@touch $@
-
 $(TARGET_MODULE): $(OBJS)
 	@mkdir -p $(NAME)
 	$(strip $(CXX) -o $@ $^ $(LDFLAGS) $(LIBS) $(SHARED))
@@ -228,24 +226,20 @@ $(ICONS_TARGET): $(ICONS)
 	@mkdir -p $(NAME)/icons
 	@cp $(subst $(NAME)/icons,$(SOURCEDIR)/icons,$@) $(NAME)/icons/
 
-$(NAME)/jg-static.mk: $(TARGET_STATIC_JG)
+$(TARGET_STATIC_MK): $(TARGET_STATIC_JG)
 	@printf '%s\n%s\n%s\n%s\n' 'NAME := $(JGNAME)' \
 		'ASSETS := $(ASSETS_BASE)' 'ICONS := $(ICONS_BASE)' \
 		'LIBS_STATIC := $(strip $(LIBS))' > $@
 
-clean:
-	rm -rf $(OBJDIR) $(NAME)
-
-ifneq ($(ENABLE_INSTALL), 0)
-install: all
+install-data: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
-	@mkdir -p $(DESTDIR)$(DOCDIR)
-	@mkdir -p $(DESTDIR)$(LIBPATH)
-	cp $(TARGET_MODULE) $(DESTDIR)$(LIBPATH)/
 	cp $(NAME)/boards.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 	cp $(NAME)/BSMemory.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 	cp $(NAME)/SufamiTurbo.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 	cp $(NAME)/SuperFamicom.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
+
+install-docs: all
+	@mkdir -p $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/COPYING $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/README $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/deps/byuuML/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-byuuML
@@ -256,17 +250,3 @@ ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 	cp $(SOURCEDIR)/deps/libsamplerate/COPYING \
 		$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate
 endif
-
-install-strip: install
-	strip $(DESTDIR)$(LIBPATH)/$(LIBRARY)
-else
-install: all
-	@echo 'Nothing to install'
-
-install-strip: install
-endif
-
-uninstall:
-	rm -rf $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
-	rm -rf $(DESTDIR)$(DOCDIR)
-	rm -f $(DESTDIR)$(LIBPATH)/$(LIBRARY)
