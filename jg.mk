@@ -119,14 +119,14 @@ else
 endif
 
 ifneq (,$(filter-out 0,$(ENABLE_SHARED) $(ENABLE_STATIC)))
-	ENABLE_LIB := 1
-	ENABLE_PKGCONF := 1
+	ENABLE_INSTALL := 1
+	ENABLE_LIBRARY := 1
 else ifeq ($(DISABLE_MODULE), 0)
-	ENABLE_LIB := 1
-	ENABLE_PKGCONF := 0
+	ENABLE_INSTALL := 1
+	ENABLE_LIBRARY := 0
 else
-	ENABLE_LIB := 0
-	ENABLE_PKGCONF := 0
+	ENABLE_INSTALL := 0
+	ENABLE_LIBRARY := 0
 endif
 
 # Compiler commands

@@ -236,7 +236,7 @@ $(NAME)/jg-static.mk: $(TARGET_STATIC_JG)
 clean:
 	rm -rf $(OBJDIR) $(NAME)
 
-ifneq ($(ENABLE_LIB), 0)
+ifneq ($(ENABLE_INSTALL), 0)
 install: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
 	@mkdir -p $(DESTDIR)$(DOCDIR)
