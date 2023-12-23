@@ -6,12 +6,14 @@ JGNAME := $(NAME)-jg
 
 CFLAGS ?= -O2
 CXXFLAGS ?= -O2
+
 FLAGS := -std=c++11
 FLAGS_C99 := -std=c99
 FLAGS_CO := -std=c89
 FLAGS_GB := -std=gnu11
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.16\"
+DEPDIR := $(SOURCEDIR)/deps
 
 # TODO: Use -Wstrict-overflow=5 which is the highest level
 WARNINGS_MIN := -Wall -Wextra -Wshadow -Wformat=2 -Wstrict-overflow=2 \
@@ -25,19 +27,26 @@ WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
 WARNINGS_ICD := $(WARNINGS_CXX)
 WARNINGS_GB := -Wno-multichar -Wno-unused-result
 
-INCLUDES := -I$(SOURCEDIR)/deps -I$(SOURCEDIR)/src
+INCLUDES := -I$(DEPDIR) -I$(SOURCEDIR)/src
 INCLUDES_JG := -I$(SOURCEDIR)/src
 
 LIBS := -lm -lstdc++
-
-USE_VENDORED_SAMPLERATE ?= 0
 
 override ENABLE_SHARED := 0
 override ENABLE_STATIC := 0
 override INSTALL_DATA := 1
 override INSTALL_SHARED := 0
 
-include $(SOURCEDIR)/jg.mk
+include $(SOURCEDIR)/mk/jg.mk
+
+# Object dirs
+MKDIRS := deps/byuuML \
+	deps/gb \
+	deps/libco \
+	deps/snes_spc \
+	src/coprocessor \
+	src/expansion \
+	src/processor
 
 CSRCS := deps/gb/apu.c \
 	deps/gb/camera.c \
@@ -116,17 +125,7 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 # https://github.com/defparam/21FX
 #	src/expansion/21fx.cpp \
 
-ifneq ($(USE_VENDORED_SAMPLERATE), 0)
-	CFLAGS_SAMPLERATE := -I$(SOURCEDIR)/deps/libsamplerate
-	LIBS_SAMPLERATE :=
-	CSRCS += deps/libsamplerate/samplerate.c \
-		deps/libsamplerate/src_linear.c \
-		deps/libsamplerate/src_sinc.c \
-		deps/libsamplerate/src_zoh.c
-else
-	CFLAGS_SAMPLERATE := $(shell $(PKG_CONFIG) --cflags samplerate)
-	LIBS_SAMPLERATE := $(shell $(PKG_CONFIG) --libs samplerate)
-endif
+include $(SOURCEDIR)/mk/samplerate.mk
 
 INCLUDES += $(CFLAGS_SAMPLERATE)
 LIBS += $(LIBS_SAMPLERATE)
@@ -139,16 +138,6 @@ ASSETS := Database/boards.bml \
 
 ASSETS_BASE := $(notdir $(ASSETS))
 ASSETS_TARGET := $(ASSETS_BASE:%=$(NAME)/%)
-
-# Object dirs
-MKDIRS := deps/byuuML \
-	deps/gb \
-	deps/libco \
-	deps/libsamplerate \
-	deps/snes_spc \
-	src/coprocessor \
-	src/expansion \
-	src/processor
 
 # List of object files
 OBJS := $(patsubst %,$(OBJDIR)/%,$(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o))
@@ -169,27 +158,27 @@ BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 all: $(ASSETS_TARGET) $(TARGET)
 
 # byuuML rules
-$(OBJDIR)/deps/byuuML/%.o: $(SOURCEDIR)/deps/byuuML/%.cpp $(OBJDIR)/.tag
+$(OBJDIR)/deps/byuuML/%.o: $(DEPDIR)/byuuML/%.cpp $(OBJDIR)/.tag
 	$(call COMPILE_INFO,$(BUILD_BML))
 	@$(BUILD_BML)
 
 # libco rules
-$(OBJDIR)/deps/libco/%.o: $(SOURCEDIR)/deps/libco/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/libco/%.o: $(DEPDIR)/libco/%.c $(OBJDIR)/.tag
 	$(call COMPILE_INFO,$(BUILD_CO))
 	@$(BUILD_CO)
 
 # libsamplerate rules
-$(OBJDIR)/deps/libsamplerate/%.o: $(SOURCEDIR)/deps/libsamplerate/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/libsamplerate/%.o: $(DEPDIR)/libsamplerate/%.c $(OBJDIR)/.tag
 	$(call COMPILE_INFO,$(BUILD_C99))
 	@$(BUILD_C99)
 
 # Game Boy rules
-$(OBJDIR)/deps/gb/%.o: $(SOURCEDIR)/deps/gb/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/gb/%.o: $(DEPDIR)/gb/%.c $(OBJDIR)/.tag
 	$(call COMPILE_INFO,$(BUILD_GB))
 	@$(BUILD_GB)
 
 # snes_spc rules
-$(OBJDIR)/deps/snes_spc/%.o: $(SOURCEDIR)/deps/snes_spc/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/snes_spc/%.o: $(DEPDIR)/snes_spc/%.c $(OBJDIR)/.tag
 	$(call COMPILE_INFO,$(BUILD_C99))
 	@$(BUILD_C99)
 
@@ -236,11 +225,11 @@ install-docs: all
 	@mkdir -p $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/COPYING $(DESTDIR)$(DOCDIR)
 	cp $(SOURCEDIR)/README $(DESTDIR)$(DOCDIR)
-	cp $(SOURCEDIR)/deps/byuuML/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-byuuML
-	cp $(SOURCEDIR)/deps/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
-	cp $(SOURCEDIR)/deps/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
-	cp $(SOURCEDIR)/deps/snes_spc/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-spc
+	cp $(DEPDIR)/byuuML/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-byuuML
+	cp $(DEPDIR)/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
+	cp $(DEPDIR)/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
+	cp $(DEPDIR)/snes_spc/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-spc
 ifneq ($(USE_VENDORED_SAMPLERATE), 0)
-	cp $(SOURCEDIR)/deps/libsamplerate/COPYING \
+	cp $(DEPDIR)/libsamplerate/COPYING \
 		$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate
 endif
