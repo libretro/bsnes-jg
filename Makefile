@@ -12,7 +12,6 @@ FLAGS_CO := -std=c89
 FLAGS_GB := -std=gnu11
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.16\"
-INCLUDES := -I$(SOURCEDIR)/deps -I$(SOURCEDIR)/src
 
 # TODO: Use -Wstrict-overflow=5 which is the highest level
 WARNINGS_MIN := -Wall -Wextra -Wshadow -Wformat=2 -Wstrict-overflow=2 \
@@ -25,6 +24,9 @@ WARNINGS := $(WARNINGS_CXX) -pedantic
 WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
 WARNINGS_ICD := $(WARNINGS_CXX)
 WARNINGS_GB := -Wno-multichar -Wno-unused-result
+
+INCLUDES := -I$(SOURCEDIR)/deps -I$(SOURCEDIR)/src
+INCLUDES_JG := -I$(SOURCEDIR)/src
 
 LIBS := -lm -lstdc++
 
@@ -159,7 +161,7 @@ BUILD_ICD = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS_ICD) $(INCLUDES))
 BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB))
 
 # Core commands
-BUILD_JG = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES) $(CFLAGS_JG))
+BUILD_JG = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES_JG) $(CFLAGS_JG))
 BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 .PHONY: $(PHONY)
