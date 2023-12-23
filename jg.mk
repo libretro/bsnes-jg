@@ -151,6 +151,16 @@ $(OBJDIR)/.tag:
 	@mkdir -p -- $(if $(MKDIRS),$(MKDIRS:%=$(OBJDIR)/%),$(OBJDIR))
 	@touch $@
 
+$(DESKTOP_TARGET): $(SOURCEDIR)/$(DESKTOP)
+	@mkdir -p $(NAME)
+	@cp $< $@
+
+ifneq ($(ICONS),)
+$(ICONS_TARGET): $(ICONS)
+	@mkdir -p $(NAME)/icons
+	@cp $(subst $(NAME)/icons,$(SOURCEDIR)/icons,$@) $(NAME)/icons/
+endif
+
 clean::
 	rm -rf $(OBJDIR) $(NAME)
 
