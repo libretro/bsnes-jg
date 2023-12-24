@@ -32,6 +32,8 @@ INCLUDES_JG := -I$(SOURCEDIR)/src
 
 LIBS := -lm -lstdc++
 
+DOCS := COPYING README
+
 override ENABLE_SHARED := 0
 override ENABLE_STATIC := 0
 override INSTALL_DATA := 1
@@ -221,15 +223,8 @@ install-data: all
 	cp $(NAME)/SufamiTurbo.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 	cp $(NAME)/SuperFamicom.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
 
-install-docs: all
-	@mkdir -p $(DESTDIR)$(DOCDIR)
-	cp $(SOURCEDIR)/COPYING $(DESTDIR)$(DOCDIR)
-	cp $(SOURCEDIR)/README $(DESTDIR)$(DOCDIR)
+install-docs::
 	cp $(DEPDIR)/byuuML/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-byuuML
 	cp $(DEPDIR)/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
 	cp $(DEPDIR)/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
 	cp $(DEPDIR)/snes_spc/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-spc
-ifneq ($(USE_VENDORED_SAMPLERATE), 0)
-	cp $(DEPDIR)/libsamplerate/COPYING \
-		$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate
-endif

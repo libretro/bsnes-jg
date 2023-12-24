@@ -9,6 +9,10 @@ ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 		deps/libsamplerate/src_linear.c \
 		deps/libsamplerate/src_sinc.c \
 		deps/libsamplerate/src_zoh.c
+
+install-docs::
+	cp $(DEPDIR)/libsamplerate/COPYING \
+		$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate
 else
 	override REQUIRES_PRIVATE += samplerate
 	CFLAGS_SAMPLERATE = $(shell $(PKG_CONFIG) --cflags samplerate)

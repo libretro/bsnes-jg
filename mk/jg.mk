@@ -161,10 +161,23 @@ $(ICONS_TARGET): $(ICONS)
 	@cp $(subst $(NAME)/icons,$(SOURCEDIR)/icons,$@) $(NAME)/icons/
 endif
 
+ifneq ($(INSTALL_SHARED), 0)
+$(OBJDIR)/$(LIB_MAJOR) $(OBJDIR)/$(LIB_SHARED): $(TARGET_SHARED)
+	ln -s $(LIB_VERSION) $@
+endif
+
 clean::
 	rm -rf $(OBJDIR) $(NAME)
 
 install-data: all
+
+install-docs:: all
+	@mkdir -p $(DESTDIR)$(DOCDIR)
+ifneq ($(DOCS),)
+	for i in $(DOCS); do \
+		cp $(SOURCEDIR)/$$i $(DESTDIR)$(DOCDIR); \
+	done
+endif
 
 install-library: all
 ifeq ($(DISABLE_MODULE), 0)
