@@ -3,6 +3,7 @@ USE_VENDORED_SAMPLERATE ?= 0
 ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 	CFLAGS_SAMPLERATE := -I$(DEPDIR)/libsamplerate
 	LIBS_SAMPLERATE := $(if $(findstring -lm,$(LIBS)),,-lm)
+	override LIBS_PRIVATE += $(LIBS_SAMPLERATE)
 	MKDIRS += deps/libsamplerate
 	CSRCS += deps/libsamplerate/samplerate.c \
 		deps/libsamplerate/src_linear.c \
