@@ -3,22 +3,7 @@ ENABLE_SHARED ?= 0
 ENABLE_STATIC ?= 0
 ENABLE_STATIC_JG ?= 0
 
-AR ?= ar
-CC ?= cc
-CXX ?= c++
-CC_FOR_BUILD ?= $(CC)
-CXX_FOR_BUILD ?= $(CXX)
-PKG_CONFIG ?= pkg-config
-
-PREFIX ?= /usr/local
-EXEC_PREFIX ?= $(PREFIX)
-LIBDIR ?= $(EXEC_PREFIX)/lib
-INCLUDEDIR ?= $(PREFIX)/include
-DATAROOTDIR ?= $(PREFIX)/share
-DATADIR ?= $(DATAROOTDIR)
-DOCDIR ?= $(DATAROOTDIR)/doc/$(NAME)
-
-CFLAGS_JG = $(shell $(PKG_CONFIG) --cflags jg)
+include $(SOURCEDIR)/mk/common.mk
 
 override VERSION := $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 
@@ -27,7 +12,6 @@ override SHARED := $(PIC)
 
 override INCPATH := $(INCLUDEDIR)/$(JGNAME)
 override LIBPATH := $(LIBDIR)/jollygood
-override OBJDIR := objs
 
 override LIBS_PRIVATE := Libs.private:
 override REQUIRES_PRIVATE := Requires.private:
@@ -47,7 +31,6 @@ else
 	override PKGCONFEXECDIR := $(EXEC_PREFIX)
 endif
 
-UNAME := $(shell uname -s)
 ifeq ($(UNAME), Darwin)
 	override LIBRARY := $(NAME).dylib
 else ifeq ($(OS), Windows_NT)
@@ -141,15 +124,7 @@ override COMPILE_CXX = $(call COMPILE, $(CXX) $(CXXFLAGS), $(1))
 override COMPILE_C_BUILD = $(strip $(CC_FOR_BUILD) $(1) $< -o $@)
 override COMPILE_CXX_BUILD = $(strip $(CXX_FOR_BUILD) $(1) $< -o $@)
 
-# Info command
-override COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
-
-override .DEFAULT_GOAL := all
-override PHONY := all clean install install-strip uninstall $(TARGET_INSTALL)
-
-$(OBJDIR)/.tag:
-	@mkdir -p -- $(if $(MKDIRS),$(MKDIRS:%=$(OBJDIR)/%),$(OBJDIR))
-	@touch $@
+override PHONY += $(TARGET_INSTALL)
 
 $(DESKTOP_TARGET): $(SOURCEDIR)/$(DESKTOP)
 	@mkdir -p $(NAME)
@@ -170,14 +145,6 @@ clean::
 	rm -rf $(OBJDIR) $(NAME)
 
 install-data: all
-
-install-docs:: all
-	@mkdir -p $(DESTDIR)$(DOCDIR)
-ifneq ($(DOCS),)
-	for i in $(DOCS); do \
-		cp $(SOURCEDIR)/$$i $(DESTDIR)$(DOCDIR); \
-	done
-endif
 
 install-library: all
 ifeq ($(DISABLE_MODULE), 0)
