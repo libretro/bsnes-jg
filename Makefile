@@ -34,11 +34,6 @@ LIBS := -lm -lstdc++
 
 DOCS := COPYING README
 
-override INSTALL_DATA := 1
-override INSTALL_SHARED := 0
-
-include $(SOURCEDIR)/mk/jg.mk
-
 # Object dirs
 MKDIRS := deps/byuuML \
 	deps/gb \
@@ -47,6 +42,17 @@ MKDIRS := deps/byuuML \
 	src/coprocessor \
 	src/expansion \
 	src/processor
+
+override INSTALL_DATA := 1
+override INSTALL_SHARED := 0
+
+include $(SOURCEDIR)/mk/jg.mk
+include $(SOURCEDIR)/mk/samplerate.mk
+
+INCLUDES += $(CFLAGS_SAMPLERATE)
+LIBS += $(LIBS_SAMPLERATE)
+
+LINKER := $(CXX)
 
 CSRCS := deps/gb/apu.c \
 	deps/gb/camera.c \
@@ -118,17 +124,13 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/sha256.cpp \
 	src/smp.cpp \
 	src/sufamiturbo.cpp \
-	src/system.cpp \
-	jg.cpp
+	src/system.cpp
 
 # TODO: Do we need this?
 # https://github.com/defparam/21FX
 #	src/expansion/21fx.cpp \
 
-include $(SOURCEDIR)/mk/samplerate.mk
-
-INCLUDES += $(CFLAGS_SAMPLERATE)
-LIBS += $(LIBS_SAMPLERATE)
+JGSRCS := jg.cpp
 
 # Assets
 ASSETS := Database/boards.bml \
@@ -140,7 +142,9 @@ ASSETS_BASE := $(notdir $(ASSETS))
 ASSETS_TARGET := $(ASSETS_BASE:%=$(NAME)/%)
 
 # List of object files
-OBJS := $(patsubst %,$(OBJDIR)/%,$(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o))
+OBJS := $(patsubst %,$(OBJDIR)/%,$(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o) \
+	$(OBJS_SAMPLERATE))
+OBJS_JG := $(patsubst %,$(OBJDIR)/%,$(JGSRCS:.cpp=.o))
 
 # Dependency commands
 BUILD_BML = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS))
@@ -197,11 +201,11 @@ $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
 	$(call COMPILE_INFO,$(BUILD_JG))
 	@$(BUILD_JG)
 
-$(TARGET_MODULE): $(OBJS)
+$(TARGET_MODULE): $(OBJS_JG) $(OBJS_MODULE)
 	@mkdir -p $(NAME)
-	$(strip $(CXX) -o $@ $^ $(LDFLAGS) $(LIBS) $(SHARED))
+	$(LINK_MODULE)
 
-$(TARGET_STATIC_JG): $(OBJS)
+$(TARGET_STATIC_JG): $(OBJS_JG) $(OBJS_SHARED)
 	@mkdir -p $(NAME)
 	$(AR) rcs $@ $^
 
