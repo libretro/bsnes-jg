@@ -76,6 +76,12 @@ override TARGET_STATIC := $(OBJDIR)/$(LIB_STATIC)
 override TARGET_STATIC_JG := $(NAME)/lib$(NAME)-jg.a
 override TARGET_STATIC_MK := $(NAME)/jg-static.mk
 
+ifeq ($(INSTALL_SHARED), 0)
+	override HEADERS :=
+	override ENABLE_SHARED := 0
+	override ENABLE_STATIC := 0
+endif
+
 ifeq ($(DISABLE_MODULE), 0)
 	override TARGET += $(TARGET_MODULE)
 endif
@@ -161,6 +167,12 @@ endif
 ifneq ($(ENABLE_STATIC), 0)
 	cp $(TARGET_STATIC) $(DESTDIR)$(LIBDIR)/
 endif
+ifneq ($(HEADERS),)
+	@mkdir -p $(DESTDIR)$(INCPATH)
+	for i in $(HEADERS); do \
+		cp $(SOURCEDIR)/$$i $(DESTDIR)$(INCPATH)/; \
+	done
+endif
 	sed -e 's|@PREFIX@|$(PREFIX)|' \
 		-e 's|@EXEC_PREFIX@|$(PKGCONFEXECDIR)|' \
 		-e 's|@LIBDIR@|$(PKGCONFLIBDIR)|' \
@@ -205,4 +217,9 @@ uninstall::
 	rm -f $(DESTDIR)$(LIBDIR)/$(LIB_MAJOR)
 	rm -f $(DESTDIR)$(LIBDIR)/$(LIB_VERSION)
 	rm -f $(DESTDIR)$(LIBDIR)/pkgconfig/$(LIB_PC)
+
+ifneq ($(HEADERS),)
+uninstall::
+	rm -rf $(DESTDIR)$(INCPATH)
+endif
 endif

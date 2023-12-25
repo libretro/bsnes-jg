@@ -34,8 +34,6 @@ LIBS := -lm -lstdc++
 
 DOCS := COPYING README
 
-override ENABLE_SHARED := 0
-override ENABLE_STATIC := 0
 override INSTALL_DATA := 1
 override INSTALL_SHARED := 0
 
