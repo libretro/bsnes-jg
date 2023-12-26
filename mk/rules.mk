@@ -10,8 +10,12 @@ $(DESKTOP_TARGET): $(SOURCEDIR)/$(DESKTOP)
 	@mkdir -p $(NAME)
 	@cp $< $@
 
+$(TARGET_STATIC_MK): $(TARGET_STATIC_JG)
+	@printf '%s\n%s\n%s\n%s\n' 'NAME := $(JGNAME)' \
+		'$(PRINT_DATA)' '$(PRINT_ICON)' '$(PRINT_LIBS)' > $@
+
 ifneq ($(ICONS),)
-$(ICONS_TARGET): $(ICONS)
+$(ICONS_TARGET): $(ICONS_BASE)
 	@mkdir -p $(NAME)/icons
 	@cp $(subst $(NAME)/icons,$(SOURCEDIR)/icons,$@) $(NAME)/icons/
 endif

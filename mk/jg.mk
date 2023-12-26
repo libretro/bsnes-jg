@@ -55,17 +55,22 @@ else
 	override SONAME := -Wl,-soname,$(LIB_MAJOR)
 endif
 
+# Data
+override PRINT_DATA = $(if $(DATA),ASSETS := $(DATA),ASSETS :=)
+override PRINT_ICON = $(if $(ICONS),ICONS := $(ICONS),ICONS :=)
+override PRINT_LIBS = $(if $(LIBS),LIBS_STATIC := $(LIBS),LIBS_STATIC :=)
+
 # Desktop File
 override DESKTOP := $(JGNAME).desktop
 
 override DESKTOP_TARGET := $(NAME)/$(DESKTOP)
 
 # Icons
-override ICONS := $(wildcard $(SOURCEDIR)/icons/*.png \
+override ICONS_BASE := $(wildcard $(SOURCEDIR)/icons/*.png \
 	$(SOURCEDIR)/icons/$(NAME).svg)
 
-override ICONS_BASE := $(notdir $(ICONS))
-override ICONS_TARGET := $(ICONS_BASE:%=$(NAME)/icons/%)
+override ICONS := $(notdir $(ICONS_BASE))
+override ICONS_TARGET := $(ICONS:%=$(NAME)/icons/%)
 
 # Library targets
 override TARGET :=
@@ -75,6 +80,10 @@ override TARGET_SHARED := $(OBJDIR)/$(LIB_VERSION)
 override TARGET_STATIC := $(OBJDIR)/$(LIB_STATIC)
 override TARGET_STATIC_JG := $(NAME)/lib$(NAME)-jg.a
 override TARGET_STATIC_MK := $(NAME)/jg-static.mk
+
+ifeq ($(INSTALL_DATA), 0)
+	override DATA :=
+endif
 
 ifeq ($(INSTALL_SHARED), 0)
 	override HEADERS :=

@@ -207,11 +207,6 @@ $(DATA_TARGET): $(DATA_BASE:%=$(SOURCEDIR)/%)
 	@mkdir -p $(NAME)
 	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/
 
-$(TARGET_STATIC_MK): $(TARGET_STATIC_JG)
-	@printf '%s\n%s\n%s\n%s\n' 'NAME := $(JGNAME)' \
-		'ASSETS := $(DATA)' 'ICONS := $(ICONS_BASE)' \
-		'LIBS_STATIC := $(strip $(LIBS))' > $@
-
 install-data: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
 	cp $(NAME)/boards.bml $(DESTDIR)$(DATADIR)/jollygood/$(NAME)/
