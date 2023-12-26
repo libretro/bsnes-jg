@@ -48,7 +48,7 @@ endif
 		-e 's|@INCLUDEDIR@|$(PKGCONFINCDIR)|' \
 		-e 's|@VERSION@|$(VERSION)|' \
 		-e 's|@DESCRIPTION@|$(DESCRIPTION)|' \
-		-e 's|@NAME@|$(NAME)|' -e 's|@JGNAME@|$(JGNAME)|' \
+		-e 's|@NAME@|$(NAME)|' \
 		-e '/Libs:/a\' -e '$(LIBS_PRIVATE)' \
 		-e '/URL:/a\' -e '$(REQUIRES_PRIVATE)' \
 		$(SOURCEDIR)/lib/pkgconf.pc.in \

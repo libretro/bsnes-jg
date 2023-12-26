@@ -10,7 +10,7 @@ override VERSION := $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 override PIC := -fPIC
 override SHARED := $(PIC)
 
-override INCPATH := $(INCLUDEDIR)/$(JGNAME)
+override INCPATH := $(INCLUDEDIR)/$(NAME)
 override LIBPATH := $(LIBDIR)/jollygood
 
 override LIBS_PRIVATE := Libs.private:
