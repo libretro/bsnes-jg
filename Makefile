@@ -77,6 +77,7 @@ CSRCS := deps/gb/apu.c \
 CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/audio.cpp \
 	src/bsmemory.cpp \
+	src/bsnes.cpp \
 	src/cartridge.cpp \
 	src/cheat.cpp \
 	src/controller.cpp \
@@ -108,7 +109,6 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 	src/expansion/expansion.cpp \
 	src/expansion/satellaview.cpp \
 	src/heuristics.cpp \
-	src/interface.cpp \
 	src/logger.cpp \
 	src/markup.cpp \
 	src/memory.cpp \

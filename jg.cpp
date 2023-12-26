@@ -27,7 +27,7 @@
 #include <jg/jg_snes.h>
 
 #include "serializer.hpp"
-#include "interface.hpp"
+#include "bsnes.hpp"
 #include "settings.hpp"
 
 #include "gamedb.hpp"

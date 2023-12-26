@@ -37,7 +37,7 @@
 #include "settings.hpp"
 #include "system.hpp"
 
-#include "interface.hpp"
+#include "bsnes.hpp"
 
 namespace SuperFamicom {
 
