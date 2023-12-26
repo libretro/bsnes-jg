@@ -31,6 +31,7 @@
 #include "settings.hpp"
 
 #include "gamedb.hpp"
+#include "version.h"
 
 #define SAMPLERATE 48000
 #define FRAMERATE 60
@@ -50,7 +51,7 @@ static jg_cb_log_t jg_cb_log;
 static jg_cb_rumble_t jg_cb_rumble;
 
 static jg_coreinfo_t coreinfo = {
-    "bsnes", "bsnes-jg", "1.1.2", "snes", NUMINPUTS, 0
+    "bsnes", "bsnes-jg", JG_VERSION, "snes", NUMINPUTS, 0
 };
 
 static jg_videoinfo_t vidinfo = {

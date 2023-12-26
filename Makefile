@@ -46,6 +46,7 @@ MKDIRS := deps/byuuML \
 override INSTALL_DATA := 1
 override INSTALL_SHARED := 0
 
+include $(SOURCEDIR)/version.h
 include $(SOURCEDIR)/mk/jg.mk
 include $(SOURCEDIR)/mk/samplerate.mk
 
