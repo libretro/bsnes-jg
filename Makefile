@@ -133,13 +133,13 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 JGSRCS := jg.cpp
 
 # Assets
-ASSETS := Database/boards.bml \
+DATA_BASE := Database/boards.bml \
 	Database/BSMemory.bml \
 	Database/SufamiTurbo.bml \
 	Database/SuperFamicom.bml
 
-ASSETS_BASE := $(notdir $(ASSETS))
-ASSETS_TARGET := $(ASSETS_BASE:%=$(NAME)/%)
+DATA := $(notdir $(DATA_BASE))
+DATA_TARGET := $(DATA:%=$(NAME)/%)
 
 # List of object files
 OBJS := $(patsubst %,$(OBJDIR)/%,$(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o) \
@@ -159,7 +159,7 @@ BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 .PHONY: $(PHONY)
 
-all: $(ASSETS_TARGET) $(TARGET)
+all: $(DATA_TARGET) $(TARGET)
 
 include $(SOURCEDIR)/mk/rules.mk
 
@@ -203,13 +203,13 @@ $(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
 	$(call COMPILE_INFO,$(BUILD_JG))
 	@$(BUILD_JG)
 
-$(ASSETS_TARGET): $(ASSETS:%=$(SOURCEDIR)/%)
+$(DATA_TARGET): $(DATA_BASE:%=$(SOURCEDIR)/%)
 	@mkdir -p $(NAME)
 	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/
 
 $(TARGET_STATIC_MK): $(TARGET_STATIC_JG)
 	@printf '%s\n%s\n%s\n%s\n' 'NAME := $(JGNAME)' \
-		'ASSETS := $(ASSETS_BASE)' 'ICONS := $(ICONS_BASE)' \
+		'ASSETS := $(DATA)' 'ICONS := $(ICONS_BASE)' \
 		'LIBS_STATIC := $(strip $(LIBS))' > $@
 
 install-data: all
