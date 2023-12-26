@@ -12,7 +12,9 @@ $(DESKTOP_TARGET): $(SOURCEDIR)/$(DESKTOP)
 
 $(TARGET_STATIC_MK): $(TARGET_STATIC_JG)
 	@printf '%s\n%s\n%s\n%s\n' 'NAME := $(JGNAME)' \
-		'$(PRINT_DATA)' '$(PRINT_ICON)' '$(PRINT_LIBS)' > $@
+		'$(if $(DATA),ASSETS := $(DATA),ASSETS :=)' \
+		'$(if $(ICONS),ICONS := $(ICONS),ICONS :=)' \
+		'$(if $(LIBS),LIBS_STATIC := $(LIBS),LIBS_STATIC :=)' > $@
 
 ifneq ($(ICONS),)
 $(ICONS_TARGET): $(ICONS_BASE)

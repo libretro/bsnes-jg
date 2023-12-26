@@ -55,20 +55,13 @@ else
 	override SONAME := -Wl,-soname,$(LIB_MAJOR)
 endif
 
-# Data
-override PRINT_DATA = $(if $(DATA),ASSETS := $(DATA),ASSETS :=)
-override PRINT_ICON = $(if $(ICONS),ICONS := $(ICONS),ICONS :=)
-override PRINT_LIBS = $(if $(LIBS),LIBS_STATIC := $(LIBS),LIBS_STATIC :=)
-
 # Desktop File
 override DESKTOP := $(JGNAME).desktop
-
 override DESKTOP_TARGET := $(NAME)/$(DESKTOP)
 
 # Icons
 override ICONS_BASE := $(wildcard $(SOURCEDIR)/icons/*.png \
 	$(SOURCEDIR)/icons/$(NAME).svg)
-
 override ICONS := $(notdir $(ICONS_BASE))
 override ICONS_TARGET := $(ICONS:%=$(NAME)/icons/%)
 
