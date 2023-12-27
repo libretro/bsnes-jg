@@ -21,12 +21,10 @@
 #include <algorithm>
 #include <cstdint>
 #include <fstream>
-#include <vector>
 
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
 
-#include "serializer.hpp"
 #include "bsnes.hpp"
 #include "settings.hpp"
 

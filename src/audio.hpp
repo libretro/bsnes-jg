@@ -20,6 +20,9 @@
 
 #pragma once
 
+#include <cstdint>
+#include <vector>
+
 #include <samplerate.h>
 
 namespace SuperFamicom {

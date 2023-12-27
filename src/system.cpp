@@ -18,11 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cstdint>
 #include <cstring>
-#include <vector>
 
-#include "serializer.hpp"
 #include "audio.hpp"
 #include "cartridge.hpp"
 #include "cheat.hpp"

@@ -22,8 +22,6 @@
 #include <cassert>
 #include <exception>
 
-#include "serializer.hpp"
-
 #include "arm7tdmi.hpp"
 
 namespace Processor {

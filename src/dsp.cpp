@@ -18,9 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cstdint>
 #include <cstring>
-#include <vector>
 
 #include "audio.hpp"
 #include "serializer.hpp"

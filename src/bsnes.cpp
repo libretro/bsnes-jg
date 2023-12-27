@@ -19,12 +19,8 @@
  */
 
 #include <cstddef>
-#include <cstdint>
 #include <fstream>
-#include <string>
-#include <vector>
 
-#include "serializer.hpp"
 #include "audio.hpp"
 #include "cartridge.hpp"
 #include "cheat.hpp"

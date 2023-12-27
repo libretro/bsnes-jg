@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "processor/arm7tdmi.hpp"
 #include "sfc.hpp"
 

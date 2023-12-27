@@ -20,7 +20,6 @@
 
 #include <cmath>
 
-#include "serializer.hpp"
 #include "memory.hpp"
 #include "sfc.hpp"
 #include "cpu.hpp"

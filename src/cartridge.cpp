@@ -21,9 +21,7 @@
 #include <algorithm>
 #include <cstring>
 #include <iterator>
-#include <vector>
 
-#include "serializer.hpp"
 #include "coprocessor/armdsp.hpp"
 #include "coprocessor/cx4.hpp"
 #include "coprocessor/dip.hpp"

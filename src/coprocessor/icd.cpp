@@ -20,9 +20,7 @@
 
 #include <fstream>
 #include <iterator>
-#include <vector>
 
-#include "serializer.hpp"
 #include "audio.hpp"
 #include "cheat.hpp"
 #include "cartridge.hpp"
