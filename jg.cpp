@@ -770,10 +770,11 @@ void jg_state_load_raw(const void *data) {
 }
 
 int jg_state_save(const char *filename) {
-    serializer s = interface->serialize();
+    std::vector<uint8_t> state;
+    interface->serialize(state);
     std::ofstream stream(filename, std::ios::out | std::ios::binary);
     if (stream.is_open()) {
-        stream.write((const char*)s.data(), s.size());
+        stream.write((const char*)state.data(), state.size());
         stream.close();
         return 1;
     }

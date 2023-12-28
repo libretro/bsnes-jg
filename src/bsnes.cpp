@@ -97,8 +97,9 @@ bool Interface::rtc() {
   return (cartridge.has.EpsonRTC || cartridge.has.SharpRTC);
 }
 
-serializer Interface::serialize(bool synchronize) {
-  return system.serialize(synchronize);
+void Interface::serialize(std::vector<uint8_t>& state, bool synchronize) {
+  serializer s = system.serialize(synchronize);
+  state = std::vector<uint8_t>(s.data(), s.data() + s.size());
 }
 
 bool Interface::unserialize(std::vector<uint8_t>& state) {
