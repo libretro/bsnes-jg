@@ -21,6 +21,10 @@
 #ifndef SPC_DSP_H
 #define SPC_DSP_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SPC_STATE_SIZE 640
 
 typedef void (*dsp_copy_func_t)(unsigned char**, void*, size_t);
@@ -65,5 +69,9 @@ void spc_dsp_run(int);
 
 // Saves/loads exact emulator state
 void spc_dsp_copy_state(unsigned char**, dsp_copy_func_t);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
