@@ -762,8 +762,7 @@ int jg_state_load(const char *filename) {
     std::vector<uint8_t> state((std::istreambuf_iterator<char>(stream)),
         std::istreambuf_iterator<char>());
     stream.close();
-    serializer s(state.data(), state.size());
-    return interface->unserialize(s);
+    return interface->unserialize(state);
 }
 
 void jg_state_load_raw(const void *data) {

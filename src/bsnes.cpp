@@ -101,7 +101,8 @@ serializer Interface::serialize(bool synchronize) {
   return system.serialize(synchronize);
 }
 
-bool Interface::unserialize(serializer& s) {
+bool Interface::unserialize(std::vector<uint8_t>& state) {
+  serializer s(state.data(), state.size());
   return system.unserialize(s);
 }
 

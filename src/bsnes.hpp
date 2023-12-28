@@ -42,7 +42,7 @@ struct Interface {
   bool rtc();
 
   serializer serialize(bool = true);
-  bool unserialize(serializer&);
+  bool unserialize(std::vector<uint8_t>&);
 
   void cheatsApply(const std::vector<std::string>&);
   void cheatsClear();
