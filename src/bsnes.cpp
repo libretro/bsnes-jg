@@ -30,6 +30,7 @@
 #include "expansion/expansion.hpp"
 #include "logger.hpp"
 #include "ppu.hpp"
+#include "serializer.hpp"
 #include "settings.hpp"
 #include "system.hpp"
 
