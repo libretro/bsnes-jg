@@ -564,11 +564,7 @@ static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
 
 static inline std::vector<uint8_t> bufToVec(void *data, size_t size) {
     uint8_t *buf = (uint8_t*)data;
-    std::vector<uint8_t> ret;
-
-    for (size_t i = 0; i < size; ++i)
-        ret.push_back(buf[i]);
-
+    std::vector<uint8_t> ret(buf, buf + size);
     return ret;
 }
 
