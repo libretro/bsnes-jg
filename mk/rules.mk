@@ -4,7 +4,7 @@ $(TARGET_MODULE): $(OBJS_JG) $(OBJS_MODULE)
 
 $(TARGET_STATIC_JG): $(OBJS_JG) $(OBJS_SHARED)
 	@mkdir -p $(NAME)
-	$(AR) rcs $@ $^
+	$(AR) -rcs $@ $^
 
 $(DESKTOP_TARGET): $(SOURCEDIR)/$(DESKTOP)
 	@mkdir -p $(NAME)
@@ -90,7 +90,7 @@ $(TARGET_SHARED): $(OBJS)
 	$(LINK_SHARED)
 
 $(TARGET_STATIC): $(OBJS)
-	$(AR) rcs $@ $^
+	$(AR) -rcs $@ $^
 
 $(OBJDIR)/$(LIB_MAJOR) $(OBJDIR)/$(LIB_SHARED): $(TARGET_SHARED)
 	ln -s $(LIB_VERSION) $@
