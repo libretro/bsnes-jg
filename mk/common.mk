@@ -7,6 +7,7 @@ PKG_CONFIG ?= pkg-config
 
 PREFIX ?= /usr/local
 EXEC_PREFIX ?= $(PREFIX)
+BINDIR ?= $(EXEC_PREFIX)/bin
 LIBDIR ?= $(EXEC_PREFIX)/lib
 INCLUDEDIR ?= $(PREFIX)/include
 DATAROOTDIR ?= $(PREFIX)/share
