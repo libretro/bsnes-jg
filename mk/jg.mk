@@ -46,13 +46,19 @@ override LIB_STATIC := lib$(NAME).a
 ifeq ($(UNAME), Darwin)
 	override LIB_MAJOR := lib$(NAME).$(VERSION_MAJOR).dylib
 	override LIB_VERSION := lib$(NAME).$(VERSION).dylib
-	override SHARED += -dynamiclib -Wl,-undefined,error
+	override SHARED += -dynamiclib
 	override SONAME := -Wl,-install_name,$(LIB_MAJOR)
 else
 	override LIB_MAJOR := $(LIB_SHARED).$(VERSION_MAJOR)
 	override LIB_VERSION := $(LIB_SHARED).$(VERSION)
-	override SHARED += -shared -Wl,--no-undefined
+	override SHARED += -shared
 	override SONAME := -Wl,-soname,$(LIB_MAJOR)
+endif
+
+ifeq ($(UNAME), Darwin)
+	override SHARED += -Wl,-undefined,error
+else ifneq ($(UNAME), OpenBSD)
+	override SHARED += -Wl,--no-undefined
 endif
 
 # Desktop File
