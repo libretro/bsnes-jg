@@ -34,6 +34,7 @@ install-docs:: all
 	@mkdir -p $(DESTDIR)$(DOCDIR)
 ifneq ($(DOCS),)
 	for i in $(DOCS); do \
-		cp $(SOURCEDIR)/$$i $(DESTDIR)$(DOCDIR); \
+		cp $(SOURCEDIR)/$$i \
+			$(DESTDIR)$(DOCDIR); \
 	done
 endif
