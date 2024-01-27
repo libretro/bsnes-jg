@@ -26,10 +26,10 @@ WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
 WARNINGS_ICD := $(WARNINGS_CXX)
 WARNINGS_GB := -Wno-multichar -Wno-unused-result
 
-INCLUDES := -I$(SOURCEDIR)/src
-INCLUDES_JG := -I$(SOURCEDIR)/src
+INCLUDES = -I$(SOURCEDIR)/src
+INCLUDES_JG = -I$(SOURCEDIR)/src
 
-LIBS := -lm -lstdc++
+LIBS = -lm -lstdc++
 
 DOCS := COPYING README
 
