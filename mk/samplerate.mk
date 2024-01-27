@@ -1,7 +1,13 @@
-USE_VENDORED_SAMPLERATE ?= 0
+DIR_SAMPLERATE := $(wildcard $(DEPDIR)/libsamplerate)
+
+ifneq ($(DIR_SAMPLERATE),)
+	USE_VENDORED_SAMPLERATE ?= 0
+else
+	override USE_VENDORED_SAMPLERATE := 0
+endif
 
 ifneq ($(USE_VENDORED_SAMPLERATE), 0)
-	CFLAGS_SAMPLERATE := -I$(DEPDIR)/libsamplerate
+	CFLAGS_SAMPLERATE := -I$(DIR_SAMPLERATE)
 	LIBS_SAMPLERATE := $(if $(findstring -lm,$(LIBS)),,-lm)
 	override LIBS_PRIVATE += $(LIBS_SAMPLERATE)
 	MKDIRS += deps/libsamplerate
@@ -12,7 +18,7 @@ ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 	OBJS_SAMPLERATE := $(SRCS_SAMPLERATE:.c=.o)
 
 install-docs::
-	cp $(DEPDIR)/libsamplerate/COPYING \
+	cp $(DIR_SAMPLERATE)/COPYING \
 		$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate
 else
 	override REQUIRES_PRIVATE += samplerate
