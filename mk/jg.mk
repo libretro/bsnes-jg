@@ -13,9 +13,6 @@ override SHARED := $(PIC)
 override INCPATH := $(INCLUDEDIR)/$(NAME)
 override LIBPATH := $(LIBDIR)/jollygood
 
-override LIBS_PRIVATE := Libs.private:
-override REQUIRES_PRIVATE := Requires.private:
-
 override PKGCONF_SH := $(wildcard $(SOURCEDIR)/lib/pkgconf.sh)
 
 ifneq ($(PKGCONF_SH),)

@@ -13,7 +13,6 @@ FLAGS_CO := -std=c89
 FLAGS_GB := -std=gnu11
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.16\"
-DEPDIR := $(SOURCEDIR)/deps
 
 # TODO: Use -Wstrict-overflow=5 which is the highest level
 WARNINGS_MIN := -Wall -Wextra -Wshadow -Wformat=2 -Wstrict-overflow=2 \
@@ -27,7 +26,7 @@ WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
 WARNINGS_ICD := $(WARNINGS_CXX)
 WARNINGS_GB := -Wno-multichar -Wno-unused-result
 
-INCLUDES := -I$(DEPDIR) -I$(SOURCEDIR)/src
+INCLUDES := -I$(SOURCEDIR)/src
 INCLUDES_JG := -I$(SOURCEDIR)/src
 
 LIBS := -lm -lstdc++
@@ -50,7 +49,7 @@ include $(SOURCEDIR)/version.h
 include $(SOURCEDIR)/mk/jg.mk
 include $(SOURCEDIR)/mk/samplerate.mk
 
-INCLUDES += $(CFLAGS_SAMPLERATE)
+INCLUDES += $(CFLAGS_SAMPLERATE) -I$(DEPDIR)
 LIBS += $(LIBS_SAMPLERATE)
 
 LINKER := $(CXX)

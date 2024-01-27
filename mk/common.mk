@@ -17,6 +17,10 @@ MANDIR ?= $(DATAROOTDIR)/man
 
 CFLAGS_JG = $(shell $(PKG_CONFIG) --cflags jg)
 
+override LIBS_PRIVATE := Libs.private:
+override REQUIRES_PRIVATE := Requires.private:
+
+override DEPDIR := $(SOURCEDIR)/deps
 override OBJDIR := objs
 override UNAME := $(shell uname -s)
 
