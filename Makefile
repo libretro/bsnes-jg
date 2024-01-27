@@ -47,7 +47,6 @@ override INSTALL_SHARED := 0
 
 include $(SOURCEDIR)/version.h
 include $(SOURCEDIR)/mk/jg.mk
-include $(SOURCEDIR)/mk/samplerate.mk
 
 INCLUDES += $(CFLAGS_SAMPLERATE) -I$(DEPDIR)
 LIBS += $(LIBS_SAMPLERATE)

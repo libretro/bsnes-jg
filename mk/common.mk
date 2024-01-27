@@ -15,14 +15,14 @@ DATADIR ?= $(DATAROOTDIR)
 DOCDIR ?= $(DATAROOTDIR)/doc/$(NAME)
 MANDIR ?= $(DATAROOTDIR)/man
 
-CFLAGS_JG = $(shell $(PKG_CONFIG) --cflags jg)
-
 override LIBS_PRIVATE := Libs.private:
 override REQUIRES_PRIVATE := Requires.private:
 
 override DEPDIR := $(SOURCEDIR)/deps
 override OBJDIR := objs
 override UNAME := $(shell uname -s)
+
+include $(SOURCEDIR)/mk/deps.mk
 
 # Info command
 override COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
