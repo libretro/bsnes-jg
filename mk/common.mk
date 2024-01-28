@@ -15,14 +15,16 @@ DATADIR ?= $(DATAROOTDIR)
 DOCDIR ?= $(DATAROOTDIR)/doc/$(NAME)
 MANDIR ?= $(DATAROOTDIR)/man
 
+WARNINGS_DEF := -Wall -Wextra -Wshadow -Wmissing-declarations
+WARNINGS_DEF_C := $(WARNINGS_DEF) -Wmissing-prototypes -pedantic
+WARNINGS_DEF_CXX := $(WARINGS_DEF) -pedantic
+
 override LIBS_PRIVATE := Libs.private:
 override REQUIRES_PRIVATE := Requires.private:
 
 override DEPDIR := $(SOURCEDIR)/deps
 override OBJDIR := objs
 override UNAME := $(shell uname -s)
-
-include $(SOURCEDIR)/mk/deps.mk
 
 # Info command
 override COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
@@ -42,3 +44,5 @@ ifneq ($(DOCS),)
 			$(DESTDIR)$(DOCDIR); \
 	done
 endif
+
+include $(SOURCEDIR)/mk/deps.mk

@@ -43,6 +43,7 @@ MKDIRS := deps/byuuML \
 	src/processor
 
 override INSTALL_DATA := 1
+override INSTALL_EXAMPLE := 0
 override INSTALL_SHARED := 0
 
 include $(SOURCEDIR)/version.h

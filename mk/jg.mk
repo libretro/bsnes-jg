@@ -1,4 +1,5 @@
 DISABLE_MODULE ?= 0
+ENABLE_EXAMPLE ?= 0
 ENABLE_SHARED ?= 0
 ENABLE_STATIC ?= 0
 ENABLE_STATIC_JG ?= 0
@@ -62,6 +63,10 @@ endif
 override DESKTOP := $(JGNAME).desktop
 override DESKTOP_TARGET := $(NAME)/$(DESKTOP)
 
+# Example
+override BIN_NAME := $(NAME)-example
+override BIN_EXAMPLE := $(OBJDIR)/$(EXAMPLE)/$(BIN_NAME)
+
 # Icons
 override ICONS_BASE := $(wildcard $(SOURCEDIR)/icons/*.png \
 	$(SOURCEDIR)/icons/$(NAME).svg)
@@ -70,7 +75,8 @@ override ICONS_TARGET := $(ICONS:%=$(NAME)/icons/%)
 
 # Library targets
 override TARGET :=
-override TARGET_INSTALL := install-data install-docs install-library
+override TARGET_BIN := $(OBJDIR)/$(BIN_NAME)
+override TARGET_INSTALL := install-bin install-data install-docs install-library
 override TARGET_MODULE := $(NAME)/$(LIBRARY)
 override TARGET_SHARED := $(OBJDIR)/$(LIB_VERSION)
 override TARGET_STATIC := $(OBJDIR)/$(LIB_STATIC)
@@ -81,10 +87,19 @@ ifeq ($(INSTALL_DATA), 0)
 	override DATA :=
 endif
 
+ifeq ($(INSTALL_EXAMPLE), 0)
+	override ENABLE_EXAMPLE := 0
+endif
+
 ifeq ($(INSTALL_SHARED), 0)
 	override HEADERS :=
 	override ENABLE_SHARED := 0
 	override ENABLE_STATIC := 0
+endif
+
+ifneq ($(ENABLE_EXAMPLE), 0)
+	override MKDIRS += $(EXAMPLE)
+	override TARGET += $(TARGET_BIN)
 endif
 
 ifeq ($(DISABLE_MODULE), 0)
@@ -120,7 +135,8 @@ endif
 ifneq (,$(filter-out 0,$(ENABLE_SHARED) $(ENABLE_STATIC)))
 	override ENABLE_INSTALL := 1
 	override ENABLE_LIBRARY := 1
-else ifeq ($(DISABLE_MODULE), 0)
+else ifneq (,$(or $(filter 0,$(DISABLE_MODULE)), \
+		$(filter-out 0,$(ENABLE_EXAMPLE))))
 	override ENABLE_INSTALL := 1
 	override ENABLE_LIBRARY := 0
 else
@@ -135,6 +151,7 @@ override COMPILE_CXX = $(call COMPILE, $(CXX) $(CXXFLAGS), $(1))
 override COMPILE_C_BUILD = $(strip $(CC_FOR_BUILD) $(1) $< -o $@)
 override COMPILE_CXX_BUILD = $(strip $(CXX_FOR_BUILD) $(1) $< -o $@)
 override LINK = $(strip $(LINKER) -o $@ $(1) $(LDFLAGS) $(LIBS) $(SHARED))
+override LINK_BIN = $(strip $(LINKER) -o $@ $(LDFLAGS) $(OBJS_BIN) $(LIBS_MODULE) $(1))
 override LINK_MODULE = $(call LINK, $(OBJS_JG) $(LIBS_MODULE))
 override LINK_SHARED = $(call LINK, $^ $(SONAME))
 

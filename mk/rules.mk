@@ -75,6 +75,9 @@ endif
 ifneq ($(ENABLE_SHARED), 0)
 	strip $(DESTDIR)$(LIBDIR)/$(LIB_VERSION)
 endif
+ifneq ($(ENABLE_EXAMPLE), 0)
+	strip $(DESTDIR)$(BINDIR)/$(BIN_NAME)
+endif
 
 uninstall::
 	rm -f $(DESTDIR)$(LIBPATH)/$(LIBRARY)
@@ -83,6 +86,34 @@ uninstall::
 ifneq ($(INSTALL_DATA), 0)
 uninstall::
 	rm -rf $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
+endif
+
+ifneq ($(INSTALL_EXAMPLE), 0)
+$(BIN_EXAMPLE): $(OBJS_BIN) $(OBJS_MODULE)
+	$(call LINK_BIN,$(LIBS_BIN))
+
+$(TARGET_BIN): $(BIN_EXAMPLE)
+	@sed 's|@EXAMPLE@|$(EXAMPLE)|' $(SOURCEDIR)/lib/bin.in > $@
+	@chmod 0755 $@
+
+install-bin: all
+ifneq ($(ENABLE_EXAMPLE), 0)
+	@mkdir -p $(DESTDIR)$(BINDIR)
+	cp $(BIN_EXAMPLE) $(DESTDIR)$(BINDIR)/
+
+ifneq ($(DOCS_EXAMPLE),)
+install-docs::
+	for i in $(DOCS_EXAMPLE); do \
+		cp $(SOURCEDIR)/$(EXAMPLE)/$$i \
+			$(DESTDIR)$(DOCDIR)/$$i-example; \
+	done
+endif
+endif
+
+uninstall::
+	rm -f $(DESTDIR)$(BINDIR)/$(BIN_NAME)
+else
+install-bin: all
 endif
 
 ifneq ($(INSTALL_SHARED), 0)
