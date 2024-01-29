@@ -31,6 +31,8 @@ INCLUDES_JG = -I$(SOURCEDIR)/src
 
 LIBS = -lm -lstdc++
 
+LIBS_REQUIRES := samplerate
+
 DOCS := COPYING README
 
 # Object dirs
@@ -172,11 +174,6 @@ $(OBJDIR)/deps/byuuML/%.o: $(DEPDIR)/byuuML/%.cpp $(OBJDIR)/.tag
 $(OBJDIR)/deps/libco/%.o: $(DEPDIR)/libco/%.c $(OBJDIR)/.tag
 	$(call COMPILE_INFO,$(BUILD_CO))
 	@$(BUILD_CO)
-
-# libsamplerate rules
-$(OBJDIR)/deps/libsamplerate/%.o: $(DEPDIR)/libsamplerate/%.c $(OBJDIR)/.tag
-	$(call COMPILE_INFO,$(BUILD_C99))
-	@$(BUILD_C99)
 
 # Game Boy rules
 $(OBJDIR)/deps/gb/%.o: $(DEPDIR)/gb/%.c $(OBJDIR)/.tag
