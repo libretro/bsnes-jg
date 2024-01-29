@@ -1,3 +1,7 @@
+$(OBJDIR)/%.o: $(SOURCEDIR)/%.$(EXT) $(PREREQ)
+	$(call COMPILE_INFO,$(BUILD_JG))
+	@$(BUILD_JG)
+
 $(TARGET_MODULE): $(OBJS_JG) $(OBJS_MODULE)
 	@mkdir -p $(NAME)
 	$(LINK_MODULE)
@@ -89,6 +93,10 @@ uninstall::
 endif
 
 ifneq ($(INSTALL_EXAMPLE), 0)
+$(OBJDIR)/$(EXAMPLE)/%.o: $(SOURCEDIR)/$(EXAMPLE)/%.$(EXT) $(OBJDIR)/.tag
+	$(call COMPILE_INFO,$(BUILD_EXAMPLE))
+	@$(BUILD_EXAMPLE)
+
 $(BIN_EXAMPLE): $(OBJS_BIN) $(OBJS_MODULE)
 	$(call LINK_BIN,$(LIBS_BIN))
 

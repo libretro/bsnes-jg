@@ -26,8 +26,10 @@ WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
 WARNINGS_ICD := $(WARNINGS_CXX)
 WARNINGS_GB := -Wno-multichar -Wno-unused-result
 
-INCLUDES = -I$(SOURCEDIR)/src
-INCLUDES_JG = -I$(SOURCEDIR)/src
+SRCDIR := $(SOURCEDIR)/src
+
+INCLUDES = -I$(SRCDIR)
+INCLUDES_JG = -I$(SRCDIR)
 
 LIBS = -lm -lstdc++
 
@@ -54,6 +56,7 @@ include $(SOURCEDIR)/mk/jg.mk
 INCLUDES += $(CFLAGS_SAMPLERATE) -I$(DEPDIR)
 LIBS += $(LIBS_SAMPLERATE)
 
+EXT := cpp
 LINKER := $(CXX)
 
 CSRCS := deps/gb/apu.c \
@@ -166,40 +169,36 @@ all: $(DATA_TARGET) $(TARGET)
 include $(SOURCEDIR)/mk/rules.mk
 
 # byuuML rules
-$(OBJDIR)/deps/byuuML/%.o: $(DEPDIR)/byuuML/%.cpp $(OBJDIR)/.tag
+$(OBJDIR)/deps/byuuML/%.o: $(DEPDIR)/byuuML/%.$(EXT) $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_BML))
 	@$(BUILD_BML)
 
 # libco rules
-$(OBJDIR)/deps/libco/%.o: $(DEPDIR)/libco/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/libco/%.o: $(DEPDIR)/libco/%.c $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_CO))
 	@$(BUILD_CO)
 
 # Game Boy rules
-$(OBJDIR)/deps/gb/%.o: $(DEPDIR)/gb/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/gb/%.o: $(DEPDIR)/gb/%.c $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_GB))
 	@$(BUILD_GB)
 
 # snes_spc rules
-$(OBJDIR)/deps/snes_spc/%.o: $(DEPDIR)/snes_spc/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/snes_spc/%.o: $(DEPDIR)/snes_spc/%.c $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_C99))
 	@$(BUILD_C99)
 
 # snes_icd rules
-$(OBJDIR)/src/coprocessor/icd.o: $(SOURCEDIR)/src/coprocessor/icd.cpp $(OBJDIR)/.tag
+$(OBJDIR)/src/coprocessor/icd.o: $(SRCDIR)/coprocessor/icd.cpp $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_ICD))
 	@$(BUILD_ICD)
 
 # SNES rules
-$(OBJDIR)/src/%.o: $(SOURCEDIR)/src/%.cpp $(OBJDIR)/.tag
+$(OBJDIR)/src/%.o: $(SRCDIR)/%.$(EXT) $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_MAIN))
 	@$(BUILD_MAIN)
 
-# Shim rules
-$(OBJDIR)/%.o: $(SOURCEDIR)/%.cpp $(OBJDIR)/.tag
-	$(call COMPILE_INFO,$(BUILD_JG))
-	@$(BUILD_JG)
-
+# Data rules
 $(DATA_TARGET): $(DATA_BASE:%=$(SOURCEDIR)/%)
 	@mkdir -p $(NAME)
 	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/

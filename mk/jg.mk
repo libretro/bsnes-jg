@@ -59,6 +59,9 @@ else ifneq ($(UNAME), OpenBSD)
 	override SHARED += -Wl,--no-undefined
 endif
 
+# Prerequisites
+override PREREQ := $(OBJDIR)/.tag
+
 # Desktop File
 override DESKTOP := $(JGNAME).desktop
 override DESKTOP_TARGET := $(NAME)/$(DESKTOP)
