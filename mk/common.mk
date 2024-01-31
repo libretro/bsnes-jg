@@ -17,7 +17,7 @@ MANDIR ?= $(DATAROOTDIR)/man
 
 WARNINGS_DEF := -Wall -Wextra -Wshadow -Wmissing-declarations
 WARNINGS_DEF_C := $(WARNINGS_DEF) -Wmissing-prototypes -pedantic
-WARNINGS_DEF_CXX := $(WARINGS_DEF) -pedantic
+WARNINGS_DEF_CXX := $(WARNINGS_DEF) -pedantic
 
 override LIBS_PRIVATE := Libs.private:
 override REQUIRES_PRIVATE := Requires.private:
