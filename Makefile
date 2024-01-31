@@ -14,18 +14,6 @@ FLAGS_GB := -std=gnu11
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
 	-D_GNU_SOURCE -DGB_VERSION=\"0.16\"
 
-# TODO: Use -Wstrict-overflow=5 which is the highest level
-WARNINGS_MIN := -Wall -Wextra -Wshadow -Wformat=2 -Wstrict-overflow=2 \
-	-Wmissing-declarations
-WARNINGS_ALL := $(WARNINGS_MIN) -Wmissing-noreturn -Wcast-align -Wcast-qual
-WARNINGS_CXX := $(WARNINGS_ALL) -Wnon-virtual-dtor -Woverloaded-virtual
-WARNINGS_C := $(WARNINGS_ALL) -Wmissing-prototypes -pedantic
-
-WARNINGS := $(WARNINGS_CXX) -pedantic
-WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
-WARNINGS_ICD := $(WARNINGS_CXX)
-WARNINGS_GB := -Wno-multichar -Wno-unused-result
-
 SRCDIR := $(SOURCEDIR)/src
 
 INCLUDES = -I$(SRCDIR)
@@ -58,6 +46,17 @@ LIBS += $(LIBS_SAMPLERATE)
 
 EXT := cpp
 LINKER := $(CXX)
+
+# TODO: Use -Wstrict-overflow=5 which is the highest level
+WARNINGS_MIN := $(WARNINGS_DEF) -Wformat=2 -Wstrict-overflow=2
+WARNINGS_ALL := $(WARNINGS_MIN) -Wmissing-noreturn -Wcast-align -Wcast-qual
+WARNINGS_CXX := $(WARNINGS_ALL) -Wnon-virtual-dtor -Woverloaded-virtual
+WARNINGS_C := $(WARNINGS_ALL) -Wmissing-prototypes -pedantic
+
+WARNINGS := $(WARNINGS_CXX) -pedantic
+WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
+WARNINGS_ICD := $(WARNINGS_CXX)
+WARNINGS_GB := -Wno-multichar -Wno-unused-result
 
 CSRCS := deps/gb/apu.c \
 	deps/gb/camera.c \
