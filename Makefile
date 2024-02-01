@@ -163,7 +163,7 @@ BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 .PHONY: $(PHONY)
 
-all: $(DATA_TARGET) $(TARGET)
+all: $(TARGET)
 
 include $(SOURCEDIR)/mk/rules.mk
 

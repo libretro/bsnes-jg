@@ -64,7 +64,6 @@ override PREREQ := $(OBJDIR)/.tag
 
 # Desktop File
 override DESKTOP := $(JGNAME).desktop
-override DESKTOP_TARGET := $(NAME)/$(DESKTOP)
 
 # Example
 override BIN_NAME := $(NAME)-example
@@ -74,57 +73,81 @@ override BIN_EXAMPLE := $(OBJDIR)/$(EXAMPLE)/$(BIN_NAME)
 override ICONS_BASE := $(wildcard $(SOURCEDIR)/icons/*.png \
 	$(SOURCEDIR)/icons/$(NAME).svg)
 override ICONS := $(notdir $(ICONS_BASE))
-override ICONS_TARGET := $(ICONS:%=$(NAME)/icons/%)
 
-# Library targets
+# Targets
 override TARGET :=
+override TARGET_INSTALL :=
+override TARGET_STRIP :=
 override TARGET_BIN := $(OBJDIR)/$(BIN_NAME)
-override TARGET_INSTALL := install-bin install-data install-docs install-library
+override TARGET_DESKTOP := $(NAME)/$(DESKTOP)
+override TARGET_ICONS := $(ICONS:%=$(NAME)/icons/%)
 override TARGET_MODULE := $(NAME)/$(LIBRARY)
 override TARGET_SHARED := $(OBJDIR)/$(LIB_VERSION)
 override TARGET_STATIC := $(OBJDIR)/$(LIB_STATIC)
 override TARGET_STATIC_JG := $(NAME)/lib$(NAME)-jg.a
 override TARGET_STATIC_MK := $(NAME)/jg-static.mk
 
-ifeq ($(INSTALL_DATA), 0)
-	override DATA :=
-endif
+override PHONY += module install-module install-strip-module static-jg
 
 ifeq ($(INSTALL_EXAMPLE), 0)
 	override ENABLE_EXAMPLE := 0
+else
+	override PHONY += example install-bin install-strip-bin
+	override MKDIRS += $(EXAMPLE)
+endif
+
+ifeq ($(INSTALL_DATA), 0)
+	override DATA :=
+else
+	override PHONY += data install-data
+	ifneq (,$(or $(filter-out 0,$(ENABLE_EXAMPLE) $(ENABLE_STATIC_JG)), \
+			$(filter 0,$(DISABLE_MODULE))))
+		override TARGET += data
+	endif
 endif
 
 ifeq ($(INSTALL_SHARED), 0)
 	override HEADERS :=
 	override ENABLE_SHARED := 0
 	override ENABLE_STATIC := 0
+else
+	PHONY += \
+		shared install-shared install-strip-shared \
+		static install-static install-strip-static \
+		install-headers install-pkgconfig
 endif
 
 ifneq ($(ENABLE_EXAMPLE), 0)
-	override MKDIRS += $(EXAMPLE)
-	override TARGET += $(TARGET_BIN)
+	override TARGET += example
+	override TARGET_INSTALL += install-bin
+	override TARGET_STRIP += install-strip-bin
 endif
 
 ifeq ($(DISABLE_MODULE), 0)
-	override TARGET += $(TARGET_MODULE)
+	override TARGET += module
+	override TARGET_INSTALL += install-module
+	override TARGET_STRIP += install-strip-module
 endif
 
 ifneq ($(ENABLE_STATIC), 0)
-	override TARGET += $(TARGET_STATIC)
+	override TARGET += static
+	override TARGET_INSTALL += install-static
 	override OBJS_SHARED := $(TARGET_STATIC)
 else
 	override OBJS_SHARED = $(OBJS)
 endif
 
 ifneq ($(ENABLE_SHARED), 0)
-	override TARGET += $(OBJDIR)/$(LIB_MAJOR) $(OBJDIR)/$(LIB_SHARED)
+	override TARGET += shared
+	override TARGET_INSTALL += install-shared
+	override TARGET_STRIP += install-shared-strip
 	override LIBS_MODULE := -L$(OBJDIR) -l$(NAME)
 else
 	override LIBS_MODULE = $(OBJS_SHARED)
 endif
 
 ifneq ($(ENABLE_STATIC_JG), 0)
-	override TARGET += $(DESKTOP_TARGET) $(ICONS_TARGET) $(TARGET_STATIC_MK)
+	override TARGET += static-jg
 endif
 
 ifneq ($(ENABLE_SHARED), 0)
@@ -136,15 +159,11 @@ else
 endif
 
 ifneq (,$(filter-out 0,$(ENABLE_SHARED) $(ENABLE_STATIC)))
-	override ENABLE_INSTALL := 1
-	override ENABLE_LIBRARY := 1
-else ifneq (,$(or $(filter 0,$(DISABLE_MODULE)), \
-		$(filter-out 0,$(ENABLE_EXAMPLE))))
-	override ENABLE_INSTALL := 1
-	override ENABLE_LIBRARY := 0
-else
-	override ENABLE_INSTALL := 0
-	override ENABLE_LIBRARY := 0
+	override TARGET_INSTALL += install-headers install-pkgconfig
+endif
+
+ifneq ($(TARGET_INSTALL),)
+	override TARGET_INSTALL += install-docs
 endif
 
 # Compiler commands
@@ -157,5 +176,3 @@ override LINK = $(strip $(LINKER) -o $@ $(1) $(LDFLAGS) $(LIBS) $(SHARED))
 override LINK_BIN = $(strip $(LINKER) -o $@ $(LDFLAGS) $(OBJS_BIN) $(LIBS_MODULE) $(1))
 override LINK_MODULE = $(call LINK, $(OBJS_JG) $(LIBS_MODULE))
 override LINK_SHARED = $(call LINK, $^ $(SONAME))
-
-override PHONY += $(TARGET_INSTALL)

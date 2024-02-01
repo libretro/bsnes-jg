@@ -10,7 +10,7 @@ $(TARGET_STATIC_JG): $(OBJS_JG) $(OBJS_SHARED)
 	@mkdir -p $(NAME)
 	$(AR) -rcs $@ $^
 
-$(DESKTOP_TARGET): $(SOURCEDIR)/$(DESKTOP)
+$(TARGET_DESKTOP): $(SOURCEDIR)/$(DESKTOP)
 	@mkdir -p $(NAME)
 	@cp $< $@
 
@@ -20,74 +20,40 @@ $(TARGET_STATIC_MK): $(TARGET_STATIC_JG)
 		'$(if $(ICONS),ICONS := $(ICONS),ICONS :=)' \
 		'$(if $(LIBS),LIBS_STATIC := $(LIBS),LIBS_STATIC :=)' > $@
 
-ifneq ($(ICONS),)
-$(ICONS_TARGET): $(ICONS_BASE)
-	@mkdir -p $(NAME)/icons
-	@cp $(subst $(NAME)/icons,$(SOURCEDIR)/icons,$@) $(NAME)/icons/
-endif
+static-jg: $(TARGET_DESKTOP) $(TARGET_ICONS) $(TARGET_STATIC_MK)
 
 clean::
 	rm -rf $(OBJDIR) $(NAME)
 
-install-data: all
+module: $(TARGET_MODULE)
 
-install-library: all
-ifeq ($(DISABLE_MODULE), 0)
+install-module: module
 	@mkdir -p $(DESTDIR)$(LIBPATH)
 	cp $(TARGET_MODULE) $(DESTDIR)$(LIBPATH)/
-endif
-ifneq ($(ENABLE_LIBRARY), 0)
-	@mkdir -p $(DESTDIR)$(LIBDIR)/pkgconfig
-ifneq ($(ENABLE_SHARED), 0)
-	cp $(TARGET_SHARED) $(DESTDIR)$(LIBDIR)/
-	cp -P $(OBJDIR)/$(LIB_MAJOR) $(DESTDIR)$(LIBDIR)/
-	cp -P $(OBJDIR)/$(LIB_SHARED) $(DESTDIR)$(LIBDIR)/
-endif
-ifneq ($(ENABLE_STATIC), 0)
-	cp $(TARGET_STATIC) $(DESTDIR)$(LIBDIR)/
-endif
-ifneq ($(HEADERS),)
-	@mkdir -p $(DESTDIR)$(INCPATH)
-	for i in $(HEADERS); do \
-		cp $(SOURCEDIR)/$$i $(DESTDIR)$(INCPATH)/; \
-	done
-endif
-	sed -e 's|@PREFIX@|$(PREFIX)|' \
-		-e 's|@EXEC_PREFIX@|$(PKGCONFEXECDIR)|' \
-		-e 's|@LIBDIR@|$(PKGCONFLIBDIR)|' \
-		-e 's|@INCLUDEDIR@|$(PKGCONFINCDIR)|' \
-		-e 's|@VERSION@|$(VERSION)|' \
-		-e 's|@DESCRIPTION@|$(DESCRIPTION)|' \
-		-e 's|@NAME@|$(NAME)|' \
-		-e '/Libs:/a\' -e '$(LIBS_PRIVATE)' \
-		-e '/URL:/a\' -e '$(REQUIRES_PRIVATE)' \
-		$(SOURCEDIR)/lib/pkgconf.pc.in \
-		> $(DESTDIR)$(LIBDIR)/pkgconfig/$(LIB_PC)
-endif
 
-ifneq ($(ENABLE_INSTALL), 0)
-install: $(TARGET_INSTALL)
-else
-install: all
-	@echo 'Nothing to install'
-endif
-
-install-strip: install
-ifeq ($(DISABLE_MODULE), 0)
+install-strip-module: install-module
 	strip $(DESTDIR)$(LIBPATH)/$(LIBRARY)
-endif
-ifneq ($(ENABLE_SHARED), 0)
-	strip $(DESTDIR)$(LIBDIR)/$(LIB_VERSION)
-endif
-ifneq ($(ENABLE_EXAMPLE), 0)
-	strip $(DESTDIR)$(BINDIR)/$(BIN_NAME)
-endif
+
+install: $(if $(TARGET_INSTALL),$(TARGET_INSTALL),all)
+	@$(if $(TARGET_INSTALL),,echo 'Nothing to install')
+
+install-strip: install $(TARGET_STRIP)
 
 uninstall::
 	rm -f $(DESTDIR)$(LIBPATH)/$(LIBRARY)
 	rm -rf $(DESTDIR)$(DOCDIR)
 
+ifneq ($(ICONS),)
+$(TARGET_ICONS): $(ICONS_BASE)
+	@mkdir -p $(NAME)/icons
+	@cp $(subst $(NAME)/icons,$(SOURCEDIR)/icons,$@) $(NAME)/icons/
+endif
+
 ifneq ($(INSTALL_DATA), 0)
+data: $(DATA_TARGET)
+
+install-data:
+
 uninstall::
 	rm -rf $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
 endif
@@ -104,11 +70,19 @@ $(TARGET_BIN): $(BIN_EXAMPLE)
 	@sed 's|@EXAMPLE@|$(EXAMPLE)|' $(SOURCEDIR)/lib/bin.in > $@
 	@chmod 0755 $@
 
-install-bin: all
-ifneq ($(ENABLE_EXAMPLE), 0)
+example: $(TARGET_BIN)
+
+install-bin: example
 	@mkdir -p $(DESTDIR)$(BINDIR)
 	cp $(BIN_EXAMPLE) $(DESTDIR)$(BINDIR)/
 
+install-strip-bin: install-bin
+	strip $(DESTDIR)$(BINDIR)/$(BIN_NAME)
+
+uninstall::
+	rm -f $(DESTDIR)$(BINDIR)/$(BIN_NAME)
+
+ifneq ($(ENABLE_EXAMPLE), 0)
 ifneq ($(DOCS_EXAMPLE),)
 install-docs::
 	for i in $(DOCS_EXAMPLE); do \
@@ -117,11 +91,6 @@ install-docs::
 	done
 endif
 endif
-
-uninstall::
-	rm -f $(DESTDIR)$(BINDIR)/$(BIN_NAME)
-else
-install-bin: all
 endif
 
 ifneq ($(INSTALL_SHARED), 0)
@@ -134,6 +103,37 @@ $(TARGET_STATIC): $(OBJS)
 $(OBJDIR)/$(LIB_MAJOR) $(OBJDIR)/$(LIB_SHARED): $(TARGET_SHARED)
 	ln -s $(LIB_VERSION) $@
 
+shared: $(OBJDIR)/$(LIB_MAJOR) $(OBJDIR)/$(LIB_SHARED)
+
+install-shared: shared
+	@mkdir -p $(DESTDIR)$(LIBDIR)
+	cp $(TARGET_SHARED) $(DESTDIR)$(LIBDIR)/
+	cp -P $(OBJDIR)/$(LIB_MAJOR) $(DESTDIR)$(LIBDIR)/
+	cp -P $(OBJDIR)/$(LIB_SHARED) $(DESTDIR)$(LIBDIR)/
+
+install-strip-shared: install-shared
+	strip $(DESTDIR)$(LIBDIR)/$(LIB_VERSION)
+
+static: $(TARGET_STATIC)
+
+install-static: static
+	@mkdir -p $(DESTDIR)$(LIBDIR)
+	cp $(TARGET_STATIC) $(DESTDIR)$(LIBDIR)/
+
+install-pkgconfig: $(SOURCEDIR)/lib/pkgconf.pc.in
+	@mkdir -p $(DESTDIR)$(LIBDIR)/pkgconfig
+	sed -e 's|@PREFIX@|$(PREFIX)|' \
+		-e 's|@EXEC_PREFIX@|$(PKGCONFEXECDIR)|' \
+		-e 's|@LIBDIR@|$(PKGCONFLIBDIR)|' \
+		-e 's|@INCLUDEDIR@|$(PKGCONFINCDIR)|' \
+		-e 's|@VERSION@|$(VERSION)|' \
+		-e 's|@DESCRIPTION@|$(DESCRIPTION)|' \
+		-e 's|@NAME@|$(NAME)|' \
+		-e '/Libs:/a\' -e '$(LIBS_PRIVATE)' \
+		-e '/URL:/a\' -e '$(REQUIRES_PRIVATE)' \
+		$< \
+		> $(DESTDIR)$(LIBDIR)/pkgconfig/$(LIB_PC)
+
 uninstall::
 	rm -f $(DESTDIR)$(LIBDIR)/$(LIB_STATIC)
 	rm -f $(DESTDIR)$(LIBDIR)/$(LIB_SHARED)
@@ -141,7 +141,13 @@ uninstall::
 	rm -f $(DESTDIR)$(LIBDIR)/$(LIB_VERSION)
 	rm -f $(DESTDIR)$(LIBDIR)/pkgconfig/$(LIB_PC)
 
+install-headers: $(HEADERS:%=$(SOURCEDIR)/%)
 ifneq ($(HEADERS),)
+	@mkdir -p $(DESTDIR)$(INCPATH)
+	for i in $(HEADERS); do \
+		cp $(SOURCEDIR)/$$i $(DESTDIR)$(INCPATH)/; \
+	done
+
 uninstall::
 	rm -rf $(DESTDIR)$(INCPATH)
 endif
