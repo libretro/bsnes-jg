@@ -15,10 +15,6 @@ ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 		deps/libsamplerate/src_sinc.c \
 		deps/libsamplerate/src_zoh.c
 	OBJS_SAMPLERATE := $(SRCS_SAMPLERATE:.c=.o)
-
-install-docs::
-	cp $(DIR_SAMPLERATE)/COPYING \
-		$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate
 else
 	CFLAGS_SAMPLERATE = $(shell $(PKG_CONFIG) --cflags samplerate)
 	LIBS_SAMPLERATE = $(shell $(PKG_CONFIG) --libs samplerate)
@@ -41,4 +37,10 @@ BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE))
 $(OBJDIR)/deps/libsamplerate/%.o: $(DIR_SAMPLERATE)/%.c $(OBJDIR)/.tag
 	$(call COMPILE_INFO,$(BUILD_SAMPLERATE))
 	@$(BUILD_SAMPLERATE)
+
+ifneq ($(USE_VENDORED_SAMPLERATE), 0)
+install-docs::
+	cp $(DIR_SAMPLERATE)/COPYING \
+		$(DESTDIR)$(DOCDIR)/COPYING-libsamplerate
+endif
 endif
