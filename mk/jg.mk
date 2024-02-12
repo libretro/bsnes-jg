@@ -46,18 +46,27 @@ ifeq ($(UNAME), Darwin)
 	override LIB_VERSION := lib$(NAME).$(VERSION).dylib
 	override SHARED += -dynamiclib
 	override SONAME := -Wl,-install_name,$(LIB_MAJOR)
+	override SYMBOLS_LIST := $(SYMBOLS)
+	override UNDEFINED := -Wl,-undefined,error
+	override VERSION_SCRIPT := -Wl,-exported_symbols_list
 else
 	override LIB_MAJOR := $(LIB_SHARED).$(VERSION_MAJOR)
 	override LIB_VERSION := $(LIB_SHARED).$(VERSION)
 	override SHARED += -shared
 	override SONAME := -Wl,-soname,$(LIB_MAJOR)
+	override SYMBOLS_LIST := $(SYMBOLS_MAP)
+	override UNDEFINED := -Wl,--no-undefined
+	override VERSION_SCRIPT := -Wl,-version-script
 endif
 
-ifeq ($(UNAME), Darwin)
-	override SHARED += -Wl,-undefined,error
-else ifneq ($(UNAME), OpenBSD)
-	override SHARED += -Wl,--no-undefined
+ifneq ($(UNAME), OpenBSD)
+	override SHARED += $(UNDEFINED)
 endif
+
+# Version Script
+override VERSION_SCRIPT_NAME = $(shell printf %s lib$(NAME) | \
+		tr '[:lower:]' '[:upper:]')_$(VERSION)
+override VERSION_SCRIPT_MODULE := $(VERSION_SCRIPT),$(OBJDIR)/module.map
 
 # Prerequisites
 override PREREQ := $(OBJDIR)/.tag
@@ -104,17 +113,26 @@ else
 			$(filter 0,$(DISABLE_MODULE))))
 		override TARGET += data
 	endif
+	ifneq (,$(or $(filter-out 0,$(ENABLE_EXAMPLE)), \
+			$(filter 0,$(DISABLE_MODULE))))
+		override TARGET_INSTALL += install-data
+	endif
 endif
 
 ifeq ($(INSTALL_SHARED), 0)
 	override HEADERS :=
+	override SYMBOLS_LIST :=
 	override ENABLE_SHARED := 0
 	override ENABLE_STATIC := 0
 else
-	PHONY += \
+	override PHONY += \
 		shared install-shared install-strip-shared \
 		static install-static install-strip-static \
 		install-headers install-pkgconfig
+endif
+
+ifneq ($(SYMBOLS_LIST),)
+	override SONAME += $(VERSION_SCRIPT),$(OBJDIR)/shared.map
 endif
 
 ifneq ($(ENABLE_EXAMPLE), 0)
@@ -143,7 +161,7 @@ ifneq ($(ENABLE_SHARED), 0)
 	override TARGET_STRIP += install-shared-strip
 	override LIBS_MODULE := -L$(OBJDIR) -l$(NAME)
 else
-	override LIBS_MODULE = $(OBJS_SHARED)
+	override LIBS_MODULE = $(OBJS_SHARED) $(LIBS)
 endif
 
 ifneq ($(ENABLE_STATIC_JG), 0)
@@ -168,11 +186,14 @@ endif
 
 # Compiler commands
 override COMPILE = $(strip $(1) $(CPPFLAGS) $(PIC) $(2) -c $< -o $@)
-override COMPILE_C = $(call COMPILE, $(CC) $(CFLAGS), $(1))
-override COMPILE_CXX = $(call COMPILE, $(CXX) $(CXXFLAGS), $(1))
+override COMPILE_C = $(call COMPILE,$(CC) $(CFLAGS),$(1))
+override COMPILE_CXX = $(call COMPILE,$(CXX) $(CXXFLAGS),$(1))
 override COMPILE_C_BUILD = $(strip $(CC_FOR_BUILD) $(1) $< -o $@)
 override COMPILE_CXX_BUILD = $(strip $(CXX_FOR_BUILD) $(1) $< -o $@)
-override LINK = $(strip $(LINKER) -o $@ $(1) $(LDFLAGS) $(LIBS) $(SHARED))
-override LINK_BIN = $(strip $(LINKER) -o $@ $(LDFLAGS) $(OBJS_BIN) $(LIBS_MODULE) $(1))
-override LINK_MODULE = $(call LINK, $(OBJS_JG) $(LIBS_MODULE))
-override LINK_SHARED = $(call LINK, $^ $(SONAME))
+
+# Linker commands
+override LINK = $(strip $(LINKER) -o $@ $(1) $(LDFLAGS) $(2))
+override LINK_BIN = $(call LINK,$(OBJS_BIN) $(LIBS_MODULE) $(LIBS_BIN),$(UNDEFINED))
+override LINK_LIB = $(call LINK,$(1),$(2) $(SHARED))
+override LINK_MODULE = $(call LINK_LIB,$(OBJS_JG) $(LIBS_MODULE) $(LIBS_JG),$(VERSION_SCRIPT_MODULE))
+override LINK_SHARED = $(call LINK_LIB,$(OBJS) $(LIBS),$(SONAME))

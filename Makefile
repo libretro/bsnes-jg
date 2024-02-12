@@ -4,9 +4,6 @@ SOURCEDIR := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword \
 NAME := bsnes
 JGNAME := $(NAME)-jg
 
-CFLAGS ?= -O2
-CXXFLAGS ?= -O2
-
 FLAGS := -std=c++11
 FLAGS_C99 := -std=c99
 FLAGS_CO := -std=c89
@@ -165,8 +162,6 @@ BUILD_MAIN = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES))
 
 all: $(TARGET)
 
-include $(SOURCEDIR)/mk/rules.mk
-
 # byuuML rules
 $(OBJDIR)/deps/byuuML/%.o: $(DEPDIR)/byuuML/%.$(EXT) $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_BML))
@@ -214,3 +209,5 @@ install-docs::
 	cp $(DEPDIR)/gb/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-gb
 	cp $(DEPDIR)/libco/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-libco
 	cp $(DEPDIR)/snes_spc/LICENSE $(DESTDIR)$(DOCDIR)/LICENSE-spc
+
+include $(SOURCEDIR)/mk/rules.mk

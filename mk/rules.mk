@@ -2,7 +2,7 @@ $(OBJDIR)/%.o: $(SOURCEDIR)/%.$(EXT) $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_JG))
 	@$(BUILD_JG)
 
-$(TARGET_MODULE): $(OBJS_JG) $(OBJS_MODULE)
+$(TARGET_MODULE): $(OBJS_JG) $(OBJS_MODULE) $(OBJDIR)/module.map
 	@mkdir -p $(NAME)
 	$(LINK_MODULE)
 
@@ -16,9 +16,9 @@ $(TARGET_DESKTOP): $(SOURCEDIR)/$(DESKTOP)
 
 $(TARGET_STATIC_MK): $(TARGET_STATIC_JG)
 	@printf '%s\n%s\n%s\n%s\n' 'NAME := $(JGNAME)' \
-		'$(if $(DATA),ASSETS := $(DATA),ASSETS :=)' \
-		'$(if $(ICONS),ICONS := $(ICONS),ICONS :=)' \
-		'$(if $(LIBS),LIBS_STATIC := $(LIBS),LIBS_STATIC :=)' > $@
+		'$(strip ASSETS := $(DATA))' \
+		'$(strip ICONS := $(ICONS))' \
+		'$(strip LIBS_STATIC := $(LIBS) $(LIBS_JG))' > $@
 
 static-jg: $(TARGET_DESKTOP) $(TARGET_ICONS) $(TARGET_STATIC_MK)
 
@@ -43,6 +43,14 @@ uninstall::
 	rm -f $(DESTDIR)$(LIBPATH)/$(LIBRARY)
 	rm -rf $(DESTDIR)$(DOCDIR)
 
+ifeq ($(UNAME), Darwin)
+$(OBJDIR)/module.map: $(OBJDIR)/.tag
+	@printf '%s\n' '_jg_*' > $@
+else
+$(OBJDIR)/module.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
+	@sed -e 's|@NAME@||' -e 's|@SYMBOLS@|jg_*;|' $< > $@
+endif
+
 ifneq ($(ICONS),)
 $(TARGET_ICONS): $(ICONS_BASE)
 	@mkdir -p $(NAME)/icons
@@ -52,22 +60,16 @@ endif
 ifneq ($(INSTALL_DATA), 0)
 data: $(DATA_TARGET)
 
-install-data:
-
 uninstall::
 	rm -rf $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
 endif
 
 ifneq ($(INSTALL_EXAMPLE), 0)
-$(OBJDIR)/$(EXAMPLE)/%.o: $(SOURCEDIR)/$(EXAMPLE)/%.$(EXT) $(OBJDIR)/.tag
-	$(call COMPILE_INFO,$(BUILD_EXAMPLE))
-	@$(BUILD_EXAMPLE)
-
 $(BIN_EXAMPLE): $(OBJS_BIN) $(OBJS_MODULE)
-	$(call LINK_BIN,$(LIBS_BIN))
+	$(LINK_BIN)
 
-$(TARGET_BIN): $(BIN_EXAMPLE)
-	@sed 's|@EXAMPLE@|$(EXAMPLE)|' $(SOURCEDIR)/lib/bin.in > $@
+$(TARGET_BIN): $(SOURCEDIR)/lib/bin.in $(BIN_EXAMPLE)
+	@sed -e 's|@EXAMPLE@|$(EXAMPLE)|' $< > $@
 	@chmod 0755 $@
 
 example: $(TARGET_BIN)
@@ -94,14 +96,14 @@ endif
 endif
 
 ifneq ($(INSTALL_SHARED), 0)
-$(TARGET_SHARED): $(OBJS)
+$(TARGET_SHARED): $(OBJS) $(OBJDIR)/shared.map
 	$(LINK_SHARED)
 
 $(TARGET_STATIC): $(OBJS)
 	$(AR) -rcs $@ $^
 
 $(OBJDIR)/$(LIB_MAJOR) $(OBJDIR)/$(LIB_SHARED): $(TARGET_SHARED)
-	ln -s $(LIB_VERSION) $@
+	ln -sf $(LIB_VERSION) $@
 
 shared: $(OBJDIR)/$(LIB_MAJOR) $(OBJDIR)/$(LIB_SHARED)
 
@@ -120,7 +122,7 @@ install-static: static
 	@mkdir -p $(DESTDIR)$(LIBDIR)
 	cp $(TARGET_STATIC) $(DESTDIR)$(LIBDIR)/
 
-install-pkgconfig: $(SOURCEDIR)/lib/pkgconf.pc.in
+install-pkgconfig: $(SOURCEDIR)/lib/pkgconf.pc.in all
 	@mkdir -p $(DESTDIR)$(LIBDIR)/pkgconfig
 	sed -e 's|@PREFIX@|$(PREFIX)|' \
 		-e 's|@EXEC_PREFIX@|$(PKGCONFEXECDIR)|' \
@@ -141,7 +143,16 @@ uninstall::
 	rm -f $(DESTDIR)$(LIBDIR)/$(LIB_VERSION)
 	rm -f $(DESTDIR)$(LIBDIR)/pkgconfig/$(LIB_PC)
 
-install-headers: $(HEADERS:%=$(SOURCEDIR)/%)
+ifeq ($(UNAME), Darwin)
+$(OBJDIR)/shared.map: $(OBJDIR)/.tag
+	@printf '%s\n' '$(SYMBOLS_LIST)' | sed -e 's/ /\n/g' > $@
+else
+$(OBJDIR)/shared.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
+	@sed -e 's|@NAME@|$(VERSION_SCRIPT_NAME) |' \
+		-e "s|@SYMBOLS@|$(SYMBOLS_LIST)|" $< > $@
+endif
+
+install-headers: $(HEADERS:%=$(SOURCEDIR)/%) all
 ifneq ($(HEADERS),)
 	@mkdir -p $(DESTDIR)$(INCPATH)
 	for i in $(HEADERS); do \

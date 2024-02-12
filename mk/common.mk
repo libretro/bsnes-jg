@@ -15,6 +15,9 @@ DATADIR ?= $(DATAROOTDIR)
 DOCDIR ?= $(DATAROOTDIR)/doc/$(NAME)
 MANDIR ?= $(DATAROOTDIR)/man
 
+CFLAGS ?= -O2
+CXXFLAGS ?= -O2
+
 WARNINGS_DEF := -Wall -Wextra -Wshadow -Wmissing-declarations
 WARNINGS_DEF_C := $(WARNINGS_DEF) -Wmissing-prototypes -pedantic
 WARNINGS_DEF_CXX := $(WARNINGS_DEF) -pedantic
