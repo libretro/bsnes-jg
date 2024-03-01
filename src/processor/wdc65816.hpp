@@ -75,6 +75,7 @@ struct WDC65816 {
   inline void pushN(uint8_t data);
   inline uint8_t readDirect(unsigned);
   inline void writeDirect(unsigned, uint8_t);
+  inline uint8_t readDirectX(unsigned, unsigned);
   inline uint8_t readDirectN(unsigned);
   inline uint8_t readBank(unsigned);
   inline void writeBank(unsigned, uint8_t);

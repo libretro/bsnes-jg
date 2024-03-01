@@ -113,6 +113,13 @@ void WDC65816::writeDirect(unsigned address, uint8_t data) {
   write((D.w + address) & 0xffff, data);
 }
 
+uint8_t WDC65816::readDirectX(unsigned address, unsigned offset) {
+  // The (direct,X) addressing mode has a bug in which the high byte is
+  // wrapped within the page if E = 1 and D&0xFF != 0.
+  if(EF && D.r16_lsb2.l) return read(((D.w + address) & 0xffff00) | ((D.w + address + offset) & 0xff));
+  else return readDirect(address + offset);
+}
+
 uint8_t WDC65816::readDirectN(unsigned address) {
   return read((D.w + address) & 0xffff);
 }
@@ -634,8 +641,8 @@ void WDC65816::IndexedIndirectRead8(alu8 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
-  V.r24_lsb4.l = readDirect(U.r24_lsb4.l + X.w + 0);
-  V.r24_lsb4.h = readDirect(U.r24_lsb4.l + X.w + 1);
+  V.r24_lsb4.l = readDirectX(U.r24_lsb4.l + X.w, 0);
+  V.r24_lsb4.h = readDirectX(U.r24_lsb4.l + X.w, 1);
   lastCycle();
   W.r24_lsb4.l = readBank(V.r24_lsb2.w + 0);
   alu(W.r24_lsb4.l);
@@ -645,8 +652,8 @@ void WDC65816::IndexedIndirectRead16(alu16 op) {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
-  V.r24_lsb4.l = readDirect(U.r24_lsb4.l + X.w + 0);
-  V.r24_lsb4.h = readDirect(U.r24_lsb4.l + X.w + 1);
+  V.r24_lsb4.l = readDirectX(U.r24_lsb4.l + X.w, 0);
+  V.r24_lsb4.h = readDirectX(U.r24_lsb4.l + X.w, 1);
   W.r24_lsb4.l = readBank(V.r24_lsb2.w + 0);
   lastCycle();
   W.r24_lsb4.h = readBank(V.r24_lsb2.w + 1);
@@ -843,8 +850,8 @@ void WDC65816::IndexedIndirectWrite8() {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
-  V.r24_lsb4.l = readDirect(U.r24_lsb4.l + X.w + 0);
-  V.r24_lsb4.h = readDirect(U.r24_lsb4.l + X.w + 1);
+  V.r24_lsb4.l = readDirectX(U.r24_lsb4.l + X.w, 0);
+  V.r24_lsb4.h = readDirectX(U.r24_lsb4.l + X.w, 1);
   lastCycle();
   writeBank(V.r24_lsb2.w + 0, A.r16_lsb2.l);
 }
@@ -853,8 +860,8 @@ void WDC65816::IndexedIndirectWrite16() {
   U.r24_lsb4.l = fetch();
   idle2();
   idle();
-  V.r24_lsb4.l = readDirect(U.r24_lsb4.l + X.w + 0);
-  V.r24_lsb4.h = readDirect(U.r24_lsb4.l + X.w + 1);
+  V.r24_lsb4.l = readDirectX(U.r24_lsb4.l + X.w, 0);
+  V.r24_lsb4.h = readDirectX(U.r24_lsb4.l + X.w, 1);
   writeBank(V.r24_lsb2.w + 0, A.r16_lsb2.l);
   lastCycle();
   writeBank(V.r24_lsb2.w + 1, A.r16_lsb2.h);
