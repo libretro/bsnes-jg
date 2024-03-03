@@ -58,7 +58,7 @@ struct ICD : Thread {
 
 private:
   struct Packet {
-    uint8_t& operator[](uint8_t address) { return data[address & 0x0f]; }
+    uint8_t& operator[](uint8_t);
     uint8_t data[16];
   };
 

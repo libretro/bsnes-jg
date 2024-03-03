@@ -45,6 +45,10 @@ static Stream *stream;
 
 ICD icd;
 
+uint8_t& ICD::Packet::operator[](uint8_t address) {
+  return data[address & 0x0f];
+}
+
 unsigned ICD::pathID() const {
   return information.pathID;
 }
