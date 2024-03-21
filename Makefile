@@ -53,7 +53,7 @@ WARNINGS_C := $(WARNINGS_ALL) -Wmissing-prototypes -pedantic
 WARNINGS := $(WARNINGS_CXX) -pedantic
 WARNINGS_CO := $(WARNINGS_MIN) -Wmissing-prototypes
 WARNINGS_ICD := $(WARNINGS_CXX)
-WARNINGS_GB := -Wno-multichar -Wno-unused-result
+WARNINGS_GB := -Wall -Wno-missing-braces -Wno-multichar -Wno-unused-result
 
 CSRCS := deps/gb/apu.c \
 	deps/gb/camera.c \
