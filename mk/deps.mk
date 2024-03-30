@@ -11,9 +11,6 @@ LIBS_EPOXY = $(shell $(PKG_CONFIG) --libs epoxy)
 CFLAGS_FLAC = $(shell $(PKG_CONFIG) --cflags flac)
 LIBS_FLAC = $(shell $(PKG_CONFIG) --libs flac)
 
-CFLAGS_GL = $(shell $(PKG_CONFIG) --cflags gl)
-LIBS_GL = $(shell $(PKG_CONFIG) --libs gl)
-
 CFLAGS_LZO = $(shell $(PKG_CONFIG) --cflags lzo2)
 LIBS_LZO = $(shell $(PKG_CONFIG) --libs lzo2)
 
