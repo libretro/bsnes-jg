@@ -1,4 +1,4 @@
-Version 1.?.?
+Version 1.2.0
 -------------
  - Extend the Super Famicom LOROM-RAM#A memory map
  - libco 16-bit stack alignment fix
@@ -7,7 +7,8 @@ Version 1.?.?
  - Ensure writes to Cx4 multiplier register do not have truncated values
  - CPU accuracy improvements: Pass gilyon's 65C816 tests
  - Rewrite snes_spc in C
- - Update to SameBoy 0.16
+ - Update to SameBoy 0.16.2 with a strict-aliasing fix backported from upstream
+ - CPU (wdc65816): Emulate (Direct,X) wraparound bug in emulation mode
 
 Version 1.1.2
 -------------
