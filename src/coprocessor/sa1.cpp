@@ -146,6 +146,8 @@ void SA1::BWRAM::writeCPU(unsigned address, uint8_t data) {
     address = sa1.mmio.sbm * 0x2000 + (address & 0x1fff);
   }
 
+  //note: BW-RAM protection works only when both SWEN and CWEN are disabled.
+  if(!sa1.mmio.swen && !sa1.mmio.cwen && (address & 0x3ffff) < 0x100U << sa1.mmio.bwp) return;
   return write(address, data);
 }
 
@@ -178,6 +180,15 @@ uint8_t SA1::BWRAM::readLinear(unsigned address, uint8_t data) {
 }
 
 void SA1::BWRAM::writeLinear(unsigned address, uint8_t data) {
+  //note: BW-RAM protection works only when both SWEN and CWEN are disabled.
+  //this is required for Kirby's Dream Land 3 to work:
+  //* BWPA = 02 (protect 400000-4003ff)
+  //* SWEN = 80 (writes enabled)
+  //* CWEN = 00 (writes disabled)
+  //KDL3 proceeds to write to 4001ax and 40032x which must succeed.
+  //note: BWPA also affects SA-1 protection
+  if(!sa1.mmio.swen && !sa1.mmio.cwen && (address & 0x3ffff) < 0x100U << sa1.mmio.bwp) return;
+
   return write(address, data);
 }
 
@@ -434,7 +445,7 @@ uint8_t SA1::read(unsigned address) {
   }
 
   if((address & 0x40e000) == 0x006000  //00-3f,80-bf:6000-7fff
-  || (address & 0xf00000) == 0x400000  //40-4f:0000-ffff
+  || (address & 0xe00000) == 0x400000  //40-5f:0000-ffff
   || (address & 0xf00000) == 0x600000  //60-6f:0000-ffff
   ) {
     step();
@@ -478,7 +489,7 @@ void SA1::write(unsigned address, uint8_t data) {
   }
 
   if((address & 0x40e000) == 0x006000  //00-3f,80-bf:6000-7fff
-  || (address & 0xf00000) == 0x400000  //40-4f:0000-ffff
+  || (address & 0xe00000) == 0x400000  //40-5f:0000-ffff
   || (address & 0xf00000) == 0x600000  //60-6f:0000-ffff
   ) {
     step();
@@ -643,8 +654,16 @@ void SA1::writeIOCPU(unsigned address, uint8_t data) {
   //(CCNT) SA-1 control
   case 0x2200: {
     if(mmio.sa1_resb && !(data & 0x20)) {
-      //reset SA-1 CPU (PC bank set to 0x00)
+      //reset SA-1 CPU (PC bank and data bank set to 0x00, clear STP status)
       r.pc.d = mmio.crv;
+      r.b    = 0x00;
+      r.stp  = false;
+      //todo: probably needs a SA-1 CPU reset
+      //reset r.s, r.e, r.wai ...
+
+      //reset io status
+      //todo: reset timing is unknown, CIWP is set to 0 at reset
+      mmio.ciwp = 0x00;
     }
 
     mmio.sa1_irq  = (data & 0x80);
