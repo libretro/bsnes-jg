@@ -37,11 +37,14 @@
 #define CHANNELS 2
 #define NUMINPUTS 5
 
-#define ASPECT_NTSC 1.3061224
-#define ASPECT_PAL 1.4257812
+#define ASPECT_NTSC 8.0 / 7.0
+#define ASPECT_PAL 7375000.0 / 5320342.5
 
 #define TIMING_NTSC 60.098812
 #define TIMING_PAL 50.006979
+
+#define VIDEO_HEIGHT 240
+#define VIDEO_WIDTH 256
 
 static jg_cb_audio_t jg_cb_audio;
 static jg_cb_frametime_t jg_cb_frametime;
@@ -54,14 +57,14 @@ static jg_coreinfo_t coreinfo = {
 
 static jg_videoinfo_t vidinfo = {
     JG_PIXFMT_RGBX5551, // pixfmt
-    512,                // wmax
-    480,                // hmax
-    256,                // w
-    224,                // h
+    VIDEO_WIDTH << 1,   // wmax
+    VIDEO_HEIGHT << 1,  // hmax
+    VIDEO_WIDTH,        // w
+    VIDEO_HEIGHT,       // h
     0,                  // x
-    8,                  // y
+    0,                  // y
     1024,               // p
-    8.0/7.0,            // aspect
+    ASPECT_NTSC,        // aspect
     NULL
 };
 
@@ -98,6 +101,26 @@ static jg_setting_t settings_bsnes[] = {
       "Set the aspect ratio",
       0, 0, 3, 0
     },
+    { "overscan_t", "Overscan Mask (Top)",
+      "N = Hide N pixels of Overscan (Top)",
+      "Hide N pixels of Overscan (Top)",
+      8, 0, 16, 0
+    },
+    { "overscan_b", "Overscan Mask (Bottom)",
+      "N = Hide N pixels of Overscan (Bottom)",
+      "Hide N pixels of Overscan (Bottom)",
+      8, 0, 16, 0
+    },
+    { "overscan_l", "Overscan Mask (Left)",
+      "N = Hide N pixels of Overscan (Left)",
+      "Hide N pixels of Overscan (Left)",
+      0, 0, 16, 0
+    },
+    { "overscan_r", "Overscan Mask (Right)",
+      "N = Hide N pixels of Overscan (Right)",
+      "Hide N pixels of Overscan (Right)",
+      0, 0, 16, 0
+    },
     { "coproc_delaysync", "Delay LLE Coprocessor Sync",
       "0 = Off, 1 = On",
       "Delay syncing Low Level Emulated coprocessors for a performance "
@@ -125,6 +148,10 @@ enum {
     PORT1,
     PORT2,
     ASPECT,
+    OVERSCAN_T,
+    OVERSCAN_B,
+    OVERSCAN_L,
+    OVERSCAN_R,
     COPROC_DELAYSYNC,
     COPROC_PREFERHLE,
     RSQUAL,
@@ -146,25 +173,39 @@ static struct Location {
 
 // Set the aspect ratio
 static void aspectRatio(void) {
+    // First, figure out what the ideal height/width are
+    unsigned aspect_w = VIDEO_WIDTH - (settings_bsnes[OVERSCAN_L].val +
+        settings_bsnes[OVERSCAN_R].val);
+    vidinfo.w = VIDEO_WIDTH - (settings_bsnes[OVERSCAN_L].val +
+        settings_bsnes[OVERSCAN_R].val);
+    vidinfo.h = VIDEO_HEIGHT - (settings_bsnes[OVERSCAN_T].val +
+        settings_bsnes[OVERSCAN_B].val);
+    vidinfo.x = settings_bsnes[OVERSCAN_L].val;
+    vidinfo.y = settings_bsnes[OVERSCAN_T].val;
+
+    double aspect_ratio = ASPECT_NTSC;
+
     switch (settings_bsnes[ASPECT].val) {
         default: case 0: { // Auto Region
-            vidinfo.aspect = interface->getRegion() == "PAL" ?
+            aspect_ratio = interface->getRegion() == "PAL" ?
                 ASPECT_PAL : ASPECT_NTSC;
             break;
         }
         case 1: { // 8:7
-            vidinfo.aspect = 8.0/7.0;
+            aspect_ratio = 8.0/7.0;
             break;
         }
         case 2: { // NTSC
-            vidinfo.aspect = ASPECT_NTSC;
+            aspect_ratio = ASPECT_NTSC;
             break;
         }
         case 3: { // PAL
-            vidinfo.aspect = ASPECT_PAL;
+            aspect_ratio = ASPECT_PAL;
             break;
         }
     }
+
+    vidinfo.aspect = (aspect_w * aspect_ratio) / (double)vidinfo.h;
 }
 
 static void inputSetup(void) {
@@ -463,10 +504,14 @@ static void fileWrite(unsigned id, std::string name, const uint8_t *data,
 static void videoFrame(const uint16_t *data, unsigned pitch, unsigned w,
     unsigned h) {
 
-    hmult = w / 256;
-    vmult = h / 240;
-    vidinfo.y = 8 * vmult;
-    h -= 2 * vidinfo.y;
+    hmult = w / VIDEO_WIDTH;
+    vmult = h / VIDEO_HEIGHT;
+
+    vidinfo.x = settings_bsnes[OVERSCAN_L].val * hmult;
+    w -= vidinfo.x + (settings_bsnes[OVERSCAN_R].val * hmult);
+
+    vidinfo.y = settings_bsnes[OVERSCAN_T].val * vmult;
+    h -= vidinfo.y + (settings_bsnes[OVERSCAN_B].val * vmult);
 
     vidinfo.w = w;
     vidinfo.h = h;
