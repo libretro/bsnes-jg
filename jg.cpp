@@ -97,7 +97,7 @@ static jg_setting_t settings_bsnes[] = {
       0, 0, 5, JG_SETTING_INPUT
     },
     { "aspect_ratio", "Aspect Ratio",
-      "0 = Auto Region, 1 = 8:7, 2 = NTSC, 3 = PAL",
+      "0 = Auto Region, 1 = 1:1 PAR, 2 = NTSC, 3 = PAL",
       "Set the aspect ratio",
       0, 0, 3, 0
     },
@@ -191,8 +191,8 @@ static void aspectRatio(void) {
                 ASPECT_PAL : ASPECT_NTSC;
             break;
         }
-        case 1: { // 8:7
-            aspect_ratio = 8.0/7.0;
+        case 1: { // 1:1 PAR
+            aspect_ratio = 1.0;
             break;
         }
         case 2: { // NTSC
