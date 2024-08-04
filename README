@@ -91,7 +91,7 @@ Copyright
 ---------
 bsnes-jg (GPL-3.0-or-later)
   Copyright (c) 2004-2020 byuu et al
-  Copyright (c) 2020-2022 Rupert Carmichael
+  Copyright (c) 2020-2024 Rupert Carmichael
   See COPYING
 
 byuuML (Zlib)
@@ -107,7 +107,7 @@ libsamplerate (BSD-2-Clause)
   See deps/libsamplerate/COPYING (https://github.com/libsndfile/libsamplerate)
 
 SameBoy (Expat)
-  Copyright (c) 2015-2023 Lior Halphon
+  Copyright (c) 2015-2024 Lior Halphon
   See deps/gb/LICENSE (https://github.com/LIJI32/SameBoy)
 
 snes_spc (LGPL-2.1-or-later)
