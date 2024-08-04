@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "sfc.hpp"
 
 namespace SuperFamicom {
@@ -27,7 +29,7 @@ namespace SuperFamicom {
 struct ICD : Thread {
   inline unsigned pathID() const;
 
-  void setOpenCallback(std::ifstream (*)(unsigned, std::string));
+  void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
   void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
 
   void synchronizeCPU();
@@ -100,7 +102,7 @@ private:
     unsigned pathID = 0;
   } information;
 
-  std::ifstream (*openCallback)(unsigned, std::string);
+  bool (*openFileCallback)(unsigned, std::string, std::vector<uint8_t>&);
 
 public:
   uint32_t bitmap[160 * 144];

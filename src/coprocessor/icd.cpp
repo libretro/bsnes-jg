@@ -18,9 +18,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <fstream>
-#include <iterator>
-
 #include "audio.hpp"
 #include "cheat.hpp"
 #include "cartridge.hpp"
@@ -424,12 +421,9 @@ bool ICD::load() {
   cartridge.information.sha256 = sha256_digest(romdata, romsize).c_str();
   GB_load_rom_from_buffer(&sameboy, romdata, romsize);
 
-  std::ifstream sramfile = openCallback(pathID(), "save.ram");
-  if (sramfile.is_open()) {
-    std::vector<char> sram((std::istreambuf_iterator<char>(sramfile)),
-      (std::istreambuf_iterator<char>()));
+  std::vector<uint8_t> sram;
+  if (openFileCallback(pathID(), "save.ram", sram)) {
     GB_load_battery_from_buffer(&sameboy, (const uint8_t*)sram.data(), sram.size());
-    sramfile.close();
   }
   return true;
 }
@@ -491,8 +485,8 @@ void ICD::setRom(const uint8_t *data, size_t size) {
   romsize = size;
 }
 
-void ICD::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
-  openCallback = cb;
+void ICD::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vector<uint8_t>&)) {
+  openFileCallback = cb;
 }
 
 void ICD::setWriteCallback(void (*cb)(unsigned, std::string, const uint8_t*, unsigned)) {

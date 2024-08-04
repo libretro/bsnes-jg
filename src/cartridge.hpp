@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <fstream>
 #include <vector>
 
 #include "memory.hpp"
@@ -39,6 +40,7 @@ struct Cartridge {
   void serialize(serializer&);
 
   void setOpenCallback(std::ifstream (*)(unsigned, std::string));
+  void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
   void setRomCallback(bool (*)(unsigned));
   void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
 
@@ -101,6 +103,7 @@ private:
   void saveMemory(Memory&, std::string);
 
   std::ifstream (*openCallback)(unsigned, std::string);
+  bool (*openFileCallback)(unsigned, std::string, std::vector<uint8_t>&);
   bool (*romCallback)(unsigned);
   void (*writeCallback)(unsigned, std::string, const uint8_t*, unsigned);
 };

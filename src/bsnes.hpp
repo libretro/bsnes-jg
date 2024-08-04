@@ -61,6 +61,7 @@ struct Interface {
   void setCoprocPreferHLE(bool);
   void setInputCallback(int16_t (*)(unsigned, unsigned, unsigned));
   void setOpenCallback(std::ifstream (*)(unsigned, std::string));
+  void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
   void setLogCallback(void (*)(int, const char *, ...));
   void setRegion(std::string);
   void setRomCallback(bool (*)(unsigned));

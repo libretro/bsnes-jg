@@ -234,8 +234,12 @@ void Interface::setLogCallback(void (*cb)(int, const char *, ...)) {
 
 void Interface::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
   cartridge.setOpenCallback(cb);
-  icd.setOpenCallback(cb);
-  msu1.setOpenCallback(cb);
+}
+
+void Interface::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vector<uint8_t>&)) {
+  cartridge.setOpenFileCallback(cb);
+  icd.setOpenFileCallback(cb);
+  msu1.setOpenFileCallback(cb);
 }
 
 void Interface::setRegion(std::string region) {

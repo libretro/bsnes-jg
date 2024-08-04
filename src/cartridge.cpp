@@ -1427,6 +1427,10 @@ void Cartridge::unload() {
   ram.reset();
 }
 
+void Cartridge::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vector<uint8_t>&)) {
+  openFileCallback = cb;
+}
+
 void Cartridge::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
   openCallback = cb;
 }

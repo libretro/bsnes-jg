@@ -292,6 +292,50 @@ static void inputSetup(void) {
     }
 }
 
+static bool fileOpenV(unsigned id, std::string name, std::vector<uint8_t>& v) {
+    std::string path;
+    bool required = false;
+
+    if (id == 1) { // SFC
+        if (name == "msu1/data.rom") {
+            path = superFamicom.location;
+            path = path.substr(0, path.find_last_of(".")) + ".msu";
+        }
+        else if (name.find("msu1/track") != std::string::npos) {
+            path = superFamicom.location;
+            path = path.substr(0, path.find_last_of(".")) +
+                name.substr(name.find_first_of("track") + 5);
+        }
+        else {
+            jg_cb_log(JG_LOG_WRN, "File load attempt: %s\n", name.c_str());
+        }
+    }
+    else if (id == 2) { // GB
+        if (name == "save.ram") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".srm";
+        }
+    }
+
+    std::ifstream stream(path, std::ios::in | std::ios::binary);
+    if (!stream.is_open()) {
+        if (required) {
+            jg_cb_log(JG_LOG_ERR, "Failed to load file: %s\n", path.c_str());
+        }
+        else {
+            return false;
+        }
+    }
+
+    v = std::vector<uint8_t>((std::istreambuf_iterator<char>(stream)),
+        std::istreambuf_iterator<char>());
+    stream.close();
+
+    jg_cb_log(JG_LOG_DBG, "Loaded %s (%ld bytes)\n", path.c_str(), v.size());
+
+    return true;
+}
+
 static std::ifstream fileOpen(unsigned id, std::string name) {
     std::string path;
     bool required = false;
@@ -330,15 +374,6 @@ static std::ifstream fileOpen(unsigned id, std::string name) {
         else if (name == "download.ram") {
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".psr";
-        }
-        else if (name == "msu1/data.rom") {
-            path = superFamicom.location;
-            path = path.substr(0, path.find_last_of(".")) + ".msu";
-        }
-        else if (name.find("msu1/track") != std::string::npos) {
-            path = superFamicom.location;
-            path = path.substr(0, path.find_last_of(".")) +
-                name.substr(name.find_first_of("track") + 5);
         }
         else if (name == "dsp1.program.rom") {
             path = std::string(pathinfo.bios) + "/dsp1.program.rom";
@@ -396,16 +431,6 @@ static std::ifstream fileOpen(unsigned id, std::string name) {
         }
         else {
             jg_cb_log(JG_LOG_WRN, "File load attempt: %s\n", name.c_str());
-        }
-    }
-    else if (id == 2) { // GB
-        if (name == "save.ram") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".srm";
-        }
-        else if (name == "time.rtc") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".rtc";
         }
     }
     else if (id == 4) { // Sufami Turbo Slot A
@@ -683,6 +708,7 @@ int jg_init(void) {
     interface = new SuperFamicom::Interface;
     interface->setInputCallback(&pollInput);
     interface->setOpenCallback(&fileOpen);
+    interface->setOpenFileCallback(&fileOpenV);
     interface->setLogCallback(jg_cb_log);
     interface->setRomCallback(&loadRom);
     interface->setWriteCallback(&fileWrite);

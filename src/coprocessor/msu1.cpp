@@ -25,6 +25,7 @@
 #include "cpu.hpp"
 #include "dsp.hpp"
 #include "settings.hpp"
+#include "logger.hpp"
 
 #include "msu1.hpp"
 
@@ -75,24 +76,26 @@ void MSU1::main() {
   int16_t right = 0;
 
   if(io.audioPlay) {
-    if(audioFile.is_open()) {
-      if(audioFile.eof()) {
+    if(!audioFile.empty()) {
+      if(io.audioPlayOffset == audioFile.size()) {
         if(!io.audioRepeat) {
           io.audioPlay = false;
-          audioFile.clear();
-          audioFile.seekg(io.audioPlayOffset = 8, std::ios::beg);
+          io.audioPlayOffset = 8;
         }
         else {
-          audioFile.clear();
-          audioFile.seekg(io.audioPlayOffset = io.audioLoopOffset, std::ios::beg);
+          io.audioPlayOffset = io.audioLoopOffset;
         }
       }
       else {
-        io.audioPlayOffset += 4;
-        left  = audioFile.get() | (audioFile.get() << 8);
-        right = audioFile.get() | (audioFile.get() << 8);
+        left = audioFile[io.audioPlayOffset++];
+        left |= (audioFile[io.audioPlayOffset++] << 8);
+
+        right = audioFile[io.audioPlayOffset++];
+        right |= (audioFile[io.audioPlayOffset++] << 8);
+
         left *= (io.audioVolume / 255.0);
         right *= (io.audioVolume / 255.0);
+
         if(dsp.mute()) left = 0, right = 0;
       }
     }
@@ -111,8 +114,8 @@ void MSU1::step(unsigned clocks) {
 }
 
 void MSU1::unload() {
-  dataFile.close();
-  audioFile.close();
+  dataFile.clear();
+  audioFile.clear();
   destroy();
 }
 
@@ -143,33 +146,31 @@ void MSU1::power() {
 }
 
 void MSU1::dataOpen() {
-  dataFile.close();
-  dataFile = openCallback(ID::SuperFamicom, "msu1/data.rom");
+  dataFile.clear();
+  if (!openFileCallback(ID::SuperFamicom, "msu1/data.rom", dataFile)) {
+    logger.log(Logger::DBG, "Failed to open msu1/data.rom");
+  }
 }
 
 void MSU1::audioOpen() {
-  audioFile.close();
+  audioFile.clear();
   std::stringstream name;
   name << "msu1/track-" << io.audioTrack << ".pcm";
-  audioFile = openCallback(ID::SuperFamicom, name.str());
-  if(audioFile.is_open()) {
-    audioFile.seekg(0, audioFile.end);
-    unsigned size = audioFile.tellg();
-    audioFile.seekg(0, audioFile.beg);
-    if(size >= 8) {
-      uint32_t header = (audioFile.get() << 24) | (audioFile.get() << 16) |
-            (audioFile.get() << 8) | audioFile.get();
+
+  if (openFileCallback(ID::SuperFamicom, name.str(), audioFile)) {
+    if(audioFile.size() >= 8) {
+      uint32_t header = (audioFile[0] << 24) | (audioFile[1] << 16) |
+            (audioFile[2] << 8) | audioFile[3];
       if(header == 0x4d535531) {  //"MSU1"
-        uint32_t offset =  audioFile.get() | (audioFile.get() << 8) |
-            (audioFile.get() << 16) | (audioFile.get() << 24);
+        uint32_t offset =  audioFile[4] | (audioFile[5] << 8) |
+            (audioFile[6] << 16) | (audioFile[7] << 24);
         io.audioLoopOffset = 8 + offset * 4;
-        if(io.audioLoopOffset > size) io.audioLoopOffset = 8;
+        if(io.audioLoopOffset > audioFile.size()) io.audioLoopOffset = 8;
         io.audioError = false;
-        audioFile.seekg(io.audioPlayOffset, std::ios::beg);
         return;
       }
     }
-    audioFile.close();
+    audioFile.clear();
   }
   io.audioError = true;
 }
@@ -189,10 +190,9 @@ uint8_t MSU1::readIO(unsigned addr, uint8_t) {
     );
   case 0x2001:
     if(io.dataBusy) return 0x00;
-    if(!dataFile) return 0x00;
-    if(dataFile.eof()) return 0x00;
-    io.dataReadOffset++;
-    return dataFile.get();
+    if(dataFile.empty()) return 0x00;
+    if(io.dataReadOffset == dataFile.size()) return 0x00;
+    return dataFile[io.dataReadOffset++];
   case 0x2002: return 'S';
   case 0x2003: return '-';
   case 0x2004: return 'M';
@@ -213,7 +213,6 @@ void MSU1::writeIO(unsigned addr, uint8_t data) {
   case 0x2002: io.dataSeekOffset = (io.dataSeekOffset & 0xff00ffff) | data << 16; break;
   case 0x2003: io.dataSeekOffset = (io.dataSeekOffset & 0x00ffffff) | data << 24;
     io.dataReadOffset = io.dataSeekOffset;
-    if(dataFile.is_open()) dataFile.seekg(io.dataReadOffset, std::ios::beg);
     break;
   case 0x2004: io.audioTrack = (io.audioTrack & 0xff00) | data << 0; break;
   case 0x2005: io.audioTrack = (io.audioTrack & 0x00ff) | data << 8;
@@ -244,8 +243,8 @@ void MSU1::writeIO(unsigned addr, uint8_t data) {
   }
 }
 
-void MSU1::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
-  openCallback = cb;
+void MSU1::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vector<uint8_t>&)) {
+  openFileCallback = cb;
 }
 
 }
