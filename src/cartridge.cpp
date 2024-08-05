@@ -1054,11 +1054,9 @@ bool Cartridge::load() {
     }
   }
 
-  std::ifstream msu1file =
-    openCallback(ID::SuperFamicom, "msu1/data.rom");
-  if (msu1file.is_open()) {
-    msu1file.close();
-    //file::exists("msu1/data.rom")
+  std::vector<uint8_t> msu1file;
+  if (openFileCallback(ID::SuperFamicom, "msu1/data.rom", msu1file)) {
+    msu1file.clear();
     has.MSU1 = true;
     bus.map({&MSU1::readIO, &msu1}, {&MSU1::writeIO, &msu1}, "00-3f,80-bf:2000-2007");
   }
