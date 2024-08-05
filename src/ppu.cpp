@@ -1320,6 +1320,7 @@ void PPU::Background::run(bool pos) {
   pixel.priority = tile.priority;
   pixel.palette = color ? (unsigned)(tile.palette + color) : 0;
   pixel.paletteGroup = tile.paletteGroup;
+
   pixelCounter = (pixelCounter + 1) & 7;
   if(!pixelCounter) renderingIndex = (renderingIndex + 1) & 0x7f;
 

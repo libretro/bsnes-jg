@@ -423,7 +423,7 @@ private:
   struct Window {
     void scanline();
     void run();
-    bool test(bool, bool, bool, bool, unsigned);
+    inline bool test(bool, bool, bool, bool, unsigned);
     void power();
 
     void serialize(serializer&);
