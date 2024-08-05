@@ -1297,7 +1297,7 @@ void PPU::Background::run(bool pos) {
   if(io.mode == Mode::Mode7) return runMode7();
 
   Tile& tile = tiles[renderingIndex];
-  uint8_t color = (tile.data[0] & 3) << 0; // io.mode is always >= BPP2
+  unsigned color = (tile.data[0] & 3) << 0; // io.mode is always >= BPP2
 
   tile.data[0] >>= 2;
 
@@ -1318,7 +1318,7 @@ void PPU::Background::run(bool pos) {
 
   Pixel pixel;
   pixel.priority = tile.priority;
-  pixel.palette = color ? unsigned(tile.palette + color) : 0;
+  pixel.palette = color ? (unsigned)(tile.palette + color) : 0;
   pixel.paletteGroup = tile.paletteGroup;
   pixelCounter = (pixelCounter + 1) & 7;
   if(!pixelCounter) renderingIndex = (renderingIndex + 1) & 0x7f;
