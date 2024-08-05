@@ -385,6 +385,24 @@ static bool fileOpenV(unsigned id, std::string name, std::vector<uint8_t>& v) {
             jg_cb_log(JG_LOG_WRN, "File load attempt: %s\n", name.c_str());
         }
     }
+    else if (id == 4) { // Sufami Turbo Slot A
+        if (name == "save.ram") {
+            if (sufamiinfo.size) {
+                path = std::string(pathinfo.save) + "/" +
+                    std::string(sufamiinfo.name) + ".srm";
+            }
+            else {
+                path = std::string(pathinfo.save) + "/" +
+                    std::string(gameinfo.name) + ".srm";
+            }
+        }
+    }
+    else if (id == 5) { // Sufami Turbo Slot B
+        if (name == "save.ram") {
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".srm";
+        }
+    }
 
     std::ifstream stream(path, std::ios::in | std::ios::binary);
     if (!stream.is_open()) {
@@ -425,24 +443,6 @@ static std::ifstream fileOpen(unsigned id, std::string name) {
         else if (name == "SuperFamicom.bml") {
             path = std::string(pathinfo.core) + "/SuperFamicom.bml";
             required = true;
-        }
-    }
-    else if (id == 4) { // Sufami Turbo Slot A
-        if (name == "save.ram") {
-            if (sufamiinfo.size) {
-                path = std::string(pathinfo.save) + "/" +
-                    std::string(sufamiinfo.name) + ".srm";
-            }
-            else {
-                path = std::string(pathinfo.save) + "/" +
-                    std::string(gameinfo.name) + ".srm";
-            }
-        }
-    }
-    else if (id == 5) { // Sufami Turbo Slot B
-        if (name == "save.ram") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".srm";
         }
     }
 

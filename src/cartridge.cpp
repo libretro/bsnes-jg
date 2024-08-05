@@ -939,11 +939,11 @@ bool Cartridge::load() {
             else if (type == "RAM" && content == "Save") {
               if(Game::Memory memory = Game::Memory(m)) {
                 sufamiturboA.ram.allocate(memory.size);
-                std::ifstream sramfile =
-                  openCallback(sufamiturboA.pathID, "save.ram");
-                if (sramfile.is_open()) {
-                  sramfile.read((char*)sufamiturboA.ram.data(), memory.size);
-                  sramfile.close();
+                std::vector<uint8_t> sramfile;
+                if (openFileCallback(sufamiturboA.pathID, "save.ram", sramfile)) {
+                  for (unsigned n = 0; n < memory.size; ++n) {
+                    sufamiturboA.ram.data()[n] = sramfile[n];
+                  }
                 }
               }
             }
@@ -971,11 +971,11 @@ bool Cartridge::load() {
             else if (type == "RAM" && content == "Save") {
               if(Game::Memory memory = Game::Memory(m)) {
                 sufamiturboB.ram.allocate(memory.size);
-                std::ifstream sramfile =
-                  openCallback(sufamiturboB.pathID, "save.ram");
-                if (sramfile.is_open()) {
-                  sramfile.read((char*)sufamiturboB.ram.data(), memory.size);
-                  sramfile.close();
+                std::vector<uint8_t> sramfile;
+                if (openFileCallback(sufamiturboB.pathID, "save.ram", sramfile)) {
+                  for (unsigned n = 0; n < memory.size; ++n) {
+                    sufamiturboB.ram.data()[n] = sramfile[n];
+                  }
                 }
               }
             }
