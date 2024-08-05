@@ -52,6 +52,8 @@
 
 #include "cartridge.hpp"
 
+#include "logger.hpp"
+
 namespace SuperFamicom {
 
 /* note: this is not copyrightable, as it is purely math tables such as sin and cos */
@@ -172,12 +174,9 @@ std::string Cartridge::loadBoard(std::string node) {
   if (node.find("EA-") == 0) node.replace(0, 3, "SHVC-");
   if (node.find("WEI-") == 0) node.replace(0, 4, "SHVC-");
 
-  std::ifstream boardsfile = openCallback(ID::System, "boards.bml");
-  if (boardsfile.is_open()) {
-    std::string boards((std::istreambuf_iterator<char>(boardsfile)),
-      (std::istreambuf_iterator<char>()));
-
-    return BML::searchBoard(boards, node);
+  std::stringstream boardsfile;
+  if (openStreamCallback("boards.bml", boardsfile)) {
+    return BML::searchBoard(boardsfile.str(), node);
   }
 
   return {};
@@ -1318,11 +1317,13 @@ void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   slotBSMemory.prgrom = data;
   Heuristics::BSMemory heuristics = Heuristics::BSMemory(data, loc);
 
-  std::ifstream dbfile = openCallback(ID::System, "BSMemory.bml");
+  std::stringstream dbfile;
+  if (openStreamCallback("BSMemory.bml", dbfile)) {
+    logger.log(Logger::DBG, "Loaded BSMemory.bml\n");
+  }
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
-  dbfile.close();
 
   slotBSMemory.document = manifest.empty() ? heuristics.manifest() : manifest;
 }
@@ -1331,15 +1332,15 @@ void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc)
   slotSufamiTurboA.prgrom = data;
   Heuristics::SufamiTurbo heuristics = Heuristics::SufamiTurbo(data, loc);
 
-  std::ifstream dbfile =
-    openCallback(ID::System, "SufamiTurbo.bml");
+  std::stringstream dbfile;
+  if (openStreamCallback("SufamiTurbo.bml", dbfile)) {
+    logger.log(Logger::DBG, "Loaded SufamiTurbo.bml\n");
+  }
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
-  dbfile.close();
 
-  slotSufamiTurboA.document =
-    manifest.empty() ? heuristics.manifest() : manifest;
+  slotSufamiTurboA.document = manifest.empty() ? heuristics.manifest() : manifest;
 
   has.SufamiTurboSlotA = true;
 }
@@ -1348,15 +1349,15 @@ void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
   slotSufamiTurboB.prgrom = data;
   Heuristics::SufamiTurbo heuristics = Heuristics::SufamiTurbo(data, loc);
 
-  std::ifstream dbfile =
-    openCallback(ID::System, "SufamiTurbo.bml");
+  std::stringstream dbfile;
+  if (openStreamCallback("SufamiTurbo.bml", dbfile)) {
+    logger.log(Logger::DBG, "Loaded SufamiTurbo.bml\n");
+  }
 
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
-  dbfile.close();
 
-  slotSufamiTurboB.document =
-    manifest.empty() ? heuristics.manifest() : manifest;
+  slotSufamiTurboB.document = manifest.empty() ? heuristics.manifest() : manifest;
 
   has.SufamiTurboSlotB = true;
 }
@@ -1364,11 +1365,13 @@ void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
 void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc) {
   Heuristics::SuperFamicom heuristics = Heuristics::SuperFamicom(data, loc);
 
-  std::ifstream dbfile =
-    openCallback(ID::System, "SuperFamicom.bml");
+  std::stringstream dbfile;
+  if (openStreamCallback("SuperFamicom.bml", dbfile)) {
+    logger.log(Logger::DBG, "Loaded SuperFamicom.bml\n");
+  }
+
   std::string sha256 = sha256_digest(data.data(), data.size());
   std::string manifest = BML::gendoc(dbfile, "game", "sha256", sha256);
-  dbfile.close();
 
   if (manifest.empty()) {
     game.document = heuristics.manifest();
@@ -1420,8 +1423,8 @@ void Cartridge::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vecto
   openFileCallback = cb;
 }
 
-void Cartridge::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
-  openCallback = cb;
+void Cartridge::setOpenStreamCallback(bool (*cb)(std::string, std::stringstream&)) {
+  openStreamCallback = cb;
 }
 
 void Cartridge::setRomCallback(bool (*cb)(unsigned)) {

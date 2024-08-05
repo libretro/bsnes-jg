@@ -21,6 +21,7 @@
 #pragma once
 
 #include <cstdint>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -60,8 +61,8 @@ struct Interface {
   void setCoprocDelayedSync(bool);
   void setCoprocPreferHLE(bool);
   void setInputCallback(int16_t (*)(unsigned, unsigned, unsigned));
-  void setOpenCallback(std::ifstream (*)(unsigned, std::string));
   void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
+  void setOpenStreamCallback(bool (*)(std::string, std::stringstream&));
   void setLogCallback(void (*)(int, const char *, ...));
   void setRegion(std::string);
   void setRomCallback(bool (*)(unsigned));

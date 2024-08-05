@@ -19,7 +19,6 @@
  */
 
 #include <cstddef>
-#include <fstream>
 
 #include "audio.hpp"
 #include "cartridge.hpp"
@@ -232,8 +231,8 @@ void Interface::setLogCallback(void (*cb)(int, const char *, ...)) {
   logger.setCallback(cb);
 }
 
-void Interface::setOpenCallback(std::ifstream (*cb)(unsigned, std::string)) {
-  cartridge.setOpenCallback(cb);
+void Interface::setOpenStreamCallback(bool (*cb)(std::string, std::stringstream&)) {
+  cartridge.setOpenStreamCallback(cb);
 }
 
 void Interface::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vector<uint8_t>&)) {

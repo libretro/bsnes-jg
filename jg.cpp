@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <fstream>
+#include <sstream>
 
 #include <jg/jg.h>
 #include <jg/jg_snes.h>
@@ -423,34 +424,18 @@ static bool fileOpenV(unsigned id, std::string name, std::vector<uint8_t>& v) {
     return true;
 }
 
-static std::ifstream fileOpen(unsigned id, std::string name) {
-    std::string path;
-    bool required = false;
-
-    if (id == 0) {
-        if (name == "boards.bml") {
-            path = std::string(pathinfo.core) + "/boards.bml";
-            required = true;
-        }
-        else if (name == "BSMemory.bml") {
-            path = std::string(pathinfo.core) + "/BSMemory.bml";
-            required = true;
-        }
-        else if (name == "SufamiTurbo.bml") {
-            path = std::string(pathinfo.core) + "/SufamiTurbo.bml";
-            required = true;
-        }
-        else if (name == "SuperFamicom.bml") {
-            path = std::string(pathinfo.core) + "/SuperFamicom.bml";
-            required = true;
-        }
-    }
-
+static bool fileOpenS(std::string name, std::stringstream& ss) {
+    std::string path = std::string(pathinfo.core) + "/" + name;
     std::ifstream stream(path, std::ios::in | std::ios::binary);
-    if (required && !stream.is_open()) {
+
+    if (!stream.is_open()) {
         jg_cb_log(JG_LOG_ERR, "Failed to load file: %s\n", path.c_str());
     }
-    return stream;
+
+    ss << stream.rdbuf();
+    stream.close();
+
+    return true;
 }
 
 static void fileWrite(unsigned id, std::string name, const uint8_t *data,
@@ -701,8 +686,8 @@ int jg_init(void) {
     // Create interface and set callbacks
     interface = new SuperFamicom::Interface;
     interface->setInputCallback(&pollInput);
-    interface->setOpenCallback(&fileOpen);
     interface->setOpenFileCallback(&fileOpenV);
+    interface->setOpenStreamCallback(&fileOpenS);
     interface->setLogCallback(jg_cb_log);
     interface->setRomCallback(&loadRom);
     interface->setWriteCallback(&fileWrite);
