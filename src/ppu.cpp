@@ -1323,7 +1323,7 @@ void PPU::Background::run(bool pos) {
   } else if(mosaic.enable) {
     pixel = mosaic.pixel;
   }
-  if(pos == Screen::Above) ++x;
+
   if(pixel.palette == 0) return;
 
   if(!hires() || pos == Screen::Above) if(io.aboveEnable) output.above = pixel;
