@@ -253,7 +253,6 @@ private:
 
     inline bool hires() const;
 
-    inline void frame();
     inline void scanline();
     void begin();
     void fetchNameTable();

@@ -50,10 +50,6 @@ void PPU::main() {
     }*/
     display.interlace = io.interlace;
     display.overscan = io.overscan;
-    bg1.frame();
-    bg2.frame();
-    bg3.frame();
-    bg4.frame();
     obj.frame();
   }
 
@@ -1080,11 +1076,11 @@ void PPU::Background::runMode7() {
 
   int pixelX = (originX + a * x) >> 8;
   int pixelY = (originY + c * x) >> 8;
-  uint16_t paletteAddress = ((pixelY & 0x07) << 3) | (pixelX & 0x07);
+  unsigned paletteAddress = ((pixelY & 0x07) << 3) | (pixelX & 0x07);
 
-  uint8_t tileX = (pixelX >> 3) & 0x7f;
-  uint8_t tileY = (pixelY >> 3) & 0x7f;
-  uint16_t tileAddress = tileY << 7 | tileX;
+  unsigned tileX = (pixelX >> 3) & 0x7f;
+  unsigned tileY = (pixelY >> 3) & 0x7f;
+  unsigned tileAddress = tileY << 7 | tileX;
 
   bool outOfBounds = (pixelX | pixelY) & ~1023;
 
@@ -1116,10 +1112,6 @@ void PPU::Background::runMode7() {
 
 bool PPU::Background::hires() const {
   return ppu.io.bgMode == 5 || ppu.io.bgMode == 6;
-}
-
-//V = 0, H = 0
-void PPU::Background::frame() {
 }
 
 //H = 0
@@ -1299,21 +1291,17 @@ void PPU::Background::run(bool pos) {
   Tile& tile = tiles[renderingIndex];
   unsigned color = (tile.data[0] & 3) << 0; // io.mode is always >= BPP2
 
-  tile.data[0] >>= 2;
-
   if(io.mode >= Mode::BPP4)
     color |= (tile.data[1] & 3) << 2;
 
-  tile.data[1] >>= 2;
-
-  if(io.mode >= Mode::BPP8)
+  if(io.mode >= Mode::BPP8) {
     color |= (tile.data[2] & 3) << 4;
-
-  tile.data[2] >>= 2;
-
-  if(io.mode >= Mode::BPP8)
     color |= (tile.data[3] & 3) << 6;
+  }
 
+  tile.data[0] >>= 2;
+  tile.data[1] >>= 2;
+  tile.data[2] >>= 2;
   tile.data[3] >>= 2;
 
   Pixel pixel;
