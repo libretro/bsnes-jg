@@ -101,11 +101,6 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
   uint8_t wram[128 * 1024];
   std::vector<Thread*> coprocessors;
 
-  struct Overclocking {
-    unsigned counter = 0;
-    unsigned target = 0;
-  } overclocking;
-
 private:
   bool init = false;
   unsigned version = 2;  //allowed: 1, 2

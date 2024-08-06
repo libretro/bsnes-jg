@@ -1338,10 +1338,8 @@ void SA1::unload() {
 }
 
 void SA1::power() {
-  double overclock = std::max(1.0, std::min(4.0, configuration.sa1.overclock / 100.0));
-
   WDC65816::power();
-  create(Enter, system.cpuFrequency() * overclock);
+  create(Enter, system.cpuFrequency());
 
   bwram.dma = false;
   for(unsigned address = 0; address < iram.size(); ++address) {

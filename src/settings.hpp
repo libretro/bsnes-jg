@@ -73,19 +73,11 @@ struct Configuration {
 
   bool hotfixes = true;
   unsigned entropy = 1; // 0 = None, 1 = Low, 2 = High
-  struct CPU {
-    unsigned overclock = 100;
-  } cpu;
+
   struct Coprocessor {
     bool delayedSync = true;
     bool preferHLE = false;
   } coprocessor;
-  struct SA1 {
-    unsigned overclock = 100;
-  } sa1;
-  struct SuperFX {
-    unsigned overclock = 100;
-  } superfx;
 
   unsigned controllerPort1 = ID::Device::Gamepad;
   unsigned controllerPort2 = ID::Device::Gamepad;

@@ -490,10 +490,8 @@ void SuperFX::unload() {
 }
 
 void SuperFX::power() {
-  double overclock = std::max(1.0, std::min(8.0, configuration.superfx.overclock / 100.0));
-
   GSU::power();
-  create(Enter, Frequency * overclock);
+  create(Enter, Frequency);
 
   romMask = rom.size() - 1;
   ramMask = ram.size() - 1;
