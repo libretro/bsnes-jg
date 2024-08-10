@@ -2,7 +2,7 @@
  * bsnes-jg - Super Nintendo emulator
  *
  * Copyright (C) 2004-2020 byuu
- * Copyright (C) 2020-2022 Rupert Carmichael
+ * Copyright (C) 2020-2024 Rupert Carmichael
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include "controller.hpp"
 
 static int16_t (*inputPoll)(unsigned, unsigned, unsigned);
+static unsigned (*inputPollGamepad)(unsigned);
 
 namespace SuperFamicom {
 
@@ -33,11 +34,11 @@ void setInputPoll(int16_t (*cb)(unsigned, unsigned, unsigned)) {
   inputPoll = cb;
 }
 
-struct Gamepad : Controller {
-  enum : unsigned {
-    Up, Down, Left, Right, B, A, Y, X, L, R, Select, Start,
-  };
+void setInputPollGamepad(unsigned (*cb)(unsigned)) {
+  inputPollGamepad = cb;
+}
 
+struct Gamepad : Controller {
   Gamepad(unsigned);
 
   uint8_t data();
@@ -47,11 +48,7 @@ private:
   using Controller::latch;
 
   bool latched;
-  unsigned counter;
-
-  bool b, y, select, start;
-  bool up, down, left, right;
-  bool a, x, l, r;
+  unsigned bits;
 };
 
 struct Justifier : Controller {
@@ -216,50 +213,40 @@ void ControllerPort::serialize(serializer& s) {
 
 Gamepad::Gamepad(unsigned deviceID) : Controller(deviceID) {
   latched = 0;
-  counter = 0;
 }
 
 uint8_t Gamepad::data() {
-  if(counter >= 16) return 1;
-  if(latched == 1) return inputPoll(port, ID::Device::Gamepad, B);
-
-  //note: D-pad physically prevents up+down and left+right from being pressed at the same time
-  switch(counter++) {
-    case  0: return b;
-    case  1: return y;
-    case  2: return select;
-    case  3: return start;
-    case  4: return up & !down;
-    case  5: return down & !up;
-    case  6: return left & !right;
-    case  7: return right & !left;
-    case  8: return a;
-    case  9: return x;
-    case 10: return l;
-    case 11: return r;
+  if (latched) {
+    bits = inputPollGamepad(port);
   }
 
-  return 0;  //12-15: signature
+  /* Additional reads past the first 16 return 1s on official controllers.
+     Third party controllers may return 0s instead.
+     Shift the MSB out and return it, replace the LSB with 1.
+  */
+  bits = (bits << 1) | 1;
+  return (bits >> 16) & 1;
 }
 
 void Gamepad::latch(bool data) {
   if(latched != data) {
     latched = data;
-    counter = 0;
 
     if(latched == 0) {
-      b      = inputPoll(port, ID::Device::Gamepad, B);
-      y      = inputPoll(port, ID::Device::Gamepad, Y);
-      select = inputPoll(port, ID::Device::Gamepad, Select);
-      start  = inputPoll(port, ID::Device::Gamepad, Start);
-      up     = inputPoll(port, ID::Device::Gamepad, Up);
-      down   = inputPoll(port, ID::Device::Gamepad, Down);
-      left   = inputPoll(port, ID::Device::Gamepad, Left);
-      right  = inputPoll(port, ID::Device::Gamepad, Right);
-      a      = inputPoll(port, ID::Device::Gamepad, A);
-      x      = inputPoll(port, ID::Device::Gamepad, X);
-      l      = inputPoll(port, ID::Device::Gamepad, L);
-      r      = inputPoll(port, ID::Device::Gamepad, R);
+      /* JOY1H       JOY1L
+         $4219       $4218
+      15  bit  8   7  bit  0
+       ---- ----   ---- ----
+       BYsS UDLR   AXlr 0000
+       |||| ||||   |||| ||||
+       |||| ||||   |||| ++++- Signature
+       |||| ||||   ||++------ L/R shoulder buttons
+       |||| ||||   ++-------- A/X buttons
+       |||| ++++------------- D-pad
+       ||++------------------ Select (s) and Start (S)
+       ++-------------------- B/Y buttons
+      */
+      bits = inputPollGamepad(port);
     }
   }
 }

@@ -2,7 +2,7 @@
  * bsnes-jg - Super Nintendo emulator
  *
  * Copyright (C) 2004-2020 byuu
- * Copyright (C) 2020-2022 Rupert Carmichael
+ * Copyright (C) 2020-2024 Rupert Carmichael
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 namespace SuperFamicom {
 
 void setInputPoll(int16_t (*)(unsigned, unsigned, unsigned));
+void setInputPollGamepad(unsigned (*)(unsigned));
 
 // SNES controller port pinout:
 //  -------------------------------

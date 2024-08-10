@@ -227,6 +227,10 @@ void Interface::setInputCallback(int16_t (*cb)(unsigned, unsigned, unsigned)) {
   setInputPoll(cb);
 }
 
+void Interface::setInputGamepadCallback(unsigned (*cb)(unsigned)) {
+  setInputPollGamepad(cb);
+}
+
 void Interface::setLogCallback(void (*cb)(int, const char *, ...)) {
   logger.setCallback(cb);
 }

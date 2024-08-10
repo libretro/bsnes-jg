@@ -525,6 +525,25 @@ static void videoFrame(const uint16_t *data, unsigned pitch, unsigned w,
 
 static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
 
+static unsigned pollInputGamepad(unsigned port) {
+    unsigned b = 0;
+
+    if (input_device[port]->button[0]) b |= Input::Gamepad::Up;
+    if (input_device[port]->button[1]) b |= Input::Gamepad::Down;
+    if (input_device[port]->button[2]) b |= Input::Gamepad::Left;
+    if (input_device[port]->button[3]) b |= Input::Gamepad::Right;
+    if (input_device[port]->button[4]) b |= Input::Gamepad::Select;
+    if (input_device[port]->button[5]) b |= Input::Gamepad::Start;
+    if (input_device[port]->button[6]) b |= Input::Gamepad::A;
+    if (input_device[port]->button[7]) b |= Input::Gamepad::B;
+    if (input_device[port]->button[8]) b |= Input::Gamepad::X;
+    if (input_device[port]->button[9]) b |= Input::Gamepad::Y;
+    if (input_device[port]->button[10]) b |= Input::Gamepad::L;
+    if (input_device[port]->button[11]) b |= Input::Gamepad::R;
+
+    return b;
+}
+
 static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
     if (device == SuperFamicom::ID::Device::SuperScope) {
         switch (input) {
@@ -686,6 +705,7 @@ int jg_init(void) {
     // Create interface and set callbacks
     interface = new SuperFamicom::Interface;
     interface->setInputCallback(&pollInput);
+    interface->setInputGamepadCallback(&pollInputGamepad);
     interface->setOpenFileCallback(&fileOpenV);
     interface->setOpenStreamCallback(&fileOpenS);
     interface->setLogCallback(jg_cb_log);
