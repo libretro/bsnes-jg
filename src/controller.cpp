@@ -104,10 +104,6 @@ private:
 };
 
 struct SuperMultitap : Controller {
-  enum : unsigned {
-    Up, Down, Left, Right, B, A, Y, X, L, R, Select, Start,
-  };
-
   SuperMultitap(unsigned);
 
   uint8_t data();
@@ -121,9 +117,7 @@ private:
   unsigned counter2;
 
   struct Gamepad {
-    bool b, y, select, start;
-    bool up, down, left, right;
-    bool a, x, l, r;
+    unsigned bits;
   } gamepads[4];
 };
 
@@ -456,20 +450,13 @@ SuperMultitap::SuperMultitap(unsigned deviceID) : Controller(deviceID) {
 
 uint8_t SuperMultitap::data() {
   if(latched) return 2;  //device detection
-  unsigned counter, a, b;
+
+  unsigned a = 0, b = 1;
 
   if(iobit()) {
-    counter = counter1;
-    if(counter >= 16) return 3;
-    counter1++;
-    if(counter >= 12) return 0;
     a = 0;  //controller 2
     b = 1;  //controller 3
   } else {
-    counter = counter2;
-    if(counter >= 16) return 3;
-    counter2++;
-    if(counter >= 12) return 0;
     a = 2;  //controller 4
     b = 3;  //controller 5
   }
@@ -477,21 +464,10 @@ uint8_t SuperMultitap::data() {
   Gamepad& padA = gamepads[a];
   Gamepad& padB = gamepads[b];
 
-  switch(counter) {
-    case  0: return padA.b << 0 | padB.b << 1;
-    case  1: return padA.y << 0 | padB.y << 1;
-    case  2: return padA.select << 0 | padB.select << 1;
-    case  3: return padA.start << 0 | padB.start << 1;
-    case  4: return (padA.up & !padA.down) << 0 | (padB.up & !padB.down) << 1;
-    case  5: return (padA.down & !padA.up) << 0 | (padB.down & !padB.up) << 1;
-    case  6: return (padA.left & !padA.right) << 0 | (padB.left & !padB.right) << 1;
-    case  7: return (padA.right & !padA.left) << 0 | (padB.right & !padB.left) << 1;
-    case  8: return padA.a << 0 | padB.a << 1;
-    case  9: return padA.x << 0 | padB.x << 1;
-    case 10: return padA.l << 0 | padB.l << 1;
-    case 11: return padA.r << 0 | padB.r << 1;
-  }
-  return 0; // unreachable
+  padA.bits = (padA.bits << 1) | 1;
+  padB.bits = (padB.bits << 1) | 1;
+
+  return ((padA.bits >> 16) & 1) | ((padB.bits >> 15) & 2);
 }
 
 void SuperMultitap::latch(bool data) {
@@ -502,19 +478,7 @@ void SuperMultitap::latch(bool data) {
 
     if(latched == 0) {
       for(unsigned id = 0; id < 4; ++id) {
-        Gamepad& gamepad = gamepads[id];
-        gamepad.b      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + B);
-        gamepad.y      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Y);
-        gamepad.select = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Select);
-        gamepad.start  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Start);
-        gamepad.up     = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Up);
-        gamepad.down   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Down);
-        gamepad.left   = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Left);
-        gamepad.right  = inputPoll(port, ID::Device::SuperMultitap, id * 12 + Right);
-        gamepad.a      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + A);
-        gamepad.x      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + X);
-        gamepad.l      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + L);
-        gamepad.r      = inputPoll(port, ID::Device::SuperMultitap, id * 12 + R);
+        gamepads[id].bits = inputPollGamepad(id + 1); // Start from gamepad 2
       }
     }
   }

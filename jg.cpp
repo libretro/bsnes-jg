@@ -163,6 +163,7 @@ static int hmult = 2;
 static int vmult = 1;
 static int ss_offset_x = 0;
 static int ss_offset_y = 0;
+static unsigned numplugged = 2;
 
 static uint8_t addon = 0;
 
@@ -211,6 +212,7 @@ static void aspectRatio(void) {
 
 static void inputSetup(void) {
     // Set up inputs
+    numplugged = 2;
     int multitap = 0;
     int port[] = { settings_bsnes[PORT1].val, settings_bsnes[PORT2].val };
     unsigned portid[] = {
@@ -230,6 +232,7 @@ static void inputSetup(void) {
     for (size_t i = 0; i < db_multitap_games.size(); ++i) {
         if ((std::string)gameinfo.md5 == db_multitap_games[i].md5) {
             multitap = db_multitap_games[i].players;
+            numplugged = multitap;
             port[1] = port[1] ? port[1] : 3;
             break;
         }
@@ -523,9 +526,11 @@ static void videoFrame(const uint16_t *data, unsigned pitch, unsigned w,
     vidinfo.buf = const_cast<void*>(reinterpret_cast<const void*>(data));
 }
 
-static uint8_t imap[12] = { 0, 1, 2, 3, 7, 6, 9, 8, 10, 11, 4, 5 };
-
 static unsigned pollInputGamepad(unsigned port) {
+    if (port >= numplugged) {
+      return 0;
+    }
+
     unsigned b = 0;
 
     if (input_device[port]->button[0]) b |= Input::Gamepad::Up;
@@ -623,11 +628,8 @@ static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
             }
         }
     }
-    else if (device == SuperFamicom::ID::Device::SuperMultitap) {
-        return input_device[(input / 12) + 1]->button[imap[input % 12]];
-    }
 
-    return port > 1 ? 0 : input_device[port]->button[imap[input]];
+    return 0;
 }
 
 static inline std::vector<uint8_t> bufToVec(void *data, size_t size) {
