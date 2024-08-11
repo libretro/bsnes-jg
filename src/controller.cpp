@@ -101,6 +101,16 @@ private:
   bool dy;     //y-direction
   bool l;      //left button
   bool r;      //right button
+
+  /* It seems that speed 0 is a linear value from 0-127, and speeds 1 and 2
+     use a LUT where values above 7 are capped to the value of last item in the
+     LUT for the respective speed. Further research may be required.
+     https://snes.nesdev.org/wiki/Mouse
+  */
+  unsigned speedlut[2][8]{
+    {0, 1, 2, 3, 8, 10, 12, 21},
+    {0, 1, 4, 9, 12, 20, 24, 28}
+  };
 };
 
 struct SuperMultitap : Controller {
@@ -431,14 +441,14 @@ void Mouse::latch(bool data) {
     if(x < 0) x = -x;  //abs(position_x)
     if(y < 0) y = -y;  //abs(position_y)
 
-    double multiplier = 1.0;
-    if(speed == 1) multiplier = 1.5;
-    if(speed == 2) multiplier = 2.0;
-    x = (double)x * multiplier;
-    y = (double)y * multiplier;
-
-    x = std::min(127, x);
-    y = std::min(127, y);
+    if (speed) {
+      x = speedlut[speed - 1][std::min(7, x)];
+      y = speedlut[speed - 1][std::min(7, y)];
+    }
+    else {
+      x = std::min(127, x);
+      y = std::min(127, y);
+    }
   }
 }
 
