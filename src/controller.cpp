@@ -28,6 +28,7 @@
 static int16_t (*inputPoll)(unsigned, unsigned, unsigned);
 static unsigned (*inputPollGamepad)(unsigned);
 static int (*inputPollMouse)(unsigned, unsigned);
+static int (*inputPollSuperScope)(unsigned, unsigned);
 
 namespace SuperFamicom {
 
@@ -41,6 +42,10 @@ void setInputPollGamepad(unsigned (*cb)(unsigned)) {
 
 void setInputPollMouse(int (*cb)(unsigned, unsigned)) {
   inputPollMouse = cb;
+}
+
+void setInputPollSuperScope(int (*cb)(unsigned, unsigned)) {
+  inputPollSuperScope = cb;
 }
 
 struct Gamepad : Controller {
@@ -143,6 +148,7 @@ struct SuperScope : Controller {
 private:
   bool latched;
   unsigned counter;
+  unsigned bits;
 
   int x;
   int y;
@@ -156,8 +162,6 @@ private:
   bool oldturbo;
   bool triggerlock;
   bool pauselock;
-
-  unsigned prev;
 };
 
 ControllerPort controllerPort1;
@@ -495,6 +499,8 @@ void SuperMultitap::latch(bool data) {
 //require manual polling of PIO ($4201.d6) to determine when iobit was written.
 //Note that no commercial game ever utilizes a Super Scope in port 1.
 
+// TODO: Actually make this accurate. It is a hacked up mess right now.
+
 SuperScope::SuperScope(unsigned deviceID) : Controller(deviceID) {
   latched = 0;
   counter = 0;
@@ -512,16 +518,15 @@ SuperScope::SuperScope(unsigned deviceID) : Controller(deviceID) {
   oldturbo    = false;
   triggerlock = false;
   pauselock   = false;
-
-  prev = 0;
 }
 
 uint8_t SuperScope::data() {
   if(counter >= 8) return 1;
 
   if(counter == 0) {
+    counter = 1;
     //turbo is a switch; toggle is edge sensitive
-    bool newturbo = inputPoll(port, ID::Device::SuperScope, Turbo);
+    bool newturbo = inputPollSuperScope(port, Turbo);
     if(newturbo && !oldturbo) {
       turbo = !turbo;  //toggle state
     }
@@ -530,7 +535,7 @@ uint8_t SuperScope::data() {
     //trigger is a button
     //if turbo is active, trigger is level sensitive; otherwise, it is edge sensitive
     trigger = false;
-    bool newtrigger = inputPoll(port, ID::Device::SuperScope, Trigger);
+    bool newtrigger = inputPollSuperScope(port, Trigger);
     if(newtrigger && (turbo || !triggerlock)) {
       trigger = true;
       triggerlock = true;
@@ -539,11 +544,11 @@ uint8_t SuperScope::data() {
     }
 
     //cursor is a button; it is always level sensitive
-    cursor = inputPoll(port, ID::Device::SuperScope, Cursor);
+    cursor = inputPollSuperScope(port, Cursor);
 
     //pause is a button; it is always edge sensitive
     pause = false;
-    bool newpause = inputPoll(port, ID::Device::SuperScope, Pause);
+    bool newpause = inputPollSuperScope(port, Pause);
     if(newpause && !pauselock) {
       pause = true;
       pauselock = true;
@@ -553,20 +558,16 @@ uint8_t SuperScope::data() {
 
     // Changes were made here because some games need their coords offset JOLLYGOOD
     offscreen = (x < -16 || y < -16 || x >= 512 || y >= 480);
+
+    bits = (offscreen ? 0 : (trigger << 15)) | 0xff;
+    bits |= (cursor << 14);
+    bits |= (turbo << 13);
+    bits |= (pause << 12);
+    bits |= (offscreen << 9);
   }
 
-  switch(counter++) {
-    case 0: return offscreen ? 0 : trigger;
-    case 1: return cursor;
-    case 2: return turbo;
-    case 3: return pause;
-    case 4: return 0;
-    case 5: return 0;
-    case 6: return offscreen;
-    case 7: return 0;  //noise (1 = yes)
-  }
-
-  return 0; // unreachable
+  bits = (bits << 1) | 1;
+  return (bits >> 16) & 1;
 }
 
 void SuperScope::latch(bool data) {
@@ -577,8 +578,8 @@ void SuperScope::latch(bool data) {
 }
 
 void SuperScope::latch() {
-  x = inputPoll(port, ID::Device::SuperScope, X);
-  y = inputPoll(port, ID::Device::SuperScope, Y);
+  x = inputPollSuperScope(port, X);
+  y = inputPollSuperScope(port, Y);
   offscreen = (x < 0 || y < 0 || x >= 512 || y >= 480);
   if(!offscreen) ppu.latchCounters(x, y);
 }

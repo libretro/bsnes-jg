@@ -89,6 +89,7 @@ struct Interface {
   void setInputCallback(int16_t (*)(unsigned, unsigned, unsigned));
   void setInputGamepadCallback(unsigned (*)(unsigned));
   void setInputMouseCallback(int (*)(unsigned, unsigned));
+  void setInputSuperScopeCallback(int (*)(unsigned, unsigned));
   void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
   void setOpenStreamCallback(bool (*)(std::string, std::stringstream&));
   void setLogCallback(void (*)(int, const char *, ...));

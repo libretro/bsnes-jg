@@ -573,40 +573,41 @@ static int pollInputMouse(unsigned port, unsigned phase) {
     return b;
 }
 
-static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
-    if (device == SuperFamicom::ID::Device::SuperScope) {
-        switch (input) {
-            case 0: { // X
-                return (input_device[port]->coord[0] / hmult) + ss_offset_x;
+static int pollInputSuperScope(unsigned port, unsigned phase) {
+    switch (phase) {
+        case 0: { // X
+            return (input_device[port]->coord[0] / hmult) + ss_offset_x;
+        }
+        case 1: { // Y
+            return (input_device[port]->coord[1] / vmult) + ss_offset_y;
+        }
+        case 2: { // Trigger
+            int ret = 0;
+            if (input_device[port]->button[1]) { // Offscreen
+                input_device[port]->coord[0] = 1026;
+                ret = 1;
             }
-            case 1: { // Y
-                return (input_device[port]->coord[1] / vmult) + ss_offset_y;
-            }
-            case 2: { // Trigger
-                int ret = 0;
-                if (input_device[port]->button[1]) { // Offscreen
-                    input_device[port]->coord[0] = 1026;
-                    ret = 1;
-                }
-                else
-                    ret = input_device[port]->button[0];
-                return ret;
-            }
-            case 3: { // Cursor
-                return input_device[port]->button[2];
-            }
-            case 4: { // Turbo
-                return input_device[port]->button[3];
-            }
-            case 5: { // Pause
-                return input_device[port]->button[4];
-            }
-            default: {
-                return 0;
-            }
+            else
+                ret = input_device[port]->button[0];
+            return ret;
+        }
+        case 3: { // Cursor
+            return input_device[port]->button[2];
+        }
+        case 4: { // Turbo
+            return input_device[port]->button[3];
+        }
+        case 5: { // Pause
+            return input_device[port]->button[4];
+        }
+        default: {
+            return 0;
         }
     }
-    else if (device == SuperFamicom::ID::Device::Justifier) {
+}
+
+static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
+    if (device == SuperFamicom::ID::Device::Justifier) {
         switch (input) {
             case 0: { // X
                 return input_device[port]->coord[0] / hmult;
@@ -713,6 +714,7 @@ int jg_init(void) {
     interface->setInputCallback(&pollInput);
     interface->setInputGamepadCallback(&pollInputGamepad);
     interface->setInputMouseCallback(&pollInputMouse);
+    interface->setInputSuperScopeCallback(&pollInputSuperScope);
     interface->setOpenFileCallback(&fileOpenV);
     interface->setOpenStreamCallback(&fileOpenS);
     interface->setLogCallback(jg_cb_log);
