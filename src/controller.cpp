@@ -101,8 +101,8 @@ private:
   unsigned speed;  //0 = slow, 1 = normal, 2 = fast
 
   /* It seems that speed 0 is a linear value from 0-127, and speeds 1 and 2
-     use a LUT where values above 7 are capped to the value of last item in the
-     LUT for the respective speed. Further research may be required.
+     use a LUT where values above 7 are capped to the value of the last item in
+     the LUT for the respective speed. Further research may be required.
      https://snes.nesdev.org/wiki/Mouse
   */
   unsigned speedlut[2][8]{
@@ -417,14 +417,24 @@ void Mouse::latch(bool data) {
         y = -y; // abs
     }
 
-    if (speed) {
+    /* Do not use the speed LUT because though it is more accurate, it leads to
+       a bad experience in the context of emulation.
+    */
+    /*if (speed) {
       x = speedlut[speed - 1][std::min(7, x)];
       y = speedlut[speed - 1][std::min(7, y)];
     }
     else {
       x = std::min(127, x);
       y = std::min(127, y);
+    }*/
+    if (speed) {
+      x *= (speed + 0.5);
+      y *= (speed + 0.5);
     }
+
+    x = std::min(127, x);
+    y = std::min(127, y);
 
     bits |= x;
     bits |= (y << 8);
