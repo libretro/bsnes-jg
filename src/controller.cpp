@@ -27,6 +27,7 @@
 
 static int16_t (*inputPoll)(unsigned, unsigned, unsigned);
 static unsigned (*inputPollGamepad)(unsigned);
+static int (*inputPollMouse)(unsigned, unsigned);
 
 namespace SuperFamicom {
 
@@ -36,6 +37,10 @@ void setInputPoll(int16_t (*cb)(unsigned, unsigned, unsigned)) {
 
 void setInputPollGamepad(unsigned (*cb)(unsigned)) {
   inputPollGamepad = cb;
+}
+
+void setInputPollMouse(int (*cb)(unsigned, unsigned)) {
+  inputPollMouse = cb;
 }
 
 struct Gamepad : Controller {
@@ -92,15 +97,8 @@ private:
   using Controller::latch;
 
   bool latched;
-  unsigned counter;
-
+  unsigned bits;
   unsigned speed;  //0 = slow, 1 = normal, 2 = fast
-  int  x;      //x-coordinate
-  int  y;      //y-coordinate
-  bool dx;     //x-direction
-  bool dy;     //y-direction
-  bool l;      //left button
-  bool r;      //right button
 
   /* It seems that speed 0 is a linear value from 0-127, and speeds 1 and 2
      use a LUT where values above 7 are capped to the value of last item in the
@@ -366,15 +364,7 @@ void Justifier::latch() {
 
 Mouse::Mouse(unsigned deviceID) : Controller(deviceID) {
   latched = 0;
-  counter = 0;
-
   speed = 0;
-  x = 0;
-  y = 0;
-  dx = 0;
-  dy = 0;
-  l = 0;
-  r = 0;
 }
 
 uint8_t Mouse::data() {
@@ -383,63 +373,49 @@ uint8_t Mouse::data() {
     return 0;
   }
 
-  if(counter >= 32) return 1;
-
-  switch(counter++) { default:
-    case  0: return 0;
-    case  1: return 0;
-    case  2: return 0;
-    case  3: return 0;
-    case  4: return 0;
-    case  5: return 0;
-    case  6: return 0;
-    case  7: return 0;
-
-    case  8: return r;
-    case  9: return l;
-    case 10: return (speed >> 1) & 1;
-    case 11: return (speed >> 0) & 1;
-
-    case 12: return 0;  //signature
-    case 13: return 0;  // ||
-    case 14: return 0;  // ||
-    case 15: return 1;  // ||
-
-    case 16: return dy;
-    case 17: return (y >> 6) & 1;
-    case 18: return (y >> 5) & 1;
-    case 19: return (y >> 4) & 1;
-    case 20: return (y >> 3) & 1;
-    case 21: return (y >> 2) & 1;
-    case 22: return (y >> 1) & 1;
-    case 23: return (y >> 0) & 1;
-
-    case 24: return dx;
-    case 25: return (x >> 6) & 1;
-    case 26: return (x >> 5) & 1;
-    case 27: return (x >> 4) & 1;
-    case 28: return (x >> 3) & 1;
-    case 29: return (x >> 2) & 1;
-    case 30: return (x >> 1) & 1;
-    case 31: return (x >> 0) & 1;
-  }
+  unsigned ret = bits >> 31;
+  bits = (bits << 1) | 1;
+  return ret;
 }
 
 void Mouse::latch(bool data) {
   if(latched != data) {
     latched = data;
-    counter = 0;
 
-    x = inputPoll(port, ID::Device::Mouse, X);  //-n = left, 0 = center, +n = right
-    y = inputPoll(port, ID::Device::Mouse, Y);  //-n = up,   0 = center, +n = down
-    l = inputPoll(port, ID::Device::Mouse, Left);
-    r = inputPoll(port, ID::Device::Mouse, Right);
+    int x = inputPollMouse(port, 0); // X relative motion
+    int y = inputPollMouse(port, 1); // Y relative motion
+    int b = inputPollMouse(port, 2); // Buttons
 
-    dx = x < 0;  //0 = right, 1 = left
-    dy = y < 0;  //0 = down,  1 = up
+    /* 76543210  First byte
+       ++++++++- Always zero: 00000000
 
-    if(x < 0) x = -x;  //abs(position_x)
-    if(y < 0) y = -y;  //abs(position_y)
+       76543210  Second byte
+       ||||++++- Signature: 0001
+       ||++----- Current sensitivity (0: low; 1: medium; 2: high)
+       |+------- Left button (1: pressed)
+       +-------- Right button (1: pressed)
+
+       76543210  Third byte
+       |+++++++- Vertical displacement since last read
+       +-------- Direction (1: up; 0: down)
+
+       76543210  Fourth byte
+       |+++++++- Horizontal displacement since last read
+       +-------- Direction (1: left; 0: right)
+    */
+    bits = 0x10000; // Signature
+    bits |= (speed << 20);
+    bits |= b;
+
+    if (x < 0) {
+        bits |= (1 << 7); // Left
+        x = -x; // abs
+    }
+
+    if (y < 0) {
+        bits |= (1 << 15); // Up
+        y = -y; // abs
+    }
 
     if (speed) {
       x = speedlut[speed - 1][std::min(7, x)];
@@ -449,6 +425,9 @@ void Mouse::latch(bool data) {
       x = std::min(127, x);
       y = std::min(127, y);
     }
+
+    bits |= x;
+    bits |= (y << 8);
   }
 }
 

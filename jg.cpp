@@ -549,6 +549,30 @@ static unsigned pollInputGamepad(unsigned port) {
     return b;
 }
 
+static int pollInputMouse(unsigned port, unsigned phase) {
+    int b = 0;
+
+    switch(phase) {
+        case 0: { // X
+            input_device[port]->rel[0] /= 2;
+            b = input_device[port]->rel[0];
+            break;
+        }
+        case 1: { // Y
+            input_device[port]->rel[1] /= 2;
+            b = input_device[port]->rel[1];
+            break;
+        }
+        case 2: { // Buttons (pre-shifted)
+            if (input_device[port]->button[0]) b |= Input::Mouse::ButtonL;
+            if (input_device[port]->button[1]) b |= Input::Mouse::ButtonR;
+            break;
+        }
+    }
+
+    return b;
+}
+
 static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
     if (device == SuperFamicom::ID::Device::SuperScope) {
         switch (input) {
@@ -579,26 +603,6 @@ static int16_t pollInput(unsigned port, unsigned device, unsigned input) {
             }
             default: {
                 return 0;
-            }
-        }
-    }
-    else if (device == SuperFamicom::ID::Device::Mouse) {
-        switch (input) {
-            case 0: { // X
-                int ret = input_device[port]->rel[0] / 2;
-                input_device[port]->rel[0] -= ret;
-                return ret;
-            }
-            case 1: { // Y
-                int ret = input_device[port]->rel[1] / 2;
-                input_device[port]->rel[1] -= ret;
-                return ret;
-            }
-            case 2: { // Left Click
-                return input_device[port]->button[0];
-            }
-            case 3: { // Right Click
-                return input_device[port]->button[1];
             }
         }
     }
@@ -708,6 +712,7 @@ int jg_init(void) {
     interface = new SuperFamicom::Interface;
     interface->setInputCallback(&pollInput);
     interface->setInputGamepadCallback(&pollInputGamepad);
+    interface->setInputMouseCallback(&pollInputMouse);
     interface->setOpenFileCallback(&fileOpenV);
     interface->setOpenStreamCallback(&fileOpenS);
     interface->setLogCallback(jg_cb_log);
