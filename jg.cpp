@@ -27,7 +27,6 @@
 #include <jg/jg_snes.h>
 
 #include "bsnes.hpp"
-#include "settings.hpp"
 
 #include "gamedb.hpp"
 #include "version.h"
@@ -259,29 +258,28 @@ static void inputSetup(void) {
         switch (port[i]) {
             default: case 0: case 1: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
-                interface->connect(i, SuperFamicom::ID::Device::Gamepad);
+                interface->connect(i, 1);
                 break;
             }
             case 2: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_MOUSE);
-                interface->connect(i, SuperFamicom::ID::Device::Mouse);
+                interface->connect(i, port[i]);
                 break;
             }
             case 3: {
                 for (int j = 1; j < (multitap ? multitap : NUMINPUTS); ++j)
                     inputinfo[j] = jg_snes_inputinfo(j, JG_SNES_PAD);
-
-                interface->connect(1, SuperFamicom::ID::Device::SuperMultitap);
+                interface->connect(1, port[i]);
                 break;
             }
             case 4: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_SUPERSCOPE);
-                interface->connect(i, SuperFamicom::ID::Device::SuperScope);
+                interface->connect(i, port[i]);
                 break;
             }
             case 5: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_JUSTIFIER);
-                interface->connect(i, SuperFamicom::ID::Device::Justifier);
+                interface->connect(i, port[i]);
                 ss_offset_x = ss_offset_y = 0;
                 break;
             }
