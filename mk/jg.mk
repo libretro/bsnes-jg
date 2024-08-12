@@ -45,7 +45,7 @@ ifeq ($(UNAME), Darwin)
 	override LIB_MAJOR := lib$(NAME).$(VERSION_MAJOR).dylib
 	override LIB_VERSION := lib$(NAME).$(VERSION).dylib
 	override SHARED += -dynamiclib
-	override SONAME := -Wl,-install_name,$(LIB_MAJOR)
+	override SONAME := -Wl,-install_name,$(LIBDIR)/$(LIB_MAJOR)
 	override SYMBOLS_LIST := $(SYMBOLS)
 	override UNDEFINED := -Wl,-undefined,error
 	override VERSION_SCRIPT := -Wl,-exported_symbols_list
@@ -129,6 +129,13 @@ else
 		shared install-shared install-strip-shared \
 		static install-static install-strip-static \
 		install-headers install-pkgconfig
+endif
+
+ifeq ($(UNAME), Darwin)
+ifneq ($(VERSION_MAJOR), 0)
+	override SONAME += -Wl,-compatibility_version,$(VERSION_MAJOR) \
+		-Wl,-current_version,$(VERSION)
+endif
 endif
 
 ifneq ($(SYMBOLS_LIST),)
