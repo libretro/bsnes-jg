@@ -215,10 +215,6 @@ static void inputSetup(void) {
     numplugged = 2;
     int multitap = 0;
     int port[] = { settings_bsnes[PORT1].val, settings_bsnes[PORT2].val };
-    unsigned portid[] = {
-        SuperFamicom::ID::Port::Controller1,
-        SuperFamicom::ID::Port::Controller2
-    };
 
     // Autodetect Mouse
     for (size_t i = 0; i < db_mouse_games.size(); ++i) {
@@ -263,14 +259,12 @@ static void inputSetup(void) {
         switch (port[i]) {
             default: case 0: case 1: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
-                interface->connect(portid[i],
-                    SuperFamicom::ID::Device::Gamepad);
+                interface->connect(i, SuperFamicom::ID::Device::Gamepad);
                 break;
             }
             case 2: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_MOUSE);
-                interface->connect(portid[i],
-                    SuperFamicom::ID::Device::Mouse);
+                interface->connect(i, SuperFamicom::ID::Device::Mouse);
                 break;
             }
             case 3: {
@@ -282,14 +276,12 @@ static void inputSetup(void) {
             }
             case 4: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_SUPERSCOPE);
-                interface->connect(portid[i],
-                    SuperFamicom::ID::Device::SuperScope);
+                interface->connect(i, SuperFamicom::ID::Device::SuperScope);
                 break;
             }
             case 5: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_JUSTIFIER);
-                interface->connect(portid[i],
-                    SuperFamicom::ID::Device::Justifier);
+                interface->connect(i, SuperFamicom::ID::Device::Justifier);
                 ss_offset_x = ss_offset_y = 0;
                 break;
             }
