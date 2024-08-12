@@ -86,7 +86,6 @@ struct Interface {
   void setAudioQuality(unsigned);
   void setCoprocDelayedSync(bool);
   void setCoprocPreferHLE(bool);
-  void setInputCallback(int16_t (*)(unsigned, unsigned, unsigned));
   void setInputGamepadCallback(unsigned (*)(unsigned));
   void setInputMouseCallback(int (*)(unsigned, unsigned));
   void setInputSuperScopeCallback(int (*)(unsigned, unsigned));

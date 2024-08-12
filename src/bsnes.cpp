@@ -223,10 +223,6 @@ void Interface::setCoprocPreferHLE(bool value) {
   configuration.coprocessor.preferHLE = value;
 }
 
-void Interface::setInputCallback(int16_t (*cb)(unsigned, unsigned, unsigned)) {
-  setInputPoll(cb);
-}
-
 void Interface::setInputGamepadCallback(unsigned (*cb)(unsigned)) {
   setInputPollGamepad(cb);
 }

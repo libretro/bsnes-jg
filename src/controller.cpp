@@ -25,16 +25,11 @@
 
 #include "controller.hpp"
 
-static int16_t (*inputPoll)(unsigned, unsigned, unsigned);
 static unsigned (*inputPollGamepad)(unsigned);
 static int (*inputPollMouse)(unsigned, unsigned);
 static int (*inputPollSuperScope)(unsigned, unsigned);
 
 namespace SuperFamicom {
-
-void setInputPoll(int16_t (*cb)(unsigned, unsigned, unsigned)) {
-  inputPoll = cb;
-}
 
 void setInputPollGamepad(unsigned (*cb)(unsigned)) {
   inputPollGamepad = cb;
@@ -77,7 +72,6 @@ private:
   const unsigned device;
   bool latched;
   unsigned counter;
-  unsigned prev;
 
   bool active;
   struct Player {
@@ -265,7 +259,6 @@ device(!chained ? ID::Device::Justifier : ID::Device::Justifiers)
   latched = 0;
   counter = 0;
   active = 0;
-  prev = 0;
 
   player1.x = 256 / 2;
   player1.y = 240 / 2;
@@ -290,14 +283,14 @@ uint8_t Justifier::data() {
   if(counter >= 32) return 1;
 
   if(counter == 0) {
-    player1.trigger = inputPoll(port, device, 0 + Trigger);
-    player1.start   = inputPoll(port, device, 0 + Start);
+    player1.trigger = inputPollSuperScope(port, Trigger);
+    player1.start   = inputPollSuperScope(port, Start);
   }
 
-  if(counter == 0 && chained) {
+  /*if(counter == 0 && chained) {
     player2.trigger = inputPoll(port, device, 4 + Trigger);
     player2.start   = inputPoll(port, device, 4 + Start);
-  }
+  }*/
 
   switch(counter++) {
     case  0: return 0;
@@ -353,17 +346,17 @@ void Justifier::latch(bool data) {
 
 void Justifier::latch() {
   if(!active) {
-    player1.x = inputPoll(port, device, 0 + X);
-    player1.y = inputPoll(port, device, 0 + Y);
+    player1.x = inputPollSuperScope(port, X);
+    player1.y = inputPollSuperScope(port, Y);
     bool offscreen = (player1.x < 0 || player1.y < 0 || player1.x >= 256 || player1.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player1.x, player1.y);
   }
-  else {
+  /*else {
     player2.x = inputPoll(port, device, 4 + X);
     player2.y = inputPoll(port, device, 4 + Y);
     bool offscreen = (player2.x < 0 || player2.y < 0 || player2.x >= 256 || player2.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player2.x, player2.y);
-  }
+  }*/
 }
 
 Mouse::Mouse(unsigned deviceID) : Controller(deviceID) {
