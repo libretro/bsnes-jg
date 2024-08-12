@@ -69,7 +69,6 @@ struct Justifier : Controller {
 
 private:
   const bool chained;  //true if the second justifier is attached to the first
-  const unsigned device;
   bool latched;
   unsigned counter;
 
@@ -249,8 +248,7 @@ void Gamepad::latch(bool data) {
 
 Justifier::Justifier(unsigned deviceID, bool chain):
 Controller(deviceID),
-chained(chain),
-device(!chained ? ID::Device::Justifier : ID::Device::Justifiers)
+chained(chain)
 {
   latched = 0;
   counter = 0;
