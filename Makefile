@@ -4,6 +4,9 @@ SOURCEDIR := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword \
 NAME := bsnes
 JGNAME := $(NAME)-jg
 
+DESCRIPTION := bsnes-jg is a cycle accurate emulator for the Super \
+	Famicom/Super Nintendo.
+
 FLAGS := -std=c++11
 FLAGS_C99 := -std=c99
 FLAGS_CO := -std=c89
@@ -22,6 +25,8 @@ LIBS_REQUIRES := samplerate
 
 DOCS := COPYING README
 
+HEADERS := src/bsnes.hpp
+
 # Object dirs
 MKDIRS := deps/byuuML \
 	deps/gb \
@@ -33,10 +38,12 @@ MKDIRS := deps/byuuML \
 
 override INSTALL_DATA := 1
 override INSTALL_EXAMPLE := 0
-override INSTALL_SHARED := 0
+override INSTALL_SHARED := 1
 
 include $(SOURCEDIR)/version.h
 include $(SOURCEDIR)/mk/jg.mk
+
+override LIBS_PRIVATE += $(LIBS)
 
 INCLUDES += $(CFLAGS_SAMPLERATE) -I$(DEPDIR)
 LIBS += $(LIBS_SAMPLERATE)
