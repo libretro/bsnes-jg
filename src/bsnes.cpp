@@ -231,8 +231,8 @@ void Interface::setInputMouseCallback(int (*cb)(unsigned, unsigned)) {
   setInputPollMouse(cb);
 }
 
-void Interface::setInputSuperScopeCallback(int (*cb)(unsigned, unsigned)) {
-  setInputPollSuperScope(cb);
+void Interface::setInputLightgunCallback(int (*cb)(unsigned, unsigned)) {
+  setInputPollLightgun(cb);
 }
 
 void Interface::setLogCallback(void (*cb)(int, const char *, ...)) {

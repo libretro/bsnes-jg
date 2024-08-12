@@ -24,7 +24,7 @@ namespace SuperFamicom {
 
 void setInputPollGamepad(unsigned (*)(unsigned));
 void setInputPollMouse(int (*)(unsigned, unsigned));
-void setInputPollSuperScope(int (*)(unsigned, unsigned));
+void setInputPollLightgun(int (*)(unsigned, unsigned));
 
 // SNES controller port pinout:
 //  -------------------------------

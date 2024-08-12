@@ -574,7 +574,7 @@ static int pollInputMouse(unsigned port, unsigned phase) {
     return b;
 }
 
-static int pollInputSuperScope(unsigned port, unsigned phase) {
+static int pollInputLightgun(unsigned port, unsigned phase) {
     switch (phase) {
         case 0: { // X
             return (input_device[port]->coord[0] / hmult) + ss_offset_x;
@@ -683,7 +683,7 @@ int jg_init(void) {
     interface = new SuperFamicom::Interface;
     interface->setInputGamepadCallback(&pollInputGamepad);
     interface->setInputMouseCallback(&pollInputMouse);
-    interface->setInputSuperScopeCallback(&pollInputSuperScope);
+    interface->setInputLightgunCallback(&pollInputLightgun);
     interface->setOpenFileCallback(&fileOpenV);
     interface->setOpenStreamCallback(&fileOpenS);
     interface->setLogCallback(jg_cb_log);

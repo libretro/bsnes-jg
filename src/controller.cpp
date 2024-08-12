@@ -27,7 +27,7 @@
 
 static unsigned (*inputPollGamepad)(unsigned);
 static int (*inputPollMouse)(unsigned, unsigned);
-static int (*inputPollSuperScope)(unsigned, unsigned);
+static int (*inputPollLightgun)(unsigned, unsigned);
 
 namespace SuperFamicom {
 
@@ -39,8 +39,8 @@ void setInputPollMouse(int (*cb)(unsigned, unsigned)) {
   inputPollMouse = cb;
 }
 
-void setInputPollSuperScope(int (*cb)(unsigned, unsigned)) {
-  inputPollSuperScope = cb;
+void setInputPollLightgun(int (*cb)(unsigned, unsigned)) {
+  inputPollLightgun = cb;
 }
 
 struct Gamepad : Controller {
@@ -83,10 +83,6 @@ private:
 };
 
 struct Mouse : Controller {
-  enum : unsigned {
-    X, Y, Left, Right,
-  };
-
   Mouse(unsigned);
 
   uint8_t data();
@@ -283,8 +279,8 @@ uint8_t Justifier::data() {
   if(counter >= 32) return 1;
 
   if(counter == 0) {
-    player1.trigger = inputPollSuperScope(port, Trigger);
-    player1.start   = inputPollSuperScope(port, Start);
+    player1.trigger = inputPollLightgun(port, Trigger);
+    player1.start   = inputPollLightgun(port, Start);
   }
 
   /*if(counter == 0 && chained) {
@@ -346,8 +342,8 @@ void Justifier::latch(bool data) {
 
 void Justifier::latch() {
   if(!active) {
-    player1.x = inputPollSuperScope(port, X);
-    player1.y = inputPollSuperScope(port, Y);
+    player1.x = inputPollLightgun(port, X);
+    player1.y = inputPollLightgun(port, Y);
     bool offscreen = (player1.x < 0 || player1.y < 0 || player1.x >= 256 || player1.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player1.x, player1.y);
   }
@@ -519,7 +515,7 @@ uint8_t SuperScope::data() {
   if(counter == 0) {
     counter = 1;
     //turbo is a switch; toggle is edge sensitive
-    bool newturbo = inputPollSuperScope(port, Turbo);
+    bool newturbo = inputPollLightgun(port, Turbo);
     if(newturbo && !oldturbo) {
       turbo = !turbo;  //toggle state
     }
@@ -528,7 +524,7 @@ uint8_t SuperScope::data() {
     //trigger is a button
     //if turbo is active, trigger is level sensitive; otherwise, it is edge sensitive
     trigger = false;
-    bool newtrigger = inputPollSuperScope(port, Trigger);
+    bool newtrigger = inputPollLightgun(port, Trigger);
     if(newtrigger && (turbo || !triggerlock)) {
       trigger = true;
       triggerlock = true;
@@ -537,11 +533,11 @@ uint8_t SuperScope::data() {
     }
 
     //cursor is a button; it is always level sensitive
-    cursor = inputPollSuperScope(port, Cursor);
+    cursor = inputPollLightgun(port, Cursor);
 
     //pause is a button; it is always edge sensitive
     pause = false;
-    bool newpause = inputPollSuperScope(port, Pause);
+    bool newpause = inputPollLightgun(port, Pause);
     if(newpause && !pauselock) {
       pause = true;
       pauselock = true;
@@ -571,8 +567,8 @@ void SuperScope::latch(bool data) {
 }
 
 void SuperScope::latch() {
-  x = inputPollSuperScope(port, X);
-  y = inputPollSuperScope(port, Y);
+  x = inputPollLightgun(port, X);
+  y = inputPollLightgun(port, Y);
   offscreen = (x < 0 || y < 0 || x >= 512 || y >= 480);
   if(!offscreen) ppu.latchCounters(x, y);
 }
