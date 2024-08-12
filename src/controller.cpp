@@ -100,10 +100,10 @@ private:
      the LUT for the respective speed. Further research may be required.
      https://snes.nesdev.org/wiki/Mouse
   */
-  unsigned speedlut[2][8]{
+  /*unsigned speedlut[2][8]{
     {0, 1, 2, 3, 8, 10, 12, 21},
     {0, 1, 4, 9, 12, 20, 24, 28}
-  };
+  };*/
 };
 
 struct SuperMultitap : Controller {
