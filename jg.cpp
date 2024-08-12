@@ -63,7 +63,7 @@ static jg_videoinfo_t vidinfo = {
     VIDEO_HEIGHT,       // h
     0,                  // x
     0,                  // y
-    1024,               // p
+    VIDEO_WIDTH << 2,   // p
     ASPECT_NTSC,        // aspect
     NULL
 };
