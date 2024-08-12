@@ -166,7 +166,7 @@ static unsigned numplugged = 2;
 
 static uint8_t addon = 0;
 
-static SuperFamicom::Interface *interface;
+static Bsnes *bsnes;
 
 static struct Location {
     std::string location;
@@ -188,7 +188,7 @@ static void aspectRatio(void) {
 
     switch (settings_bsnes[ASPECT].val) {
         default: case 0: { // Auto Region
-            aspect_ratio = interface->getRegion() == "PAL" ?
+            aspect_ratio = bsnes->getRegion() == "PAL" ?
                 ASPECT_PAL : ASPECT_NTSC;
             break;
         }
@@ -258,28 +258,28 @@ static void inputSetup(void) {
         switch (port[i]) {
             default: case 0: case 1: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
-                interface->connect(i, 1);
+                bsnes->connect(i, 1);
                 break;
             }
             case 2: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_MOUSE);
-                interface->connect(i, port[i]);
+                bsnes->connect(i, port[i]);
                 break;
             }
             case 3: {
                 for (int j = 1; j < (multitap ? multitap : NUMINPUTS); ++j)
                     inputinfo[j] = jg_snes_inputinfo(j, JG_SNES_PAD);
-                interface->connect(1, port[i]);
+                bsnes->connect(1, port[i]);
                 break;
             }
             case 4: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_SUPERSCOPE);
-                interface->connect(i, port[i]);
+                bsnes->connect(i, port[i]);
                 break;
             }
             case 5: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_JUSTIFIER);
-                interface->connect(i, port[i]);
+                bsnes->connect(i, port[i]);
                 ss_offset_x = ss_offset_y = 0;
                 break;
             }
@@ -618,13 +618,13 @@ static bool loadRom(unsigned id) {
             rom.erase(rom.begin(), rom.begin() + 512);
         }
 
-        interface->setRomSuperFamicom(rom, superFamicom.location);
+        bsnes->setRomSuperFamicom(rom, superFamicom.location);
         return true;
     }
     else if (id == 3) {
         std::vector<uint8_t> rom = bufToVec(gameinfo.data, gameinfo.size);
         if (rom.size() < 0x8000) return false;
-        interface->setRomBSMemory(rom, bsMemory.location);
+        bsnes->setRomBSMemory(rom, bsMemory.location);
         return true;
     }
     else if (id == 4) {
@@ -636,7 +636,7 @@ static bool loadRom(unsigned id) {
             rom = bufToVec(gameinfo.data, gameinfo.size);
 
         if (rom.size() < 0x20000) return false;
-        interface->setRomSufamiTurboA(rom, sufamiTurboA.location);
+        bsnes->setRomSufamiTurboA(rom, sufamiTurboA.location);
         return true;
     }
     else if (id == 5) {
@@ -645,7 +645,7 @@ static bool loadRom(unsigned id) {
 
         std::vector<uint8_t> rom = bufToVec(gameinfo.data, gameinfo.size);
         if (rom.size() < 0x20000) return false;
-        interface->setRomSufamiTurboB(rom, sufamiTurboB.location);
+        bsnes->setRomSufamiTurboB(rom, sufamiTurboB.location);
         return true;
     }
     return false;
@@ -670,36 +670,36 @@ void jg_set_cb_rumble(jg_cb_rumble_t func) {
 
 int jg_init(void) {
     // Create interface and set callbacks
-    interface = new SuperFamicom::Interface;
-    interface->setInputGamepadCallback(&pollInputGamepad);
-    interface->setInputMouseCallback(&pollInputMouse);
-    interface->setInputLightgunCallback(&pollInputLightgun);
-    interface->setOpenFileCallback(&fileOpenV);
-    interface->setOpenStreamCallback(&fileOpenS);
-    interface->setLogCallback(jg_cb_log);
-    interface->setRomCallback(&loadRom);
-    interface->setWriteCallback(&fileWrite);
+    bsnes = new Bsnes;
+    bsnes->setInputGamepadCallback(&pollInputGamepad);
+    bsnes->setInputMouseCallback(&pollInputMouse);
+    bsnes->setInputLightgunCallback(&pollInputLightgun);
+    bsnes->setOpenFileCallback(&fileOpenV);
+    bsnes->setOpenStreamCallback(&fileOpenS);
+    bsnes->setLogCallback(jg_cb_log);
+    bsnes->setRomCallback(&loadRom);
+    bsnes->setWriteCallback(&fileWrite);
 
     // Configuration
-    interface->setCoprocDelayedSync(settings_bsnes[COPROC_DELAYSYNC].val);
-    interface->setCoprocPreferHLE(settings_bsnes[COPROC_PREFERHLE].val);
+    bsnes->setCoprocDelayedSync(settings_bsnes[COPROC_DELAYSYNC].val);
+    bsnes->setCoprocPreferHLE(settings_bsnes[COPROC_PREFERHLE].val);
 
     return 1;
 }
 
 void jg_deinit(void) {
-    delete interface;
+    delete bsnes;
 }
 
 void jg_reset(int hard) {
     if (hard)
-        interface->power();
+        bsnes->power();
     else
-        interface->reset();
+        bsnes->reset();
 }
 
 void jg_exec_frame(void) {
-    interface->run();
+    bsnes->run();
 }
 
 int jg_game_load(void) {
@@ -716,7 +716,7 @@ int jg_game_load(void) {
         }
 
         superFamicom.location = std::string(addoninfo.path);
-        interface->setRomGB((const uint8_t*)gameinfo.data, gameinfo.size);
+        bsnes->setRomGB((const uint8_t*)gameinfo.data, gameinfo.size);
         addon = 1;
     }
     else if (ext == "bs") {
@@ -753,41 +753,41 @@ int jg_game_load(void) {
         superFamicom.location = std::string(gameinfo.path);
     }
 
-    interface->unload();
+    bsnes->unload();
 
     if (settings_bsnes[REGION].val == 1)
-        interface->setRegion("NTSC");
+        bsnes->setRegion("NTSC");
     else if (settings_bsnes[REGION].val == 2)
-        interface->setRegion("PAL");
+        bsnes->setRegion("PAL");
 
-    if (!interface->load())
+    if (!bsnes->load())
       jg_cb_log(JG_LOG_ERR, "Failed to load ROM\n");
 
     inputSetup();
 
     aspectRatio();
 
-    interface->setAudioQuality(settings_bsnes[RSQUAL].val);
+    bsnes->setAudioQuality(settings_bsnes[RSQUAL].val);
 
     // Audio and timing adjustments
-    if (interface->getRegion() == "PAL") {
+    if (bsnes->getRegion() == "PAL") {
         audinfo.spf = (SAMPLERATE / FRAMERATE_PAL) * CHANNELS;
-        interface->setAudioSpf(audinfo.spf);
+        bsnes->setAudioSpf(audinfo.spf);
         jg_cb_frametime(TIMING_PAL);
     }
     else {
-        interface->setAudioSpf(audinfo.spf);
+        bsnes->setAudioSpf(audinfo.spf);
         jg_cb_frametime(TIMING_NTSC);
     }
 
-    interface->power(); // Power up!
+    bsnes->power(); // Power up!
 
     return 1;
 }
 
 int jg_game_unload(void) {
-    // Save happens on interface->unload
-    interface->unload();
+    // Save happens on bsnes->unload
+    bsnes->unload();
     return 1;
 }
 
@@ -796,7 +796,7 @@ int jg_state_load(const char *filename) {
     std::vector<uint8_t> state((std::istreambuf_iterator<char>(stream)),
         std::istreambuf_iterator<char>());
     stream.close();
-    return interface->unserialize(state);
+    return bsnes->unserialize(state);
 }
 
 void jg_state_load_raw(const void *data) {
@@ -805,7 +805,7 @@ void jg_state_load_raw(const void *data) {
 
 int jg_state_save(const char *filename) {
     std::vector<uint8_t> state;
-    interface->serialize(state);
+    bsnes->serialize(state);
     std::ofstream stream(filename, std::ios::out | std::ios::binary);
     if (stream.is_open()) {
         stream.write((const char*)state.data(), state.size());
@@ -830,11 +830,11 @@ void jg_media_insert(void) {
 }
 
 void jg_cheat_clear(void) {
-    interface->cheatsClear();
+    bsnes->cheatsClear();
 }
 
 void jg_cheat_set(const char *code) {
-    if (!interface->cheatsDecode(addon, code)) {
+    if (!bsnes->cheatsDecode(addon, code)) {
         jg_cb_log(JG_LOG_WRN, "Failed to decode cheat: %s\n", code);
     }
 }
@@ -872,14 +872,14 @@ jg_setting_t* jg_get_settings(size_t *numsettings) {
 }
 
 void jg_setup_video(void) {
-    interface->setVideoBuffer((uint16_t*)vidinfo.buf);
-    interface->setVideoCallback(&videoFrame);
+    bsnes->setVideoBuffer((uint16_t*)vidinfo.buf);
+    bsnes->setVideoCallback(&videoFrame);
 }
 
 void jg_setup_audio(void) {
-    interface->setAudioBuffer((float*)audinfo.buf);
-    interface->setAudioCallback(jg_cb_audio);
-    interface->setAudioFrequency((double)SAMPLERATE);
+    bsnes->setAudioBuffer((float*)audinfo.buf);
+    bsnes->setAudioCallback(jg_cb_audio);
+    bsnes->setAudioFrequency((double)SAMPLERATE);
 }
 
 void jg_set_inputstate(jg_inputstate_t *ptr, int port) {

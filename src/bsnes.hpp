@@ -51,9 +51,7 @@ struct Input {
   };
 };
 
-namespace SuperFamicom {
-
-struct Interface {
+struct Bsnes {
   bool loaded();
   bool load();
   void save();
@@ -104,5 +102,3 @@ struct Interface {
   void setVideoPixelFormat(unsigned);
   void setVideoCallback(void (*)(const uint16_t*, unsigned, unsigned, unsigned));
 };
-
-}
