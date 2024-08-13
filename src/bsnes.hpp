@@ -25,31 +25,33 @@
 #include <string>
 #include <vector>
 
-struct Input {
-  struct Gamepad {
-    enum : unsigned {
-      Up =      (1 << 11),
-      Down =    (1 << 10),
-      Left =    (1 << 9),
-      Right =   (1 << 8),
-      Select =  (1 << 13),
-      Start =   (1 << 12),
-      A =       (1 << 7),
-      B =       (1 << 15),
-      X =       (1 << 6),
-      Y =       (1 << 14),
-      L =       (1 << 5),
-      R =       (1 << 4)
-    };
-  };
+namespace BsnesInput {
 
-  struct Mouse {
-    enum : unsigned {
-      ButtonL = (1 << 22),
-      ButtonR = (1 << 23)
-    };
+struct Gamepad {
+  enum : unsigned {
+    Up =      (1 << 11),
+    Down =    (1 << 10),
+    Left =    (1 << 9),
+    Right =   (1 << 8),
+    Select =  (1 << 13),
+    Start =   (1 << 12),
+    A =       (1 << 7),
+    B =       (1 << 15),
+    X =       (1 << 6),
+    Y =       (1 << 14),
+    L =       (1 << 5),
+    R =       (1 << 4)
   };
 };
+
+struct Mouse {
+  enum : unsigned {
+    ButtonL = (1 << 22),
+    ButtonR = (1 << 23)
+  };
+};
+
+}
 
 struct Bsnes {
   bool loaded();
