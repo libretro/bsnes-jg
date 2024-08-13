@@ -517,12 +517,13 @@ static void videoFrame(const uint16_t *data, unsigned pitch, unsigned w,
     vidinfo.buf = const_cast<void*>(reinterpret_cast<const void*>(data));
 }
 
-static unsigned pollInputGamepad(unsigned port) {
+static int pollInputGamepad(const void *udata, unsigned port, unsigned phase) {
+    (void)udata; (void)phase;
     if (port >= numplugged) {
       return 0;
     }
 
-    unsigned b = 0;
+    int b = 0;
 
     if (input_device[port]->button[0]) b |= Input::Gamepad::Up;
     if (input_device[port]->button[1]) b |= Input::Gamepad::Down;
@@ -540,7 +541,8 @@ static unsigned pollInputGamepad(unsigned port) {
     return b;
 }
 
-static int pollInputMouse(unsigned port, unsigned phase) {
+static int pollInputMouse(const void *udata, unsigned port, unsigned phase) {
+    (void)udata;
     int b = 0;
 
     switch(phase) {
@@ -564,7 +566,8 @@ static int pollInputMouse(unsigned port, unsigned phase) {
     return b;
 }
 
-static int pollInputLightgun(unsigned port, unsigned phase) {
+static int pollInputLightgun(const void *udata, unsigned port, unsigned phase) {
+    (void)udata;
     switch (phase) {
         case 0: { // X
             return (input_device[port]->coord[0] / hmult) + ss_offset_x;

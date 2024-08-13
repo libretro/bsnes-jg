@@ -84,9 +84,9 @@ struct Bsnes {
   void setAudioQuality(unsigned);
   void setCoprocDelayedSync(bool);
   void setCoprocPreferHLE(bool);
-  void setInputGamepadCallback(unsigned (*)(unsigned));
-  void setInputMouseCallback(int (*)(unsigned, unsigned));
-  void setInputLightgunCallback(int (*)(unsigned, unsigned));
+  void setInputGamepadCallback(int (*)(const void*, unsigned, unsigned));
+  void setInputMouseCallback(int (*)(const void*, unsigned, unsigned));
+  void setInputLightgunCallback(int (*)(const void*, unsigned, unsigned));
   void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
   void setOpenStreamCallback(bool (*)(std::string, std::stringstream&));
   void setLogCallback(void (*)(int, const char *, ...));

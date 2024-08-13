@@ -223,15 +223,15 @@ void Bsnes::setCoprocPreferHLE(bool value) {
   SuperFamicom::configuration.coprocessor.preferHLE = value;
 }
 
-void Bsnes::setInputGamepadCallback(unsigned (*cb)(unsigned)) {
+void Bsnes::setInputGamepadCallback(int (*cb)(const void*, unsigned, unsigned)) {
   SuperFamicom::setInputPollGamepad(cb);
 }
 
-void Bsnes::setInputMouseCallback(int (*cb)(unsigned, unsigned)) {
+void Bsnes::setInputMouseCallback(int (*cb)(const void*, unsigned, unsigned)) {
   SuperFamicom::setInputPollMouse(cb);
 }
 
-void Bsnes::setInputLightgunCallback(int (*cb)(unsigned, unsigned)) {
+void Bsnes::setInputLightgunCallback(int (*cb)(const void*, unsigned, unsigned)) {
   SuperFamicom::setInputPollLightgun(cb);
 }
 
