@@ -523,18 +523,18 @@ static int pollInputGamepad(const void *udata, unsigned port, unsigned phase) {
 
     int b = 0;
 
-    if (input_device[port]->button[0]) b |= BsnesInput::Gamepad::Up;
-    if (input_device[port]->button[1]) b |= BsnesInput::Gamepad::Down;
-    if (input_device[port]->button[2]) b |= BsnesInput::Gamepad::Left;
-    if (input_device[port]->button[3]) b |= BsnesInput::Gamepad::Right;
-    if (input_device[port]->button[4]) b |= BsnesInput::Gamepad::Select;
-    if (input_device[port]->button[5]) b |= BsnesInput::Gamepad::Start;
-    if (input_device[port]->button[6]) b |= BsnesInput::Gamepad::A;
-    if (input_device[port]->button[7]) b |= BsnesInput::Gamepad::B;
-    if (input_device[port]->button[8]) b |= BsnesInput::Gamepad::X;
-    if (input_device[port]->button[9]) b |= BsnesInput::Gamepad::Y;
-    if (input_device[port]->button[10]) b |= BsnesInput::Gamepad::L;
-    if (input_device[port]->button[11]) b |= BsnesInput::Gamepad::R;
+    if (input_device[port]->button[0]) b |= Bsnes::Input::Gamepad::Up;
+    if (input_device[port]->button[1]) b |= Bsnes::Input::Gamepad::Down;
+    if (input_device[port]->button[2]) b |= Bsnes::Input::Gamepad::Left;
+    if (input_device[port]->button[3]) b |= Bsnes::Input::Gamepad::Right;
+    if (input_device[port]->button[4]) b |= Bsnes::Input::Gamepad::Select;
+    if (input_device[port]->button[5]) b |= Bsnes::Input::Gamepad::Start;
+    if (input_device[port]->button[6]) b |= Bsnes::Input::Gamepad::A;
+    if (input_device[port]->button[7]) b |= Bsnes::Input::Gamepad::B;
+    if (input_device[port]->button[8]) b |= Bsnes::Input::Gamepad::X;
+    if (input_device[port]->button[9]) b |= Bsnes::Input::Gamepad::Y;
+    if (input_device[port]->button[10]) b |= Bsnes::Input::Gamepad::L;
+    if (input_device[port]->button[11]) b |= Bsnes::Input::Gamepad::R;
 
     return b;
 }
@@ -555,8 +555,10 @@ static int pollInputMouse(const void *udata, unsigned port, unsigned phase) {
             break;
         }
         case 2: { // Buttons (pre-shifted)
-            if (input_device[port]->button[0]) b |= BsnesInput::Mouse::ButtonL;
-            if (input_device[port]->button[1]) b |= BsnesInput::Mouse::ButtonR;
+            if (input_device[port]->button[0]) b |=
+                Bsnes::Input::Mouse::ButtonL;
+            if (input_device[port]->button[1]) b |=
+                Bsnes::Input::Mouse::ButtonR;
             break;
         }
     }

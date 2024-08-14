@@ -25,36 +25,34 @@
 #include <string>
 #include <vector>
 
-namespace BsnesInput {
-
-namespace Gamepad {
-  constexpr unsigned Up =     (1 << 11);
-  constexpr unsigned Down =   (1 << 10);
-  constexpr unsigned Left =   (1 << 9);
-  constexpr unsigned Right =  (1 << 8);
-  constexpr unsigned Select = (1 << 13);
-  constexpr unsigned Start =  (1 << 12);
-  constexpr unsigned A =      (1 << 7);
-  constexpr unsigned B =      (1 << 15);
-  constexpr unsigned X =      (1 << 6);
-  constexpr unsigned Y =      (1 << 14);
-  constexpr unsigned L =      (1 << 5);
-  constexpr unsigned R =      (1 << 4);
-}
-
-namespace Mouse {
-  constexpr unsigned ButtonL = (1 << 22);
-  constexpr unsigned ButtonR = (1 << 23);
-}
-
-}
-
 namespace Bsnes {
 
-namespace Region {
-  constexpr unsigned NTSC = 0;
-  constexpr unsigned PAL = 1;
-}
+namespace Input {
+    namespace Gamepad {
+      constexpr unsigned Up =       (1 << 11);
+      constexpr unsigned Down =     (1 << 10);
+      constexpr unsigned Left =     (1 << 9);
+      constexpr unsigned Right =    (1 << 8);
+      constexpr unsigned Select =   (1 << 13);
+      constexpr unsigned Start =    (1 << 12);
+      constexpr unsigned A =        (1 << 7);
+      constexpr unsigned B =        (1 << 15);
+      constexpr unsigned X =        (1 << 6);
+      constexpr unsigned Y =        (1 << 14);
+      constexpr unsigned L =        (1 << 5);
+      constexpr unsigned R =        (1 << 4);
+    }
+
+    namespace Mouse {
+      constexpr unsigned ButtonL =  (1 << 22);
+      constexpr unsigned ButtonR =  (1 << 23);
+    }
+  }
+
+  namespace Region {
+    constexpr unsigned NTSC = 0;
+    constexpr unsigned PAL = 1;
+  }
 
   bool loaded();
   bool load();
