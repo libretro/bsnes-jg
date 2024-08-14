@@ -50,6 +50,12 @@ namespace Mouse {
 }
 
 namespace Bsnes {
+
+namespace Region {
+  constexpr unsigned NTSC = 0;
+  constexpr unsigned PAL = 1;
+}
+
   bool loaded();
   bool load();
   void save();
@@ -73,7 +79,7 @@ namespace Bsnes {
   bool runAhead();
   void setRunAhead(bool);
 
-  std::string getRegion();
+  unsigned getRegion();
 
   void setAudioBuffer(float*);
   void setAudioCallback(void (*)(size_t));

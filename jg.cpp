@@ -186,7 +186,7 @@ static void aspectRatio(void) {
 
     switch (settings_bsnes[ASPECT].val) {
         default: case 0: { // Auto Region
-            aspect_ratio = Bsnes::getRegion() == "PAL" ?
+            aspect_ratio = Bsnes::getRegion() == Bsnes::Region::PAL ?
                 ASPECT_PAL : ASPECT_NTSC;
             break;
         }
@@ -769,7 +769,7 @@ int jg_game_load(void) {
     Bsnes::setAudioQuality(settings_bsnes[RSQUAL].val);
 
     // Audio and timing adjustments
-    if (Bsnes::getRegion() == "PAL") {
+    if (Bsnes::getRegion() == Bsnes::Region::PAL) {
         audinfo.spf = (SAMPLERATE / FRAMERATE_PAL) * CHANNELS;
         Bsnes::setAudioSpf(audinfo.spf);
         jg_cb_frametime(TIMING_PAL);

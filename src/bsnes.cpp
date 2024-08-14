@@ -192,8 +192,8 @@ void Bsnes::setRunAhead(bool runAhead) {
   SuperFamicom::system.runAhead = runAhead;
 }
 
-std::string Bsnes::getRegion() {
-  return SuperFamicom::cartridge.region();
+unsigned Bsnes::getRegion() {
+  return SuperFamicom::cartridge.region() == "PAL" ? Region::PAL : Region::NTSC;
 }
 
 void Bsnes::setAudioBuffer(float *buf) {
