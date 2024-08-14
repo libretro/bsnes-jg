@@ -27,33 +27,29 @@
 
 namespace BsnesInput {
 
-struct Gamepad {
-  enum : unsigned {
-    Up =      (1 << 11),
-    Down =    (1 << 10),
-    Left =    (1 << 9),
-    Right =   (1 << 8),
-    Select =  (1 << 13),
-    Start =   (1 << 12),
-    A =       (1 << 7),
-    B =       (1 << 15),
-    X =       (1 << 6),
-    Y =       (1 << 14),
-    L =       (1 << 5),
-    R =       (1 << 4)
-  };
-};
+namespace Gamepad {
+  constexpr unsigned Up =     (1 << 11);
+  constexpr unsigned Down =   (1 << 10);
+  constexpr unsigned Left =   (1 << 9);
+  constexpr unsigned Right =  (1 << 8);
+  constexpr unsigned Select = (1 << 13);
+  constexpr unsigned Start =  (1 << 12);
+  constexpr unsigned A =      (1 << 7);
+  constexpr unsigned B =      (1 << 15);
+  constexpr unsigned X =      (1 << 6);
+  constexpr unsigned Y =      (1 << 14);
+  constexpr unsigned L =      (1 << 5);
+  constexpr unsigned R =      (1 << 4);
+}
 
-struct Mouse {
-  enum : unsigned {
-    ButtonL = (1 << 22),
-    ButtonR = (1 << 23)
-  };
-};
+namespace Mouse {
+  constexpr unsigned ButtonL = (1 << 22);
+  constexpr unsigned ButtonR = (1 << 23);
+}
 
 }
 
-struct Bsnes {
+namespace Bsnes {
   bool loaded();
   bool load();
   void save();
@@ -103,4 +99,4 @@ struct Bsnes {
   void setVideoBuffer(uint16_t*);
   void setVideoPixelFormat(unsigned);
   void setVideoCallback(void (*)(const uint16_t*, unsigned, unsigned, unsigned));
-};
+}
