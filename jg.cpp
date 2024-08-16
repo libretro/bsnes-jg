@@ -254,28 +254,30 @@ static void inputSetup(void) {
 
     for (int i = 0; i < 2; ++i) {
         switch (port[i]) {
-            default: case 0: case 1: {
+            default:
+            case Bsnes::Input::Type::Unconnected:
+            case Bsnes::Input::Type::Gamepad: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
                 Bsnes::connect(i, 1);
                 break;
             }
-            case 2: {
+            case Bsnes::Input::Type::Mouse: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_MOUSE);
                 Bsnes::connect(i, port[i]);
                 break;
             }
-            case 3: {
+            case Bsnes::Input::Type::Multitap: {
                 for (int j = 1; j < (multitap ? multitap : NUMINPUTS); ++j)
                     inputinfo[j] = jg_snes_inputinfo(j, JG_SNES_PAD);
                 Bsnes::connect(1, port[i]);
                 break;
             }
-            case 4: {
+            case Bsnes::Input::Type::SuperScope: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_SUPERSCOPE);
                 Bsnes::connect(i, port[i]);
                 break;
             }
-            case 5: {
+            case Bsnes::Input::Type::Justifier: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_JUSTIFIER);
                 Bsnes::connect(i, port[i]);
                 ss_offset_x = ss_offset_y = 0;

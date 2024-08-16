@@ -26,8 +26,18 @@
 #include <vector>
 
 namespace Bsnes {
+  namespace Input {
+    namespace Type {
+      enum : unsigned {
+        Unconnected,
+        Gamepad,
+        Mouse,
+        Multitap,
+        SuperScope,
+        Justifier,
+      };
+    }
 
-namespace Input {
     namespace Gamepad {
       constexpr unsigned Up =       (1 << 11);
       constexpr unsigned Down =     (1 << 10);
