@@ -191,13 +191,6 @@ void System::runToSave() {
 
   scheduler.mode = Scheduler::Mode::Synchronize;
 
-  runToSaveStrict();
-
-  scheduler.mode = Scheduler::Mode::Run;
-  scheduler.active = cpu.thread;
-}
-
-void System::runToSaveStrict() {
   //run every thread until it cleanly hits a synchronization point
   //if it fails, start resynchronizing every thread again
   auto synchronize = [&](cothread_t thread) -> bool {
@@ -227,6 +220,9 @@ void System::runToSaveStrict() {
       }
     }
   }
+
+  scheduler.mode = Scheduler::Mode::Run;
+  scheduler.active = cpu.thread;
 }
 
 void System::frameEvent() {
