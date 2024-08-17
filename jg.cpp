@@ -872,8 +872,7 @@ jg_setting_t* jg_get_settings(size_t *numsettings) {
 }
 
 void jg_setup_video(void) {
-    Bsnes::setVideoBuffer((uint16_t*)vidinfo.buf);
-    Bsnes::setVideoCallback(&videoFrame);
+    Bsnes::setVideoSpec({0, (uint16_t*)vidinfo.buf, nullptr, &videoFrame});
 }
 
 void jg_setup_audio(void) {

@@ -267,14 +267,8 @@ void Bsnes::setWriteCallback(void (*cb)(unsigned, std::string, const uint8_t*, u
   SuperFamicom::icd.setWriteCallback(cb);
 }
 
-void Bsnes::setVideoBuffer(uint16_t *buffer) {
-  SuperFamicom::ppu.setBuffer(buffer);
-}
-
-void Bsnes::setVideoPixelFormat(unsigned pixfmt) {
-  SuperFamicom::ppu.setPixelFormat(pixfmt);
-}
-
-void Bsnes::setVideoCallback(void (*cb)(const uint16_t*, unsigned, unsigned, unsigned)) {
-  SuperFamicom::ppu.setCallback(cb);
+void Bsnes::setVideoSpec(Video::Spec spec) {
+  SuperFamicom::ppu.setPixelFormat(spec.pixfmt);
+  SuperFamicom::ppu.setBuffer(spec.buf);
+  SuperFamicom::ppu.setCallback(spec.cb);
 }

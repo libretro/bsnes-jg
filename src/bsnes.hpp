@@ -37,6 +37,15 @@ namespace Bsnes {
     } Spec;
   }
 
+  namespace Video {
+    typedef struct _Spec {
+      unsigned pixfmt;
+      uint16_t *buf;
+      void *ptr;
+      void (*cb)(const uint16_t*, unsigned, unsigned, unsigned);
+    } Spec;
+  }
+
   namespace Input {
     namespace Device {
       enum : unsigned {
@@ -122,7 +131,5 @@ namespace Bsnes {
   void setRomSufamiTurboB(std::vector<uint8_t>&, std::string&);
   void setRomSuperFamicom(std::vector<uint8_t>&, std::string&);
   void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
-  void setVideoBuffer(uint16_t*);
-  void setVideoPixelFormat(unsigned);
-  void setVideoCallback(void (*)(const uint16_t*, unsigned, unsigned, unsigned));
+  void setVideoSpec(Video::Spec);
 }
