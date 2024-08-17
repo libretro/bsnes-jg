@@ -517,6 +517,10 @@ static void videoFrame(const uint16_t *data, unsigned pitch, unsigned w,
     vidinfo.buf = const_cast<void*>(reinterpret_cast<const void*>(data));
 }
 
+static void audioFrame(const void*, size_t numsamps) {
+    jg_cb_audio(numsamps);
+}
+
 static int pollInputGamepad(const void *udata, unsigned port, unsigned phase) {
     (void)udata; (void)phase;
     if (port >= numplugged) {
@@ -881,7 +885,7 @@ void jg_setup_video(void) {
 
 void jg_setup_audio(void) {
     Bsnes::setAudioBuffer((float*)audinfo.buf);
-    Bsnes::setAudioCallback(jg_cb_audio);
+    Bsnes::setAudioCallback(nullptr, &audioFrame);
     Bsnes::setAudioFrequency((double)SAMPLERATE);
 }
 

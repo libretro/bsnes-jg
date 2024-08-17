@@ -37,13 +37,15 @@ struct Audio {
   void reset();
   void setFrequency(double);
   void setBuffer(float*);
-  void setCallback(void (*)(std::size_t));
+  void setCallback(void*, void (*)(const void*, std::size_t));
   void setSpf(unsigned);
   void setQuality(unsigned);
 
 private:
-  void (*audioFrame)(std::size_t);
+  void (*audioFrame)(const void*, std::size_t);
   void process();
+
+  void *udata = nullptr;
 
   std::vector<Stream*> _streams;
 

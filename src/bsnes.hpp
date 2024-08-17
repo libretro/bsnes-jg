@@ -90,7 +90,7 @@ namespace Bsnes {
   unsigned getRegion();
 
   void setAudioBuffer(float*);
-  void setAudioCallback(void (*)(size_t));
+  void setAudioCallback(void*, void (*)(const void*, size_t));
   void setAudioFrequency(double);
   void setAudioSpf(unsigned);
   void setAudioQuality(unsigned);

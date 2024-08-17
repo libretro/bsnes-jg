@@ -35,7 +35,8 @@ void Audio::setBuffer(float *b) {
   buffer = b;
 }
 
-void Audio::setCallback(void (*cb)(size_t)) {
+void Audio::setCallback(void *ptr, void (*cb)(const void*, size_t)) {
+  udata = ptr;
   audioFrame = cb;
 }
 
@@ -132,7 +133,7 @@ void Audio::process() {
     stream->queue_out.erase(stream->queue_out.begin(), stream->queue_out.begin() + _spf);
   }
 
-  audioFrame(_spf);
+  audioFrame(udata, _spf);
   memset(&buffer[0], 0.0, _spf * sizeof(float));
 }
 

@@ -199,8 +199,9 @@ unsigned Bsnes::getRegion() {
 void Bsnes::setAudioBuffer(float *buf) {
   SuperFamicom::audio.setBuffer(buf);
 }
-void Bsnes::setAudioCallback(void (*cb)(size_t)) {
-  SuperFamicom::audio.setCallback(cb);
+
+void Bsnes::setAudioCallback(void *ptr, void (*cb)(const void*, size_t)) {
+  SuperFamicom::audio.setCallback(ptr, cb);
 }
 
 void Bsnes::setAudioFrequency(double freq) {
