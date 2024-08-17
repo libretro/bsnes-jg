@@ -58,15 +58,6 @@ void Bsnes::unload() {
   SuperFamicom::system.unload();
 }
 
-unsigned Bsnes::connected(unsigned port) {
-  switch(port) {
-    case SuperFamicom::ID::Port::Controller1: return SuperFamicom::configuration.controllerPort1;
-    case SuperFamicom::ID::Port::Controller2: return SuperFamicom::configuration.controllerPort2;
-    case SuperFamicom::ID::Port::Expansion:   return SuperFamicom::configuration.expansionPort;
-    default: return 0;
-  }
-}
-
 void Bsnes::power() {
   SuperFamicom::system.power(/* reset = */ false);
 }

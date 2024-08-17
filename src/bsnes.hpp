@@ -96,7 +96,6 @@ namespace Bsnes {
   void save();
   void unload();
 
-  unsigned connected(unsigned);
   void power();
   void reset();
   void run();
