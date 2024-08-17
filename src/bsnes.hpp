@@ -100,8 +100,6 @@ namespace Bsnes {
   void reset();
   void run();
 
-  bool rtc();
-
   void serialize(std::vector<uint8_t>&, bool = true);
   bool unserialize(std::vector<uint8_t>&);
 
@@ -110,6 +108,7 @@ namespace Bsnes {
   bool cheatsDecode(int, std::string);
 
   unsigned getRegion();
+  bool getRtcPresent();
 
   void setAudioSpec(Audio::Spec);
   void setCoprocDelayedSync(bool);

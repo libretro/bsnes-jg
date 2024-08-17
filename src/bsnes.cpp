@@ -70,7 +70,7 @@ void Bsnes::run() {
   SuperFamicom::system.run();
 }
 
-bool Bsnes::rtc() {
+bool Bsnes::getRtcPresent() {
   return (SuperFamicom::cartridge.has.EpsonRTC || SuperFamicom::cartridge.has.SharpRTC);
 }
 
