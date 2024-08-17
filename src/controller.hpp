@@ -22,10 +22,6 @@
 
 namespace SuperFamicom {
 
-void setInputPollGamepad(int (*)(const void*, unsigned, unsigned));
-void setInputPollMouse(int (*)(const void*, unsigned, unsigned));
-void setInputPollLightgun(int (*)(const void*, unsigned, unsigned));
-
 // SNES controller port pinout:
 //  -------------------------------
 // | (1) (2) (3) (4) | (5) (6) (7) )
@@ -45,16 +41,23 @@ struct Controller {
 
   bool iobit();
   void iobit(bool);
+
+  void setPoll(void *ptr, int (*cb)(const void*, unsigned, unsigned)) {
+    udata = ptr;
+    poll = cb;
+  }
+
   virtual uint8_t data() { return 0; }
   virtual void latch(bool) {}
   virtual void latch() {}  // light guns
 
   const unsigned port;
-  const void *udata = nullptr;
+  void *udata = nullptr;
+  int (*poll)(const void*, unsigned, unsigned);
 };
 
 struct ControllerPort {
-  void connect(unsigned);
+  void connect(unsigned, void*, int (*)(const void*, unsigned, unsigned));
 
   void power(unsigned);
   void unload();

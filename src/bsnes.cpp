@@ -67,20 +67,6 @@ unsigned Bsnes::connected(unsigned port) {
   }
 }
 
-void Bsnes::connect(unsigned port, unsigned device) {
-  switch(port) {
-    case SuperFamicom::ID::Port::Controller1:
-      SuperFamicom::controllerPort1.connect(SuperFamicom::configuration.controllerPort1 = device);
-      break;
-    case SuperFamicom::ID::Port::Controller2:
-      SuperFamicom::controllerPort2.connect(SuperFamicom::configuration.controllerPort2 = device);
-      break;
-    case SuperFamicom::ID::Port::Expansion:
-      SuperFamicom::expansionPort.connect(SuperFamicom::configuration.expansionPort = device);
-      break;
-  }
-}
-
 void Bsnes::power() {
   SuperFamicom::system.power(/* reset = */ false);
 }
@@ -224,16 +210,26 @@ void Bsnes::setCoprocPreferHLE(bool value) {
   SuperFamicom::configuration.coprocessor.preferHLE = value;
 }
 
-void Bsnes::setInputGamepadCallback(int (*cb)(const void*, unsigned, unsigned)) {
-  SuperFamicom::setInputPollGamepad(cb);
-}
-
-void Bsnes::setInputMouseCallback(int (*cb)(const void*, unsigned, unsigned)) {
-  SuperFamicom::setInputPollMouse(cb);
-}
-
-void Bsnes::setInputLightgunCallback(int (*cb)(const void*, unsigned, unsigned)) {
-  SuperFamicom::setInputPollLightgun(cb);
+void Bsnes::setInputDevice(Input::Spec spec) {
+  switch(spec.port) {
+    case SuperFamicom::ID::Port::Controller1:
+      SuperFamicom::controllerPort1.connect(
+        SuperFamicom::configuration.controllerPort1 = spec.device,
+        spec.ptr, spec.cb
+      );
+      break;
+    case SuperFamicom::ID::Port::Controller2:
+      SuperFamicom::controllerPort2.connect(
+        SuperFamicom::configuration.controllerPort2 = spec.device,
+        spec.ptr, spec.cb
+      );
+      break;
+    case SuperFamicom::ID::Port::Expansion:
+      SuperFamicom::expansionPort.connect(
+        SuperFamicom::configuration.expansionPort = spec.device
+      );
+      break;
+  }
 }
 
 void Bsnes::setLogCallback(void (*cb)(int, const char *, ...)) {

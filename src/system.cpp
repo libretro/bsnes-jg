@@ -419,10 +419,8 @@ void System::power(bool reset) {
 
   controllerPort1.power(ID::Port::Controller1);
   controllerPort2.power(ID::Port::Controller2);
-  expansionPort.power();
 
-  controllerPort1.connect(configuration.controllerPort1);
-  controllerPort2.connect(configuration.controllerPort2);
+  expansionPort.power();
   expansionPort.connect(configuration.expansionPort);
 
   information.serializeSize[0] = serializeInit(0);

@@ -27,7 +27,7 @@
 
 namespace Bsnes {
   namespace Input {
-    namespace Type {
+    namespace Device {
       enum : unsigned {
         Unconnected,
         Gamepad,
@@ -57,6 +57,13 @@ namespace Bsnes {
       constexpr unsigned ButtonL =  (1 << 22);
       constexpr unsigned ButtonR =  (1 << 23);
     }
+
+    typedef struct _Spec {
+      unsigned port;
+      unsigned device;
+      void *ptr;
+      int (*cb)(const void*, unsigned, unsigned);
+    } Spec;
   }
 
   namespace Region {
@@ -70,7 +77,6 @@ namespace Bsnes {
   void unload();
 
   unsigned connected(unsigned);
-  void connect(unsigned, unsigned);
   void power();
   void reset();
   void run();
@@ -96,9 +102,7 @@ namespace Bsnes {
   void setAudioQuality(unsigned);
   void setCoprocDelayedSync(bool);
   void setCoprocPreferHLE(bool);
-  void setInputGamepadCallback(int (*)(const void*, unsigned, unsigned));
-  void setInputMouseCallback(int (*)(const void*, unsigned, unsigned));
-  void setInputLightgunCallback(int (*)(const void*, unsigned, unsigned));
+  void setInputDevice(Input::Spec);
   void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
   void setOpenStreamCallback(bool (*)(std::string, std::stringstream&));
   void setLogCallback(void (*)(int, const char *, ...));

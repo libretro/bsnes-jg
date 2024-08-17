@@ -207,86 +207,6 @@ static void aspectRatio(void) {
     vidinfo.aspect = (aspect_w * aspect_ratio) / (double)vidinfo.h;
 }
 
-static void inputSetup(void) {
-    // Set up inputs
-    numplugged = 2;
-    int multitap = 0;
-    int port[] = { settings_bsnes[PORT1].val, settings_bsnes[PORT2].val };
-
-    // Autodetect Mouse
-    for (size_t i = 0; i < db_mouse_games.size(); ++i) {
-        if ((std::string)gameinfo.md5 == db_mouse_games[i]) {
-            port[0] = port[0] ? port[0] : 2;
-            break;
-        }
-    }
-
-    // Autodetect Multitap
-    for (size_t i = 0; i < db_multitap_games.size(); ++i) {
-        if ((std::string)gameinfo.md5 == db_multitap_games[i].md5) {
-            multitap = db_multitap_games[i].players;
-            numplugged = multitap;
-            port[1] = port[1] ? port[1] : 3;
-            break;
-        }
-    }
-
-    // Autodetect Super Scope
-    for (size_t i = 0; i < db_superscope_games.size(); ++i) {
-        if ((std::string)gameinfo.md5 == db_superscope_games[i].md5) {
-            port[1] = port[1] ? port[1] : 4;
-            ss_offset_x = db_superscope_games[i].x;
-            ss_offset_y = db_superscope_games[i].y;
-            break;
-        }
-    }
-
-    // Autodetect Justifier
-    for (size_t i = 0; i < db_justifier_games.size(); ++i) {
-        if ((std::string)gameinfo.md5 == db_justifier_games[i]) {
-            port[1] = port[1] ? port[1] : 5;
-            break;
-        }
-    }
-
-    for (int i = 0; i < NUMINPUTS; ++i)
-        inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_UNCONNECTED);
-
-    for (int i = 0; i < 2; ++i) {
-        switch (port[i]) {
-            default:
-            case Bsnes::Input::Type::Unconnected:
-            case Bsnes::Input::Type::Gamepad: {
-                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
-                Bsnes::connect(i, 1);
-                break;
-            }
-            case Bsnes::Input::Type::Mouse: {
-                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_MOUSE);
-                Bsnes::connect(i, port[i]);
-                break;
-            }
-            case Bsnes::Input::Type::Multitap: {
-                for (int j = 1; j < (multitap ? multitap : NUMINPUTS); ++j)
-                    inputinfo[j] = jg_snes_inputinfo(j, JG_SNES_PAD);
-                Bsnes::connect(1, port[i]);
-                break;
-            }
-            case Bsnes::Input::Type::SuperScope: {
-                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_SUPERSCOPE);
-                Bsnes::connect(i, port[i]);
-                break;
-            }
-            case Bsnes::Input::Type::Justifier: {
-                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_JUSTIFIER);
-                Bsnes::connect(i, port[i]);
-                ss_offset_x = ss_offset_y = 0;
-                break;
-            }
-        }
-    }
-}
-
 static bool fileOpenV(unsigned id, std::string name, std::vector<uint8_t>& v) {
     std::string path;
     bool required = false;
@@ -521,8 +441,7 @@ static void audioFrame(const void*, size_t numsamps) {
     jg_cb_audio(numsamps);
 }
 
-static int pollInputGamepad(const void *udata, unsigned port, unsigned phase) {
-    (void)udata; (void)phase;
+static int pollGamepad(const void *, unsigned port, unsigned) {
     if (port >= numplugged) {
       return 0;
     }
@@ -545,8 +464,7 @@ static int pollInputGamepad(const void *udata, unsigned port, unsigned phase) {
     return b;
 }
 
-static int pollInputMouse(const void *udata, unsigned port, unsigned phase) {
-    (void)udata;
+static int pollMouse(const void*, unsigned port, unsigned phase) {
     int b = 0;
 
     switch(phase) {
@@ -572,8 +490,7 @@ static int pollInputMouse(const void *udata, unsigned port, unsigned phase) {
     return b;
 }
 
-static int pollInputLightgun(const void *udata, unsigned port, unsigned phase) {
-    (void)udata;
+static int pollLightgun(const void*, unsigned port, unsigned phase) {
     switch (phase) {
         case 0: { // X
             return (input_device[port]->coord[0] / hmult) + ss_offset_x;
@@ -602,6 +519,89 @@ static int pollInputLightgun(const void *udata, unsigned port, unsigned phase) {
         }
         default: {
             return 0;
+        }
+    }
+}
+
+static void inputSetup(void) {
+    // Set up inputs
+    numplugged = 2;
+    unsigned multitap = 0;
+    unsigned port[] = {
+        unsigned(settings_bsnes[PORT1].val),
+        unsigned(settings_bsnes[PORT2].val)
+    };
+
+    // Autodetect Mouse
+    for (size_t i = 0; i < db_mouse_games.size(); ++i) {
+        if ((std::string)gameinfo.md5 == db_mouse_games[i]) {
+            port[0] = port[0] ? port[0] : 2;
+            break;
+        }
+    }
+
+    // Autodetect Multitap
+    for (size_t i = 0; i < db_multitap_games.size(); ++i) {
+        if ((std::string)gameinfo.md5 == db_multitap_games[i].md5) {
+            multitap = db_multitap_games[i].players;
+            numplugged = multitap;
+            port[1] = port[1] ? port[1] : 3;
+            break;
+        }
+    }
+
+    // Autodetect Super Scope
+    for (size_t i = 0; i < db_superscope_games.size(); ++i) {
+        if ((std::string)gameinfo.md5 == db_superscope_games[i].md5) {
+            port[1] = port[1] ? port[1] : 4;
+            ss_offset_x = db_superscope_games[i].x;
+            ss_offset_y = db_superscope_games[i].y;
+            break;
+        }
+    }
+
+    // Autodetect Justifier
+    for (size_t i = 0; i < db_justifier_games.size(); ++i) {
+        if ((std::string)gameinfo.md5 == db_justifier_games[i]) {
+            port[1] = port[1] ? port[1] : 5;
+            break;
+        }
+    }
+
+    for (int i = 0; i < NUMINPUTS; ++i)
+        inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_UNCONNECTED);
+
+    for (unsigned i = 0; i < 2; ++i) {
+        switch (port[i]) {
+            default:
+            case Bsnes::Input::Device::Unconnected:
+            case Bsnes::Input::Device::Gamepad: {
+                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
+                Bsnes::setInputDevice({i, 1, nullptr, &pollGamepad});
+                break;
+            }
+            case Bsnes::Input::Device::Mouse: {
+                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_MOUSE);
+                Bsnes::setInputDevice({i, port[i], nullptr, &pollMouse});
+                break;
+            }
+            case Bsnes::Input::Device::Multitap: {
+                for (unsigned j = 1; j < (multitap ? multitap : NUMINPUTS); ++j)
+                    inputinfo[j] = jg_snes_inputinfo(j, JG_SNES_PAD);
+                Bsnes::setInputDevice({1, port[i], nullptr, &pollGamepad});
+                break;
+            }
+            case Bsnes::Input::Device::SuperScope: {
+                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_SUPERSCOPE);
+                Bsnes::setInputDevice({i, port[i], nullptr, &pollLightgun});
+                break;
+            }
+            case Bsnes::Input::Device::Justifier: {
+                inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_JUSTIFIER);
+                Bsnes::setInputDevice({i, port[i], nullptr, &pollLightgun});
+                ss_offset_x = ss_offset_y = 0;
+                break;
+            }
         }
     }
 }
@@ -679,9 +679,6 @@ void jg_set_cb_rumble(jg_cb_rumble_t func) {
 
 int jg_init(void) {
     // Set callbacks
-    Bsnes::setInputGamepadCallback(&pollInputGamepad);
-    Bsnes::setInputMouseCallback(&pollInputMouse);
-    Bsnes::setInputLightgunCallback(&pollInputLightgun);
     Bsnes::setOpenFileCallback(&fileOpenV);
     Bsnes::setOpenStreamCallback(&fileOpenS);
     Bsnes::setLogCallback(jg_cb_log);
@@ -770,8 +767,6 @@ int jg_game_load(void) {
     if (!Bsnes::load())
       jg_cb_log(JG_LOG_ERR, "Failed to load ROM\n");
 
-    inputSetup();
-
     aspectRatio();
 
     Bsnes::setAudioQuality(settings_bsnes[RSQUAL].val);
@@ -788,6 +783,8 @@ int jg_game_load(void) {
     }
 
     Bsnes::power(); // Power up!
+
+    inputSetup();
 
     return 1;
 }

@@ -25,23 +25,7 @@
 
 #include "controller.hpp"
 
-static int (*inputPollGamepad)(const void*, unsigned, unsigned);
-static int (*inputPollMouse)(const void*, unsigned, unsigned);
-static int (*inputPollLightgun)(const void*, unsigned, unsigned);
-
 namespace SuperFamicom {
-
-void setInputPollGamepad(int (*cb)(const void*, unsigned, unsigned)) {
-  inputPollGamepad = cb;
-}
-
-void setInputPollMouse(int (*cb)(const void*, unsigned, unsigned)) {
-  inputPollMouse = cb;
-}
-
-void setInputPollLightgun(int (*cb)(const void*, unsigned, unsigned)) {
-  inputPollLightgun = cb;
-}
 
 struct Gamepad : Controller {
   Gamepad(unsigned);
@@ -177,7 +161,7 @@ void Controller::iobit(bool data) {
   }
 }
 
-void ControllerPort::connect(unsigned deviceID) {
+void ControllerPort::connect(unsigned deviceID, void *ptr, int (*cb)(const void*, unsigned, unsigned)) {
   if(system.loaded()) {
     delete device;
 
@@ -190,6 +174,8 @@ void ControllerPort::connect(unsigned deviceID) {
       case ID::Device::Justifier: device = new Justifier(port, false); break;
       case ID::Device::Justifiers: device = new Justifier(port, true); break;
     }
+
+    device->setPoll(ptr, cb);
   }
 }
 
@@ -212,7 +198,7 @@ Gamepad::Gamepad(unsigned deviceID) : Controller(deviceID) {
 
 uint8_t Gamepad::data() {
   if (latched) {
-    bits = inputPollGamepad(udata, port, 0);
+    bits = poll(udata, port, 0);
   }
 
   /* Additional reads past the first 16 return 1s on official controllers.
@@ -241,7 +227,7 @@ void Gamepad::latch(bool data) {
        ||++------------------ Select (s) and Start (S)
        ++-------------------- B/Y buttons
       */
-      bits = inputPollGamepad(udata, port, 0);
+      bits = poll(udata, port, 0);
     }
   }
 }
@@ -277,8 +263,8 @@ uint8_t Justifier::data() {
   if(counter >= 32) return 1;
 
   if(counter == 0) {
-    player1.trigger = inputPollLightgun(udata, port, Trigger);
-    player1.start   = inputPollLightgun(udata, port, Start);
+    player1.trigger = poll(udata, port, Trigger);
+    player1.start   = poll(udata, port, Start);
   }
 
   /*if(counter == 0 && chained) {
@@ -340,8 +326,8 @@ void Justifier::latch(bool data) {
 
 void Justifier::latch() {
   if(!active) {
-    player1.x = inputPollLightgun(udata, port, X);
-    player1.y = inputPollLightgun(udata, port, Y);
+    player1.x = poll(udata, port, X);
+    player1.y = poll(udata, port, Y);
     bool offscreen = (player1.x < 0 || player1.y < 0 || player1.x >= 256 || player1.y >= (int)ppu.vdisp());
     if(!offscreen) ppu.latchCounters(player1.x, player1.y);
   }
@@ -373,9 +359,9 @@ void Mouse::latch(bool data) {
   if(latched != data) {
     latched = data;
 
-    int x = inputPollMouse(udata, port, 0); // X relative motion
-    int y = inputPollMouse(udata, port, 1); // Y relative motion
-    int b = inputPollMouse(udata, port, 2); // Buttons
+    int x = poll(udata, port, 0); // X relative motion
+    int y = poll(udata, port, 1); // Y relative motion
+    int b = poll(udata, port, 2); // Buttons
 
     /* 76543210  First byte
        ++++++++- Always zero: 00000000
@@ -468,7 +454,7 @@ void SuperMultitap::latch(bool data) {
 
     if(latched == 0) {
       for(unsigned id = 0; id < 4; ++id) {
-        gamepads[id].bits = inputPollGamepad(udata, id + 1, 0); // Start from gamepad 2
+        gamepads[id].bits = poll(udata, id + 1, 0); // Start from gamepad 2
       }
     }
   }
@@ -513,7 +499,7 @@ uint8_t SuperScope::data() {
   if(counter == 0) {
     counter = 1;
     //turbo is a switch; toggle is edge sensitive
-    bool newturbo = inputPollLightgun(udata, port, Turbo);
+    bool newturbo = poll(udata, port, Turbo);
     if(newturbo && !oldturbo) {
       turbo = !turbo;  //toggle state
     }
@@ -522,7 +508,7 @@ uint8_t SuperScope::data() {
     //trigger is a button
     //if turbo is active, trigger is level sensitive; otherwise, it is edge sensitive
     trigger = false;
-    bool newtrigger = inputPollLightgun(udata, port, Trigger);
+    bool newtrigger = poll(udata, port, Trigger);
     if(newtrigger && (turbo || !triggerlock)) {
       trigger = true;
       triggerlock = true;
@@ -531,11 +517,11 @@ uint8_t SuperScope::data() {
     }
 
     //cursor is a button; it is always level sensitive
-    cursor = inputPollLightgun(udata, port, Cursor);
+    cursor = poll(udata, port, Cursor);
 
     //pause is a button; it is always edge sensitive
     pause = false;
-    bool newpause = inputPollLightgun(udata, port, Pause);
+    bool newpause = poll(udata, port, Pause);
     if(newpause && !pauselock) {
       pause = true;
       pauselock = true;
@@ -565,8 +551,8 @@ void SuperScope::latch(bool data) {
 }
 
 void SuperScope::latch() {
-  x = inputPollLightgun(udata, port, X);
-  y = inputPollLightgun(udata, port, Y);
+  x = poll(udata, port, X);
+  y = poll(udata, port, Y);
   offscreen = (x < 0 || y < 0 || x >= 512 || y >= 480);
   if(!offscreen) ppu.latchCounters(x, y);
 }
