@@ -186,20 +186,11 @@ void Bsnes::setAudioBuffer(float *buf) {
   SuperFamicom::audio.setBuffer(buf);
 }
 
-void Bsnes::setAudioCallback(void *ptr, void (*cb)(const void*, size_t)) {
-  SuperFamicom::audio.setCallback(ptr, cb);
-}
-
-void Bsnes::setAudioFrequency(double freq) {
-  SuperFamicom::audio.setFrequency(freq);
-}
-
-void Bsnes::setAudioSpf(unsigned spf) {
-  SuperFamicom::audio.setSpf(spf);
-}
-
-void Bsnes::setAudioQuality(unsigned rsqual) {
-  SuperFamicom::audio.setQuality(rsqual);
+void Bsnes::setAudioSpec(Audio::Spec spec) {
+  SuperFamicom::audio.setFrequency(spec.freq);
+  SuperFamicom::audio.setSpf(spec.spf);
+  SuperFamicom::audio.setQuality(spec.rsqual);
+  SuperFamicom::audio.setCallback(spec.ptr, spec.cb);
 }
 
 void Bsnes::setCoprocDelayedSync(bool value) {

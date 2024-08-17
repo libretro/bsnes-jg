@@ -769,18 +769,17 @@ int jg_game_load(void) {
 
     aspectRatio();
 
-    Bsnes::setAudioQuality(settings_bsnes[RSQUAL].val);
-
     // Audio and timing adjustments
     if (Bsnes::getRegion() == Bsnes::Region::PAL) {
         audinfo.spf = (SAMPLERATE / FRAMERATE_PAL) * CHANNELS;
-        Bsnes::setAudioSpf(audinfo.spf);
         jg_cb_frametime(TIMING_PAL);
     }
     else {
-        Bsnes::setAudioSpf(audinfo.spf);
         jg_cb_frametime(TIMING_NTSC);
     }
+
+    Bsnes::setAudioSpec({double(SAMPLERATE),audinfo.spf,
+        unsigned(settings_bsnes[RSQUAL].val), nullptr, &audioFrame});
 
     Bsnes::power(); // Power up!
 
@@ -882,8 +881,6 @@ void jg_setup_video(void) {
 
 void jg_setup_audio(void) {
     Bsnes::setAudioBuffer((float*)audinfo.buf);
-    Bsnes::setAudioCallback(nullptr, &audioFrame);
-    Bsnes::setAudioFrequency((double)SAMPLERATE);
 }
 
 void jg_set_inputstate(jg_inputstate_t *ptr, int port) {

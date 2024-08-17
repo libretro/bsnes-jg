@@ -26,6 +26,16 @@
 #include <vector>
 
 namespace Bsnes {
+  namespace Audio {
+    typedef struct _Spec {
+      double freq;
+      unsigned spf;
+      unsigned rsqual;
+      void *ptr;
+      void (*cb)(const void*, size_t);
+    } Spec;
+  }
+
   namespace Input {
     namespace Device {
       enum : unsigned {
@@ -96,10 +106,7 @@ namespace Bsnes {
   unsigned getRegion();
 
   void setAudioBuffer(float*);
-  void setAudioCallback(void*, void (*)(const void*, size_t));
-  void setAudioFrequency(double);
-  void setAudioSpf(unsigned);
-  void setAudioQuality(unsigned);
+  void setAudioSpec(Audio::Spec);
   void setCoprocDelayedSync(bool);
   void setCoprocPreferHLE(bool);
   void setInputDevice(Input::Spec);
