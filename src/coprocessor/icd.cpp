@@ -73,7 +73,7 @@ void ICD::ppuWrite(uint8_t color) {
 
 void ICD::apuWrite(int16_t left, int16_t right) {
   int16_t samples[] = {left, right};
-  if(!system.runAhead) stream->write(samples);
+  stream->write(samples);
 }
 
 void ICD::joypWrite(bool p14, bool p15) {

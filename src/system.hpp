@@ -52,8 +52,6 @@ struct System {
   serializer serialize(bool);
   bool unserialize(serializer&);
 
-  bool runAhead = false;
-
 private:
   struct Information {
     bool loaded = false;

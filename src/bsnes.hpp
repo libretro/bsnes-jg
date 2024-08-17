@@ -110,9 +110,6 @@ namespace Bsnes {
   void cheatsClear();
   bool cheatsDecode(int, std::string);
 
-  bool runAhead();
-  void setRunAhead(bool);
-
   unsigned getRegion();
 
   void setAudioSpec(Audio::Spec);

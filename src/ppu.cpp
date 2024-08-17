@@ -2430,13 +2430,10 @@ void PPU::power(bool reset) {
 }
 
 void PPU::refresh() {
-  if(system.runAhead) return;
-
   uint16_t *out = this->output;
   unsigned pitch  = 512;
   unsigned width  = 512;
   unsigned height = ppu.display.interlace ? 480 : 240;
-
   videoFrame(out, pitch * sizeof(uint16_t), width, height);
 }
 

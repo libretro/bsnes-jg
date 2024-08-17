@@ -170,14 +170,6 @@ bool Bsnes::cheatsDecode(int sys, std::string code) {
   return decoded;
 }
 
-bool Bsnes::runAhead() {
-  return SuperFamicom::system.runAhead;
-}
-
-void Bsnes::setRunAhead(bool runAhead) {
-  SuperFamicom::system.runAhead = runAhead;
-}
-
 unsigned Bsnes::getRegion() {
   return SuperFamicom::cartridge.region() == "PAL" ? Region::PAL : Region::NTSC;
 }
