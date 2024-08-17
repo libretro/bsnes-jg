@@ -190,7 +190,7 @@ void Bsnes::setCoprocPreferHLE(bool value) {
   SuperFamicom::configuration.coprocessor.preferHLE = value;
 }
 
-void Bsnes::setInputDevice(Input::Spec spec) {
+void Bsnes::setInputSpec(Input::Spec spec) {
   switch(spec.port) {
     case SuperFamicom::ID::Port::Controller1:
       SuperFamicom::controllerPort1.connect(

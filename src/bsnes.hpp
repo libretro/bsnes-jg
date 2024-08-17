@@ -115,7 +115,7 @@ namespace Bsnes {
   void setAudioSpec(Audio::Spec);
   void setCoprocDelayedSync(bool);
   void setCoprocPreferHLE(bool);
-  void setInputDevice(Input::Spec);
+  void setInputSpec(Input::Spec);
   void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
   void setOpenStreamCallback(bool (*)(std::string, std::stringstream&));
   void setLogCallback(void (*)(int, const char *, ...));
