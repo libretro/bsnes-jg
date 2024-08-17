@@ -115,7 +115,6 @@ namespace Bsnes {
 
   unsigned getRegion();
 
-  void setAudioBuffer(float*);
   void setAudioSpec(Audio::Spec);
   void setCoprocDelayedSync(bool);
   void setCoprocPreferHLE(bool);
