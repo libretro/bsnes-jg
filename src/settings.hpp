@@ -66,9 +66,6 @@ struct Configuration {
     struct PPU2 {
       unsigned version = 3;
     } ppu2;
-    struct Serialization {
-      bool faststates = false;
-    } serialization;
   } system;
 
   bool hotfixes = true;

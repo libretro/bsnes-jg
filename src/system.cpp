@@ -188,52 +188,13 @@ void System::run() {
 
 void System::runToSave() {
   const std::string headerTitle = cartridge.headerTitle();
-  bool method = configuration.system.serialization.faststates;
-
-  //these games will periodically deadlock when using "Fast" synchronization
-  if(headerTitle == "MEGAMAN X3"
-      || headerTitle == "STAR FOX"
-      || headerTitle == "Star Ocean"
-      || headerTitle == "SUPER MARIO RPG"
-      || headerTitle == "TALES OF PHANTASIA")
-    method = 0;
 
   scheduler.mode = Scheduler::Mode::Synchronize;
 
-  method ? runToSaveFast() : runToSaveStrict();
+  runToSaveStrict();
 
   scheduler.mode = Scheduler::Mode::Run;
   scheduler.active = cpu.thread;
-}
-
-void System::runToSaveFast() {
-  //run the emulator normally until the CPU thread naturally hits a synchronization point
-  while(true) {
-    scheduler.enter();
-    if(scheduler.event == Scheduler::Event::Frame) frameEvent();
-    if(scheduler.event == Scheduler::Event::Synchronized) {
-      if(scheduler.active != cpu.thread) continue;
-      break;
-    }
-    if(scheduler.event == Scheduler::Event::Desynchronized) continue;
-  }
-
-  //ignore any desynchronization events to force all other threads to their synchronization points
-  auto synchronize = [&](cothread_t thread) -> void {
-    scheduler.active = thread;
-    while(true) {
-      scheduler.enter();
-      if(scheduler.event == Scheduler::Event::Frame) frameEvent();
-      if(scheduler.event == Scheduler::Event::Synchronized) break;
-      if(scheduler.event == Scheduler::Event::Desynchronized) continue;
-    }
-  };
-
-  synchronize(smp.thread);
-  synchronize(ppu.thread);
-  for(Thread* coprocessor : cpu.coprocessors) {
-    synchronize(coprocessor->thread);
-  }
 }
 
 void System::runToSaveStrict() {

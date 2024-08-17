@@ -40,7 +40,6 @@ struct System {
 
   void run();
   void runToSave();
-  void runToSaveFast();
   void runToSaveStrict();
   void frameEvent();
 
