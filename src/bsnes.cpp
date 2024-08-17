@@ -182,14 +182,11 @@ unsigned Bsnes::getRegion() {
   return SuperFamicom::cartridge.region() == "PAL" ? Region::PAL : Region::NTSC;
 }
 
-void Bsnes::setAudioBuffer(float *buf) {
-  SuperFamicom::audio.setBuffer(buf);
-}
-
 void Bsnes::setAudioSpec(Audio::Spec spec) {
   SuperFamicom::audio.setFrequency(spec.freq);
   SuperFamicom::audio.setSpf(spec.spf);
   SuperFamicom::audio.setQuality(spec.rsqual);
+  SuperFamicom::audio.setBuffer(spec.buf);
   SuperFamicom::audio.setCallback(spec.ptr, spec.cb);
 }
 

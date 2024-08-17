@@ -31,6 +31,7 @@ namespace Bsnes {
       double freq;
       unsigned spf;
       unsigned rsqual;
+      float *buf;
       void *ptr;
       void (*cb)(const void*, size_t);
     } Spec;

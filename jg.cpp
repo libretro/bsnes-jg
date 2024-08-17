@@ -778,9 +778,6 @@ int jg_game_load(void) {
         jg_cb_frametime(TIMING_NTSC);
     }
 
-    Bsnes::setAudioSpec({double(SAMPLERATE),audinfo.spf,
-        unsigned(settings_bsnes[RSQUAL].val), nullptr, &audioFrame});
-
     Bsnes::power(); // Power up!
 
     inputSetup();
@@ -880,7 +877,9 @@ void jg_setup_video(void) {
 }
 
 void jg_setup_audio(void) {
-    Bsnes::setAudioBuffer((float*)audinfo.buf);
+    Bsnes::setAudioSpec({double(SAMPLERATE),audinfo.spf,
+        unsigned(settings_bsnes[RSQUAL].val),
+        (float*)audinfo.buf, nullptr, &audioFrame});
 }
 
 void jg_set_inputstate(jg_inputstate_t *ptr, int port) {
