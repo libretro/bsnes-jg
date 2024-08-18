@@ -221,8 +221,8 @@ void Bsnes::setRegion(std::string region) {
   SuperFamicom::cartridge.setRegion(region);
 }
 
-void Bsnes::setRomCallback(bool (*cb)(unsigned)) {
-  SuperFamicom::cartridge.setRomCallback(cb);
+void Bsnes::setRomLoadCallback(void *ptr, bool (*cb)(void*, unsigned)) {
+  SuperFamicom::cartridge.setRomCallback(ptr, cb);
 }
 
 void Bsnes::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {

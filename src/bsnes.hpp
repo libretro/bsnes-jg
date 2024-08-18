@@ -118,7 +118,7 @@ namespace Bsnes {
   void setOpenStreamCallback(bool (*)(std::string, std::stringstream&));
   void setLogCallback(void (*)(int, const char *, ...));
   void setRegion(std::string);
-  void setRomCallback(bool (*)(unsigned));
+  void setRomLoadCallback(void*, bool (*)(void*, unsigned));
   void setRomBSMemory(std::vector<uint8_t>&, std::string&);
   void setRomGB(const uint8_t*, size_t);
   void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);

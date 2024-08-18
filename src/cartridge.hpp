@@ -41,7 +41,7 @@ struct Cartridge {
 
   void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
   void setOpenStreamCallback(bool (*)(std::string, std::stringstream&));
-  void setRomCallback(bool (*)(unsigned));
+  void setRomCallback(void*, bool (*)(void*, unsigned));
   void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
 
   void setRegion(std::string);
@@ -90,9 +90,6 @@ struct Cartridge {
   } has;
 
 private:
-  std::string board;
-  std::string forceRegion;
-
   std::string loadBoard(std::string);
   void loadBSMemory(std::string);
 
@@ -102,10 +99,15 @@ private:
 
   void saveMemory(Memory&, std::string);
 
+  std::string board;
+  std::string forceRegion;
+
   bool (*openFileCallback)(unsigned, std::string, std::vector<uint8_t>&);
   bool (*openStreamCallback)(std::string, std::stringstream&);
-  bool (*romCallback)(unsigned);
+  bool (*romCallback)(void*, unsigned);
   void (*writeCallback)(unsigned, std::string, const uint8_t*, unsigned);
+
+  void *udata_rom;
 };
 
 extern Cartridge cartridge;

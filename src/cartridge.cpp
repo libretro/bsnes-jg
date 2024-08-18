@@ -251,7 +251,7 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
 void Cartridge::loadBSMemory(std::string node) {
   has.BSMemorySlot = true;
 
-  if(romCallback(ID::BSMemory)) {
+  if(romCallback(udata_rom, ID::BSMemory)) {
     bsmemory.pathID = ID::BSMemory;
 
     if (!slotBSMemory.document.empty()) {
@@ -325,7 +325,7 @@ bool Cartridge::load() {
   slotSufamiTurboA = {};
   slotSufamiTurboB = {};
 
-  if(!romCallback(ID::SuperFamicom) || game.document.empty())
+  if(!romCallback(udata_rom, ID::SuperFamicom) || game.document.empty())
     return false;
 
   information.pathID = ID::SuperFamicom;
@@ -920,7 +920,7 @@ bool Cartridge::load() {
     }
     else if (id == "SufamiTurbo") {
       //slot(type=SufamiTurbo)[0]
-      if (i == 0 && romCallback(ID::SufamiTurboA)) {
+      if (i == 0 && romCallback(udata_rom, ID::SufamiTurboA)) {
         sufamiturboA.pathID = ID::SufamiTurboA;
         if (!slotSufamiTurboA.document.empty()) {
           slotSufamiTurboA.load(slotSufamiTurboA.document);
@@ -952,7 +952,7 @@ bool Cartridge::load() {
         loadMap(BML::searchNode(slots[i], {"slot", "ram", "map"}), sufamiturboA.ram);
       }
       //slot(type=SufamiTurbo)[1]
-      else if (i == 1 && romCallback(ID::SufamiTurboB)) {
+      else if (i == 1 && romCallback(udata_rom, ID::SufamiTurboB)) {
         sufamiturboB.pathID = ID::SufamiTurboB;
         if (!slotSufamiTurboB.document.empty()) {
           slotSufamiTurboB.load(slotSufamiTurboB.document);
@@ -1427,8 +1427,9 @@ void Cartridge::setOpenStreamCallback(bool (*cb)(std::string, std::stringstream&
   openStreamCallback = cb;
 }
 
-void Cartridge::setRomCallback(bool (*cb)(unsigned)) {
+void Cartridge::setRomCallback(void *ptr, bool (*cb)(void*, unsigned)) {
   romCallback = cb;
+  udata_rom = ptr;
 }
 
 void Cartridge::setWriteCallback(void (*cb)(unsigned, std::string, const uint8_t*, unsigned)) {

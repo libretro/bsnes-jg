@@ -612,7 +612,7 @@ static inline std::vector<uint8_t> bufToVec(void *data, size_t size) {
     return ret;
 }
 
-static bool loadRom(unsigned id) {
+static bool loadRom(void*, unsigned id) {
     if (id == 1) {
         std::vector<uint8_t> rom = addon ?
         bufToVec(addoninfo.data, addoninfo.size) :
@@ -682,7 +682,7 @@ int jg_init(void) {
     Bsnes::setOpenFileCallback(&fileOpenV);
     Bsnes::setOpenStreamCallback(&fileOpenS);
     Bsnes::setLogCallback(jg_cb_log);
-    Bsnes::setRomCallback(&loadRom);
+    Bsnes::setRomLoadCallback(nullptr, &loadRom);
     Bsnes::setWriteCallback(&fileWrite);
 
     // Configuration
