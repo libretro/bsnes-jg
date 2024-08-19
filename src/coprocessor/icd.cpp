@@ -432,7 +432,7 @@ void ICD::save() {
   if(int size = GB_save_battery_size(&sameboy)) {
     uint8_t *data = (uint8_t*)malloc(size);
     GB_save_battery_to_buffer(&sameboy, data, size);
-    writeCallback(pathID(), "save.ram", data, size);
+    writeCallback(udata_wr, pathID(), "save.ram", data, size);
     free(data);
   }
 }
@@ -489,8 +489,9 @@ void ICD::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vector<uint
   openFileCallback = cb;
 }
 
-void ICD::setWriteCallback(void (*cb)(unsigned, std::string, const uint8_t*, unsigned)) {
+void ICD::setWriteCallback(void *ptr, void (*cb)(void*, unsigned, std::string, const uint8_t*, unsigned)) {
   writeCallback = cb;
+  udata_wr = ptr;
 }
 
 }

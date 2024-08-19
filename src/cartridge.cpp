@@ -306,7 +306,7 @@ void Cartridge::saveMemory(Memory& sram, std::string node) {
   if (game.memory(memory, node)
       && !(memory.type == "RAM" && !memory.nonVolatile)
       && !(memory.type == "RTC" && !memory.nonVolatile)) {
-    writeCallback(pathID(), memory.name(), sram.data(), sram.size());
+    writeCallback(udata_wr, pathID(), memory.name(), sram.data(), sram.size());
   }
 }
 
@@ -1193,7 +1193,7 @@ void Cartridge::save() {
             BML::search(m, {"memory", "architecture"}) == "ARM6") {
           Game::Memory file;
           if (game.memory(file, m) && file.nonVolatile) {
-            writeCallback(ID::SuperFamicom, "save.ram", armdsp.programRAM, (16 * 1024));
+            writeCallback(udata_wr, ID::SuperFamicom, "save.ram", armdsp.programRAM, (16 * 1024));
           }
         }
       }
@@ -1206,11 +1206,11 @@ void Cartridge::save() {
           if (content == "Data" && BML::search(m, {"memory", "architecture"}) == "HG51BS169") {
             Game::Memory file;
             if (game.memory(file, m) && file.nonVolatile) {
-              writeCallback(ID::SuperFamicom, "save.ram", hitachidsp.dataRAM, (3 * 1024));
+              writeCallback(udata_wr, ID::SuperFamicom, "save.ram", hitachidsp.dataRAM, (3 * 1024));
             }
           }
           else if (content == "Save") {
-            writeCallback(ID::SuperFamicom, "save.ram", hitachidsp.ram.data(), hitachidsp.ram.size());
+            writeCallback(udata_wr, ID::SuperFamicom, "save.ram", hitachidsp.ram.data(), hitachidsp.ram.size());
           }
         }
       }
@@ -1223,7 +1223,7 @@ void Cartridge::save() {
             BML::search(m, {"memory", "architecture"}) == "uPD7725") {
           Game::Memory file;
           if (game.memory(file, m) && file.nonVolatile) {
-            writeCallback(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, 2 * 256);
+            writeCallback(udata_wr, ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, 2 * 256);
           }
         }
       }
@@ -1236,7 +1236,7 @@ void Cartridge::save() {
             BML::search(m, {"memory", "architecture"}) == "uPD96050") {
           Game::Memory file;
           if (game.memory(file, m) && file.nonVolatile) {
-            writeCallback(ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, (4 * 1024));
+            writeCallback(udata_wr, ID::SuperFamicom, "save.ram", (uint8_t*)necdsp.dataRAM, (4 * 1024));
           }
         }
       }
@@ -1253,7 +1253,7 @@ void Cartridge::save() {
       if (game.memory(file, memory) && file.nonVolatile) {
         uint8_t data[16] = {0};
         epsonrtc.save(data);
-        writeCallback(ID::SuperFamicom, "time.rtc", data, 16);
+        writeCallback(udata_wr, ID::SuperFamicom, "time.rtc", data, 16);
       }
     }
     //rtc(manufacturer=Sharp)
@@ -1263,7 +1263,7 @@ void Cartridge::save() {
       if (game.memory(file, memory) && file.nonVolatile) {
         uint8_t data[16] = {0};
         sharprtc.save(data);
-        writeCallback(ID::SuperFamicom, "time.rtc", data, 16);
+        writeCallback(udata_wr, ID::SuperFamicom, "time.rtc", data, 16);
       }
     }
   }
@@ -1277,7 +1277,7 @@ void Cartridge::save() {
           BML::search(m, {"memory", "content"}) == "Program") {
         if(Game::Memory memory = Game::Memory(m)) {
           if (bsmemory.memory.data() != nullptr) {
-            writeCallback(bsmemory.pathID, memory.name(), bsmemory.memory.data(), memory.size);
+            writeCallback(udata_wr, bsmemory.pathID, memory.name(), bsmemory.memory.data(), memory.size);
           }
         }
       }
@@ -1289,7 +1289,7 @@ void Cartridge::save() {
           BML::search(m, {"memory", "content"}) == "Save") {
         if(Game::Memory memory = Game::Memory(m)) {
           if (memory.nonVolatile) {
-            writeCallback(sufamiturboA.pathID, memory.name(), sufamiturboA.ram.data(), memory.size);
+            writeCallback(udata_wr, sufamiturboA.pathID, memory.name(), sufamiturboA.ram.data(), memory.size);
           }
         }
       }
@@ -1301,7 +1301,7 @@ void Cartridge::save() {
           BML::search(m, {"memory", "content"}) == "Save") {
         if(Game::Memory memory = Game::Memory(m)) {
           if (memory.nonVolatile) {
-            writeCallback(sufamiturboB.pathID, memory.name(), sufamiturboB.ram.data(), memory.size);
+            writeCallback(udata_wr, sufamiturboB.pathID, memory.name(), sufamiturboB.ram.data(), memory.size);
           }
         }
       }
@@ -1432,8 +1432,9 @@ void Cartridge::setRomCallback(void *ptr, bool (*cb)(void*, unsigned)) {
   udata_rom = ptr;
 }
 
-void Cartridge::setWriteCallback(void (*cb)(unsigned, std::string, const uint8_t*, unsigned)) {
+void Cartridge::setWriteCallback(void *ptr, void (*cb)(void*, unsigned, std::string, const uint8_t*, unsigned)) {
   writeCallback = cb;
+  udata_wr = ptr;
 }
 
 }

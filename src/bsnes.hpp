@@ -124,6 +124,6 @@ namespace Bsnes {
   void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);
   void setRomSufamiTurboB(std::vector<uint8_t>&, std::string&);
   void setRomSuperFamicom(std::vector<uint8_t>&, std::string&);
-  void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
+  void setWriteCallback(void*, void (*)(void*, unsigned, std::string, const uint8_t*, unsigned));
   void setVideoSpec(Video::Spec);
 }

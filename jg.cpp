@@ -352,7 +352,7 @@ static bool fileOpenS(std::string name, std::stringstream& ss) {
     return true;
 }
 
-static void fileWrite(unsigned id, std::string name, const uint8_t *data,
+static void fileWrite(void*, unsigned id, std::string name, const uint8_t *data,
     unsigned size) {
 
     std::string path;
@@ -683,7 +683,7 @@ int jg_init(void) {
     Bsnes::setOpenStreamCallback(&fileOpenS);
     Bsnes::setLogCallback(jg_cb_log);
     Bsnes::setRomLoadCallback(nullptr, &loadRom);
-    Bsnes::setWriteCallback(&fileWrite);
+    Bsnes::setWriteCallback(nullptr, &fileWrite);
 
     // Configuration
     Bsnes::setCoprocDelayedSync(settings_bsnes[COPROC_DELAYSYNC].val);

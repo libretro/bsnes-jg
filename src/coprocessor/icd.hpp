@@ -30,7 +30,7 @@ struct ICD : Thread {
   inline unsigned pathID() const;
 
   void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
-  void setWriteCallback(void (*)(unsigned, std::string, const uint8_t*, unsigned));
+  void setWriteCallback(void*, void (*)(void*, unsigned, std::string, const uint8_t*, unsigned));
 
   void synchronizeCPU();
   void main();
@@ -64,7 +64,10 @@ private:
     uint8_t data[16];
   };
 
-  void (*writeCallback)(unsigned, std::string, const uint8_t*, unsigned);
+  void (*writeCallback)(void*, unsigned, std::string, const uint8_t*, unsigned);
+  bool (*openFileCallback)(unsigned, std::string, std::vector<uint8_t>&);
+
+  void *udata_wr;
 
   Packet packet[64];
   uint8_t packetSize;
@@ -101,8 +104,6 @@ private:
   struct Information {
     unsigned pathID = 0;
   } information;
-
-  bool (*openFileCallback)(unsigned, std::string, std::vector<uint8_t>&);
 
 public:
   uint32_t bitmap[160 * 144];
