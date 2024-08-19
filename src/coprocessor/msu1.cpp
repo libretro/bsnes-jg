@@ -147,7 +147,7 @@ void MSU1::power() {
 
 void MSU1::dataOpen() {
   dataFile.clear();
-  if (!openFileCallback(ID::SuperFamicom, "msu1/data.rom", dataFile)) {
+  if (!openFileCallback(udata_v, ID::SuperFamicom, "msu1/data.rom", dataFile)) {
     logger.log(Logger::DBG, "Failed to open msu1/data.rom");
   }
 }
@@ -157,7 +157,7 @@ void MSU1::audioOpen() {
   std::stringstream name;
   name << "msu1/track-" << io.audioTrack << ".pcm";
 
-  if (openFileCallback(ID::SuperFamicom, name.str(), audioFile)) {
+  if (openFileCallback(udata_v, ID::SuperFamicom, name.str(), audioFile)) {
     if(audioFile.size() >= 8) {
       uint32_t header = (audioFile[0] << 24) | (audioFile[1] << 16) |
             (audioFile[2] << 8) | audioFile[3];
@@ -243,8 +243,9 @@ void MSU1::writeIO(unsigned addr, uint8_t data) {
   }
 }
 
-void MSU1::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vector<uint8_t>&)) {
+void MSU1::setOpenFileCallback(void *ptr, bool (*cb)(void*, unsigned, std::string, std::vector<uint8_t>&)) {
   openFileCallback = cb;
+  udata_v = ptr;
 }
 
 }

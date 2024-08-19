@@ -211,10 +211,10 @@ void Bsnes::setOpenStreamCallback(void *ptr, bool (*cb)(void*, std::string, std:
   SuperFamicom::cartridge.setOpenStreamCallback(ptr, cb);
 }
 
-void Bsnes::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vector<uint8_t>&)) {
-  SuperFamicom::cartridge.setOpenFileCallback(cb);
-  SuperFamicom::icd.setOpenFileCallback(cb);
-  SuperFamicom::msu1.setOpenFileCallback(cb);
+void Bsnes::setOpenFileCallback(void *ptr, bool (*cb)(void*, unsigned, std::string, std::vector<uint8_t>&)) {
+  SuperFamicom::cartridge.setOpenFileCallback(ptr, cb);
+  SuperFamicom::icd.setOpenFileCallback(ptr, cb);
+  SuperFamicom::msu1.setOpenFileCallback(ptr, cb);
 }
 
 void Bsnes::setRegion(std::string region) {

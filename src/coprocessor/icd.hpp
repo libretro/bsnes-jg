@@ -29,7 +29,7 @@ namespace SuperFamicom {
 struct ICD : Thread {
   inline unsigned pathID() const;
 
-  void setOpenFileCallback(bool (*)(unsigned, std::string, std::vector<uint8_t>&));
+  void setOpenFileCallback(void*, bool (*)(void*, unsigned, std::string, std::vector<uint8_t>&));
   void setWriteCallback(void*, void (*)(void*, unsigned, std::string, const uint8_t*, unsigned));
 
   void synchronizeCPU();
@@ -64,9 +64,10 @@ private:
     uint8_t data[16];
   };
 
+  bool (*openFileCallback)(void*, unsigned, std::string, std::vector<uint8_t>&);
   void (*writeCallback)(void*, unsigned, std::string, const uint8_t*, unsigned);
-  bool (*openFileCallback)(unsigned, std::string, std::vector<uint8_t>&);
 
+  void *udata_v;
   void *udata_wr;
 
   Packet packet[64];

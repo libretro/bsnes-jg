@@ -207,7 +207,9 @@ static void aspectRatio(void) {
     vidinfo.aspect = (aspect_w * aspect_ratio) / (double)vidinfo.h;
 }
 
-static bool fileOpenV(unsigned id, std::string name, std::vector<uint8_t>& v) {
+static bool fileOpenV(void*, unsigned id, std::string name,
+    std::vector<uint8_t>& v) {
+
     std::string path;
     bool required = false;
 
@@ -679,7 +681,7 @@ void jg_set_cb_rumble(jg_cb_rumble_t func) {
 
 int jg_init(void) {
     // Set callbacks
-    Bsnes::setOpenFileCallback(&fileOpenV);
+    Bsnes::setOpenFileCallback(nullptr, &fileOpenV);
     Bsnes::setOpenStreamCallback(nullptr, &fileOpenS);
     Bsnes::setLogCallback(jg_cb_log);
     Bsnes::setRomLoadCallback(nullptr, &loadRom);

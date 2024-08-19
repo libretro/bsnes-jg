@@ -238,7 +238,7 @@ void Cartridge::loadMemory(Memory& mem, std::string node) {
     }
     else {
       std::vector<uint8_t> memfile;
-      if (openFileCallback(pathID(), memory_name, memfile)) {
+      if (openFileCallback(udata_v, pathID(), memory_name, memfile)) {
         for (unsigned i = 0; i < std::min(unsigned(memfile.size()), mem.size()); ++i) {
           mem.data()[i] = memfile[i];
         }
@@ -550,7 +550,7 @@ bool Cartridge::load() {
           if (content == "Program" ) {
             Game::Memory file;
             if(game.memory(file, m)) {
-              if (openFileCallback(ID::SuperFamicom, file.name(), firmfile)) {
+              if (openFileCallback(udata_v, ID::SuperFamicom, file.name(), firmfile)) {
                 for (unsigned i = 0; i < (128 * 1024); ++i) {
                   armdsp.programROM[i] = firmfile[i];
                 }
@@ -560,7 +560,7 @@ bool Cartridge::load() {
           else if (content == "Data") {
             Game::Memory file;
             if(game.memory(file, m)) {
-              if (openFileCallback(ID::SuperFamicom, file.name(), firmfile)) {
+              if (openFileCallback(udata_v, ID::SuperFamicom, file.name(), firmfile)) {
                 for (unsigned i = 0; i < (32 * 1024); ++i) {
                   armdsp.dataROM[i] = firmfile[i];
                 }
@@ -572,7 +572,7 @@ bool Cartridge::load() {
           Game::Memory file;
           if(game.memory(file, m)) {
             std::vector<uint8_t> sramfile;
-            if (openFileCallback(ID::SuperFamicom, "save.ram", sramfile)) {
+            if (openFileCallback(udata_v, ID::SuperFamicom, "save.ram", sramfile)) {
               for (unsigned i = 0; i < (16 * 1024); ++i) {
                 armdsp.programRAM[i] = sramfile[i];
               }
@@ -682,7 +682,7 @@ bool Cartridge::load() {
       bool failed = false;
 
       std::vector<uint8_t> prgfile;
-      if (openFileCallback(ID::SuperFamicom, ident + ".program.rom", prgfile)) {
+      if (openFileCallback(udata_v, ID::SuperFamicom, ident + ".program.rom", prgfile)) {
         for (unsigned i = 0; i < 2048; ++i) {
           necdsp.programROM[i] = prgfile[i * 3] |
             (prgfile[(i * 3) + 1] << 8) |
@@ -694,7 +694,7 @@ bool Cartridge::load() {
       }
 
       std::vector<uint8_t> datafile;
-      if (openFileCallback(ID::SuperFamicom, ident + ".data.rom", datafile)) {
+      if (openFileCallback(udata_v, ID::SuperFamicom, ident + ".data.rom", datafile)) {
         for (unsigned i = 0; i < 1024; ++i) {
           necdsp.dataROM[i] = datafile[i * 2] | (datafile[(i * 2) + 1] << 8);
         }
@@ -735,7 +735,7 @@ bool Cartridge::load() {
           if (BML::search(m, {"memory", "type"}) == "RAM" &&
               BML::search(m, {"memory", "content"}) == "Data") {
             std::vector<uint8_t> sramfile;
-            if (openFileCallback(ID::SuperFamicom, "save.ram", sramfile)) {
+            if (openFileCallback(udata_v, ID::SuperFamicom, "save.ram", sramfile)) {
               for (unsigned i = 0; i < 256; ++i) {
                 necdsp.dataRAM[i] = sramfile[i * 2] | (sramfile[i * 2 + 1] << 8);
               }
@@ -771,7 +771,7 @@ bool Cartridge::load() {
       bool failed = false;
 
       std::vector<uint8_t> prgfile;
-      if (openFileCallback(ID::SuperFamicom, ident + ".program.rom", prgfile)) {
+      if (openFileCallback(udata_v, ID::SuperFamicom, ident + ".program.rom", prgfile)) {
         for (unsigned i = 0; i < 16384; ++i) {
           necdsp.programROM[i] = prgfile[i * 3] |
             (prgfile[(i * 3) + 1] << 8) |
@@ -783,7 +783,7 @@ bool Cartridge::load() {
       }
 
       std::vector<uint8_t> datafile;
-      if (openFileCallback(ID::SuperFamicom, ident + ".data.rom", datafile)) {
+      if (openFileCallback(udata_v, ID::SuperFamicom, ident + ".data.rom", datafile)) {
         for (unsigned i = 0; i < 2048; ++i) {
           necdsp.dataROM[i] = datafile[i * 2] | (datafile[(i * 2) + 1] << 8);
         }
@@ -809,7 +809,7 @@ bool Cartridge::load() {
           if (BML::search(m, {"memory", "type"}) == "RAM" &&
               BML::search(m, {"memory", "content"}) == "Data") {
             std::vector<uint8_t> sramfile;
-            if (openFileCallback(ID::SuperFamicom, "save.ram", sramfile)) {
+            if (openFileCallback(udata_v, ID::SuperFamicom, "save.ram", sramfile)) {
               for (unsigned i = 0; i < 2048; ++i) {
                 necdsp.dataRAM[i] = sramfile[i * 2] | (sramfile[i * 2 + 1] << 8);
               }
@@ -939,7 +939,7 @@ bool Cartridge::load() {
               if(Game::Memory memory = Game::Memory(m)) {
                 sufamiturboA.ram.allocate(memory.size);
                 std::vector<uint8_t> sramfile;
-                if (openFileCallback(sufamiturboA.pathID, "save.ram", sramfile)) {
+                if (openFileCallback(udata_v, sufamiturboA.pathID, "save.ram", sramfile)) {
                   for (unsigned n = 0; n < memory.size; ++n) {
                     sufamiturboA.ram.data()[n] = sramfile[n];
                   }
@@ -971,7 +971,7 @@ bool Cartridge::load() {
               if(Game::Memory memory = Game::Memory(m)) {
                 sufamiturboB.ram.allocate(memory.size);
                 std::vector<uint8_t> sramfile;
-                if (openFileCallback(sufamiturboB.pathID, "save.ram", sramfile)) {
+                if (openFileCallback(udata_v, sufamiturboB.pathID, "save.ram", sramfile)) {
                   for (unsigned n = 0; n < memory.size; ++n) {
                     sufamiturboB.ram.data()[n] = sramfile[n];
                   }
@@ -1015,7 +1015,7 @@ bool Cartridge::load() {
 
       if(game.memory(file, BML::searchNode(rtc, {"rtc", "memory"}))) {
         std::vector<uint8_t> rtcfile;
-        if (openFileCallback(ID::SuperFamicom, "time.rtc", rtcfile)) {
+        if (openFileCallback(udata_v, ID::SuperFamicom, "time.rtc", rtcfile)) {
           uint8_t data[16] = {0};
           for (unsigned i = 0; i < 16; ++i) data[i] = rtcfile[i];
           epsonrtc.load(data);
@@ -1035,7 +1035,7 @@ bool Cartridge::load() {
 
       if(game.memory(file, BML::searchNode(rtc, {"rtc", "memory"}))) {
         std::vector<uint8_t> rtcfile;
-        if (openFileCallback(ID::SuperFamicom, "time.rtc", rtcfile)) {
+        if (openFileCallback(udata_v, ID::SuperFamicom, "time.rtc", rtcfile)) {
           uint8_t data[16] = {0};
           for (unsigned i = 0; i < 16; ++i) data[i] = rtcfile[i];
           sharprtc.load(data);
@@ -1045,7 +1045,7 @@ bool Cartridge::load() {
   }
 
   std::vector<uint8_t> msu1file;
-  if (openFileCallback(ID::SuperFamicom, "msu1/data.rom", msu1file)) {
+  if (openFileCallback(udata_v, ID::SuperFamicom, "msu1/data.rom", msu1file)) {
     msu1file.clear();
     has.MSU1 = true;
     bus.map({&MSU1::readIO, &msu1}, {&MSU1::writeIO, &msu1}, "00-3f,80-bf:2000-2007");
@@ -1419,8 +1419,9 @@ void Cartridge::unload() {
   ram.reset();
 }
 
-void Cartridge::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vector<uint8_t>&)) {
+void Cartridge::setOpenFileCallback(void* ptr, bool (*cb)(void*, unsigned, std::string, std::vector<uint8_t>&)) {
   openFileCallback = cb;
+  udata_v = ptr;
 }
 
 void Cartridge::setOpenStreamCallback(void *ptr, bool (*cb)(void*, std::string, std::stringstream&)) {
