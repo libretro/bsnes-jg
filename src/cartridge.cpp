@@ -175,7 +175,7 @@ std::string Cartridge::loadBoard(std::string node) {
   if (node.find("WEI-") == 0) node.replace(0, 4, "SHVC-");
 
   std::stringstream boardsfile;
-  if (openStreamCallback("boards.bml", boardsfile)) {
+  if (openStreamCallback(udata_s, "boards.bml", boardsfile)) {
     return BML::searchBoard(boardsfile.str(), node);
   }
 
@@ -1318,7 +1318,7 @@ void Cartridge::setRomBSMemory(std::vector<uint8_t>& data, std::string& loc) {
   Heuristics::BSMemory heuristics = Heuristics::BSMemory(data, loc);
 
   std::stringstream dbfile;
-  if (openStreamCallback("BSMemory.bml", dbfile)) {
+  if (openStreamCallback(udata_s, "BSMemory.bml", dbfile)) {
     logger.log(Logger::DBG, "Loaded BSMemory.bml\n");
   }
 
@@ -1333,7 +1333,7 @@ void Cartridge::setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc)
   Heuristics::SufamiTurbo heuristics = Heuristics::SufamiTurbo(data, loc);
 
   std::stringstream dbfile;
-  if (openStreamCallback("SufamiTurbo.bml", dbfile)) {
+  if (openStreamCallback(udata_s, "SufamiTurbo.bml", dbfile)) {
     logger.log(Logger::DBG, "Loaded SufamiTurbo.bml\n");
   }
 
@@ -1350,7 +1350,7 @@ void Cartridge::setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc)
   Heuristics::SufamiTurbo heuristics = Heuristics::SufamiTurbo(data, loc);
 
   std::stringstream dbfile;
-  if (openStreamCallback("SufamiTurbo.bml", dbfile)) {
+  if (openStreamCallback(udata_s, "SufamiTurbo.bml", dbfile)) {
     logger.log(Logger::DBG, "Loaded SufamiTurbo.bml\n");
   }
 
@@ -1366,7 +1366,7 @@ void Cartridge::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc)
   Heuristics::SuperFamicom heuristics = Heuristics::SuperFamicom(data, loc);
 
   std::stringstream dbfile;
-  if (openStreamCallback("SuperFamicom.bml", dbfile)) {
+  if (openStreamCallback(udata_s, "SuperFamicom.bml", dbfile)) {
     logger.log(Logger::DBG, "Loaded SuperFamicom.bml\n");
   }
 
@@ -1423,8 +1423,9 @@ void Cartridge::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vecto
   openFileCallback = cb;
 }
 
-void Cartridge::setOpenStreamCallback(bool (*cb)(std::string, std::stringstream&)) {
+void Cartridge::setOpenStreamCallback(void *ptr, bool (*cb)(void*, std::string, std::stringstream&)) {
   openStreamCallback = cb;
+  udata_s = ptr;
 }
 
 void Cartridge::setRomCallback(void *ptr, bool (*cb)(void*, unsigned)) {

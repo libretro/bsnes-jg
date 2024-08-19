@@ -338,7 +338,7 @@ static bool fileOpenV(unsigned id, std::string name, std::vector<uint8_t>& v) {
     return true;
 }
 
-static bool fileOpenS(std::string name, std::stringstream& ss) {
+static bool fileOpenS(void*, std::string name, std::stringstream& ss) {
     std::string path = std::string(pathinfo.core) + "/" + name;
     std::ifstream stream(path, std::ios::in | std::ios::binary);
 
@@ -680,7 +680,7 @@ void jg_set_cb_rumble(jg_cb_rumble_t func) {
 int jg_init(void) {
     // Set callbacks
     Bsnes::setOpenFileCallback(&fileOpenV);
-    Bsnes::setOpenStreamCallback(&fileOpenS);
+    Bsnes::setOpenStreamCallback(nullptr, &fileOpenS);
     Bsnes::setLogCallback(jg_cb_log);
     Bsnes::setRomLoadCallback(nullptr, &loadRom);
     Bsnes::setWriteCallback(nullptr, &fileWrite);

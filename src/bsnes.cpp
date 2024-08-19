@@ -207,8 +207,8 @@ void Bsnes::setLogCallback(void (*cb)(int, const char *, ...)) {
   logger.setCallback(cb);
 }
 
-void Bsnes::setOpenStreamCallback(bool (*cb)(std::string, std::stringstream&)) {
-  SuperFamicom::cartridge.setOpenStreamCallback(cb);
+void Bsnes::setOpenStreamCallback(void *ptr, bool (*cb)(void*, std::string, std::stringstream&)) {
+  SuperFamicom::cartridge.setOpenStreamCallback(ptr, cb);
 }
 
 void Bsnes::setOpenFileCallback(bool (*cb)(unsigned, std::string, std::vector<uint8_t>&)) {
