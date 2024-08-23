@@ -1,7 +1,7 @@
 /*
  * bsnes-jg - Super Nintendo emulator
  *
- * Copyright (C) 2020-2022 Rupert Carmichael
+ * Copyright (C) 2020-2024 Rupert Carmichael
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,28 +17,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cstdarg>
-#include <cstdio>
+#include <iostream>
 
 #include "logger.hpp"
 
 Logger logger;
 
-__attribute__ ((format (printf, 2, 3)))
-static void log_default(int level, const char *fmt, ...) {
-    static const char *lchr = "DIWE";
-    char buffer[512];
-    va_list va;
-    va_start(va, fmt);
-    vsnprintf(buffer, sizeof(buffer), fmt, va);
-    va_end(va);
-    fprintf(stdout, "%c: %s", lchr[level], buffer);
+static void log_default(void*, int, std::string& text) {
+    std::cerr << text;
+}
+
+void Logger::log(int level, std::string text) {
+    log_cb(udata, level, text);
 }
 
 Logger::Logger() {
-    setCallback(&log_default);
+    setCallback(nullptr, &log_default);
 }
 
-void Logger::setCallback(void (*cb)(int, const char *, ...)) {
-    log = cb;
+void Logger::setCallback(void *ptr, void (*cb)(void*, int, std::string&)) {
+    log_cb = cb;
+    udata = ptr;
 }

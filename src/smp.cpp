@@ -103,7 +103,8 @@ uint8_t SMP::portRead(uint8_t port) const {
     case 2: return io.cpu2;
     case 3: return io.cpu3;
     default:
-      logger.log(Logger::WRN, "SMP: Invalid Port Read: 0x%02x\n", port);
+      logger.log(Logger::WRN, std::string("SMP: Invalid Port Write: ") +
+        std::to_string(port) + "\n");
       return 0;
   }
 }
@@ -115,7 +116,8 @@ void SMP::portWrite(uint8_t port, uint8_t data) {
     case 2: io.apu2 = data; break;
     case 3: io.apu3 = data; break;
     default:
-      logger.log(Logger::WRN, "SMP: Invalid Port Write: 0x%02x\n", port);
+      logger.log(Logger::WRN, std::string("SMP: Invalid Port Write: ") +
+        std::to_string(port) + "\n");
       break;
   }
 }
@@ -179,7 +181,8 @@ uint8_t SMP::readIO(uint16_t address) {
     timer2.stage3 = 0;
     return data;
   default:
-    logger.log(Logger::WRN, "SMP: Invalid Address: 0x%04x\n", address);
+    logger.log(Logger::WRN, std::string("SMP: Invalid Address: ") +
+      std::to_string(address) + "\n");
     return data;
   }
 }

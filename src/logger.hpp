@@ -1,7 +1,7 @@
 /*
  * bsnes-jg - Super Nintendo emulator
  *
- * Copyright (C) 2020-2022 Rupert Carmichael
+ * Copyright (C) 2020-2024 Rupert Carmichael
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,17 @@
 
 #pragma once
 
+#include <string>
+
 struct Logger {
   enum levels { DBG, INF, WRN, ERR };
 
   Logger();
-  void setCallback(void (*)(int, const char *, ...));
+  void log(int, std::string);
+  void setCallback(void*, void (*)(void*, int, std::string&));
 
-  void (*log)(int, const char *, ...);
+  void (*log_cb)(void*, int, std::string&);
+  void *udata;
 };
 
 extern Logger logger;

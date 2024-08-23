@@ -170,6 +170,10 @@ static struct Location {
     std::string location;
 } bsMemory, superFamicom, sufamiTurboA, sufamiTurboB;
 
+static void logCallback(void*, int level, std::string& text) {
+    jg_cb_log(level, text.c_str());
+}
+
 // Set the aspect ratio
 static void aspectRatio(void) {
     // First, figure out what the ideal height/width are
@@ -683,7 +687,7 @@ int jg_init(void) {
     // Set callbacks
     Bsnes::setOpenFileCallback(nullptr, &fileOpenV);
     Bsnes::setOpenStreamCallback(nullptr, &fileOpenS);
-    Bsnes::setLogCallback(jg_cb_log);
+    Bsnes::setLogCallback(nullptr, logCallback);
     Bsnes::setRomLoadCallback(nullptr, &loadRom);
     Bsnes::setWriteCallback(nullptr, &fileWrite);
 

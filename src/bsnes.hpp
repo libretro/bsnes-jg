@@ -116,7 +116,7 @@ namespace Bsnes {
   void setInputSpec(Input::Spec);
   void setOpenFileCallback(void*, bool (*)(void*, unsigned, std::string, std::vector<uint8_t>&));
   void setOpenStreamCallback(void*, bool (*)(void*, std::string, std::stringstream&));
-  void setLogCallback(void (*)(int, const char *, ...));
+  void setLogCallback(void*, void (*)(void*, int, std::string&));
   void setRegion(std::string);
   void setRomLoadCallback(void*, bool (*)(void*, unsigned));
   void setRomBSMemory(std::vector<uint8_t>&, std::string&);

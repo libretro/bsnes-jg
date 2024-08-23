@@ -203,8 +203,8 @@ void Bsnes::setInputSpec(Input::Spec spec) {
   }
 }
 
-void Bsnes::setLogCallback(void (*cb)(int, const char *, ...)) {
-  logger.setCallback(cb);
+void Bsnes::setLogCallback(void *ptr, void (*cb)(void*, int, std::string&)) {
+  logger.setCallback(ptr, cb);
 }
 
 void Bsnes::setOpenStreamCallback(void *ptr, bool (*cb)(void*, std::string, std::stringstream&)) {

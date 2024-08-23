@@ -674,7 +674,7 @@ std::string SuperFamicom::revision() const {
       case 'S': revision = "SNSP-" + code + "-" + F; break;
       case 'U': revision = "SNSP-" + code + "-" + F; break;
       case 'X': revision = "SNSP-" + code + "-" + F; break;
-      default: logger.log(Logger::WRN, "Invalid Revision Code: %c\n", D); break;
+      default: logger.log(Logger::WRN, std::string("Invalid Revision Code: ") + D + "\n"); break;
     }
   }
 
