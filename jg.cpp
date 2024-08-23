@@ -685,11 +685,11 @@ void jg_set_cb_rumble(jg_cb_rumble_t func) {
 
 int jg_init(void) {
     // Set callbacks
-    Bsnes::setOpenFileCallback(nullptr, &fileOpenV);
-    Bsnes::setOpenStreamCallback(nullptr, &fileOpenS);
+    Bsnes::setOpenFileCallback(nullptr, fileOpenV);
+    Bsnes::setOpenStreamCallback(nullptr, fileOpenS);
     Bsnes::setLogCallback(nullptr, logCallback);
-    Bsnes::setRomLoadCallback(nullptr, &loadRom);
-    Bsnes::setWriteCallback(nullptr, &fileWrite);
+    Bsnes::setRomLoadCallback(nullptr, loadRom);
+    Bsnes::setWriteCallback(nullptr, fileWrite);
 
     // Configuration
     Bsnes::setCoprocDelayedSync(settings_bsnes[COPROC_DELAYSYNC].val);
