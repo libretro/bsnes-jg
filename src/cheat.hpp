@@ -33,15 +33,13 @@ struct Cheat {
     unsigned data;
     unsigned compare;
     bool usecompare;
-    bool enable;
     unsigned restore;
   };
 
   explicit operator bool() const;
 
   void reset();
-  void append(unsigned, unsigned, unsigned, bool);
-  void assign(const std::vector<std::string>&);
+  void set(std::string&);
   bool find(uint8_t*, unsigned, unsigned);
 
   std::vector<Code> codes;

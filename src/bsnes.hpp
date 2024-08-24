@@ -103,8 +103,8 @@ namespace Bsnes {
   void serialize(std::vector<uint8_t>&, bool = true);
   bool unserialize(std::vector<uint8_t>&);
 
-  void cheatsApply(const std::vector<std::string>&);
   void cheatsClear();
+  void cheatsSetCheat(std::string&);
   std::string cheatsDecode(int, std::string);
 
   unsigned getRegion();

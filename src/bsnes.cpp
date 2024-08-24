@@ -82,36 +82,33 @@ bool Bsnes::unserialize(std::vector<uint8_t>& state) {
   return SuperFamicom::system.unserialize(s);
 }
 
-void Bsnes::cheatsApply(const std::vector<std::string>& list) {
-  if(SuperFamicom::cartridge.has.ICD) {
-    SuperFamicom::cheats.assign(list);
+void Bsnes::cheatsClear() {
+  if (!SuperFamicom::cartridge.has.ICD) {
+    SuperFamicom::Memory::GlobalWriteEnable = true;
+    for (SuperFamicom::Cheat::Code& chtcode : SuperFamicom::cheats.codes) {
+      SuperFamicom::bus.write(chtcode.address, chtcode.restore);
+    }
+    SuperFamicom::Memory::GlobalWriteEnable = false;
+  }
+
+  SuperFamicom::cheats.reset();
+}
+
+void Bsnes::cheatsSetCheat(std::string& code) {
+  SuperFamicom::cheats.set(code);
+
+  if (SuperFamicom::cartridge.has.ICD) {
     return;
   }
 
+  SuperFamicom::Cheat::Code& chtcode = SuperFamicom::cheats.codes.back();
+  chtcode.restore = SuperFamicom::bus.read(chtcode.address);
+
   SuperFamicom::Memory::GlobalWriteEnable = true;
-
-  for (SuperFamicom::Cheat::Code& code : SuperFamicom::cheats.codes) {
-    SuperFamicom::bus.write(code.address, code.restore);
+  if (!chtcode.compare || chtcode.compare == chtcode.restore) {
+    SuperFamicom::bus.write(chtcode.address, chtcode.data);
   }
-
-  SuperFamicom::cheats.assign(list);
-
-  for (SuperFamicom::Cheat::Code& code : SuperFamicom::cheats.codes) {
-    code.restore = SuperFamicom::bus.read(code.address);
-    if (!code.compare || code.compare == code.restore) {
-      code.enable = true;
-      SuperFamicom::bus.write(code.address, code.data);
-    } else {
-      code.enable = false;
-    }
-  }
-
   SuperFamicom::Memory::GlobalWriteEnable = false;
-}
-
-void Bsnes::cheatsClear() {
-  std::vector<std::string> list{};
-  cheatsApply(list);
 }
 
 std::string Bsnes::cheatsDecode(int sys, std::string code) {

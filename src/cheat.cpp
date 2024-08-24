@@ -45,22 +45,20 @@ void Cheat::reset() {
   codes.clear();
 }
 
-void Cheat::append(unsigned address, unsigned data, unsigned compare, bool usecompare) {
-  codes.push_back({address, data, compare, usecompare, true, 0});
-}
+void Cheat::set(std::string& code) {
+  std::replace(code.begin(), code.end(), '?', '=');
+  std::stringstream ss(code);
+  std::vector<unsigned> part;
 
-void Cheat::assign(const std::vector<std::string>& list) {
-  reset();
+  while(std::getline(ss, code, '=')) {
+    part.push_back(std::stoul(code, nullptr, 16));
+  }
 
-  for (std::string entry : list) {
-    std::replace(entry.begin(), entry.end(), '?', '=');
-    std::stringstream ss(entry);
-    std::vector<unsigned> part;
-    while(std::getline(ss, entry, '=')) {
-      part.push_back(std::stoul(entry, nullptr, 16));
-    }
-    if (part.size() == 2) append(part[0], part[1], 0, false);
-    if (part.size() == 3) append(part[0], part[2], part[1], true);
+  if (part.size() == 2) {
+    codes.push_back({part[0], part[1], 0, false, 0});
+  }
+  else if (part.size() == 3) {
+    codes.push_back({part[0], part[2], part[1], true, 0});
   }
 }
 
