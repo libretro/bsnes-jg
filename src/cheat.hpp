@@ -47,7 +47,7 @@ struct Cheat {
   std::vector<Code> codes;
 };
 
-extern Cheat cheat;
+extern Cheat cheats;
 
 }
 

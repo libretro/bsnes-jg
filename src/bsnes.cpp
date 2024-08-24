@@ -39,8 +39,6 @@ namespace SuperFamicom {
 Configuration configuration;
 };
 
-static std::vector<std::string> cheatList;
-
 bool Bsnes::loaded() {
   return SuperFamicom::system.loaded();
 }
@@ -86,79 +84,44 @@ bool Bsnes::unserialize(std::vector<uint8_t>& state) {
 
 void Bsnes::cheatsApply(const std::vector<std::string>& list) {
   if(SuperFamicom::cartridge.has.ICD) {
-    SuperFamicom::cheat.assign(list);
+    SuperFamicom::cheats.assign(list);
     return;
   }
 
-  //make all ROM data writable temporarily
   SuperFamicom::Memory::GlobalWriteEnable = true;
 
-  SuperFamicom::Cheat oldCheat = SuperFamicom::cheat;
-  SuperFamicom::Cheat newCheat;
-  newCheat.assign(list);
+  for (SuperFamicom::Cheat::Code& code : SuperFamicom::cheats.codes) {
+    SuperFamicom::bus.write(code.address, code.restore);
+  }
 
-  //determine all old codes to remove
-  for(SuperFamicom::Cheat::Code& oldCode : oldCheat.codes) {
-    bool found = false;
-    for(SuperFamicom::Cheat::Code& newCode : newCheat.codes) {
-      if(oldCode == newCode) {
-        found = true;
-        break;
-      }
-    }
-    if(!found) {
-      //remove old cheat
-      if(oldCode.enable) {
-        SuperFamicom::bus.write(oldCode.address, oldCode.restore);
-      }
+  SuperFamicom::cheats.assign(list);
+
+  for (SuperFamicom::Cheat::Code& code : SuperFamicom::cheats.codes) {
+    code.restore = SuperFamicom::bus.read(code.address);
+    if (!code.compare || code.compare == code.restore) {
+      code.enable = true;
+      SuperFamicom::bus.write(code.address, code.data);
+    } else {
+      code.enable = false;
     }
   }
 
-  //determine all new codes to create
-  for(SuperFamicom::Cheat::Code& newCode : newCheat.codes) {
-    bool found = false;
-    for(SuperFamicom::Cheat::Code& oldCode : oldCheat.codes) {
-      if(newCode == oldCode) {
-        found = true;
-        break;
-      }
-    }
-    if(!found) {
-      //create new cheat
-      newCode.restore = SuperFamicom::bus.read(newCode.address);
-      if(!newCode.compare || newCode.compare == newCode.restore) {
-        newCode.enable = true;
-        SuperFamicom::bus.write(newCode.address, newCode.data);
-      } else {
-        newCode.enable = false;
-      }
-    }
-  }
-
-  SuperFamicom::cheat = newCheat;
-
-  //restore ROM write protection
   SuperFamicom::Memory::GlobalWriteEnable = false;
 }
 
 void Bsnes::cheatsClear() {
-  cheatList.clear();
-  cheatsApply(cheatList);
+  std::vector<std::string> list{};
+  cheatsApply(list);
 }
 
-bool Bsnes::cheatsDecode(int sys, std::string code) {
+std::string Bsnes::cheatsDecode(int sys, std::string code) {
   bool decoded = false;
   if (sys == 1) // Game Boy
     decoded = CheatDecoder::gb(code);
   else // Other
     decoded = CheatDecoder::snes(code);
 
-  if (decoded) {
-    cheatList.push_back(code);
-    cheatsApply(cheatList);
-  }
-
-  return decoded;
+  return decoded ? code : std::string{};
 }
 
 unsigned Bsnes::getRegion() {

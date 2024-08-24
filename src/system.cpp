@@ -230,7 +230,7 @@ void System::frameEvent() {
 
   //refresh all cheat codes once per frame
   Memory::GlobalWriteEnable = true;
-  for(Cheat::Code& code : cheat.codes) {
+  for(Cheat::Code& code : cheats.codes) {
     if(code.enable) {
       bus.write(code.address, code.data);
     }

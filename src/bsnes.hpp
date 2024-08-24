@@ -105,7 +105,7 @@ namespace Bsnes {
 
   void cheatsApply(const std::vector<std::string>&);
   void cheatsClear();
-  bool cheatsDecode(int, std::string);
+  std::string cheatsDecode(int, std::string);
 
   unsigned getRegion();
   bool getRtcPresent();

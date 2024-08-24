@@ -166,6 +166,8 @@ static unsigned numplugged = 2;
 
 static uint8_t addon = 0;
 
+static std::vector<std::string> cheatList;
+
 static struct Location {
     std::string location;
 } bsMemory, superFamicom, sufamiTurboA, sufamiTurboB;
@@ -836,13 +838,19 @@ void jg_media_insert(void) {
 }
 
 void jg_cheat_clear(void) {
-    Bsnes::cheatsClear();
+    cheatList.clear();
+    Bsnes::cheatsApply(cheatList);
 }
 
 void jg_cheat_set(const char *code) {
-    if (!Bsnes::cheatsDecode(addon, code)) {
+    std::string decoded = Bsnes::cheatsDecode(addon, code);
+    if (decoded.empty()) {
         jg_cb_log(JG_LOG_WRN, "Failed to decode cheat: %s\n", code);
+        return;
     }
+
+    cheatList.push_back(decoded);
+    Bsnes::cheatsApply(cheatList);
 }
 
 void jg_rehash(void) {

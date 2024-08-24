@@ -26,7 +26,7 @@
 
 namespace SuperFamicom {
 
-Cheat cheat;
+Cheat cheats;
 
 bool Cheat::Code::operator==(const Code& code) const {
   if(address != code.address
