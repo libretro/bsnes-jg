@@ -805,8 +805,7 @@ int jg_state_load(const char *filename) {
     return Bsnes::unserialize(state);
 }
 
-void jg_state_load_raw(const void *data) {
-    if (data) { }
+void jg_state_load_raw(const void*) {
 }
 
 int jg_state_save(const char *filename) {
@@ -853,13 +852,10 @@ void jg_rehash(void) {
     inputSetup();
 }
 
-void jg_data_push(uint32_t type, int port, const void *ptr, size_t size) {
-    if (type || port || ptr || size) { }
+void jg_data_push(uint32_t, int, const void*, size_t) {
 }
 
-// JG Functions that return values to the frontend
-jg_coreinfo_t* jg_get_coreinfo(const char *sys) {
-    if (sys) { }
+jg_coreinfo_t* jg_get_coreinfo(const char*) {
     return &coreinfo;
 }
 
