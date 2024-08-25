@@ -52,7 +52,6 @@ void Bsnes::save() {
 }
 
 void Bsnes::unload() {
-  save();
   SuperFamicom::system.unload();
 }
 

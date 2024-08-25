@@ -763,8 +763,6 @@ int jg_game_load(void) {
         superFamicom.location = std::string(gameinfo.path);
     }
 
-    Bsnes::unload();
-
     if (settings_bsnes[REGION].val == 1)
         Bsnes::setRegion(Bsnes::Region::NTSC);
     else if (settings_bsnes[REGION].val == 2)
@@ -792,7 +790,7 @@ int jg_game_load(void) {
 }
 
 int jg_game_unload(void) {
-    // Save happens on Bsnes::unload
+    Bsnes::save();
     Bsnes::unload();
     return 1;
 }
