@@ -104,8 +104,7 @@ namespace Bsnes {
   bool unserialize(std::vector<uint8_t>&);
 
   void cheatsClear();
-  void cheatsSetCheat(std::string&);
-  std::string cheatsDecode(int, std::string);
+  void cheatsSetCheat(std::string);
 
   unsigned getRegion();
   bool getRtcPresent();

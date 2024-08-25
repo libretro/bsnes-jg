@@ -839,12 +839,7 @@ void jg_cheat_clear(void) {
 }
 
 void jg_cheat_set(const char *code) {
-    std::string decoded = Bsnes::cheatsDecode(addon, code);
-    if (decoded.empty()) {
-        jg_cb_log(JG_LOG_WRN, "Failed to decode cheat: %s\n", code);
-        return;
-    }
-    Bsnes::cheatsSetCheat(decoded);
+    Bsnes::cheatsSetCheat(code);
 }
 
 void jg_rehash(void) {

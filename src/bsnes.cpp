@@ -94,7 +94,12 @@ void Bsnes::cheatsClear() {
   SuperFamicom::cheats.reset();
 }
 
-void Bsnes::cheatsSetCheat(std::string& code) {
+void Bsnes::cheatsSetCheat(std::string code) {
+  if (!(SuperFamicom::cartridge.has.ICD ? CheatDecoder::gb(code) : CheatDecoder::snes(code))) {
+    logger.log(Logger::WRN, std::string("Failed to decode cheat: ") + code + "\n");
+    return;
+  }
+
   SuperFamicom::cheats.set(code);
 
   if (SuperFamicom::cartridge.has.ICD) {
@@ -109,16 +114,6 @@ void Bsnes::cheatsSetCheat(std::string& code) {
     SuperFamicom::bus.write(chtcode.address, chtcode.data);
   }
   SuperFamicom::Memory::GlobalWriteEnable = false;
-}
-
-std::string Bsnes::cheatsDecode(int sys, std::string code) {
-  bool decoded = false;
-  if (sys == 1) // Game Boy
-    decoded = CheatDecoder::gb(code);
-  else // Other
-    decoded = CheatDecoder::snes(code);
-
-  return decoded ? code : std::string{};
 }
 
 unsigned Bsnes::getRegion() {
