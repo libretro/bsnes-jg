@@ -172,8 +172,13 @@ void Bsnes::setOpenFileCallback(void *ptr, bool (*cb)(void*, unsigned, std::stri
   SuperFamicom::msu1.setOpenFileCallback(ptr, cb);
 }
 
-void Bsnes::setRegion(std::string region) {
-  SuperFamicom::cartridge.setRegion(region);
+void Bsnes::setRegion(unsigned region) {
+  if (region == Region::NTSC) {
+    SuperFamicom::cartridge.setRegion("NTSC");
+  }
+  else {
+    SuperFamicom::cartridge.setRegion("PAL");
+  }
 }
 
 void Bsnes::setRomLoadCallback(void *ptr, bool (*cb)(void*, unsigned)) {

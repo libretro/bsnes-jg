@@ -766,9 +766,9 @@ int jg_game_load(void) {
     Bsnes::unload();
 
     if (settings_bsnes[REGION].val == 1)
-        Bsnes::setRegion("NTSC");
+        Bsnes::setRegion(Bsnes::Region::NTSC);
     else if (settings_bsnes[REGION].val == 2)
-        Bsnes::setRegion("PAL");
+        Bsnes::setRegion(Bsnes::Region::PAL);
 
     if (!Bsnes::load())
       jg_cb_log(JG_LOG_ERR, "Failed to load ROM\n");

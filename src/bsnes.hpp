@@ -160,9 +160,9 @@ namespace Bsnes {
 
   /**
    * Set emulated system's region
-   * @param Region Emulated system's region
+   * @param region Emulated system's region
    */
-  void setRegion(std::string);
+  void setRegion(unsigned);
 
   /**
    * Determine whether the loaded content contains a Real-time Clock
