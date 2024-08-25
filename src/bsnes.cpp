@@ -72,8 +72,8 @@ bool Bsnes::getRtcPresent() {
   return (SuperFamicom::cartridge.has.EpsonRTC || SuperFamicom::cartridge.has.SharpRTC);
 }
 
-void Bsnes::serialize(std::vector<uint8_t>& state, bool synchronize) {
-  serializer s = SuperFamicom::system.serialize(synchronize);
+void Bsnes::serialize(std::vector<uint8_t>& state) {
+  serializer s = SuperFamicom::system.serialize(true);
   state = std::vector<uint8_t>(s.data(), s.data() + s.size());
 }
 

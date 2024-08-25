@@ -132,7 +132,7 @@ namespace Bsnes {
    * Serialize emulated system state (save state)
    * @param state Empty buffer to store state data
    */
-  void serialize(std::vector<uint8_t>&, bool = true);
+  void serialize(std::vector<uint8_t>&);
 
   /**
    * Unserialize emulated system state (load state)
