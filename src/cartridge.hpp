@@ -42,7 +42,7 @@ struct Cartridge {
 
   std::pair<void*, unsigned> getMemoryRaw(unsigned);
 
-  void setOpenFileCallback(void*, bool (*)(void*, unsigned, std::string, std::vector<uint8_t>&));
+  void setOpenFileCallback(void*, bool (*)(void*, std::string, std::vector<uint8_t>&));
   void setOpenStreamCallback(void*, bool (*)(void*, std::string, std::stringstream&));
   void setRomCallback(void*, bool (*)(void*, unsigned));
   void setWriteCallback(void*, void (*)(void*, std::string, const uint8_t*, unsigned));
@@ -105,7 +105,7 @@ private:
   std::string board;
   std::string forceRegion;
 
-  bool (*openFileCallback)(void*, unsigned, std::string, std::vector<uint8_t>&);
+  bool (*openFileCallback)(void*, std::string, std::vector<uint8_t>&);
   bool (*openStreamCallback)(void*, std::string, std::stringstream&);
   bool (*romCallback)(void*, unsigned);
   void (*writeCallback)(void*, std::string, const uint8_t*, unsigned);

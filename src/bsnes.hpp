@@ -220,7 +220,7 @@ namespace Bsnes {
    * @param ptr User data passed to the callback
    * @param cb Callback for opening files to be loaded into a buffer
    */
-  void setOpenFileCallback(void*, bool (*)(void*, unsigned, std::string, std::vector<uint8_t>&));
+  void setOpenFileCallback(void*, bool (*)(void*, std::string, std::vector<uint8_t>&));
 
   /**
    * Set the callback for opening files as a std::stringstream

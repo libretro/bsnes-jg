@@ -25,7 +25,7 @@
 namespace SuperFamicom {
 
 struct MSU1 : Thread {
-  void setOpenFileCallback(void*, bool (*)(void*, unsigned, std::string, std::vector<uint8_t>&));
+  void setOpenFileCallback(void*, bool (*)(void*, std::string, std::vector<uint8_t>&));
 
   void synchronizeCPU();
   void main();
@@ -74,7 +74,7 @@ private:
     bool dataBusy;
   } io;
 
-  bool (*openFileCallback)(void*, unsigned, std::string, std::vector<uint8_t>&);
+  bool (*openFileCallback)(void*, std::string, std::vector<uint8_t>&);
   void *udata_v;
 };
 

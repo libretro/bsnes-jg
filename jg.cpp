@@ -211,118 +211,101 @@ static void aspectRatio(void) {
     vidinfo.aspect = (aspect_w * aspect_ratio) / (double)vidinfo.h;
 }
 
-static bool fileOpenV(void*, unsigned id, std::string name,
-    std::vector<uint8_t>& v) {
-
+static bool fileOpenV(void*, std::string name, std::vector<uint8_t>& v) {
     std::string path;
     bool required = false;
 
-    if (id == 1) { // SFC
-        if (name == "save.ram") {
+    if (name == "save.ram") {
+        path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".srm";
+    }
+    else if (name == "dsp1.program.rom") {
+        path = std::string(pathinfo.bios) + "/dsp1.program.rom";
+    }
+    else if (name == "dsp1.data.rom") {
+        path = std::string(pathinfo.bios) + "/dsp1.data.rom";
+    }
+    else if (name == "dsp1b.program.rom") {
+        path = std::string(pathinfo.bios) + "/dsp1b.program.rom";
+    }
+    else if (name == "dsp1b.data.rom") {
+        path = std::string(pathinfo.bios) + "/dsp1b.data.rom";
+    }
+    else if (name == "dsp2.program.rom") {
+        path = std::string(pathinfo.bios) + "/dsp2.program.rom";
+    }
+    else if (name == "dsp2.data.rom") {
+        path = std::string(pathinfo.bios) + "/dsp2.data.rom";
+    }
+    else if (name == "dsp3.program.rom") {
+        path = std::string(pathinfo.bios) + "/dsp3.program.rom";
+        required = true;
+    }
+    else if (name == "dsp3.data.rom") {
+        path = std::string(pathinfo.bios) + "/dsp3.data.rom";
+        required = true;
+    }
+    else if (name == "dsp4.program.rom") {
+        path = std::string(pathinfo.bios) + "/dsp4.program.rom";
+    }
+    else if (name == "dsp4.data.rom") {
+        path = std::string(pathinfo.bios) + "/dsp4.data.rom";
+    }
+    else if (name == "st010.program.rom") {
+        path = std::string(pathinfo.bios) + "/st010.program.rom";
+    }
+    else if (name == "st010.data.rom") {
+        path = std::string(pathinfo.bios) + "/st010.data.rom";
+    }
+    else if (name == "st011.program.rom") {
+        path = std::string(pathinfo.bios) + "/st011.program.rom";
+        required = true;
+    }
+    else if (name == "st011.data.rom") {
+        path = std::string(pathinfo.bios) + "/st011.data.rom";
+        required = true;
+    }
+    else if (name == "arm6.program.rom") {
+        path = std::string(pathinfo.bios) + "/st018.program.rom";
+        required = true;
+    }
+    else if (name == "arm6.data.rom") {
+        path = std::string(pathinfo.bios) + "/st018.data.rom";
+        required = true;
+    }
+    else if (name == "msu1/data.rom") {
+        path = superFamicom.location;
+        path = path.substr(0, path.find_last_of(".")) + ".msu";
+    }
+    else if (name.find("msu1/track") != std::string::npos) {
+        path = superFamicom.location;
+        path = path.substr(0, path.find_last_of(".")) +
+            name.substr(name.find_first_of("track") + 5);
+    }
+    else if (name == "download.ram") {
+        path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".psr";
+    }
+    else if (name == "time.rtc") {
+        path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".rtc";
+    }
+    else if (name == "sufamiA.ram") {
+        if (sufamiinfo.size) { // There are two Sufami Turbo carts inserted
             path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".srm";
-        }
-        else if (name == "dsp1.program.rom") {
-            path = std::string(pathinfo.bios) + "/dsp1.program.rom";
-        }
-        else if (name == "dsp1.data.rom") {
-            path = std::string(pathinfo.bios) + "/dsp1.data.rom";
-        }
-        else if (name == "dsp1b.program.rom") {
-            path = std::string(pathinfo.bios) + "/dsp1b.program.rom";
-        }
-        else if (name == "dsp1b.data.rom") {
-            path = std::string(pathinfo.bios) + "/dsp1b.data.rom";
-        }
-        else if (name == "dsp2.program.rom") {
-            path = std::string(pathinfo.bios) + "/dsp2.program.rom";
-        }
-        else if (name == "dsp2.data.rom") {
-            path = std::string(pathinfo.bios) + "/dsp2.data.rom";
-        }
-        else if (name == "dsp3.program.rom") {
-            path = std::string(pathinfo.bios) + "/dsp3.program.rom";
-            required = true;
-        }
-        else if (name == "dsp3.data.rom") {
-            path = std::string(pathinfo.bios) + "/dsp3.data.rom";
-            required = true;
-        }
-        else if (name == "dsp4.program.rom") {
-            path = std::string(pathinfo.bios) + "/dsp4.program.rom";
-        }
-        else if (name == "dsp4.data.rom") {
-            path = std::string(pathinfo.bios) + "/dsp4.data.rom";
-        }
-        else if (name == "st010.program.rom") {
-            path = std::string(pathinfo.bios) + "/st010.program.rom";
-        }
-        else if (name == "st010.data.rom") {
-            path = std::string(pathinfo.bios) + "/st010.data.rom";
-        }
-        else if (name == "st011.program.rom") {
-            path = std::string(pathinfo.bios) + "/st011.program.rom";
-            required = true;
-        }
-        else if (name == "st011.data.rom") {
-            path = std::string(pathinfo.bios) + "/st011.data.rom";
-            required = true;
-        }
-        else if (name == "arm6.program.rom") {
-            path = std::string(pathinfo.bios) + "/st018.program.rom";
-            required = true;
-        }
-        else if (name == "arm6.data.rom") {
-            path = std::string(pathinfo.bios) + "/st018.data.rom";
-            required = true;
-        }
-        else if (name == "msu1/data.rom") {
-            path = superFamicom.location;
-            path = path.substr(0, path.find_last_of(".")) + ".msu";
-        }
-        else if (name.find("msu1/track") != std::string::npos) {
-            path = superFamicom.location;
-            path = path.substr(0, path.find_last_of(".")) +
-                name.substr(name.find_first_of("track") + 5);
-        }
-        else if (name == "download.ram") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".psr";
-        }
-        else if (name == "time.rtc") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".rtc";
+                std::string(sufamiinfo.name) + ".srm";
         }
         else {
-            jg_cb_log(JG_LOG_WRN, "File load attempt: %s\n", name.c_str());
-        }
-    }
-    else if (id == 2) { // GB
-        if (name == "save.ram") {
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".srm";
         }
-        else {
-            jg_cb_log(JG_LOG_WRN, "File load attempt: %s\n", name.c_str());
-        }
     }
-    else if (id == 4) { // Sufami Turbo Slot A
-        if (name == "save.ram") {
-            if (sufamiinfo.size) {
-                path = std::string(pathinfo.save) + "/" +
-                    std::string(sufamiinfo.name) + ".srm";
-            }
-            else {
-                path = std::string(pathinfo.save) + "/" +
-                    std::string(gameinfo.name) + ".srm";
-            }
-        }
+    else if (name == "sufamiB.ram") {
+        path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".srm";
     }
-    else if (id == 5) { // Sufami Turbo Slot B
-        if (name == "save.ram") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".srm";
-        }
+    else {
+        jg_cb_log(JG_LOG_WRN, "File load attempt: %s\n", name.c_str());
     }
 
     std::ifstream stream(path, std::ios::in | std::ios::binary);

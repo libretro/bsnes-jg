@@ -422,7 +422,7 @@ bool ICD::load() {
   GB_load_rom_from_buffer(&sameboy, romdata, romsize);
 
   std::vector<uint8_t> sram;
-  if (openFileCallback(udata_v, pathID(), "save.ram", sram)) {
+  if (openFileCallback(udata_v, "save.ram", sram)) {
     GB_load_battery_from_buffer(&sameboy, (const uint8_t*)sram.data(), sram.size());
   }
   return true;
@@ -485,7 +485,7 @@ void ICD::setRom(const uint8_t *data, size_t size) {
   romsize = size;
 }
 
-void ICD::setOpenFileCallback(void *ptr, bool (*cb)(void*, unsigned, std::string, std::vector<uint8_t>&)) {
+void ICD::setOpenFileCallback(void *ptr, bool (*cb)(void*, std::string, std::vector<uint8_t>&)) {
   openFileCallback = cb;
   udata_v = ptr;
 }
