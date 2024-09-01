@@ -358,55 +358,29 @@ static bool fileOpenS(void*, std::string name, std::stringstream& ss) {
     return true;
 }
 
-static void fileWrite(void*, unsigned id, std::string name, const uint8_t *data,
+static void fileWrite(void*, std::string name, const uint8_t *data,
     unsigned size) {
 
     std::string path;
 
-    if (id == 1) { // SFC
-        if (name == "save.ram") {
+    if (name == "save.ram") {
+        if (sufamiinfo.size)
+            path = std::string(pathinfo.save) + "/" +
+                std::string(sufamiinfo.name) + ".srm";
+        else
             path = std::string(pathinfo.save) + "/" +
                 std::string(gameinfo.name) + ".srm";
-        }
-        else if (name == "time.rtc") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".rtc";
-        }
-        else if (name == "download.ram") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".psr";
-        }
     }
-    else if (id == 2) { // GB
-        if (name == "save.ram") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".srm";
-        }
-        else if (name == "time.rtc") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".rtc";
-        }
+    else if (name == "time.rtc") {
+        path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".rtc";
     }
-    else if (id == 3) { // BS-X
-        if (name == "program.flash") { //writes are not flushed to disk in bsnes
-            return;
-        }
+    else if (name == "download.ram") {
+        path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".psr";
     }
-    else if (id == 4) { // Sufami Turbo Slot A
-        if (name == "save.ram") {
-            if (sufamiinfo.size)
-                path = std::string(pathinfo.save) + "/" +
-                    std::string(sufamiinfo.name) + ".srm";
-            else
-                path = std::string(pathinfo.save) + "/" +
-                    std::string(gameinfo.name) + ".srm";
-        }
-    }
-    else if (id == 5) { // Sufami Turbo Slot B
-        if (name == "save.ram") {
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".srm";
-        }
+    if (name == "program.flash") { //writes are not flushed to disk in bsnes
+        return;
     }
 
     if (path.empty()) {

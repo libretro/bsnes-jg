@@ -204,7 +204,7 @@ void Bsnes::setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc) {
   SuperFamicom::cartridge.setRomSuperFamicom(data, loc);
 }
 
-void Bsnes::setWriteCallback(void *ptr, void (*cb)(void*, unsigned, std::string, const uint8_t*, unsigned)) {
+void Bsnes::setWriteCallback(void *ptr, void (*cb)(void*, std::string, const uint8_t*, unsigned)) {
   SuperFamicom::cartridge.setWriteCallback(ptr, cb);
   SuperFamicom::icd.setWriteCallback(ptr, cb);
 }

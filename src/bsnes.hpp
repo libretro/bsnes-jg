@@ -226,7 +226,7 @@ namespace Bsnes {
    * @param ptr User data passed to the callback
    * @param cb Callback for writing files (non-volatile save data)
    */
-  void setWriteCallback(void*, void (*)(void*, unsigned, std::string, const uint8_t*, unsigned));
+  void setWriteCallback(void*, void (*)(void*, std::string, const uint8_t*, unsigned));
 
   /**
    * Set the callback for requesting ROM data to be loaded into the emulated system

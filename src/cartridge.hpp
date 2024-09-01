@@ -42,7 +42,7 @@ struct Cartridge {
   void setOpenFileCallback(void*, bool (*)(void*, unsigned, std::string, std::vector<uint8_t>&));
   void setOpenStreamCallback(void*, bool (*)(void*, std::string, std::stringstream&));
   void setRomCallback(void*, bool (*)(void*, unsigned));
-  void setWriteCallback(void*, void (*)(void*, unsigned, std::string, const uint8_t*, unsigned));
+  void setWriteCallback(void*, void (*)(void*, std::string, const uint8_t*, unsigned));
 
   void setRegion(std::string);
 
@@ -105,7 +105,7 @@ private:
   bool (*openFileCallback)(void*, unsigned, std::string, std::vector<uint8_t>&);
   bool (*openStreamCallback)(void*, std::string, std::stringstream&);
   bool (*romCallback)(void*, unsigned);
-  void (*writeCallback)(void*, unsigned, std::string, const uint8_t*, unsigned);
+  void (*writeCallback)(void*, std::string, const uint8_t*, unsigned);
 
   void *udata_v;
   void *udata_s;

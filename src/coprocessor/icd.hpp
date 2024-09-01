@@ -30,7 +30,7 @@ struct ICD : Thread {
   inline unsigned pathID() const;
 
   void setOpenFileCallback(void*, bool (*)(void*, unsigned, std::string, std::vector<uint8_t>&));
-  void setWriteCallback(void*, void (*)(void*, unsigned, std::string, const uint8_t*, unsigned));
+  void setWriteCallback(void*, void (*)(void*, std::string, const uint8_t*, unsigned));
 
   void synchronizeCPU();
   void main();
@@ -65,7 +65,7 @@ private:
   };
 
   bool (*openFileCallback)(void*, unsigned, std::string, std::vector<uint8_t>&);
-  void (*writeCallback)(void*, unsigned, std::string, const uint8_t*, unsigned);
+  void (*writeCallback)(void*, std::string, const uint8_t*, unsigned);
 
   void *udata_v;
   void *udata_wr;
