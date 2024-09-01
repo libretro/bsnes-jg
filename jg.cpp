@@ -399,9 +399,7 @@ static void fileWrite(void*, std::string name, const uint8_t *data,
     }
 }
 
-static void videoFrame(const uint16_t *data, unsigned pitch, unsigned w,
-    unsigned h) {
-
+static void videoFrame(unsigned w, unsigned h, unsigned pitch) {
     hmult = w / VIDEO_WIDTH;
     vmult = h / VIDEO_HEIGHT;
 
@@ -413,8 +411,7 @@ static void videoFrame(const uint16_t *data, unsigned pitch, unsigned w,
 
     vidinfo.w = w;
     vidinfo.h = h;
-    vidinfo.p = pitch / 2; // Divide by pixel size - 16-bit pixels == 2
-    vidinfo.buf = const_cast<void*>(reinterpret_cast<const void*>(data));
+    vidinfo.p = pitch;
 }
 
 static void audioFrame(const void*, size_t numsamps) {

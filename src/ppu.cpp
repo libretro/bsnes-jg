@@ -2283,7 +2283,7 @@ bg4(Background::ID::BG4) {
 PPU::~PPU() {
 }
 
-void PPU::setCallback(void (*cb)(const uint16_t*, unsigned, unsigned, unsigned)) {
+void PPU::setCallback(void (*cb)(unsigned, unsigned, unsigned)) {
   videoFrame = cb;
 }
 
@@ -2430,11 +2430,10 @@ void PPU::power(bool reset) {
 }
 
 void PPU::refresh() {
-  uint16_t *out = this->output;
   unsigned pitch  = 512;
   unsigned width  = 512;
   unsigned height = ppu.display.interlace ? 480 : 240;
-  videoFrame(out, pitch * sizeof(uint16_t), width, height);
+  videoFrame(width, height, pitch);
 }
 
 }

@@ -39,10 +39,10 @@ namespace Bsnes {
 
   namespace Video {
     typedef struct _Spec {
-      unsigned pixfmt;                                              /**< Pixel format: 0-1 for RGBX5551 or XRGB1555 */
-      uint16_t *buf;                                                /**< Buffer for raw pixel data */
-      void *ptr;                                                    /**< User data passed to callback */
-      void (*cb)(const uint16_t*, unsigned, unsigned, unsigned);    /**< Callback for video output */
+      unsigned pixfmt;                              /**< Pixel format: 0-1 for RGBX5551 or XRGB1555 */
+      uint16_t *buf;                                /**< Buffer for raw pixel data */
+      void *ptr;                                    /**< User data passed to callback */
+      void (*cb)(unsigned, unsigned, unsigned);     /**< Callback for video output */
     } Spec;
   }
 
