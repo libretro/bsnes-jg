@@ -90,6 +90,8 @@ struct Cartridge {
     bool BSMemorySlot;
     bool SufamiTurboSlotA;
     bool SufamiTurboSlotB;
+
+    bool SRAM;
   } has;
 
 private:

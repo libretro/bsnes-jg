@@ -318,8 +318,35 @@ void Cartridge::serialize(serializer& s) {
 
 std::pair<void*, unsigned> Cartridge::getMemoryRaw(unsigned type) {
   switch (type) {
-    case 0: return std::make_pair(ram.data(), ram.size());
+    case 0: {
+      if (has.SA1 && has.SRAM) {
+        return std::make_pair(sa1.bwram.data(), sa1.bwram.size());
+      }
+      else if (has.SuperFX && has.SRAM) {
+        return std::make_pair(superfx.ram.data(), superfx.ram.size());
+      }
+      else if (has.ARMDSP && has.SRAM) {
+        return std::make_pair(armdsp.programRAM, 16 * 1024);
+      }
+      else if (has.HitachiDSP && has.SRAM) {
+        return std::make_pair(hitachidsp.ram.data(), hitachidsp.ram.size());
+      }
+      else if (has.NECDSP && has.SRAM) {
+        unsigned ramsize = necdsp.revision == NECDSP::Revision::uPD7725 ? (2 * 256) : (2 * 2048);
+        return std::make_pair(necdsp.dataRAM, ramsize);
+      }
+      else if (has.SPC7110 && has.SRAM) {
+        return std::make_pair(spc7110.ram.data(), spc7110.ram.size());
+      }
+      else if (has.OBC1 && has.SRAM) {
+        return std::make_pair(obc1.ram.data(), obc1.ram.size());
+      }
+      else if (has.SRAM) {
+        return std::make_pair(ram.data(), ram.size());
+      }
+    }
   }
+
   return std::make_pair(nullptr, 0);
 }
 
@@ -384,6 +411,7 @@ bool Cartridge::load() {
     }
     //ram(type=RAM,content=Save)
     else if (type == "RAM" && content == "Save") {
+      has.SRAM = true;
       loadMemory(ram, m);
       for (std::string map : BML::searchList(m, "map")) {
         loadMap(map, ram);
@@ -481,6 +509,7 @@ bool Cartridge::load() {
         if (BML::search(m, {"memory", "type"}) == "RAM") {
           std::string content = BML::search(m, {"memory", "content"});
           if (content == "Save") {
+            has.SRAM = true;
             loadMemory(sa1.bwram, m);
             for (std::string map : BML::searchList(m, "map")) {
               loadMap(map, {&SA1::BWRAM::readCPU, &sa1.bwram}, {&SA1::BWRAM::writeCPU, &sa1.bwram});
@@ -521,6 +550,7 @@ bool Cartridge::load() {
           }
         }
         else if (type == "RAM" && content == "Save") {
+          has.SRAM = true;
           loadMemory(superfx.ram, m);
           for (std::string& c : BML::searchList(m, "map")) {
             loadMap(c, superfx.cpuram);
@@ -576,6 +606,7 @@ bool Cartridge::load() {
           }
         }
         else if (type == "RAM" && content == "Data") {
+          has.SRAM = true;
           Game::Memory file;
           if(game.memory(file, m)) {
             std::vector<uint8_t> sramfile;
@@ -613,6 +644,7 @@ bool Cartridge::load() {
           }
         }
         else if (type == "RAM" && content == "Save") {
+          has.SRAM = true;
           loadMemory(hitachidsp.ram, m);
           for (std::string map : BML::searchList(m, "map")) {
             loadMap(map, {&HitachiDSP::readRAM, &hitachidsp}, {&HitachiDSP::writeRAM, &hitachidsp});
@@ -741,6 +773,7 @@ bool Cartridge::load() {
         for (std::string& m : BML::searchList(p, "memory")) {
           if (BML::search(m, {"memory", "type"}) == "RAM" &&
               BML::search(m, {"memory", "content"}) == "Data") {
+            has.SRAM = true;
             std::vector<uint8_t> sramfile;
             if (openFileCallback(udata_v, "save.ram", sramfile)) {
               for (unsigned i = 0; i < 256; ++i) {
@@ -870,6 +903,7 @@ bool Cartridge::load() {
       if (!sram.empty()) {
         if (BML::search(sram, {"memory", "type"}) == "RAM" &&
             BML::search(sram, {"memory", "content"}) == "Save") {
+          has.SRAM = true;
           loadMemory(spc7110.ram, sram);
           for (std::string& m : BML::searchList(sram, "map")) {
             loadMap(m, {&SPC7110::mcuramRead, &spc7110}, {&SPC7110::mcuramWrite, &spc7110});
@@ -913,6 +947,7 @@ bool Cartridge::load() {
       for (std::string m : BML::searchList(p, "memory")) {
         if (BML::search(m, {"memory", "type"}) == "RAM" &&
             BML::search(m, {"memory", "content"}) == "Save") {
+          has.SRAM = true;
           loadMemory(obc1.ram, m);
         }
       }
