@@ -24,6 +24,7 @@
 #include "cartridge.hpp"
 #include "cheat.hpp"
 #include "controller.hpp"
+#include "cpu.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"
 #include "expansion/expansion.hpp"
@@ -69,6 +70,21 @@ void Bsnes::run() {
 
 bool Bsnes::getRtcPresent() {
   return (SuperFamicom::cartridge.has.EpsonRTC || SuperFamicom::cartridge.has.SharpRTC);
+}
+
+std::pair<void*, unsigned> Bsnes::getMemoryRaw(unsigned type) {
+  switch (type) {
+    default: case Memory::CartRAM: case Memory::RealTimeClock: {
+      return SuperFamicom::cartridge.getMemoryRaw(type);
+    }
+    case Memory::MainRAM: {
+      return std::make_pair((void*)SuperFamicom::cpu.wram, 128 * 1024);
+    }
+    case Memory::VideoRAM: { // 16-bit
+      return std::make_pair((void*)SuperFamicom::ppu.vram.data, (64 * 1024) << 1);
+    }
+  }
+  return std::make_pair(nullptr, 0);
 }
 
 void Bsnes::serialize(std::vector<uint8_t>& state) {

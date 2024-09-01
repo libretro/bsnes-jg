@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace Bsnes {
@@ -84,6 +85,13 @@ namespace Bsnes {
       void *ptr;                                    /**< User data passed to callback */
       int (*cb)(const void*, unsigned, unsigned);   /**< Input poll callback */
     } Spec;
+  }
+
+  namespace Memory {
+    constexpr unsigned CartRAM = 0;         /**< SRAM on Cartridge */
+    constexpr unsigned RealTimeClock = 1;   /**< Real Time Clock */
+    constexpr unsigned MainRAM = 2;         /**< Main system RAM */
+    constexpr unsigned VideoRAM = 3;        /**< Video RAM (PPU) */
   }
 
   namespace Region {
@@ -169,6 +177,13 @@ namespace Bsnes {
    * @return Loaded content contains a Real-time Clock
    */
   bool getRtcPresent();
+
+  /**
+   * Retrieve pointer to and size of raw data
+   * @param type Type of raw data to retrieve
+   * @return Pointer to and size of raw data
+   */
+  std::pair<void*, unsigned> getMemoryRaw(unsigned);
 
   /**
    * Set audio specifications

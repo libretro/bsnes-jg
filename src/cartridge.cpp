@@ -163,6 +163,8 @@ static Game slotBSMemory;
 static Game slotSufamiTurboA;
 static Game slotSufamiTurboB;
 
+Cartridge cartridge;
+
 unsigned Cartridge::pathID() const { return information.pathID; }
 std::string Cartridge::region() const { return information.region; }
 std::string Cartridge::headerTitle() const { return game.title; }
@@ -314,7 +316,12 @@ void Cartridge::serialize(serializer& s) {
   s.array(ram.data(), ram.size());
 }
 
-Cartridge cartridge;
+std::pair<void*, unsigned> Cartridge::getMemoryRaw(unsigned type) {
+  switch (type) {
+    case 0: return std::make_pair(ram.data(), ram.size());
+  }
+  return std::make_pair(nullptr, 0);
+}
 
 bool Cartridge::load() {
   information = {};

@@ -114,6 +114,12 @@ struct PPU : Thread, PPUcounter {
   void setBuffer(uint16_t*);
   void setPixelFormat(unsigned); // 0 = 5551, 1 = 1555
 
+  struct VRAM {
+    uint16_t& operator[](unsigned);
+    uint16_t data[64 * 1024];
+    uint16_t mask = 0x7fff;
+  } vram;
+
 private:
   inline void step();
   inline void step(unsigned);
@@ -128,12 +134,6 @@ private:
   uint8_t readIO(unsigned, uint8_t);
   void writeIO(unsigned, uint8_t);
   void updateVideoMode();
-
-  struct VRAM {
-    uint16_t& operator[](unsigned);
-    uint16_t data[64 * 1024];
-    uint16_t mask = 0x7fff;
-  } vram;
 
   uint16_t *output;
   uint16_t lightTable[16][32768];

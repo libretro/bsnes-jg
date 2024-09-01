@@ -21,6 +21,7 @@
 #pragma once
 
 #include <sstream>
+#include <utility>
 #include <vector>
 
 #include "memory.hpp"
@@ -38,6 +39,8 @@ struct Cartridge {
   void unload();
 
   void serialize(serializer&);
+
+  std::pair<void*, unsigned> getMemoryRaw(unsigned);
 
   void setOpenFileCallback(void*, bool (*)(void*, unsigned, std::string, std::vector<uint8_t>&));
   void setOpenStreamCallback(void*, bool (*)(void*, std::string, std::stringstream&));
