@@ -364,12 +364,8 @@ static void fileWrite(void*, std::string name, const uint8_t *data,
     std::string path;
 
     if (name == "save.ram") {
-        if (sufamiinfo.size)
-            path = std::string(pathinfo.save) + "/" +
-                std::string(sufamiinfo.name) + ".srm";
-        else
-            path = std::string(pathinfo.save) + "/" +
-                std::string(gameinfo.name) + ".srm";
+        path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".srm";
     }
     else if (name == "time.rtc") {
         path = std::string(pathinfo.save) + "/" +
@@ -379,8 +375,20 @@ static void fileWrite(void*, std::string name, const uint8_t *data,
         path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".psr";
     }
-    if (name == "program.flash") { //writes are not flushed to disk in bsnes
-        return;
+    else if (name == "program.flash") {
+        return; // writes are not flushed to disk in bsnes
+    }
+    else if (name == "sufamiA.ram") {
+        if (sufamiinfo.size) // There are two Sufami Turbo carts inserted
+            path = std::string(pathinfo.save) + "/" +
+                std::string(sufamiinfo.name) + ".srm";
+        else
+            path = std::string(pathinfo.save) + "/" +
+                std::string(gameinfo.name) + ".srm";
+    }
+    else if (name == "sufamiB.ram") {
+        path = std::string(pathinfo.save) + "/" +
+            std::string(gameinfo.name) + ".srm";
     }
 
     if (path.empty()) {

@@ -1296,7 +1296,7 @@ void Cartridge::save() {
           BML::search(m, {"memory", "content"}) == "Save") {
         if(Game::Memory memory = Game::Memory(m)) {
           if (memory.nonVolatile) {
-            writeCallback(udata_wr, memory.name(), sufamiturboA.ram.data(), memory.size);
+            writeCallback(udata_wr, "sufamiA.ram", sufamiturboA.ram.data(), memory.size);
           }
         }
       }
@@ -1308,7 +1308,7 @@ void Cartridge::save() {
           BML::search(m, {"memory", "content"}) == "Save") {
         if(Game::Memory memory = Game::Memory(m)) {
           if (memory.nonVolatile) {
-            writeCallback(udata_wr, memory.name(), sufamiturboB.ram.data(), memory.size);
+            writeCallback(udata_wr, "sufamiB.ram", sufamiturboB.ram.data(), memory.size);
           }
         }
       }
