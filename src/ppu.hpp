@@ -90,8 +90,8 @@ struct PPU : Thread, PPUcounter {
   PPU();
   ~PPU();
 
-  void setCallback(void (*)(unsigned, unsigned, unsigned));
-  void (*videoFrame)(unsigned, unsigned, unsigned);
+  void setCallback(void*, void (*)(const void*, unsigned, unsigned, unsigned));
+  void (*videoFrame)(const void*, unsigned, unsigned, unsigned);
 
   alwaysinline void synchronizeCPU();
   bool load();
@@ -119,6 +119,8 @@ struct PPU : Thread, PPUcounter {
     uint16_t data[64 * 1024];
     uint16_t mask = 0x7fff;
   } vram;
+
+  void *udata;
 
 private:
   inline void step();

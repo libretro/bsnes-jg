@@ -228,5 +228,5 @@ void Bsnes::setWriteCallback(void *ptr, void (*cb)(void*, std::string, const uin
 void Bsnes::setVideoSpec(Video::Spec spec) {
   SuperFamicom::ppu.setPixelFormat(spec.pixfmt);
   SuperFamicom::ppu.setBuffer(spec.buf);
-  SuperFamicom::ppu.setCallback(spec.cb);
+  SuperFamicom::ppu.setCallback(spec.ptr, spec.cb);
 }
