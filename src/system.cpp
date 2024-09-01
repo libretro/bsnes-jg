@@ -187,8 +187,6 @@ void System::run() {
 }
 
 void System::runToSave() {
-  const std::string headerTitle = cartridge.headerTitle();
-
   scheduler.mode = Scheduler::Mode::Synchronize;
 
   //run every thread until it cleanly hits a synchronization point
