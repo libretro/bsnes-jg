@@ -319,30 +319,32 @@ void Cartridge::serialize(serializer& s) {
 std::pair<void*, unsigned> Cartridge::getMemoryRaw(unsigned type) {
   switch (type) {
     case 0: {
-      if (has.SA1 && has.SRAM) {
-        return std::make_pair(sa1.bwram.data(), sa1.bwram.size());
-      }
-      else if (has.SuperFX && has.SRAM) {
-        return std::make_pair(superfx.ram.data(), superfx.ram.size());
-      }
-      else if (has.ARMDSP && has.SRAM) {
-        return std::make_pair(armdsp.programRAM, 16 * 1024);
-      }
-      else if (has.HitachiDSP && has.SRAM) {
-        return std::make_pair(hitachidsp.ram.data(), hitachidsp.ram.size());
-      }
-      else if (has.NECDSP && has.SRAM) {
-        unsigned ramsize = necdsp.revision == NECDSP::Revision::uPD7725 ? (2 * 256) : (2 * 2048);
-        return std::make_pair(necdsp.dataRAM, ramsize);
-      }
-      else if (has.SPC7110 && has.SRAM) {
-        return std::make_pair(spc7110.ram.data(), spc7110.ram.size());
-      }
-      else if (has.OBC1 && has.SRAM) {
-        return std::make_pair(obc1.ram.data(), obc1.ram.size());
-      }
-      else if (has.SRAM) {
-        return std::make_pair(ram.data(), ram.size());
+      if (has.SRAM) {
+        if (has.SA1) {
+          return std::make_pair(sa1.bwram.data(), sa1.bwram.size());
+        }
+        else if (has.SuperFX) {
+          return std::make_pair(superfx.ram.data(), superfx.ram.size());
+        }
+        else if (has.ARMDSP) {
+          return std::make_pair(armdsp.programRAM, 16 * 1024);
+        }
+        else if (has.HitachiDSP) {
+          return std::make_pair(hitachidsp.ram.data(), hitachidsp.ram.size());
+        }
+        else if (has.NECDSP) {
+          unsigned ramsize = necdsp.revision == NECDSP::Revision::uPD7725 ? (2 * 256) : (2 * 2048);
+          return std::make_pair(necdsp.dataRAM, ramsize);
+        }
+        else if (has.SPC7110) {
+          return std::make_pair(spc7110.ram.data(), spc7110.ram.size());
+        }
+        else if (has.OBC1) {
+          return std::make_pair(obc1.ram.data(), obc1.ram.size());
+        }
+        else {
+          return std::make_pair(ram.data(), ram.size());
+        }
       }
     }
   }
