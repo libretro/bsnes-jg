@@ -447,10 +447,10 @@ static int pollMouse(const void*, unsigned port, unsigned phase) {
             break;
         }
         case 2: { // Buttons (pre-shifted)
-            if (input_device[port]->button[0]) b |=
-                Bsnes::Input::Mouse::ButtonL;
-            if (input_device[port]->button[1]) b |=
-                Bsnes::Input::Mouse::ButtonR;
+            if (input_device[port]->button[0])
+                b |= Bsnes::Input::Mouse::ButtonL;
+            if (input_device[port]->button[1])
+                b |= Bsnes::Input::Mouse::ButtonR;
             break;
         }
     }
