@@ -277,11 +277,6 @@ static bool fileOpenV(void*, std::string name, std::vector<uint8_t>& v) {
         path = superFamicom.location;
         path = path.substr(0, path.find_last_of(".")) + ".msu";
     }
-    else if (name.find("msu1/track") != std::string::npos) {
-        path = superFamicom.location;
-        path = path.substr(0, path.find_last_of(".")) +
-            name.substr(name.find_first_of("track") + 5);
-    }
     else if (name == "download.ram") {
         path = std::string(pathinfo.save) + "/" +
             std::string(gameinfo.name) + ".psr";
@@ -339,6 +334,25 @@ static bool fileOpenS(void*, std::string name, std::stringstream& ss) {
     stream.close();
 
     return true;
+}
+
+static bool fileOpenMsu(void*, std::string name, std::ifstream& ifs) {
+    std::string path;
+    if (name == "msu1/data.rom") {
+        path = superFamicom.location;
+        path = path.substr(0, path.find_last_of(".")) + ".msu";
+    }
+    else if (name.find("msu1/track") != std::string::npos) {
+        path = superFamicom.location;
+        path = path.substr(0, path.find_last_of(".")) +
+            name.substr(name.find_first_of("track") + 5);
+    }
+
+    if (path.empty())
+        return false;
+
+    ifs = std::ifstream(path, std::ios::in | std::ios::binary);
+    return ifs.is_open();
 }
 
 static void fileWrite(void*, std::string name, const uint8_t *data,
@@ -649,6 +663,7 @@ int jg_init(void) {
     // Set callbacks
     Bsnes::setOpenFileCallback(nullptr, fileOpenV);
     Bsnes::setOpenStreamCallback(nullptr, fileOpenS);
+    Bsnes::setOpenMsuCallback(nullptr, fileOpenMsu);
     Bsnes::setLogCallback(nullptr, logCallback);
     Bsnes::setRomLoadCallback(nullptr, loadRom);
     Bsnes::setWriteCallback(nullptr, fileWrite);

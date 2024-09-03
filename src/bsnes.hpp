@@ -230,6 +230,13 @@ namespace Bsnes {
   void setOpenStreamCallback(void*, bool (*)(void*, std::string, std::stringstream&));
 
   /**
+   * Set the callback for opening MSU-1 related files as a std::ifstream
+   * @param ptr User data passed to the callback
+   * @param cb Callback for opening MSU-1 related files as a std::ifstream
+   */
+  void setOpenMsuCallback(void*, bool (*)(void*, std::string, std::ifstream&));
+
+  /**
    * Set the callback for log output
    * @param ptr User data passed to the callback
    * @param cb Callback log output

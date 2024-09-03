@@ -184,7 +184,10 @@ void Bsnes::setOpenStreamCallback(void *ptr, bool (*cb)(void*, std::string, std:
 void Bsnes::setOpenFileCallback(void *ptr, bool (*cb)(void*, std::string, std::vector<uint8_t>&)) {
   SuperFamicom::cartridge.setOpenFileCallback(ptr, cb);
   SuperFamicom::icd.setOpenFileCallback(ptr, cb);
-  SuperFamicom::msu1.setOpenFileCallback(ptr, cb);
+}
+
+void Bsnes::setOpenMsuCallback(void *ptr, bool (*cb)(void*, std::string, std::ifstream&)) {
+  SuperFamicom::msu1.setOpenMsuCallback(ptr, cb);
 }
 
 void Bsnes::setRegion(unsigned region) {

@@ -76,26 +76,24 @@ void MSU1::main() {
   int16_t right = 0;
 
   if(io.audioPlay) {
-    if(!audioFile.empty()) {
-      if(io.audioPlayOffset == audioFile.size()) {
+    if(audioFile.is_open()) {
+      if(audioFile.eof()) {
         if(!io.audioRepeat) {
           io.audioPlay = false;
-          io.audioPlayOffset = 8;
+          audioFile.clear();
+          audioFile.seekg(io.audioPlayOffset = 8, std::ios::beg);
         }
         else {
-          io.audioPlayOffset = io.audioLoopOffset;
+          audioFile.clear();
+          audioFile.seekg(io.audioPlayOffset = io.audioLoopOffset, std::ios::beg);
         }
       }
       else {
-        left = audioFile[io.audioPlayOffset++];
-        left |= (audioFile[io.audioPlayOffset++] << 8);
-
-        right = audioFile[io.audioPlayOffset++];
-        right |= (audioFile[io.audioPlayOffset++] << 8);
-
+        io.audioPlayOffset += 4;
+        left  = audioFile.get() | (audioFile.get() << 8);
+        right = audioFile.get() | (audioFile.get() << 8);
         left *= (io.audioVolume / 255.0);
         right *= (io.audioVolume / 255.0);
-
         if(dsp.mute()) left = 0, right = 0;
       }
     }
@@ -114,8 +112,8 @@ void MSU1::step(unsigned clocks) {
 }
 
 void MSU1::unload() {
-  dataFile.clear();
-  audioFile.clear();
+  dataFile.close();
+  audioFile.close();
   destroy();
 }
 
@@ -146,31 +144,34 @@ void MSU1::power() {
 }
 
 void MSU1::dataOpen() {
-  dataFile.clear();
-  if (!openFileCallback(udata_v, "msu1/data.rom", dataFile)) {
+  dataFile.close();
+  if (!openMsuCallback(udata, "msu1/data.rom", dataFile)) {
     logger.log(Logger::DBG, "Failed to open msu1/data.rom");
   }
 }
 
 void MSU1::audioOpen() {
-  audioFile.clear();
+  audioFile.close();
   std::stringstream name;
   name << "msu1/track-" << io.audioTrack << ".pcm";
-
-  if (openFileCallback(udata_v, name.str(), audioFile)) {
-    if(audioFile.size() >= 8) {
-      uint32_t header = (audioFile[0] << 24) | (audioFile[1] << 16) |
-            (audioFile[2] << 8) | audioFile[3];
+  if (openMsuCallback(udata, name.str(), audioFile)) {
+    audioFile.seekg(0, audioFile.end);
+    unsigned size = audioFile.tellg();
+    audioFile.seekg(0, audioFile.beg);
+    if(size >= 8) {
+      uint32_t header = (audioFile.get() << 24) | (audioFile.get() << 16) |
+            (audioFile.get() << 8) | audioFile.get();
       if(header == 0x4d535531) {  //"MSU1"
-        uint32_t offset =  audioFile[4] | (audioFile[5] << 8) |
-            (audioFile[6] << 16) | (audioFile[7] << 24);
+        uint32_t offset =  audioFile.get() | (audioFile.get() << 8) |
+            (audioFile.get() << 16) | (audioFile.get() << 24);
         io.audioLoopOffset = 8 + offset * 4;
-        if(io.audioLoopOffset > audioFile.size()) io.audioLoopOffset = 8;
+        if(io.audioLoopOffset > size) io.audioLoopOffset = 8;
         io.audioError = false;
+        audioFile.seekg(io.audioPlayOffset, std::ios::beg);
         return;
       }
     }
-    audioFile.clear();
+    audioFile.close();
   }
   io.audioError = true;
 }
@@ -190,9 +191,10 @@ uint8_t MSU1::readIO(unsigned addr, uint8_t) {
     );
   case 0x2001:
     if(io.dataBusy) return 0x00;
-    if(dataFile.empty()) return 0x00;
-    if(io.dataReadOffset == dataFile.size()) return 0x00;
-    return dataFile[io.dataReadOffset++];
+    if(!dataFile) return 0x00;
+    if(dataFile.eof()) return 0x00;
+    io.dataReadOffset++;
+    return dataFile.get();
   case 0x2002: return 'S';
   case 0x2003: return '-';
   case 0x2004: return 'M';
@@ -213,6 +215,7 @@ void MSU1::writeIO(unsigned addr, uint8_t data) {
   case 0x2002: io.dataSeekOffset = (io.dataSeekOffset & 0xff00ffff) | data << 16; break;
   case 0x2003: io.dataSeekOffset = (io.dataSeekOffset & 0x00ffffff) | data << 24;
     io.dataReadOffset = io.dataSeekOffset;
+    if(dataFile.is_open()) dataFile.seekg(io.dataReadOffset, std::ios::beg);
     break;
   case 0x2004: io.audioTrack = (io.audioTrack & 0xff00) | data << 0; break;
   case 0x2005: io.audioTrack = (io.audioTrack & 0x00ff) | data << 8;
@@ -243,9 +246,9 @@ void MSU1::writeIO(unsigned addr, uint8_t data) {
   }
 }
 
-void MSU1::setOpenFileCallback(void *ptr, bool (*cb)(void*, std::string, std::vector<uint8_t>&)) {
-  openFileCallback = cb;
-  udata_v = ptr;
+void MSU1::setOpenMsuCallback(void *ptr, bool (*cb)(void*, std::string, std::ifstream&)) {
+  udata = ptr;
+  openMsuCallback = cb;
 }
 
 }
