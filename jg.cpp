@@ -559,28 +559,28 @@ static void inputSetup(void) {
             case Bsnes::Input::Device::Unconnected:
             case Bsnes::Input::Device::Gamepad: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_PAD);
-                Bsnes::setInputSpec({i, 1, nullptr, &pollGamepad});
+                Bsnes::setInputSpec({i, 1, nullptr, pollGamepad});
                 break;
             }
             case Bsnes::Input::Device::Mouse: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_MOUSE);
-                Bsnes::setInputSpec({i, port[i], nullptr, &pollMouse});
+                Bsnes::setInputSpec({i, port[i], nullptr, pollMouse});
                 break;
             }
             case Bsnes::Input::Device::Multitap: {
                 for (unsigned j = 1; j < (multitap ? multitap : NUMINPUTS); ++j)
                     inputinfo[j] = jg_snes_inputinfo(j, JG_SNES_PAD);
-                Bsnes::setInputSpec({1, port[i], nullptr, &pollGamepad});
+                Bsnes::setInputSpec({1, port[i], nullptr, pollGamepad});
                 break;
             }
             case Bsnes::Input::Device::SuperScope: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_SUPERSCOPE);
-                Bsnes::setInputSpec({i, port[i], nullptr, &pollLightgun});
+                Bsnes::setInputSpec({i, port[i], nullptr, pollLightgun});
                 break;
             }
             case Bsnes::Input::Device::Justifier: {
                 inputinfo[i] = jg_snes_inputinfo(i, JG_SNES_JUSTIFIER);
-                Bsnes::setInputSpec({i, port[i], nullptr, &pollLightgun});
+                Bsnes::setInputSpec({i, port[i], nullptr, pollLightgun});
                 ss_offset_x = ss_offset_y = 0;
                 break;
             }
