@@ -762,11 +762,13 @@ int jg_game_load(void) {
         jg_cb_frametime(TIMING_NTSC);
     }
 
-    Bsnes::power(); // Power up!
+    // Power up!
+    Bsnes::power();
 
     // Reserve data for states
     state.reserve(Bsnes::serializeSize());
 
+    // Set up input devices
     inputSetup();
 
     return 1;
