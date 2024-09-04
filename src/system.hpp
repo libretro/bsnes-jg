@@ -47,6 +47,7 @@ struct System {
   void unload();
   void power(bool);
 
+  unsigned serializeSize(bool);
   serializer serialize(bool);
   bool unserialize(serializer&);
 
@@ -58,10 +59,6 @@ private:
     double apuFrequency = 32040.0 * 768.0;
     unsigned serializeSize[2] = {0, 0};
   } information;
-
-  struct Hacks {
-    bool fastPPU = false;
-  } hacks;
 
   void serializeAll(serializer&, bool);
   unsigned serializeInit(bool);

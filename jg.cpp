@@ -158,6 +158,9 @@ enum {
     REGION
 };
 
+// State data
+static std::vector<uint8_t> state;
+
 static int hmult = 2;
 static int vmult = 1;
 static int ss_offset_x = 0;
@@ -761,6 +764,9 @@ int jg_game_load(void) {
 
     Bsnes::power(); // Power up!
 
+    // Reserve data for states
+    state.reserve(Bsnes::serializeSize());
+
     inputSetup();
 
     return 1;
@@ -769,26 +775,29 @@ int jg_game_load(void) {
 int jg_game_unload(void) {
     Bsnes::save();
     Bsnes::unload();
+    state.clear();
     return 1;
 }
 
 int jg_state_load(const char *filename) {
     std::ifstream stream(filename, std::ios::in | std::ios::binary);
-    std::vector<uint8_t> state((std::istreambuf_iterator<char>(stream)),
+    state = std::vector<uint8_t>((std::istreambuf_iterator<char>(stream)),
         std::istreambuf_iterator<char>());
     stream.close();
-    return Bsnes::unserialize(state);
+    return Bsnes::unserialize(state.data(), state.size());
 }
 
 void jg_state_load_raw(const void*) {
 }
 
 int jg_state_save(const char *filename) {
-    std::vector<uint8_t> state;
-    Bsnes::serialize(state);
+    unsigned size = Bsnes::serialize(state.data());
+    if (!size)
+        return 0;
+
     std::ofstream stream(filename, std::ios::out | std::ios::binary);
     if (stream.is_open()) {
-        stream.write((const char*)state.data(), state.size());
+        stream.write((const char*)state.data(), size);
         stream.close();
         return 1;
     }
@@ -800,7 +809,7 @@ const void* jg_state_save_raw(void) {
 }
 
 size_t jg_state_size(void) {
-    return 0;
+    return Bsnes::serializeSize();
 }
 
 void jg_media_select(void) {

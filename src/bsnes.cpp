@@ -19,6 +19,7 @@
  */
 
 #include <cstddef>
+#include <cstring>
 
 #include "audio.hpp"
 #include "cartridge.hpp"
@@ -87,13 +88,18 @@ std::pair<void*, unsigned> Bsnes::getMemoryRaw(unsigned type) {
   return std::make_pair(nullptr, 0);
 }
 
-void Bsnes::serialize(std::vector<uint8_t>& state) {
-  serializer s = SuperFamicom::system.serialize(true);
-  state = std::vector<uint8_t>(s.data(), s.data() + s.size());
+unsigned Bsnes::serializeSize() {
+  return SuperFamicom::system.serializeSize(true);
 }
 
-bool Bsnes::unserialize(std::vector<uint8_t>& state) {
-  serializer s(state.data(), state.size());
+unsigned Bsnes::serialize(uint8_t *data) {
+  serializer s = SuperFamicom::system.serialize(true);
+  std::memcpy(data, s.data(), s.size());
+  return s.size();
+}
+
+bool Bsnes::unserialize(const uint8_t *data, unsigned size) {
+  serializer s(data, size);
   return SuperFamicom::system.unserialize(s);
 }
 

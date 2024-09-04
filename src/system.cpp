@@ -109,6 +109,10 @@ bool System::unserialize(serializer& s) {
   return true;
 }
 
+unsigned System::serializeSize(bool synchronize) {
+  return information.serializeSize[synchronize];
+}
+
 //internal
 
 void System::serializeAll(serializer& s, bool synchronize) {
@@ -169,13 +173,14 @@ unsigned System::serializeInit(bool synchronize) {
   unsigned serializeSize = 0;
   char version[16] = {};
   char description[512] = {};
+  bool placeholder = false;
 
   s.integer(signature);
   s.integer(serializeSize);
   s.array(version);
   s.array(description);
   s.boolean(synchronize);
-  s.boolean(hacks.fastPPU);
+  s.boolean(placeholder);
   serializeAll(s, synchronize);
   return s.size();
 }
@@ -205,7 +210,7 @@ void System::runToSave() {
   while(true) {
     //SMP thread is synchronized twice to ensure the CPU and SMP are closely aligned:
     //this is extremely critical for Tales of Phantasia and Star Ocean.
-    if(!synchronize(smp.thread)) continue;
+    //if(!synchronize(smp.thread)) continue;
     if(!synchronize(cpu.thread)) continue;
     if(!synchronize(smp.thread)) continue;
     if(!synchronize(ppu.thread)) continue;

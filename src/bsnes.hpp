@@ -137,17 +137,25 @@ namespace Bsnes {
   void run();
 
   /**
-   * Serialize emulated system state (save state)
-   * @param state Empty buffer to store state data
+   * Determine the size of the state in bytes
+   * @return Size of state in bytes
    */
-  void serialize(std::vector<uint8_t>&);
+  unsigned serializeSize();
+
+  /**
+   * Serialize emulated system state (save state)
+   * @param data Empty buffer to store state data
+   * @return Size of state in bytes
+   */
+  unsigned serialize(uint8_t*);
 
   /**
    * Unserialize emulated system state (load state)
-   * @param state Buffer containing state data
+   * @param data Buffer containing state data
+   * @param size Size of buffer containing state data
    * @return Success/fail
    */
-  bool unserialize(std::vector<uint8_t>&);
+  bool unserialize(const uint8_t*, unsigned);
 
   /**
    * Deactivate all cheats and clear the cheat list
