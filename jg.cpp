@@ -56,7 +56,7 @@ static jg_coreinfo_t coreinfo = {
 };
 
 static jg_videoinfo_t vidinfo = {
-    JG_PIXFMT_RGBX5551, // pixfmt
+    JG_PIXFMT_XRGB8888, // pixfmt
     VIDEO_WIDTH << 1,   // wmax
     VIDEO_HEIGHT << 1,  // hmax
     VIDEO_WIDTH,        // w
@@ -858,7 +858,7 @@ jg_setting_t* jg_get_settings(size_t *numsettings) {
 }
 
 void jg_setup_video(void) {
-    Bsnes::setVideoSpec({0, (uint16_t*)vidinfo.buf, nullptr, &videoFrame});
+    Bsnes::setVideoSpec({(uint32_t*)vidinfo.buf, nullptr, &videoFrame});
 }
 
 void jg_setup_audio(void) {

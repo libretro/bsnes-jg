@@ -111,8 +111,8 @@ struct PPU : Thread, PPUcounter {
 
   void serialize(serializer&);
 
-  void setBuffer(uint16_t*);
-  void setPixelFormat(unsigned); // 0 = 5551, 1 = 1555
+  void setBuffer(uint32_t*);
+  void genPalette();
 
   struct VRAM {
     uint16_t& operator[](unsigned);
@@ -137,8 +137,8 @@ private:
   void writeIO(unsigned, uint8_t);
   void updateVideoMode();
 
-  uint16_t *output;
-  uint16_t lightTable[16][32768];
+  uint32_t *output;
+  uint32_t lightTable[16][32768];
 
   struct {
     bool interlace;
@@ -470,18 +470,18 @@ private:
     void run();
     void power();
 
-    uint16_t below(bool hires);
-    uint16_t above();
+    unsigned below(bool hires);
+    unsigned above();
 
-    uint16_t blend(unsigned, unsigned) const;
-    inline uint16_t paletteColor(uint8_t) const;
-    inline uint16_t directColor(uint8_t, uint8_t) const;
-    inline uint16_t fixedColor() const;
+    unsigned blend(unsigned, unsigned) const;
+    inline unsigned paletteColor(uint8_t) const;
+    inline unsigned directColor(uint8_t, uint8_t) const;
+    inline unsigned fixedColor() const;
 
     void serialize(serializer&);
 
-    uint16_t *lineA;
-    uint16_t *lineB;
+    uint32_t *lineA;
+    uint32_t *lineB;
 
     uint16_t cgram[256];
 

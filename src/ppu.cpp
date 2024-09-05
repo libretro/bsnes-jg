@@ -1771,14 +1771,14 @@ void PPU::Screen::run() {
   if(ppu.vcounter() > 232 || ppu.vcounter() == 0) return;
 
   bool hires      = ppu.io.pseudoHires || ppu.io.bgMode == 5 || ppu.io.bgMode == 6;
-  uint16_t belowColor = below(hires);
-  uint16_t aboveColor = above();
+  unsigned belowColor = below(hires);
+  unsigned aboveColor = above();
 
   *lineA++ = *lineB++ = ppu.lightTable[ppu.io.displayBrightness][hires ? belowColor : aboveColor];
   *lineA++ = *lineB++ = ppu.lightTable[ppu.io.displayBrightness][aboveColor];
 }
 
-uint16_t PPU::Screen::below(bool hires) {
+unsigned PPU::Screen::below(bool hires) {
   if(ppu.io.displayDisable || (!ppu.io.overscan && ppu.vcounter() >= 225)) return 0;
 
   unsigned priority = 0;
@@ -1809,15 +1809,15 @@ uint16_t PPU::Screen::below(bool hires) {
   if((math.transparent = (priority == 0))) math.below.color = paletteColor(0);
 
   if(!hires) return 0;
-  if(!math.below.colorEnable) return math.above.colorEnable ? math.below.color : (uint16_t)0;
+  if(!math.below.colorEnable) return math.above.colorEnable ? math.below.color : (unsigned)0;
 
   return blend(
-    math.above.colorEnable ? math.below.color : (uint16_t)0,
+    math.above.colorEnable ? math.below.color : (unsigned)0,
     math.blendMode ? math.above.color : fixedColor()
   );
 }
 
-uint16_t PPU::Screen::above() {
+unsigned PPU::Screen::above() {
   if(ppu.io.displayDisable || (!ppu.io.overscan && ppu.vcounter() >= 225)) return 0;
 
   unsigned priority = 0;
@@ -1873,7 +1873,7 @@ uint16_t PPU::Screen::above() {
   );
 }
 
-uint16_t PPU::Screen::blend(unsigned x, unsigned y) const {
+unsigned PPU::Screen::blend(unsigned x, unsigned y) const {
   if(!io.colorMode) {  //add
     if(!math.colorHalve) {
       unsigned sum = x + y;
@@ -1893,12 +1893,12 @@ uint16_t PPU::Screen::blend(unsigned x, unsigned y) const {
   }
 }
 
-uint16_t PPU::Screen::paletteColor(uint8_t palette) const {
+unsigned PPU::Screen::paletteColor(uint8_t palette) const {
   ppu.latch.cgramAddress = palette;
   return cgram[palette];
 }
 
-uint16_t PPU::Screen::directColor(uint8_t palette, uint8_t paletteGroup) const {
+unsigned PPU::Screen::directColor(uint8_t palette, uint8_t paletteGroup) const {
   //palette = -------- BBGGGRRR
   //group   = -------- -----bgr
   //output  = 0BBb00GG Gg0RRRr0
@@ -1907,7 +1907,7 @@ uint16_t PPU::Screen::directColor(uint8_t palette, uint8_t paletteGroup) const {
        + (palette << 2 & 0x001c) + (paletteGroup <<  1 & 0x0002);
 }
 
-uint16_t PPU::Screen::fixedColor() const {
+unsigned PPU::Screen::fixedColor() const {
   return io.colorBlue << 10 | io.colorGreen << 5 | io.colorRed << 0;
 }
 
@@ -2248,11 +2248,11 @@ unsigned PPUcounter::hdot() const {
   }
 }
 
-void PPU::setBuffer(uint16_t *buffer) {
+void PPU::setBuffer(uint32_t *buffer) {
   output = buffer;
 }
 
-void PPU::setPixelFormat(unsigned pixfmt) {
+void PPU::genPalette() {
   for(unsigned l = 0; l < 16; ++l) {
     for(unsigned r = 0; r < 32; ++r) {
       for(unsigned g = 0; g < 32; ++g) {
@@ -2261,9 +2261,8 @@ void PPU::setPixelFormat(unsigned pixfmt) {
           unsigned ar = (luma * r + 0.5);
           unsigned ag = (luma * g + 0.5);
           unsigned ab = (luma * b + 0.5);
-          lightTable[l][(r << 10) + (g << 5) + b] = pixfmt ?
-            (ab << 10) + (ag << 5) + ar :
-            (ab << 11) + (ag << 6) + (ar << 1);
+          lightTable[l][(r << 10) + (g << 5) + b] =
+            (ab << 19) + (ag << 11) + (ar << 3);
         }
       }
     }
@@ -2277,7 +2276,7 @@ bg3(Background::ID::BG3),
 bg4(Background::ID::BG4) {
   ppu1.version = 1;  //allowed values: 1
   ppu2.version = 3;  //allowed values: 1, 2, 3
-  setPixelFormat(0);
+  genPalette();
 }
 
 PPU::~PPU() {
