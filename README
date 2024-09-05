@@ -124,6 +124,16 @@ Notes
   HLE off. The defaults are similar to the "Balanced Profile". The "Performance
   Profile" is gone. If this is still too slow, try Mednafen's snes_faust.
 
+Contributing
+------------
+Any contributions should respect the direction and goals of the project. This
+emulator project is aligned with the originally stated goal of its original
+author, which is to preserve the SFC/SNES console accurately for future
+generations. To achieve this, the codebase must be as standards-compliant as
+possible to ensure it will remain buildable and usable even in the absence of
+active developers. The project therefore avoids complicated hacks or
+enhancements in order to focus purely on preservation.
+
 Copyright
 ---------
 bsnes-jg (GPL-3.0-or-later)
