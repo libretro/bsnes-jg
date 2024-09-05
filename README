@@ -87,7 +87,7 @@ N = Hide N pixels of Overscan (Left)
 overscan_r = 0
 N = Hide N pixels of Overscan (Right)
 
-luminance
+luminance = 10
 0 = 0%, 1 = 10%, 2 = 20%, 3 = 30%, 4 = 40%, 5 = 50%, 6 = 60%, 7 = 70%, 8 = 80%,
 9 = 90%, 10 = 100%",
 
