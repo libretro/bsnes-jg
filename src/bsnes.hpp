@@ -223,6 +223,14 @@ namespace Bsnes {
   void setCoprocPreferHLE(bool);
 
   /**
+   * Set video colour parameters
+   * @param luminance Luminance, also known as brightness, 0-100
+   * @param saturation Saturation, 0-200
+   * @param gamma Gamma, 100-200
+   */
+  void setVideoColourParams(unsigned, unsigned, unsigned);
+
+  /**
    * Set the callback for opening files to be loaded into a buffer
    * @param ptr User data passed to the callback
    * @param cb Callback for opening files to be loaded into a buffer

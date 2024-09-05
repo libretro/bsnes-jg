@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cmath>
 #include <cstring>
 
 #include "serializer.hpp"
@@ -2252,7 +2253,10 @@ void PPU::setBuffer(uint32_t *buffer) {
   output = buffer;
 }
 
-void PPU::genPalette() {
+void PPU::genPalette(double luminance, double saturation, double gamma) {
+  double reciprocal = 1.0 / 32767.0;
+  double inverse = std::max(0.0, 1.0 - saturation);
+
   for(unsigned l = 0; l < 16; ++l) {
     for(unsigned r = 0; r < 32; ++r) {
       for(unsigned g = 0; g < 32; ++g) {
@@ -2261,8 +2265,26 @@ void PPU::genPalette() {
           unsigned ar = (luma * r + 0.5);
           unsigned ag = (luma * g + 0.5);
           unsigned ab = (luma * b + 0.5);
+
+          ar = ar << 3 | ar >> 2; ar = ar << 8 | ar << 0;
+          ag = ag << 3 | ag >> 2; ag = ag << 8 | ag << 0;
+          ab = ab << 3 | ab >> 2; ab = ab << 8 | ab << 0;
+
+          unsigned grayscale = std::min((ar + ag + ab) / 3, (unsigned)65535);
+          ar = std::min(ar * saturation + grayscale * inverse, 65535.0);
+          ag = std::min(ag * saturation + grayscale * inverse, 65535.0);
+          ab = std::min(ab * saturation + grayscale * inverse, 65535.0);
+
+          ar = ar > 32767 ? ar : uint16_t(32767 * pow(ar * reciprocal, gamma));
+          ag = ag > 32767 ? ag : uint16_t(32767 * pow(ag * reciprocal, gamma));
+          ab = ab > 32767 ? ab : uint16_t(32767 * pow(ab * reciprocal, gamma));
+
+          ar = std::min(ar * luminance, 65535.0);
+          ag = std::min(ag * luminance, 65535.0);
+          ab = std::min(ab * luminance, 65535.0);
+
           lightTable[l][(r << 10) + (g << 5) + b] =
-            (ab << 19) + (ag << 11) + (ar << 3);
+            ab >> 8 << 16 | ag >> 8 <<  8 | ar >> 8 << 0;
         }
       }
     }

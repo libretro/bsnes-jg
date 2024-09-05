@@ -112,7 +112,7 @@ struct PPU : Thread, PPUcounter {
   void serialize(serializer&);
 
   void setBuffer(uint32_t*);
-  void genPalette();
+  void genPalette(double = 1.0, double = 1.0, double = 1.2);
 
   struct VRAM {
     uint16_t& operator[](unsigned);

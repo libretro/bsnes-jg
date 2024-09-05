@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
 #include <cstddef>
 #include <cstring>
 
@@ -155,6 +156,14 @@ void Bsnes::setCoprocDelayedSync(bool value) {
 
 void Bsnes::setCoprocPreferHLE(bool value) {
   SuperFamicom::configuration.coprocessor.preferHLE = value;
+}
+
+void Bsnes::setVideoColourParams(unsigned luminance, unsigned saturation, unsigned gamma) {
+  SuperFamicom::ppu.genPalette(
+    std::max(0.0, std::min(1.0, luminance / 100.0)),
+    std::max(0.0, std::min(2.0, saturation / 100.0)),
+    std::max(1.0, std::min(2.0, gamma / 100.0))
+  );
 }
 
 void Bsnes::setInputSpec(Input::Spec spec) {

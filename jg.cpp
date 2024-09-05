@@ -121,6 +121,26 @@ static jg_setting_t settings_bsnes[] = {
       "Hide N pixels of Overscan (Right)",
       0, 0, 16, 0
     },
+    { "luminance", "Colour: Luminance",
+      "0 = 0%, 1 = 10%, 2 = 20%, 3 = 30%, 4 = 40%, 5 = 50%, "
+      "6 = 60%, 7 = 70%, 8 = 80%, 9 = 90%, 10 = 100%",
+      "Adjust luminance level",
+      10, 0, 10, 0
+    },
+    { "saturation", "Colour: Saturation",
+      "0 = 0%, 1 = 10%, 2 = 20%, 3 = 30%, 4 = 40%, 5 = 50%, "
+      "6 = 60%, 7 = 70%, 8 = 80%, 9 = 90%, 10 = 100%, "
+      "11 = 110%, 12 = 120%, 13 = 130%, 14 = 140%, 15 = 150%, "
+      "16 = 160%, 17 = 170%, 18 = 180%, 19 = 190%, 20 = 200%",
+      "Adjust saturation level",
+      10, 0, 20, 0
+    },
+    { "gamma", "Colour: Gamma",
+      "0 = 100%, 1 = 110%, 2 = 120%, 3 = 130%, 4 = 140%, 5 = 150%, "
+      "6 = 160%, 7 = 170%, 8 = 180%, 9 = 190%, 10 = 200%",
+      "Adjust gamma level",
+      2, 0, 10, 0
+    },
     { "coproc_delaysync", "Delay LLE Coprocessor Sync",
       "0 = Off, 1 = On",
       "Delay syncing Low Level Emulated coprocessors for a performance "
@@ -152,6 +172,9 @@ enum {
     OVERSCAN_B,
     OVERSCAN_L,
     OVERSCAN_R,
+    LUMINANCE,
+    SATURATION,
+    GAMMA,
     COPROC_DELAYSYNC,
     COPROC_PREFERHLE,
     RSQUAL,
@@ -674,6 +697,9 @@ int jg_init(void) {
     // Configuration
     Bsnes::setCoprocDelayedSync(settings_bsnes[COPROC_DELAYSYNC].val);
     Bsnes::setCoprocPreferHLE(settings_bsnes[COPROC_PREFERHLE].val);
+    Bsnes::setVideoColourParams(settings_bsnes[LUMINANCE].val * 10,
+        settings_bsnes[SATURATION].val * 10,
+        settings_bsnes[GAMMA].val * 10 + 100);
 
     return 1;
 }
@@ -831,6 +857,9 @@ void jg_cheat_set(const char *code) {
 void jg_rehash(void) {
     aspectRatio();
     inputSetup();
+    Bsnes::setVideoColourParams(settings_bsnes[LUMINANCE].val * 10,
+        settings_bsnes[SATURATION].val * 10,
+        settings_bsnes[GAMMA].val * 10 + 100);
 }
 
 void jg_data_push(uint32_t, int, const void*, size_t) {
