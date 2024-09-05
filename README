@@ -65,8 +65,40 @@ also be loaded in this manner when loading two Sufami Turbo cartridges.
 
 Settings
 --------
+port1 = 0
+0 = Auto, 1 = Controller, 2 = Mouse
+
+port2 = 0
+0 = Auto, 1 = Controller, 2 = Mouse, 3 = Multitap, 4 = Super Scope,
+5 = Justifier",
+
 aspect_ratio = 0
 0 = Auto Region, 1 = 1:1 PAR, 2 = NTSC, 3 = PAL
+
+overscan_t = 8
+N = Hide N pixels of Overscan (Top)
+
+overscan_b = 8
+N = Hide N pixels of Overscan (Bottom)
+
+overscan_l = 0
+N = Hide N pixels of Overscan (Left)
+
+overscan_r = 0
+N = Hide N pixels of Overscan (Right)
+
+luminance
+0 = 0%, 1 = 10%, 2 = 20%, 3 = 30%, 4 = 40%, 5 = 50%, 6 = 60%, 7 = 70%, 8 = 80%,
+9 = 90%, 10 = 100%",
+
+saturation = 10
+0 = 0%, 1 = 10%, 2 = 20%, 3 = 30%, 4 = 40%, 5 = 50%, 6 = 60%, 7 = 70%, 8 = 80%,
+9 = 90%, 10 = 100%, 11 = 110%, 12 = 120%, 13 = 130%, 14 = 140%, 15 = 150%,
+16 = 160%, 17 = 170%, 18 = 180%, 19 = 190%, 20 = 200%
+
+gamma = 2
+0 = 100%, 1 = 110%, 2 = 120%, 3 = 130%, 4 = 140%, 5 = 150%, 6 = 160%, 7 = 170%,
+8 = 180%, 9 = 190%, 10 = 200%
 
 coproc_delaysync = 0
 0 = Off, 1 = On
@@ -76,6 +108,9 @@ coproc_preferhle = 1
 
 rsqual = 0
 0 = Fastest, 1 = Medium, 2 = Best
+
+region = 0
+0 = Auto, 1 = NTSC, 2 = PAL
 
 Notes
 -----

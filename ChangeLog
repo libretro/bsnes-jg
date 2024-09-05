@@ -1,3 +1,16 @@
+Version x.y.z
+-------------
+ - Update to SameBoy 0.16.6
+ - Backported RISC-V support for libco from ares
+ - jg: Overscan masking settings
+ - General performance improvements
+ - Code cleanup and build improvements
+ - Internal input routines made more like real hardware
+ - Render internally using 32-bit (8 colours per channel) instead of 16-bit (5
+   colours per channel) pixels
+ - Added settings for colour adjustments (Luminance, Saturation, Gamma)
+ - First release of libbsnes with a public API
+
 Version 1.2.0
 -------------
  - Extend the Super Famicom LOROM-RAM#A memory map
