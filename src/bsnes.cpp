@@ -76,7 +76,7 @@ bool Bsnes::getRtcPresent() {
 
 std::pair<void*, unsigned> Bsnes::getMemoryRaw(unsigned type) {
   switch (type) {
-    default: case Memory::CartRAM: case Memory::RealTimeClock: {
+    default: case Memory::CartRAM: case Memory::RealTimeClock: case Memory::SGBCartRAM: {
       return SuperFamicom::cartridge.getMemoryRaw(type);
     }
     case Memory::MainRAM: {

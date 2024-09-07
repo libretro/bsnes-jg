@@ -37,6 +37,9 @@ struct ICD : Thread {
   void step(unsigned);
   unsigned clockFrequency() const;
 
+  void* sramData();
+  unsigned sramSize();
+
   bool load();
   void save();
   void unload();

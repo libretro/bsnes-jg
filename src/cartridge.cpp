@@ -318,7 +318,7 @@ void Cartridge::serialize(serializer& s) {
 
 std::pair<void*, unsigned> Cartridge::getMemoryRaw(unsigned type) {
   switch (type) {
-    case 0: {
+    case 0: { // SFC Cart RAM
       if (has.SRAM) {
         if (has.SA1) {
           return std::make_pair(sa1.bwram.data(), sa1.bwram.size());
@@ -346,6 +346,16 @@ std::pair<void*, unsigned> Cartridge::getMemoryRaw(unsigned type) {
           return std::make_pair(ram.data(), ram.size());
         }
       }
+      break;
+    }
+    case 1: { // RTC - Unimplemented
+      break;
+    }
+    case 2: { // GB Cart RAM
+      if (has.ICD) {
+        return std::make_pair(icd.sramData(), icd.sramSize());
+      }
+      break;
     }
   }
 

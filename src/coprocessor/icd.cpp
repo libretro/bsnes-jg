@@ -391,6 +391,19 @@ unsigned ICD::clockFrequency() const {
   return Frequency ? Frequency : system.cpuFrequency();
 }
 
+void* ICD::sramData() {
+  size_t sram_size = sramSize();
+  if (sram_size) {
+    uint16_t bank;
+    return GB_get_direct_access(&sameboy, GB_DIRECT_ACCESS_CART_RAM, &sram_size, &bank);
+  }
+  return nullptr;
+}
+
+unsigned ICD::sramSize() {
+  return GB_save_battery_size(&sameboy);
+}
+
 bool ICD::load() {
   information = {};
 
