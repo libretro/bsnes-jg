@@ -210,20 +210,18 @@ void System::runToSave() {
   while(true) {
     //SMP thread is synchronized twice to ensure the CPU and SMP are closely aligned:
     //this is extremely critical for Tales of Phantasia and Star Ocean.
-    if(!synchronize(smp.thread)) continue;
-    if(!synchronize(cpu.thread)) continue;
-    if(!synchronize(smp.thread)) continue;
-    if(!synchronize(ppu.thread)) continue;
-
-    bool synchronized = true;
-    for(Thread* coprocessor : cpu.coprocessors) {
-      if(!synchronize(coprocessor->thread)) {
-        synchronized = false; break;
+    if(synchronize(smp.thread) && synchronize(cpu.thread)) {
+      bool synchronized = true;
+      for(Thread* coprocessor : cpu.coprocessors) {
+        if(!synchronize(coprocessor->thread)) {
+          synchronized = false;
+          break;
+        }
+      }
+      if(synchronized && synchronize(smp.thread) && synchronize(ppu.thread)) {
+        break;
       }
     }
-    if(!synchronized) continue;
-
-    break;
   }
 
   scheduler.mode = Scheduler::Mode::Run;
