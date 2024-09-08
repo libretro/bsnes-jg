@@ -621,7 +621,7 @@ static inline std::vector<uint8_t> bufToVec(void *data, size_t size) {
 }
 
 static bool loadRom(void*, unsigned id) {
-    if (id == 1) {
+    if (id == Bsnes::GameType::SuperFamicom) {
         std::vector<uint8_t> rom = addon ?
         bufToVec(addoninfo.data, addoninfo.size) :
         bufToVec(gameinfo.data, gameinfo.size);
@@ -638,13 +638,13 @@ static bool loadRom(void*, unsigned id) {
         Bsnes::setRomSuperFamicom(rom, superFamicom.location);
         return true;
     }
-    else if (id == 3) {
+    else if (id == Bsnes::GameType::BSX) {
         std::vector<uint8_t> rom = bufToVec(gameinfo.data, gameinfo.size);
         if (rom.size() < 0x8000) return false;
         Bsnes::setRomBSMemory(rom, bsMemory.location);
         return true;
     }
-    else if (id == 4) {
+    else if (id == Bsnes::GameType::SufamiTurboA) {
         std::vector<uint8_t> rom;
 
         if (sufamiinfo.size)
@@ -656,7 +656,7 @@ static bool loadRom(void*, unsigned id) {
         Bsnes::setRomSufamiTurboA(rom, sufamiTurboA.location);
         return true;
     }
-    else if (id == 5) {
+    else if (id == Bsnes::GameType::SufamiTurboB) {
         if (!sufamiinfo.size)
             return false;
 

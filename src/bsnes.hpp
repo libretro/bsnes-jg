@@ -86,6 +86,14 @@ namespace Bsnes {
     } Spec;
   }
 
+  namespace GameType {
+    constexpr unsigned SuperFamicom = 1;    /**< Super Famicom, SNES */
+    constexpr unsigned GameBoy = 2;         /**< Game Boy (Super Game Boy) */
+    constexpr unsigned BSX = 3;             /**< BS-X Satellaview */
+    constexpr unsigned SufamiTurboA = 4;    /**< Sufami Turbo Slot A */
+    constexpr unsigned SufamiTurboB = 5;    /**< Sufami Turbo Slot B */
+  }
+
   namespace Memory {
     constexpr unsigned CartRAM = 0;         /**< SRAM on Cartridge */
     constexpr unsigned RealTimeClock = 1;   /**< Real Time Clock */
