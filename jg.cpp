@@ -616,8 +616,7 @@ static void inputSetup(void) {
 
 static inline std::vector<uint8_t> bufToVec(void *data, size_t size) {
     uint8_t *buf = (uint8_t*)data;
-    std::vector<uint8_t> ret(buf, buf + size);
-    return ret;
+    return std::vector<uint8_t>(buf, buf + size);
 }
 
 static bool loadRom(void*, unsigned id) {
