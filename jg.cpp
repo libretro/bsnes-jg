@@ -809,10 +809,13 @@ int jg_game_unload(void) {
 
 int jg_state_load(const char *filename) {
     std::ifstream stream(filename, std::ios::in | std::ios::binary);
-    state = std::vector<uint8_t>((std::istreambuf_iterator<char>(stream)),
-        std::istreambuf_iterator<char>());
-    stream.close();
-    return Bsnes::unserialize(state.data(), state.size());
+    if (stream.is_open()) {
+        state = std::vector<uint8_t>((std::istreambuf_iterator<char>(stream)),
+            std::istreambuf_iterator<char>());
+        stream.close();
+        return Bsnes::unserialize(state.data(), state.size());
+    }
+    return 0;
 }
 
 void jg_state_load_raw(const void*) {
