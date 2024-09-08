@@ -357,6 +357,24 @@ std::pair<void*, unsigned> Cartridge::getMemoryRaw(unsigned type) {
       }
       break;
     }
+    case 3: { // BS-X Download RAM
+      if (has.MCC) {
+        return std::make_pair(mcc.psram.data(), mcc.psram.size());
+      }
+      break;
+    }
+    case 4: { // Sufami Turbo Slot A
+      if (has.SufamiTurboSlotA) {
+        return std::make_pair(sufamiturboA.ram.data(), sufamiturboA.ram.size());
+      }
+      break;
+    }
+    case 5: { // Sufami Turbo Slot B
+      if (has.SufamiTurboSlotB) {
+        return std::make_pair(sufamiturboB.ram.data(), sufamiturboB.ram.size());
+      }
+      break;
+    }
   }
 
   return std::make_pair(nullptr, 0);

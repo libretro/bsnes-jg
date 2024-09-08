@@ -90,8 +90,11 @@ namespace Bsnes {
     constexpr unsigned CartRAM = 0;         /**< SRAM on Cartridge */
     constexpr unsigned RealTimeClock = 1;   /**< Real Time Clock */
     constexpr unsigned SGBCartRAM = 2;      /**< SRAM on Game Boy Cartridge */
-    constexpr unsigned MainRAM = 3;         /**< Main system RAM */
-    constexpr unsigned VideoRAM = 4;        /**< Video RAM (PPU) */
+    constexpr unsigned BSXDownloadRAM = 3;  /**< BS-X Satellaview Download RAM */
+    constexpr unsigned SufamiARAM = 4;      /**< Sufami Turbo Cartridge A SRAM */
+    constexpr unsigned SufamiBRAM = 5;      /**< Sufami Turbo Cartridge B SRAM */
+    constexpr unsigned MainRAM = 6;         /**< Main system RAM */
+    constexpr unsigned VideoRAM = 7;        /**< Video RAM (PPU) */
   }
 
   namespace Region {
