@@ -72,6 +72,9 @@ port2 = 0
 0 = Auto, 1 = Controller, 2 = Mouse, 3 = Multitap, 4 = Super Scope,
 5 = Justifier",
 
+region = 0
+0 = Auto, 1 = NTSC, 2 = PAL
+
 aspect_ratio = 0
 0 = Auto Region, 1 = 1:1 PAR, 2 = NTSC, 3 = PAL
 
@@ -109,8 +112,8 @@ coproc_preferhle = 1
 rsqual = 0
 0 = Fastest, 1 = Medium, 2 = Best
 
-region = 0
-0 = Auto, 1 = NTSC, 2 = PAL
+spc_interp = 0
+0 = Gaussian, 1 = Sinc
 
 Notes
 -----
