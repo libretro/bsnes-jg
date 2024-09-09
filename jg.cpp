@@ -96,6 +96,11 @@ static jg_setting_t settings_bsnes[] = {
       "Select the device plugged into controller port 2",
       0, 0, 5, JG_SETTING_INPUT
     },
+    { "region", "Region",
+      "0 = Auto, 1 = NTSC, 2 = PAL",
+      "Set the region to use",
+      0, 0, 2, JG_SETTING_RESTART
+    },
     { "aspect_ratio", "Aspect Ratio",
       "0 = Auto Region, 1 = 1:1 PAR, 2 = NTSC, 3 = PAL",
       "Set the aspect ratio",
@@ -162,16 +167,12 @@ static jg_setting_t settings_bsnes[] = {
       "Set the SPC700 sample interpolation algorithm",
       0, 0, 1, 0
     },
-    { "region", "Region",
-      "0 = Auto, 1 = NTSC, 2 = PAL",
-      "Set the region to use",
-      0, 0, 2, JG_SETTING_RESTART
-    }
 };
 
 enum {
     PORT1,
     PORT2,
+    REGION,
     ASPECT,
     OVERSCAN_T,
     OVERSCAN_B,
@@ -183,8 +184,7 @@ enum {
     COPROC_DELAYSYNC,
     COPROC_PREFERHLE,
     RSQUAL,
-    SPC_INTERP,
-    REGION
+    SPC_INTERP
 };
 
 // State data
