@@ -38,6 +38,9 @@ void spc_dsp_init(void*);
 // doesn't generate any.
 void spc_dsp_set_output(int16_t*, int);
 
+// Sets the interpolation algorithm
+void spc_dsp_set_interpolation(int);
+
 // Emulation
 
 // Resets DSP to power-on state
