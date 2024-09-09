@@ -34,6 +34,8 @@ struct DSP {
   void quirk();
   bool mute();
 
+  void setInterpolation(int);
+
   void serialize(serializer&);
 
   int64_t clock = 0;

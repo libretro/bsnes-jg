@@ -29,6 +29,7 @@
 #include "cpu.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"
+#include "dsp.hpp"
 #include "expansion/expansion.hpp"
 #include "logger.hpp"
 #include "ppu.hpp"
@@ -169,6 +170,10 @@ void Bsnes::setVideoColourParams(unsigned luminance, unsigned saturation, unsign
     std::max(0.0, std::min(2.0, saturation / 100.0)),
     std::max(1.0, std::min(2.0, gamma / 100.0))
   );
+}
+
+void Bsnes::setSpcInterpolation(unsigned algo) {
+  SuperFamicom::dsp.setInterpolation(algo);
 }
 
 void Bsnes::setInputSpec(Input::Spec spec) {

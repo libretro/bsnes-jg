@@ -115,4 +115,8 @@ bool DSP::mute() {
   return spc_dsp_mute();
 }
 
+void DSP::setInterpolation(int interp) {
+  spc_dsp_set_interpolation(interp);
+}
+
 }

@@ -36,6 +36,13 @@ namespace Bsnes {
       void *ptr;                        /**< User data passed to callback */
       void (*cb)(const void*, size_t);  /**< Callback for audio output */
     } Spec;
+
+    namespace Interpolation {
+      enum : unsigned {
+        Gaussian,   /**< Gaussian */
+        Sinc,       /**< Sinc */
+      };
+    }
   }
 
   namespace Video {
@@ -241,6 +248,12 @@ namespace Bsnes {
    * @param gamma Gamma, 100-200
    */
   void setVideoColourParams(unsigned, unsigned, unsigned);
+
+  /**
+   * Set the SPC700 (audio processing unit) sample interpolation algorithm
+   * @param algo Algorithm: 0-1 for Gaussian, Sinc
+   */
+  void setSpcInterpolation(unsigned);
 
   /**
    * Set the callback for opening files to be loaded into a buffer

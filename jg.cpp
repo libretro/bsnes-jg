@@ -157,6 +157,11 @@ static jg_setting_t settings_bsnes[] = {
       "Quality level for the internal resampler",
       0, 0, 2, 1
     },
+    { "spc_interp", "SPC Interpolation Algorithm",
+      "0 = Gaussian, 1 = Sinc",
+      "Set the SPC700 sample interpolation algorithm",
+      0, 0, 1, 0
+    },
     { "region", "Region",
       "0 = Auto, 1 = NTSC, 2 = PAL",
       "Set the region to use",
@@ -178,6 +183,7 @@ enum {
     COPROC_DELAYSYNC,
     COPROC_PREFERHLE,
     RSQUAL,
+    SPC_INTERP,
     REGION
 };
 
@@ -699,6 +705,7 @@ int jg_init(void) {
     Bsnes::setVideoColourParams(settings_bsnes[LUMINANCE].val * 10,
         settings_bsnes[SATURATION].val * 10,
         settings_bsnes[GAMMA].val * 10 + 100);
+    Bsnes::setSpcInterpolation(settings_bsnes[SPC_INTERP].val);
 
     return 1;
 }
@@ -862,6 +869,7 @@ void jg_rehash(void) {
     Bsnes::setVideoColourParams(settings_bsnes[LUMINANCE].val * 10,
         settings_bsnes[SATURATION].val * 10,
         settings_bsnes[GAMMA].val * 10 + 100);
+    Bsnes::setSpcInterpolation(settings_bsnes[SPC_INTERP].val);
 }
 
 void jg_data_push(uint32_t, int, const void*, size_t) {
