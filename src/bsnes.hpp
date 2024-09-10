@@ -54,11 +54,11 @@ namespace Bsnes {
   namespace Input {
     namespace Device {
       constexpr unsigned Unconnected    = 0;    /**< No input device connected */
-      constexpr unsigned Gamepad        = 1;   /**< SFC/SNES Controller */
-      constexpr unsigned Mouse          = 2;   /**< SFC/SNES Mouse */
-      constexpr unsigned Multitap       = 3;   /**< Multitap */
-      constexpr unsigned SuperScope     = 4;   /**< Super Scope (light gun) */
-      constexpr unsigned Justifier      = 5;   /**< Konami Justifier (light gun) */
+      constexpr unsigned Gamepad        = 1;    /**< SFC/SNES Controller */
+      constexpr unsigned Mouse          = 2;    /**< SFC/SNES Mouse */
+      constexpr unsigned Multitap       = 3;    /**< Multitap */
+      constexpr unsigned SuperScope     = 4;    /**< Super Scope (light gun) */
+      constexpr unsigned Justifier      = 5;    /**< Konami Justifier (light gun) */
     }
 
     namespace Gamepad {
