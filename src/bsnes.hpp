@@ -38,10 +38,8 @@ namespace Bsnes {
     } Spec;
 
     namespace Interpolation {
-      enum : unsigned {
-        Gaussian,   /**< Gaussian */
-        Sinc,       /**< Sinc */
-      };
+      constexpr unsigned Gaussian   = 0;    /**< Gaussian */
+      constexpr unsigned Sinc       = 1;    /**< Sinc */
     }
   }
 
@@ -55,14 +53,12 @@ namespace Bsnes {
 
   namespace Input {
     namespace Device {
-      enum : unsigned {
-        Unconnected,    /**< No input device connected */
-        Gamepad,        /**< SFC/SNES Controller */
-        Mouse,          /**< SFC/SNES Mouse */
-        Multitap,       /**< Multitap */
-        SuperScope,     /**< Super Scope (light gun) */
-        Justifier,      /**< Konami Justifier (light gun) */
-      };
+      constexpr unsigned Unconnected    = 0;    /**< No input device connected */
+      constexpr unsigned Gamepad        = 1;   /**< SFC/SNES Controller */
+      constexpr unsigned Mouse          = 2;   /**< SFC/SNES Mouse */
+      constexpr unsigned Multitap       = 3;   /**< Multitap */
+      constexpr unsigned SuperScope     = 4;   /**< Super Scope (light gun) */
+      constexpr unsigned Justifier      = 5;   /**< Konami Justifier (light gun) */
     }
 
     namespace Gamepad {
