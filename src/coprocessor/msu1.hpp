@@ -20,12 +20,12 @@
 
 #pragma once
 
-#include <fstream>
+#include <istream>
 
 namespace SuperFamicom {
 
 struct MSU1 : Thread {
-  void setOpenMsuCallback(void*, bool (*)(void*, std::string, std::ifstream&));
+  void setOpenMsuCallback(void*, bool (*)(void*, std::string, std::istream**));
 
   void synchronizeCPU();
   void main();
@@ -42,8 +42,8 @@ struct MSU1 : Thread {
   void serialize(serializer&);
 
 private:
-  std::ifstream dataFile;
-  std::ifstream audioFile;
+  std::istream *dataFile = nullptr;
+  std::istream *audioFile = nullptr;
   void *udata;
 
   enum Flag : unsigned {
@@ -75,7 +75,7 @@ private:
     bool dataBusy;
   } io;
 
-  bool (*openMsuCallback)(void*, std::string, std::ifstream&);
+  bool (*openMsuCallback)(void*, std::string, std::istream**);
 };
 
 extern MSU1 msu1;

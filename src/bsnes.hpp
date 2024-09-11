@@ -270,7 +270,7 @@ namespace Bsnes {
    * @param ptr User data passed to the callback
    * @param cb Callback for opening MSU-1 related files as a std::ifstream
    */
-  void setOpenMsuCallback(void*, bool (*)(void*, std::string, std::ifstream&));
+  void setOpenMsuCallback(void*, bool (*)(void*, std::string, std::istream**));
 
   /**
    * Set the callback for log output

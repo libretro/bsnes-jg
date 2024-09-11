@@ -190,6 +190,10 @@ enum {
 // State data
 static std::vector<uint8_t> state;
 
+// MSU-1 file management
+static std::ifstream msu_file_audio;
+static std::ifstream msu_file_data;
+
 static int hmult = 2;
 static int vmult = 1;
 static int ss_offset_x = 0;
@@ -368,23 +372,26 @@ static bool fileOpenS(void*, std::string name, std::stringstream& ss) {
     return true;
 }
 
-static bool fileOpenMsu(void*, std::string name, std::ifstream& ifs) {
-    std::string path;
+static bool fileOpenMsu(void*, std::string name, std::istream **is) {
+    std::string path = superFamicom.location;
+
     if (name == "msu1/data.rom") {
-        path = superFamicom.location;
         path = path.substr(0, path.find_last_of(".")) + ".msu";
+        msu_file_data.close();
+        msu_file_data = std::ifstream(path, std::ios::in | std::ios::binary);
+        *is = msu_file_data.is_open() ? &msu_file_data : nullptr;
+        return msu_file_data.is_open();
     }
     else if (name.find("msu1/track") != std::string::npos) {
-        path = superFamicom.location;
         path = path.substr(0, path.find_last_of(".")) +
             name.substr(name.find_first_of("track") + 5);
+        msu_file_audio.close();
+        msu_file_audio = std::ifstream(path, std::ios::in | std::ios::binary);
+        *is = msu_file_audio.is_open() ? &msu_file_audio : nullptr;
+        return msu_file_audio.is_open();
     }
 
-    if (path.empty())
-        return false;
-
-    ifs = std::ifstream(path, std::ios::in | std::ios::binary);
-    return ifs.is_open();
+    return false;
 }
 
 static void fileWrite(void*, std::string name, const uint8_t *data,
@@ -809,7 +816,15 @@ int jg_game_load(void) {
 int jg_game_unload(void) {
     Bsnes::save();
     Bsnes::unload();
+
     state.clear();
+
+    if (msu_file_audio.is_open())
+        msu_file_audio.close();
+
+    if (msu_file_data.is_open())
+        msu_file_data.close();
+
     return 1;
 }
 

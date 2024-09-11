@@ -211,7 +211,7 @@ void Bsnes::setOpenFileCallback(void *ptr, bool (*cb)(void*, std::string, std::v
   SuperFamicom::icd.setOpenFileCallback(ptr, cb);
 }
 
-void Bsnes::setOpenMsuCallback(void *ptr, bool (*cb)(void*, std::string, std::ifstream&)) {
+void Bsnes::setOpenMsuCallback(void *ptr, bool (*cb)(void*, std::string, std::istream**)) {
   SuperFamicom::msu1.setOpenMsuCallback(ptr, cb);
 }
 
