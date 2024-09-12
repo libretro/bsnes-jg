@@ -192,8 +192,52 @@ void System::run() {
 }
 
 void System::runToSave() {
+  const std::string headerTitle = cartridge.headerTitle();
+  bool states_special = false;
+
+  //these games will periodically deadlock when using "Normal" synchronization
+  if(headerTitle == "Star Ocean" || headerTitle == "TALES OF PHANTASIA")
+    states_special = true;
+
   scheduler.mode = Scheduler::Mode::Synchronize;
 
+  states_special ? runToSaveSpecial() : runToSaveNormal();
+
+  scheduler.mode = Scheduler::Mode::Run;
+  scheduler.active = cpu.thread;
+}
+
+void System::runToSaveNormal() {
+  //run the emulator normally until the CPU thread naturally hits a synchronization point
+  while(true) {
+    scheduler.enter();
+    if(scheduler.event == Scheduler::Event::Frame) frameEvent();
+    if(scheduler.event == Scheduler::Event::Synchronized) {
+      if(scheduler.active != cpu.thread) continue;
+      break;
+    }
+    if(scheduler.event == Scheduler::Event::Desynchronized) continue;
+  }
+
+  //ignore any desynchronization events to force all other threads to their synchronization points
+  auto synchronize = [&](cothread_t thread) -> void {
+    scheduler.active = thread;
+    while(true) {
+      scheduler.enter();
+      if(scheduler.event == Scheduler::Event::Frame) frameEvent();
+      if(scheduler.event == Scheduler::Event::Synchronized) break;
+      if(scheduler.event == Scheduler::Event::Desynchronized) continue;
+    }
+  };
+
+  synchronize(smp.thread);
+  synchronize(ppu.thread);
+  for(Thread* coprocessor : cpu.coprocessors) {
+    synchronize(coprocessor->thread);
+  }
+}
+
+void System::runToSaveSpecial() {
   //run every thread until it cleanly hits a synchronization point
   //if it fails, start resynchronizing every thread again
   auto synchronize = [&](cothread_t thread) -> bool {
@@ -210,23 +254,23 @@ void System::runToSave() {
   while(true) {
     //SMP thread is synchronized twice to ensure the CPU and SMP are closely aligned:
     //this is extremely critical for Tales of Phantasia and Star Ocean.
-    if(synchronize(smp.thread) && synchronize(cpu.thread)) {
-      bool synchronized = true;
-      for(Thread* coprocessor : cpu.coprocessors) {
-        if(!synchronize(coprocessor->thread)) {
-          synchronized = false;
-          break;
-        }
-      }
-      if(synchronized && synchronize(smp.thread) && synchronize(ppu.thread)) {
-        break;
+    if(!synchronize(smp.thread)) continue;
+    if(!synchronize(cpu.thread)) continue;
+    if(!synchronize(smp.thread)) continue;
+    if(!synchronize(ppu.thread)) continue;
+
+    bool synchronized = true;
+    for(Thread* coprocessor : cpu.coprocessors) {
+      if(!synchronize(coprocessor->thread)) {
+        synchronized = false; break;
       }
     }
-  }
+    if(!synchronized) continue;
 
-  scheduler.mode = Scheduler::Mode::Run;
-  scheduler.active = cpu.thread;
+    break;
+  }
 }
+
 
 void System::frameEvent() {
   ppu.refresh();

@@ -40,6 +40,8 @@ struct System {
 
   void run();
   void runToSave();
+  void runToSaveNormal();
+  void runToSaveSpecial();
   void frameEvent();
 
   bool load();
