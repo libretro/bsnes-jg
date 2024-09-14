@@ -192,13 +192,6 @@ void System::run() {
 }
 
 void System::runToSave() {
-  const std::string headerTitle = cartridge.headerTitle();
-  bool states_special = false;
-
-  //these games will periodically deadlock when using "Normal" synchronization
-  if(headerTitle == "Star Ocean" || headerTitle == "TALES OF PHANTASIA")
-    states_special = true;
-
   scheduler.mode = Scheduler::Mode::Synchronize;
 
   states_special ? runToSaveSpecial() : runToSaveNormal();
@@ -320,9 +313,15 @@ bool System::load() {
     information.cpuFrequency = FREQ_PAL * 4.8;
   }
 
-  if(configuration.hotfixes) {
-    const std::string headerTitle = cartridge.headerTitle();
+  const std::string headerTitle = cartridge.headerTitle();
 
+  //these games will periodically deadlock when using "Normal" synchronization
+  if(headerTitle == "Star Ocean" || headerTitle == "TALES OF PHANTASIA")
+    states_special = true;
+  else
+    states_special = false;
+
+  if(configuration.hotfixes) {
    /* Dirt Racer (Europe) relies on uninitialized memory containing certain
       values to boot without freezing. The game itself is broken and will fail
       to run sometimes on real hardware, but for the sake of expedience WRAM

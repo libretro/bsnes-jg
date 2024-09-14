@@ -64,6 +64,8 @@ private:
 
   void serializeAll(serializer&, bool);
   unsigned serializeInit(bool);
+
+  bool states_special = false;
 };
 
 extern System system;
