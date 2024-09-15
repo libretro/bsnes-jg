@@ -118,6 +118,9 @@ spc_interp = 0
 hotfixes = 0
 0 = Off, 1 = On
 
+runahead = 0
+N = Number of frames to run ahead
+
 Notes
 -----
 - Coprocessor Delayed Sync only applies for LLE coprocessor emulation.
