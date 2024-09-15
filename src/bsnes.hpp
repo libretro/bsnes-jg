@@ -90,27 +90,27 @@ namespace Bsnes {
   }
 
   namespace GameType {
-    constexpr unsigned SuperFamicom = 1;    /**< Super Famicom, SNES */
-    constexpr unsigned GameBoy = 2;         /**< Game Boy (Super Game Boy) */
-    constexpr unsigned BSX = 3;             /**< BS-X Satellaview */
-    constexpr unsigned SufamiTurboA = 4;    /**< Sufami Turbo Slot A */
-    constexpr unsigned SufamiTurboB = 5;    /**< Sufami Turbo Slot B */
+    constexpr unsigned SuperFamicom =   1;  /**< Super Famicom, SNES */
+    constexpr unsigned GameBoy =        2;  /**< Game Boy (Super Game Boy) */
+    constexpr unsigned BSX =            3;  /**< BS-X Satellaview */
+    constexpr unsigned SufamiTurboA =   4;  /**< Sufami Turbo Slot A */
+    constexpr unsigned SufamiTurboB =   5;  /**< Sufami Turbo Slot B */
   }
 
   namespace Memory {
-    constexpr unsigned CartRAM = 0;         /**< SRAM on Cartridge */
-    constexpr unsigned RealTimeClock = 1;   /**< Real Time Clock */
-    constexpr unsigned SGBCartRAM = 2;      /**< SRAM on Game Boy Cartridge */
+    constexpr unsigned CartRAM =        0;  /**< SRAM on Cartridge */
+    constexpr unsigned RealTimeClock =  1;  /**< Real Time Clock */
+    constexpr unsigned SGBCartRAM =     2;  /**< SRAM on Game Boy Cartridge */
     constexpr unsigned BSXDownloadRAM = 3;  /**< BS-X Satellaview Download RAM */
-    constexpr unsigned SufamiARAM = 4;      /**< Sufami Turbo Cartridge A SRAM */
-    constexpr unsigned SufamiBRAM = 5;      /**< Sufami Turbo Cartridge B SRAM */
-    constexpr unsigned MainRAM = 6;         /**< Main system RAM */
-    constexpr unsigned VideoRAM = 7;        /**< Video RAM (PPU) */
+    constexpr unsigned SufamiARAM =     4;  /**< Sufami Turbo Cartridge A SRAM */
+    constexpr unsigned SufamiBRAM =     5;  /**< Sufami Turbo Cartridge B SRAM */
+    constexpr unsigned MainRAM =        6;  /**< Main system RAM */
+    constexpr unsigned VideoRAM =       7;  /**< Video RAM (PPU) */
   }
 
   namespace Region {
-    constexpr unsigned NTSC = 0;    /**< NTSC: Japan, North America */
-    constexpr unsigned PAL = 1;     /**< PAL: UK, Europe, Australia */
+    constexpr unsigned NTSC =   0;  /**< NTSC: Japan, North America */
+    constexpr unsigned PAL =    1;  /**< PAL: UK, Europe, Australia */
   }
 
   /**
