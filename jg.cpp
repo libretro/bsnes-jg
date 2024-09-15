@@ -171,6 +171,11 @@ static jg_setting_t settings_bsnes[] = {
       "0 = Off, 1 = On",
       "Enable hotfixes for games that were released with fundamental bugs",
       0, 0, 1, JG_SETTING_RESTART
+    },
+    { "runahead", "Run-Ahead (Input Latency Reduction)",
+      "N = Number of frames to run ahead",
+      "Run N frames ahead to decrease input latency (heavy CPU load)",
+      0, 0, 4, 0
     }
 };
 
@@ -190,7 +195,8 @@ enum {
     COPROC_PREFERHLE,
     RSQUAL,
     SPC_INTERP,
-    HOTFIXES
+    HOTFIXES,
+    RUNAHEAD
 };
 
 // State data
@@ -735,7 +741,10 @@ void jg_reset(int hard) {
 }
 
 void jg_exec_frame(void) {
-    Bsnes::run();
+    if (settings_bsnes[RUNAHEAD].val)
+        Bsnes::runAhead(settings_bsnes[RUNAHEAD].val);
+    else
+        Bsnes::run();
 }
 
 int jg_game_load(void) {
