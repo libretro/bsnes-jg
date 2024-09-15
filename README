@@ -115,6 +115,9 @@ rsqual = 0
 spc_interp = 0
 0 = Gaussian, 1 = Sinc
 
+hotfixes = 0
+0 = Off, 1 = On
+
 Notes
 -----
 - Coprocessor Delayed Sync only applies for LLE coprocessor emulation.
