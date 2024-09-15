@@ -151,7 +151,7 @@ namespace Bsnes {
   void run();
 
   /**
-   * Run multiple frames of emulation in advance to prevent input latency
+   * Run multiple frames of emulation in advance to reduce input latency
    * @param frames Number of frames to run ahead
    */
   void runAhead(unsigned);
