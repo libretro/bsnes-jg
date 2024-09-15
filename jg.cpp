@@ -167,6 +167,11 @@ static jg_setting_t settings_bsnes[] = {
       "Set the SPC700 sample interpolation algorithm",
       0, 0, 1, 0
     },
+    { "hotfixes", "Hotfixes",
+      "0 = Off, 1 = On",
+      "Enable hotfixes for games that were released with fundamental bugs",
+      0, 0, 1, JG_SETTING_RESTART
+    }
 };
 
 enum {
@@ -184,7 +189,8 @@ enum {
     COPROC_DELAYSYNC,
     COPROC_PREFERHLE,
     RSQUAL,
-    SPC_INTERP
+    SPC_INTERP,
+    HOTFIXES
 };
 
 // State data
@@ -709,6 +715,7 @@ int jg_init(void) {
     // Configuration
     Bsnes::setCoprocDelayedSync(settings_bsnes[COPROC_DELAYSYNC].val);
     Bsnes::setCoprocPreferHLE(settings_bsnes[COPROC_PREFERHLE].val);
+    Bsnes::setHotfixes(settings_bsnes[HOTFIXES].val);
     Bsnes::setVideoColourParams(settings_bsnes[LUMINANCE].val * 10,
         settings_bsnes[SATURATION].val * 10,
         settings_bsnes[GAMMA].val * 10 + 100);

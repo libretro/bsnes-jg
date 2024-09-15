@@ -68,7 +68,7 @@ struct Configuration {
     } ppu2;
   } system;
 
-  bool hotfixes = true;
+  bool hotfixes = false;
   unsigned entropy = 1; // 0 = None, 1 = Low, 2 = High
 
   struct Coprocessor {

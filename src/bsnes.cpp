@@ -164,6 +164,10 @@ void Bsnes::setCoprocPreferHLE(bool value) {
   SuperFamicom::configuration.coprocessor.preferHLE = value;
 }
 
+void Bsnes::setHotfixes(bool value) {
+  SuperFamicom::configuration.hotfixes = value;
+}
+
 void Bsnes::setVideoColourParams(unsigned luminance, unsigned saturation, unsigned gamma) {
   SuperFamicom::ppu.genPalette(
     std::max(0.0, std::min(1.0, luminance / 100.0)),

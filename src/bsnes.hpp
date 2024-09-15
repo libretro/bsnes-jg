@@ -238,6 +238,12 @@ namespace Bsnes {
   void setCoprocPreferHLE(bool);
 
   /**
+   * Apply hotfixes for games released with fundamental bugs
+   * @param value on/off
+   */
+  void setHotfixes(bool);
+
+  /**
    * Set video colour parameters
    * @param luminance Luminance, also known as brightness, 0-100
    * @param saturation Saturation, 0-200
