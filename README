@@ -106,7 +106,7 @@ gamma = 2
 coproc_delaysync = 0
 0 = Off, 1 = On
 
-coproc_preferhle = 1
+coproc_preferhle = 0
 0 = Off, 1 = On
 
 rsqual = 0

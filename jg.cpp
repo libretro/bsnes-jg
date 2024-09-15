@@ -155,7 +155,7 @@ static jg_setting_t settings_bsnes[] = {
     { "coproc_preferhle", "Prefer HLE Coprocessors",
       "0 = Off, 1 = On",
       "Prefer High Level Emulation of coprocessors when available",
-      1, 0, 1, JG_SETTING_RESTART
+      0, 0, 1, JG_SETTING_RESTART
     },
     { "rsqual", "Resampler Quality",
       "0 = Fastest, 1 = Medium, 2 = Best",
