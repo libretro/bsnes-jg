@@ -2452,6 +2452,7 @@ void PPU::power(bool reset) {
 }
 
 void PPU::refresh() {
+  if(system.runAhead) return;
   unsigned pitch  = 512;
   unsigned width  = 512;
   unsigned height = ppu.display.interlace ? 480 : 240;

@@ -73,6 +73,7 @@ void DSP::main() {
 
   int count = spc_dsp_sample_count();
   if(count > 0) {
+    if(!system.runAhead)
     for(int n = 0; n < count; n += 2) {
       int16_t left  = samplebuffer[n + 0];
       int16_t right = samplebuffer[n + 1];

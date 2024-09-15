@@ -102,7 +102,7 @@ void MSU1::main() {
     }
   }
 
-  stream->sample(left, right);
+  if(!system.runAhead) stream->sample(left, right);
   step(1);
   synchronizeCPU();
 }

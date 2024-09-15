@@ -71,6 +71,23 @@ void Bsnes::run() {
   SuperFamicom::system.run();
 }
 
+void Bsnes::runAhead(unsigned frames) {
+  if (!frames)
+    return;
+
+  SuperFamicom::system.runAhead = true;
+  SuperFamicom::system.run();
+  serializer s = SuperFamicom::system.serialize(false); // deterministic
+
+  for (unsigned i = 0; i < frames - 1; ++i)
+    SuperFamicom::system.run();
+
+  SuperFamicom::system.runAhead = false;
+  SuperFamicom::system.run();
+  s.setMode(serializer::Mode::Load);
+  SuperFamicom::system.unserialize(s);
+}
+
 bool Bsnes::getRtcPresent() {
   return (SuperFamicom::cartridge.has.EpsonRTC || SuperFamicom::cartridge.has.SharpRTC);
 }

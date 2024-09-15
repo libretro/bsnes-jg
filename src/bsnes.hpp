@@ -151,6 +151,12 @@ namespace Bsnes {
   void run();
 
   /**
+   * Run multiple frames of emulation in advance to prevent input latency
+   * @param frames Number of frames to run ahead
+   */
+  void runAhead(unsigned);
+
+  /**
    * Determine the size of the state in bytes
    * @return Size of state in bytes
    */
