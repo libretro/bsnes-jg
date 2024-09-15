@@ -1,4 +1,4 @@
-Version x.y.z
+Version 2.0.0
 -------------
  - Update to SameBoy 0.16.6
  - Backported RISC-V support for libco from ares
@@ -6,9 +6,12 @@ Version x.y.z
  - General performance improvements
  - Code cleanup and build improvements
  - Internal input routines made more like real hardware
- - Render internally using 32-bit (8 colours per channel) instead of 16-bit (5
-   colours per channel) pixels
+ - Render pixels at 8 bits per channel versus 5 bits per channel
  - Added settings for colour adjustments (Luminance, Saturation, Gamma)
+ - Added sinc interpolation for sound sample generation
+ - Fixed save states in coprocessor games with delayed sync turned off
+ - Allow user control of hotfix enablement
+ - Allow raw access to memory blocks (for debug or other special features)
  - First release of libbsnes with a public API
 
 Version 1.2.0
