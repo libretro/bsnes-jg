@@ -715,6 +715,14 @@ std::string SuperFamicom::board() const {
     }
   }
 
+  //the Sufami Turbo has the non-descriptive label "ADD-ON BASE CASSETE"
+  //(yes, missing a T), and its serial "A9PJ" is shared with
+  //Bishoujo Senshi Sailor Moon SuperS - Fuwafuwa Panic (Japan)
+  //so we identify it with this embedded string
+  std::string sufamiSig = "BANDAI SFC-ADX";
+  if (std::string(data.begin(), data.begin() + sufamiSig.length()) == sufamiSig)
+    board += "ST-" + mode;
+
   //this game's title ovewrites the map mode with '!' (0x21), but is a LOROM game
   if(title() == "YUYU NO QUIZ DE GO!GO") mode = "LOROM-";
 
@@ -726,10 +734,7 @@ std::string SuperFamicom::board() const {
   std::string cser = serial();
   const char *cserial = cser.c_str();
 
-  if(serial() == "A9PJ") {
-  //Sufami Turbo (JPN)
-    board += "ST-" + mode;
-  } else if(serial() == "ZBSJ") {
+  if(serial() == "ZBSJ") {
   //BS-X: Sore wa Namae o Nusumareta Machi no Monogatari (JPN)
     board += "BS-MCC-";
   } else if(serial() == "042J") {
