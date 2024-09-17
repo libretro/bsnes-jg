@@ -194,19 +194,22 @@ void System::run() {
 void System::runToSave() {
   scheduler.mode = Scheduler::Mode::Synchronize;
 
-  states_special ? runToSaveSpecial() : runToSaveNormal();
-
-  scheduler.mode = Scheduler::Mode::Run;
-  scheduler.active = cpu.thread;
-}
-
-void System::runToSaveNormal() {
   // Enable coprocessor delayed sync if it is off - this is extremely important
   // for coprocessor games, as many will not sync correctly for states when the
   // option is off.
   bool delay_sync_prev = configuration.coprocessor.delayedSync;
   configuration.coprocessor.delayedSync = true;
 
+  states_special ? runToSaveSpecial() : runToSaveNormal();
+
+  // Restore coprocessor delayed sync to whatever it was previous to the state save operation
+  configuration.coprocessor.delayedSync = delay_sync_prev;
+
+  scheduler.mode = Scheduler::Mode::Run;
+  scheduler.active = cpu.thread;
+}
+
+void System::runToSaveNormal() {
   //run the emulator normally until the CPU thread naturally hits a synchronization point
   while(true) {
     scheduler.enter();
@@ -234,15 +237,9 @@ void System::runToSaveNormal() {
   for(Thread* coprocessor : cpu.coprocessors) {
     synchronize(coprocessor->thread);
   }
-
-  // Restore coprocessor delayed sync to whatever it was previous to the state save operation
-  configuration.coprocessor.delayedSync = delay_sync_prev;
 }
 
 void System::runToSaveSpecial() {
-  bool delay_sync_prev = configuration.coprocessor.delayedSync;
-  configuration.coprocessor.delayedSync = true;
-
   //run every thread until it cleanly hits a synchronization point
   //if it fails, start resynchronizing every thread again
   auto synchronize = [&](cothread_t thread) -> bool {
@@ -274,8 +271,6 @@ void System::runToSaveSpecial() {
 
     break;
   }
-
-  configuration.coprocessor.delayedSync = delay_sync_prev;
 }
 
 
