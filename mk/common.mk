@@ -3,6 +3,7 @@ CC ?= cc
 CXX ?= c++
 CC_FOR_BUILD ?= $(CC)
 CXX_FOR_BUILD ?= $(CXX)
+DOXYGEN ?= doxygen
 PKG_CONFIG ?= pkg-config
 
 PREFIX ?= /usr/local
@@ -13,6 +14,7 @@ INCLUDEDIR ?= $(PREFIX)/include
 DATAROOTDIR ?= $(PREFIX)/share
 DATADIR ?= $(DATAROOTDIR)
 DOCDIR ?= $(DATAROOTDIR)/doc/$(NAME)
+HTMLDIR ?= $(DOCDIR)
 MANDIR ?= $(DATAROOTDIR)/man
 
 CFLAGS ?= -O2

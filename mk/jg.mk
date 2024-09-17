@@ -1,5 +1,6 @@
 DISABLE_MODULE ?= 0
 ENABLE_EXAMPLE ?= 0
+ENABLE_HTML ?= 0
 ENABLE_SHARED ?= 0
 ENABLE_STATIC ?= 0
 ENABLE_STATIC_JG ?= 0
@@ -74,6 +75,9 @@ override PREREQ := $(OBJDIR)/.tag
 # Desktop File
 override DESKTOP := $(JGNAME).desktop
 
+# HTML Docs
+override DOXYFILE := $(wildcard $(SOURCEDIR)/lib/Doxyfile.in)
+
 # Example
 override BIN_NAME := $(NAME)-example
 override BIN_EXAMPLE := $(OBJDIR)/$(EXAMPLE)/$(BIN_NAME)
@@ -97,6 +101,12 @@ override TARGET_STATIC_JG := $(NAME)/lib$(NAME)-jg.a
 override TARGET_STATIC_MK := $(NAME)/jg-static.mk
 
 override PHONY += module install-module install-strip-module static-jg
+
+ifeq ($(DOXYFILE),)
+	override ENABLE_HTML := 0
+else
+	override PHONY += html install-html
+endif
 
 ifeq ($(INSTALL_EXAMPLE), 0)
 	override ENABLE_EXAMPLE := 0
@@ -140,6 +150,12 @@ endif
 
 ifneq ($(SYMBOLS_LIST),)
 	override SONAME += $(VERSION_SCRIPT),$(OBJDIR)/shared.map
+endif
+
+ifneq ($(ENABLE_HTML), 0)
+	override MKDIRS += doc
+	override TARGET += html
+	override TARGET_INSTALL += install-html
 endif
 
 ifneq ($(ENABLE_EXAMPLE), 0)

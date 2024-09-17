@@ -51,6 +51,26 @@ $(OBJDIR)/module.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
 	@sed -e 's|@NAME@||' -e 's|@SYMBOLS@|jg_*;|' $< > $@
 endif
 
+ifneq ($(DOXYFILE),)
+$(OBJDIR)/doc/Doxyfile: $(DOXYFILE) $(OBJDIR)/.tag
+	@sed -e 's|@OBJDIR@|$(OBJDIR)|' -e 's|@SOURCEDIR@|$(SOURCEDIR)|' $< > $@
+
+$(OBJDIR)/doc/doxyfile.tag: $(OBJDIR)/doc/Doxyfile
+	$(DOXYGEN) $<
+	@touch $@
+
+html: $(OBJDIR)/doc/doxyfile.tag
+
+install-html: html
+	@mkdir -p $(DESTDIR)$(HTMLDIR)
+	for i in $(OBJDIR)/doc/html/*; do \
+		cp $$i $(DESTDIR)/$(HTMLDIR); \
+	done
+
+uninstall::
+	rm -rf $(DESTDIR)$(HTMLDIR)
+endif
+
 ifneq ($(ICONS),)
 $(TARGET_ICONS): $(ICONS_BASE)
 	@mkdir -p $(NAME)/icons

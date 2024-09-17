@@ -26,6 +26,7 @@ CXX implicit variable if you wish to use a different compiler.
 Options:
   DISABLE_MODULE - Set to a non-zero value to disable building the module.
   ENABLE_SHARED - Set to a non-zero value to build a shared library.
+  ENABLE_HTML - Set to a non-zero value to generate the html documentation.
   ENABLE_STATIC - Set to a non-zero value to build a static archive.
   ENABLE_STATIC_JG - Set to a non-zero value to build a static JG archive.
   USE_VENDORED_SAMPLERATE - Set non-zero to use vendored libsamplerate
