@@ -12,6 +12,7 @@ Version 2.0.0
  - Fixed save states in coprocessor games with delayed sync turned off
  - Allow user control of hotfix enablement
  - Allow raw access to memory blocks (for debug or other special features)
+ - Backported fixes from libco upstream
  - First release of libbsnes with a public API
 
 Version 1.2.0
