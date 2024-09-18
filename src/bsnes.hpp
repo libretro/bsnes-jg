@@ -154,7 +154,7 @@ namespace Bsnes {
    * Run multiple frames of emulation in advance to reduce input latency
    * @param frames Number of frames to run ahead
    */
-  void runAhead(unsigned);
+  void runAhead(unsigned frames);
 
   /**
    * Determine the size of the state in bytes
@@ -167,7 +167,7 @@ namespace Bsnes {
    * @param data Empty buffer to store state data
    * @return Size of state in bytes
    */
-  unsigned serialize(uint8_t*);
+  unsigned serialize(uint8_t *data);
 
   /**
    * Unserialize emulated system state (load state)
@@ -175,7 +175,7 @@ namespace Bsnes {
    * @param size Size of buffer containing state data
    * @return Success/fail
    */
-  bool unserialize(const uint8_t*, unsigned);
+  bool unserialize(const uint8_t *data, unsigned size);
 
   /**
    * Deactivate all cheats and clear the cheat list
@@ -186,7 +186,7 @@ namespace Bsnes {
    * Activate a cheat
    * @param code Cheat code to apply
    */
-  void cheatsSetCheat(std::string);
+  void cheatsSetCheat(std::string code);
 
   /**
    * Determine the emulated system's region
@@ -198,7 +198,7 @@ namespace Bsnes {
    * Set emulated system's region
    * @param region Emulated system's region
    */
-  void setRegion(unsigned);
+  void setRegion(unsigned region);
 
   /**
    * Determine whether the loaded content contains a Real-time Clock
@@ -211,43 +211,43 @@ namespace Bsnes {
    * @param type Type of raw data to retrieve
    * @return Pointer to and size of raw data
    */
-  std::pair<void*, unsigned> getMemoryRaw(unsigned);
+  std::pair<void*, unsigned> getMemoryRaw(unsigned type);
 
   /**
    * Set audio specifications
    * @param spec Audio specifications
    */
-  void setAudioSpec(Audio::Spec);
+  void setAudioSpec(Audio::Spec spec);
 
   /**
    * Set video specifications
    * @param spec Video specifications
    */
-  void setVideoSpec(Video::Spec);
+  void setVideoSpec(Video::Spec spec);
 
   /**
    * Set input specifications
    * @param spec Input specifications
    */
-  void setInputSpec(Input::Spec);
+  void setInputSpec(Input::Spec spec);
 
   /**
    * Delay coprocessor sync for a speed boost at the expense of accuracy
    * @param value on/off
    */
-  void setCoprocDelayedSync(bool);
+  void setCoprocDelayedSync(bool value);
 
   /**
    * Prefer high level emulation of coprocessors when available
    * @param value on/off
    */
-  void setCoprocPreferHLE(bool);
+  void setCoprocPreferHLE(bool value);
 
   /**
    * Apply hotfixes for games released with fundamental bugs
    * @param value on/off
    */
-  void setHotfixes(bool);
+  void setHotfixes(bool value);
 
   /**
    * Set video colour parameters
@@ -255,88 +255,93 @@ namespace Bsnes {
    * @param saturation Saturation, 0-200
    * @param gamma Gamma, 100-200
    */
-  void setVideoColourParams(unsigned, unsigned, unsigned);
+  void setVideoColourParams(unsigned luminance, unsigned saturation,
+    unsigned gamma);
 
   /**
    * Set the SPC700 (audio processing unit) sample interpolation algorithm
    * @param algo Algorithm: 0-1 for Gaussian, Sinc
    */
-  void setSpcInterpolation(unsigned);
+  void setSpcInterpolation(unsigned algo);
 
   /**
    * Set the callback for opening files to be loaded into a buffer
    * @param ptr User data passed to the callback
    * @param cb Callback for opening files to be loaded into a buffer
    */
-  void setOpenFileCallback(void*, bool (*)(void*, std::string, std::vector<uint8_t>&));
+  void setOpenFileCallback(void *ptr, bool (*cb)(void*, std::string,
+    std::vector<uint8_t>&));
 
   /**
    * Set the callback for opening files as a std::stringstream
    * @param ptr User data passed to the callback
    * @param cb Callback for opening files as a std::stringstream
    */
-  void setOpenStreamCallback(void*, bool (*)(void*, std::string, std::stringstream&));
+  void setOpenStreamCallback(void *ptr, bool (*cb)(void*, std::string,
+    std::stringstream&));
 
   /**
    * Set the callback for opening MSU-1 related files as a std::ifstream
    * @param ptr User data passed to the callback
    * @param cb Callback for opening MSU-1 related files as a std::ifstream
    */
-  void setOpenMsuCallback(void*, bool (*)(void*, std::string, std::istream**));
+  void setOpenMsuCallback(void *ptr, bool (*cb)(void*, std::string,
+    std::istream**));
 
   /**
    * Set the callback for log output
    * @param ptr User data passed to the callback
    * @param cb Callback log output
    */
-  void setLogCallback(void*, void (*)(void*, int, std::string&));
+  void setLogCallback(void *ptr, void (*cb)(void*, int, std::string&));
 
   /**
    * Set the callback for writing files (non-volatile save data)
    * @param ptr User data passed to the callback
    * @param cb Callback for writing files (non-volatile save data)
    */
-  void setWriteCallback(void*, void (*)(void*, std::string, const uint8_t*, unsigned));
+  void setWriteCallback(void *ptr, void (*cb)(void*, std::string,
+    const uint8_t*, unsigned));
 
   /**
    * Set the callback for requesting ROM data to be loaded into the emulated system
    * @param ptr User data passed to the callback
    * @param cb Callback for requesting ROM data to be loaded into the emulated system
    */
-  void setRomLoadCallback(void*, bool (*)(void*, unsigned));
+  void setRomLoadCallback(void *ptr, bool (*cb)(void*, unsigned));
 
   /**
    * Load BS-X Satellaview content into the emulated system
    * @param data Buffer containing BS-X memory cartridge data
    * @param loc Location of the data (filesystem path)
    */
-  void setRomBSMemory(std::vector<uint8_t>&, std::string&);
+  void setRomBSMemory(std::vector<uint8_t>& data, std::string& loc);
 
   /**
    * Load Game Boy content into the emulated system
    * @param data Buffer containing Game Boy cartridge data
    * @param size Size of Game Boy cartridge data buffer
    */
-  void setRomGB(const uint8_t*, size_t);
+  void setRomGB(const uint8_t *data, size_t size);
 
   /**
    * Load Sufami Turbo (Slot A) content into the emulated system
    * @param data Buffer containing Sufami Turbo (Slot A) cartridge data
    * @param loc Location of the data (filesystem path)
    */
-  void setRomSufamiTurboA(std::vector<uint8_t>&, std::string&);
+  void setRomSufamiTurboA(std::vector<uint8_t>& data, std::string& loc);
 
   /**
    * Load Sufami Turbo (Slot B) content into the emulated system
    * @param data Buffer containing Sufami Turbo (Slot B) cartridge data
    * @param loc Location of the data (filesystem path)
    */
-  void setRomSufamiTurboB(std::vector<uint8_t>&, std::string&);
+  void setRomSufamiTurboB(std::vector<uint8_t>& data, std::string& loc);
 
   /**
    * Load Super Famicom/SNES content into the emulated system
    * @param data Buffer containing Super Famicom/SNES cartridge data
    * @param loc Location of the data (filesystem path)
    */
-  void setRomSuperFamicom(std::vector<uint8_t>&, std::string&);
+  void setRomSuperFamicom(std::vector<uint8_t>& data, std::string& loc);
 }
