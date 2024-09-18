@@ -52,8 +52,11 @@ $(OBJDIR)/module.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
 endif
 
 ifneq ($(DOXYFILE),)
-$(OBJDIR)/doc/Doxyfile: $(DOXYFILE) $(OBJDIR)/.tag
-	@sed -e 's|@OBJDIR@|$(OBJDIR)|' -e 's|@SOURCEDIR@|$(SOURCEDIR)|' $< > $@
+$(TARGET_HTML): $(HEADERS) $(OBJDIR)/.tag
+	@cp $(HEADERS:%=$(SOURCEDIR)/%) $(OBJDIR)/doc/
+
+$(OBJDIR)/doc/Doxyfile: $(DOXYFILE) $(TARGET_HTML)
+	@sed -e 's|@NAME@|$(NAME)|' -e 's|@OBJDIR@|$(OBJDIR)|' $< > $@
 
 $(OBJDIR)/doc/doxyfile.tag: $(OBJDIR)/doc/Doxyfile
 	$(DOXYGEN) $<
