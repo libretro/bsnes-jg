@@ -3,15 +3,12 @@ Example libbsnes implementation
 This is a very basic example of how to use libbsnes. To build, you will require
 libbsnes, libsamplerate, and SDL2 to be installed in your environment.
 
-To run, you will need to copy the contents of the "Database" directory in the
-repository root to the executable's directory.
-
 Building
 --------
   make
 
 Usage:
-  ./libbsnes-example game.sfc
+  ./bsnes-example game.sfc
 
 Controls
 --------
