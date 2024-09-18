@@ -56,7 +56,12 @@ $(TARGET_HTML): $(HEADERS) $(OBJDIR)/.tag
 	@cp $(HEADERS:%=$(SOURCEDIR)/%) $(OBJDIR)/doc/
 
 $(OBJDIR)/doc/Doxyfile: $(DOXYFILE) $(TARGET_HTML)
-	@sed -e 's|@NAME@|$(NAME)|' -e 's|@OBJDIR@|$(OBJDIR)|' $< > $@
+	@sed -e 's|@NAME@|$(NAME)|' \
+		-e 's|@DESCRIPTION@|$(DESCRIPTION)|' \
+		-e 's|@VERSION@|$(VERSION)|' \
+		-e 's|@OBJDIR@|$(OBJDIR)|' \
+		$< \
+		> $@
 
 $(OBJDIR)/doc/doxyfile.tag: $(OBJDIR)/doc/Doxyfile
 	$(DOXYGEN) $<
