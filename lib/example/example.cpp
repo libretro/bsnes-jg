@@ -245,7 +245,7 @@ static void audioFrame(const void*, size_t numsamps) {
     SDL_QueueAudio(dev, outbuf, srcdata.output_frames_gen << 2);
 }
 
-static int pollGamepad(const void *, unsigned port, unsigned) {
+static int pollGamepad(const void*, unsigned port, unsigned) {
     int b = 0;
     for (int i = 0; i < 12; ++i)
         if (buttons[port][i]) b |= bmap[i];
@@ -274,7 +274,7 @@ int main (int argc, char *argv[]) {
     // Set data path for BML assets
     datapath = std::string(DATADIR) + "/boards.bml";
     std::ifstream bmlstream(datapath, std::ios::in | std::ios::binary);
-    datapath = bmlstream.is_open() ? DATADIR :"./";
+    datapath = bmlstream.is_open() ? DATADIR : "./";
     bmlstream.close();
 
     // Allow joystick input when the window is not focused
@@ -296,7 +296,7 @@ int main (int argc, char *argv[]) {
     int windowwidth = SCREEN_WIDTH * scale;
     int windowheight = SCREEN_HEIGHT * scale;
 
-    window = SDL_CreateWindow("libbsnes-example",
+    window = SDL_CreateWindow("bsnes-example",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         windowwidth, windowheight, windowflags);
 
