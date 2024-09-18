@@ -1,5 +1,6 @@
 objs/*
 bsnes
 bsnes-example
+lib/example/*.bml
 *.o
 *.d
