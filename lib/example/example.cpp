@@ -55,6 +55,9 @@ static std::vector<uint8_t> game;
 static std::string gamepath = "";
 static std::string gamename = "";
 
+// Data path for BML assets
+static std::string datapath = "";
+
 // Keep track of whether the emulator should be running or not
 static int running = 1;
 
@@ -126,11 +129,12 @@ static void logCallback(void*, int level, std::string& text) {
 }
 
 static bool fileOpenS(void*, std::string name, std::stringstream& ss) {
-    std::string path = "./" + name;
+    std::string path = datapath + "/" + name;
     std::ifstream stream(path, std::ios::in | std::ios::binary);
 
     if (!stream.is_open()) {
         fprintf(stderr, "Failed to load file: %s\n", path.c_str());
+        return false;
     }
 
     ss << stream.rdbuf();
@@ -256,7 +260,6 @@ int main (int argc, char *argv[]) {
 
     // Load the uncompressed game data into memory
     std::ifstream stream(argv[1], std::ios::in | std::ios::binary);
-
     if (!stream.is_open())
         return 1;
 
@@ -267,6 +270,12 @@ int main (int argc, char *argv[]) {
     gamepath = argv[1];
     gamename = gamepath.substr(gamepath.find_last_of('/') + 1);
     gamename = gamename.substr(0, gamename.find_last_of('.'));
+
+    // Set data path for BML assets
+    datapath = std::string(DATADIR) + "/boards.bml";
+    std::ifstream bmlstream(datapath, std::ios::in | std::ios::binary);
+    datapath = bmlstream.is_open() ? DATADIR :"./";
+    bmlstream.close();
 
     // Allow joystick input when the window is not focused
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
