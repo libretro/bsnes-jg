@@ -932,7 +932,7 @@ void jg_setup_video(void) {
 }
 
 void jg_setup_audio(void) {
-    Bsnes::setAudioSpec({double(SAMPLERATE),audinfo.spf,
+    Bsnes::setAudioSpec({double(SAMPLERATE), audinfo.spf,
         unsigned(settings_bsnes[RSQUAL].val),
         (float*)audinfo.buf, nullptr, &audioFrame});
 }
