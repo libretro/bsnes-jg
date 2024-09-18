@@ -1,4 +1,5 @@
 objs/*
-bsnes/*
+bsnes
+bsnes-example
 *.o
 *.d
