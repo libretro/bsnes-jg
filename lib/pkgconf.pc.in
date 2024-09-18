@@ -8,4 +8,4 @@ Description: @DESCRIPTION@
 Version: @VERSION@
 URL: https://gitlab.com/jgemu/@NAME@
 Libs: -L${libdir} -l@NAME@
-Cflags: -I${includedir}
+Cflags: -I${includedir}/@NAME@
