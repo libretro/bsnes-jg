@@ -8,7 +8,7 @@ CXXFLAGS = -O2
 
 PKG_CONFIG = pkg-config
 
-NAME = libbsnes-example
+NAME = bsnes-example
 
 CFLAGS_LIBBSNES = `$(PKG_CONFIG) --cflags libbsnes`
 LIBS_LIBBSNES = `$(PKG_CONFIG) --libs libbsnes`
