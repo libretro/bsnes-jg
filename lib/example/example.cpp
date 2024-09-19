@@ -278,10 +278,22 @@ int main (int argc, char *argv[]) {
     gamename = gamename.substr(0, gamename.find_last_of('.'));
 
     // Set data path for BML assets
-    datapath = std::string(DATADIR) + "/boards.bml";
-    std::ifstream bmlstream(datapath, std::ios::in | std::ios::binary);
-    datapath = bmlstream.is_open() ? DATADIR : (relpath + "/");
-    bmlstream.close();
+    std::ifstream bmlstream(relpath + "/boards.bml");
+    if (bmlstream.is_open()) {
+        datapath = relpath;
+    }
+    else {
+        datapath = DATADIR;
+        bmlstream = std::ifstream(datapath + "/boards.bml");
+    }
+
+    if (bmlstream.is_open()) {
+        bmlstream.close();
+    }
+    else {
+        fprintf(stderr, "Failed to deduce BML asset location\n");
+        return 1;
+    }
 
     // Allow joystick input when the window is not focused
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
