@@ -258,10 +258,16 @@ int main (int argc, char *argv[]) {
         exit(1);
     }
 
+    // Find the relative path to the executable
+    std::string relpath = argv[0];
+    relpath = relpath.substr(0, relpath.find_last_of('/'));
+
     // Load the uncompressed game data into memory
     std::ifstream stream(argv[1], std::ios::in | std::ios::binary);
-    if (!stream.is_open())
+    if (!stream.is_open()) {
+        fprintf(stderr, "Failed to open requested file\n");
         return 1;
+    }
 
     game = std::vector<uint8_t>((std::istreambuf_iterator<char>(stream)),
         std::istreambuf_iterator<char>());
@@ -274,7 +280,7 @@ int main (int argc, char *argv[]) {
     // Set data path for BML assets
     datapath = std::string(DATADIR) + "/boards.bml";
     std::ifstream bmlstream(datapath, std::ios::in | std::ios::binary);
-    datapath = bmlstream.is_open() ? DATADIR : "./";
+    datapath = bmlstream.is_open() ? DATADIR : (relpath + "/");
     bmlstream.close();
 
     // Allow joystick input when the window is not focused
