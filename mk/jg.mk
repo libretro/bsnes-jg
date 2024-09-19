@@ -113,6 +113,7 @@ endif
 ifeq ($(INSTALL_EXAMPLE), 0)
 	override ENABLE_EXAMPLE := 0
 else
+	override MKDIRS += $(EXAMPLE)
 	override PHONY += example install-bin install-strip-bin
 endif
 
@@ -166,7 +167,6 @@ ifneq ($(ENABLE_HTML), 0)
 endif
 
 ifneq ($(ENABLE_EXAMPLE), 0)
-	override MKDIRS += $(EXAMPLE)
 	override TARGET += example
 	override TARGET_INSTALL += install-bin
 	override TARGET_STRIP += install-strip-bin
