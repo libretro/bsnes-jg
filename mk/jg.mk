@@ -107,7 +107,7 @@ override PHONY += module install-module install-strip-module static-jg
 ifeq ($(DOXYFILE),)
 	override ENABLE_HTML := 0
 else
-	override PHONY += html install-html
+	override PHONY += doxyfile html install-html
 endif
 
 ifeq ($(INSTALL_EXAMPLE), 0)
@@ -161,7 +161,6 @@ ifneq ($(SYMBOLS_LIST),)
 endif
 
 ifneq ($(ENABLE_HTML), 0)
-	override MKDIRS += doc
 	override TARGET += html
 	override TARGET_INSTALL += install-html
 endif

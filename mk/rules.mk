@@ -52,7 +52,8 @@ $(OBJDIR)/module.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
 endif
 
 ifneq ($(DOXYFILE),)
-$(TARGET_HTML): $(HEADERS) $(OBJDIR)/.tag
+$(TARGET_HTML): $(HEADERS)
+	@mkdir -p $(OBJDIR)/doc
 	@cp $(HEADERS:%=$(SOURCEDIR)/%) $(OBJDIR)/doc/
 
 $(OBJDIR)/doc/Doxyfile: $(DOXYFILE) $(TARGET_HTML)
@@ -62,6 +63,8 @@ $(OBJDIR)/doc/Doxyfile: $(DOXYFILE) $(TARGET_HTML)
 		-e 's|@OBJDIR@|$(OBJDIR)|' \
 		$< \
 		> $@
+
+doxyfile: $(OBJDIR)/doc/Doxyfile
 
 $(OBJDIR)/doc/doxyfile.tag: $(OBJDIR)/doc/Doxyfile
 	$(DOXYGEN) $<
