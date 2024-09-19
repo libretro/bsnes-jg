@@ -128,7 +128,8 @@ else
 			$(filter 0,$(DISABLE_MODULE))))
 		override TARGET_INSTALL += install-data
 	endif
-	ifeq ($(DISABLE_MODULE), 0)
+	ifneq (,$(or $(filter-out 0,$(ENABLE_STATIC_JG)), \
+                        $(filter 0,$(DISABLE_MODULE))))
 		override PREREQ_DATA += $(DATA_TARGET)
 	endif
 	ifneq ($(ENABLE_EXAMPLE), 0)
