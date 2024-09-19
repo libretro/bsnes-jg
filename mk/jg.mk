@@ -71,6 +71,7 @@ override VERSION_SCRIPT_MODULE := $(VERSION_SCRIPT),$(OBJDIR)/module.map
 
 # Prerequisites
 override PREREQ := $(OBJDIR)/.tag
+override PREREQ_DATA =
 
 # Desktop File
 override DESKTOP := $(JGNAME).desktop
@@ -113,7 +114,6 @@ ifeq ($(INSTALL_EXAMPLE), 0)
 	override ENABLE_EXAMPLE := 0
 else
 	override PHONY += example install-bin install-strip-bin
-	override MKDIRS += $(EXAMPLE)
 endif
 
 ifeq ($(INSTALL_DATA), 0)
@@ -127,6 +127,12 @@ else
 	ifneq (,$(or $(filter-out 0,$(ENABLE_EXAMPLE)), \
 			$(filter 0,$(DISABLE_MODULE))))
 		override TARGET_INSTALL += install-data
+	endif
+	ifeq ($(DISABLE_MODULE), 0)
+		override PREREQ_DATA += $(DATA_TARGET)
+	endif
+	ifneq ($(ENABLE_EXAMPLE), 0)
+		override PREREQ_DATA += $(DATA_BIN_TARGET)
 	endif
 endif
 
@@ -160,6 +166,7 @@ ifneq ($(ENABLE_HTML), 0)
 endif
 
 ifneq ($(ENABLE_EXAMPLE), 0)
+	override MKDIRS += $(EXAMPLE)
 	override TARGET += example
 	override TARGET_INSTALL += install-bin
 	override TARGET_STRIP += install-strip-bin

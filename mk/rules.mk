@@ -86,7 +86,7 @@ $(TARGET_ICONS): $(ICONS_BASE)
 endif
 
 ifneq ($(INSTALL_DATA), 0)
-data: $(DATA_TARGET)
+data: $(PREREQ_DATA)
 
 uninstall::
 	rm -rf $(DESTDIR)$(DATADIR)/jollygood/$(NAME)

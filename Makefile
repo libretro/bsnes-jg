@@ -11,8 +11,6 @@ FLAGS := -std=c++11
 FLAGS_C99 := -std=c99
 FLAGS_CO := -std=c89
 FLAGS_GB := -std=gnu11
-CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
-	-D_GNU_SOURCE -DGB_VERSION=\"0.16.6\"
 
 SRCDIR := $(SOURCEDIR)/src
 
@@ -24,6 +22,9 @@ LIBS = -lm -lstdc++
 LIBS_REQUIRES := samplerate
 
 DOCS := COPYING README
+DOCS_EXAMPLE := README
+
+EXAMPLE := lib/example
 
 HEADERS := src/bsnes.hpp
 
@@ -47,7 +48,7 @@ extern \"C++\" {\\
 endef
 
 override INSTALL_DATA := 1
-override INSTALL_EXAMPLE := 0
+override INSTALL_EXAMPLE := 1
 override INSTALL_SHARED := 1
 
 include $(SOURCEDIR)/version.h
@@ -55,11 +56,19 @@ include $(SOURCEDIR)/mk/jg.mk
 
 override LIBS_PRIVATE += $(LIBS)
 
+CPPFLAGS_BIN := -DDATADIR="\"$(DATADIR)/jollygood/$(NAME)\""
+CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_DEBUGGER \
+	-D_GNU_SOURCE -DGB_VERSION=\"0.16.6\"
+
 INCLUDES += $(CFLAGS_SAMPLERATE) -I$(DEPDIR)
 LIBS += $(LIBS_SAMPLERATE)
 
 EXT := cpp
 LINKER := $(CXX)
+
+# Example dependencies
+INCLUDES_BIN = $(INCLUDES_JG) $(CFLAGS_SDL2) $(CFLAGS_SAMPLERATE)
+LIBS_BIN = $(LIBS_SDL2) $(LIBS_SAMPLERATE)
 
 # TODO: Use -Wstrict-overflow=5 which is the highest level
 WARNINGS_MIN := $(WARNINGS_DEF) -Wformat=2 -Wstrict-overflow=2
@@ -148,6 +157,8 @@ CXXSRCS := deps/byuuML/byuuML.cpp \
 # https://github.com/defparam/21FX
 #	src/expansion/21fx.cpp \
 
+BINSRCS := $(EXAMPLE)/example.cpp
+
 JGSRCS := jg.cpp
 
 # Assets
@@ -158,10 +169,12 @@ DATA_BASE := Database/boards.bml \
 
 DATA := $(notdir $(DATA_BASE))
 DATA_TARGET := $(DATA:%=$(NAME)/%)
+DATA_BIN_TARGET := $(DATA:%=$(OBJDIR)/$(EXAMPLE)/%)
 
 # List of object files
 OBJS := $(patsubst %,$(OBJDIR)/%,$(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o) \
 	$(OBJS_SAMPLERATE))
+OBJS_BIN := $(patsubst %,$(OBJDIR)/%,$(BINSRCS:.cpp=.o))
 OBJS_JG := $(patsubst %,$(OBJDIR)/%,$(JGSRCS:.cpp=.o))
 
 # Dependency commands
@@ -170,6 +183,9 @@ BUILD_C99 = $(call COMPILE_C, $(FLAGS_C99) $(WARNINGS_C))
 BUILD_CO = $(call COMPILE_C, $(FLAGS_CO) $(WARNINGS_CO))
 BUILD_ICD = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS_ICD) $(INCLUDES))
 BUILD_GB = $(call COMPILE_C, $(FLAGS_GB) $(WARNINGS_GB) $(CPPFLAGS_GB))
+
+# Example commands
+BUILD_EXAMPLE = $(call COMPILE_CXX, $(FLAGS) $(CPPFLAGS_BIN) $(INCLUDES_BIN))
 
 # Core commands
 BUILD_JG = $(call COMPILE_CXX, $(FLAGS) $(WARNINGS) $(INCLUDES_JG) $(CFLAGS_JG))
@@ -183,6 +199,11 @@ all: $(TARGET)
 $(OBJDIR)/deps/byuuML/%.o: $(DEPDIR)/byuuML/%.$(EXT) $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_BML))
 	@$(BUILD_BML)
+
+# Example rules
+$(OBJDIR)/$(EXAMPLE)/%.o: $(SOURCEDIR)/$(EXAMPLE)/%.$(EXT) $(PREREQ)
+	$(call COMPILE_INFO,$(BUILD_EXAMPLE))
+	@$(BUILD_EXAMPLE)
 
 # libco rules
 $(OBJDIR)/deps/libco/%.o: $(DEPDIR)/libco/%.c $(PREREQ)
@@ -213,6 +234,10 @@ $(OBJDIR)/src/%.o: $(SRCDIR)/%.$(EXT) $(PREREQ)
 $(DATA_TARGET): $(DATA_BASE:%=$(SOURCEDIR)/%)
 	@mkdir -p $(NAME)
 	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/
+
+$(DATA_BIN_TARGET): $(DATA_BASE:%=$(SOURCEDIR)/%) $(PREREQ)
+	@cp $(subst $(OBJDIR)/$(EXAMPLE),$(SOURCEDIR)/Database,$@) \
+		$(OBJDIR)/$(EXAMPLE)
 
 install-data: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
