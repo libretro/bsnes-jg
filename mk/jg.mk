@@ -77,6 +77,7 @@ override PREREQ_DATA =
 override DESKTOP := $(JGNAME).desktop
 
 # HTML Docs
+override HTML_OUT := $(OBJDIR)/doc
 override DOXYFILE := $(wildcard $(SOURCEDIR)/lib/Doxyfile.in)
 
 # Example
@@ -95,7 +96,7 @@ override TARGET_STRIP :=
 override TARGET_BIN := $(OBJDIR)/$(BIN_NAME)
 override TARGET_DESKTOP := $(NAME)/$(DESKTOP)
 override TARGET_ICONS := $(ICONS:%=$(NAME)/icons/%)
-override TARGET_HTML := $(addprefix $(OBJDIR)/doc/,$(notdir $(HEADERS)))
+override TARGET_HTML := $(addprefix $(HTML_OUT)/,$(notdir $(HEADERS)))
 override TARGET_MODULE := $(NAME)/$(LIBRARY)
 override TARGET_SHARED := $(OBJDIR)/$(LIB_VERSION)
 override TARGET_STATIC := $(OBJDIR)/$(LIB_STATIC)

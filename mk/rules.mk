@@ -52,29 +52,31 @@ $(OBJDIR)/module.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
 endif
 
 ifneq ($(DOXYFILE),)
-$(TARGET_HTML): $(HEADERS)
-	@mkdir -p $(OBJDIR)/doc
-	@cp $(HEADERS:%=$(SOURCEDIR)/%) $(OBJDIR)/doc/
+$(HTML_OUT)/.tag:
+	@mkdir -p $(HTML_OUT)
+	@touch $@
 
-$(OBJDIR)/doc/Doxyfile: $(DOXYFILE) $(TARGET_HTML)
+$(TARGET_HTML): $(HEADERS) $(HTML_OUT)/.tag
+	@cp $(HEADERS:%=$(SOURCEDIR)/%) $(HTML_OUT)/
+
+$(HTML_OUT)/Doxyfile: $(DOXYFILE) $(TARGET_HTML)
 	@sed -e 's|@NAME@|$(NAME)|' \
 		-e 's|@DESCRIPTION@|$(DESCRIPTION)|' \
 		-e 's|@VERSION@|$(VERSION)|' \
-		-e 's|@OBJDIR@|$(OBJDIR)|' \
 		$< \
 		> $@
 
-doxyfile: $(OBJDIR)/doc/Doxyfile
+doxyfile: $(HTML_OUT)/Doxyfile
 
-$(OBJDIR)/doc/doxyfile.tag: $(OBJDIR)/doc/Doxyfile
-	$(DOXYGEN) $<
+$(HTML_OUT)/doxyfile.tag: $(HTML_OUT)/Doxyfile
+	cd $(HTML_OUT) && $(DOXYGEN) Doxyfile
 	@touch $@
 
-html: $(OBJDIR)/doc/doxyfile.tag
+html: $(HTML_OUT)/doxyfile.tag
 
 install-html: html
 	@mkdir -p $(DESTDIR)$(HTMLDIR)
-	for i in $(OBJDIR)/doc/html/*; do \
+	for i in $(HTML_OUT)/html/*; do \
 		cp $$i $(DESTDIR)/$(HTMLDIR); \
 	done
 
