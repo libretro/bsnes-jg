@@ -72,6 +72,7 @@ override VERSION_SCRIPT_MODULE := $(VERSION_SCRIPT),$(OBJDIR)/module.map
 # Prerequisites
 override PREREQ := $(OBJDIR)/.tag
 override PREREQ_DATA =
+override PREREQ_EXAMPLE = $(TARGET_BIN)
 
 # Desktop File
 override DESKTOP := $(JGNAME).desktop
@@ -81,8 +82,9 @@ override HTML_OUT := $(OBJDIR)/doc
 override DOXYFILE := $(wildcard $(SOURCEDIR)/lib/Doxyfile.in)
 
 # Example
+override BIN_OUT := $(OBJDIR)/$(EXAMPLE)
 override BIN_NAME := $(NAME)-example
-override BIN_EXAMPLE := $(OBJDIR)/$(EXAMPLE)/$(BIN_NAME)
+override BIN_EXAMPLE := $(BIN_OUT)/$(BIN_NAME)
 
 # Icons
 override ICONS_BASE := $(wildcard $(SOURCEDIR)/icons/*.png \
@@ -114,7 +116,6 @@ endif
 ifeq ($(INSTALL_EXAMPLE), 0)
 	override ENABLE_EXAMPLE := 0
 else
-	override MKDIRS += $(EXAMPLE)
 	override PHONY += example install-bin install-strip-bin
 endif
 
@@ -136,6 +137,9 @@ else
 	endif
 	ifneq ($(ENABLE_EXAMPLE), 0)
 		override PREREQ_DATA += $(DATA_BIN_TARGET)
+	endif
+	ifneq ($(INSTALL_EXAMPLE), 0)
+		override PREREQ_EXAMPLE += $(DATA_BIN_TARGET)
 	endif
 endif
 

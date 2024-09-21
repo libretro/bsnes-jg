@@ -98,6 +98,14 @@ uninstall::
 endif
 
 ifneq ($(INSTALL_EXAMPLE), 0)
+$(BIN_OUT)/.tag:
+	@mkdir -p $(BIN_OUT)
+	touch $@
+
+$(BIN_OUT)/%.o: $(SOURCEDIR)/$(EXAMPLE)/%.$(EXT) $(BIN_OUT)/.tag
+	$(call COMPILE_INFO,$(BUILD_EXAMPLE))
+	@$(BUILD_EXAMPLE)
+
 $(BIN_EXAMPLE): $(OBJS_BIN) $(OBJS_MODULE)
 	$(LINK_BIN)
 
@@ -105,7 +113,7 @@ $(TARGET_BIN): $(SOURCEDIR)/lib/bin.in $(BIN_EXAMPLE)
 	@sed -e 's|@EXAMPLE@|$(EXAMPLE)|' $< > $@
 	@chmod 0755 $@
 
-example: $(TARGET_BIN)
+example: $(PREREQ_EXAMPLE)
 
 install-bin: example
 	@mkdir -p $(DESTDIR)$(BINDIR)

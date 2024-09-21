@@ -169,7 +169,7 @@ DATA_BASE := Database/boards.bml \
 
 DATA := $(notdir $(DATA_BASE))
 DATA_TARGET := $(DATA:%=$(NAME)/%)
-DATA_BIN_TARGET := $(DATA:%=$(OBJDIR)/$(EXAMPLE)/%)
+DATA_BIN_TARGET := $(DATA:%=$(BIN_OUT)/%)
 
 # List of object files
 OBJS := $(patsubst %,$(OBJDIR)/%,$(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o) \
@@ -201,11 +201,6 @@ $(OBJDIR)/deps/byuuML/%.o: $(DEPDIR)/byuuML/%.$(EXT) $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_BML))
 	@$(BUILD_BML)
 
-# Example rules
-$(OBJDIR)/$(EXAMPLE)/%.o: $(SOURCEDIR)/$(EXAMPLE)/%.$(EXT) $(PREREQ)
-	$(call COMPILE_INFO,$(BUILD_EXAMPLE))
-	@$(BUILD_EXAMPLE)
-
 # libco rules
 $(OBJDIR)/deps/libco/%.o: $(DEPDIR)/libco/%.c $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_CO))
@@ -236,9 +231,8 @@ $(DATA_TARGET): $(DATA_BASE:%=$(SOURCEDIR)/%)
 	@mkdir -p $(NAME)
 	@cp $(subst $(NAME),$(SOURCEDIR)/Database,$@) $(NAME)/
 
-$(DATA_BIN_TARGET): $(DATA_BASE:%=$(SOURCEDIR)/%) $(PREREQ)
-	@cp $(subst $(OBJDIR)/$(EXAMPLE),$(SOURCEDIR)/Database,$@) \
-		$(OBJDIR)/$(EXAMPLE)
+$(DATA_BIN_TARGET): $(DATA_BASE:%=$(SOURCEDIR)/%) $(BIN_OUT)/.tag
+	@cp $(subst $(BIN_OUT),$(SOURCEDIR)/Database,$@) $(BIN_OUT)
 
 install-data: all
 	@mkdir -p $(DESTDIR)$(DATADIR)/jollygood/$(NAME)
