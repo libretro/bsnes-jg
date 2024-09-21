@@ -29,6 +29,7 @@
 #include "coprocessor/dsp2.hpp"
 #include "coprocessor/dsp4.hpp"
 #include "coprocessor/epsonrtc.hpp"
+#include "coprocessor/event.hpp"
 #include "coprocessor/hitachidsp.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/mcc.hpp"
@@ -272,36 +273,6 @@ void Cartridge::loadBSMemory(std::string node) {
     }
   }
 }
-
-//processor(architecture=uPD78214)
-/*void Cartridge::loadEvent(Markup::Node node) {
-  has.Event = true;
-  event.board = Event::Board::Unknown;
-  if(node["identifier"].text() == "Campus Challenge '92") event.board = Event::Board::CampusChallenge92;
-  if(node["identifier"].text() == "PowerFest '94") event.board = Event::Board::PowerFest94;
-
-  for(auto map : node.find("map")) {
-    loadMap(map, {&Event::read, &event}, {&Event::write, &event});
-  }
-
-  if(auto mcu = node["mcu"]) {
-    for(auto map : mcu.find("map")) {
-      loadMap(map, {&Event::mcuRead, &event}, {&Event::mcuWrite, &event});
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Program)"]) {
-      loadMemory(event.rom[0], memory);
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Level-1)"]) {
-      loadMemory(event.rom[1], memory);
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Level-2)"]) {
-      loadMemory(event.rom[2], memory);
-    }
-    if(auto memory = mcu["memory(type=ROM,content=Level-3)"]) {
-      loadMemory(event.rom[3], memory);
-    }
-  }
-}*/
 
 void Cartridge::saveMemory(Memory& sram, std::string node) {
   Game::Memory memory;
@@ -549,6 +520,59 @@ bool Cartridge::load() {
             loadMemory(sa1.iram, m);
             for (std::string map : BML::searchList(m, "map")) {
               loadMap(map, {&SA1::IRAM::readCPU, &sa1.iram}, {&SA1::IRAM::writeCPU, &sa1.iram});
+            }
+          }
+        }
+      }
+    }
+    //processor(architecture=uPD78214)
+    else if (arch == "uPD78214") {
+      has.Event = true;
+      event.board = Event::Board::Unknown;
+
+      std::string pident = BML::search(
+        BML::searchNode(p, {"processor", "identifier"}), {"identifier"}
+      );
+
+      if (pident == "Campus Challenge '92") {
+        event.board = Event::Board::CampusChallenge92;
+      }
+      else if (pident == "PowerFest '94") {
+        event.board = Event::Board::PowerFest94;
+      }
+
+      std::string pmap = BML::searchNode(p, {"processor", "map"});
+      if (!pmap.empty()) {
+        loadMap(pmap, {&Event::read, &event}, {&Event::write, &event});
+      }
+
+      std::string mcu = BML::searchNode(p, {"processor", "mcu"});
+      if (!mcu.empty()) {
+        for (std::string map : BML::searchList(mcu, "map")) {
+          loadMap(map, {&Event::mcuRead, &event}, {&Event::mcuWrite, &event});
+        }
+
+        unsigned evt_offset = 0;
+        for (std::string& m : BML::searchList(mcu, "memory")) {
+          if (BML::search(m, {"memory", "type"}) == "ROM") {
+            unsigned evt_index = 4; // Out of bounds
+
+            if (BML::search(m, {"memory", "content"}) == "Program")
+              evt_index = 0;
+            else if (BML::search(m, {"memory", "content"}) == "Level-1")
+              evt_index = 1;
+            else if (BML::search(m, {"memory", "content"}) == "Level-2")
+              evt_index = 2;
+            else if (BML::search(m, {"memory", "content"}) == "Level-3")
+              evt_index = 3;
+
+            if (evt_index > 3) continue; // Don't go out of bounds
+
+            Game::Memory memory;
+            if (game.memory(memory, m)) {
+              event.rom[evt_index].allocate(memory.size);
+              std::memcpy(event.rom[evt_index].data(), &game.prgrom[evt_offset], memory.size);
+              evt_offset += memory.size;
             }
           }
         }
@@ -1064,10 +1088,13 @@ bool Cartridge::load() {
     // Multi-game carts (Campus Challenge '92, PowerFest '94) were no longer
     // supported after higan v106, and in bsnes standalone this always returns 0.
     //dip.value = platform->dipSettings(board);
-    dip.value = 0;
+    dip.value = 0x00;
 
-    for (std::string map : BML::searchList(board, "map")) {
-      loadMap(map, {&DIP::read, &dip}, {&DIP::write, &dip});
+    std::string board_dip = BML::searchNode(board, {"dip"});
+    if (!board_dip.empty()) {
+      for (std::string map : BML::searchList(board_dip, "map")) {
+        loadMap(map, {&DIP::read, &dip}, {&DIP::write, &dip});
+      }
     }
   }
 

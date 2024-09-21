@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "memory.hpp"
+
 namespace SuperFamicom {
 
 //HLE of the NEC uPD78P214GC processor found on SNES-EVENT PCBs, used by:
