@@ -176,6 +176,12 @@ static jg_setting_t settings_bsnes[] = {
       "N = Number of frames to run ahead",
       "Run N frames ahead to decrease input latency (heavy CPU load)",
       0, 0, 4, 0
+    },
+    { "cmptn_timer", "Competition Timer",
+      "N = Minutes of game time (competition boards)",
+      "Set the DIP Switches for Competition/Event boards to control the number "
+      "of minutes of game time",
+      6, 3, 18, 0
     }
 };
 
@@ -196,7 +202,8 @@ enum {
     RSQUAL,
     SPC_INTERP,
     HOTFIXES,
-    RUNAHEAD
+    RUNAHEAD,
+    CMPTN_TIMER
 };
 
 // State data
@@ -726,6 +733,11 @@ int jg_init(void) {
         settings_bsnes[SATURATION].val * 10,
         settings_bsnes[GAMMA].val * 10 + 100);
     Bsnes::setSpcInterpolation(settings_bsnes[SPC_INTERP].val);
+
+    /* DIP Switches only apply to competition boards for now, but if NSS is
+       ever supported, the values will need to be set more intelligently.
+    */
+    Bsnes::setDIPSwitches(settings_bsnes[CMPTN_TIMER].val & 0xff);
 
     return 1;
 }

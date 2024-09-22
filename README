@@ -123,6 +123,9 @@ hotfixes = 0
 runahead = 0
 N = Number of frames to run ahead
 
+cmptn_timer = 6
+N = Minutes of game time (competition boards)
+
 Notes
 -----
 - Coprocessor Delayed Sync only applies for LLE coprocessor emulation.
