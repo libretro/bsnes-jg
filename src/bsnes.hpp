@@ -28,6 +28,9 @@
 
 namespace Bsnes {
   namespace Audio {
+    /**
+     * Audio Specifications - Specify audio parameters
+     */
     typedef struct _Spec {
       double freq;                      /**< Output frequency (Hz) */
       unsigned spf;                     /**< Samples per frame (approx) */
@@ -44,6 +47,9 @@ namespace Bsnes {
   }
 
   namespace Video {
+    /**
+     * Video Specifications - Specify video parameters
+     */
     typedef struct _Spec {
       uint32_t *buf;                                            /**< Buffer for raw pixel data */
       void *ptr;                                                /**< User data passed to callback */
@@ -81,6 +87,9 @@ namespace Bsnes {
       constexpr unsigned ButtonR =  (1 << 23);  /**< Mouse: Right Click */
     }
 
+    /**
+     * Input Specifications - Specify input device parameters
+     */
     typedef struct _Spec {
       unsigned port;                                /**< Control Port */
       unsigned device;                              /**< Input::Device type */
