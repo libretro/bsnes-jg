@@ -265,6 +265,7 @@ uint8_t SA1::IRAM::readCPU(unsigned address, uint8_t data) {
 
 void SA1::IRAM::writeCPU(unsigned address, uint8_t data) {
   cpu.synchronizeCoprocessors();
+  if(!(sa1.mmio.siwp & 1 << (address >> 8 & 7))) return;
   return write(address, data);
 }
 
@@ -273,6 +274,7 @@ uint8_t SA1::IRAM::readSA1(unsigned address, uint8_t data) {
 }
 
 void SA1::IRAM::writeSA1(unsigned address, uint8_t data) {
+  if(!(sa1.mmio.ciwp & 1 << (address >> 8 & 7))) return;
   return write(address, data);
 }
 
