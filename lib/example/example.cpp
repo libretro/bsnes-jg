@@ -36,6 +36,9 @@ static SDL_AudioDeviceID dev;
 static SDL_Window *window;
 static SDL_Renderer *renderer;
 static SDL_Texture *texture;
+static int rw = 0;
+static int rh = 0;
+static int pitch = 0;
 
 // Video rendering
 static uint32_t *vbuf = NULL;
@@ -205,13 +208,11 @@ static bool loadRom(void*, unsigned id) {
     return false;
 }
 
-static void videoFrame(const void*, unsigned w, unsigned h, unsigned pitch) {
-    // Render the scene
-    SDL_Rect srcrect = {0, 0, int(w), int(h)};
-    SDL_RenderClear(renderer);
-    SDL_UpdateTexture(texture, &srcrect, vbuf, pitch * sizeof(uint32_t));
-    SDL_RenderCopy(renderer, texture, &srcrect, NULL);
-    SDL_RenderPresent(renderer);
+static void videoFrame(const void*, unsigned w, unsigned h, unsigned p) {
+    // Update renderer properties
+    rw = w;
+    rh = h;
+    pitch = p;
 }
 
 static void audioFrame(const void*, size_t numsamps) {
@@ -399,6 +400,12 @@ int main (int argc, char *argv[]) {
 
         for (int i = 0; i < runframes; ++i)
             Bsnes::run();
+
+        SDL_Rect srcrect = {0, 0, rw, rh};
+        SDL_RenderClear(renderer);
+        SDL_UpdateTexture(texture, &srcrect, vbuf, pitch * sizeof(uint32_t));
+        SDL_RenderCopy(renderer, texture, &srcrect, NULL);
+        SDL_RenderPresent(renderer);
 
         // Poll for events
         while (SDL_PollEvent(&event)) {
