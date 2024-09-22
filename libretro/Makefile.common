@@ -1,0 +1,87 @@
+INCFLAGS := -I$(CORE_DIR)/deps -I$(CORE_DIR)/deps/libsamplerate \
+	-I$(CORE_DIR)/deps/libco -I$(CORE_DIR)/deps/gb \
+	-I$(CORE_DIR)/deps/snes_spc -I$(CORE_DIR)/deps/byuuML \
+	-I$(CORE_DIR)/src -I$(CORE_DIR)/libretro
+
+ifeq ($(platform),unix)
+LIBS += -lm
+endif
+
+SOURCES_C := \
+	$(CORE_DIR)/deps/gb/apu.c \
+	$(CORE_DIR)/deps/gb/camera.c \
+	$(CORE_DIR)/deps/gb/display.c \
+	$(CORE_DIR)/deps/gb/gb.c \
+	$(CORE_DIR)/deps/gb/joypad.c \
+	$(CORE_DIR)/deps/gb/mbc.c \
+	$(CORE_DIR)/deps/gb/memory.c \
+	$(CORE_DIR)/deps/gb/printer.c \
+	$(CORE_DIR)/deps/gb/random.c \
+	$(CORE_DIR)/deps/gb/rewind.c \
+	$(CORE_DIR)/deps/gb/rumble.c \
+	$(CORE_DIR)/deps/gb/save_state.c \
+	$(CORE_DIR)/deps/gb/sgb.c \
+	$(CORE_DIR)/deps/gb/sm83_cpu.c \
+	$(CORE_DIR)/deps/gb/timing.c \
+	$(CORE_DIR)/deps/gb/workboy.c \
+	$(CORE_DIR)/deps/libco/libco.c \
+	$(CORE_DIR)/deps/libsamplerate/samplerate.c \
+	$(CORE_DIR)/deps/libsamplerate/src_linear.c \
+	$(CORE_DIR)/deps/libsamplerate/src_sinc.c \
+	$(CORE_DIR)/deps/libsamplerate/src_zoh.c \
+	$(CORE_DIR)/deps/snes_spc/spc_dsp.c
+
+SOURCES_CXX := \
+	$(CORE_DIR)/libretro/libretro.cpp \
+	$(CORE_DIR)/deps/byuuML/byuuML.cpp \
+	$(CORE_DIR)/src/audio.cpp \
+	$(CORE_DIR)/src/bsmemory.cpp \
+	$(CORE_DIR)/src/bsnes.cpp \
+	$(CORE_DIR)/src/cartridge.cpp \
+	$(CORE_DIR)/src/cheat.cpp \
+	$(CORE_DIR)/src/controller.cpp \
+	$(CORE_DIR)/src/coprocessor/armdsp.cpp \
+	$(CORE_DIR)/src/coprocessor/cx4.cpp \
+	$(CORE_DIR)/src/coprocessor/dip.cpp \
+	$(CORE_DIR)/src/coprocessor/dsp1.cpp \
+	$(CORE_DIR)/src/coprocessor/dsp1emu.cpp \
+	$(CORE_DIR)/src/coprocessor/dsp2.cpp \
+	$(CORE_DIR)/src/coprocessor/dsp4.cpp \
+	$(CORE_DIR)/src/coprocessor/dsp4emu.cpp \
+	$(CORE_DIR)/src/coprocessor/epsonrtc.cpp \
+	$(CORE_DIR)/src/coprocessor/event.cpp \
+	$(CORE_DIR)/src/coprocessor/hitachidsp.cpp \
+	$(CORE_DIR)/src/coprocessor/icd.cpp \
+	$(CORE_DIR)/src/coprocessor/mcc.cpp \
+	$(CORE_DIR)/src/coprocessor/msu1.cpp \
+	$(CORE_DIR)/src/coprocessor/necdsp.cpp \
+	$(CORE_DIR)/src/coprocessor/obc1.cpp \
+	$(CORE_DIR)/src/coprocessor/sa1.cpp \
+	$(CORE_DIR)/src/coprocessor/sdd1.cpp \
+	$(CORE_DIR)/src/coprocessor/sharprtc.cpp \
+	$(CORE_DIR)/src/coprocessor/spc7110.cpp \
+	$(CORE_DIR)/src/coprocessor/st0010.cpp \
+	$(CORE_DIR)/src/coprocessor/superfx.cpp \
+	$(CORE_DIR)/src/cpu.cpp \
+	$(CORE_DIR)/src/dsp.cpp \
+	$(CORE_DIR)/src/emulator.cpp \
+	$(CORE_DIR)/src/expansion/expansion.cpp \
+	$(CORE_DIR)/src/expansion/satellaview.cpp \
+	$(CORE_DIR)/src/heuristics.cpp \
+	$(CORE_DIR)/src/logger.cpp \
+	$(CORE_DIR)/src/markup.cpp \
+	$(CORE_DIR)/src/memory.cpp \
+	$(CORE_DIR)/src/ppu.cpp \
+	$(CORE_DIR)/src/processor/arm7tdmi.cpp \
+	$(CORE_DIR)/src/processor/gsu.cpp \
+	$(CORE_DIR)/src/processor/hg51b.cpp \
+	$(CORE_DIR)/src/processor/spc700.cpp \
+	$(CORE_DIR)/src/processor/upd96050.cpp \
+	$(CORE_DIR)/src/processor/wdc65816.cpp \
+	$(CORE_DIR)/src/random.cpp \
+	$(CORE_DIR)/src/serializer.cpp \
+	$(CORE_DIR)/src/sfc.cpp \
+	$(CORE_DIR)/src/sha256.cpp \
+	$(CORE_DIR)/src/smp.cpp \
+	$(CORE_DIR)/src/sufamiturbo.cpp \
+	$(CORE_DIR)/src/system.cpp
