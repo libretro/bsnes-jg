@@ -1,0 +1,68 @@
+bsnes-jg-libretro
+-----------------
+bsnes-jg is a cycle accurate emulator for the Super Famicom/Super Nintendo
+Entertainment System, including support for the Super Game Boy, BS-X
+Satellaview, and Sufami Turbo.
+
+This is a fork of bsnes v115. Many changes have been made post-fork:
+ - Higher quality resampler with settings
+ - Improved performance without loss of accuracy
+ - Portability improvements
+ - Removal of accuracy-reducing hacks and unnecessary code
+ - Significant increase in standards compliance
+ - Translation to the C++ Standard Library (ISO C++11)
+
+This is the libretro port of bsnes-jg, whose upstream repository lives at:
+https://gitlab.com/jgemu/bsnes
+
+Compiling
+---------
+  make
+
+
+Input Devices
+-------------
+The following input devices are currently supported:
+
+SNES Control Pad
+SNES Mouse
+Super Multitap
+Super Scope
+Justifier
+
+Libretro-specific Notes
+------------------------
+- States created with bsnes-libretro (based on v115) are compatible assuming
+  the "accurate" PPU was used, and the coprocessor settings are the same.
+
+Contributing
+------------
+Contributions to the core emulator should be submitted upstream.
+Contributions to the libretro port should be based on the libretro branch.
+
+Copyright
+---------
+bsnes-jg (GPL-3.0-or-later)
+  Copyright (c) 2004-2020 byuu et al
+  Copyright (c) 2020-2024 Rupert Carmichael
+  See COPYING
+
+byuuML (Zlib)
+  Copyright (c) 2017 Solra Bizna
+  See deps/byuuML/LICENSE (https://github.com/SolraBizna/byuuML)
+
+libco (ISC)
+  Copyright (c) 2006-2020 byuu et al
+  See deps/libco/LICENSE (https://github.com/higan-emu/libco)
+
+libsamplerate (BSD-2-Clause)
+  Copyright (c) 2002-2021, Erik de Castro Lopo
+  See deps/libsamplerate/COPYING (https://github.com/libsndfile/libsamplerate)
+
+SameBoy (Expat)
+  Copyright (c) 2015-2024 Lior Halphon
+  See deps/gb/LICENSE (https://github.com/LIJI32/SameBoy)
+
+snes_spc (LGPL-2.1-or-later)
+  Copyright (C) 2007 Shay Green.
+  See deps/snes_spc/license.txt (https://slack.net/~ant/libs/audio.html)
