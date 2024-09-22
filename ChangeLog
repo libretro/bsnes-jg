@@ -14,6 +14,7 @@ Version 2.0.0
  - Allow raw access to memory blocks (for debug or other special features)
  - Backported fixes from libco upstream
  - Enabled support for competition boards (Campus Challenge '92, PowerFest '94)
+ - Full support for SA-1 I-RAM write protection
  - First release of libbsnes with a public API
 
 Version 1.2.0
