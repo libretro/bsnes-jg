@@ -81,6 +81,12 @@ static void input_handler(SDL_Event& event) {
             case SDL_SCANCODE_ESCAPE:
                 running = 0;
                 break;
+            case SDL_SCANCODE_F1:
+                Bsnes::power();
+                break;
+            case SDL_SCANCODE_F2:
+                Bsnes::reset();
+                break;
 
             case SDL_SCANCODE_UP:
                 buttons[0][0] = event.type == SDL_KEYDOWN;
@@ -149,12 +155,12 @@ static bool fileOpenS(void*, std::string name, std::stringstream& ss) {
 static bool fileOpenV(void*, std::string name, std::vector<uint8_t>& v) {
     std::string path;
 
-    if (name == "save.ram") {
+    if (name == "save.ram")
         path = std::string("./") + gamename + ".srm";
-    }
-    else {
+    else if (name == "time.rtc")
+        path = std::string("./") + gamename + ".rtc";
+    else
         return false;
-    }
 
     std::ifstream stream(path, std::ios::in | std::ios::binary);
     if (!stream.is_open()) {
@@ -182,6 +188,8 @@ static void fileWrite(void*, std::string name, const uint8_t *data,
 
     if (name == "save.ram")
         path = std::string("./") + gamename + ".srm";
+    else if (name == "time.rtc")
+        path = std::string("./") + gamename + ".rtc";
 
     if (path.empty()) {
         fprintf(stderr, "No file routines for: %s\n", name.c_str());
