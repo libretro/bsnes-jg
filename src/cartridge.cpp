@@ -1085,17 +1085,17 @@ bool Cartridge::load() {
   //dip
   if (BML::exists(board, {"board", "processor", "dip"})) {
     has.DIP = true;
-    // Multi-game carts (Campus Challenge '92, PowerFest '94) were no longer
-    // supported after higan v106, and in bsnes standalone this always returns 0.
-    //dip.value = platform->dipSettings(board);
-    dip.value = 0x00;
-
-    std::string board_dip = BML::searchNode(board, {"dip"});
+    //dip.value = 0x00;
+    /* There are no instances where detailed information about DIP switches is
+     * relevant or available in regards to the SFC/SNES. The code block below
+     * is preserved in case this ever changes (if NSS is supported).
+    */
+    /*std::string board_dip = BML::searchNode(board, {"dip"});
     if (!board_dip.empty()) {
       for (std::string map : BML::searchList(board_dip, "map")) {
         loadMap(map, {&DIP::read, &dip}, {&DIP::write, &dip});
       }
-    }
+    }*/
   }
 
   std::vector<std::string> rtclist = BML::searchList(board, "rtc");

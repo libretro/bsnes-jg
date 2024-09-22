@@ -85,7 +85,8 @@ void Event::power() {
 
   //DIP switches 0-3 control the time: 3 minutes + 0-15 extra minutes
   timer = (3 + (dip.value & 15)) * 60;  //in seconds
-  //DIP switches 4-5 serve an unknown purpose
+  //DIP switch 4 serves an unknown purpose
+  //DIP switch 5 (only) sets Test Mode, unemulated pending further info
   //DIP switches 6-7 are not connected
 
   status = 0x00;

@@ -250,6 +250,12 @@ namespace Bsnes {
   void setHotfixes(bool value);
 
   /**
+   * Set the value of any available DIP switches
+   * @param value 8 DIP switches with each bit representing one switch
+   */
+  void setDIPSwitches(uint8_t value);
+
+  /**
    * Set video colour parameters
    * @param luminance Luminance, also known as brightness, 0-100
    * @param saturation Saturation, 0-200

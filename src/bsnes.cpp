@@ -27,6 +27,7 @@
 #include "cheat.hpp"
 #include "controller.hpp"
 #include "cpu.hpp"
+#include "coprocessor/dip.hpp"
 #include "coprocessor/icd.hpp"
 #include "coprocessor/msu1.hpp"
 #include "dsp.hpp"
@@ -183,6 +184,10 @@ void Bsnes::setCoprocPreferHLE(bool value) {
 
 void Bsnes::setHotfixes(bool value) {
   SuperFamicom::configuration.hotfixes = value;
+}
+
+void Bsnes::setDIPSwitches(uint8_t value) {
+  SuperFamicom::dip.value = value;
 }
 
 void Bsnes::setVideoColourParams(unsigned luminance, unsigned saturation, unsigned gamma) {
