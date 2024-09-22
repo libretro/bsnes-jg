@@ -736,8 +736,11 @@ int jg_init(void) {
 
     /* DIP Switches only apply to competition boards for now, but if NSS is
        ever supported, the values will need to be set more intelligently.
+       In this case we remove 3 from the value because the value of 0 is
+       actually 3 minutes, and the setting value is set in a human-readable
+       form with the 3 minutes already added.
     */
-    Bsnes::setDIPSwitches(settings_bsnes[CMPTN_TIMER].val & 0xff);
+    Bsnes::setDIPSwitches((settings_bsnes[CMPTN_TIMER].val & 0xff) - 3);
 
     return 1;
 }
