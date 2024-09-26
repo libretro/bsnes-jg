@@ -48,7 +48,7 @@ prefix := /usr
 libdir := $(prefix)/lib
 
 LIBRETRO_DIR := libretro
-TARGET_NAME := bsnes-jg
+TARGET_NAME := bsnes_jg
 
 SPACE :=
 SPACE := $(SPACE) $(SPACE)
