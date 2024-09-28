@@ -1113,5 +1113,9 @@ void retro_cheat_reset(void) {
 }
 
 void retro_cheat_set(unsigned, bool, const char *code) {
-    Bsnes::cheatsSetCheat(code);
+    // libretro multi-code cheats are delimited by +
+    std::istringstream ss(code);
+    std::string token;
+    while (std::getline(ss, token, '+'))
+        Bsnes::cheatsSetCheat(token);
 }
