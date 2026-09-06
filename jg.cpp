@@ -908,22 +908,16 @@ int jg_game_load(void) {
 
     aspectRatio();
 
-    // Audio and timing adjustments
-    if (Bsnes::getRegion() == Bsnes::Region::PAL) {
-        audinfo.spf = (SAMPLERATE / FRAMERATE_PAL) * CHANNELS;
+    /* Audio and timing adjustments - both values must be assigned on every
+       load, or the previously loaded game's region is inherited.
+    */
+    bool pal = Bsnes::getRegion() == Bsnes::Region::PAL;
+    audinfo.spf = (SAMPLERATE / (pal ? FRAMERATE_PAL : FRAMERATE)) * CHANNELS;
 #if JG_VERSION_NUMBER >= 10100
-        jg_cb_frametime(udata_frametime, TIMING_PAL);
+    jg_cb_frametime(udata_frametime, pal ? TIMING_PAL : TIMING_NTSC);
 #else
-        jg_cb_frametime(TIMING_PAL);
+    jg_cb_frametime(pal ? TIMING_PAL : TIMING_NTSC);
 #endif
-    }
-    else {
-#if JG_VERSION_NUMBER >= 10100
-        jg_cb_frametime(udata_frametime, TIMING_NTSC);
-#else
-        jg_cb_frametime(TIMING_NTSC);
-#endif
-    }
 
     // Power up!
     Bsnes::power();
