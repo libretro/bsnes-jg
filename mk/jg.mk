@@ -49,7 +49,7 @@ ifeq ($(PLATFORM), Darwin)
 	override LIB_VERSION := lib$(NAME).$(VERSION).dylib
 	override SHARED += -dynamiclib
 	override SONAME := -Wl,-install_name,$(LIBDIR)/$(LIB_MAJOR)
-	override SYMBOLS_LIST := $(SYMBOLS)
+	override SYMBOLS_LIST := $(SYMBOLS:%=_%)
 	override UNDEFINED :=
 	override VERSION_SCRIPT := -Wl,-exported_symbols_list
 else
@@ -57,7 +57,7 @@ else
 	override LIB_VERSION := $(LIB_SHARED).$(VERSION)
 	override SHARED += -shared
 	override SONAME := -Wl,-soname,$(LIB_MAJOR)
-	override SYMBOLS_LIST := $(SYMBOLS_MAP)
+	override SYMBOLS_LIST := $(SYMBOLS:%=%;)
 	override UNDEFINED := -Wl,--no-undefined
 	override VERSION_SCRIPT := -Wl,-version-script
 endif

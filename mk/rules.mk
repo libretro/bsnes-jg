@@ -208,8 +208,10 @@ $(OBJDIR)/shared.map: $(OBJDIR)/.tag
 	@printf '%s\n' '$(SYMBOLS_LIST)' | sed -e 's/ /\n/g' > $@
 else
 $(OBJDIR)/shared.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
-	@sed -e 's|@NAME@|$(VERSION_SCRIPT_NAME) |' \
-		-e "s|@SYMBOLS@|$(SYMBOLS_LIST)|" $< > $@
+	@SYMS="$$(printf '%s\n' '$(SYMBOLS_LIST)' | sed -e 's/ / \\\n/g' | \
+		sed -e '1!s/^/    /')"; \
+	sed -e 's|@NAME@|$(VERSION_SCRIPT_NAME) |' \
+		-e "s|@SYMBOLS@|$$SYMS|" $< > $@
 endif
 
 install-headers: $(HEADERS:%=$(SOURCEDIR)/%) all

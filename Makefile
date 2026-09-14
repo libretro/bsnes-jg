@@ -40,14 +40,7 @@ MKDIRS := deps/byuuML \
 	src/processor
 
 # Global symbols
-# TODO: Darwin export files expect mangled symbols for C++
-SYMBOLS :=
-
-define SYMBOLS_MAP
-extern \"C++\" {\\
-      Bsnes::*;\\
-    };
-endef
+SYMBOLS := _ZN5Bsnes*
 
 override INSTALL_DATA := 1
 override INSTALL_EXAMPLE := 1
