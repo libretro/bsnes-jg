@@ -75,7 +75,7 @@ endif
 
 # Version Script
 override VERSION_SCRIPT_NAME = $(shell printf %s lib$(NAME) | \
-		tr '[:lower:]' '[:upper:]')_$(VERSION)
+		tr '[:lower:]' '[:upper:]')_$(VERSION_MAJOR)
 override VERSION_SCRIPT_MODULE := $(VERSION_SCRIPT),$(OBJDIR)/module.map
 
 # Prerequisites
