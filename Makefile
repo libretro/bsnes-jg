@@ -30,15 +30,6 @@ EXAMPLE := lib/example
 
 HEADERS := src/bsnes.hpp
 
-# Object dirs
-MKDIRS := deps/byuuML \
-	deps/gb \
-	deps/libco \
-	deps/snes_spc \
-	src/coprocessor \
-	src/expansion \
-	src/processor
-
 # Global symbols
 SYMBOLS := _ZN5Bsnes*
 

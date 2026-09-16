@@ -9,7 +9,6 @@ endif
 ifneq ($(USE_VENDORED_SAMPLERATE), 0)
 	CFLAGS_SAMPLERATE := -I$(DIR_SAMPLERATE)
 	LIBS_SAMPLERATE := $(if $(findstring -lm,$(LIBS)),,-lm)
-	MKDIRS += deps/libsamplerate
 	SRCS_SAMPLERATE := deps/libsamplerate/samplerate.c \
 		deps/libsamplerate/src_linear.c \
 		deps/libsamplerate/src_sinc.c \

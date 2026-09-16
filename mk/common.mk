@@ -74,8 +74,13 @@ override COMPILE_INFO = $(info $(subst $(SOURCEDIR)/,,$(1)))
 override .DEFAULT_GOAL := all
 override PHONY := all clean install install-docs install-strip uninstall
 
+# Object dirs
+override ALL_DIRS = $(patsubst %/,%,$(dir $(OBJS)))
+override MKDIRS = $(sort $(foreach d, \
+	$(ALL_DIRS),$(if $(filter $(d)/%,$(ALL_DIRS)),,$d)))
+
 $(OBJDIR)/.tag:
-	@mkdir -p -- $(if $(MKDIRS),$(MKDIRS:%=$(OBJDIR)/%),$(OBJDIR))
+	@mkdir -p -- $(MKDIRS)
 	@touch $@
 
 install-docs:: all
