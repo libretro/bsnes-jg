@@ -19,6 +19,8 @@ override PKGCONF_SH := $(wildcard $(SOURCEDIR)/lib/pkgconf.sh)
 
 override LIBS_PRIVATE += $(LIBS) $(LIBS_STATIC)
 
+override OBJS_ALL += $(OBJS_JG)
+
 ifneq ($(PKGCONF_SH),)
 	override PKGCONFLIBDIR := \
 		$(shell $(PKGCONF_SH) "$(EXEC_PREFIX)" "$(LIBDIR)" exec_)

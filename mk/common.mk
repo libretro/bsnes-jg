@@ -75,7 +75,8 @@ override .DEFAULT_GOAL := all
 override PHONY := all clean install install-docs install-strip uninstall
 
 # Object dirs
-override ALL_DIRS = $(patsubst %/,%,$(dir $(OBJS)))
+override OBJS_ALL = $(OBJS)
+override ALL_DIRS = $(patsubst %/,%,$(dir $(OBJS_ALL)))
 override MKDIRS = $(sort $(foreach d, \
 	$(ALL_DIRS),$(if $(filter $(d)/%,$(ALL_DIRS)),,$d)))
 
