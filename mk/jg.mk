@@ -21,6 +21,14 @@ override LIBS_PRIVATE += $(LIBS) $(LIBS_STATIC)
 
 override OBJS_ALL += $(OBJS_JG)
 
+override SRCS = \
+	$(if $(filter file,$(origin CSRCS)),$(CSRCS)) \
+        $(if $(filter file,$(origin CXXSRCS)),$(CXXSRCS))
+
+# List of object files
+override OBJS = $(patsubst %,$(OBJDIR)/%.o,$(basename $(SRCS)))
+override OBJS_JG = $(patsubst %,$(OBJDIR)/%.o,$(basename $(JGSRCS)))
+
 ifneq ($(PKGCONF_SH),)
 	override PKGCONFLIBDIR := \
 		$(shell $(PKGCONF_SH) "$(EXEC_PREFIX)" "$(LIBDIR)" exec_)
@@ -130,6 +138,7 @@ endif
 ifeq ($(INSTALL_EXAMPLE), 0)
 	override ENABLE_EXAMPLE := 0
 else
+	override OBJS_BIN = $(patsubst %,$(OBJDIR)/%.o,$(basename $(BINSRCS)))
 	override PHONY += example install-bin install-strip-bin
 endif
 
