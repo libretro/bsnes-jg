@@ -47,10 +47,10 @@ uninstall::
 	rm -rf $(DESTDIR)$(DOCDIR)
 
 ifeq ($(PLATFORM), Darwin)
-$(OBJDIR)/module.map: $(OBJDIR)/.tag
+$(OBJDIR)/module.map: $(PREREQ)
 	@printf '%s\n' '_jg_*' > $@
 else
-$(OBJDIR)/module.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
+$(OBJDIR)/module.map: $(SOURCEDIR)/link.in $(PREREQ)
 	@sed -e 's|@NAME@||' -e 's|@SYMBOLS@|jg_*;|' $< > $@
 endif
 
@@ -204,10 +204,10 @@ uninstall::
 	rm -f $(DESTDIR)$(LIBDIR)/pkgconfig/$(LIB_PC)
 
 ifeq ($(PLATFORM), Darwin)
-$(OBJDIR)/shared.map: $(OBJDIR)/.tag
+$(OBJDIR)/shared.map: $(PREREQ)
 	@printf '%s\n' '$(SYMBOLS_LIST)' | sed -e 's/ /\n/g' > $@
 else
-$(OBJDIR)/shared.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
+$(OBJDIR)/shared.map: $(SOURCEDIR)/link.in $(PREREQ)
 	@SYMS="$$(printf '%s\n' '$(SYMBOLS_LIST)' | sed -e 's/ / \\\n/g' | \
 		sed -e '1!s/^/    /')"; \
 	sed -e 's|@NAME@|$(VERSION_SCRIPT_NAME) |' \

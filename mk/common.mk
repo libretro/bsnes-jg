@@ -80,7 +80,7 @@ override ALL_DIRS = $(patsubst %/,%,$(dir $(OBJS_ALL)))
 override MKDIRS = $(sort $(foreach d, \
 	$(ALL_DIRS),$(if $(filter $(d)/%,$(ALL_DIRS)),,$d)))
 
-$(OBJDIR)/.tag:
+$(PREREQ):
 	@mkdir -p -- $(MKDIRS)
 	@touch $@
 

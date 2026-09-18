@@ -37,7 +37,7 @@ endif
 
 BUILD_SAMPLERATE = $(call COMPILE_C, $(FLAGS_SAMPLERATE))
 
-$(OBJDIR)/deps/libsamplerate/%.o: $(DIR_SAMPLERATE)/%.c $(OBJDIR)/.tag
+$(OBJDIR)/deps/libsamplerate/%.o: $(DIR_SAMPLERATE)/%.c $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_SAMPLERATE))
 	@$(BUILD_SAMPLERATE)
 
