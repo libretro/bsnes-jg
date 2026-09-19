@@ -1,14 +1,6 @@
 # User set make config
 -include config.mk
 
-$(OBJDIR)/$(OBJS_SRCDIR)%.o: $(SRCDIR)/%.$(EXT) $(PREREQ) $(PREREQ_MAIN)
-	$(call COMPILE_INFO,$(BUILD_MAIN))
-	@$(BUILD_MAIN)
-
-$(OBJDIR)/%.o: $(SOURCEDIR)/%.$(EXT) $(PREREQ)
-	$(call COMPILE_INFO,$(BUILD_JG))
-	@$(BUILD_JG)
-
 $(TARGET_MODULE): $(OBJS_JG) $(OBJS_MODULE) $(OBJDIR)/module.map
 	@mkdir -p $(NAME)
 	$(LINK_MODULE)
@@ -229,3 +221,11 @@ uninstall::
 	rm -rf $(DESTDIR)$(INCPATH)
 endif
 endif
+
+$(OBJDIR)/$(OBJS_SRCDIR)%.o: $(SRCDIR)/%.$(EXT) $(PREREQ) $(PREREQ_MAIN)
+	$(call COMPILE_INFO,$(BUILD_MAIN))
+	@$(BUILD_MAIN)
+
+$(OBJDIR)/%.o: $(SOURCEDIR)/%.$(EXT) $(PREREQ)
+	$(call COMPILE_INFO,$(BUILD_JG))
+	@$(BUILD_JG)
