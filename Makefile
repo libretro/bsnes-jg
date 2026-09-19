@@ -204,11 +204,6 @@ $(OBJDIR)/src/coprocessor/icd.o: $(SRCDIR)/coprocessor/icd.cpp $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_ICD))
 	@$(BUILD_ICD)
 
-# SNES rules
-$(OBJDIR)/src/%.o: $(SRCDIR)/%.$(EXT) $(PREREQ)
-	$(call COMPILE_INFO,$(BUILD_MAIN))
-	@$(BUILD_MAIN)
-
 # Data rules
 $(DATA_TARGET): $(DATA_BASE:%=$(SOURCEDIR)/%)
 	@mkdir -p $(NAME)

@@ -20,6 +20,7 @@ override PKGCONF_SH := $(wildcard $(SOURCEDIR)/lib/pkgconf.sh)
 override LIBS_PRIVATE += $(LIBS) $(LIBS_STATIC)
 
 override OBJS_ALL += $(OBJS_JG)
+override OBJS_SRCDIR := $(if $(filter %/..,$(SRCDIR)),,$(notdir $(SRCDIR))/)
 
 override SRCS = \
 	$(if $(filter file,$(origin CSRCS)),$(CSRCS)) \
@@ -91,6 +92,7 @@ override VERSION_SCRIPT_MODULE := $(VERSION_SCRIPT),$(OBJDIR)/module.map
 # Prerequisites
 override PREREQ_DATA =
 override PREREQ_EXAMPLE = $(TARGET_BIN)
+override PREREQ_MAIN =
 
 # Desktop File
 override DESKTOP := $(JGNAME).desktop
