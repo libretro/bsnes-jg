@@ -30,24 +30,8 @@ EXAMPLE := lib/example
 
 HEADERS := src/bsnes.hpp
 
-# Object dirs
-MKDIRS := deps/byuuML \
-	deps/gb \
-	deps/libco \
-	deps/snes_spc \
-	src/coprocessor \
-	src/expansion \
-	src/processor
-
 # Global symbols
-# TODO: Darwin export files expect mangled symbols for C++
-SYMBOLS :=
-
-define SYMBOLS_MAP
-extern \"C++\" {\\
-      Bsnes::*;\\
-    };
-endef
+SYMBOLS := _ZN5Bsnes*
 
 override INSTALL_DATA := 1
 override INSTALL_EXAMPLE := 1
@@ -59,7 +43,7 @@ include $(SOURCEDIR)/mk/jg.mk
 CPPFLAGS_BIN := -DDATADIR="\"$(DATADIR)/jollygood/$(NAME)\""
 CPPFLAGS_GB := -DGB_INTERNAL -DGB_DISABLE_CHEATS -DGB_DISABLE_CHEAT_SEARCH \
 	-DGB_DISABLE_DEBUGGER -DGB_DISABLE_REWIND -D_GNU_SOURCE \
-	-DGB_VERSION=\"1.0.2\"
+	-DGB_VERSION=\"1.0.3\"
 
 INCLUDES += $(CFLAGS_SAMPLERATE) -I$(DEPDIR)
 LIBS += $(LIBS_SAMPLERATE)
@@ -170,14 +154,10 @@ DATA := $(notdir $(DATA_BASE))
 DATA_TARGET := $(DATA:%=$(NAME)/%)
 DATA_BIN_TARGET := $(DATA:%=$(BIN_OUT)/%)
 
-# List of object files
-OBJS := $(patsubst %,$(OBJDIR)/%,$(CSRCS:.c=.o) $(CXXSRCS:.cpp=.o)) \
-	$(OBJS_SAMPLERATE)
-OBJS_BIN := $(patsubst %,$(OBJDIR)/%,$(BINSRCS:.cpp=.o))
-OBJS_JG := $(patsubst %,$(OBJDIR)/%,$(JGSRCS:.cpp=.o))
+override OBJS += $(OBJS_SAMPLERATE)
 
 ifneq ($(ENABLE_SHARED), 0)
-	OBJS_BIN += $(OBJS_SAMPLERATE)
+	override OBJS_BIN += $(OBJS_SAMPLERATE)
 endif
 
 # Dependency commands
@@ -223,11 +203,6 @@ $(OBJDIR)/deps/snes_spc/%.o: $(DEPDIR)/snes_spc/%.c $(PREREQ)
 $(OBJDIR)/src/coprocessor/icd.o: $(SRCDIR)/coprocessor/icd.cpp $(PREREQ)
 	$(call COMPILE_INFO,$(BUILD_ICD))
 	@$(BUILD_ICD)
-
-# SNES rules
-$(OBJDIR)/src/%.o: $(SRCDIR)/%.$(EXT) $(PREREQ)
-	$(call COMPILE_INFO,$(BUILD_MAIN))
-	@$(BUILD_MAIN)
 
 # Data rules
 $(DATA_TARGET): $(DATA_BASE:%=$(SOURCEDIR)/%)

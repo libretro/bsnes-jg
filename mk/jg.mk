@@ -19,6 +19,17 @@ override PKGCONF_SH := $(wildcard $(SOURCEDIR)/lib/pkgconf.sh)
 
 override LIBS_PRIVATE += $(LIBS) $(LIBS_STATIC)
 
+override OBJS_ALL += $(OBJS_JG)
+override OBJS_SRCDIR := $(if $(filter %/..,$(SRCDIR)),,$(notdir $(SRCDIR))/)
+
+override SRCS = \
+	$(if $(filter file,$(origin CSRCS)),$(CSRCS)) \
+        $(if $(filter file,$(origin CXXSRCS)),$(CXXSRCS))
+
+# List of object files
+override OBJS = $(patsubst %,$(OBJDIR)/%.o,$(basename $(SRCS)))
+override OBJS_JG = $(patsubst %,$(OBJDIR)/%.o,$(basename $(JGSRCS)))
+
 ifneq ($(PKGCONF_SH),)
 	override PKGCONFLIBDIR := \
 		$(shell $(PKGCONF_SH) "$(EXEC_PREFIX)" "$(LIBDIR)" exec_)
@@ -49,7 +60,7 @@ ifeq ($(PLATFORM), Darwin)
 	override LIB_VERSION := lib$(NAME).$(VERSION).dylib
 	override SHARED += -dynamiclib
 	override SONAME := -Wl,-install_name,$(LIBDIR)/$(LIB_MAJOR)
-	override SYMBOLS_LIST := $(SYMBOLS)
+	override SYMBOLS_LIST := $(SYMBOLS:%=_%)
 	override UNDEFINED :=
 	override VERSION_SCRIPT := -Wl,-exported_symbols_list
 else
@@ -57,7 +68,7 @@ else
 	override LIB_VERSION := $(LIB_SHARED).$(VERSION)
 	override SHARED += -shared
 	override SONAME := -Wl,-soname,$(LIB_MAJOR)
-	override SYMBOLS_LIST := $(SYMBOLS_MAP)
+	override SYMBOLS_LIST := $(SYMBOLS:%=%;)
 	override UNDEFINED := -Wl,--no-undefined
 	override VERSION_SCRIPT := -Wl,-version-script
 endif
@@ -75,12 +86,13 @@ endif
 
 # Version Script
 override VERSION_SCRIPT_NAME = $(shell printf %s lib$(NAME) | \
-		tr '[:lower:]' '[:upper:]')_$(VERSION)
+		tr '[:lower:]' '[:upper:]')_$(VERSION_MAJOR)
 override VERSION_SCRIPT_MODULE := $(VERSION_SCRIPT),$(OBJDIR)/module.map
 
 # Prerequisites
 override PREREQ_DATA =
 override PREREQ_EXAMPLE = $(TARGET_BIN)
+override PREREQ_MAIN =
 
 # Desktop File
 override DESKTOP := $(JGNAME).desktop
@@ -128,6 +140,7 @@ endif
 ifeq ($(INSTALL_EXAMPLE), 0)
 	override ENABLE_EXAMPLE := 0
 else
+	override OBJS_BIN = $(patsubst %,$(OBJDIR)/%.o,$(basename $(BINSRCS)))
 	override PHONY += example install-bin install-strip-bin
 endif
 

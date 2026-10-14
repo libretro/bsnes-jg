@@ -363,15 +363,16 @@ bool Cartridge::load() {
   slotSufamiTurboA = {};
   slotSufamiTurboB = {};
 
+  /* A forced region applies to a single load, so that it cannot outlive the
+     setting which requested it.
+  */
+  information.region = forceRegion.empty() ? "Auto" : forceRegion;
+  forceRegion.clear();
+
   if(!romCallback(udata_rom, ID::SuperFamicom) || game.document.empty())
     return false;
 
   information.pathID = ID::SuperFamicom;
-
-  if (forceRegion == "")
-    information.region = "Auto";
-  else
-    information.region = forceRegion;
 
   game.load(game.document);
 

@@ -1,10 +1,6 @@
 # User set make config
 -include config.mk
 
-$(OBJDIR)/%.o: $(SOURCEDIR)/%.$(EXT) $(PREREQ)
-	$(call COMPILE_INFO,$(BUILD_JG))
-	@$(BUILD_JG)
-
 $(TARGET_MODULE): $(OBJS_JG) $(OBJS_MODULE) $(OBJDIR)/module.map
 	@mkdir -p $(NAME)
 	$(LINK_MODULE)
@@ -47,10 +43,10 @@ uninstall::
 	rm -rf $(DESTDIR)$(DOCDIR)
 
 ifeq ($(PLATFORM), Darwin)
-$(OBJDIR)/module.map: $(OBJDIR)/.tag
+$(OBJDIR)/module.map: $(PREREQ)
 	@printf '%s\n' '_jg_*' > $@
 else
-$(OBJDIR)/module.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
+$(OBJDIR)/module.map: $(SOURCEDIR)/link.in $(PREREQ)
 	@sed -e 's|@NAME@||' -e 's|@SYMBOLS@|jg_*;|' $< > $@
 endif
 
@@ -204,12 +200,14 @@ uninstall::
 	rm -f $(DESTDIR)$(LIBDIR)/pkgconfig/$(LIB_PC)
 
 ifeq ($(PLATFORM), Darwin)
-$(OBJDIR)/shared.map: $(OBJDIR)/.tag
+$(OBJDIR)/shared.map: $(PREREQ)
 	@printf '%s\n' '$(SYMBOLS_LIST)' | sed -e 's/ /\n/g' > $@
 else
-$(OBJDIR)/shared.map: $(SOURCEDIR)/link.in $(OBJDIR)/.tag
-	@sed -e 's|@NAME@|$(VERSION_SCRIPT_NAME) |' \
-		-e "s|@SYMBOLS@|$(SYMBOLS_LIST)|" $< > $@
+$(OBJDIR)/shared.map: $(SOURCEDIR)/link.in $(PREREQ)
+	@SYMS="$$(printf '%s\n' '$(SYMBOLS_LIST)' | sed -e 's/ / \\\n/g' | \
+		sed -e '1!s/^/    /')"; \
+	sed -e 's|@NAME@|$(VERSION_SCRIPT_NAME) |' \
+		-e "s|@SYMBOLS@|$$SYMS|" $< > $@
 endif
 
 install-headers: $(HEADERS:%=$(SOURCEDIR)/%) all
@@ -223,3 +221,11 @@ uninstall::
 	rm -rf $(DESTDIR)$(INCPATH)
 endif
 endif
+
+$(OBJDIR)/$(OBJS_SRCDIR)%.o: $(SRCDIR)/%.$(EXT) $(PREREQ) $(PREREQ_MAIN)
+	$(call COMPILE_INFO,$(BUILD_MAIN))
+	@$(BUILD_MAIN)
+
+$(OBJDIR)/%.o: $(SOURCEDIR)/%.$(EXT) $(PREREQ)
+	$(call COMPILE_INFO,$(BUILD_JG))
+	@$(BUILD_JG)
