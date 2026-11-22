@@ -907,13 +907,16 @@ void CPU::irqPoll() {
   }
 
   //IRQ test
-  //the IRQ unit's V counter is cleared at H=2 on the first scanline of a field,
-  //rather than advancing at H=6 as on all other scanlines
-  //(V=last,H=339 can never match: that H only exists at H=2, after V is cleared)
+  //the IRQ unit's H and V counters are driven by the PPU's blanking signals and
+  //differ from the PPU's own at the start of each scanline: at hclock 2 they
+  //still read the previous line's V and H=339, at hclock 6 and 10 both read H=0
+  //on the first scanline of a field V is cleared at hclock 2 (end of vblank)
+  //instead of advancing at hclock 6, so V=0 IRQs raise one poll earlier, and
+  //V=last,H=339 can never match: H=339 is only seen once V is already 0
   unsigned vtime = vcounter(10);
   if(vcounter() == 0 && hcounter() == 6) vtime = 0;
-  //the IRQ unit's H counter is cleared at H=6 and held at 0 until H=10,
-  //so HTIME=0 (stored as 4) matches one poll earlier than HTIME>=1
+  //H=0 is held for two polls, so HTIME=0 (stored as 4) matches one poll earlier
+  //than HTIME>=1
   unsigned htime = hcounter(io.htime == 4 ? 6 : 10);
   if(raise(status.irqValid, io.irqEnable
   && (!io.virqEnable || vtime == io.vtime)
