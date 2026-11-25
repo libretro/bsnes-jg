@@ -42,14 +42,14 @@ static const unsigned oamObjectWidth1[] = {16, 32, 64, 32, 64, 64, 32, 32};
 
 void PPU::main() {
   if(vcounter() == 0) {
-    /*if(display.overscan && !io.overscan) {
+    if(display.overscan && !io.overscan) {
       //when disabling overscan, clear the overscan area that won't be rendered to:
+      unsigned pitch = io.interlace ? 1024 : 512;
       for(unsigned y = 1; y <= 240; ++y) {
         if(y >= 8 && y <= 231) continue;
-        auto out = ppu.output + y * 1024;
-        std::memset(out, 0, 1024 * sizeof(uint16_t));
+        std::memset(output + y * pitch, 0, pitch * sizeof(uint32_t));
       }
-    }*/
+    }
     display.interlace = io.interlace;
     display.overscan = io.overscan;
     obj.frame();
