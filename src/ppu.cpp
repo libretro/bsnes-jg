@@ -1652,12 +1652,20 @@ void PPU::Object::power() {
 
 void PPU::Window::scanline() {
   x = 0;
+  latch = {};
   invalidate();
 }
 
 void PPU::Window::run() {
-  bool one = (x >= io.oneLeft && x <= io.oneRight);
-  bool two = (x >= io.twoLeft && x <= io.twoRight);
+  //the edges are matched against the dot counter, not compared with it, so
+  //moving an edge behind the dot counter can neither reopen a window that has
+  //closed nor close one that is open
+  if(x == io.oneLeft) latch.one.active = true;
+  if(x == io.twoLeft) latch.two.active = true;
+  bool one = latch.one.active && !latch.one.stop;
+  bool two = latch.two.active && !latch.two.stop;
+  if(x == io.oneRight) latch.one.stop = true;
+  if(x == io.twoRight) latch.two.stop = true;
   ++x;
 
   uint8_t key = (uint8_t)one << 1 | (uint8_t)two;
@@ -1778,6 +1786,7 @@ void PPU::Window::power() {
   output.above.colorEnable = 0;
   output.below.colorEnable = 0;
 
+  latch = {};
   x = 0;
 }
 
