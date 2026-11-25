@@ -476,6 +476,17 @@ private:
       } above, below;
     } output;
 
+    //each window opens when the dot counter reaches its left edge and stays
+    //closed for the rest of the line once it has passed its right edge
+    //cleared at the start of every scanline, which is where the PPU thread
+    //synchronizes for save states, so not serialized
+    struct Latch {
+      struct Range {
+        bool active;
+        bool stop;
+      } one, two;
+    } latch;
+
     unsigned x;
   };
 

@@ -83,6 +83,7 @@ struct CPU : Processor::WDC65816, Thread, PPUcounter {
 
   inline void aluEdge();
   inline void dmaEdge();
+  inline bool hdmaRequested() const;
 
   inline void nmiPoll();
   inline void irqPoll();
@@ -143,6 +144,7 @@ private:
     bool dmaPending = 0;
     bool hdmaPending = 0;
     bool hdmaMode = 0;  //0 = init, 1 = run
+    bool dmaTransferring = 0;  //inside the DMA channel loop; never set across an instruction, so not serialized
 
     unsigned autoJoypadCounter = 33;  //state machine; 4224 / 128 = 33 (inactive)
 
